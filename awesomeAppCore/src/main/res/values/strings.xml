@@ -725,5 +725,8 @@
 		<string name="i_could_not_decrypt_the_message_you_sent">I could not decrypt the message you sent</string>
 		
 		<string name="swipe_hint">&lt; swipe left and right for more options &gt;</string>
+
+		<string name="no_friends">Invite your friends to join you on Zom</string>
+    <string name="no_convos">Time to start Zomming!</string>
 	</resources>
 

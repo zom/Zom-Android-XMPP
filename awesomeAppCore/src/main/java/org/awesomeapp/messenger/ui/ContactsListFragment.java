@@ -33,6 +33,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import org.awesomeapp.messenger.MainActivity;
 import org.awesomeapp.messenger.ui.onboarding.OnboardingManager;
@@ -53,7 +54,7 @@ public class ContactsListFragment extends Fragment {
     private LoaderManager mLoaderManager;
     private int mLoaderId = 1001;
     private RecyclerView mRecView;
-
+    private View mEmptyView;
     String mSearchString = null;
 
     @Nullable
@@ -63,9 +64,15 @@ public class ContactsListFragment extends Fragment {
                 R.layout.awesome_fragment_contacts_list, container, false);
 
         mRecView = (RecyclerView)view.findViewById(R.id.recyclerview);
+        mEmptyView = view.findViewById(R.id.empty_view);
+
         setupRecyclerView(mRecView);
 
         setupActions (view);
+
+// ...
+
+
         return view;
     }
 
@@ -82,6 +89,15 @@ public class ContactsListFragment extends Fragment {
 
         Cursor cursor = null;
         mAdapter = new ContactListRecyclerViewAdapter(getActivity(),cursor);
+
+        if (mAdapter.getItemCount() == 0) {
+            mRecView.setVisibility(View.GONE);
+            mEmptyView.setVisibility(View.VISIBLE);
+        }
+        else {
+            mRecView.setVisibility(View.VISIBLE);
+            mEmptyView.setVisibility(View.GONE);
+        }
 
     }
 
@@ -228,6 +244,15 @@ public class ContactsListFragment extends Fragment {
 
             if (mRecView.getAdapter() == null)
                 mRecView.setAdapter(mAdapter);
+
+            if (mAdapter.getItemCount() == 0) {
+                mRecView.setVisibility(View.GONE);
+                mEmptyView.setVisibility(View.VISIBLE);
+            }
+            else {
+                mRecView.setVisibility(View.VISIBLE);
+                mEmptyView.setVisibility(View.GONE);
+            };
 
 
         }

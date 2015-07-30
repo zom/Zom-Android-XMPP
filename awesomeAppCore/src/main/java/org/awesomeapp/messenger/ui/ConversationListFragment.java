@@ -52,14 +52,19 @@ public class ConversationListFragment extends Fragment {
     private LoaderManager mLoaderManager;
     private int mLoaderId = 1001;
     private RecyclerView mRecView;
+    private View mEmptyView;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mRecView = (RecyclerView) inflater.inflate(
+        View view = inflater.inflate(
                 R.layout.awesome_fragment_message_list, container, false);
+
+        mRecView =  (RecyclerView)view.findViewById(R.id.recyclerview);
+        mEmptyView = view.findViewById(R.id.empty_view);
+
         setupRecyclerView(mRecView);
-        return mRecView;
+        return view;
     }
 
     private void setupRecyclerView(RecyclerView recyclerView) {
@@ -109,6 +114,16 @@ public class ConversationListFragment extends Fragment {
             }
         });
         swipeToDismissTouchHelper.attachToRecyclerView(recyclerView);
+
+
+        if (mAdapter.getItemCount() == 0) {
+            mRecView.setVisibility(View.GONE);
+            mEmptyView.setVisibility(View.VISIBLE);
+        }
+        else {
+            mRecView.setVisibility(View.VISIBLE);
+            mEmptyView.setVisibility(View.GONE);
+        }
 
     }
 
@@ -218,6 +233,14 @@ public class ConversationListFragment extends Fragment {
                 mRecView.setAdapter(mAdapter);
 
 
+            if (mAdapter.getItemCount() == 0) {
+                mRecView.setVisibility(View.GONE);
+                mEmptyView.setVisibility(View.VISIBLE);
+            }
+            else {
+                mRecView.setVisibility(View.VISIBLE);
+                mEmptyView.setVisibility(View.GONE);
+            }
         }
 
         @Override

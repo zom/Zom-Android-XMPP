@@ -27,7 +27,7 @@
       android:layout_margin="0dp"
       android:gravity="center_horizontal|top"
       android:orientation="horizontal"
-      android:background="?colorAccent"
+      android:background="?colorPrimaryDark"
       >
     <Button
         android:id="@+id/btnInviteSMS"
@@ -69,4 +69,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
     />
+    <TextView
+        android:id="@+id/empty_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:visibility="gone"
+        android:text="@string/no_friends" />
   </LinearLayout>
