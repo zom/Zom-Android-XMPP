@@ -498,10 +498,12 @@
         <activity android:name="org.awesomeapp.messenger.ui.widgets.SecureCameraActivity" />
         <activity
             android:name="org.awesomeapp.messenger.MainActivity"
-            android:theme="@style/Theme.DesignDemo" />
+            android:theme="@style/AppThemeNoAction"
+            />
         <activity
             android:name="org.awesomeapp.messenger.ui.ConversationDetailActivity"
-            android:theme="@style/Theme.DesignDemo" />
+            android:theme="@style/AppThemeNoAction"
+             />
     </application>
 
 </manifest>

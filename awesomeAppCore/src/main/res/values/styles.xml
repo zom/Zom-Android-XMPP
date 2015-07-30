@@ -69,7 +69,8 @@
     </style>
 
     <style name="AppTheme" parent="@style/Theme.AppCompat.Light" >    
-        
+
+
            <!-- colorPrimary is used for the default action bar background -->
     <item name="colorPrimary">#E7275A</item>
 
@@ -107,6 +108,11 @@
        
        
      </style>
+
+    <style name="AppThemeNoAction" parent="@style/AppTheme">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
      
     
    <style name="AppThemeDark" parent="@style/Theme.AppCompat" >
@@ -127,34 +133,19 @@
     <item name="colorAccent">#ffff2b62</item>
     
     <item name="windowActionBar">true</item>
-       <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
+    <!--   <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>-->
        <item name="windowActionModeOverlay">true</item>
               <item name="attachIcon">@drawable/content_new_attachment</item>
        
     </style>
+    <!--
     
    <style name="DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
     <item name="spinBars">true</item>
     <item name="color">@android:color/white</item>
 </style>
+-->
 
 
-    <style name="Theme.DesignDemo" parent="Base.Theme.DesignDemo">
-    </style>
-
-    <style name="Base.Theme.DesignDemo" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">#E7275A</item>
-        <item name="colorPrimaryDark">#ff6e132c</item>
-        <item name="colorAccent">#ffbabeb8</item>
-        <item name="android:windowBackground">@color/window_background</item>
-    </style>
-
-    <style name="Widget.CardContent" parent="android:Widget">
-        <item name="android:paddingLeft">16dp</item>
-        <item name="android:paddingRight">16dp</item>
-        <item name="android:paddingTop">24dp</item>
-        <item name="android:paddingBottom">24dp</item>
-        <item name="android:orientation">vertical</item>
-    </style>
 
 </resources>
