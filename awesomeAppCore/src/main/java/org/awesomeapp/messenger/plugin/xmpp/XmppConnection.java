@@ -1287,7 +1287,9 @@ public class XmppConnection extends ImConnection implements CallbackHandler {
                     debug(TAG, "got delivery receipt for " + drIncoming.getId());
                     boolean groupMessage = smackMessage.getType() == org.jivesoftware.smack.packet.Message.Type.groupchat;
                     ChatSession session = findOrCreateSession(address, groupMessage);
-                    session.onMessageReceipt(drIncoming.getId());
+
+                    if (session != null)
+                        session.onMessageReceipt(drIncoming.getId());
                     
                 }
 
@@ -1300,33 +1302,37 @@ public class XmppConnection extends ImConnection implements CallbackHandler {
 
                     ChatSession session = findOrCreateSession(address, isGroupMessage);
 
-                    Message rec = new Message(body);
-                    rec.setTo(aTo);
-                    rec.setFrom(aFrom);
-                    rec.setDateTime(new Date());
+                    if (session != null) {
 
-                    rec.setType(Imps.MessageType.INCOMING);
+                        Message rec = new Message(body);
 
-                    /*
-                    // Detect if this was said by us, and mark message as outgoing
-                    if (isGroupMessage && rec.getFrom().getResource().equals(rec.getTo().getUser())) {
-                        rec.setType(Imps.MessageType.OUTGOING);
-                    }*/
+                        rec.setTo(aTo);
+                        rec.setFrom(aFrom);
+                        rec.setDateTime(new Date());
 
-                    boolean good = session.onReceiveMessage(rec);
+                        rec.setType(Imps.MessageType.INCOMING);
 
-                    if (smackMessage.getExtension("request", DeliveryReceipts.NAMESPACE) != null) {
-                        if (good) {
-                            debug(TAG, "sending delivery receipt");
-                            // got XEP-0184 request, send receipt
-                            sendReceipt(smackMessage);
-                            session.onReceiptsExpected();
-                        } else {
-                            debug(TAG, "not sending delivery receipt due to processing error");
+                        /*
+                        // Detect if this was said by us, and mark message as outgoing
+                        if (isGroupMessage && rec.getFrom().getResource().equals(rec.getTo().getUser())) {
+                            rec.setType(Imps.MessageType.OUTGOING);
+                        }*/
+
+                        boolean good = session.onReceiveMessage(rec);
+
+                        if (smackMessage.getExtension("request", DeliveryReceipts.NAMESPACE) != null) {
+                            if (good) {
+                                debug(TAG, "sending delivery receipt");
+                                // got XEP-0184 request, send receipt
+                                sendReceipt(smackMessage);
+                                session.onReceiptsExpected();
+                            } else {
+                                debug(TAG, "not sending delivery receipt due to processing error");
+                            }
+
+                        } else if (!good) {
+                            debug(TAG, "packet processing error");
                         }
-
-                    } else if (!good) {
-                        debug(TAG, "packet processing error");
                     }
 
                 }
@@ -1627,7 +1633,9 @@ public class XmppConnection extends ImConnection implements CallbackHandler {
 
         if (session == null) {
             ImEntity participant = findOrCreateParticipant(address, groupChat);
-            session = mSessionManager.createChatSession(participant,false);
+
+            if (participant != null)
+                session = mSessionManager.createChatSession(participant,false);
 
         }
 
@@ -1638,7 +1646,8 @@ public class XmppConnection extends ImConnection implements CallbackHandler {
         ImEntity participant = mContactListManager.getContact(address);
         if (participant == null) {
             if (!groupChat) {
-                participant = makeContact(address);
+             //   participant = makeContact(address);
+                // don't allow messages from non contacts
             }
             else {
                 try {
