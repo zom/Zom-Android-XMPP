@@ -1,4 +1,0 @@
-<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle" >
-   <solid android:color="#efefef" />
-   <stroke android:width="2dip" android:color="#ffecc0"/>
-</shape><!-- From: file:/home/n8fr8/StudioProjects/Gibberbot/awesomeAppCore/src/main/res/drawable/background_encrypted.xml -->
