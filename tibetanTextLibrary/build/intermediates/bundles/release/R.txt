@@ -1,5 +1,0 @@
-int drawable ic_action_search 0x7f020000
-int drawable ic_launcher 0x7f020001
-int string app_name 0x7f040000
-int style AppTheme 0x7f050000
-int xml typefaceprefs 0x7f030000
