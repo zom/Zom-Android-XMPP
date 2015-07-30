@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="cachewordlib-chatsecure-14.1.0">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/external/cacheword/cachewordlib/cachewordlib-chatsecure-14.1.0.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="emojilib">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/external/AndroidEmojiInput/library/bin/emojilib.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="androidpinning">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/external/AndroidPinning/bin/androidpinning.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

@@ -2,17 +2,12 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/external/AndroidPinning/AndroidPinning.iml" filepath="$PROJECT_DIR$/external/AndroidPinning/AndroidPinning.iml" />
-      <module fileurl="file://$PROJECT_DIR$/external/bho/BhoBoard/BhoBoard.iml" filepath="$PROJECT_DIR$/external/bho/BhoBoard/BhoBoard.iml" />
       <module fileurl="file://$PROJECT_DIR$/Gibberbot.iml" filepath="$PROJECT_DIR$/Gibberbot.iml" />
-      <module fileurl="file://$PROJECT_DIR$/external/MemorizingTrustManager/MemorizingTrustManager.iml" filepath="$PROJECT_DIR$/external/MemorizingTrustManager/MemorizingTrustManager.iml" />
-      <module fileurl="file://$PROJECT_DIR$/external/bho/TibetanTextLibrary/TibetanTextLibrary.iml" filepath="$PROJECT_DIR$/external/bho/TibetanTextLibrary/TibetanTextLibrary.iml" />
-      <module fileurl="file://$PROJECT_DIR$/external/cacheword/cachewordlib/cachewordlib.iml" filepath="$PROJECT_DIR$/external/cacheword/cachewordlib/cachewordlib.iml" />
-      <module fileurl="file://$PROJECT_DIR$/external/AndroidEmojiInput/library/library.iml" filepath="$PROJECT_DIR$/external/AndroidEmojiInput/library/library.iml" />
-      <module fileurl="file://$PROJECT_DIR$/external/SlidingMenu/library/library1.iml" filepath="$PROJECT_DIR$/external/SlidingMenu/library/library1.iml" />
-      <module fileurl="file://$PROJECT_DIR$/external/ViewPagerIndicator/library/library2.iml" filepath="$PROJECT_DIR$/external/ViewPagerIndicator/library/library2.iml" />
-      <module fileurl="file://$PROJECT_DIR$/external/AndroidEmojiInput/stickerpack/stickerpack.iml" filepath="$PROJECT_DIR$/external/AndroidEmojiInput/stickerpack/stickerpack.iml" />
+      <module fileurl="file://$PROJECT_DIR$/awesomeAppCore/awesomeAppCore.iml" filepath="$PROJECT_DIR$/awesomeAppCore/awesomeAppCore.iml" />
+      <module fileurl="file://$PROJECT_DIR$/memorizingActivity/memorizingActivity.iml" filepath="$PROJECT_DIR$/memorizingActivity/memorizingActivity.iml" />
+      <module fileurl="file://$PROJECT_DIR$/otr4jandroid/otr4jandroid.iml" filepath="$PROJECT_DIR$/otr4jandroid/otr4jandroid.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tibetanTextLibrary/tibetanTextLibrary.iml" filepath="$PROJECT_DIR$/tibetanTextLibrary/tibetanTextLibrary.iml" />
+      <module fileurl="file://$PROJECT_DIR$/zxing-core/zxing-core.iml" filepath="$PROJECT_DIR$/zxing-core/zxing-core.iml" />
     </modules>
   </component>
 </project>
-
