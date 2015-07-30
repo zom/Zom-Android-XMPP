@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="icudt46l1">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/assets/icudt46l.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

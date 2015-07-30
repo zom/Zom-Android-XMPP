@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="memorizingactivity">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/external/MemorizingTrustManager/bin/memorizingactivity.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

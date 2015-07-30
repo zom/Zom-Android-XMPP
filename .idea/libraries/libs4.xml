@@ -1,0 +1,20 @@
+<component name="libraryTable">
+  <library name="libs4">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/libs/android-support-v7-appcompat.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/android-support-v4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/sqlcipher.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/commons-io-2.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/jsoup-1.5.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/asmack-android-8.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/gp-bcc-lib.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/guava-11.0.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/IOCipher-v0.3-debug.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/commons-codec.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/zxing.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/HockeySDK.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

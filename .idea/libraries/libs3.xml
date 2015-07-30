@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="libs3">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/external/AndroidEmojiInput/library/libs/android-support-v4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/external/AndroidEmojiInput/library/libs/gson-1.6.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

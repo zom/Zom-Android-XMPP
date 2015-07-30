@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="tibetantextlibrary">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/external/bho/TibetanTextLibrary/bin/tibetantextlibrary.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

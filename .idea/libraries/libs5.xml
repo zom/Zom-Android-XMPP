@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="libs5">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/external/bho/TbChat/libs/asmack-android-7.jar!/" />
+      <root url="jar://$PROJECT_DIR$/external/bho/TbChat/libs/commons-codec.jar!/" />
+      <root url="jar://$PROJECT_DIR$/external/bho/TbChat/libs/gp-bcc-lib.jar!/" />
+      <root url="jar://$PROJECT_DIR$/external/bho/TbChat/libs/jsoup-1.5.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/external/bho/TbChat/libs/guava-r09.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

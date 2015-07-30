@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="libs2">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/external/cacheword/cachewordhelpers/libs/sqlcipher.jar!/" />
+      <root url="jar://$PROJECT_DIR$/external/cacheword/cachewordhelpers/libs/IOCipher-v0.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

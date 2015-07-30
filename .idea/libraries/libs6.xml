@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="libs6">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/external/bho/external/actionbarsherlock/actionbarsherlock-samples/styled/libs/android-support-v4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/external/bho/external/actionbarsherlock/actionbarsherlock-samples/styled/libs/nineoldandroids-2.2.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

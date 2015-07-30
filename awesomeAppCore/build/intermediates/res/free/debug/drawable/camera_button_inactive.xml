@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <stroke android:width="10dp" android:color="#EC4136" />
+	<solid android:color="#EAE2CD" />
+</shape>
+
+
+
+<!-- From: file:/home/n8fr8/StudioProjects/Gibberbot/awesomeAppCore/src/main/res/drawable/camera_button_inactive.xml -->

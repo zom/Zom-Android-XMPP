@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="libs">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/external/cacheword/cachewordtest/libs/commons-codec.jar!/" />
+      <root url="jar://$PROJECT_DIR$/external/cacheword/cachewordtest/libs/guava-r09.jar!/" />
+      <root url="jar://$PROJECT_DIR$/external/cacheword/cachewordtest/libs/sqlcipher.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

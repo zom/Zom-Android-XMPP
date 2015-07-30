@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="viewpager">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/external/ViewPagerIndicator/library/bin/viewpager.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

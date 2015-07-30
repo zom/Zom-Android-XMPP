@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/home/n8fr8/StudioProjects/Gibberbot/awesomeAppCore/src/main/res/values-sn/strings.xml -->
+    <eat-comment/>
+    <string name="account_setup_password">svombunuro</string>
+    <string name="account_setup_pers_now_title">Pinda</string>
+    <string name="label_password">Svombunuro:</string>
+    <string name="menu_about">Maererano</string>
+    <string name="menu_settings">zvamada</string>
+    <string name="menu_sign_in">Pinda</string>
+    <string name="menu_sign_out">Buda</string>
+    <string name="notification_sound_title">Mand</string>
+    <string name="notification_vibrate_title">Bvunda</string>
+    <string name="sign_in">Pinda</string>
+</resources>

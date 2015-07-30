@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="cachewordlib">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/external/cacheword/cachewordlib/bin/cachewordlib.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
