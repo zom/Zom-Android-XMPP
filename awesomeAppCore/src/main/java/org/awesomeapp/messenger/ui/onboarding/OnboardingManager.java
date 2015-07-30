@@ -34,6 +34,7 @@ import android.util.Log;
 public class OnboardingManager {
 
     public final static int REQUEST_SCAN = 1111;
+    public final static String BASE_INVITE_URL = "https://zom.im/i/#";
 
     public static void inviteSMSContact (Activity context, String phoneNumber, String message)
     {
@@ -110,7 +111,7 @@ public class OnboardingManager {
         if (code != null) {
             String out = new String(Base64.decode(code, Base64.URL_SAFE | Base64.NO_WRAP | Base64.NO_PADDING));
 
-            String[] parts = out.split("\\?k=");
+            String[] parts = out.split("\\?otr=");
 
             return parts;
         }
@@ -122,11 +123,11 @@ public class OnboardingManager {
     public static String generateInviteLink (Context context, String username, String fingerprint) throws IOException
     {
         StringBuffer inviteUrl = new StringBuffer();
-        inviteUrl.append("https://zom.im/invite/");
+        inviteUrl.append(BASE_INVITE_URL);
         
         StringBuffer code = new StringBuffer();        
         code.append(username);
-        code.append("?k=").append(fingerprint);
+        code.append("?otr=").append(fingerprint);
         
         inviteUrl.append(Base64.encodeToString(code.toString().getBytes(), Base64.URL_SAFE|Base64.NO_WRAP|Base64.NO_PADDING));
         return inviteUrl.toString();
