@@ -2,44 +2,12 @@
 {
   "servers":[
     {
-    "domain": "dukgo.com",
-    "server": "dukgo.com",
-    "port": 5222,
-    "certificate": "asdasda",
-    "logoUrl": "https://s3....",
-    "country": "US"
-    },
-    {
-      "domain": "otr.im",
+      "domain": "jabber.otr.im",
       "server": "jabber.otr.im",
       "port": 5222,
-      "certificate": "asdasda",
+      "certificate": "C9:DD:09:15:DD:25:FE:69:65:1C:2D:81:47:46:A1:99:94:73:FA:1D:31:31:09:31:FE:69:2C:87:1F:94:E2:30",
       "logoUrl": "https://s3....",
-      "country": "US"
-    },
-    {
-      "domain": "xmpp.jp",
-      "server": "xmpp.jp",
-      "port": 5222,
-      "certificate": "asdasda",
-      "logoUrl": "https://s3....",
-      "country": "JP"
-    },
-    {
-    "domain": "hyper.to",
-    "server": "chat.hyper.to",
-    "port": 5222,
-    "certificate": "asdasda",
-    "logoUrl": "https://s3....",
-    "country": "US"
-    },
-    {
-    "domain": "jabber.ccc.de",
-    "server": "foo.jabber.ccc.de",
-    "port": 5222,
-    "certificate": "asdasda",
-    "logoUrl": "https://s3....",
-    "country": "DE"
+      "country": "NL"
     }
 ]
 }
