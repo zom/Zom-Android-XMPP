@@ -55,6 +55,7 @@ import java.util.concurrent.TimeUnit;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import org.apache.harmony.javax.security.auth.callback.Callback;
@@ -1142,7 +1143,7 @@ public class XmppConnection extends ImConnection implements CallbackHandler {
 
         if (requireTls) {
 
-            MemorizingTrustManager trustManager = ImApp.sImApp.getTrustManager();
+            TrustManager trustManager = ImApp.sImApp.getTrustManager();
 
             if (sslContext == null)
             {
@@ -1182,10 +1183,16 @@ public class XmppConnection extends ImConnection implements CallbackHandler {
                 mConfig.setEnabledCipherSuites(XMPPCertPins.SSL_IDEAL_CIPHER_SUITES);
             }
 
+            if (trustManager instanceof MemorizingTrustManager) {
+                HostnameVerifier hv = ((MemorizingTrustManager)trustManager).wrapHostnameVerifier(HttpsURLConnection.getDefaultHostnameVerifier());
 
-            HostnameVerifier hv = trustManager.wrapHostnameVerifier(HttpsURLConnection.getDefaultHostnameVerifier());
+                mConfig.setHostnameVerifier(hv);
+            }
+            else
+            {
+                mConfig.setHostnameVerifier(HttpsURLConnection.getDefaultHostnameVerifier());
+            }
 
-            mConfig.setHostnameVerifier(hv);
             mConfig.setCustomSSLContext(sslContext);
 
             mConfig.setSecurityMode(SecurityMode.required);
@@ -1942,7 +1949,7 @@ public class XmppConnection extends ImConnection implements CallbackHandler {
             ContactList cl;
 
             try {
-                cl = mContactListManager.getDefaultContactList();
+                cl = getDefaultContactList();
             } catch (ImException e1) {
                 debug(TAG,"couldn't read default list");
                 cl = null;
@@ -1956,7 +1963,8 @@ public class XmppConnection extends ImConnection implements CallbackHandler {
                 XmppAddress groupAddress = new XmppAddress(generalGroupName);
 
                 cl = new ContactList(groupAddress,generalGroupName, true, contacts, this);
-
+                cl.setDefault(true);
+                mDefaultContactList = cl;
                 notifyContactListCreated(cl);
             }
 
@@ -2277,17 +2285,7 @@ public class XmppConnection extends ImConnection implements CallbackHandler {
 
             if (mConnection.isConnected())
             {
-                org.jivesoftware.smack.packet.Presence reqSubscribe = new org.jivesoftware.smack.packet.Presence(
-                        org.jivesoftware.smack.packet.Presence.Type.subscribe);
-                reqSubscribe.setTo(contact.getAddress().getBareAddress());
-                sendPacket(reqSubscribe);
-                
-                org.jivesoftware.smack.packet.Presence reqSubscribed = new org.jivesoftware.smack.packet.Presence(
-                        org.jivesoftware.smack.packet.Presence.Type.subscribed);
-                reqSubscribed.setTo(contact.getAddress().getBareAddress());
-                sendPacket(reqSubscribed);
 
-               
                 String[] groups = new String[] { list.getName() };
                 try {
                     RosterEntry rEntry = mRoster.getEntry(contact.getAddress().getBareAddress());
@@ -2318,6 +2316,15 @@ public class XmppConnection extends ImConnection implements CallbackHandler {
                 do_loadContactLists();
                 notifyContactListUpdated(list, ContactListListener.LIST_CONTACT_ADDED, contact);
 
+                org.jivesoftware.smack.packet.Presence reqSubscribe = new org.jivesoftware.smack.packet.Presence(
+                        org.jivesoftware.smack.packet.Presence.Type.subscribe);
+                reqSubscribe.setTo(contact.getAddress().getBareAddress());
+                sendPacket(reqSubscribe);
+
+                org.jivesoftware.smack.packet.Presence reqSubscribed = new org.jivesoftware.smack.packet.Presence(
+                        org.jivesoftware.smack.packet.Presence.Type.subscribed);
+                reqSubscribed.setTo(contact.getAddress().getBareAddress());
+                sendPacket(reqSubscribed);
             }
         }
 
@@ -3013,6 +3020,7 @@ public class XmppConnection extends ImConnection implements CallbackHandler {
         if (presenceParts.length > 1)
             p.setResource(presenceParts[1]);
 
+        /**
         if (contact == null && presence.getType() == Type.subscribe) {
 
             XmppAddress xAddr = new XmppAddress(presence.getFrom());
@@ -3043,13 +3051,11 @@ public class XmppConnection extends ImConnection implements CallbackHandler {
                 debug(TAG,"unable to add new contact to default list: " + e.getLocalizedMessage());
 
             }
-
-
         }
         else if (contact == null)
         {
             return null; //do nothing if we don't have a contact
-        }
+        }*/
 
         if (presence.getType() == Type.subscribe) {
             debug(TAG,"got subscribe request: " + presence.getFrom());
@@ -3062,6 +3068,11 @@ public class XmppConnection extends ImConnection implements CallbackHandler {
             {
                 Log.e(TAG,"remote exception on subscription handling",e);
             }
+
+            org.jivesoftware.smack.packet.Presence reqSubscribed = new org.jivesoftware.smack.packet.Presence(
+                    org.jivesoftware.smack.packet.Presence.Type.subscribed);
+            reqSubscribed.setTo(contact.getAddress().getBareAddress());
+            sendPacket(reqSubscribed);
         }
         else if (presence.getType() == Type.subscribed) {
             debug(TAG,"got subscribed confirmation request: " + presence.getFrom());
