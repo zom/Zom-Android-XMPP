@@ -106,8 +106,8 @@ public class AccountActivity extends ActionBarActivity {
     EditText mEditUserAccount;
     EditText mEditPass;
     EditText mEditPassConfirm;
-    CheckBox mRememberPass;
-    CheckBox mUseTor;
+  //  CheckBox mRememberPass;
+   // CheckBox mUseTor;
     Button mBtnSignIn;
     Button mBtnQrDisplay;
     AutoCompleteTextView mSpinnerDomains;
@@ -289,8 +289,8 @@ public class AccountActivity extends ActionBarActivity {
                                        + settings.getDomain();
                 mEditUserAccount.setText(mOriginalUserAccount);
                 mEditPass.setText(cursor.getString(ACCOUNT_PASSWORD_COLUMN));
-                mRememberPass.setChecked(!cursor.isNull(ACCOUNT_PASSWORD_COLUMN));
-                mUseTor.setChecked(settings.getUseTor());
+                //mRememberPass.setChecked(!cursor.isNull(ACCOUNT_PASSWORD_COLUMN));
+                //mUseTor.setChecked(settings.getUseTor());
                 mBtnQrDisplay.setVisibility(View.VISIBLE);
             } finally {
                 settings.close();
@@ -344,8 +344,8 @@ public class AccountActivity extends ActionBarActivity {
 
         }
 
-        mRememberPass = (CheckBox) findViewById(R.id.rememberPassword);
-        mUseTor = (CheckBox) findViewById(R.id.useTor);
+//        mRememberPass = (CheckBox) findViewById(R.id.rememberPassword);
+  //      mUseTor = (CheckBox) findViewById(R.id.useTor);
 
 
         mBtnSignIn = (Button) findViewById(R.id.btnSignIn);
@@ -356,12 +356,13 @@ public class AccountActivity extends ActionBarActivity {
         mBtnAdvanced = (Button) findViewById(R.id.btnAdvanced);
         mBtnQrDisplay = (Button) findViewById(R.id.btnQR);
 
+        /*
         mRememberPass.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 updateWidgetState();
             }
-        });
+        });*/
 
     }
 
@@ -407,6 +408,7 @@ public class AccountActivity extends ActionBarActivity {
 
                 checkUserChanged();
 
+                /**
                 if (mUseTor.isChecked())
                 {
                     OrbotHelper oh = new OrbotHelper(AccountActivity.this);
@@ -415,15 +417,15 @@ public class AccountActivity extends ActionBarActivity {
                         oh.requestOrbotStart(AccountActivity.this);
                         return;
                     }
-                }
+                }*/
 
 
                 final String pass = mEditPass.getText().toString();
                 final String passConf = mEditPassConfirm.getText().toString();
-                final boolean rememberPass = mRememberPass.isChecked();
+                final boolean rememberPass = true;
                 final boolean isActive = false; // TODO(miron) does this ever need to be true?
                 ContentResolver cr = getContentResolver();
-                final boolean useTor =  mUseTor.isChecked();
+                final boolean useTor =  false;
 
                 if (mIsNewAccount)
                 {
@@ -512,12 +514,13 @@ public class AccountActivity extends ActionBarActivity {
             }
         });
 
+        /**
         mUseTor.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 updateUseTor(isChecked);
             }
-        });
+        });*/
 
         updateWidgetState();
 
@@ -541,13 +544,13 @@ public class AccountActivity extends ActionBarActivity {
         {
             mEditPass.setText(i.getExtras().getString("newpass"));
             mEditPass.setVisibility(View.GONE);
-            mRememberPass.setChecked(true);
-            mRememberPass.setVisibility(View.GONE);
+            //mRememberPass.setChecked(true);
+            //mRememberPass.setVisibility(View.GONE);
         }
 
         if (i.getBooleanExtra("hideTor", false))
         {
-            mUseTor.setVisibility(View.GONE);
+            //mUseTor.setVisibility(View.GONE);
         }
 
     }
@@ -627,7 +630,7 @@ public class AccountActivity extends ActionBarActivity {
 
             orbotHelper.promptToInstall(this);
 
-            mUseTor.setChecked(false);
+            //mUseTor.setChecked(false);
             settings.setUseTor(false);
         }
         else
@@ -976,8 +979,8 @@ public class AccountActivity extends ActionBarActivity {
         mEditPass.setFocusable(goodUsername);
         mEditPass.setFocusableInTouchMode(goodUsername);
 
-        mRememberPass.setEnabled(hasNameAndPassword);
-        mRememberPass.setFocusable(hasNameAndPassword);
+        //mRememberPass.setEnabled(hasNameAndPassword);
+        //mRememberPass.setFocusable(hasNameAndPassword);
 
         mEditUserAccount.setEnabled(!isSignedIn);
         mEditPass.setEnabled(!isSignedIn);

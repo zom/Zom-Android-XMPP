@@ -92,7 +92,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="20dp"
-                        android:text="What do you like to be called?"
+                        android:text="What do you want to be called?"
                         android:textSize="18dp"
                         android:textColor="@android:color/white"
                         />
@@ -101,6 +101,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textAlignment="center"
+                        android:gravity="center_horizontal"
                         android:autoLink="none"
                         android:cursorVisible="true"
                         android:inputType="textEmailAddress"

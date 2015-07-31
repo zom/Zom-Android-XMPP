@@ -27,5 +27,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" exported="" name="zxing-core.zxing-core" level="project" />
   </component>
 </module>

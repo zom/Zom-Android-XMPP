@@ -54,7 +54,7 @@ public class ContactsListFragment extends Fragment {
     private LoaderManager mLoaderManager;
     private int mLoaderId = 1001;
     private RecyclerView mRecView;
-    private View mEmptyView;
+    private View mEmptyView, mEmptyViewImage;
     String mSearchString = null;
 
     @Nullable
@@ -65,6 +65,7 @@ public class ContactsListFragment extends Fragment {
 
         mRecView = (RecyclerView)view.findViewById(R.id.recyclerview);
         mEmptyView = view.findViewById(R.id.empty_view);
+        mEmptyViewImage = view.findViewById(R.id.empty_view_image);
 
         setupRecyclerView(mRecView);
 
@@ -93,10 +94,14 @@ public class ContactsListFragment extends Fragment {
         if (mAdapter.getItemCount() == 0) {
             mRecView.setVisibility(View.GONE);
             mEmptyView.setVisibility(View.VISIBLE);
+            mEmptyViewImage.setVisibility(View.VISIBLE);
+
         }
         else {
             mRecView.setVisibility(View.VISIBLE);
             mEmptyView.setVisibility(View.GONE);
+            mEmptyViewImage.setVisibility(View.GONE);
+
         }
 
     }
@@ -203,7 +208,7 @@ public class ContactsListFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
 
-                    ((MainActivity)mContext).startChat(chatProviderId, chatUsername);
+                    ((ContactListActivity)mContext).startChat(chatProviderId, chatUsername);
 
                 }
             });
@@ -248,10 +253,14 @@ public class ContactsListFragment extends Fragment {
             if (mAdapter.getItemCount() == 0) {
                 mRecView.setVisibility(View.GONE);
                 mEmptyView.setVisibility(View.VISIBLE);
+                mEmptyViewImage.setVisibility(View.VISIBLE);
+
             }
             else {
                 mRecView.setVisibility(View.VISIBLE);
                 mEmptyView.setVisibility(View.GONE);
+                mEmptyViewImage.setVisibility(View.GONE);
+
             };
 
 

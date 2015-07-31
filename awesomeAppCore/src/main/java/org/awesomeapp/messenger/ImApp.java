@@ -87,6 +87,11 @@ import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.TrustManager;
+
 import de.duenndns.ssl.MemorizingTrustManager;
 
 public class ImApp extends Application {
@@ -1044,9 +1049,10 @@ public class ImApp extends Application {
 
     private void initTrustManager ()
     {
-        PinningTrustManager trustPinning = new PinningTrustManager(SystemKeyStore.getInstance(this),XMPPCertPins.getPinList(), 0);
-        mTrustManager = new MemorizingTrustManager(this, trustPinning);
+      //  PinningTrustManager trustPinning = new PinningTrustManager(SystemKeyStore.getInstance(this),XMPPCertPins.getPinList(), 0);
+        MemorizingTrustManager trustManager = new MemorizingTrustManager(this);
 
+        mTrustManager = trustManager;
     }
 
     public MemorizingTrustManager getTrustManager ()

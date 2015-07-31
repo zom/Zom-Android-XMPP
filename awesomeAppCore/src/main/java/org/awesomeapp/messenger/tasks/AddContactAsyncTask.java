@@ -83,25 +83,23 @@ public class AddContactAsyncTask extends AsyncTask<String, Void, Void> {
 
         try {
             IContactListManager contactListMgr = conn.getContactListManager();
-            String listName = "";//getSelectedListName();
 
-            if (!TextUtils.isEmpty(listName)) {
-                return contactListMgr.getContactList(listName);
-            } else {
-                // Use the default list
-                List<IBinder> lists = contactListMgr.getContactLists();
-                for (IBinder binder : lists) {
-                    IContactList list = IContactList.Stub.asInterface(binder);
-                    if (list.isDefault()) {
-                        return list;
-                    }
+            // Use the default list
+            List<IBinder> lists = contactListMgr.getContactLists();
+            for (IBinder binder : lists) {
+                IContactList list = IContactList.Stub.asInterface(binder);
+                if (list.isDefault()) {
+                    return list;
                 }
-                // No default list, use the first one as default list
-                if (!lists.isEmpty()) {
-                    return IContactList.Stub.asInterface(lists.get(0));
-                }
-                return null;
             }
+
+            // No default list, use the first one as default list
+            if (!lists.isEmpty()) {
+                return IContactList.Stub.asInterface(lists.get(0));
+            }
+
+            return null;
+
         } catch (RemoteException e) {
             // If the service has died, there is no list for now.
             return null;

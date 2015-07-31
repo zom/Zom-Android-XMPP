@@ -52,7 +52,9 @@ public class ConversationListFragment extends Fragment {
     private LoaderManager mLoaderManager;
     private int mLoaderId = 1001;
     private RecyclerView mRecView;
+
     private View mEmptyView;
+    private View mEmptyViewImage;
 
     @Nullable
     @Override
@@ -62,6 +64,7 @@ public class ConversationListFragment extends Fragment {
 
         mRecView =  (RecyclerView)view.findViewById(R.id.recyclerview);
         mEmptyView = view.findViewById(R.id.empty_view);
+        mEmptyViewImage = view.findViewById(R.id.empty_view_image);
 
         setupRecyclerView(mRecView);
         return view;
@@ -119,10 +122,14 @@ public class ConversationListFragment extends Fragment {
         if (mAdapter.getItemCount() == 0) {
             mRecView.setVisibility(View.GONE);
             mEmptyView.setVisibility(View.VISIBLE);
+            mEmptyViewImage.setVisibility(View.VISIBLE);
+
         }
         else {
             mRecView.setVisibility(View.VISIBLE);
             mEmptyView.setVisibility(View.GONE);
+            mEmptyViewImage.setVisibility(View.GONE);
+
         }
 
     }
@@ -236,10 +243,14 @@ public class ConversationListFragment extends Fragment {
             if (mAdapter.getItemCount() == 0) {
                 mRecView.setVisibility(View.GONE);
                 mEmptyView.setVisibility(View.VISIBLE);
+                mEmptyViewImage.setVisibility(View.VISIBLE);
+
             }
             else {
                 mRecView.setVisibility(View.VISIBLE);
                 mEmptyView.setVisibility(View.GONE);
+                mEmptyViewImage.setVisibility(View.GONE);
+
             }
         }
 

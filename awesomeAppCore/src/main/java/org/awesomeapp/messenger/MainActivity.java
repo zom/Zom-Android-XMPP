@@ -39,6 +39,8 @@ import android.view.View;
 
 
 import org.awesomeapp.messenger.tasks.AddContactAsyncTask;
+import org.awesomeapp.messenger.ui.AccountFragment;
+import org.awesomeapp.messenger.ui.ContactListActivity;
 import org.awesomeapp.messenger.ui.ContactsListFragment;
 import org.awesomeapp.messenger.ui.ConversationDetailActivity;
 import org.awesomeapp.messenger.ui.ConversationListFragment;
@@ -72,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
     private ImApp mApp;
 
     private final static int REQUEST_ADD_CONTACT = 9999;
+    private final static int REQUEST_CHOOSE_CONTACT = REQUEST_ADD_CONTACT+1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,10 +103,11 @@ public class MainActivity extends AppCompatActivity {
        final TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
 
         Adapter adapter = new Adapter(getSupportFragmentManager());
-        adapter.addFragment(new ConversationListFragment(), getString(R.string.title_chats),R.drawable.ic_message_white_36dp);
-        adapter.addFragment(new ContactsListFragment(), getString(R.string.contacts), R.drawable.ic_face_white_36dp);
-        adapter.addFragment(new GalleryFragment(), "Photos", R.drawable.ic_photo_library_white_36dp);
-        adapter.addFragment(new MoreFragment(), "More", R.drawable.ic_more_horiz_white_36dp);
+        adapter.addFragment(new ConversationListFragment(), getString(R.string.title_chats), R.drawable.ic_message_white_36dp);
+        //adapter.addFragment(new ContactsListFragment(), getString(R.string.contacts), R.drawable.ic_face_white_36dp);
+        adapter.addFragment(new GalleryFragment(), getString(R.string.title_gallery), R.drawable.ic_photo_library_white_36dp);
+        adapter.addFragment(new MoreFragment(), getString(R.string.title_more), R.drawable.ic_more_horiz_white_36dp);
+        adapter.addFragment(new AccountFragment(), getString(R.string.title_me), R.drawable.ic_face_white_24dp);
 
         mViewPager.setAdapter(adapter);
 
@@ -111,26 +115,28 @@ public class MainActivity extends AppCompatActivity {
 
         TabLayout.Tab tab = tabLayout.newTab();
         tab.setIcon(R.drawable.ic_discuss);
+     //   tab.setText(R.string.title_chats);
         tabLayout.addTab(tab);
 
         tab = tabLayout.newTab();
-        tab.setIcon(R.drawable.ic_face_white_36dp);
+        tab.setIcon(R.drawable.ic_photo_library_white_24dp);
+      //  tab.setText(R.string.title_gallery);
         tabLayout.addTab(tab);
 
         tab = tabLayout.newTab();
-        tab.setIcon(R.drawable.ic_photo_library_white_36dp);
+        tab.setIcon(R.drawable.ic_toys_white_24dp);
         tabLayout.addTab(tab);
 
         tab = tabLayout.newTab();
-        tab.setIcon(R.drawable.ic_more_horiz_white_36dp);
+        tab.setIcon(R.drawable.ic_face_white_24dp);
         tabLayout.addTab(tab);
-
 
         tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
 
                 mViewPager.setCurrentItem(tab.getPosition());
+
 
             }
 
@@ -149,8 +155,24 @@ public class MainActivity extends AppCompatActivity {
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mViewPager.setCurrentItem(1); //show contacts
-                Snackbar.make(mViewPager, "Choose a friend to start zoming!", Snackbar.LENGTH_LONG).show();
+
+                int tabIdx = mViewPager.getCurrentItem();
+
+                if (tabIdx == 0)
+                {
+                    Intent intent = new Intent(MainActivity.this, ContactListActivity.class);
+                    startActivityForResult(intent, REQUEST_CHOOSE_CONTACT);
+                }
+                else if (tabIdx == 1)
+                {
+                    //add contact
+                }
+                else if (tabIdx == 2)
+                {
+
+                }
+
+
             }
         });
 
@@ -184,31 +206,17 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == RESULT_OK) {
-            if (requestCode == OnboardingManager.REQUEST_SCAN) {
-
-                ArrayList<String> resultScans = data.getStringArrayListExtra("result");
-                for (String resultScan : resultScans)
-                {
-
-                    try {
-                        //parse each string and if they are for a new user then add the user
-                        String[] parts = OnboardingManager.decodeInviteLink(resultScan);
-
-                        new AddContactAsyncTask(mApp.getDefaultProviderId(),mApp.getDefaultAccountId(), mApp).execute(parts[0],parts[1]);
-
-                        //if they are for a group chat, then add the group
-                    }
-                    catch (Exception e)
-                    {
-                        Log.w(ImApp.LOG_TAG, "error parsing QR invite link", e);
-                    }
-                }
-            }
-            else if (requestCode == REQUEST_ADD_CONTACT)
+            if (requestCode == REQUEST_ADD_CONTACT)
             {
                 String username = data.getStringExtra(ContactsPickerActivity.EXTRA_RESULT_USERNAME);
                 long providerId = data.getLongExtra(ContactsPickerActivity.EXTRA_RESULT_PROVIDER,-1);
-                startChat(providerId, username,Imps.ContactsColumns.TYPE_NORMAL,true, null);
+                startChat(providerId, username);
+            }
+            else if (requestCode == REQUEST_CHOOSE_CONTACT)
+            {
+                String username = data.getStringExtra(ContactsPickerActivity.EXTRA_RESULT_USERNAME);
+                long providerId = data.getLongExtra(ContactsPickerActivity.EXTRA_RESULT_PROVIDER,-1);
+                startChat(providerId, username);
             }
         }
     }

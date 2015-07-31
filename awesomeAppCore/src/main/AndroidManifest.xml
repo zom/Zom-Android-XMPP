@@ -3,8 +3,8 @@
     package="info.guardianproject.otr.app.im"
     android:installLocation="auto"
     android:sharedUserLabel="@string/perm_label"
-    android:versionCode="1500004"
-    android:versionName="15.0.0-alpha-4" >
+    android:versionCode="1500005"
+    android:versionName="15.0.0-alpha-5" >
 
     <uses-sdk
         android:minSdkVersion="9"
@@ -503,7 +503,14 @@
         <activity
             android:name="org.awesomeapp.messenger.ui.ConversationDetailActivity"
             android:theme="@style/AppThemeNoAction"
-             />
+            android:exported="false"
+
+            />
+        <activity
+            android:name="org.awesomeapp.messenger.ui.ContactListActivity"
+            android:exported="false"
+            android:title="@string/contacts"
+            />
     </application>
 
 </manifest>

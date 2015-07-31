@@ -728,5 +728,11 @@
 
 		<string name="no_friends">Invite your friends to join you on Zom</string>
     <string name="no_convos">Time to start Zomming!</string>
-	</resources>
+
+    <string name="title_gallery">Gallery</string>
+    <string name="title_more">Discover</string>
+    <string name="title_me">Me</string>
+
+
+</resources>
 

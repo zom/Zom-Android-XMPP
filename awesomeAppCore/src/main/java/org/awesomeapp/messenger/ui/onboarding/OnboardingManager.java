@@ -107,16 +107,24 @@ public class OnboardingManager {
     public static String[] decodeInviteLink (String link)
     {
         Uri inviteLink = Uri.parse(link);
-        String code = inviteLink.getLastPathSegment();
-        if (code != null) {
-            String out = new String(Base64.decode(code, Base64.URL_SAFE | Base64.NO_WRAP | Base64.NO_PADDING));
+        String[] code = inviteLink.toString().split("#");
 
-            String[] parts = out.split("\\?otr=");
+        if (code.length > 1) {
 
-            return parts;
+            try {
+                String out = new String(Base64.decode(code[1], Base64.URL_SAFE | Base64.NO_WRAP | Base64.NO_PADDING));
+
+                String[] parts = out.split("\\?otr=");
+
+                return parts;
+            }
+            catch (IllegalArgumentException iae)
+            {
+             Log.e(ImApp.LOG_TAG,"bad link decode",iae);
+            }
         }
-        else
-            return null;
+
+        return null;
 
     }
 

@@ -3,12 +3,14 @@ package org.awesomeapp.messenger.ui.onboarding;
 import org.awesomeapp.messenger.crypto.OtrAndroidKeyManagerImpl;
 import info.guardianproject.otr.app.im.R;
 import org.awesomeapp.messenger.ImApp;
+import org.awesomeapp.messenger.tasks.AddContactAsyncTask;
 import org.awesomeapp.messenger.ui.legacy.SignInHelper;
 import org.awesomeapp.messenger.ui.legacy.SimpleAlertHandler;
 import org.awesomeapp.messenger.ui.legacy.ThemeableActivity;
 import org.awesomeapp.messenger.util.Languages;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -392,7 +394,7 @@ public class OnboardingActivity extends ThemeableActivity {
     {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
-
+        finish();
     }
 
     private void doExistingAccountRegister ()
@@ -432,6 +434,45 @@ public class OnboardingActivity extends ThemeableActivity {
             signInHelper.signIn(account.password, account.providerId, account.accountId, true);
 
             showInviteScreen();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        showInviteScreen();
+
+        ImApp mApp = (ImApp)getApplication();
+        mApp.initAccountInfo();
+
+        if (resultCode == RESULT_OK) {
+            if (requestCode == OnboardingManager.REQUEST_SCAN) {
+
+                ArrayList<String> resultScans = data.getStringArrayListExtra("result");
+                for (String resultScan : resultScans)
+                {
+
+                    try {
+                        //parse each string and if they are for a new user then add the user
+                        String[] parts = OnboardingManager.decodeInviteLink(resultScan);
+
+                        new AddContactAsyncTask(mApp.getDefaultProviderId(),mApp.getDefaultAccountId(), mApp).execute(parts[0],parts[1]);
+
+                        //if they are for a group chat, then add the group
+                    }
+                    catch (Exception e)
+                    {
+                        Log.w(ImApp.LOG_TAG, "error parsing QR invite link", e);
+                    }
+                }
+
+                if (resultScans.size() > 0)
+                {
+                    showMainScreen ();
+                }
+            }
+
         }
     }
 
