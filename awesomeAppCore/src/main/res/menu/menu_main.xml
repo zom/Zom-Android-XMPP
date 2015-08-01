@@ -16,6 +16,9 @@
 
         />
 
-    <item android:id="@+id/action_settings" android:title="@string/menu_settings"
+    <item android:id="@+id/menu_settings" android:title="@string/menu_settings"
         android:orderInCategory="100" app:showAsAction="never" />
+
+    <item android:id="@+id/menu_search" android:title="@string/search_button_text"
+        android:icon="@drawable/ic_action_search" app:showAsAction="always"/>
 </menu>

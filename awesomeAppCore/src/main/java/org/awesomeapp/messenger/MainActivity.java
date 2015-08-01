@@ -16,7 +16,11 @@
 
 package org.awesomeapp.messenger;
 
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.support.design.widget.FloatingActionButton;
@@ -33,11 +37,15 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 
+import org.awesomeapp.messenger.model.ImConnection;
 import org.awesomeapp.messenger.tasks.AddContactAsyncTask;
 import org.awesomeapp.messenger.ui.AccountFragment;
 import org.awesomeapp.messenger.ui.ContactListActivity;
@@ -45,13 +53,16 @@ import org.awesomeapp.messenger.ui.ContactsListFragment;
 import org.awesomeapp.messenger.ui.ConversationDetailActivity;
 import org.awesomeapp.messenger.ui.ConversationListFragment;
 import org.awesomeapp.messenger.ui.GalleryFragment;
+import org.awesomeapp.messenger.ui.GalleryListFragment;
 import org.awesomeapp.messenger.ui.MoreFragment;
+import org.awesomeapp.messenger.ui.legacy.SettingActivity;
 import org.awesomeapp.messenger.ui.onboarding.OnboardingActivity;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.ui.onboarding.OnboardingManager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import info.guardianproject.iocipher.VirtualFileSystem;
 import org.awesomeapp.messenger.service.IChatSession;
@@ -105,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
         Adapter adapter = new Adapter(getSupportFragmentManager());
         adapter.addFragment(new ConversationListFragment(), getString(R.string.title_chats), R.drawable.ic_message_white_36dp);
         //adapter.addFragment(new ContactsListFragment(), getString(R.string.contacts), R.drawable.ic_face_white_36dp);
-        adapter.addFragment(new GalleryFragment(), getString(R.string.title_gallery), R.drawable.ic_photo_library_white_36dp);
+        adapter.addFragment(new GalleryListFragment(), getString(R.string.title_gallery), R.drawable.ic_photo_library_white_36dp);
         adapter.addFragment(new MoreFragment(), getString(R.string.title_more), R.drawable.ic_more_horiz_white_36dp);
         adapter.addFragment(new AccountFragment(), getString(R.string.title_me), R.drawable.ic_face_white_24dp);
 
@@ -241,6 +252,15 @@ public class MainActivity extends AppCompatActivity {
                 Intent i = new Intent(this, AddContactActivity.class);
                 startActivityForResult(i,REQUEST_ADD_CONTACT);
                 return true;
+
+            case R.id.menu_settings:
+                Intent sintent = new Intent(this, SettingActivity.class);
+                startActivityForResult(sintent,REQUEST_ADD_CONTACT+3);
+                return true;
+
+            case R.id.menu_group_chat:
+                showGroupChatDialog();
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -358,6 +378,150 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return mRequestedChatId;
+    }
+
+    private void showGroupChatDialog ()
+    {
+
+        // This example shows how to add a custom layout to an AlertDialog
+        LayoutInflater factory = LayoutInflater.from(this);
+
+        final View dialogGroup = factory.inflate(R.layout.alert_dialog_group_chat, null);
+        TextView tvServer = (TextView) dialogGroup.findViewById(R.id.chat_server);
+        // tvServer.setText(ImApp.DEFAULT_GROUPCHAT_SERVER);// need to make this a list
+
+       // final Spinner listAccounts = (Spinner) dialogGroup.findViewById(R.id.choose_list);
+       // setupAccountSpinner(listAccounts);
+
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.create_or_join_group_chat)
+                .setView(dialogGroup)
+                .setPositiveButton(R.string.connect, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                    /* User clicked OK so do some stuff */
+
+                        String chatRoom = null;
+                        String chatServer = null;
+                        String nickname = null;
+
+                        TextView tv = (TextView)dialogGroup.findViewById(R.id.chat_room);
+                        chatRoom = tv.getText().toString();
+
+                        tv = (TextView) dialogGroup.findViewById(R.id.chat_server);
+                        chatServer = tv.getText().toString();
+
+                        tv = (TextView) dialogGroup.findViewById(R.id.nickname);
+                        nickname = tv.getText().toString();
+
+                        try
+                        {
+                            IImConnection conn = mApp.getConnection(mApp.getDefaultProviderId());
+                            if (conn.getState() == ImConnection.LOGGED_IN)
+                                startGroupChat (chatRoom, chatServer, nickname, conn);
+
+                        } catch (RemoteException re) {
+
+                        }
+
+                        dialog.dismiss();
+
+                    }
+                })
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                    /* User clicked cancel so do some stuff */
+                        dialog.dismiss();
+                    }
+                })
+                .create().show();
+
+
+
+    }
+
+    private IImConnection mLastConnGroup = null;
+    private long mRequestedChatId = -1;
+
+    public void startGroupChat (String room, String server, String nickname, IImConnection conn)
+    {
+        mLastConnGroup = conn;
+
+        new AsyncTask<String, Long, String>() {
+
+            private ProgressDialog dialog;
+
+
+            @Override
+            protected void onPreExecute() {
+                dialog = new ProgressDialog(MainActivity.this);
+
+                dialog.setMessage(getString(R.string.connecting_to_group_chat_));
+                dialog.setCancelable(true);
+                dialog.show();
+            }
+
+            @Override
+            protected String doInBackground(String... params) {
+
+                String roomAddress = (params[0] + '@' + params[1]).toLowerCase(Locale.US).replace(' ', '_');
+                String nickname = params[2];
+
+                try {
+                    IChatSessionManager manager = mLastConnGroup.getChatSessionManager();
+                    IChatSession session = manager.getChatSession(roomAddress);
+                    if (session == null) {
+                        session = manager.createMultiUserChatSession(roomAddress, nickname, true);
+                        if (session != null)
+                        {
+                            mRequestedChatId = session.getId();
+                            publishProgress(mRequestedChatId);
+
+                        } else {
+                            return getString(R.string.unable_to_create_or_join_group_chat);
+
+                        }
+                    } else {
+                        mRequestedChatId = session.getId();
+                        publishProgress(mRequestedChatId);
+                    }
+
+                    return null;
+
+                } catch (RemoteException e) {
+                    return e.toString();
+                }
+
+            }
+
+            @Override
+            protected void onProgressUpdate(Long... showChatId) {
+                //showChat(showChatId[0]);
+            }
+
+            @Override
+            protected void onPostExecute(String result) {
+                super.onPostExecute(result);
+
+                if (dialog.isShowing()) {
+                    dialog.dismiss();
+                }
+
+                if (result != null)
+                {
+                 //   mHandler.showServiceErrorAlert(result);
+
+                }
+
+
+            }
+        }.execute(room, server, nickname);
+
+
+
     }
 
 

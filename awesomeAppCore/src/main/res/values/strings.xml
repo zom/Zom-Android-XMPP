@@ -732,7 +732,7 @@
     <string name="title_gallery">Gallery</string>
     <string name="title_more">Discover</string>
     <string name="title_me">Me</string>
-
+	<string name="no_photos">Shared and received photos will appear here</string>
 
 </resources>
 

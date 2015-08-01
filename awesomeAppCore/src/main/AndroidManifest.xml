@@ -449,7 +449,7 @@
             </intent-filter>
         </receiver>
         <receiver
-            android:name="org.awesomeapp.messenger.ui.legacy.BootCompletedListener"
+            android:name="org.awesomeapp.messenger.service.BootCompletedListener"
             android:enabled="true"
             android:exported="true" >
             <intent-filter>

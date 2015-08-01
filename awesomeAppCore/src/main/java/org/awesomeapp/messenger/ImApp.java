@@ -1060,7 +1060,6 @@ public class ImApp extends Application {
         return mTrustManager;
     }
 
-
     public boolean initAccountInfo ()
     {
         if (mDefaultProviderId == -1) {

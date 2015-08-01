@@ -296,7 +296,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
         
         mNotifyBuilder = new NotificationCompat.Builder(this)
             .setContentTitle(getString(R.string.app_name))
-            .setSmallIcon(R.drawable.ic_discuss);
+            .setSmallIcon(R.drawable.notify_zom);
 
       //  note.setOnlyAlertOnce(true);
         mNotifyBuilder.setOngoing(true);
@@ -705,12 +705,12 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
                 if (!isNetworkAvailable())
                 {
                     message = getString(R.string.error_suspended_connection);
-                    mNotifyBuilder.setSmallIcon(R.drawable.ic_discuss);
+                    mNotifyBuilder.setSmallIcon(R.drawable.notify_zom);
                 }
                 else
                 {
                     message = getString(R.string.app_unlocked);
-                    mNotifyBuilder.setSmallIcon(R.drawable.ic_discuss);
+                    mNotifyBuilder.setSmallIcon(R.drawable.notify_zom);
                 }
                 
                 mNotifyBuilder.setContentText(message);
