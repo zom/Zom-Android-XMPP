@@ -17,6 +17,7 @@
 package org.awesomeapp.messenger.ui;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.net.Uri;
@@ -36,6 +37,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import org.awesomeapp.messenger.MainActivity;
+import org.awesomeapp.messenger.ui.legacy.AddContactActivity;
 import org.awesomeapp.messenger.ui.onboarding.OnboardingManager;
 import org.awesomeapp.messenger.provider.Imps;
 
@@ -153,6 +155,19 @@ public class ContactsListFragment extends Fragment {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
+            }
+
+        });
+
+        Button btnInviteAdd = (Button)view.findViewById(R.id.btnInviteAdd);
+        btnInviteAdd.setOnClickListener(new View.OnClickListener()
+        {
+
+            @Override
+            public void onClick(View v) {
+
+                Intent i = new Intent(getActivity(), AddContactActivity.class);
+                getActivity().startActivityForResult(i,MainActivity.REQUEST_ADD_CONTACT);
             }
 
         });

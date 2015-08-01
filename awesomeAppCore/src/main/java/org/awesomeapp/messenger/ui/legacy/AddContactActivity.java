@@ -69,7 +69,6 @@ public class AddContactActivity extends ActionBarActivity {
     private MultiAutoCompleteTextView mAddressList;
     private Spinner mListSpinner;
     Button mInviteButton;
-    Button mScanButton;
     ImApp mApp;
     SimpleAlertHandler mHandler;
 
@@ -104,9 +103,6 @@ public class AddContactActivity extends ActionBarActivity {
         mInviteButton.setText(brandingRes.getString(BrandingResourceIDs.STRING_BUTTON_ADD_CONTACT));
         mInviteButton.setOnClickListener(mButtonHandler);
         mInviteButton.setEnabled(false);
-
-        mScanButton = (Button) findViewById(R.id.scan);
-        mScanButton.setOnClickListener(mScanHandler);
 
         Intent intent = getIntent();
         String scheme = intent.getScheme();

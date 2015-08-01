@@ -84,8 +84,8 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton mFab;
     private ImApp mApp;
 
-    private final static int REQUEST_ADD_CONTACT = 9999;
-    private final static int REQUEST_CHOOSE_CONTACT = REQUEST_ADD_CONTACT+1;
+    public final static int REQUEST_ADD_CONTACT = 9999;
+    public final static int REQUEST_CHOOSE_CONTACT = REQUEST_ADD_CONTACT+1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

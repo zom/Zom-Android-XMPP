@@ -20,6 +20,15 @@
     android:orientation="vertical"
     >
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Invite new friends to Zom"
+        android:padding="3dp"
+        android:background="?colorPrimaryDark"
+        android:textColor="@android:color/white"
+        />
   <LinearLayout
       android:id="@+id/inviteOptions"
       android:layout_width="match_parent"
@@ -33,9 +42,9 @@
         android:id="@+id/btnInviteSMS"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
+        android:layout_margin="1dp"
         android:textSize="10dp"
-        android:text="Invite SMS"
+        android:text="SMS"
         android:drawableLeft="@android:drawable/ic_menu_send"
         android:background="@android:color/transparent"
         android:textColor="@android:color/white"
@@ -43,9 +52,9 @@
       android:id="@+id/btnInviteShare"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_margin="10dp"
+      android:layout_margin="1dp"
       android:textSize="10dp"
-      android:text="Invite Share"
+      android:text="Link"
       android:drawableLeft="@android:drawable/ic_menu_share"
       android:background="@android:color/transparent"
       android:textColor="@android:color/white"
@@ -55,10 +64,22 @@
           android:id="@+id/btnInviteScan"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:layout_margin="10dp"
+          android:layout_margin="1dp"
           android:textSize="10dp"
-          android:text="Scan QR"
+          android:text="Scan"
           android:drawableLeft="@android:drawable/ic_menu_camera"
+          android:background="@android:color/transparent"
+          android:textColor="@android:color/white"
+
+          />
+      <Button
+          android:id="@+id/btnInviteAdd"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_margin="1dp"
+          android:textSize="10dp"
+          android:text="Add"
+          android:drawableLeft="@android:drawable/ic_menu_add"
           android:background="@android:color/transparent"
           android:textColor="@android:color/white"
 
