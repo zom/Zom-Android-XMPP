@@ -36,7 +36,6 @@ import java.io.File;
 import java.security.GeneralSecurityException;
 import java.util.UUID;
 
-import net.hockeyapp.android.UpdateManager;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -647,8 +646,5 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
     }
 
 
-    private void checkForUpdates() {
-        // Remove this for store builds!
-        UpdateManager.register(this, ImApp.HOCKEY_APP_ID);
-    }
+
 }

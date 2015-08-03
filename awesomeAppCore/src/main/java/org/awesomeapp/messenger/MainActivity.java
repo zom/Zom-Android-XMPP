@@ -45,6 +45,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 
+import net.hockeyapp.android.UpdateManager;
+
 import org.awesomeapp.messenger.model.ImConnection;
 import org.awesomeapp.messenger.tasks.AddContactAsyncTask;
 import org.awesomeapp.messenger.ui.AccountFragment;
@@ -207,6 +209,7 @@ public class MainActivity extends AppCompatActivity {
             ImApp app = (ImApp)getApplication();
             app.getTrustManager().bindDisplayActivity(this);
             app.checkForCrashes(this);
+            checkForUpdates();
             mApp.initAccountInfo();
 
         }
@@ -520,5 +523,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        UpdateManager.unregister();
+    }
+
+    private void checkForUpdates() {
+        // Remove this for store builds!
+        UpdateManager.register(this, ImApp.HOCKEY_APP_ID);
+
+    }
 
 }
