@@ -3109,7 +3109,7 @@ public class XmppConnection extends ImConnection implements CallbackHandler {
             //this is typical presence, let's get the latest/highest priority
             debug(TAG,"got presence:: " + presence.getFrom() + "=" + p.getStatusText());
             
-            if (contact.getPresence() != null)
+            if (contact != null && contact.getPresence() != null)
             {                
                 Presence pOld = contact.getPresence();
 

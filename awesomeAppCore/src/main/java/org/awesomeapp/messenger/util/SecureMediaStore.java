@@ -326,7 +326,10 @@ public class SecureMediaStore {
         // create the target directories tree
         mkdirs( targetPath );
         // copy
-        java.io.FileInputStream fis = new java.io.FileInputStream(new java.io.File(sourcePath));
+        java.io.InputStream fis = null;
+        java.io.File file = new java.io.File(sourcePath);
+        fis  = new java.io.FileInputStream(file);
+
         FileOutputStream fos = new FileOutputStream(new File(targetPath), false);
 
         IOUtils.copyLarge(fis, fos);
@@ -334,7 +337,8 @@ public class SecureMediaStore {
         fos.close();
         fis.close();
     }
-    
+
+
     public static void copyToVfs(InputStream sourceIS, String targetPath) throws IOException {
         // create the target directories tree
         mkdirs( targetPath );

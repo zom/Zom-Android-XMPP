@@ -25,6 +25,7 @@ import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.database.CharArrayBuffer;
 import android.database.ContentObserver;
@@ -46,6 +47,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MotionEventCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -100,11 +102,17 @@ import org.awesomeapp.messenger.ui.legacy.Markup;
 import org.awesomeapp.messenger.ui.legacy.PresenceUtils;
 import org.awesomeapp.messenger.ui.legacy.SimpleAlertHandler;
 import org.awesomeapp.messenger.ui.legacy.adapter.ChatListenerAdapter;
+import org.awesomeapp.messenger.ui.stickers.Sticker;
+import org.awesomeapp.messenger.ui.stickers.StickerGroup;
+import org.awesomeapp.messenger.ui.stickers.StickerManager;
+import org.awesomeapp.messenger.ui.stickers.StickerPagerAdapter;
+import org.awesomeapp.messenger.ui.stickers.StickerSelectListener;
 import org.awesomeapp.messenger.ui.widgets.RoundedAvatarDrawable;
 import org.awesomeapp.messenger.util.LogCleaner;
 import org.awesomeapp.messenger.util.SystemServices;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 
 import info.guardianproject.otr.app.im.R;
@@ -660,8 +668,11 @@ public class ConversationView {
 
                 if (mViewAttach.getVisibility() == View.GONE)
                     mViewAttach.setVisibility(View.VISIBLE);
-                else
+                else {
                     mViewAttach.setVisibility(View.GONE);
+                    if (mStickerBox != null)
+                        mStickerBox.setVisibility(View.GONE);
+                }
             }
 
         });
@@ -689,6 +700,15 @@ public class ConversationView {
             @Override
             public void onClick(View v) {
                 mActivity.startFilePicker();
+            }
+
+        });
+
+        ((ImageButton) mActivity.findViewById(R.id.btnAttachSticker)).setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+               showStickers();
             }
 
         });
@@ -925,6 +945,7 @@ public class ConversationView {
 
         mMessageAdapter = new ConversationRecyclerViewAdapter(mActivity, null);
         mHistory.setAdapter(mMessageAdapter);
+
     }
 
 
@@ -1352,7 +1373,8 @@ public class ConversationView {
                 mMessageAdapter.swapCursor(new DeltaCursor(newCursor));
 
                 if (mMessageAdapter.getItemCount() > 0)
-                    mHistory.smoothScrollToPosition(mMessageAdapter.getItemCount()-1);
+                    mHistory.smoothScrollToPosition(mMessageAdapter.getItemCount());
+
             }
 
         }
@@ -2617,6 +2639,82 @@ public class ConversationView {
             bindChat(mLastChatId);
             startListening();
         }
+
+    }
+
+    private static StickerManager sStickerManager = null;
+    private ViewPager mStickerPager = null;
+    private View mStickerBox = null;
+
+    private void showStickers ()
+    {
+        if (mStickerPager == null)
+        {
+
+            initStickers();
+            mStickerBox = mActivity.findViewById(R.id.stickerBox);
+        }
+
+        mStickerBox.setVisibility(mStickerBox.getVisibility() == View.GONE ? View.VISIBLE : View.GONE);
+    }
+
+    private synchronized void initStickers ()
+    {
+        if (sStickerManager == null)
+        {
+            sStickerManager = sStickerManager.getInstance(mContext);
+
+            try {
+
+                String basePath = "stickers/olo_and_shimi_1";
+                AssetManager aMan = mActivity.getAssets();
+                String[] filelist = aMan.list(basePath);
+
+                String category = "Olo & Shimi";
+
+                for (int i = 0; i < filelist.length; i++) {
+                    Sticker sticker = new Sticker();
+                    sticker.name = filelist[i];
+                    sticker.category = category;
+                    sticker.assetPath = basePath + '/' +  filelist[i];
+                    sticker.res = mActivity.getResources();
+                    sticker.emoticon =  filelist[i];
+
+                    sStickerManager.addPattern(sticker.emoticon, sticker);
+                    sStickerManager.addEmojiToCategory(category, sticker);
+                }
+
+
+
+            }
+            catch (Exception fe)
+            {
+                Log.e(ImApp.LOG_TAG,"could not load emoji definition",fe);
+            }
+
+        }
+
+
+        mStickerPager = (ViewPager)mActivity.findViewById(R.id.stickerPager);
+
+        Collection<StickerGroup> emojiGroups = sStickerManager.getEmojiGroups();
+
+        if (emojiGroups.size() > 0)
+        {
+            StickerPagerAdapter emojiPagerAdapter = new StickerPagerAdapter(mActivity, new ArrayList<StickerGroup>(emojiGroups),
+                    new StickerSelectListener() {
+                        @Override
+                        public void onStickerSelected(Sticker s) {
+
+                            mActivity.handleSendDelete(Uri.parse(s.assetPath),false,false);
+                            showStickers();
+                        }
+                    });
+
+            mStickerPager.setAdapter(emojiPagerAdapter);
+
+        }
+
 
     }
 

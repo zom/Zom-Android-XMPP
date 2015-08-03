@@ -181,7 +181,7 @@ public class ConversationDetailActivity extends AppCompatActivity {
         return list.size() > 0;
     }
 
-    private void handleSendDelete( Uri contentUri, boolean delete, boolean resizeImage) {
+    public void handleSendDelete( Uri contentUri, boolean delete, boolean resizeImage) {
         try {
             // import
             SystemServices.FileInfo info = SystemServices.getFileInfoFromURI(this, contentUri);
@@ -189,8 +189,15 @@ public class ConversationDetailActivity extends AppCompatActivity {
             Uri vfsUri;
             if (resizeImage)
                 vfsUri = SecureMediaStore.resizeAndImportImage(this, sessionId, contentUri, info.type);
-            else
-                vfsUri = SecureMediaStore.importContent(sessionId, info.path);
+            else {
+
+                if (contentUri.getScheme() != null)
+                    vfsUri = SecureMediaStore.importContent(sessionId, info.path);
+                else
+                {
+                    vfsUri = SecureMediaStore.importContent(sessionId, info.path,getResources().getAssets().open(info.path));
+                }
+            }
             // send
             boolean sent = handleSendData(vfsUri, info.type);
             if (!sent) {
