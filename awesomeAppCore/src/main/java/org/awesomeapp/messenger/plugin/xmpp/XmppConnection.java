@@ -3142,7 +3142,9 @@ public class XmppConnection extends ImConnection implements CallbackHandler {
             {
 
                 //we don't have a presence yet so set one
-                contact.setPresence(p);
+                if (contact != null)
+                    contact.setPresence(p);
+
             }
             
         }
