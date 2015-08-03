@@ -247,11 +247,6 @@ public class MainActivity extends AppCompatActivity {
             case android.R.id.home:
                 //mDrawerLayout.openDrawer(GravityCompat.START);
                 return true;
-            case R.id.menu_add_contact:
-
-                Intent i = new Intent(this, AddContactActivity.class);
-                startActivityForResult(i,REQUEST_ADD_CONTACT);
-                return true;
 
             case R.id.menu_settings:
                 Intent sintent = new Intent(this, SettingActivity.class);
