@@ -253,6 +253,8 @@ public class MessageListItem extends FrameLayout {
 
             } else {
                 mHolder.mMediaThumbnail.setVisibility(View.GONE);
+                mHolder.mContainer.setBackgroundResource(R.drawable.message_view_rounded_light);
+
                 if (showContact)
                 {
                     String[] nickParts = nickname.split("/");
@@ -603,7 +605,6 @@ public class MessageListItem extends FrameLayout {
 
             showMediaThumbnail(mimeType, mediaUri, id, mHolder);
 
-
             mHolder.mTextViewForMessages.setVisibility(View.GONE);
             mHolder.mMediaThumbnail.setVisibility(View.VISIBLE);
 
@@ -613,6 +614,7 @@ public class MessageListItem extends FrameLayout {
 
              SpannableString spannablecontent=new SpannableString(lastMessage);
             mHolder.mTextViewForMessages.setText(spannablecontent);
+            mHolder.mContainer.setBackgroundResource(R.drawable.message_view_rounded_light);
 
         }
 

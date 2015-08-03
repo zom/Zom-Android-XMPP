@@ -61,6 +61,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -338,7 +339,6 @@ public class ConversationView {
         return mViewType;
     }
 
-    /**
     private class RequeryCallback implements Runnable {
         public void run() {
             if (Log.isLoggable(ImApp.LOG_TAG, Log.DEBUG)) {
@@ -350,7 +350,7 @@ public class ConversationView {
     }
 
     private RequeryCallback mRequeryCallback = null;
-     */
+
 
     private OnItemClickListener mOnItemClickListener = new OnItemClickListener() {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -1157,7 +1157,8 @@ public class ConversationView {
     }
 
     public void bindChat(long chatId) {
-        log("bind " + this + " " + chatId);
+        //log("bind " + this + " " + chatId);
+
         mLastChatId = chatId;
 
         Uri contactUri = ContentUris.withAppendedId(Imps.Contacts.CONTENT_URI, chatId);
@@ -1344,11 +1345,10 @@ public class ConversationView {
 
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor newCursor) {
+
             if (newCursor != null) {
 
-                boolean isFirstTime = mMessageAdapter.getCursor()==null;
-
-                newCursor.setNotificationUri(mActivity.getContentResolver(), mUri);
+           //     newCursor.setNotificationUri(mActivity.getContentResolver(), mUri);
                 mMessageAdapter.swapCursor(new DeltaCursor(newCursor));
 
                 if (mMessageAdapter.getItemCount() > 0)
@@ -1367,8 +1367,6 @@ public class ConversationView {
 
     void scheduleRequery(long interval) {
 
-        mMessageAdapter.notifyDataSetChanged();
-        /*
 
         if (mRequeryCallback == null) {
             mRequeryCallback = new RequeryCallback();
@@ -1380,22 +1378,22 @@ public class ConversationView {
             log("scheduleRequery");
         }
         mHandler.postDelayed(mRequeryCallback, interval);
-        */
+
 
     }
 
     void cancelRequery() {
-        /**
+
         if (mRequeryCallback != null) {
             if (Log.isLoggable(ImApp.LOG_TAG, Log.DEBUG)) {
                 log("cancelRequery");
             }
             mHandler.removeCallbacks(mRequeryCallback);
             mRequeryCallback = null;
-        }*/
+        }
     }
 
-    /*
+
     void requeryCursor() {
 
         if (mMessageAdapter.isScrolling()) {
@@ -1412,7 +1410,7 @@ public class ConversationView {
         if (cursor != null) {
             cursor.requery();
         }
-    }*/
+    }
 
     private Cursor getMessageCursor() {
         return mMessageAdapter == null ? null : mMessageAdapter.getCursor();
@@ -2560,17 +2558,17 @@ public class ConversationView {
                 if (Log.isLoggable(ImApp.LOG_TAG, Log.DEBUG)) {
                     log("delta = " + delta + ", showTs=" + showTimeStamp);
                 }
+                */
                 if (!showDelivery) {
                     scheduleRequery(SHOW_DELIVERY_INTERVAL);
                 } else if (!showTimeStamp) {
                     scheduleRequery(SHOW_TIME_STAMP_INTERVAL);
                 } else {
                     cancelRequery();
-                }*/
+                }
             }
         }
 
-        /*
         public void onScrollStateChanged(AbsListView view, int scrollState) {
             int oldState = mScrollState;
             mScrollState = scrollState;
@@ -2585,7 +2583,7 @@ public class ConversationView {
                 }
             }
 
-            if (oldState == OnScrollListener.SCROLL_STATE_FLING) {
+            if (oldState == AbsListView.OnScrollListener.SCROLL_STATE_FLING) {
                 if (mNeedRequeryCursor) {
                     requeryCursor();
                 } else {
@@ -2595,9 +2593,8 @@ public class ConversationView {
         }
 
         boolean isScrolling() {
-            return mScrollState == OnScrollListener.SCROLL_STATE_FLING;
+            return mScrollState == AbsListView.OnScrollListener.SCROLL_STATE_FLING;
         }
-        */
 
         void setNeedRequeryCursor(boolean requeryCursor) {
             mNeedRequeryCursor = requeryCursor;

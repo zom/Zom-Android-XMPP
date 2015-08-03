@@ -1692,7 +1692,6 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
                 
                     log("set notify url " + url);
 
-
                 c.setNotificationUri(getContext().getContentResolver(), url);
             }
 
