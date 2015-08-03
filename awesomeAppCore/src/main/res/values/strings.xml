@@ -463,7 +463,7 @@
 		<string name="group_chat_invite_notify_text">New group chat invitation from <xliff:g id="user">%s</xliff:g></string>
 		<string name="new_messages_notify">New message(s) from</string>
 		<string name="starting_the_chatsecure_service_">Starting the ChatSecure service…</string>
-		<string name="app_unlocked">Activated &amp; unlocked</string>
+		<string name="app_unlocked">Zom is running</string>
 		<string name="toast_chat_copied_to_clipboard">message copied to the clipboard</string>
 		
 		<!-- Alerts: Exceptions -->

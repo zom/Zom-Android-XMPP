@@ -19,6 +19,8 @@ package org.awesomeapp.messenger.service;
 
 import info.guardianproject.cacheword.CacheWordHandler;
 import info.guardianproject.cacheword.ICacheWordSubscriber;
+
+import org.awesomeapp.messenger.MainActivity;
 import org.awesomeapp.messenger.crypto.IOtrKeyManager;
 import org.awesomeapp.messenger.crypto.OtrAndroidKeyManagerImpl;
 import org.awesomeapp.messenger.crypto.OtrChatManager;
@@ -302,7 +304,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
         mNotifyBuilder.setOngoing(true);
         mNotifyBuilder.setWhen( System.currentTimeMillis() );
         
-        Intent notificationIntent = new Intent(this, NewChatActivity.class);
+        Intent notificationIntent = new Intent(this, MainActivity.class);
         PendingIntent launchIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent, 0);
 
         mNotifyBuilder.setContentIntent(launchIntent);
