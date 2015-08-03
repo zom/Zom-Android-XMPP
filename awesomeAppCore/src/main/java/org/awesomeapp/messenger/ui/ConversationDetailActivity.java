@@ -304,6 +304,13 @@ public class ConversationDetailActivity extends AppCompatActivity {
         return false; // was not sent
     }
 
+    boolean mIsAudioRecording = false;
+
+    public boolean isAudioRecording ()
+    {
+        return mIsAudioRecording;
+    }
+
     public void startAudioRecording ()
     {
         mMediaRecorder = new MediaRecorder();
@@ -316,6 +323,7 @@ public class ConversationDetailActivity extends AppCompatActivity {
         mMediaRecorder.setOutputFile(mAudioFilePath.getAbsolutePath());
 
         try {
+            mIsAudioRecording = true;
             mMediaRecorder.prepare();
             mMediaRecorder.start();
         }
@@ -333,7 +341,9 @@ public class ConversationDetailActivity extends AppCompatActivity {
     public void stopAudioRecording (boolean send)
     {
         if (mMediaRecorder != null && mAudioFilePath != null) {
+            
             mMediaRecorder.stop();
+
             mMediaRecorder.reset();
             mMediaRecorder.release();
 
@@ -347,6 +357,8 @@ public class ConversationDetailActivity extends AppCompatActivity {
             {
                 mAudioFilePath.delete();
             }
+
+            mIsAudioRecording = false;
         }
 
     }

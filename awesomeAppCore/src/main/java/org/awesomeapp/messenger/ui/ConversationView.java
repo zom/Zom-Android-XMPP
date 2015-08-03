@@ -45,6 +45,7 @@ import android.provider.Browser;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -53,6 +54,7 @@ import android.text.TextWatcher;
 import android.text.style.StyleSpan;
 import android.text.style.URLSpan;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -159,7 +161,10 @@ public class ConversationView {
     private Button mButtonTalk;
     private ImageButton mButtonAttach;
     private View mViewAttach;
-    
+
+    private ImageView mButtonDeleteVoice;
+    private View mViewDeleteVoice;
+
     private View mStatusWarningView;
     private TextView mWarningText;
     private ProgressBar mProgressTransfer;
@@ -622,7 +627,22 @@ public class ConversationView {
         mMicButton = (ImageButton) mActivity.findViewById(R.id.btnMic);
         mButtonTalk = (Button)mActivity.findViewById(R.id.buttonHoldToTalk);
 
-        //mHistory.setOnItemClickListener(mOnItemClickListener);
+        mButtonDeleteVoice = (ImageView)mActivity.findViewById(R.id.btnDeleteVoice);
+        mViewDeleteVoice = mActivity.findViewById(R.id.viewDeleteVoice);
+
+        mButtonDeleteVoice.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+
+                if(motionEvent.getAction() == MotionEvent.ACTION_MOVE)
+                {
+                    mButtonDeleteVoice.setBackgroundColor(android.R.color.holo_red_light);
+                }
+
+                return false;
+            }
+        });
+
 
         mButtonAttach = (ImageButton) mActivity.findViewById(R.id.btnAttach);
         mViewAttach = mActivity.findViewById(R.id.attachPanel);
@@ -664,8 +684,7 @@ public class ConversationView {
 
         });
 
-        ((ImageButton) mActivity.findViewById(R.id.btnAttachFile)).setOnClickListener(new View.OnClickListener()
-        {
+        ((ImageButton) mActivity.findViewById(R.id.btnAttachFile)).setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -674,30 +693,52 @@ public class ConversationView {
 
         });
 
-        ((ImageButton) mActivity.findViewById(R.id.btnMic)).setOnClickListener(new View.OnClickListener() {
+        mMicButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
 
                 //this is the tap to change to hold to talk mode
+                if (!mActivity.isAudioRecording()) {
+                    mComposeMessage.setVisibility(View.GONE);
+                    mMicButton.setVisibility(View.GONE);
 
-                mComposeMessage.setVisibility(View.GONE);
-                mMicButton.setVisibility(View.GONE);
-                mSendButton.setVisibility(View.VISIBLE);
-                mButtonTalk.setVisibility(View.VISIBLE);
+                    mSendButton.setImageResource(R.drawable.ic_keyboard_black_36dp);
+                    mSendButton.setVisibility(View.VISIBLE);
+                    mButtonTalk.setVisibility(View.VISIBLE);
+
+                }
             }
 
         });
 
-        ((ImageButton) mActivity.findViewById(R.id.btnMic)).setOnLongClickListener(new View.OnLongClickListener() {
 
-
-            @Override
-            public boolean onLongClick(View view) {
+        final GestureDetector gestureDetector = new GestureDetector(new GestureDetector.SimpleOnGestureListener() {
+            public void onLongPress(MotionEvent e) {
 
                 //this is for recording audio directly from one press
+                mActivity.startAudioRecording();
 
-                return false;
+            }
+
+            @Override
+            public boolean onSingleTapUp(MotionEvent e) {
+
+
+                if (mActivity.isAudioRecording()) {
+                    boolean send = true;//inViewInBounds(mMicButton, (int) motionEvent.getX(), (int) motionEvent.getY());
+                    mActivity.stopAudioRecording(send);
+                }
+
+                return super.onSingleTapUp(e);
+            }
+        });
+
+        mMicButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                return gestureDetector.onTouchEvent(motionEvent);
+
             }
         });
 
@@ -708,18 +749,23 @@ public class ConversationView {
                     case MotionEvent.ACTION_DOWN:
                         mActivity.startAudioRecording();
                         mButtonTalk.setText("Recording... release to send");
+                        mViewDeleteVoice.setVisibility(View.VISIBLE);
+
                         break;
                     case MotionEvent.ACTION_MOVE:
                         boolean inBounds = inViewInBounds(btnTalk,(int)theMotion.getX(),(int)theMotion.getY());
                         if (!inBounds)
                             mButtonTalk.setText("Recording... release to delete");
-                        else
+                        else {
                             mButtonTalk.setText("Recording... release to send");
-                        break;
+                            mViewDeleteVoice.setVisibility(View.VISIBLE);
+                        }
+                            break;
                     case MotionEvent.ACTION_UP:
                         mButtonTalk.setText("Hold to talk");
                         boolean send = inViewInBounds(btnTalk,(int)theMotion.getX(),(int)theMotion.getY());
                         mActivity.stopAudioRecording(send);
+                        mViewDeleteVoice.setVisibility(View.GONE);
 
                         break;
                 }
@@ -837,6 +883,7 @@ public class ConversationView {
                     mComposeMessage.setVisibility(View.VISIBLE);
                     mMicButton.setVisibility(View.VISIBLE);
 
+                    mSendButton.setImageResource(R.drawable.ic_keyboard_black_18dp);
                 }
             }
         });
@@ -876,10 +923,11 @@ public class ConversationView {
 
         });
 
-
         mMessageAdapter = new ConversationRecyclerViewAdapter(mActivity, null);
         mHistory.setAdapter(mMessageAdapter);
     }
+
+
 
     private boolean inViewInBounds(View view, int x, int y){
         Rect outRect = new Rect();
