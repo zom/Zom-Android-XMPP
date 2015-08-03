@@ -53,12 +53,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"         
                 
-                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="?contactTextSecondary"
                 />
 
-                  
-    <ImageView
+        <org.ironrabbit.type.CustomTypefaceTextView
+            android:id="@+id/line3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="?contactTextSecondary"
+            />
+
+
+        <ImageView
             android:id="@+id/statusIcon"
             android:layout_width="24dp"
             android:layout_height="24dp"
