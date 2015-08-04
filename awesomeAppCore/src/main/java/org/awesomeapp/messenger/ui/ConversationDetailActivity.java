@@ -19,6 +19,7 @@ package org.awesomeapp.messenger.ui;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.content.res.Configuration;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
@@ -73,6 +74,7 @@ public class ConversationDetailActivity extends AppCompatActivity {
 
         mConvoView = new ConversationView(this);
         mConvoView.bindChat(mChatId);
+        mConvoView.setSelected(true);
 
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -102,6 +104,9 @@ public class ConversationDetailActivity extends AppCompatActivity {
             case R.id.menu_end_conversation:
                 mConvoView.closeChatSession(true);
                 finish();
+                return true;
+            case R.id.menu_verify_or_view:
+                mConvoView.showVerifyDialog();
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -145,7 +150,6 @@ public class ConversationDetailActivity extends AppCompatActivity {
 
     void startFilePicker() {
         Intent selectFile = new Intent(Intent.ACTION_GET_CONTENT);
-        selectFile.setType("file/*");
         Intent intentChooser = Intent.createChooser(selectFile, "Select File");
 
         if (intentChooser != null)
@@ -370,13 +374,20 @@ public class ConversationDetailActivity extends AppCompatActivity {
 
     }
 
+/**
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        setContentView(R.layout.awesome_activity_detail);
 
-    private static final int REQUEST_PICK_CONTACTS = RESULT_FIRST_USER + 1;
-    private static final int REQUEST_SEND_IMAGE = REQUEST_PICK_CONTACTS + 1;
-    private static final int REQUEST_SEND_FILE = REQUEST_SEND_IMAGE + 1;
-    private static final int REQUEST_SEND_AUDIO = REQUEST_SEND_FILE + 1;
-    private static final int REQUEST_TAKE_PICTURE = REQUEST_SEND_AUDIO + 1;
-    private static final int REQUEST_SETTINGS = REQUEST_TAKE_PICTURE + 1;
-    private static final int REQUEST_TAKE_PICTURE_SECURE = REQUEST_SETTINGS + 1;
-    private static final int REQUEST_ADD_CONTACT = REQUEST_TAKE_PICTURE_SECURE + 1;
+    }*/
+
+    public static final int REQUEST_PICK_CONTACTS = RESULT_FIRST_USER + 1;
+    public static final int REQUEST_SEND_IMAGE = REQUEST_PICK_CONTACTS + 1;
+    public static final int REQUEST_SEND_FILE = REQUEST_SEND_IMAGE + 1;
+    public static final int REQUEST_SEND_AUDIO = REQUEST_SEND_FILE + 1;
+    public static final int REQUEST_TAKE_PICTURE = REQUEST_SEND_AUDIO + 1;
+    public static final int REQUEST_SETTINGS = REQUEST_TAKE_PICTURE + 1;
+    public static final int REQUEST_TAKE_PICTURE_SECURE = REQUEST_SETTINGS + 1;
+    public static final int REQUEST_ADD_CONTACT = REQUEST_TAKE_PICTURE_SECURE + 1;
 }

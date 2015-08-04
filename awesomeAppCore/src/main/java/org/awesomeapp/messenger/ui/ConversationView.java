@@ -223,13 +223,17 @@ public class ConversationView {
                     {
                         String remoteJID = otrChatSession.getRemoteUserId();
                         
-                        boolean isChatSecure = (remoteJID != null && remoteJID.contains("ChatSecure"));
+                        boolean isChatSecure = true;//(remoteJID != null && remoteJID.contains("ChatSecure"));
                             
                         if (otrPolicyAuto && isChatSecure) //if set to auto, and is chatsecure, then start encryption
                         {
                                //automatically attempt to turn on OTR after 1 second
                                 mHandler.postAtTime(new Runnable (){
-                                    public void run (){  setOTRState(true);}
+                                    public void run (){
+                                        setOTRState(true);
+                                        updateWarningView();
+
+                                    }
                                  },1000);
                         }
                     }
@@ -2671,6 +2675,23 @@ public class ConversationView {
                 String[] filelist = aMan.list(basePath);
 
                 String category = "Olo & Shimi";
+
+                for (int i = 0; i < filelist.length; i++) {
+                    Sticker sticker = new Sticker();
+                    sticker.name = filelist[i];
+                    sticker.category = category;
+                    sticker.assetPath = basePath + '/' +  filelist[i];
+                    sticker.res = mActivity.getResources();
+                    sticker.emoticon =  filelist[i];
+
+                    sStickerManager.addPattern(sticker.emoticon, sticker);
+                    sStickerManager.addEmojiToCategory(category, sticker);
+                }
+
+                basePath = "stickers/zomkyi";
+                filelist = aMan.list(basePath);
+
+                category = "Zomkyi";
 
                 for (int i = 0; i < filelist.length; i++) {
                     Sticker sticker = new Sticker();
