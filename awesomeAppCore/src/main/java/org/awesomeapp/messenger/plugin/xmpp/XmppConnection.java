@@ -803,7 +803,7 @@ public class XmppConnection extends ImConnection implements CallbackHandler {
             mPassword = mPassword.split(":")[1];
         }
 
-        Cursor cursor = contentResolver.query(Imps.ProviderSettings.CONTENT_URI,new String[] {Imps.ProviderSettings.NAME, Imps.ProviderSettings.VALUE},Imps.ProviderSettings.PROVIDER + "=?",new String[] { Long.toString(mProviderId)},null);
+        Cursor cursor = contentResolver.query(Imps.ProviderSettings.CONTENT_URI, new String[]{Imps.ProviderSettings.NAME, Imps.ProviderSettings.VALUE}, Imps.ProviderSettings.PROVIDER + "=?", new String[]{Long.toString(mProviderId)}, null);
 
         if (cursor == null)
             return;
@@ -2321,10 +2321,6 @@ public class XmppConnection extends ImConnection implements CallbackHandler {
                 reqSubscribe.setTo(contact.getAddress().getBareAddress());
                 sendPacket(reqSubscribe);
 
-                org.jivesoftware.smack.packet.Presence reqSubscribed = new org.jivesoftware.smack.packet.Presence(
-                        org.jivesoftware.smack.packet.Presence.Type.subscribed);
-                reqSubscribed.setTo(contact.getAddress().getBareAddress());
-                sendPacket(reqSubscribed);
             }
         }
 
@@ -2540,8 +2536,7 @@ public class XmppConnection extends ImConnection implements CallbackHandler {
         execute(new Runnable() {
             @Override
             public void run() {
-                if (mState == SUSPENDED || mState == SUSPENDING)
-                {
+                if (mState == SUSPENDED || mState == SUSPENDING) {
                     debug(TAG, "network type changed");
                     mNeedReconnect = false;
                     setState(LOGGING_IN, null);
@@ -3058,7 +3053,35 @@ public class XmppConnection extends ImConnection implements CallbackHandler {
         }*/
 
         if (presence.getType() == Type.subscribe) {
-            debug(TAG,"got subscribe request: " + presence.getFrom());
+            debug(TAG, "got subscribe request: " + presence.getFrom());
+
+            if (contact == null) {
+                XmppAddress xAddr = new XmppAddress(presence.getFrom());
+                contact = new Contact(xAddr, xAddr.getUser());
+
+                try {
+                    if (!mContactListManager.getDefaultContactList().containsContact(contact.getAddress()))
+                    {
+                        mContactListManager.getDefaultContactList().addExistingContact(contact);
+                    }
+                } catch (ImException e) {
+
+                    debug(TAG,"unable to add new contact to default list: " + e.getLocalizedMessage());
+
+                }
+            }
+
+
+            org.jivesoftware.smack.packet.Presence reqSubscribed = new org.jivesoftware.smack.packet.Presence(
+                    org.jivesoftware.smack.packet.Presence.Type.subscribed);
+            reqSubscribed.setTo(contact.getAddress().getBareAddress());
+            sendPacket(reqSubscribed);
+
+
+            org.jivesoftware.smack.packet.Presence reqSubscribe = new org.jivesoftware.smack.packet.Presence(
+                    org.jivesoftware.smack.packet.Presence.Type.subscribe);
+            reqSubscribe.setTo(contact.getAddress().getBareAddress());
+            sendPacket(reqSubscribe);
 
             try
             {
@@ -3069,10 +3092,7 @@ public class XmppConnection extends ImConnection implements CallbackHandler {
                 Log.e(TAG,"remote exception on subscription handling",e);
             }
 
-            org.jivesoftware.smack.packet.Presence reqSubscribed = new org.jivesoftware.smack.packet.Presence(
-                    org.jivesoftware.smack.packet.Presence.Type.subscribed);
-            reqSubscribed.setTo(contact.getAddress().getBareAddress());
-            sendPacket(reqSubscribed);
+
         }
         else if (presence.getType() == Type.subscribed) {
             debug(TAG,"got subscribed confirmation request: " + presence.getFrom());
