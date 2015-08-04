@@ -6,6 +6,9 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
+import org.awesomeapp.messenger.ImApp;
 
 import info.guardianproject.otr.app.im.R;
 
@@ -56,6 +59,11 @@ public class AccountFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.account_activity, container, false);
+
+        TextView tv = (TextView)view.findViewById(R.id.edtName);
+
+        String username = ((ImApp)getActivity().getApplication()).getDefaultUsername();
+        tv.setText(username);
 
         return view;
     }

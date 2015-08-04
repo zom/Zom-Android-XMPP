@@ -353,8 +353,9 @@ public class AccountActivity extends ActionBarActivity {
         if (mIsNewAccount)
             mBtnSignIn.setText(R.string.btn_create_new_account);
 
-        mBtnAdvanced = (Button) findViewById(R.id.btnAdvanced);
-        mBtnQrDisplay = (Button) findViewById(R.id.btnQR);
+
+        //mBtnAdvanced = (Button) findViewById(R.id.btnAdvanced);
+       // mBtnQrDisplay = (Button) findViewById(R.id.btnQR);
 
         /*
         mRememberPass.setOnCheckedChangeListener(new OnCheckedChangeListener() {

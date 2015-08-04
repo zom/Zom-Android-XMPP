@@ -69,6 +69,7 @@ public class ContactListActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        setTitle(R.string.contacts);
     }
 
     @Override

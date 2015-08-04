@@ -30,8 +30,15 @@
 	    android:layout_height="wrap_content"
 	    android:orientation="vertical"
 	    android:padding="10dp" android:layout_gravity="fill_vertical">
-	
-	    <EditText android:id="@+id/edtName"
+
+
+		<ImageView
+			android:layout_width="200dp"
+			android:layout_height="wrap_content"
+			android:src="@drawable/avatar_unknown"
+			android:id="@+id/imageView" />
+
+		<EditText android:id="@+id/edtName"
 	        android:selectAllOnFocus="true"
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
@@ -54,7 +61,9 @@
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
 	        android:hint="@string/account_setup_password"
-	        android:selectAllOnFocus="true" android:inputType="textPassword"/>
+	        android:selectAllOnFocus="true" android:inputType="textPassword"
+			android:text="******"
+			/>
 	    
 	      <EditText android:id="@+id/edtPassConfirm"
 	        android:layout_width="match_parent"
@@ -102,30 +111,30 @@
 	
 	         />
 	         -->
-	
-	  <Button android:id="@+id/btnAdvanced"
-	                android:layout_height="wrap_content"
-	                android:layout_marginTop="20dip"
-	                android:text="@string/account_setup_advanced_button" android:layout_width="match_parent"/>
-		  <Button android:id="@+id/btnQR"
-	                android:layout_height="wrap_content"
-	                android:layout_marginTop="3dip"
-	                android:text="@string/menu_sidebar_qr" android:layout_width="match_parent"
-	                			android:visibility="gone"
-	                
-	                />
-	  
-	  
-	 
-	                <!-- 
-	    <TextView android:id="@+id/signUp"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:paddingLeft="4dip"
-	        android:focusable="true"
-	        android:focusableInTouchMode="true"
-	        android:textAppearance="?android:attr/textAppearanceSmall" />
-	         -->
+
+		<!--
+<Button android:id="@+id/btnAdvanced"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dip"
+        android:text="@string/account_setup_advanced_button" android:layout_width="match_parent"/>
+<Button android:id="@+id/btnQR"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dip"
+        android:text="@string/menu_sidebar_qr" android:layout_width="match_parent"
+                    android:visibility="gone"
+
+        />
+
+
+
+<TextView android:id="@+id/signUp"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:paddingLeft="4dip"
+android:focusable="true"
+android:focusableInTouchMode="true"
+android:textAppearance="?android:attr/textAppearanceSmall" />
+ -->
 	
 	</LinearLayout>
 </ScrollView>

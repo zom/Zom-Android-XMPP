@@ -172,10 +172,10 @@ public class GalleryListFragment extends Fragment {
 
             buf.append(Imps.Messages.MIME_TYPE);
             buf.append(" LIKE ");
-            buf.append("'image%'");
+            buf.append("'image/jpeg'");
 
             CursorLoader loader = new CursorLoader(getActivity(), mUri, MESSAGE_PROJECTION,
-                    buf == null ? null : buf.toString(), null, Imps.Messages.DEFAULT_SORT_ORDER);
+                    buf == null ? null : buf.toString(), null, Imps.Messages.REVERSE_SORT_ORDER);
 
             //     loader.setUpdateThrottle(10L);
             return loader;

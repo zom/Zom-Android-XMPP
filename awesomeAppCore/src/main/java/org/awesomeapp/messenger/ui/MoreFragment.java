@@ -8,6 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.awesomeapp.messenger.ImApp;
+
 import info.guardianproject.otr.app.im.R;
 
 public class MoreFragment extends Fragment {
@@ -57,6 +59,8 @@ public class MoreFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_more, container, false);
+
+
 
         return view;
     }

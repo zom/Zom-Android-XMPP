@@ -105,9 +105,17 @@
        <item name="windowActionModeOverlay">true</item>
        -->
        <item name="attachIcon">@drawable/content_new_attachment_dark</item>
-       
-       
-     </style>
+
+        <item name="actionBarTheme">@style/AppBaseTheme.Toolbar</item>
+
+
+    </style>
+
+    <!--Action bar-->
+    <style name="AppBaseTheme.Toolbar" parent="Widget.AppCompat.ActionBar.Solid">
+        <item name="android:textColorPrimary">#ffffff</item>
+        <item name="colorControlNormal">#ffffff</item>
+    </style>
 
     <style name="AppThemeNoAction" parent="@style/AppTheme">
         <item name="windowActionBar">false</item>

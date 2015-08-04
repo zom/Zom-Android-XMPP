@@ -3,15 +3,15 @@
     xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
 
     <item android:id="@+id/menu_search" android:title="@string/search_button_text"
-        android:icon="@drawable/ic_settings_white_24dp" app:showAsAction="always"
+        android:icon="@drawable/ic_search_white_24dp" app:showAsAction="always"
         android:orderInCategory="1"
         />
 
     <item android:id="@+id/menu_settings"
-        android:icon="@drawable/ic_search_white_24dp"
+        android:icon="@drawable/ic_settings_white_24dp"
         android:title="@string/menu_settings"
         android:orderInCategory="2"
-        app:showAsAction="always" />
+        app:showAsAction="never" />
 
 
 </menu>

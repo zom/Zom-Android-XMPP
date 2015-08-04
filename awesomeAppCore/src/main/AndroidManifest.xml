@@ -504,7 +504,6 @@
             android:name="org.awesomeapp.messenger.ui.ConversationDetailActivity"
             android:theme="@style/AppThemeNoAction"
             android:exported="false"
-
             />
         <activity
             android:name="org.awesomeapp.messenger.ui.ContactListActivity"
