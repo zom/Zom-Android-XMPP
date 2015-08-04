@@ -215,17 +215,12 @@ public class MainActivity extends AppCompatActivity {
 
                 int tabIdx = mViewPager.getCurrentItem();
 
-                if (tabIdx == 0)
-                {
+                if (tabIdx == 0) {
                     Intent intent = new Intent(MainActivity.this, ContactListActivity.class);
                     startActivityForResult(intent, REQUEST_CHOOSE_CONTACT);
-                }
-                else if (tabIdx == 1)
-                {
+                } else if (tabIdx == 1) {
                     startPhotoTaker();
-                }
-                else if (tabIdx == 2)
-                {
+                } else if (tabIdx == 2) {
 
                 }
 
@@ -233,6 +228,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        checkForUpdates();
 
     }
 
@@ -253,7 +249,7 @@ public class MainActivity extends AppCompatActivity {
             ImApp app = (ImApp)getApplication();
             app.getTrustManager().bindDisplayActivity(this);
             app.checkForCrashes(this);
-            checkForUpdates();
+
             mApp.initAccountInfo();
 
         }
