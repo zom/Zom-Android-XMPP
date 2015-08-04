@@ -167,30 +167,26 @@ public class MainActivity extends AppCompatActivity {
                 sb.append(getString(R.string.app_name));
                 sb.append(" | ");
 
-                switch (tab.getPosition())
-                {
+                switch (tab.getPosition()) {
                     case 0:
-                        sb.append( getString(R.string.title_chats));
+                        sb.append(getString(R.string.title_chats));
                         break;
                     case 1:
-                        sb.append( getString(R.string.title_gallery));
+                        sb.append(getString(R.string.title_gallery));
                         break;
                     case 2:
-                        sb.append( getString(R.string.title_more));
+                        sb.append(getString(R.string.title_more));
                         break;
                     case 3:
-                        sb.append( getString(R.string.title_me));
+                        sb.append(getString(R.string.title_me));
                         break;
                 }
 
                 mToolbar.setTitle(sb.toString());
 
-                if (tab.getPosition() > 1)
-                {
+                if (tab.getPosition() > 1) {
                     mFab.setVisibility(View.GONE);
-                }
-                else
-                {
+                } else {
                     mFab.setVisibility(View.VISIBLE);
                 }
 
@@ -281,6 +277,26 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+
+        if (mLastPhoto != null)
+            savedInstanceState.putString("lastphoto", mLastPhoto.toString());
+
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        // Restore UI state from the savedInstanceState.
+        // This bundle has also been passed to onCreate.
+
+       String lastPhotoPath =  savedInstanceState.getString("lastphoto");
+        if (lastPhotoPath != null)
+            mLastPhoto = Uri.parse(lastPhotoPath);
+    }
+
     private void importPhoto ()
     {
 
@@ -299,6 +315,7 @@ public class MainActivity extends AppCompatActivity {
                     System.currentTimeMillis(), Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED,
                     0, offerId, info.type);
 
+            mLastPhoto = null;
         }
         catch (IOException ioe)
         {

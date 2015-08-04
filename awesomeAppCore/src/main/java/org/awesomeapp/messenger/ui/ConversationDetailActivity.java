@@ -250,7 +250,10 @@ public class ConversationDetailActivity extends AppCompatActivity {
             }
             else if (requestCode == REQUEST_TAKE_PICTURE)
             {
-                handleSendDelete(mLastPhoto, true, true);
+                if (mLastPhoto != null) {
+                    handleSendDelete(mLastPhoto, true, true);
+                    mLastPhoto = null;
+                }
                 /**
                 File file = new File(getRealPathFromURI(mLastPhoto));
                 final Handler handler = new Handler();
@@ -374,13 +377,25 @@ public class ConversationDetailActivity extends AppCompatActivity {
 
     }
 
-/**
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        setContentView(R.layout.awesome_activity_detail);
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
 
-    }*/
+        if (mLastPhoto != null)
+            savedInstanceState.putString("lastphoto", mLastPhoto.toString());
+
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        // Restore UI state from the savedInstanceState.
+        // This bundle has also been passed to onCreate.
+
+        String lastPhotoPath =  savedInstanceState.getString("lastphoto");
+        if (lastPhotoPath != null)
+            mLastPhoto = Uri.parse(lastPhotoPath);
+    }
 
     public static final int REQUEST_PICK_CONTACTS = RESULT_FIRST_USER + 1;
     public static final int REQUEST_SEND_IMAGE = REQUEST_PICK_CONTACTS + 1;
