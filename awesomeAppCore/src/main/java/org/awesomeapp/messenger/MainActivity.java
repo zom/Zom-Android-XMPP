@@ -20,9 +20,13 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.RemoteException;
+import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -62,9 +66,13 @@ import org.awesomeapp.messenger.ui.onboarding.OnboardingActivity;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.ui.onboarding.OnboardingManager;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
 
 import info.guardianproject.iocipher.VirtualFileSystem;
 import org.awesomeapp.messenger.service.IChatSession;
@@ -74,6 +82,8 @@ import info.guardianproject.otr.app.im.R;
 import org.awesomeapp.messenger.ui.legacy.AddContactActivity;
 import org.awesomeapp.messenger.ui.legacy.ContactsPickerActivity;
 import org.awesomeapp.messenger.util.LogCleaner;
+import org.awesomeapp.messenger.util.SecureMediaStore;
+import org.awesomeapp.messenger.util.SystemServices;
 
 
 /**
@@ -84,10 +94,13 @@ public class MainActivity extends AppCompatActivity {
  //   private DrawerLayout mDrawerLayout;
     private ViewPager mViewPager;
     private FloatingActionButton mFab;
+    private Toolbar mToolbar;
+
     private ImApp mApp;
 
     public final static int REQUEST_ADD_CONTACT = 9999;
     public final static int REQUEST_CHOOSE_CONTACT = REQUEST_ADD_CONTACT+1;
+    public final static int REQUEST_SETTINGS = REQUEST_ADD_CONTACT+2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,8 +110,8 @@ public class MainActivity extends AppCompatActivity {
 
         mApp = (ImApp)getApplication();
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
 
         final ActionBar ab = getSupportActionBar();
      //   ab.setHomeAsUpIndicator(R.drawable.ic_menu);
@@ -150,6 +163,37 @@ public class MainActivity extends AppCompatActivity {
 
                 mViewPager.setCurrentItem(tab.getPosition());
 
+                StringBuffer sb = new StringBuffer();
+                sb.append(getString(R.string.app_name));
+                sb.append(" | ");
+
+                switch (tab.getPosition())
+                {
+                    case 0:
+                        sb.append( getString(R.string.title_chats));
+                        break;
+                    case 1:
+                        sb.append( getString(R.string.title_gallery));
+                        break;
+                    case 2:
+                        sb.append( getString(R.string.title_more));
+                        break;
+                    case 3:
+                        sb.append( getString(R.string.title_me));
+                        break;
+                }
+
+                mToolbar.setTitle(sb.toString());
+
+                if (tab.getPosition() > 1)
+                {
+                    mFab.setVisibility(View.GONE);
+                }
+                else
+                {
+                    mFab.setVisibility(View.VISIBLE);
+                }
+
 
             }
 
@@ -178,7 +222,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 else if (tabIdx == 1)
                 {
-                    //add contact
+                    startPhotoTaker();
                 }
                 else if (tabIdx == 2)
                 {
@@ -232,7 +276,51 @@ public class MainActivity extends AppCompatActivity {
                 long providerId = data.getLongExtra(ContactsPickerActivity.EXTRA_RESULT_PROVIDER,-1);
                 startChat(providerId, username);
             }
+            else if (requestCode == ConversationDetailActivity.REQUEST_TAKE_PICTURE)
+            {
+                if (mLastPhoto != null)
+                    importPhoto ();
+
+            }
         }
+    }
+
+    private void importPhoto ()
+    {
+
+        // import
+        SystemServices.FileInfo info = SystemServices.getFileInfoFromURI(this, mLastPhoto);
+        String sessionId = "self";
+        String offerId = UUID.randomUUID().toString();
+
+        try {
+            Uri vfsUri = SecureMediaStore.resizeAndImportImage(this, sessionId, mLastPhoto, info.type);
+
+            delete(mLastPhoto);
+
+            Imps.insertMessageInDb(
+                    getContentResolver(), false, new Date().getTime(), true, null, vfsUri.toString(),
+                    System.currentTimeMillis(), Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED,
+                    0, offerId, info.type);
+
+        }
+        catch (IOException ioe)
+        {
+            Log.e(ImApp.LOG_TAG,"error importing photo",ioe);
+        }
+
+    }
+
+    private boolean delete(Uri uri) {
+        if (uri.getScheme().equals("content")) {
+            int deleted = getContentResolver().delete(uri,null,null);
+            return deleted == 1;
+        }
+        if (uri.getScheme().equals("file")) {
+            java.io.File file = new java.io.File(uri.toString().substring(5));
+            return file.delete();
+        }
+        return false;
     }
 
 
@@ -253,7 +341,7 @@ public class MainActivity extends AppCompatActivity {
 
             case R.id.menu_settings:
                 Intent sintent = new Intent(this, SettingActivity.class);
-                startActivityForResult(sintent,REQUEST_ADD_CONTACT+3);
+                startActivityForResult(sintent,REQUEST_SETTINGS);
                 return true;
 
             case R.id.menu_group_chat:
@@ -535,4 +623,26 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    Uri mLastPhoto = null;
+
+    void startPhotoTaker() {
+
+        // create Intent to take a picture and return control to the calling application
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        File photo = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),  "cs_" + new Date().getTime() + ".jpg");
+        mLastPhoto = Uri.fromFile(photo);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT,
+                mLastPhoto);
+
+        // start the image capture Intent
+        startActivityForResult(intent, ConversationDetailActivity.REQUEST_TAKE_PICTURE);
+    }
+
+    /**
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        setContentView(R.layout.awesome_activity_main);
+
+    }*/
 }
