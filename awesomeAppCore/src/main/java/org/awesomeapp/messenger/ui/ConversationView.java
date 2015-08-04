@@ -670,8 +670,15 @@ public class ConversationView {
             @Override
             public void onClick(View v) {
 
-                if (mViewAttach.getVisibility() == View.GONE)
+                if (mViewAttach.getVisibility() == View.GONE) {
                     mViewAttach.setVisibility(View.VISIBLE);
+                    // Check if no view has focus:
+                    View view = mActivity.getCurrentFocus();
+                    if (view != null) {
+                        InputMethodManager imm = (InputMethodManager)mActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                    }
+                }
                 else {
                     mViewAttach.setVisibility(View.GONE);
                     if (mStickerBox != null)
@@ -2727,7 +2734,8 @@ public class ConversationView {
                         @Override
                         public void onStickerSelected(Sticker s) {
 
-                            mActivity.handleSendDelete(Uri.parse(s.assetPath),false,false);
+                            mActivity.handleSendDelete(Uri.parse(s.assetPath), false, false);
+                            mViewAttach.setVisibility(View.GONE);
                             showStickers();
                         }
                     });
