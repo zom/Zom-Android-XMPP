@@ -11,6 +11,7 @@ import org.awesomeapp.messenger.util.Languages;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -51,6 +52,8 @@ public class OnboardingActivity extends ThemeableActivity {
     private String mFingerprint;
 
     private SimpleAlertHandler mHandler;
+
+    private static final String USERNAME_ONLY_ALPHANUM = "[^A-Za-z0-9]";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -297,7 +300,9 @@ public class OnboardingActivity extends ThemeableActivity {
         mSetupStatus.setVisibility(View.VISIBLE);
 
         findViewById(R.id.progressImage).setVisibility(View.VISIBLE);
-        
+
+        mRequestedUserName = mRequestedUserName.replaceAll(USERNAME_ONLY_ALPHANUM, "").toLowerCase(Locale.ENGLISH);
+
         new FindServerTask ().execute(mRequestedUserName);
     }
 
