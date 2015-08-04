@@ -983,6 +983,7 @@ public class Imps {
 
         /** The default sort order for this table */
         public static final String DEFAULT_SORT_ORDER = "date ASC";
+        public static final String REVERSE_SORT_ORDER = "date DESC";
 
         /**
          * The "contact" column. This is not a real column in the messages
