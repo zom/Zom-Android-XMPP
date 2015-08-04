@@ -30,22 +30,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="fd3113b6-7f25-47f7-addc-7c82685e10c4" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/awesomeAppCore/awesomeAppCore-free-release.apk" afterPath="$PROJECT_DIR$/awesomeAppCore/awesomeAppCore-free-release.apk" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/awesomeAppCore/src/main/java/org/awesomeapp/messenger/ui/legacy/AccountActivity.java" afterPath="$PROJECT_DIR$/awesomeAppCore/src/main/java/org/awesomeapp/messenger/ui/legacy/AccountActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/awesomeAppCore/src/main/java/org/awesomeapp/messenger/ui/AccountFragment.java" afterPath="$PROJECT_DIR$/awesomeAppCore/src/main/java/org/awesomeapp/messenger/ui/AccountFragment.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/awesomeAppCore/src/main/AndroidManifest.xml" afterPath="$PROJECT_DIR$/awesomeAppCore/src/main/AndroidManifest.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/awesomeAppCore/src/main/java/org/awesomeapp/messenger/ui/ContactListActivity.java" afterPath="$PROJECT_DIR$/awesomeAppCore/src/main/java/org/awesomeapp/messenger/ui/ContactListActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/awesomeAppCore/src/main/java/org/awesomeapp/messenger/ui/ConversationDetailActivity.java" afterPath="$PROJECT_DIR$/awesomeAppCore/src/main/java/org/awesomeapp/messenger/ui/ConversationDetailActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/awesomeAppCore/src/main/java/org/awesomeapp/messenger/ui/ConversationView.java" afterPath="$PROJECT_DIR$/awesomeAppCore/src/main/java/org/awesomeapp/messenger/ui/ConversationView.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/awesomeAppCore/src/main/java/org/awesomeapp/messenger/ui/GalleryListFragment.java" afterPath="$PROJECT_DIR$/awesomeAppCore/src/main/java/org/awesomeapp/messenger/ui/GalleryListFragment.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/awesomeAppCore/src/main/java/org/awesomeapp/messenger/provider/Imps.java" afterPath="$PROJECT_DIR$/awesomeAppCore/src/main/java/org/awesomeapp/messenger/provider/Imps.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/awesomeAppCore/src/main/java/org/awesomeapp/messenger/MainActivity.java" afterPath="$PROJECT_DIR$/awesomeAppCore/src/main/java/org/awesomeapp/messenger/MainActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/awesomeAppCore/src/main/java/org/awesomeapp/messenger/ui/MoreFragment.java" afterPath="$PROJECT_DIR$/awesomeAppCore/src/main/java/org/awesomeapp/messenger/ui/MoreFragment.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/awesomeAppCore/src/main/res/layout/account_activity.xml" afterPath="$PROJECT_DIR$/awesomeAppCore/src/main/res/layout/account_activity.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/awesomeAppCore/src/main/res/layout/fragment_more.xml" afterPath="$PROJECT_DIR$/awesomeAppCore/src/main/res/layout/fragment_more.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/awesomeAppCore/src/main/res/menu/menu_conversation_detail.xml" afterPath="$PROJECT_DIR$/awesomeAppCore/src/main/res/menu/menu_conversation_detail.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/awesomeAppCore/src/main/res/menu/menu_main.xml" afterPath="$PROJECT_DIR$/awesomeAppCore/src/main/res/menu/menu_main.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/awesomeAppCore/src/main/res/values/styles.xml" afterPath="$PROJECT_DIR$/awesomeAppCore/src/main/res/values/styles.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="Gibberbot.iws" />
@@ -67,130 +52,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="contact_view.xml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/awesomeAppCore/src/main/res/layout/contact_view.xml">
+      <file leaf-file-name="AndroidManifest.xml" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/awesomeAppCore/src/main/AndroidManifest.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-6.290323">
-              <caret line="63" column="53" selection-start-line="63" selection-start-column="0" selection-end-line="64" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-          <provider editor-type-id="android-designer">
-            <state />
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ConversationDetailActivity.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/awesomeAppCore/src/main/java/org/awesomeapp/messenger/ui/ConversationDetailActivity.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-6.774194">
-              <caret line="76" column="26" selection-start-line="76" selection-start-column="19" selection-end-line="76" selection-end-column="26" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="menu_conversation_detail.xml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/awesomeAppCore/src/main/res/menu/menu_conversation_detail.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="24" column="55" selection-start-line="24" selection-start-column="36" selection-end-line="24" selection-end-column="55" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ConversationView.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/awesomeAppCore/src/main/java/org/awesomeapp/messenger/ui/ConversationView.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-14.064516">
-              <caret line="2692" column="0" selection-start-line="2692" selection-start-column="0" selection-end-line="2692" selection-end-column="0" />
-              <folding>
-                <element signature="e#0#91090#0" expanded="true" />
-                <element signature="e#9339#9605#0" expanded="true" />
-                <element signature="e#9604#9605#0" expanded="true" />
-                <element signature="e#14659#14887#0" expanded="true" />
-                <element signature="e#14886#14887#0" expanded="true" />
-                <element signature="e#32981#33045#0" expanded="true" />
-                <element signature="e#33044#33045#0" expanded="true" />
-                <element signature="e#55933#55993#0" expanded="true" />
-                <element signature="e#90692#91007#0" expanded="true" />
-                <element signature="e#91006#91007#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="awesome_onboarding.xml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/awesomeAppCore/src/main/res/layout/awesome_onboarding.xml">
-          <provider editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="50" column="64" selection-start-line="50" selection-start-column="64" selection-end-line="50" selection-end-column="64" />
-              <folding>
-                <element signature="e#1350#1371#0" expanded="true" />
-                <element signature="e#6139#6173#0" expanded="true" />
-                <element signature="e#6460#6478#0" expanded="true" />
-                <element signature="e#10635#10661#0" expanded="true" />
-                <element signature="e#12098#12143#0" expanded="true" />
-                <element signature="e#12956#12991#0" expanded="true" />
-                <element signature="e#13290#13322#0" expanded="true" />
-                <element signature="e#13880#13920#0" expanded="true" />
-                <element signature="e#14157#14174#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-          <provider selected="true" editor-type-id="android-designer">
-            <state />
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="OnboardingActivity.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/awesomeAppCore/src/main/java/org/awesomeapp/messenger/ui/onboarding/OnboardingActivity.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-8.225806">
-              <caret line="55" column="0" selection-start-line="55" selection-start-column="0" selection-end-line="55" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ImUrlActivity.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/awesomeAppCore/src/main/java/org/awesomeapp/messenger/ImUrlActivity.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-6.774194">
-              <caret line="377" column="21" selection-start-line="377" selection-start-column="0" selection-end-line="378" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="XmppConnection.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/awesomeAppCore/src/main/java/org/awesomeapp/messenger/plugin/xmpp/XmppConnection.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.47543582">
-              <caret line="3072" column="0" selection-start-line="3072" selection-start-column="0" selection-end-line="3072" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="XmppAddress.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/awesomeAppCore/src/main/java/org/awesomeapp/messenger/plugin/xmpp/XmppAddress.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="22" column="11" selection-start-line="22" selection-start-column="11" selection-end-line="22" selection-end-column="11" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Contact.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/awesomeAppCore/src/main/java/org/awesomeapp/messenger/model/Contact.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="29" column="11" selection-start-line="29" selection-start-column="11" selection-end-line="29" selection-end-column="11" />
+            <state vertical-scroll-proportion="0.13595167">
+              <caret line="6" column="25" selection-start-line="6" selection-start-column="25" selection-end-line="6" selection-end-column="39" />
               <folding />
             </state>
           </provider>
@@ -4095,7 +3961,6 @@
         <option value="$PROJECT_DIR$/awesomeAppCore/src/main/java/org/awesomeapp/messenger/ui/ContactListActivity.java" />
         <option value="$PROJECT_DIR$/awesomeAppCore/src/main/res/values/styles.xml" />
         <option value="$PROJECT_DIR$/awesomeAppCore/src/main/java/org/awesomeapp/messenger/ImUrlActivity.java" />
-        <option value="$PROJECT_DIR$/awesomeAppCore/src/main/AndroidManifest.xml" />
         <option value="$PROJECT_DIR$/awesomeAppCore/src/main/java/org/awesomeapp/messenger/provider/Imps.java" />
         <option value="$PROJECT_DIR$/awesomeAppCore/src/main/java/org/awesomeapp/messenger/ui/GalleryListFragment.java" />
         <option value="$PROJECT_DIR$/awesomeAppCore/src/main/java/org/awesomeapp/messenger/ui/MoreFragment.java" />
@@ -4111,6 +3976,7 @@
         <option value="$PROJECT_DIR$/awesomeAppCore/src/main/java/org/awesomeapp/messenger/ui/onboarding/OnboardingActivity.java" />
         <option value="$PROJECT_DIR$/awesomeAppCore/src/main/java/org/awesomeapp/messenger/ui/ConversationView.java" />
         <option value="$PROJECT_DIR$/awesomeAppCore/src/main/java/org/awesomeapp/messenger/plugin/xmpp/XmppConnection.java" />
+        <option value="$PROJECT_DIR$/awesomeAppCore/src/main/AndroidManifest.xml" />
       </list>
     </option>
   </component>
@@ -4290,72 +4156,6 @@
               <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="messenger" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Gibberbot" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="awesomeAppCore" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="messenger" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ui" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Gibberbot" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="awesomeAppCore" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="messenger" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ui" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="onboarding" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Gibberbot" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="awesomeAppCore" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
               <option name="myItemId" value="manifests" />
               <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidManifestsGroupNode" />
             </PATH_ELEMENT>
@@ -4369,7 +4169,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="recentsLimit" value="5" />
-    <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_SERIALS" value="927408e4" />
+    <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_SERIALS" value="TA95000DHE" />
     <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_AVD" value="Nexus5m" />
     <property name="FullScreen" value="false" />
     <property name="last_directory_selection" value="$PROJECT_DIR$/awesomeAppCore/src/main/res/layout" />
@@ -4627,10 +4427,10 @@
       <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.28806585" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24952622" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24952622" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.30574858" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.30574858" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32921812" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
@@ -5014,14 +4814,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/awesomeAppCore/src/main/AndroidManifest.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-0.48387095">
-          <caret line="1" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/awesomeAppCore/src/main/java/org/awesomeapp/messenger/provider/Imps.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -5144,35 +4936,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/awesomeAppCore/src/main/res/menu/menu_conversation_detail.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="24" column="55" selection-start-line="24" selection-start-column="36" selection-end-line="24" selection-end-column="55" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/awesomeAppCore/src/main/java/org/awesomeapp/messenger/ui/ConversationDetailActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-6.774194">
-          <caret line="76" column="26" selection-start-line="76" selection-start-column="19" selection-end-line="76" selection-end-column="26" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/awesomeAppCore/src/main/res/layout/contact_view.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-6.290323">
-          <caret line="63" column="53" selection-start-line="63" selection-start-column="0" selection-end-line="64" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-      <provider editor-type-id="android-designer">
-        <state />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/awesomeAppCore/src/main/res/layout/awesome_onboarding.xml">
       <provider editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -5231,8 +4994,45 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/awesomeAppCore/src/main/java/org/awesomeapp/messenger/plugin/xmpp/XmppConnection.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.47543582">
+        <state vertical-scroll-proportion="-9.67742">
           <caret line="3072" column="0" selection-start-line="3072" selection-start-column="0" selection-end-line="3072" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/awesomeAppCore/src/main/res/menu/menu_conversation_detail.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.50151056">
+          <caret line="24" column="55" selection-start-line="24" selection-start-column="36" selection-end-line="24" selection-end-column="55" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/awesomeAppCore/src/main/java/org/awesomeapp/messenger/ui/ConversationDetailActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.33280507">
+          <caret line="76" column="26" selection-start-line="76" selection-start-column="19" selection-end-line="76" selection-end-column="26" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/awesomeAppCore/src/main/res/layout/contact_view.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.30903327">
+          <caret line="63" column="53" selection-start-line="63" selection-start-column="0" selection-end-line="64" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+      <provider editor-type-id="android-designer">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/awesomeAppCore/src/main/AndroidManifest.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.13595167">
+          <caret line="6" column="25" selection-start-line="6" selection-start-column="25" selection-end-line="6" selection-end-column="39" />
           <folding />
         </state>
       </provider>
