@@ -18,6 +18,9 @@
 package org.awesomeapp.messenger.ui;
 
 import info.guardianproject.otr.app.im.R;
+
+import org.awesomeapp.messenger.ImUrlActivity;
+import org.awesomeapp.messenger.crypto.OtrDataHandler;
 import org.awesomeapp.messenger.util.SecureMediaStore;
 import org.awesomeapp.messenger.ui.legacy.DatabaseUtils;
 import org.awesomeapp.messenger.ImApp;
@@ -451,20 +454,16 @@ public class MessageListItem extends FrameLayout {
         new AlertDialog.Builder(context)
         .setTitle(context.getString(R.string.export_media))
         .setMessage(context.getString(R.string.export_media_file_to, exportPath.getAbsolutePath()))
+                .setNeutralButton("Share on Zom", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        reshareMediaFile(mimeType, mediaUri);
+                    }
+                })
         .setPositiveButton(R.string.export, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int whichButton) {
-                try {
-                    SecureMediaStore.exportContent(mimeType, mediaUri, exportPath);
-                    Intent shareIntent = new Intent();
-                    shareIntent.setAction(Intent.ACTION_SEND);
-                    shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(exportPath));
-                    shareIntent.setType(mimeType);
-                    context.startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.export_media)));
-                } catch (IOException e) {
-                    Toast.makeText(getContext(), "Export Failed " + e.getMessage(), Toast.LENGTH_LONG).show();
-                    e.printStackTrace();
-                }
+                exportMediaFile(mimeType, mediaUri, exportPath);
                 return;
             }
         })
@@ -475,6 +474,34 @@ public class MessageListItem extends FrameLayout {
             }
         })
         .create().show();
+    }
+
+    private void reshareMediaFile (String mimeType, Uri mediaUri)
+    {
+
+        String resharePath = "vfs:/" + mediaUri.getPath();
+        Intent shareIntent = new Intent(context, ImUrlActivity.class);
+        shareIntent.setAction(Intent.ACTION_SEND);
+        shareIntent.setDataAndType(Uri.parse(resharePath), mimeType);
+        context.startActivity(shareIntent);
+
+
+    }
+
+    private void exportMediaFile (String mimeType, Uri mediaUri, java.io.File exportPath)
+    {
+        try {
+
+            SecureMediaStore.exportContent(mimeType, mediaUri, exportPath);
+            Intent shareIntent = new Intent();
+            shareIntent.setAction(Intent.ACTION_SEND);
+            shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(exportPath));
+            shareIntent.setType(mimeType);
+            context.startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.export_media)));
+        } catch (IOException e) {
+            Toast.makeText(getContext(), "Export Failed " + e.getMessage(), Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        }
     }
 
     public static boolean isIntentAvailable(Context context, Intent intent) {

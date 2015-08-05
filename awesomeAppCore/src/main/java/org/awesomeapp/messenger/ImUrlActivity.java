@@ -604,7 +604,10 @@ public class ImUrlActivity extends Activity {
 
     void openOtrInBand(final Uri data, final String type) {
 
-        mSendType = getContentResolver().getType(data);
+        if (type != null)
+            mSendType = type;
+        else
+            mSendType = getContentResolver().getType(data);
         
         if (mSendType != null ) {
             
@@ -677,51 +680,44 @@ public class ImUrlActivity extends Activity {
             else if (mSendUri != null && session.getOtrChatSession() != null)
             {
 
-                if (session.getOtrChatSession().getChatStatus() != SessionStatus.ENCRYPTED.ordinal())
-                {
-                    //can't do OTR transfer
-                    Toast.makeText(this, R.string.err_otr_share_no_encryption, Toast.LENGTH_LONG).show();
-                }
-                else
-                {
-                    try {
+                try {
 
-                            
-                            String offerId = UUID.randomUUID().toString();
-                          //  Log.i(TAG, "mSendUrl " +mSendUrl);
-                            Uri vfsUri = null;
-                            
-                            if (SecureMediaStore.isVfsUri(mSendUri))
-                                vfsUri = mSendUri;
+
+                        String offerId = UUID.randomUUID().toString();
+                      //  Log.i(TAG, "mSendUrl " +mSendUrl);
+                        Uri vfsUri = null;
+
+                        if (SecureMediaStore.isVfsUri(mSendUri))
+                            vfsUri = mSendUri;
+                        else
+                        {
+                            InputStream is = getContentResolver().openInputStream(mSendUri);
+                            String fileName = mSendUri.getLastPathSegment();
+                            FileInfo importInfo = SystemServices.getFileInfoFromURI(this, mSendUri);
+
+                            if (importInfo.type != null && importInfo.type.startsWith("image"))
+                                vfsUri = SecureMediaStore.resizeAndImportImage(this, session.getId() + "", mSendUri, importInfo.type);
                             else
-                            {
-                                InputStream is = getContentResolver().openInputStream(mSendUri);
-                                String fileName = mSendUri.getLastPathSegment();
-                                FileInfo importInfo = SystemServices.getFileInfoFromURI(this, mSendUri);
+                                vfsUri = SecureMediaStore.importContent(session.getId() + "", fileName, is);
 
-                                if (importInfo.type != null && importInfo.type.startsWith("image"))
-                                    vfsUri = SecureMediaStore.resizeAndImportImage(this, session.getId() + "", mSendUri, importInfo.type);
-                                else
-                                    vfsUri = SecureMediaStore.importContent(session.getId() + "", fileName, is);
+                        }
 
-                            }
-                            
-                            FileInfo info = SystemServices.getFileInfoFromURI(this, vfsUri);
-                            session.offerData(offerId, info.path, mSendType );
+                        FileInfo info = SystemServices.getFileInfoFromURI(this, vfsUri);
+                        session.offerData(offerId, info.path, mSendType );
 
-                            Imps.insertMessageInDb(
-                                    getContentResolver(), false, session.getId(), true, null, vfsUri.toString(),
-                                    System.currentTimeMillis(), Imps.MessageType.OUTGOING_ENCRYPTED, // TODO show verified status
-                                    0, offerId, mSendType);
+                        Imps.insertMessageInDb(
+                                getContentResolver(), false, session.getId(), true, null, vfsUri.toString(),
+                                System.currentTimeMillis(), Imps.MessageType.OUTGOING_ENCRYPTED, // TODO show verified status
+                                0, offerId, mSendType);
 
 
-                    } catch (Exception e) {
+                } catch (Exception e) {
 
-                        Toast.makeText(this, R.string.unable_to_securely_share_this_file, Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, R.string.unable_to_securely_share_this_file, Toast.LENGTH_LONG).show();
 
-                        e.printStackTrace();
-                    }
+                    e.printStackTrace();
                 }
+
             }
         }
         catch (RemoteException e)
