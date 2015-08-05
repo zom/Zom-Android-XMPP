@@ -126,6 +126,9 @@ public class GalleryListItem extends FrameLayout {
         // save the media uri while the MediaScanner is creating the thumbnail
         // if the holder was reused, the pair is broken
         Uri mMediaUri = null;
+        ImageView mActionFav = (ImageView)findViewById(R.id.media_thumbnail_fav);
+        ImageView mActionSend = (ImageView)findViewById(R.id.media_thumbnail_send);
+        ImageView mActionShare = (ImageView)findViewById(R.id.media_thumbnail_share);
 
         ViewHolder() {
         }
@@ -137,12 +140,21 @@ public class GalleryListItem extends FrameLayout {
                     onClickMediaIcon( mimeType, mediaUri );
                 }
             });
-            mMediaThumbnail.setOnLongClickListener( new OnLongClickListener() {
 
+            mActionSend.setOnClickListener(new OnClickListener() {
                 @Override
-                public boolean onLongClick(View v) {
-                    onLongClickMediaIcon( mimeType, mediaUri );
-                    return false;
+                public void onClick(View view) {
+
+                    reshareMediaFile(mimeType, mediaUri);
+                }
+            });
+
+            mActionShare.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    final java.io.File exportPath = SecureMediaStore.exportPath(mimeType, mediaUri);
+
+                    exportMediaFile(mimeType, mediaUri, exportPath);
                 }
             });
         }
@@ -185,7 +197,6 @@ public class GalleryListItem extends FrameLayout {
 
             if( mimeType != null ) {
 
-                mHolder.mMediaThumbnail.setVisibility(View.VISIBLE);
                 mHolder.mContainer.setVisibility(View.VISIBLE);
 
                 Uri mediaUri = Uri.parse( body ) ;
@@ -193,7 +204,6 @@ public class GalleryListItem extends FrameLayout {
 
             }
             else {
-                mHolder.mMediaThumbnail.setVisibility(View.GONE);
                 mHolder.mContainer.setVisibility(View.GONE);
 
             }
@@ -334,41 +344,11 @@ public class GalleryListItem extends FrameLayout {
         }
     }
 
-    protected void onLongClickMediaIcon(final String mimeType, final Uri mediaUri) {
-
-        final java.io.File exportPath = SecureMediaStore.exportPath(mimeType, mediaUri);
-
-        new AlertDialog.Builder(context)
-                .setTitle(context.getString(R.string.export_media))
-                .setMessage(context.getString(R.string.export_media_file_to, exportPath.getAbsolutePath()))
-                .setNeutralButton("Reshare", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        reshareMediaFile(mimeType, mediaUri);
-                    }
-                })
-                .setPositiveButton(R.string.export, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        exportMediaFile(mimeType, mediaUri, exportPath);
-                        return;
-                    }
-                })
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        return;
-                    }
-                })
-                .create().show();
-    }
-
     private void reshareMediaFile (String mimeType, Uri mediaUri)
     {
-        String resharePath = "vfs:/" + mediaUri.getPath();
         Intent shareIntent = new Intent(context, ImUrlActivity.class);
         shareIntent.setAction(Intent.ACTION_SEND);
-        shareIntent.setDataAndType(Uri.parse(resharePath),mimeType);
+        shareIntent.setDataAndType(mediaUri,mimeType);
         context.startActivity(shareIntent);
 
     }
@@ -446,6 +426,10 @@ public class GalleryListItem extends FrameLayout {
                     }
                     // set the thumbnail
                     aHolder.mMediaThumbnail.setImageBitmap(result);
+                }
+                else
+                {
+                    aHolder.mContainer.setVisibility(View.GONE);
                 }
             }
         }.execute();

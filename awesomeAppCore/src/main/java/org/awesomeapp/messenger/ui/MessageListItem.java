@@ -126,6 +126,8 @@ public class MessageListItem extends FrameLayout {
        // View mStatusBlock = findViewById(R.id.status_block);
         ImageView mMediaThumbnail = (ImageView) findViewById(R.id.media_thumbnail);
         View mContainer = findViewById(R.id.message_container);
+        View mMediaContainer = findViewById(R.id.media_thumbnail_container);
+
 
         // save the media uri while the MediaScanner is creating the thumbnail
         // if the holder was reused, the pair is broken
@@ -248,14 +250,14 @@ public class MessageListItem extends FrameLayout {
             if( mimeType != null ) {
 
                 mHolder.mTextViewForMessages.setVisibility(View.GONE);
-                mHolder.mMediaThumbnail.setVisibility(View.VISIBLE);
+                mHolder.mMediaContainer.setVisibility(View.VISIBLE);
 
                 Uri mediaUri = Uri.parse( body ) ;
                 lastMessage = "";
                 showMediaThumbnail(mimeType, mediaUri, id, mHolder);
 
             } else {
-                mHolder.mMediaThumbnail.setVisibility(View.GONE);
+                mHolder.mMediaContainer.setVisibility(View.GONE);
                 mHolder.mContainer.setBackgroundResource(R.drawable.message_view_rounded_light);
 
                 if (showContact)
@@ -324,7 +326,7 @@ public class MessageListItem extends FrameLayout {
         }
         holder.setOnClickListenerMediaThumbnail(mimeType, mediaUri);
 
-        holder.mMediaThumbnail.setVisibility(View.VISIBLE);
+        holder.mMediaContainer.setVisibility(View.VISIBLE);
         holder.mTextViewForMessages.setText(lastMessage);
         holder.mTextViewForMessages.setVisibility(View.GONE);
 
@@ -633,10 +635,10 @@ public class MessageListItem extends FrameLayout {
             showMediaThumbnail(mimeType, mediaUri, id, mHolder);
 
             mHolder.mTextViewForMessages.setVisibility(View.GONE);
-            mHolder.mMediaThumbnail.setVisibility(View.VISIBLE);
+            mHolder.mMediaContainer.setVisibility(View.VISIBLE);
 
         } else {
-            mHolder.mMediaThumbnail.setVisibility(View.GONE);
+            mHolder.mMediaContainer.setVisibility(View.GONE);
             lastMessage = body;//formatMessage(body);
 
              SpannableString spannablecontent=new SpannableString(lastMessage);
