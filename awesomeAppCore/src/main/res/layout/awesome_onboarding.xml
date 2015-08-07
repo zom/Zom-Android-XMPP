@@ -47,12 +47,12 @@
                         android:id="@+id/btnShowRegister"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-
-                        android:text="Create an Account with Zom"
+                        android:text="@string/create_an_account"
                         android:layout_margin="0dp"
                         android:layout_gravity="bottom"
                         android:background="?colorPrimary"
                         android:textColor="@android:color/white"
+                        android:textStyle="bold"
                         android:gravity="center_horizontal"
                         android:textAppearance="?android:attr/textAppearanceLarge"
 
@@ -72,7 +72,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textAppearance="?android:attr/textAppearanceSmall"
-                            android:text="Add Existing Account"
+                            android:text="@string/sign_in_message"
                             android:layout_margin="0dp"
                             android:layout_gravity="bottom"
                             android:background="?colorPrimary"
@@ -96,7 +96,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="20dp"
-                        android:text="What do you want to be called?"
+                        android:text="@string/create_id"
                         android:textSize="18dp"
                         android:textColor="@android:color/white"
                         />
@@ -136,10 +136,23 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="10dp"
-                        android:text="@string/registering_new_account_"
+                        android:text=""
                         android:textSize="18dp"
                         android:visibility="gone"
                         android:textColor="@android:color/white"
+                        />
+
+                    <EditText
+                        android:id="@+id/statusAccountInfo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:text=""
+                        android:textSize="18dp"
+                        android:visibility="gone"
+                        android:background="#ffffff"
+                        android:padding="3dp"
+                        android:selectAllOnFocus="true"
                         />
 
                     <Button android:id="@+id/btnRegister"

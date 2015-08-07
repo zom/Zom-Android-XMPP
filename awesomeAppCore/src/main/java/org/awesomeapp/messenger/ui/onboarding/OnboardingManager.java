@@ -142,10 +142,22 @@ public class OnboardingManager {
         return inviteUrl.toString();
     }
 
-    public static String generatePassword ()
+    private final static String PASSWORD_LETTERS = "abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789+@!#";
+    private final static int PASSWORD_LENGTH = 10;
+
+    public static String generatePassword()
     {
+        // Pick from some letters that won't be easily mistaken for each
+        // other. So, for example, omit o O and 0, 1 l and L.
         SecureRandom random = new SecureRandom();
-        return new BigInteger(130, random).toString(32).substring(0, 15);
+
+        StringBuffer pw = new StringBuffer();
+        for (int i=0; i<PASSWORD_LENGTH; i++)
+        {
+            int index = (int)(random.nextDouble()*PASSWORD_LETTERS.length());
+            pw.append(PASSWORD_LETTERS.substring(index, index+1));
+        }
+        return pw.toString();
     }
 
     public static OnboardingAccount registerAccount (Activity context, Handler handler, String username) throws JSONException {

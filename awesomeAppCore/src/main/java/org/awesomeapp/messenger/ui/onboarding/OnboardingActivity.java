@@ -324,11 +324,13 @@ public class OnboardingActivity extends ThemeableActivity {
             try {
                 OnboardingAccount result = OnboardingManager.registerAccount(OnboardingActivity.this, mHandler, username[0]);
 
-                String jabberId = result.username + '@' + result.domain;
+                if (result != null) {
+                    String jabberId = result.username + '@' + result.domain;
 
-                OtrAndroidKeyManagerImpl keyMan = OtrAndroidKeyManagerImpl.getInstance(OnboardingActivity.this);
-                keyMan.generateLocalKeyPair(jabberId);
-                mFingerprint = keyMan.getLocalFingerprint(jabberId);
+                    OtrAndroidKeyManagerImpl keyMan = OtrAndroidKeyManagerImpl.getInstance(OnboardingActivity.this);
+                    keyMan.generateLocalKeyPair(jabberId);
+                    mFingerprint = keyMan.getLocalFingerprint(jabberId);
+                }
 
                 return result;
             }
@@ -346,13 +348,29 @@ public class OnboardingActivity extends ThemeableActivity {
 
             findViewById(R.id.progressImage).setVisibility(View.GONE);
 
+            EditText etAccountInfo = (EditText) findViewById(R.id.statusAccountInfo);
+            etAccountInfo.setVisibility(View.VISIBLE);
+
+            StringBuffer sb = new StringBuffer();
+            sb.append(getString(R.string.account_congrats)).append("\n\n");
+            sb.append(getString(R.string.save_account_info));
+            mSetupStatus.setText(sb.toString());
+
+            sb = new StringBuffer();
+            sb.append(getString(R.string.zom_id)).append(account.username).append("\n");
+            sb.append(getString(R.string.account_password_label)).append(account.password).append("\n");
+            sb.append(getString(R.string.account_server_label)).append(account.domain);
+            etAccountInfo.setText(sb.toString());
+            etAccountInfo.setSelected(true);
+
+            mEditUsername.setVisibility(View.GONE);
             mSetupProgress.setVisibility(View.GONE);
-            mSetupStatus.setText("Success. You are now ready to Zom!");
+
             mSetupButton.setVisibility(View.VISIBLE);
 
             SignInHelper signInHelper = new SignInHelper(OnboardingActivity.this, mHandler);
             signInHelper.activateAccount(account.providerId,account.accountId);
-            signInHelper.signIn(account.password,account.providerId,account.accountId,true);
+            signInHelper.signIn(account.password, account.providerId, account.accountId, true);
         }
       }
 
