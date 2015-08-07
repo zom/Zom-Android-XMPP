@@ -160,7 +160,7 @@ public class OnboardingManager {
         return pw.toString();
     }
 
-    public static OnboardingAccount registerAccount (Activity context, Handler handler, String username) throws JSONException {
+    public static OnboardingAccount registerAccount (Activity context, Handler handler, String username, String domain, int port) throws JSONException {
         OnboardingAccount result = null;
         String password = generatePassword();
 
@@ -192,54 +192,92 @@ public class OnboardingManager {
 
         settings.setDoDnsSrv(doDnsSrvLookup);
 
-        int nameIdx = 0;
+        if (domain == null) {
+            int nameIdx = 0;
 
-        for (int i = 1; i < 10; i++) {
-            for (int n = 0; n < servers.length(); n++) {
+            for (int i = 1; i < 10; i++) {
+                for (int n = 0; n < servers.length(); n++) {
 
-                JSONObject server = servers.getJSONObject(n);
+                    JSONObject server = servers.getJSONObject(n);
 
-                try {
+                    try {
 
-                    String domain = server.getString("domain");
-                    //settings.setServer(DEFAULT_SERVER_GOOGLE); //set the google connect server
-                    settings.setDomain(domain);
-                    settings.setPort(server.getInt("port"));
-                    settings.requery();
+                        domain = server.getString("domain");
+                        //settings.setServer(DEFAULT_SERVER_GOOGLE); //set the google connect server
+                        settings.setDomain(domain);
+                        settings.setPort(server.getInt("port"));
+                        settings.requery();
 
-                    HashMap<String, String> aParams = new HashMap<String, String>();
+                        HashMap<String, String> aParams = new HashMap<String, String>();
 
-                    XmppConnection xmppConn = new XmppConnection(context);
-                    xmppConn.initUser(providerId, accountId);
-                    xmppConn.registerAccount(settings, username, password, aParams);
+                        XmppConnection xmppConn = new XmppConnection(context);
+                        xmppConn.initUser(providerId, accountId);
+                        xmppConn.registerAccount(settings, username, password, aParams);
 
-                    result = new OnboardingAccount();
-                    result.username = username;
-                    result.domain = domain;
-                    result.password = password;
-                    result.providerId = providerId;
-                    result.accountId = accountId;
+                        result = new OnboardingAccount();
+                        result.username = username;
+                        result.domain = domain;
+                        result.password = password;
+                        result.providerId = providerId;
+                        result.accountId = accountId;
 
-                    //now keep this account signed-in
-                    ContentValues values = new ContentValues();
-                    values.put(Imps.AccountColumns.KEEP_SIGNED_IN, 1);
-                    cr.update(accountUri, values, null, null);
+                        //now keep this account signed-in
+                        ContentValues values = new ContentValues();
+                        values.put(Imps.AccountColumns.KEEP_SIGNED_IN, 1);
+                        cr.update(accountUri, values, null, null);
 
-                    settings.close();
+                        settings.close();
 
-                    return result;
-                    // settings closed in registerAccount
-                } catch (Exception e) {
-                    LogCleaner.error(ImApp.LOG_TAG, "error registering new account", e);
+                        return result;
+                        // settings closed in registerAccount
+                    } catch (Exception e) {
+                        LogCleaner.error(ImApp.LOG_TAG, "error registering new account", e);
 
 
+                    }
                 }
+
+                username = username + i; //add a number to the end of the username
+                ImApp.insertOrUpdateAccount(cr, providerId, username, password);
+                settings.requery();
+
             }
+        }
+        else
+        {
+            try
+            {
+                //settings.setServer(DEFAULT_SERVER_GOOGLE); //set the google connect server
+                settings.setDomain(domain);
+                settings.setPort(port);
+                settings.requery();
 
-            username = username + i; //add a number to the end of the username
-            ImApp.insertOrUpdateAccount(cr, providerId, username, password);
-            settings.requery();
+                HashMap<String, String> aParams = new HashMap<String, String>();
 
+                XmppConnection xmppConn = new XmppConnection(context);
+                xmppConn.initUser(providerId, accountId);
+                xmppConn.registerAccount(settings, username, password, aParams);
+
+                result = new OnboardingAccount();
+                result.username = username;
+                result.domain = domain;
+                result.password = password;
+                result.providerId = providerId;
+                result.accountId = accountId;
+
+                //now keep this account signed-in
+                ContentValues values = new ContentValues();
+                values.put(Imps.AccountColumns.KEEP_SIGNED_IN, 1);
+                cr.update(accountUri, values, null, null);
+
+                settings.close();
+
+                return result;
+            } catch (Exception e) {
+                LogCleaner.error(ImApp.LOG_TAG, "error registering new account", e);
+
+
+            }
         }
 
         settings.close();

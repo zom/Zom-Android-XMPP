@@ -8,7 +8,7 @@ import android.util.Log;
 
 import info.guardianproject.cacheword.PRNGFixes;
 import info.guardianproject.otr.app.im.R;
-import org.awesomeapp.messenger.ui.legacy.AccountActivity;
+import org.awesomeapp.messenger.ui.AccountViewFragment;
 import org.awesomeapp.messenger.util.Debug;
 
 import java.security.KeyManagementException;
@@ -59,8 +59,8 @@ public class XMPPCertPinsTest extends AndroidTestCase {
         }
         ArrayList<String> domains = new ArrayList<String>(
                 Arrays.asList(c.getResources().getStringArray(R.array.account_domains)));
-        domains.add(AccountActivity.DEFAULT_SERVER_FACEBOOK);
-        domains.add(AccountActivity.DEFAULT_SERVER_JABBERORG);
+        domains.add(AccountViewFragment.DEFAULT_SERVER_FACEBOOK);
+        domains.add(AccountViewFragment.DEFAULT_SERVER_JABBERORG);
         // currently fails here, needs SRV tricks
         // domains.add(AccountActivity.DEFAULT_SERVER_GOOGLE);
         domainsWithPins = domains.toArray(new String[domains.size()]);

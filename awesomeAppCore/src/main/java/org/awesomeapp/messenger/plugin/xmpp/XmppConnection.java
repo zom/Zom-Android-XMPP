@@ -1826,10 +1826,7 @@ public class XmppConnection extends ImConnection implements CallbackHandler {
          * Create new list of contacts from roster entries.
          *
          * Runs in executor thread
-         *
-         * @param entryIter iterator of roster entries to add to contact list
-         * @param skipList list of contacts which should be omitted; new
-         *            contacts are added to this list automatically
+         **
          * @return contacts from roster which were not present in skiplist.
          */
         /*
@@ -2316,8 +2313,15 @@ public class XmppConnection extends ImConnection implements CallbackHandler {
                 do_loadContactLists();
                 notifyContactListUpdated(list, ContactListListener.LIST_CONTACT_ADDED, contact);
 
+                //i want your presence
                 org.jivesoftware.smack.packet.Presence reqSubscribe = new org.jivesoftware.smack.packet.Presence(
                         org.jivesoftware.smack.packet.Presence.Type.subscribe);
+                reqSubscribe.setTo(contact.getAddress().getBareAddress());
+                sendPacket(reqSubscribe);
+
+                //i approve you having my presence!
+                org.jivesoftware.smack.packet.Presence reqSubscribed = new org.jivesoftware.smack.packet.Presence(
+                        org.jivesoftware.smack.packet.Presence.Type.subscribed);
                 reqSubscribe.setTo(contact.getAddress().getBareAddress());
                 sendPacket(reqSubscribe);
 
@@ -3055,39 +3059,23 @@ public class XmppConnection extends ImConnection implements CallbackHandler {
         if (presence.getType() == Type.subscribe) {
             debug(TAG, "got subscribe request: " + presence.getFrom());
 
-            if (contact == null) {
-                XmppAddress xAddr = new XmppAddress(presence.getFrom());
-                contact = new Contact(xAddr, xAddr.getUser());
-
-                try {
-                    if (!mContactListManager.getDefaultContactList().containsContact(contact.getAddress()))
-                    {
-                        mContactListManager.getDefaultContactList().addExistingContact(contact);
-                    }
-                } catch (ImException e) {
-
-                    debug(TAG,"unable to add new contact to default list: " + e.getLocalizedMessage());
-
-                }
-            }
-
-
-            org.jivesoftware.smack.packet.Presence reqSubscribed = new org.jivesoftware.smack.packet.Presence(
-                    org.jivesoftware.smack.packet.Presence.Type.subscribed);
-            reqSubscribed.setTo(contact.getAddress().getBareAddress());
-            sendPacket(reqSubscribed);
-
-
-            org.jivesoftware.smack.packet.Presence reqSubscribe = new org.jivesoftware.smack.packet.Presence(
-                    org.jivesoftware.smack.packet.Presence.Type.subscribe);
-            reqSubscribe.setTo(contact.getAddress().getBareAddress());
-            sendPacket(reqSubscribe);
-
             try
             {
+                if (contact == null) {
+                    XmppAddress xAddr = new XmppAddress(presence.getFrom());
+                    contact = new Contact(xAddr, xAddr.getUser());
+                }
+
+                mContactListManager.doAddContactToListAsync(contact, getContactListManager().getDefaultContactList());
+
+                org.jivesoftware.smack.packet.Presence reqSubscribed = new org.jivesoftware.smack.packet.Presence(
+                        org.jivesoftware.smack.packet.Presence.Type.subscribed);
+                reqSubscribed.setTo(contact.getAddress().getBareAddress());
+                sendPacket(reqSubscribed);
+
                 mContactListManager.getSubscriptionRequestListener().onSubScriptionRequest(contact, mProviderId, mAccountId);
             }
-            catch (RemoteException e)
+            catch (Exception e)
             {
                 Log.e(TAG,"remote exception on subscription handling",e);
             }
@@ -3095,12 +3083,20 @@ public class XmppConnection extends ImConnection implements CallbackHandler {
 
         }
         else if (presence.getType() == Type.subscribed) {
+
             debug(TAG,"got subscribed confirmation request: " + presence.getFrom());
             try
             {
+                if (contact == null) {
+                    XmppAddress xAddr = new XmppAddress(presence.getFrom());
+                    contact = new Contact(xAddr, xAddr.getUser());
+                }
+
+                mContactListManager.doAddContactToListAsync(contact,getContactListManager().getDefaultContactList());
+
                 mContactListManager.getSubscriptionRequestListener().onSubscriptionApproved(contact, mProviderId, mAccountId);
             }
-            catch (RemoteException e)
+            catch (Exception e)
             {
                 Log.e(TAG,"remote exception on subscription handling",e);
             }

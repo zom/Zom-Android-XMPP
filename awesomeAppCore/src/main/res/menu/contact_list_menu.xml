@@ -21,17 +21,12 @@
    xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
-    <item android:id="@+id/menu_invite_user"
-        android:title="@string/menu_add_contact" 
-        android:icon="@drawable/ic_menu_add_contact"
-        		        app:showAsAction="always"        
-         />
      <item
     android:id="@+id/menu_search"
     app:actionViewClass="android.support.v7.widget.SearchView"
     android:icon="@drawable/ic_menu_search"
-    app:showAsAction="ifRoom|collapseActionView"
-    android:title="@string/menu_search_contacts"/>
+    app:showAsAction="always|collapseActionView"
+    android:title="@string/search_by_id"/>
     <!-- 
 
 	<item android:id="@+id/action_search"

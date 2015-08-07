@@ -3,8 +3,8 @@
     package="info.guardianproject.otr.app.im"
     android:installLocation="auto"
     android:sharedUserLabel="@string/perm_label"
-    android:versionCode="1500008"
-    android:versionName="15.0.0-alpha-8" >
+    android:versionCode="1500009"
+    android:versionName="15.0.0-alpha-9" >
 
     <uses-sdk
         android:minSdkVersion="9"
@@ -299,7 +299,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="org.awesomeapp.messenger.ui.legacy.AccountActivity"
+            android:name="org.awesomeapp.messenger.ui.AccountViewFragment"
             android:exported="false"
             android:windowSoftInputMode="stateUnchanged" >
             <intent-filter>
@@ -366,7 +366,7 @@
         <activity
             android:name="org.awesomeapp.messenger.ui.legacy.ContactsPickerActivity"
             android:exported="false"
-            android:label="@string/contacts_picker_title" >
+            android:label="@string/choose_friend" >
             <intent-filter>
                 <action android:name="android.intent.action.PICK" />
 
@@ -509,6 +509,12 @@
             android:name="org.awesomeapp.messenger.ui.ContactListActivity"
             android:exported="false"
             android:title="@string/contacts"
+            />
+
+        <activity
+            android:name="org.awesomeapp.messenger.ui.GalleryActivity"
+            android:exported="false"
+            android:title="@string/photo_gallery"
             />
     </application>
 

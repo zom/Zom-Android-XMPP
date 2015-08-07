@@ -21,7 +21,7 @@ import org.awesomeapp.messenger.service.IChatSession;
 import org.awesomeapp.messenger.service.IChatSessionManager;
 import org.awesomeapp.messenger.service.IImConnection;
 import info.guardianproject.otr.app.im.R;
-import org.awesomeapp.messenger.ui.legacy.AccountActivity;
+import org.awesomeapp.messenger.ui.AccountViewFragment;
 import org.awesomeapp.messenger.ui.legacy.ContactsPickerActivity;
 import org.awesomeapp.messenger.ui.legacy.LockScreenActivity;
 import org.awesomeapp.messenger.ui.legacy.NewChatActivity;
@@ -47,7 +47,6 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
 
-import net.java.otr4j.session.SessionStatus;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
@@ -296,7 +295,7 @@ public class ImUrlActivity extends Activity {
 
     private void editAccount(long accountId) {
         Uri accountUri = ContentUris.withAppendedId(Imps.Account.CONTENT_URI, accountId);
-        Intent intent = new Intent(this, AccountActivity.class);
+        Intent intent = new Intent(this, AccountViewFragment.class);
         intent.setAction(Intent.ACTION_EDIT);
         intent.setData(accountUri);
         intent.putExtra(ImApp.EXTRA_INTENT_SEND_TO_USER, mToAddress);
@@ -588,7 +587,7 @@ public class ImUrlActivity extends Activity {
                     uriAccountData = Uri.parse("ima://" + regUser + ':' + regPass + '@' + regDomain);
                 }
 
-                Intent intent = new Intent(ImUrlActivity.this, AccountActivity.class);
+                Intent intent = new Intent(ImUrlActivity.this, AccountViewFragment.class);
                 intent.setAction(Intent.ACTION_INSERT);
                 intent.setData(uriAccountData);
                 startActivityForResult(intent,REQUEST_CREATE_ACCOUNT);

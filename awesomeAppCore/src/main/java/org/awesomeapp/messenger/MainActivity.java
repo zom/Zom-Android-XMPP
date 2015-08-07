@@ -131,8 +131,8 @@ public class MainActivity extends AppCompatActivity {
         Adapter adapter = new Adapter(getSupportFragmentManager());
         adapter.addFragment(new ConversationListFragment(), getString(R.string.title_chats), R.drawable.ic_message_white_36dp);
         adapter.addFragment(new ContactsListFragment(), getString(R.string.contacts), R.drawable.ic_face_white_36dp);
-        //adapter.addFragment(new GalleryListFragment(), getString(R.string.title_gallery), R.drawable.ic_photo_library_white_36dp);
-        adapter.addFragment(new MoreFragment(), getString(R.string.title_more), R.drawable.ic_more_horiz_white_36dp);
+        adapter.addFragment(new GalleryListFragment(), getString(R.string.title_gallery), R.drawable.ic_photo_library_white_36dp);
+        //adapter.addFragment(new MoreFragment(), getString(R.string.title_more), R.drawable.ic_more_horiz_white_36dp);
         adapter.addFragment(new AccountFragment(), getString(R.string.title_me), R.drawable.ic_face_white_24dp);
 
         mViewPager.setAdapter(adapter);
@@ -145,15 +145,16 @@ public class MainActivity extends AppCompatActivity {
 
         tab = tabLayout.newTab();
        // tab.setIcon(R.drawable.ic_photo_library_white_24dp);
+        tab.setIcon(R.drawable.ic_people_white_36dp);
+        tabLayout.addTab(tab);
+
+        tab = tabLayout.newTab();
+//        tab.setIcon(R.drawable.ic_toys_white_24dp);
+        tab.setIcon(R.drawable.ic_photo_library_white_24dp);
+        tabLayout.addTab(tab);
+
+        tab = tabLayout.newTab();
         tab.setIcon(R.drawable.ic_face_white_24dp);
-        tabLayout.addTab(tab);
-
-        tab = tabLayout.newTab();
-        tab.setIcon(R.drawable.ic_toys_white_24dp);
-        tabLayout.addTab(tab);
-
-        tab = tabLayout.newTab();
-        tab.setIcon(R.drawable.ic_settings_white_24dp);
         tabLayout.addTab(tab);
 
         tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -171,10 +172,10 @@ public class MainActivity extends AppCompatActivity {
                         sb.append(getString(R.string.chats));
                         break;
                     case 1:
-                        sb.append(getString(R.string.contacts));
+                        sb.append(getString(R.string.friends));
                         break;
                     case 2:
-                        sb.append(getString(R.string.discover));
+                        sb.append(getString(R.string.photo_gallery));
                         break;
                     case 3:
                         sb.append(getString(R.string.me_title));
@@ -183,12 +184,11 @@ public class MainActivity extends AppCompatActivity {
 
                 mToolbar.setTitle(sb.toString());
 
-                if (tab.getPosition() > 1) {
-                    mFab.setVisibility(View.GONE);
+                if (tab.getPosition() == 2) {
+                    mFab.setImageResource(R.drawable.ic_photo_camera_white_36dp);
                 } else {
-                    mFab.setVisibility(View.VISIBLE);
+                    mFab.setImageResource(R.drawable.ic_add_white_24dp);
                 }
-
 
             }
 
@@ -211,12 +211,17 @@ public class MainActivity extends AppCompatActivity {
                 int tabIdx = mViewPager.getCurrentItem();
 
                 if (tabIdx == 0) {
-                    Intent intent = new Intent(MainActivity.this, ContactListActivity.class);
+                    Intent intent = new Intent(MainActivity.this, ContactsPickerActivity.class);
                     startActivityForResult(intent, REQUEST_CHOOSE_CONTACT);
                 } else if (tabIdx == 1) {
-                    startPhotoTaker();
+                    Intent i = new Intent(MainActivity.this, AddContactActivity.class);
+                    startActivityForResult(i,MainActivity.REQUEST_ADD_CONTACT);
                 } else if (tabIdx == 2) {
-
+                    startPhotoTaker();
+                }
+                else if (tabIdx == 3) {
+                    Intent i = new Intent(MainActivity.this, OnboardingActivity.class);
+                    startActivity(i);
                 }
 
 

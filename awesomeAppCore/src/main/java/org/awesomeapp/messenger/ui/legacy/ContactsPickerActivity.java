@@ -129,7 +129,7 @@ public class ContactsPickerActivity extends ActionBarActivity  {
         
         if (getIntent() != null && getIntent().hasExtra("invitations"))
         {
-            mShowInvitations = getIntent().getBooleanExtra("invitations", false);            
+            mShowInvitations = getIntent().getBooleanExtra("invitations", false);
         }
         
         
@@ -211,7 +211,7 @@ public class ContactsPickerActivity extends ActionBarActivity  {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
 
-        case R.id.menu_invite_user:
+        case R.id.menu_search:
             Intent i = new Intent(ContactsPickerActivity.this, AddContactActivity.class);
 
             this.startActivityForResult(i, REQUEST_CODE_ADD_CONTACT);
@@ -314,8 +314,7 @@ public class ContactsPickerActivity extends ActionBarActivity  {
         @Override
         public void bindView(View view, Context context, Cursor cursor) {
             ContactListItem v = (ContactListItem) view;
-            v.bind(cursor, mSearchString, true);
-
+            v.bind(cursor, mSearchString, false);
         }
     }
 

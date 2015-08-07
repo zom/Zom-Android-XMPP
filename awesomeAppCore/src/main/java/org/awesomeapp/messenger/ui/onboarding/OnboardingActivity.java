@@ -7,6 +7,7 @@ import org.awesomeapp.messenger.tasks.AddContactAsyncTask;
 import org.awesomeapp.messenger.ui.legacy.SignInHelper;
 import org.awesomeapp.messenger.ui.legacy.SimpleAlertHandler;
 import org.awesomeapp.messenger.ui.legacy.ThemeableActivity;
+import org.awesomeapp.messenger.ui.widgets.InstantAutoCompleteTextView;
 import org.awesomeapp.messenger.util.Languages;
 
 import java.io.IOException;
@@ -48,6 +49,8 @@ public class OnboardingActivity extends ThemeableActivity {
     private TextView mSetupStatus;
     private Button mSetupButton;
 
+    private InstantAutoCompleteTextView mSpinnerDomains;
+
     private String mRequestedUserName;
     private String mFullUserName;
     private String mFingerprint;
@@ -68,7 +71,8 @@ public class OnboardingActivity extends ThemeableActivity {
 
         mViewFlipper = (ViewFlipper) findViewById(R.id.viewFlipper1);
         mEditUsername = (EditText)findViewById(R.id.edtNewName);
-        
+        mSpinnerDomains = (InstantAutoCompleteTextView)findViewById(R.id.spinnerDomains);
+
         setAnimLeft();
         
         Button btnShowCreate = (Button) findViewById(R.id.btnShowRegister);
@@ -89,6 +93,17 @@ public class OnboardingActivity extends ThemeableActivity {
             public void onClick(View v) {
                 setAnimLeft();
                 showLoginScreen();
+            }
+
+        });
+
+        Button btnShowAdvanced = (Button) findViewById(R.id.btnAdvanced);
+        btnShowAdvanced.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                setAnimLeft();
+                showAdvancedScreen();
             }
 
         });
@@ -290,6 +305,16 @@ public class OnboardingActivity extends ThemeableActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
     }
+
+    private void showAdvancedScreen ()
+    {
+        mViewFlipper.setDisplayedChild(4);
+
+        getSupportActionBar().show();
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+    }
+
     
     private void startAccountSetup()
     {
@@ -322,7 +347,7 @@ public class OnboardingActivity extends ThemeableActivity {
         @Override
         protected OnboardingAccount doInBackground(String... username) {
             try {
-                OnboardingAccount result = OnboardingManager.registerAccount(OnboardingActivity.this, mHandler, username[0]);
+                OnboardingAccount result = OnboardingManager.registerAccount(OnboardingActivity.this, mHandler, username[0], username[1], 5222);
 
                 if (result != null) {
                     String jabberId = result.username + '@' + result.domain;
@@ -426,7 +451,23 @@ public class OnboardingActivity extends ThemeableActivity {
         String username = ((TextView)findViewById(R.id.edtName)).getText().toString();
         String password = ((TextView)findViewById(R.id.edtPass)).getText().toString();
 
-        new ExistingAccountTask().execute(username, password);
+        if (mSpinnerDomains.getVisibility() == View.VISIBLE) {
+
+            String passwordConf = ((TextView)findViewById(R.id.edtPassConfirm)).getText().toString();
+            String domain = mSpinnerDomains.getText().toString();
+
+            if (password.equals(passwordConf))
+            {
+
+            }
+            else
+            {
+                //show password conf error
+            }
+        }
+        else {
+            new ExistingAccountTask().execute(username, password);
+        }
     }
 
     private class ExistingAccountTask extends AsyncTask<String, Void, OnboardingAccount> {

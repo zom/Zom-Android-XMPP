@@ -35,7 +35,7 @@
     <string name="error_general">Whoops! Something went wrong. Please try again.</string>
 
     <string name="chats">Chats</string>
-    <string name="choose_friend">Choose Friend</string>
+    <string name="choose_friend">Choose a Friend</string>
     <string name="send_message">Send a message</string>
     <string name="clear_history">Clear History</string>
     <string name="push_to_talk">Push to talk</string>
@@ -123,5 +123,9 @@
 
     <string name="features">Features</string>
     <string name="help">Help</string>
+    <string name="save_account_info">Write down or save this info in a safe place, in case you need to setup the app again:</string>
+    <string name="zom_id">"Zom ID: "</string>
+    <string name="account_password_label">"Password: "</string>
+    <string name="account_server_label">"Server: "</string>
 
 </resources>

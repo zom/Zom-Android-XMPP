@@ -128,6 +128,10 @@ public class MessageListItem extends FrameLayout {
         View mContainer = findViewById(R.id.message_container);
         View mMediaContainer = findViewById(R.id.media_thumbnail_container);
 
+        ImageView mActionFav = (ImageView)findViewById(R.id.media_thumbnail_fav);
+        ImageView mActionSend = (ImageView)findViewById(R.id.media_thumbnail_send);
+        ImageView mActionShare = (ImageView)findViewById(R.id.media_thumbnail_share);
+
 
         // save the media uri while the MediaScanner is creating the thumbnail
         // if the holder was reused, the pair is broken
@@ -139,20 +143,38 @@ public class MessageListItem extends FrameLayout {
         }
 
         public void setOnClickListenerMediaThumbnail( final String mimeType, final Uri mediaUri ) {
+
             mMediaThumbnail.setOnClickListener( new OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     onClickMediaIcon( mimeType, mediaUri );
                 }
             });
-            mMediaThumbnail.setOnLongClickListener( new OnLongClickListener() {
 
+            mMediaThumbnail.setOnClickListener( new OnClickListener() {
                 @Override
-                public boolean onLongClick(View v) {
-                    onLongClickMediaIcon( mimeType, mediaUri );
-                    return false;
+                public void onClick(View v) {
+                    onClickMediaIcon( mimeType, mediaUri );
                 }
             });
+
+            mActionSend.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    reshareMediaFile(mimeType, mediaUri);
+                }
+            });
+
+            mActionShare.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    final java.io.File exportPath = SecureMediaStore.exportPath(mimeType, mediaUri);
+
+                    exportMediaFile(mimeType, mediaUri, exportPath);
+                }
+            });
+
         }
 
         public void resetOnClickListenerMediaThumbnail() {

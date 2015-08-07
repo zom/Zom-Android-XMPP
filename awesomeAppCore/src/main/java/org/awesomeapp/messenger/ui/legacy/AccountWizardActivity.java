@@ -46,6 +46,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 
+import org.awesomeapp.messenger.ui.AccountViewFragment;
 import org.awesomeapp.messenger.util.OrbotHelper;
 import info.guardianproject.otr.app.im.R;
 import org.awesomeapp.messenger.plugin.xmpp.auth.GTalkOAuth2;
@@ -350,7 +351,7 @@ public class AccountWizardActivity extends ThemeableActivity {
         String regDomain = "jabber.calyxinstitute.org";
         Uri uriAccountData = Uri.parse("ima://" + regUser + ':' + regPass + '@' + regDomain);
 
-        Intent intent = new Intent(this, AccountActivity.class);
+        Intent intent = new Intent(this, AccountViewFragment.class);
         intent.setAction(Intent.ACTION_INSERT);
         intent.setData(uriAccountData);
         intent.putExtra("useTor", true);

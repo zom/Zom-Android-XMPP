@@ -77,9 +77,6 @@
                 android:orientation="horizontal"
                 android:layout_gravity="bottom"
                 android:gravity="center_horizontal"
-                android:background="#55555555"
-                android:visibility="gone"
-
                 >
                 <ImageView
                     android:id="@+id/media_thumbnail_fav"
