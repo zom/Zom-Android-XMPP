@@ -49,6 +49,7 @@ public class OnboardingActivity extends ThemeableActivity {
     private Button mSetupButton;
 
     private String mRequestedUserName;
+    private String mFullUserName;
     private String mFingerprint;
 
     private SimpleAlertHandler mHandler;
@@ -341,7 +342,7 @@ public class OnboardingActivity extends ThemeableActivity {
         @Override
         protected void onPostExecute(OnboardingAccount account) {
 
-            mRequestedUserName = account.username + '@' + account.domain;
+            mFullUserName = account.username + '@' + account.domain;
 
             findViewById(R.id.progressImage).setVisibility(View.GONE);
 
@@ -363,22 +364,22 @@ public class OnboardingActivity extends ThemeableActivity {
     private void showInviteScreen ()
     {
         mViewFlipper.setDisplayedChild(2);
-        getSupportActionBar().setTitle("Invite");
+        getSupportActionBar().setTitle(R.string.invite_action);
 
         TextView tv = (TextView)findViewById(R.id.statusInviteFriends);
-        tv.setText("Invite your friends to connect on Zom....");
+        tv.setText(R.string.invite_friends);
     }
 
     private void doInviteSMS()
     {
-        String inviteString = OnboardingManager.generateInviteMessage(this, mRequestedUserName, mFingerprint);
+        String inviteString = OnboardingManager.generateInviteMessage(this, mRequestedUserName,mFullUserName, mFingerprint);
         OnboardingManager.inviteSMSContact(this, null, inviteString);
     }
-    
+
     private void doInviteShare()
     {
 
-        String inviteString = OnboardingManager.generateInviteMessage(this, mRequestedUserName, mFingerprint);
+        String inviteString = OnboardingManager.generateInviteMessage(this, mRequestedUserName,mFullUserName, mFingerprint);
         OnboardingManager.inviteShare(this, inviteString);
     }
  
@@ -386,7 +387,7 @@ public class OnboardingActivity extends ThemeableActivity {
     {
         String inviteString;
         try {
-            inviteString = OnboardingManager.generateInviteLink(this, mRequestedUserName, mFingerprint);
+            inviteString = OnboardingManager.generateInviteLink(this, mFullUserName, mFingerprint);
             OnboardingManager.inviteScan(this, inviteString);
         } catch (IOException e) {
             // TODO Auto-generated catch block
@@ -432,7 +433,7 @@ public class OnboardingActivity extends ThemeableActivity {
         @Override
         protected void onPostExecute(OnboardingAccount account) {
 
-            mRequestedUserName = account.username + '@' + account.domain;
+            mFullUserName = account.username + '@' + account.domain;
 
             SignInHelper signInHelper = new SignInHelper(OnboardingActivity.this, mHandler);
             signInHelper.activateAccount(account.providerId,account.accountId);

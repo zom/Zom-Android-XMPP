@@ -1,5 +1,6 @@
 package org.awesomeapp.messenger.ui.onboarding;
 
+import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.ui.qr.QrScanActivity;
 import org.json.JSONArray;
@@ -86,13 +87,13 @@ public class OnboardingManager {
 
     }
     
-    public static String generateInviteMessage (Context context, String username, String fingerprint)
+    public static String generateInviteMessage (Context context, String nickname, String username, String fingerprint)
     {
         try
         {
             StringBuffer resp = new StringBuffer();
-            
-            resp.append(username).append(" is inviting you to Zom: ");
+
+            resp.append(nickname).append(" is inviting you to Zom: ");
             
             resp.append(generateInviteLink(context,username,fingerprint));
             
