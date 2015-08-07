@@ -51,22 +51,69 @@
             	   android:color="?messageTextPrimary"
 
                      />
-          
-          <ImageView
-            android:id="@+id/media_thumbnail"
+
+
+
+        <FrameLayout
+            android:id="@+id/media_thumbnail_container"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"                      
-           
-             android:scaleType="centerCrop"     
-              android:visibility="gone"  
-                       android:focusableInTouchMode="true"
-                  
-             />
-        
-	 	        
-      
-       
-                  <TextView
+            android:layout_height="wrap_content"
+            android:padding="0dp"
+            android:descendantFocusability="blocksDescendants"
+            android:visibility="gone"
+            >
+            <ImageView
+                android:id="@+id/media_thumbnail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scaleType="centerCrop"
+                android:focusableInTouchMode="true"
+                />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="0dp"
+                android:orientation="horizontal"
+                android:layout_gravity="bottom"
+                android:gravity="center_horizontal"
+                android:background="#55555555"
+                android:visibility="gone"
+
+                >
+                <ImageView
+                    android:id="@+id/media_thumbnail_fav"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:focusableInTouchMode="true"
+                    android:gravity="left"
+                    android:src="@drawable/ic_favorite_border_white_24dp"
+                    android:layout_margin="10dp"
+                    />
+                <ImageView
+                    android:id="@+id/media_thumbnail_send"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:focusableInTouchMode="true"
+                    android:gravity="center_horizontal"
+                    android:src="@drawable/ic_send_white_24dp"
+                    android:layout_margin="10dp"
+                    />
+                <ImageView
+                    android:id="@+id/media_thumbnail_share"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:focusableInTouchMode="true"
+                    android:gravity="right"
+                    android:src="@drawable/ic_share_white_24dp"
+                    android:layout_margin="10dp"
+                    />
+            </LinearLayout>
+        </FrameLayout>
+
+
+
+
+        <TextView
                 android:id="@+id/messagets"
                 android:layout_width="160dp"
                 android:layout_height="wrap_content"
