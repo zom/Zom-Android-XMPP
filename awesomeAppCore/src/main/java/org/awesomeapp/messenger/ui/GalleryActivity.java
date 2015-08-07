@@ -63,8 +63,6 @@ public class GalleryActivity extends AppCompatActivity {
         Intent intent = getIntent();
         mApp = (ImApp)getApplication();
 
-        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 

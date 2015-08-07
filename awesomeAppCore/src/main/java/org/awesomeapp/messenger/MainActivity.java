@@ -443,7 +443,9 @@ public class MainActivity extends AppCompatActivity {
                 IChatSessionManager manager = conn.getChatSessionManager();
                 IChatSession session = manager.getChatSession(address);
 
-                if (session == null && manager != null) {
+                //even if there is an existing session, it might be ended, so let's start a new one!
+
+                if (manager != null) {
 
                     // Create session.  Stash requested contact ID for when we get called back.
                     if (userType == Imps.ContactsColumns.TYPE_GROUP)
@@ -457,9 +459,6 @@ public class MainActivity extends AppCompatActivity {
                         if (message != null)
                             session.sendMessage(message);
                     }
-
-                } else {
-                    mRequestedChatId = session.getId();
 
                 }
 

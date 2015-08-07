@@ -37,6 +37,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import org.awesomeapp.messenger.MainActivity;
+import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
 import org.awesomeapp.messenger.ui.legacy.AddContactActivity;
 import org.awesomeapp.messenger.ui.onboarding.OnboardingManager;
 import org.awesomeapp.messenger.provider.Imps;
@@ -117,7 +118,8 @@ public class ContactsListFragment extends Fragment {
             public void onClick(View v) {
 
                 ImApp app = ((ImApp)getActivity().getApplication());
-                String inviteString = OnboardingManager.generateInviteMessage(getActivity(), app.getDefaultUsername(), app.getDefaultOtrKey());
+                String nickname = new XmppAddress(app.getDefaultUsername()).getUser();
+                String inviteString = OnboardingManager.generateInviteMessage(getActivity(), nickname, app.getDefaultUsername(), app.getDefaultOtrKey());
                 OnboardingManager.inviteSMSContact(getActivity(), null, inviteString);
             }
 
@@ -132,7 +134,9 @@ public class ContactsListFragment extends Fragment {
 
                 ImApp app = ((ImApp)getActivity().getApplication());
 
-                String inviteString = OnboardingManager.generateInviteMessage(getActivity(),  app.getDefaultUsername(), app.getDefaultOtrKey());
+                String nickname = new XmppAddress(app.getDefaultUsername()).getUser();
+
+                String inviteString = OnboardingManager.generateInviteMessage(getActivity(),  nickname, app.getDefaultUsername(), app.getDefaultOtrKey());
                 OnboardingManager.inviteShare(getActivity(), inviteString);
 
             }
@@ -223,7 +227,10 @@ public class ContactsListFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
 
-                    ((ContactListActivity)mContext).startChat(chatProviderId, chatUsername);
+                    if (mContext instanceof ContactListActivity)
+                        ((ContactListActivity)mContext).startChat(chatProviderId, chatUsername);
+                    else if (mContext instanceof MainActivity)
+                        ((MainActivity)mContext).startChat(chatProviderId, chatUsername);
 
                 }
             });
