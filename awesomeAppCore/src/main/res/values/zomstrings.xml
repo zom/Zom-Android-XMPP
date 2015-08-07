@@ -1,26 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Zom</string>
+    <string name="app_name_zom">Zom</string>
     <string name="create_an_account">Create an Account</string>
     <string name="create_id">Create a Zom ID</string>
     <string name="advanced">Advanced</string>
     <string name="account_congrats">Congratulations! Your account has been created!</string>
     <string name="invite_friends">Invite friends</string>
-    <string name="sms">SMS</string>
-    <string name="share">Share</string>
-    <string name="scan_qr">Scan</string>
+    <string name="invite_sms">SMS</string>
+    <string name="invite_share">Share</string>
+    <string name="invite_scan_qr">Scan</string>
+    <string name="invite_add">Add</string>
+
     <string name="login">Log In</string>
     <string name="sign_in_message">Sign into an existing account</string>
-    <string name="next">Next</string>
-    <string name="skip">Skip</string>
-    <string name="cancel">Cancel</string>
-    <string name="accept">Accept</string>
-    <string name="reject">Reject</string>
-    <string name="sign_in">Sign in</string>
-    <string name="invite">Invite</string>
-    <string name="save">Save</string>
-    <string name="settings">Settings</string>
+    <string name="next_action">Next</string>
+    <string name="skip_action">Skip</string>
+    <string name="cancel_action">Cancel</string>
+    <string name="accept_action">Accept</string>
+    <string name="reject_action">Reject</string>
+    <string name="sign_in_action">Sign in</string>
+    <string name="invite_action">Invite</string>
+    <string name="save_action">Save</string>
+    <string name="settings_action">Settings</string>
 
     <string name="friends">Friends</string>
 
@@ -29,7 +31,7 @@
     <string name="nearby">Nearby</string>
     <string name="invite_accepted">Your invite has been accepted</string>
     <string name="invite_rejected">Your invite has been rejected</string>
-    <string name="invite_redundant">You're already friends</string>
+    <string name="invite_redundant">You\'re already friends</string>
     <string name="error_general">Whoops! Something went wrong. Please try again.</string>
 
     <string name="chats">Chats</string>
@@ -41,7 +43,7 @@
     <string name="recording_delete">Recording... Release to delete</string>
 
 
-    <string name="contact_offline">Contact is offline</string>
+    <string name="contact_offline_message">Contact is offline</string>
     <string name="message_failed">Whoops! Message failed to send. Please try again.</string>
     <string name="new_message">You have a new message</string>
     <string name="unread_message">Unread messages</string>
@@ -65,12 +67,12 @@
 
     <string name="photo_gallery">Photo Gallery</string>
     <string name="download">Download</string>
-    <string name="copy">Copy</string>
-    <string name="delete">Delete</string>
+    <string name="copy_action">Copy</string>
+    <string name="delete_action">Delete</string>
     <string name="save_in_gallery">Save in phone gallery</string>
     <string name="sticker_gallery">Sticker Gallery</string>
 
-    <string name="me">Me</string>
+    <string name="me_title">Me</string>
     <string name="profile">Profile</string>
     <string name="accounts">My Accounts</string>
     <string name="select_avatar">Select of Create an Avatar</string>
@@ -83,7 +85,7 @@
     <string name="change_server">Change Server</string>
     <string name="delete_account">Delete Account</string>
 
-    <string name="add_account">Add Account</string>
+    <string name="add_account_action">Add Account</string>
 
     <string name="privacy">Privacy</string>
     <string name="security_center">Security Center</string>

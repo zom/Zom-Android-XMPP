@@ -24,7 +24,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="Invite new friends to Zom"
+        android:text="@string/invite_friends"
         android:padding="3dp"
         android:background="?colorPrimaryDark"
         android:textColor="@android:color/white"
@@ -32,19 +32,22 @@
   <LinearLayout
       android:id="@+id/inviteOptions"
       android:layout_width="match_parent"
-      android:layout_height="64dp"
+      android:layout_height="wrap_content"
       android:layout_margin="0dp"
-      android:gravity="center_horizontal|top"
+      android:layout_gravity="center_horizontal"
+      android:gravity="center_horizontal"
       android:orientation="horizontal"
       android:background="?colorPrimaryDark"
+
       >
     <Button
         android:id="@+id/btnInviteSMS"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="1dp"
         android:textSize="10dp"
-        android:text="SMS"
+        android:layout_margin="1dp"
+
+        android:text="@string/invite_sms"
         android:drawableLeft="@android:drawable/ic_menu_send"
         android:background="@android:color/transparent"
         android:textColor="@android:color/white"
@@ -52,9 +55,10 @@
       android:id="@+id/btnInviteShare"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_margin="1dp"
       android:textSize="10dp"
-      android:text="Link"
+      android:layout_margin="1dp"
+
+      android:text="@string/invite_share"
       android:drawableLeft="@android:drawable/ic_menu_share"
       android:background="@android:color/transparent"
       android:textColor="@android:color/white"
@@ -65,8 +69,9 @@
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_margin="1dp"
+
           android:textSize="10dp"
-          android:text="Scan"
+          android:text="@string/invite_scan_qr"
           android:drawableLeft="@android:drawable/ic_menu_camera"
           android:background="@android:color/transparent"
           android:textColor="@android:color/white"
@@ -78,7 +83,7 @@
           android:layout_height="wrap_content"
           android:layout_margin="1dp"
           android:textSize="10dp"
-          android:text="Add"
+          android:text="@string/invite_add"
           android:drawableLeft="@android:drawable/ic_menu_add"
           android:background="@android:color/transparent"
           android:textColor="@android:color/white"
@@ -90,14 +95,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
     />
-    <TextView
-        android:id="@+id/empty_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:visibility="gone"
-        android:text="@string/no_friends"
-        android:layout_margin="20dp"
         />
     <ImageView
         android:id="@+id/empty_view_image"

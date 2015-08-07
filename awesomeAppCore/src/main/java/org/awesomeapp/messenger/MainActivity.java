@@ -130,8 +130,8 @@ public class MainActivity extends AppCompatActivity {
 
         Adapter adapter = new Adapter(getSupportFragmentManager());
         adapter.addFragment(new ConversationListFragment(), getString(R.string.title_chats), R.drawable.ic_message_white_36dp);
-        //adapter.addFragment(new ContactsListFragment(), getString(R.string.contacts), R.drawable.ic_face_white_36dp);
-        adapter.addFragment(new GalleryListFragment(), getString(R.string.title_gallery), R.drawable.ic_photo_library_white_36dp);
+        adapter.addFragment(new ContactsListFragment(), getString(R.string.contacts), R.drawable.ic_face_white_36dp);
+        //adapter.addFragment(new GalleryListFragment(), getString(R.string.title_gallery), R.drawable.ic_photo_library_white_36dp);
         adapter.addFragment(new MoreFragment(), getString(R.string.title_more), R.drawable.ic_more_horiz_white_36dp);
         adapter.addFragment(new AccountFragment(), getString(R.string.title_me), R.drawable.ic_face_white_24dp);
 
@@ -141,12 +141,11 @@ public class MainActivity extends AppCompatActivity {
 
         TabLayout.Tab tab = tabLayout.newTab();
         tab.setIcon(R.drawable.ic_discuss);
-     //   tab.setText(R.string.title_chats);
         tabLayout.addTab(tab);
 
         tab = tabLayout.newTab();
-        tab.setIcon(R.drawable.ic_photo_library_white_24dp);
-      //  tab.setText(R.string.title_gallery);
+       // tab.setIcon(R.drawable.ic_photo_library_white_24dp);
+        tab.setIcon(R.drawable.ic_face_white_24dp);
         tabLayout.addTab(tab);
 
         tab = tabLayout.newTab();
@@ -154,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.addTab(tab);
 
         tab = tabLayout.newTab();
-        tab.setIcon(R.drawable.ic_face_white_24dp);
+        tab.setIcon(R.drawable.ic_settings_white_24dp);
         tabLayout.addTab(tab);
 
         tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -169,16 +168,16 @@ public class MainActivity extends AppCompatActivity {
 
                 switch (tab.getPosition()) {
                     case 0:
-                        sb.append(getString(R.string.title_chats));
+                        sb.append(getString(R.string.chats));
                         break;
                     case 1:
-                        sb.append(getString(R.string.title_gallery));
+                        sb.append(getString(R.string.contacts));
                         break;
                     case 2:
-                        sb.append(getString(R.string.title_more));
+                        sb.append(getString(R.string.discover));
                         break;
                     case 3:
-                        sb.append(getString(R.string.title_me));
+                        sb.append(getString(R.string.me_title));
                         break;
                 }
 
