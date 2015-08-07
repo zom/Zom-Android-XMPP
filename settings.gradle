@@ -1,4 +1,4 @@
-include ':memorizingActivity', ':otr4jandroid'
+include ':memorizingActivity', ':otr4jandroid', ':waveform-android'
 include ':tibetanTextLibrary'
 include ':awesomeAppCore'
 include ':zxing-core'
