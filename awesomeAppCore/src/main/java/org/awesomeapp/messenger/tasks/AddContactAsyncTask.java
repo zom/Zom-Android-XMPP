@@ -83,7 +83,7 @@ public class AddContactAsyncTask extends AsyncTask<String, Void, Void> {
 
         try {
             IContactListManager contactListMgr = conn.getContactListManager();
-
+            
             // Use the default list
             List<IBinder> lists = contactListMgr.getContactLists();
             for (IBinder binder : lists) {

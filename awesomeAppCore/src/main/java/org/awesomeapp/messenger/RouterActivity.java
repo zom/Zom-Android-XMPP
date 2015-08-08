@@ -31,15 +31,18 @@ import org.awesomeapp.messenger.ui.legacy.SimpleAlertHandler;
 import org.awesomeapp.messenger.ui.legacy.ThemeableActivity;
 import org.awesomeapp.messenger.model.ImConnection;
 import org.awesomeapp.messenger.provider.Imps;
+import org.ironrabbit.type.CustomTypefaceManager;
 
 import java.io.File;
 import java.security.GeneralSecurityException;
+import java.util.List;
 import java.util.UUID;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ContentUris;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -55,6 +58,8 @@ import android.os.StatFs;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.inputmethod.InputMethodInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 public class RouterActivity extends ThemeableActivity implements ICacheWordSubscriber  {
@@ -95,6 +100,8 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        checkCustomFont ();
 
         getSupportActionBar().hide();
         
@@ -645,6 +652,31 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
         }
     }
 
+    private void checkCustomFont ()
+    {
+        if (CustomTypefaceManager.getCurrentTypeface(this)==null)
+        {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            List<InputMethodInfo> mInputMethodProperties = imm.getEnabledInputMethodList();
+
+            final int N = mInputMethodProperties.size();
+
+            for (int i = 0; i < N; i++) {
+
+                InputMethodInfo imi = mInputMethodProperties.get(i);
+
+                //imi contains the information about the keyboard you are using
+                if (imi.getPackageName().equals("org.ironrabbit.bhoboard"))
+                {
+                    CustomTypefaceManager.loadFromKeyboard(this);
+                    break;
+                }
+
+            }
+
+
+        }
+    }
 
 
 }

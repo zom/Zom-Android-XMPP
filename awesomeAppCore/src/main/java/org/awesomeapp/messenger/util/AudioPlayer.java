@@ -5,8 +5,11 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnPreparedListener;
+import android.media.audiofx.Visualizer;
 import android.net.Uri;
 import android.widget.Toast;
+
+import org.awesomeapp.messenger.ui.widgets.VisualizerView;
 
 public class AudioPlayer {
     private static final String TAG = "AudioPlayer";
@@ -18,21 +21,49 @@ public class AudioPlayer {
     private MediaPlayer mediaPlayer;
     private HttpMediaStreamer streamer;
 
-    public AudioPlayer(Context context, String fileName, String mimeType) {
+    private Visualizer mVisualizer;
+    private VisualizerView mVisualizerView;
+
+    private int mDuration = -1;
+
+    public AudioPlayer(Context context, String fileName, String mimeType, VisualizerView visualizerView) throws Exception {
         mContext = context.getApplicationContext();
         mFileName = fileName;
         mMimeType = mimeType;
+        mVisualizerView = visualizerView;
+
+        initPlayer();
+
+    }
+
+    public int getDuration ()
+    {
+        return mDuration;
     }
 
     public void play() {
-        try {
-            initPlayer();
-        } catch (Exception e) {
-            Toast.makeText(mContext, e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-        }
+        mediaPlayer.start();
     }
 
     public void pause() {
+        mediaPlayer.pause();
+    }
+
+    public boolean isPlaying () {
+        if (mediaPlayer != null)
+            return mediaPlayer.isPlaying();
+        else
+            return false;
+    }
+
+    public boolean isPaused () {
+        if (mediaPlayer != null)
+            return (!mediaPlayer.isPlaying()) && (mediaPlayer.getCurrentPosition() > 0);
+        else
+            return false;
+    }
+
+    public void stop() {
         killPlayer();
     }
 
@@ -49,7 +80,7 @@ public class AudioPlayer {
         }
     }
 
-    private void initPlayer() throws Exception {
+    public void initPlayer() throws Exception {
         streamer = new HttpMediaStreamer(mFileName, mMimeType);
         Uri uri = streamer.getUri();
 
@@ -59,18 +90,46 @@ public class AudioPlayer {
 
             @Override
             public void onPrepared(MediaPlayer mp) {
-                mediaPlayer.start();
+
+                mDuration = mediaPlayer.getDuration();
+                setupVisualizerFxAndUI();
+                mVisualizer.setEnabled(true);
+
+
             }
         });
         mediaPlayer.setOnCompletionListener(new OnCompletionListener() {
 
             @Override
             public void onCompletion(MediaPlayer mp) {
-                killPlayer();
+                //killPlayer();
+
             }
         });
 
         mediaPlayer.setDataSource(mContext, uri);
         mediaPlayer.prepareAsync();
+
+
+
+    }
+
+
+    private void setupVisualizerFxAndUI() {
+
+        // Create the Visualizer object and attach it to our media player.
+        mVisualizer = new Visualizer(mediaPlayer.getAudioSessionId());
+        mVisualizer.setCaptureSize(Visualizer.getCaptureSizeRange()[1]);
+        mVisualizer.setDataCaptureListener(
+                new Visualizer.OnDataCaptureListener() {
+                    public void onWaveFormDataCapture(Visualizer visualizer,
+                                                      byte[] bytes, int samplingRate) {
+                        mVisualizerView.updateVisualizer(bytes);
+                    }
+
+                    public void onFftDataCapture(Visualizer visualizer,
+                                                 byte[] bytes, int samplingRate) {
+                    }
+                }, Visualizer.getMaxCaptureRate() / 2, true, false);
     }
 }

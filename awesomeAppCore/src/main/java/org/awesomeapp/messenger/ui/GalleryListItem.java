@@ -286,10 +286,6 @@ public class GalleryListItem extends FrameLayout {
                 context.startActivity(intent);
                 return;
             }
-            if (mimeType.startsWith("audio")) {
-                new AudioPlayer(getContext(), mediaUri.getPath(), mimeType).play();
-                return;
-            }
             return;
         }
         else

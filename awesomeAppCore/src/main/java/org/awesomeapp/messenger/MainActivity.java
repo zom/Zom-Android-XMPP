@@ -278,6 +278,26 @@ public class MainActivity extends AppCompatActivity {
                     importPhoto ();
 
             }
+            else if (requestCode == OnboardingManager.REQUEST_SCAN) {
+
+                ArrayList<String> resultScans = data.getStringArrayListExtra("result");
+                for (String resultScan : resultScans)
+                {
+
+                    try {
+                        //parse each string and if they are for a new user then add the user
+                        String[] parts = OnboardingManager.decodeInviteLink(resultScan);
+
+                        new AddContactAsyncTask(mApp.getDefaultProviderId(),mApp.getDefaultAccountId(), mApp).execute(parts[0],parts[1]);
+
+                        //if they are for a group chat, then add the group
+                    }
+                    catch (Exception e)
+                    {
+                        Log.w(ImApp.LOG_TAG, "error parsing QR invite link", e);
+                    }
+                }
+            }
         }
     }
 

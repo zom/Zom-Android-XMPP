@@ -21,6 +21,7 @@ import info.guardianproject.otr.app.im.R;
 
 import org.awesomeapp.messenger.ImUrlActivity;
 import org.awesomeapp.messenger.crypto.OtrDataHandler;
+import org.awesomeapp.messenger.ui.widgets.VisualizerView;
 import org.awesomeapp.messenger.util.SecureMediaStore;
 import org.awesomeapp.messenger.ui.legacy.DatabaseUtils;
 import org.awesomeapp.messenger.ImApp;
@@ -60,6 +61,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.media.audiofx.Visualizer;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -132,7 +134,9 @@ public class MessageListItem extends FrameLayout {
         ImageView mActionSend = (ImageView)findViewById(R.id.media_thumbnail_send);
         ImageView mActionShare = (ImageView)findViewById(R.id.media_thumbnail_share);
 
-
+        View mAudioContainer = findViewById(R.id.audio_container);
+        VisualizerView mVisualizerView = (VisualizerView) findViewById(R.id.audio_view);
+        View mAudioButton = findViewById(R.id.audio_button);
         // save the media uri while the MediaScanner is creating the thumbnail
         // if the holder was reused, the pair is broken
         Uri mMediaUri = null;
@@ -144,36 +148,47 @@ public class MessageListItem extends FrameLayout {
 
         public void setOnClickListenerMediaThumbnail( final String mimeType, final Uri mediaUri ) {
 
-            mMediaThumbnail.setOnClickListener( new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onClickMediaIcon( mimeType, mediaUri );
-                }
-            });
+            if (mimeType.startsWith("audio") && mAudioContainer != null)
+            {
+                mAudioContainer.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        onClickMediaIcon(mimeType, mediaUri);
+                    }
+                });
+            }
+            else {
+                mMediaThumbnail.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        onClickMediaIcon(mimeType, mediaUri);
+                    }
+                });
 
-            mMediaThumbnail.setOnClickListener( new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onClickMediaIcon( mimeType, mediaUri );
-                }
-            });
+                mMediaThumbnail.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        onClickMediaIcon(mimeType, mediaUri);
+                    }
+                });
 
-            mActionSend.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View view) {
+                mActionSend.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
 
-                    reshareMediaFile(mimeType, mediaUri);
-                }
-            });
+                        reshareMediaFile(mimeType, mediaUri);
+                    }
+                });
 
-            mActionShare.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    final java.io.File exportPath = SecureMediaStore.exportPath(mimeType, mediaUri);
+                mActionShare.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        final java.io.File exportPath = SecureMediaStore.exportPath(mimeType, mediaUri);
 
-                    exportMediaFile(mimeType, mediaUri, exportPath);
-                }
-            });
+                        exportMediaFile(mimeType, mediaUri, exportPath);
+                    }
+                });
+            }
 
         }
 
@@ -254,6 +269,9 @@ public class MessageListItem extends FrameLayout {
         mHolder = (ViewHolder)getTag();
 
         mHolder.mTextViewForMessages.setVisibility(View.VISIBLE);
+        mHolder.mAudioContainer.setVisibility(View.GONE);
+        mHolder.mMediaContainer.setVisibility(View.GONE);
+        mHolder.mContainer.setBackgroundResource(R.drawable.message_view_rounded_light);
 
         if (nickname == null)
             nickname = address;
@@ -266,20 +284,37 @@ public class MessageListItem extends FrameLayout {
         else
         {
             lastMessage = formatMessage(body);
-            showAvatar(address,nickname,true,presenceStatus);
+            showAvatar(address, nickname, true, presenceStatus);
 
             mHolder.resetOnClickListenerMediaThumbnail();
+
+
             if( mimeType != null ) {
 
-                mHolder.mTextViewForMessages.setVisibility(View.GONE);
-                mHolder.mMediaContainer.setVisibility(View.VISIBLE);
-
-                Uri mediaUri = Uri.parse( body ) ;
+                Uri mediaUri = Uri.parse(body);
                 lastMessage = "";
-                showMediaThumbnail(mimeType, mediaUri, id, mHolder);
+
+                if (mimeType.startsWith("audio"))
+                {
+                    try {
+                        mHolder.mAudioContainer.setVisibility(View.VISIBLE);
+                        showAudioPlayer(mimeType, mediaUri, id, mHolder);
+                    }
+                    catch (Exception e)
+                    {
+                        mHolder.mAudioContainer.setVisibility(View.GONE);
+                    }
+
+                }
+                else {
+                    mHolder.mTextViewForMessages.setVisibility(View.GONE);
+                    mHolder.mMediaContainer.setVisibility(View.VISIBLE);
+
+                    showMediaThumbnail(mimeType, mediaUri, id, mHolder);
+                }
 
             } else {
-                mHolder.mMediaContainer.setVisibility(View.GONE);
+
                 mHolder.mContainer.setBackgroundResource(R.drawable.message_view_rounded_light);
 
                 if (showContact)
@@ -358,11 +393,6 @@ public class MessageListItem extends FrameLayout {
            // holder.mMediaThumbnail.setBackgroundColor(Color.WHITE);
 
         }
-        else if (mimeType.startsWith("audio"))
-        {
-            holder.mMediaThumbnail.setImageResource(R.drawable.media_audio_play);
-            holder.mMediaThumbnail.setBackgroundColor(Color.TRANSPARENT);
-        }
         else
         {
             holder.mMediaThumbnail.setImageResource(R.drawable.ic_file); // generic file icon
@@ -373,6 +403,29 @@ public class MessageListItem extends FrameLayout {
 
 
 
+    }
+
+    private void showAudioPlayer (String mimeType, Uri mediaUri, int id, ViewHolder holder) throws Exception
+    {
+        /* Guess the MIME type in case we received a file that we can display or play*/
+        if (TextUtils.isEmpty(mimeType) || mimeType.startsWith("application")) {
+            String guessed = URLConnection.guessContentTypeFromName(mediaUri.toString());
+            if (!TextUtils.isEmpty(guessed)) {
+                if (TextUtils.equals(guessed, "video/3gpp"))
+                    mimeType = "audio/3gpp";
+                else
+                    mimeType = guessed;
+            }
+        }
+
+        holder.setOnClickListenerMediaThumbnail(mimeType, mediaUri);
+       // holder.mContainer.setBackgroundColor(getResources().getColor(android.R.color.transparent));
+        mAudioPlayer = new AudioPlayer(getContext(), mediaUri.getPath(), mimeType, mHolder.mVisualizerView);
+
+        if (mAudioPlayer.getDuration() != -1)
+            mHolder.mTextViewForMessages.setText((mAudioPlayer.getDuration()/1000) + "secs");
+        else
+            mHolder.mTextViewForMessages.setText("");
     }
 
 
@@ -401,7 +454,7 @@ public class MessageListItem extends FrameLayout {
         return path;
     }
 
-    private MediaPlayer mMediaPlayer = null;
+    private AudioPlayer mAudioPlayer;
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     protected void onClickMediaIcon(String mimeType, Uri mediaUri) {
@@ -414,7 +467,19 @@ public class MessageListItem extends FrameLayout {
                 return;
             }
             if (mimeType.startsWith("audio")) {
-                new AudioPlayer(getContext(), mediaUri.getPath(), mimeType).play();
+
+                if (mAudioPlayer.getDuration() != -1)
+                    mHolder.mTextViewForMessages.setText((mAudioPlayer.getDuration()/1000) + "secs");
+
+                if (mAudioPlayer.isPlaying())
+                {
+                    mAudioPlayer.pause();
+                }
+                else
+                {
+                    mAudioPlayer.play();
+                }
+
                 return;
             }
             return;
@@ -431,23 +496,14 @@ public class MessageListItem extends FrameLayout {
             if (mimeType.startsWith("audio") || (body.endsWith("3gp")||body.endsWith("3gpp")||body.endsWith("amr")))
             {
 
-                if (mMediaPlayer != null)
-                    mMediaPlayer.release();
-
-                try
+                if (mAudioPlayer.isPlaying())
                 {
-                    mMediaPlayer = new  MediaPlayer();
-                    mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-                    mMediaPlayer.setDataSource(body);
-                    mMediaPlayer.prepare();
-                    mMediaPlayer.start();
-
-                    return;
-                } catch (IOException e) {
-                    Log.e(ImApp.LOG_TAG,"error playing audio: " + body,e);
+                    mAudioPlayer.pause();
                 }
-
-
+                else
+                {
+                    mAudioPlayer.play();
+                }
             }
 
             Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -460,7 +516,7 @@ public class MessageListItem extends FrameLayout {
 
             Context context = getContext().getApplicationContext();
 
-            if (isIntentAvailable(context,intent))
+            if (isIntentAvailable(context, intent))
             {
                 context.startActivity(intent);
             }
@@ -470,6 +526,7 @@ public class MessageListItem extends FrameLayout {
             }
         }
     }
+
 
     protected void onLongClickMediaIcon(final String mimeType, final Uri mediaUri) {
 
@@ -648,19 +705,39 @@ public class MessageListItem extends FrameLayout {
         mHolder = (ViewHolder)getTag();
 
         mHolder.mTextViewForMessages.setVisibility(View.VISIBLE);
+        mHolder.mAudioContainer.setVisibility(View.GONE);
+        mHolder.mMediaContainer.setVisibility(View.GONE);
+        mHolder.mContainer.setBackgroundResource(R.drawable.message_view_rounded_light);
+
         mHolder.resetOnClickListenerMediaThumbnail();
+
         if( mimeType != null ) {
 
             lastMessage = "";
+
             Uri mediaUri = Uri.parse( body ) ;
 
-            showMediaThumbnail(mimeType, mediaUri, id, mHolder);
+            if (mimeType.startsWith("audio"))
+            {
+                try {
+                    mHolder.mAudioContainer.setVisibility(View.VISIBLE);
+                    showAudioPlayer(mimeType, mediaUri, id, mHolder);
+                }
+                catch (Exception e)
+                {
+                    mHolder.mAudioContainer.setVisibility(View.GONE);
+                }
 
-            mHolder.mTextViewForMessages.setVisibility(View.GONE);
-            mHolder.mMediaContainer.setVisibility(View.VISIBLE);
+            }
+            else {
+                mHolder.mTextViewForMessages.setVisibility(View.GONE);
+
+                mHolder.mMediaContainer.setVisibility(View.VISIBLE);
+                showMediaThumbnail(mimeType, mediaUri, id, mHolder);
+
+            }
 
         } else {
-            mHolder.mMediaContainer.setVisibility(View.GONE);
             lastMessage = body;//formatMessage(body);
 
              SpannableString spannablecontent=new SpannableString(lastMessage);
@@ -904,4 +981,5 @@ public class MessageListItem extends FrameLayout {
         default:
         }
     }
+
 }
