@@ -20,7 +20,6 @@ package org.awesomeapp.messenger.ui;
 import info.guardianproject.otr.app.im.R;
 
 import org.awesomeapp.messenger.ImUrlActivity;
-import org.awesomeapp.messenger.crypto.OtrDataHandler;
 import org.awesomeapp.messenger.ui.widgets.VisualizerView;
 import org.awesomeapp.messenger.util.SecureMediaStore;
 import org.awesomeapp.messenger.ui.legacy.DatabaseUtils;
@@ -32,7 +31,6 @@ import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.ui.widgets.ImageViewActivity;
 import org.awesomeapp.messenger.ui.widgets.LetterAvatar;
 import org.awesomeapp.messenger.ui.widgets.RoundedAvatarDrawable;
-import org.awesomeapp.messenger.util.AudioPlayer;
 import org.awesomeapp.messenger.util.LinkifyHelper;
 
 import java.io.File;
@@ -59,9 +57,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
-import android.media.audiofx.Visualizer;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -154,6 +149,17 @@ public class MessageListItem extends FrameLayout {
                     @Override
                     public void onClick(View v) {
                         onClickMediaIcon(mimeType, mediaUri);
+                    }
+                });
+
+                mAudioContainer.setOnLongClickListener(new OnLongClickListener() {
+
+                    @Override
+                    public boolean onLongClick(View view) {
+                        final java.io.File exportPath = SecureMediaStore.exportPath(mimeType, mediaUri);
+
+                        exportMediaFile(mimeType, mediaUri, exportPath);
+                        return true;
                     }
                 });
             }

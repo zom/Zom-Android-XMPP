@@ -33,6 +33,7 @@ import org.awesomeapp.messenger.util.SystemServices;
 import org.awesomeapp.messenger.util.SystemServices.FileInfo;
 import net.java.otr4j.session.SessionStatus;
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -40,6 +41,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.AsyncTask;
+import android.support.v4.util.LruCache;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -294,11 +297,10 @@ public class ContactListItem extends FrameLayout {
                         if (holder.mMediaThumb != null)
                         {
                             holder.mMediaThumb.setVisibility(View.VISIBLE);
-                        
-                            Bitmap b = MessageListItem.getThumbnail(getContext().getContentResolver(), Uri.parse(lastMsg));
-                            holder.mMediaThumb.setImageBitmap(b);
-                            
-                            holder.mLine2.setVisibility(View.GONE);
+
+                            setThumbnail(getContext().getContentResolver(), holder, Uri.parse(lastMsg));
+
+                                    holder.mLine2.setVisibility(View.GONE);
                                     
                         }
                     }
@@ -449,7 +451,43 @@ public class ContactListItem extends FrameLayout {
         return Color.TRANSPARENT;
     }
 
-    
+    /**
+     * @param contentResolver
+     * @param aHolder
+     * @param uri
+     */
+    private void setThumbnail(final ContentResolver contentResolver, final ViewHolder aHolder, final Uri uri) {
+        new AsyncTask<String, Void, Bitmap>() {
+
+            @Override
+            protected Bitmap doInBackground(String... params) {
+
+                Bitmap result = mBitmapCache.get(uri.toString());
+
+                if (result == null)
+                    return MessageListItem.getThumbnail(contentResolver, uri );
+                else
+                    return result;
+            }
+
+            @Override
+            protected void onPostExecute(Bitmap result) {
+
+                if (uri != null && result != null)
+                {
+                    mBitmapCache.put(uri.toString(), result);
+
+                    // set the thumbnail
+                    aHolder.mMediaThumb.setImageBitmap(result);
+                }
+            }
+        }.execute();
+    }
+
+
+    private static int sCacheSize = 10; // 1MiB
+    private static LruCache<String,Bitmap> mBitmapCache = new LruCache<String,Bitmap>(sCacheSize);
+
     /*
     private String queryGroupMembers(ContentResolver resolver, long groupId) {
         String[] projection = { Imps.GroupMembers.NICKNAME };
