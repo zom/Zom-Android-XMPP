@@ -7,6 +7,7 @@ import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.media.audiofx.Visualizer;
 import android.net.Uri;
+import android.util.Log;
 import android.widget.Toast;
 
 import org.awesomeapp.messenger.ui.widgets.VisualizerView;
@@ -86,14 +87,23 @@ public class AudioPlayer {
 
         mediaPlayer = new MediaPlayer();
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        mediaPlayer.setDataSource(mContext, uri);
+
+        mediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+            @Override
+            public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
+
+                Log.d("AudioPlayer", "there was an error loading music: " + i + " " + i1);
+                return true;
+            }
+
+        });
         mediaPlayer.setOnPreparedListener(new OnPreparedListener() {
 
             @Override
             public void onPrepared(MediaPlayer mp) {
 
                 mDuration = mediaPlayer.getDuration();
-                setupVisualizerFxAndUI();
-                mVisualizer.setEnabled(true);
 
 
             }
@@ -107,10 +117,11 @@ public class AudioPlayer {
             }
         });
 
-        mediaPlayer.setDataSource(mContext, uri);
+
         mediaPlayer.prepareAsync();
 
-
+        setupVisualizerFxAndUI();
+        mVisualizer.setEnabled(true);
 
     }
 

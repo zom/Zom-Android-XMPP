@@ -329,10 +329,10 @@ public class ConversationDetailActivity extends AppCompatActivity {
     {
         mMediaRecorder = new MediaRecorder();
 
-        mAudioFilePath = new File(getFilesDir(),"audiotemp.aac");
+        mAudioFilePath = new File(getFilesDir(),"audiotemp.m4a");
 
         mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.AAC_ADTS);
+        mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
         mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
         mMediaRecorder.setOutputFile(mAudioFilePath.getAbsolutePath());
 
