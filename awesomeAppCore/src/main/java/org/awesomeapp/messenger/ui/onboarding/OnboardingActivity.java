@@ -347,7 +347,14 @@ public class OnboardingActivity extends ThemeableActivity {
         @Override
         protected OnboardingAccount doInBackground(String... username) {
             try {
-                OnboardingAccount result = OnboardingManager.registerAccount(OnboardingActivity.this, mHandler, username[0], username[1], 5222);
+
+                String newuser = username[0];
+                String domain = null;
+
+                if (username.length > 1)
+                    domain = username[1];
+
+                OnboardingAccount result = OnboardingManager.registerAccount(OnboardingActivity.this, mHandler, newuser, domain, 5222);
 
                 if (result != null) {
                     String jabberId = result.username + '@' + result.domain;
