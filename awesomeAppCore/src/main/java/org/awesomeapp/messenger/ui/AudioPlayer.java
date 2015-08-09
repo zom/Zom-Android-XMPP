@@ -1,13 +1,16 @@
 package org.awesomeapp.messenger.ui;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.media.audiofx.Visualizer;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.awesomeapp.messenger.ui.widgets.VisualizerView;
@@ -25,17 +28,41 @@ public class AudioPlayer {
 
     private Visualizer mVisualizer;
     private VisualizerView mVisualizerView;
+    private TextView mInfoView;
 
     private int mDuration = -1;
     private boolean mPrepared = false;
     private boolean mPlayOnPrepare = false;
 
-    public AudioPlayer(Context context, String fileName, String mimeType, VisualizerView visualizerView) throws Exception {
+    public AudioPlayer(Context context, String fileName, String mimeType, VisualizerView visualizerView, TextView infoView) throws Exception {
         mContext = context.getApplicationContext();
         mFileName = fileName;
         mMimeType = mimeType;
         mVisualizerView = visualizerView;
-        initPlayer();
+        mInfoView = infoView;
+
+        new AsyncTask<String, Void, Boolean>() {
+
+            @Override
+            protected Boolean doInBackground(String... params) {
+
+                try {
+                    initPlayer();
+                    return true;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void onPostExecute(Boolean playerInit) {
+
+
+            }
+
+        }.execute();
+
     }
 
     public int getDuration ()
@@ -45,22 +72,7 @@ public class AudioPlayer {
 
     public void play() {
 
-        if (!mPrepared) {
-
-            mPlayOnPrepare = true;
-
-            try {
-                if (streamer == null)
-                    initPlayer();
-
-            }
-            catch (Exception e)
-            {
-
-            }
-        }
-        else {
-
+        if (mPrepared) {
 
             if (mVisualizer == null)
                 setupVisualizerFxAndUI();
@@ -131,6 +143,8 @@ public class AudioPlayer {
 
                 mPrepared = true;
                 mDuration = mediaPlayer.getDuration();
+                mInfoView.setText((getDuration()/1000) + "secs");
+
                 if (mPlayOnPrepare)
                     play();
 
@@ -171,4 +185,6 @@ public class AudioPlayer {
                     }
                 }, Visualizer.getMaxCaptureRate() / 2, true, false);
     }
+
+
 }

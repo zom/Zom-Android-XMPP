@@ -425,13 +425,11 @@ public class MessageListItem extends FrameLayout {
         }
 
         holder.setOnClickListenerMediaThumbnail(mimeType, mediaUri);
+        mHolder.mTextViewForMessages.setText("");
        // holder.mContainer.setBackgroundColor(getResources().getColor(android.R.color.transparent));
-        mAudioPlayer = new AudioPlayer(getContext(), mediaUri.getPath(), mimeType, mHolder.mVisualizerView);
+        mAudioPlayer = new AudioPlayer(getContext(), mediaUri.getPath(), mimeType, mHolder.mVisualizerView,mHolder.mTextViewForMessages);
+        holder.mContainer.setBackgroundColor(getResources().getColor(android.R.color.transparent));
 
-        if (mAudioPlayer.getDuration() != -1)
-            mHolder.mTextViewForMessages.setText((mAudioPlayer.getDuration()/1000) + "secs");
-        else
-            mHolder.mTextViewForMessages.setText("");
     }
 
 
