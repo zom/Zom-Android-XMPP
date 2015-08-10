@@ -65,24 +65,40 @@
             android:textColor="?contactTextSecondary"
             />
 
+        
+          	</LinearLayout>
 
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:padding="0dp"
+        android:orientation="vertical"
+        android:gravity="right"
+        >
+
+        <TextView
+            android:id="@+id/statusText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="?contactTextSecondary"
+            android:gravity="right|top"
+            />
         <ImageView
             android:id="@+id/statusIcon"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:scaleType="centerCrop" 
+            android:scaleType="centerCrop"
             android:padding="3dp"
-            android:layout_marginTop="-32dp"
-              android:layout_gravity="right|bottom"
-              
-            />	
-            
-                   
-        
-          	</LinearLayout>
-          	
-    
-		<ImageView
+            android:gravity="right|bottom"
+
+            />
+
+    </FrameLayout>
+
+
+    <ImageView
             android:id="@+id/avatar"
             android:layout_width="48dp"
             android:layout_height="48dp"

@@ -1383,8 +1383,13 @@ public class ConversationView {
            //     newCursor.setNotificationUri(mActivity.getContentResolver(), mUri);
                 mMessageAdapter.swapCursor(new DeltaCursor(newCursor));
 
-                if (mMessageAdapter.getItemCount() > 0)
-                    mHistory.smoothScrollToPosition(mMessageAdapter.getItemCount());
+                mHandler.postDelayed(new Runnable () {
+
+                    public void run() {
+                        if (mMessageAdapter.getItemCount() > 0)
+                            mHistory.scrollToPosition(mMessageAdapter.getItemCount() - 1);
+                    }
+                },500);
 
             }
 
@@ -2677,7 +2682,7 @@ public class ConversationView {
 
             try {
 
-                String basePath = "assets://stickers/olo_and_shimi_1";
+                String basePath = "stickers/olo_and_shimi_1";
                 AssetManager aMan = mActivity.getAssets();
                 String[] filelist = aMan.list(basePath);
 
@@ -2687,7 +2692,7 @@ public class ConversationView {
                     Sticker sticker = new Sticker();
                     sticker.name = filelist[i];
                     sticker.category = category;
-                    sticker.assetPath = basePath + '/' +  filelist[i];
+                    sticker.assetUri = Uri.parse(basePath + '/' +  filelist[i]);
                     sticker.res = mActivity.getResources();
                     sticker.emoticon =  filelist[i];
 
@@ -2704,7 +2709,7 @@ public class ConversationView {
                     Sticker sticker = new Sticker();
                     sticker.name = filelist[i];
                     sticker.category = category;
-                    sticker.assetPath = basePath + '/' +  filelist[i];
+                    sticker.assetUri = Uri.parse(basePath + '/' +  filelist[i]);
                     sticker.res = mActivity.getResources();
                     sticker.emoticon =  filelist[i];
 
@@ -2734,8 +2739,8 @@ public class ConversationView {
                         @Override
                         public void onStickerSelected(Sticker s) {
 
-//                            mActivity.handleSendDelete(Uri.parse(s.assetPath), false, false, false);
-                            mActivity.handleSendData(Uri.parse(s.assetPath),"image/png");
+                            mActivity.handleSendDelete(s.assetUri, false, false, true);
+                         //   mActivity.handleSendData(Uri.parse(s.assetPath),"image/png");
 
                             mViewAttach.setVisibility(View.GONE);
                             showStickers();

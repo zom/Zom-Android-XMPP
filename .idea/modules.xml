@@ -7,7 +7,6 @@
       <module fileurl="file://$PROJECT_DIR$/memorizingActivity/memorizingActivity.iml" filepath="$PROJECT_DIR$/memorizingActivity/memorizingActivity.iml" />
       <module fileurl="file://$PROJECT_DIR$/otr4jandroid/otr4jandroid.iml" filepath="$PROJECT_DIR$/otr4jandroid/otr4jandroid.iml" />
       <module fileurl="file://$PROJECT_DIR$/tibetanTextLibrary/tibetanTextLibrary.iml" filepath="$PROJECT_DIR$/tibetanTextLibrary/tibetanTextLibrary.iml" />
-      <module fileurl="file://$PROJECT_DIR$/waveform-android/waveform-android.iml" filepath="$PROJECT_DIR$/waveform-android/waveform-android.iml" />
       <module fileurl="file://$PROJECT_DIR$/zxing-core/zxing-core.iml" filepath="$PROJECT_DIR$/zxing-core/zxing-core.iml" />
     </modules>
   </component>

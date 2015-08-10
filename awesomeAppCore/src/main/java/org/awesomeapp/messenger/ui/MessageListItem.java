@@ -20,6 +20,8 @@ package org.awesomeapp.messenger.ui;
 import info.guardianproject.otr.app.im.R;
 
 import org.awesomeapp.messenger.ImUrlActivity;
+import org.awesomeapp.messenger.tasks.ThumbnailLoaderRequest;
+import org.awesomeapp.messenger.tasks.ThumbnailLoaderTask;
 import org.awesomeapp.messenger.ui.widgets.VisualizerView;
 import org.awesomeapp.messenger.util.SecureMediaStore;
 import org.awesomeapp.messenger.ui.legacy.DatabaseUtils;
@@ -32,6 +34,7 @@ import org.awesomeapp.messenger.ui.widgets.ImageViewActivity;
 import org.awesomeapp.messenger.ui.widgets.LetterAvatar;
 import org.awesomeapp.messenger.ui.widgets.RoundedAvatarDrawable;
 import org.awesomeapp.messenger.util.LinkifyHelper;
+import org.ocpsoft.prettytime.PrettyTime;
 
 import java.io.File;
 import java.io.IOException;
@@ -82,7 +85,7 @@ import android.widget.Toast;
 public class MessageListItem extends FrameLayout {
 
     private static int sCacheSize = 10; // 1MiB
-    private static LruCache<String,Bitmap> mBitmapCache = new LruCache<String,Bitmap>(sCacheSize);
+    private static LruCache<String,Bitmap> sBitmapCache = new LruCache<String,Bitmap>(sCacheSize);
 
     public enum DeliveryState {
         NEUTRAL, DELIVERED, UNDELIVERED
@@ -102,12 +105,9 @@ public class MessageListItem extends FrameLayout {
         this.context = context;
     }
 
-    private ViewHolder mHolder = null;
+    private MessageViewHolder mHolder = null;
 
-    private final static DateFormat MESSAGE_DATETIME_FORMAT = SimpleDateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
-    private final static DateFormat MESSAGE_TIME_FORMAT = SimpleDateFormat.getTimeInstance(DateFormat.SHORT);
-    private static final SimpleDateFormat FMT_SAME_DAY = new SimpleDateFormat("yyyyMMdd");
-
+    private final static PrettyTime sPrettyTime = new PrettyTime();
     private final static Date DATE_NOW = new Date();
 
     private final static char DELIVERED_SUCCESS = '\u2714';
@@ -115,28 +115,25 @@ public class MessageListItem extends FrameLayout {
     private final static String LOCK_CHAR = "Secure";
 
 
-    class ViewHolder
+    class MessageViewHolder extends MediaViewHolder
     {
         TextView mTextViewForMessages = (TextView) findViewById(R.id.message);
         TextView mTextViewForTimestamp = (TextView) findViewById(R.id.messagets);
         ImageView mAvatar = (ImageView) findViewById(R.id.avatar);
        // View mStatusBlock = findViewById(R.id.status_block);
-        ImageView mMediaThumbnail = (ImageView) findViewById(R.id.media_thumbnail);
-        View mContainer = findViewById(R.id.message_container);
+
         View mMediaContainer = findViewById(R.id.media_thumbnail_container);
 
-        ImageView mActionFav = (ImageView)findViewById(R.id.media_thumbnail_fav);
-        ImageView mActionSend = (ImageView)findViewById(R.id.media_thumbnail_send);
-        ImageView mActionShare = (ImageView)findViewById(R.id.media_thumbnail_share);
 
         View mAudioContainer = findViewById(R.id.audio_container);
         VisualizerView mVisualizerView = (VisualizerView) findViewById(R.id.audio_view);
         ImageView mAudioButton = (ImageView)findViewById(R.id.audio_button);
         // save the media uri while the MediaScanner is creating the thumbnail
         // if the holder was reused, the pair is broken
-        Uri mMediaUri = null;
 
-        ViewHolder() {
+
+        MessageViewHolder(View view) {
+            super (view);
             // disable built-in autoLink so we can add custom ones
             mTextViewForMessages.setAutoLinkMask(0);
         }
@@ -242,11 +239,11 @@ public class MessageListItem extends FrameLayout {
         super.onFinishInflate();
 
 
-        mHolder = (ViewHolder)getTag();
+        mHolder = (MessageViewHolder)getTag();
 
         if (mHolder == null)
         {
-            mHolder = new ViewHolder();
+            mHolder = new MessageViewHolder(this);
             setTag(mHolder);
 
         }
@@ -272,7 +269,7 @@ public class MessageListItem extends FrameLayout {
     public void bindIncomingMessage(int id, int messageType, String address, String nickname, final String mimeType, final String body, Date date, Markup smileyRes,
             boolean scrolling, EncryptionState encryption, boolean showContact, int presenceStatus) {
 
-        mHolder = (ViewHolder)getTag();
+        mHolder = (MessageViewHolder)getTag();
 
         mHolder.mTextViewForMessages.setVisibility(View.VISIBLE);
         mHolder.mAudioContainer.setVisibility(View.GONE);
@@ -353,12 +350,7 @@ public class MessageListItem extends FrameLayout {
 
         if (date != null)
         {
-           CharSequence tsText = null;
-
-           if (isSameDay(date,DATE_NOW))
-               tsText = formatTimeStamp(date,messageType,MESSAGE_TIME_FORMAT, null, encryption);
-           else
-               tsText = formatTimeStamp(date,messageType,MESSAGE_DATETIME_FORMAT, null, encryption);
+           CharSequence tsText = formatTimeStamp(date,messageType, null, encryption);
 
          mHolder.mTextViewForTimestamp.setText(tsText);
          mHolder.mTextViewForTimestamp.setVisibility(View.VISIBLE);
@@ -376,7 +368,7 @@ public class MessageListItem extends FrameLayout {
         LinkifyHelper.addTorSafeLinks(mHolder.mTextViewForMessages);
     }
 
-    private void showMediaThumbnail (String mimeType, Uri mediaUri, int id, ViewHolder holder)
+    private void showMediaThumbnail (String mimeType, Uri mediaUri, int id, MessageViewHolder holder)
     {
         /* Guess the MIME type in case we received a file that we can display or play*/
         if (TextUtils.isEmpty(mimeType) || mimeType.startsWith("application")) {
@@ -412,7 +404,7 @@ public class MessageListItem extends FrameLayout {
 
     }
 
-    private void showAudioPlayer (String mimeType, Uri mediaUri, int id, ViewHolder holder) throws Exception
+    private void showAudioPlayer (String mimeType, Uri mediaUri, int id, MessageViewHolder holder) throws Exception
     {
         /* Guess the MIME type in case we received a file that we can display or play*/
         if (TextUtils.isEmpty(mimeType) || mimeType.startsWith("application")) {
@@ -431,12 +423,6 @@ public class MessageListItem extends FrameLayout {
         mAudioPlayer = new AudioPlayer(getContext(), mediaUri.getPath(), mimeType, mHolder.mVisualizerView,mHolder.mTextViewForMessages);
         holder.mContainer.setBackgroundColor(getResources().getColor(android.R.color.transparent));
 
-    }
-
-
-    private boolean isSameDay (Date date1, Date date2)
-    {
-        return FMT_SAME_DAY.format(date1).equals(FMT_SAME_DAY.format(date2));
     }
 
     protected String convertMediaUriToPath(Uri uri) {
@@ -591,51 +577,20 @@ public class MessageListItem extends FrameLayout {
      * @param aHolder
      * @param mediaUri
      */
-    private void setImageThumbnail(final ContentResolver contentResolver, final int id, final ViewHolder aHolder, final Uri mediaUri) {
+    private void setImageThumbnail(final ContentResolver contentResolver, final int id, final MessageViewHolder aHolder, final Uri mediaUri) {
         // pair this holder to the uri. if the holder is recycled, the pairing is broken
         aHolder.mMediaUri = mediaUri;
         // if a content uri - already scanned
 
-        setThumbnail(contentResolver, aHolder, mediaUri);
+
+        ThumbnailLoaderRequest request = new ThumbnailLoaderRequest();
+        request.mHolder = aHolder;
+        request.mUri = mediaUri;
+        request.mResolver = contentResolver;
+
+        new ThumbnailLoaderTask(sBitmapCache).execute(request);
 
 
-    }
-
-    /**
-     * @param contentResolver
-     * @param aHolder
-     * @param uri
-     */
-    private void setThumbnail(final ContentResolver contentResolver, final ViewHolder aHolder, final Uri uri) {
-        new AsyncTask<String, Void, Bitmap>() {
-
-            @Override
-            protected Bitmap doInBackground(String... params) {
-
-                Bitmap result = mBitmapCache.get(uri.toString());
-
-                if (result == null)
-                    return getThumbnail( contentResolver, uri );
-                else
-                    return result;
-            }
-
-            @Override
-            protected void onPostExecute(Bitmap result) {
-
-                if (uri != null && result != null)
-                {
-                    mBitmapCache.put(uri.toString(), result);
-
-                    // confirm the holder is still paired to this uri
-                    if( ! uri.equals( aHolder.mMediaUri ) ) {
-                        return ;
-                    }
-                    // set the thumbnail
-                    aHolder.mMediaThumbnail.setImageBitmap(result);
-                }
-            }
-        }.execute();
     }
 
     public final static int THUMBNAIL_SIZE_DEFAULT = 400;
@@ -693,7 +648,7 @@ public class MessageListItem extends FrameLayout {
     public void bindOutgoingMessage(int id, int messageType, String address, final String mimeType, final String body, Date date, Markup smileyRes, boolean scrolling,
             DeliveryState delivery, EncryptionState encryption) {
 
-        mHolder = (ViewHolder)getTag();
+        mHolder = (MessageViewHolder)getTag();
 
         mHolder.mTextViewForMessages.setVisibility(View.VISIBLE);
         mHolder.mAudioContainer.setVisibility(View.GONE);
@@ -741,12 +696,7 @@ public class MessageListItem extends FrameLayout {
         if (date != null)
         {
 
-            CharSequence tsText = null;
-
-            if (isSameDay(date,DATE_NOW))
-                tsText = formatTimeStamp(date,messageType, MESSAGE_TIME_FORMAT, delivery, encryption);
-            else
-                tsText = formatTimeStamp(date,messageType, MESSAGE_DATETIME_FORMAT, delivery, encryption);
+            CharSequence tsText = formatTimeStamp(date,messageType, delivery, encryption);
 
             mHolder.mTextViewForTimestamp.setText(tsText);
 
@@ -822,7 +772,7 @@ public class MessageListItem extends FrameLayout {
 
     public void bindPresenceMessage(String contact, int type, boolean isGroupChat, boolean scrolling) {
 
-        mHolder = (ViewHolder)getTag();
+        mHolder = (MessageViewHolder)getTag();
 
         CharSequence message = formatPresenceUpdates(contact, type, isGroupChat, scrolling);
         mHolder.mTextViewForMessages.setText(message);
@@ -832,18 +782,18 @@ public class MessageListItem extends FrameLayout {
 
     public void bindErrorMessage(int errCode) {
 
-        mHolder = (ViewHolder)getTag();
+        mHolder = (MessageViewHolder)getTag();
 
         mHolder.mTextViewForMessages.setText(R.string.msg_sent_failed);
         mHolder.mTextViewForMessages.setTextColor(getResources().getColor(R.color.error));
 
     }
 
-    private SpannableString formatTimeStamp(Date date, int messageType, DateFormat format, MessageListItem.DeliveryState delivery, EncryptionState encryptionState) {
+    private SpannableString formatTimeStamp(Date date, int messageType, MessageListItem.DeliveryState delivery, EncryptionState encryptionState) {
 
 
         StringBuilder deliveryText = new StringBuilder();
-        deliveryText.append(format.format(date));
+        deliveryText.append(sPrettyTime.format(date));
         deliveryText.append(' ');
 
         if (delivery != null)

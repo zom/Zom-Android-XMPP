@@ -98,6 +98,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:22.2.0'
     compile 'com.android.support:cardview-v7:22.2.0'
     compile 'com.android.support:recyclerview-v7:22.2.0'
+    compile 'net.hockeyapp.android:HockeySDK:3.5.0'
     compile group: 'com.google.guava', name: 'guava', version: '18.0'
     compile 'commons-codec:commons-codec:1.9'
     compile 'commons-io:commons-io:2.4'
@@ -108,10 +109,11 @@ dependencies {
     compile project(':otr4jandroid')
     compile files('libs/asmack-android-8.jar')
     compile files('libs/gp-bcc-lib.jar')
-    compile files('libs/HockeySDK.jar')
     compile files('libs/cachewordlib-v0.1-3-g71cc426-debug.jar')
     compile files('libs/IOCipher-v0.3-2-g926b982.jar')
     compile files('libs/jsoup-1.5.2.jar')
     compile files('libs/sqlcipher.jar')
     compile 'de.hdodenhof:circleimageview:1.3.0'
+    compile 'org.ocpsoft.prettytime:prettytime:4.0.0.Final'
+
 }

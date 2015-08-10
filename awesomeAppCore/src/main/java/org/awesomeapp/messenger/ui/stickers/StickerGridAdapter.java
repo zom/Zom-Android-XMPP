@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,7 +54,7 @@ public class StickerGridAdapter extends BaseAdapter
   	  try
   	  {
   		  
-  		  InputStream  is = mEmoji.get(position).res.getAssets().open(mEmoji.get(position).assetPath);
+  		  InputStream  is = mEmoji.get(position).res.getAssets().open(mEmoji.get(position).assetUri.getPath());
     	
     	  Bitmap bmp = BitmapFactory.decodeStream(is);
     	  

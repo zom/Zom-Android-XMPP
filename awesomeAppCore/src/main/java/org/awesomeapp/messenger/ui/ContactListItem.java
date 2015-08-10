@@ -31,6 +31,8 @@ import org.awesomeapp.messenger.ui.widgets.LetterAvatar;
 import org.awesomeapp.messenger.ui.widgets.RoundedAvatarDrawable;
 import org.awesomeapp.messenger.util.SystemServices;
 import org.awesomeapp.messenger.util.SystemServices.FileInfo;
+import org.ocpsoft.prettytime.PrettyTime;
+
 import net.java.otr4j.session.SessionStatus;
 import android.app.Activity;
 import android.content.ContentResolver;
@@ -53,6 +55,10 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class ContactListItem extends FrameLayout {
     public static final String[] CONTACT_PROJECTION = { Imps.Contacts._ID, Imps.Contacts.PROVIDER,
@@ -85,15 +91,11 @@ public class ContactListItem extends FrameLayout {
     public static final int COLUMN_AVATAR_HASH = 12;
     public static final int COLUMN_AVATAR_DATA = 13;
 
-
-    private ImApp app = null;
     static Drawable AVATAR_DEFAULT_GROUP = null;
+    private final static PrettyTime sPrettyTime = new PrettyTime();
 
     public ContactListItem(Context context, AttributeSet attrs) {
         super(context, attrs);
-
-        app = ((ImApp)((Activity) getContext()).getApplication());
-
 
     }
 
@@ -102,6 +104,7 @@ public class ContactListItem extends FrameLayout {
 
         TextView mLine1;
         TextView mLine2;
+        TextView mStatusText;
         ImageView mAvatar;
         ImageView mStatusIcon;
         View mContainer;
@@ -114,24 +117,7 @@ public class ContactListItem extends FrameLayout {
 
     public void bind(Cursor cursor, String underLineText, boolean showChatMsg, boolean scrolling) {
 
-        /*
-        if (Debug.DEBUG_ENABLED)
-        {
-            StringBuffer debug = new StringBuffer();
-            for (int i = 0; i < cursor.getColumnCount();i++)
-            {
-                String name = cursor.getColumnName(i);
-                String value = cursor.getString(i);
-                if (value != null && value.length() < 100)
-                    debug.append(name+":" + value+",");
-                else if (value == null)
-                    debug.append(name+":(null)");
-            }
 
-           Log.d(ImApp.LOG_TAG,"contact:" + debug.toString());
-
-        }*/
-        
         ViewHolder holder = (ViewHolder)getTag();
 
         if (holder == null) {
@@ -141,6 +127,7 @@ public class ContactListItem extends FrameLayout {
 
             holder.mAvatar = (ImageView)findViewById(R.id.avatar);
             holder.mStatusIcon = (ImageView)findViewById(R.id.statusIcon);
+            holder.mStatusText = (TextView)findViewById(R.id.statusText);
             //holder.mEncryptionIcon = (ImageView)view.findViewById(R.id.encryptionIcon);
 
             holder.mContainer = findViewById(R.id.message_container);
@@ -157,6 +144,7 @@ public class ContactListItem extends FrameLayout {
         final int type = cursor.getInt(COLUMN_CONTACT_TYPE);
         final String lastMsg = cursor.getString(COLUMN_LAST_MESSAGE);
 
+        long lastMsgDate = cursor.getLong(COLUMN_LAST_MESSAGE_DATE);
         final int presence = cursor.getInt(COLUMN_CONTACT_PRESENCE_STATUS);
 
         final int subType = cursor.getInt(COLUMN_SUBSCRIPTION_TYPE);
@@ -320,6 +308,17 @@ public class ContactListItem extends FrameLayout {
                 }
             }
 
+            if (lastMsgDate != -1)
+            {
+                Date dateLast = new Date(lastMsgDate);
+                holder.mStatusText.setText(sPrettyTime.format(dateLast));
+
+            }
+            else
+            {
+                holder.mStatusText.setText("");
+            }
+
         }
         else if (holder.mLine2 != null)
         {
@@ -362,6 +361,9 @@ public class ContactListItem extends FrameLayout {
     {
 
          try {
+
+             ImApp app = ((ImApp)((Activity) getContext()).getApplication());
+
              IImConnection conn = app.getConnection(providerId);
              if (conn == null || conn.getChatSessionManager() == null)
                  return;

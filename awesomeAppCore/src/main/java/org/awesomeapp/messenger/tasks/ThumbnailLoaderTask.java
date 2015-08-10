@@ -12,6 +12,7 @@ import android.view.View;
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.ui.GalleryListFragment;
 import org.awesomeapp.messenger.ui.GalleryListItem;
+import org.awesomeapp.messenger.ui.MediaViewHolder;
 import org.awesomeapp.messenger.util.SecureMediaStore;
 
 import java.io.InputStream;
@@ -113,7 +114,7 @@ public static Bitmap getThumbnailFile(ContentResolver cr,Uri uri,int thumbnailSi
     public class ThumbnailLoaderResult {
         public Bitmap mBitmap;
         public Uri mUri;
-        public GalleryListItem.ViewHolder mHolder;
+        public MediaViewHolder mHolder;
     }
 
 }

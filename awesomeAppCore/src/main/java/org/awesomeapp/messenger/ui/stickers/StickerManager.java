@@ -180,7 +180,7 @@ public class StickerManager {
 				    hasChanges = true;
 				    
 				    Sticker emoji = entry.getValue();
-				    spannable.setSpan(new ImageSpan(context, BitmapFactory.decodeStream(emoji.res.getAssets().open(emoji.assetPath))),
+				    spannable.setSpan(new ImageSpan(context, BitmapFactory.decodeStream(emoji.res.getAssets().open(emoji.assetUri.getPath()))),
 				            matcher.start(), matcher.end(),
 				            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 				}

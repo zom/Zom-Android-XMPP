@@ -95,6 +95,7 @@
         android:dividerHeight="6dp"
         android:transcriptMode="normal"
         android:paddingBottom="48dp"
+        android:gravity="top"
         />
 
 

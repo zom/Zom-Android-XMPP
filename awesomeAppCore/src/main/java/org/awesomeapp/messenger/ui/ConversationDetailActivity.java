@@ -172,12 +172,10 @@ public class ConversationDetailActivity extends AppCompatActivity {
                 vfsUri = SecureMediaStore.resizeAndImportImage(this, sessionId, contentUri, info.type);
             else if (importContent) {
 
-                if (contentUri.getScheme() != null)
-                    vfsUri = SecureMediaStore.importContent(sessionId, info.path);
-                else
-                {
+                if (contentUri.getScheme() == null || contentUri.getScheme().equals("assets"))
                     vfsUri = SecureMediaStore.importContent(sessionId, info.path,getResources().getAssets().open(info.path));
-                }
+                else
+                    vfsUri = SecureMediaStore.importContent(sessionId, info.path);
             }
             else
             {

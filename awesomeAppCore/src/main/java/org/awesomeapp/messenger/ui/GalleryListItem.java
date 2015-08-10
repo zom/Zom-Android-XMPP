@@ -96,7 +96,7 @@ public class GalleryListItem extends FrameLayout {
         this.context = context;
     }
 
-    private ViewHolder mHolder = null;
+    private GalleryMediaViewHolder mHolder = null;
 
     private final static DateFormat MESSAGE_DATETIME_FORMAT = SimpleDateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
     private final static DateFormat MESSAGE_TIME_FORMAT = SimpleDateFormat.getTimeInstance(DateFormat.SHORT);
@@ -109,30 +109,23 @@ public class GalleryListItem extends FrameLayout {
     private final static String LOCK_CHAR = "Secure";
 
 
-    public class ViewHolder
+    public class GalleryMediaViewHolder extends MediaViewHolder
     {
-        public ImageView mMediaThumbnail = (ImageView) findViewById(R.id.media_thumbnail);
-        public View mContainer = findViewById(R.id.message_container);
 
-        // save the media uri while the MediaScanner is creating the thumbnail
-        // if the holder was reused, the pair is broken
-        public Uri mMediaUri = null;
-        ImageView mActionFav = (ImageView)findViewById(R.id.media_thumbnail_fav);
-        ImageView mActionSend = (ImageView)findViewById(R.id.media_thumbnail_send);
-        ImageView mActionShare = (ImageView)findViewById(R.id.media_thumbnail_share);
-
-        ViewHolder() {
+        public GalleryMediaViewHolder (View view)
+        {
+            super(view);
         }
 
         public void setOnClickListenerMediaThumbnail( final String mimeType, final Uri mediaUri ) {
-            mMediaThumbnail.setOnClickListener( new OnClickListener() {
+            mMediaThumbnail.setOnClickListener( new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     onClickMediaIcon( mimeType, mediaUri );
                 }
             });
 
-            mActionSend.setOnClickListener(new OnClickListener() {
+            mActionSend.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
 
@@ -140,7 +133,7 @@ public class GalleryListItem extends FrameLayout {
                 }
             });
 
-            mActionShare.setOnClickListener(new OnClickListener() {
+            mActionShare.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     final java.io.File exportPath = SecureMediaStore.exportPath(mimeType, mediaUri);
@@ -154,20 +147,19 @@ public class GalleryListItem extends FrameLayout {
             mMediaThumbnail.setOnClickListener( null );
         }
 
-       long mTimeDiff = -1;
+        long mTimeDiff = -1;
     }
-
 
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
 
 
-        mHolder = (ViewHolder)getTag();
+        mHolder = (GalleryMediaViewHolder)getTag();
 
         if (mHolder == null)
         {
-            mHolder = new ViewHolder();
+            mHolder = new GalleryMediaViewHolder(this);
             setTag(mHolder);
 
         }
@@ -184,7 +176,7 @@ public class GalleryListItem extends FrameLayout {
 
     public void bind(int id, final String mimeType, final String body, Date date) {
 
-        mHolder = (ViewHolder)getTag();
+        mHolder = (GalleryMediaViewHolder)getTag();
 
             if( mimeType != null ) {
 
@@ -201,7 +193,7 @@ public class GalleryListItem extends FrameLayout {
 
     }
 
-    private void showMediaThumbnail (String mimeType, Uri mediaUri, int id, ViewHolder holder)
+    private void showMediaThumbnail (String mimeType, Uri mediaUri, int id, GalleryMediaViewHolder holder)
     {
         /* Guess the MIME type in case we received a file that we can display or play*/
         if (TextUtils.isEmpty(mimeType) || mimeType.startsWith("application")) {
@@ -371,7 +363,7 @@ public class GalleryListItem extends FrameLayout {
      * @param aHolder
      * @param mediaUri
      */
-    private void setImageThumbnail(ContentResolver contentResolver, int id, ViewHolder aHolder, Uri mediaUri) {
+    private void setImageThumbnail(ContentResolver contentResolver, int id, GalleryMediaViewHolder aHolder, Uri mediaUri) {
         // pair this holder to the uri. if the holder is recycled, the pairing is broken
         aHolder.mMediaUri = mediaUri;
         // if a content uri - already scanned
@@ -386,7 +378,7 @@ public class GalleryListItem extends FrameLayout {
      * @param aHolder
      * @param uri
      */
-    private void setThumbnail(ContentResolver contentResolver, ViewHolder aHolder, Uri uri) {
+    private void setThumbnail(ContentResolver contentResolver, GalleryMediaViewHolder aHolder, Uri uri) {
 
         ThumbnailLoaderRequest request = new ThumbnailLoaderRequest();
         request.mHolder = aHolder;
