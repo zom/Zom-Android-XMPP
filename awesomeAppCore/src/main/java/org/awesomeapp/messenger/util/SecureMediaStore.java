@@ -120,7 +120,7 @@ public class SecureMediaStore {
             FileInputStream fis = new FileInputStream(new File(image.getPath()));
             BitmapFactory.decodeStream(fis, null, options);
         } catch (Exception e) {
-            Log.e(ImApp.LOG_TAG,"unable to read vfs thumbnail",e);
+            LogCleaner.warn(ImApp.LOG_TAG,"unable to read vfs thumbnail" + e.toString());
             return null;
         }
 
@@ -138,7 +138,7 @@ public class SecureMediaStore {
             Bitmap scaledBitmap = BitmapFactory.decodeStream(fis, null, opts);
             return scaledBitmap;
         } catch (FileNotFoundException e) {
-            LogCleaner.error(ImApp.LOG_TAG, "can't find IOcipher file: " + image.getPath(), e);
+            LogCleaner.warn(ImApp.LOG_TAG, "can't find IOcipher file: " + image.getPath());
             return null;
         }
         catch (OutOfMemoryError oe)

@@ -131,7 +131,7 @@ public class MessageListItem extends FrameLayout {
 
         View mAudioContainer = findViewById(R.id.audio_container);
         VisualizerView mVisualizerView = (VisualizerView) findViewById(R.id.audio_view);
-        View mAudioButton = findViewById(R.id.audio_button);
+        ImageView mAudioButton = (ImageView)findViewById(R.id.audio_button);
         // save the media uri while the MediaScanner is creating the thumbnail
         // if the holder was reused, the pair is broken
         Uri mMediaUri = null;
@@ -278,6 +278,7 @@ public class MessageListItem extends FrameLayout {
         mHolder.mAudioContainer.setVisibility(View.GONE);
         mHolder.mMediaContainer.setVisibility(View.GONE);
         mHolder.mContainer.setBackgroundResource(R.drawable.message_view_rounded_light);
+        mHolder.mAudioButton.setImageResource(R.drawable.media_audio_play);
 
         if (nickname == null)
             nickname = address;
@@ -476,10 +477,12 @@ public class MessageListItem extends FrameLayout {
 
                 if (mAudioPlayer.isPlaying())
                 {
+                    mHolder.mAudioButton.setImageResource(R.drawable.media_audio_play);
                     mAudioPlayer.pause();
                 }
                 else
                 {
+                    mHolder.mAudioButton.setImageResource(R.drawable.media_audio_pause);
                     mAudioPlayer.play();
                 }
 
@@ -696,6 +699,7 @@ public class MessageListItem extends FrameLayout {
         mHolder.mAudioContainer.setVisibility(View.GONE);
         mHolder.mMediaContainer.setVisibility(View.GONE);
         mHolder.mContainer.setBackgroundResource(R.drawable.message_view_rounded_light);
+        mHolder.mAudioButton.setImageResource(R.drawable.media_audio_play);
 
         mHolder.resetOnClickListenerMediaThumbnail();
 

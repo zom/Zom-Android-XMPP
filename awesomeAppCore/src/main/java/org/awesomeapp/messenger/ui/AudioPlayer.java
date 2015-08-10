@@ -23,7 +23,7 @@ public class AudioPlayer {
     private String mFileName;
     private String mMimeType;
 
-    private MediaPlayer mediaPlayer;
+    private static MediaPlayer mediaPlayer;
     private HttpMediaStreamer streamer;
 
     private Visualizer mVisualizer;
@@ -40,7 +40,6 @@ public class AudioPlayer {
         mMimeType = mimeType;
         mVisualizerView = visualizerView;
         mInfoView = infoView;
-
 
     }
 
@@ -126,6 +125,15 @@ public class AudioPlayer {
     public void initPlayer() throws Exception {
 
         info.guardianproject.iocipher.File fileStream = new info.guardianproject.iocipher.File(mFileName);
+
+        if (mediaPlayer != null)
+        {
+            if (mediaPlayer.isPlaying())
+                mediaPlayer.stop();
+
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
 
         mediaPlayer = new MediaPlayer();
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);

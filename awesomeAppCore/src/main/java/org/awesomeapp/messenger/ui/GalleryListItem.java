@@ -54,6 +54,8 @@ import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.ImUrlActivity;
 import org.awesomeapp.messenger.model.Presence;
 import org.awesomeapp.messenger.provider.Imps;
+import org.awesomeapp.messenger.tasks.ThumbnailLoaderRequest;
+import org.awesomeapp.messenger.tasks.ThumbnailLoaderTask;
 import org.awesomeapp.messenger.ui.widgets.ImageViewActivity;
 import org.awesomeapp.messenger.ui.widgets.RoundedAvatarDrawable;
 import org.awesomeapp.messenger.util.SecureMediaStore;
@@ -72,7 +74,9 @@ import info.guardianproject.otr.app.im.R;
 public class GalleryListItem extends FrameLayout {
 
     private static int sCacheSize = 10; // 1MiB
-    private static LruCache<String,Bitmap> mBitmapCache = new LruCache<String,Bitmap>(sCacheSize);
+    private static LruCache<String,Bitmap> sBitmapCache = new LruCache<String,Bitmap>(sCacheSize);
+
+    public final static int THUMBNAIL_SIZE_DEFAULT = 400;
 
     public enum DeliveryState {
         NEUTRAL, DELIVERED, UNDELIVERED
@@ -105,14 +109,14 @@ public class GalleryListItem extends FrameLayout {
     private final static String LOCK_CHAR = "Secure";
 
 
-    class ViewHolder
+    public class ViewHolder
     {
-        ImageView mMediaThumbnail = (ImageView) findViewById(R.id.media_thumbnail);
-        View mContainer = findViewById(R.id.message_container);
+        public ImageView mMediaThumbnail = (ImageView) findViewById(R.id.media_thumbnail);
+        public View mContainer = findViewById(R.id.message_container);
 
         // save the media uri while the MediaScanner is creating the thumbnail
         // if the holder was reused, the pair is broken
-        Uri mMediaUri = null;
+        public Uri mMediaUri = null;
         ImageView mActionFav = (ImageView)findViewById(R.id.media_thumbnail_fav);
         ImageView mActionSend = (ImageView)findViewById(R.id.media_thumbnail_send);
         ImageView mActionShare = (ImageView)findViewById(R.id.media_thumbnail_share);
@@ -367,7 +371,7 @@ public class GalleryListItem extends FrameLayout {
      * @param aHolder
      * @param mediaUri
      */
-    private void setImageThumbnail(final ContentResolver contentResolver, final int id, final ViewHolder aHolder, final Uri mediaUri) {
+    private void setImageThumbnail(ContentResolver contentResolver, int id, ViewHolder aHolder, Uri mediaUri) {
         // pair this holder to the uri. if the holder is recycled, the pairing is broken
         aHolder.mMediaUri = mediaUri;
         // if a content uri - already scanned
@@ -382,85 +386,17 @@ public class GalleryListItem extends FrameLayout {
      * @param aHolder
      * @param uri
      */
-    private void setThumbnail(final ContentResolver contentResolver, final ViewHolder aHolder, final Uri uri) {
-        new AsyncTask<String, Void, Bitmap>() {
+    private void setThumbnail(ContentResolver contentResolver, ViewHolder aHolder, Uri uri) {
 
-            @Override
-            protected Bitmap doInBackground(String... params) {
+        ThumbnailLoaderRequest request = new ThumbnailLoaderRequest();
+        request.mHolder = aHolder;
+        request.mUri = uri;
+        request.mResolver = contentResolver;
 
-                Bitmap result = mBitmapCache.get(uri.toString());
+        new ThumbnailLoaderTask(sBitmapCache).execute(request);
 
-                if (result == null)
-                    return getThumbnail( contentResolver, uri );
-                else
-                    return result;
-            }
-
-            @Override
-            protected void onPostExecute(Bitmap result) {
-
-                if (uri != null && result != null)
-                {
-                    mBitmapCache.put(uri.toString(), result);
-
-                    // confirm the holder is still paired to this uri
-                    if( ! uri.equals( aHolder.mMediaUri ) ) {
-                        return ;
-                    }
-                    // set the thumbnail
-                    aHolder.mMediaThumbnail.setImageBitmap(result);
-                }
-                else
-                {
-                    aHolder.mContainer.setVisibility(View.GONE);
-                }
-            }
-        }.execute();
     }
 
-    public final static int THUMBNAIL_SIZE_DEFAULT = 400;
-
-    public static Bitmap getThumbnail(ContentResolver cr, Uri uri) {
-     //   Log.e( MessageView.class.getSimpleName(), "getThumbnail uri:" + uri);
-        if (SecureMediaStore.isVfsUri(uri)) {
-            return SecureMediaStore.getThumbnailVfs(uri, THUMBNAIL_SIZE_DEFAULT);
-        }
-        return getThumbnailFile(cr, uri, THUMBNAIL_SIZE_DEFAULT);
-    }
-
-    public static Bitmap getThumbnailFile(ContentResolver cr, Uri uri, int thumbnailSize) {
-
-
-        try
-        {
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inJustDecodeBounds = true;
-            options.inInputShareable = true;
-            options.inPurgeable = true;
-
-            InputStream is = cr.openInputStream(uri);
-            BitmapFactory.decodeStream(is, null, options);
-            if ((options.outWidth == -1) || (options.outHeight == -1))
-                return null;
-
-            int originalSize = (options.outHeight > options.outWidth) ? options.outHeight
-                    : options.outWidth;
-
-            BitmapFactory.Options opts = new BitmapFactory.Options();
-            opts.inSampleSize = originalSize / thumbnailSize;
-
-            is = cr.openInputStream(uri);
-
-            Bitmap scaledBitmap = BitmapFactory.decodeStream(is, null, options);
-
-            return scaledBitmap;
-        }
-        catch (Exception e)
-        {
-            Log.d(ImApp.LOG_TAG,"could not getThumbnailFile",e);
-            return null;
-        }
-    }
 
     private String formatMessage (String body)
     {
