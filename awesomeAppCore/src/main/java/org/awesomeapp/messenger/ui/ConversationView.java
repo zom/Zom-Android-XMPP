@@ -2677,7 +2677,7 @@ public class ConversationView {
 
             try {
 
-                String basePath = "stickers/olo_and_shimi_1";
+                String basePath = "assets://stickers/olo_and_shimi_1";
                 AssetManager aMan = mActivity.getAssets();
                 String[] filelist = aMan.list(basePath);
 
@@ -2734,7 +2734,9 @@ public class ConversationView {
                         @Override
                         public void onStickerSelected(Sticker s) {
 
-                            mActivity.handleSendDelete(Uri.parse(s.assetPath), false, false);
+//                            mActivity.handleSendDelete(Uri.parse(s.assetPath), false, false, false);
+                            mActivity.handleSendData(Uri.parse(s.assetPath),"image/png");
+
                             mViewAttach.setVisibility(View.GONE);
                             showStickers();
                         }

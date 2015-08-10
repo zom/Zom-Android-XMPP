@@ -41,27 +41,6 @@ public class AudioPlayer {
         mVisualizerView = visualizerView;
         mInfoView = infoView;
 
-        new AsyncTask<String, Void, Boolean>() {
-
-            @Override
-            protected Boolean doInBackground(String... params) {
-
-                try {
-                    initPlayer();
-                    return true;
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    return false;
-                }
-            }
-
-            @Override
-            protected void onPostExecute(Boolean playerInit) {
-
-
-            }
-
-        }.execute();
 
     }
 
@@ -81,6 +60,31 @@ public class AudioPlayer {
                 mVisualizer.setEnabled(true);
 
             mediaPlayer.start();
+        }
+        else
+        {
+            mPlayOnPrepare = true;
+            new AsyncTask<String, Void, Boolean>() {
+
+                @Override
+                protected Boolean doInBackground(String... params) {
+
+                    try {
+                        initPlayer();
+                        return true;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        return false;
+                    }
+                }
+
+                @Override
+                protected void onPostExecute(Boolean playerInit) {
+
+
+                }
+
+            }.execute();
         }
     }
 
@@ -120,12 +124,21 @@ public class AudioPlayer {
     }
 
     public void initPlayer() throws Exception {
-        streamer = new HttpMediaStreamer(mFileName, mMimeType);
-        Uri uri = streamer.getUri();
+
+        info.guardianproject.iocipher.File fileStream = new info.guardianproject.iocipher.File(mFileName);
 
         mediaPlayer = new MediaPlayer();
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        mediaPlayer.setDataSource(mContext, uri);
+
+        if (fileStream.exists()) {
+            streamer = new HttpMediaStreamer(fileStream, mMimeType);
+            Uri uri = streamer.getUri();
+            mediaPlayer.setDataSource(mContext, uri);
+        }
+        else
+        {
+            mediaPlayer.setDataSource(mFileName);
+        }
 
         mediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
             @Override

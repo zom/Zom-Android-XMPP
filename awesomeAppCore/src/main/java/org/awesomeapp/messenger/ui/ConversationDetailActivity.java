@@ -156,36 +156,13 @@ public class ConversationDetailActivity extends AppCompatActivity {
             startActivityForResult(Intent.createChooser(selectFile, "Select File"), REQUEST_SEND_FILE);
     }
 
-    void startAudioPicker() {
-
-
-        Intent intent = new Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION);
-        if (!isCallable(intent))
-        {
-            intent = new Intent("android.provider.MediaStore.RECORD_SOUND");
-            intent.addCategory("android.intent.category.DEFAULT");
-
-            if (!isCallable(intent))
-            {
-                intent = new Intent(Intent.ACTION_GET_CONTENT);
-                intent.setType("audio/*");
-
-                if (!isCallable(intent))
-                    return;
-
-            }
-        }
-
-        startActivityForResult(intent, REQUEST_SEND_AUDIO); // intent and requestCode of 1
-
-    }
     private boolean isCallable(Intent intent) {
         List<ResolveInfo> list = getPackageManager().queryIntentActivities(intent,
                 PackageManager.MATCH_DEFAULT_ONLY);
         return list.size() > 0;
     }
 
-    public void handleSendDelete( Uri contentUri, boolean delete, boolean resizeImage) {
+    public void handleSendDelete( Uri contentUri, boolean delete, boolean resizeImage, boolean importContent) {
         try {
             // import
             SystemServices.FileInfo info = SystemServices.getFileInfoFromURI(this, contentUri);
@@ -193,7 +170,7 @@ public class ConversationDetailActivity extends AppCompatActivity {
             Uri vfsUri;
             if (resizeImage)
                 vfsUri = SecureMediaStore.resizeAndImportImage(this, sessionId, contentUri, info.type);
-            else {
+            else if (importContent) {
 
                 if (contentUri.getScheme() != null)
                     vfsUri = SecureMediaStore.importContent(sessionId, info.path);
@@ -202,6 +179,11 @@ public class ConversationDetailActivity extends AppCompatActivity {
                     vfsUri = SecureMediaStore.importContent(sessionId, info.path,getResources().getAssets().open(info.path));
                 }
             }
+            else
+            {
+                vfsUri = contentUri;
+            }
+
             // send
             boolean sent = handleSendData(vfsUri, info.type);
             if (!sent) {
@@ -238,40 +220,40 @@ public class ConversationDetailActivity extends AppCompatActivity {
 
         if (resultCode == RESULT_OK) {
 
-            if (requestCode == REQUEST_SEND_IMAGE || requestCode == REQUEST_SEND_FILE || requestCode == REQUEST_SEND_AUDIO) {
+            if (requestCode == REQUEST_SEND_IMAGE) {
                 Uri uri = resultIntent.getData() ;
 
                 if( uri == null ) {
                     return ;
                 }
-                boolean deleteAudioFile = (requestCode == REQUEST_SEND_AUDIO);
-                boolean resizeImage = requestCode == REQUEST_SEND_IMAGE; //resize if is an image, not shared as "file"
-                handleSendDelete(uri, deleteAudioFile, resizeImage);
+                boolean deleteFile = false;
+                boolean resizeImage = true;
+                boolean importContent = true;
+                handleSendDelete(uri, deleteFile, resizeImage, importContent);
+            }
+            else if (requestCode == REQUEST_SEND_FILE || requestCode == REQUEST_SEND_AUDIO) {
+                Uri uri = resultIntent.getData() ;
+
+                if( uri == null ) {
+                    return;
+                }
+                boolean deleteFile = false;
+                boolean resizeImage = false;
+                boolean importContent = false;
+
+                handleSendDelete(uri, deleteFile, resizeImage, importContent);
             }
             else if (requestCode == REQUEST_TAKE_PICTURE)
             {
                 if (mLastPhoto != null) {
-                    handleSendDelete(mLastPhoto, true, true);
+                    boolean deleteFile = true;
+                    boolean resizeImage = true;
+                    boolean importContent = true;
+
+                    handleSendDelete(mLastPhoto, deleteFile, resizeImage, importContent);
                     mLastPhoto = null;
                 }
-                /**
-                File file = new File(getRealPathFromURI(mLastPhoto));
-                final Handler handler = new Handler();
-                MediaScannerConnection.scanFile(
-                        this, new String[]{file.toString()}, null,
-                        new MediaScannerConnection.OnScanCompletedListener() {
-                            @Override
-                            public void onScanCompleted(String path, final Uri uri) {
 
-                                handler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        handleSendDelete(mLastPhoto, true, true);
-                                    }
-                                });
-                            }
-                        });
-                 */
             }
 
 
@@ -279,39 +261,35 @@ public class ConversationDetailActivity extends AppCompatActivity {
         }
     }
 
-    private boolean handleSendData(Uri uri, String mimeType) {
+    public boolean handleSendData(Uri uri, String mimeType) {
         try {
             SystemServices.FileInfo info = SystemServices.getFileInfoFromURI(this, uri);
 
             if (mimeType != null)
                 info.type = mimeType;
 
-            if (info != null && info.path != null && SecureMediaStore.exists(info.path))
-            {
-                IChatSession session = mConvoView.getChatSession();
+            //if (info != null && info.path != null && SecureMediaStore.exists(info.path))
 
-                if (session != null) {
-                    if (info.type == null)
-                        if (mimeType != null)
-                            info.type = mimeType;
-                        else
-                            info.type = "application/octet-stream";
+            IChatSession session = mConvoView.getChatSession();
 
-                    String offerId = UUID.randomUUID().toString();
-                    session.offerData(offerId, info.path, info.type );
+            if (session != null) {
+                if (info.type == null)
+                    if (mimeType != null)
+                        info.type = mimeType;
+                    else
+                        info.type = "application/octet-stream";
 
-                    int type = mConvoView.isOtrSessionVerified() ? Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED : Imps.MessageType.OUTGOING_ENCRYPTED;
-                    Imps.insertMessageInDb(
-                            getContentResolver(), false, session.getId(), true, null, uri.toString(),
-                            System.currentTimeMillis(), type,
-                            0, offerId, info.type);
-                    return true; // sent
-                }
+                String offerId = UUID.randomUUID().toString();
+                session.offerData(offerId, info.path, info.type );
+
+                int type = mConvoView.isOtrSessionVerified() ? Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED : Imps.MessageType.OUTGOING_ENCRYPTED;
+                Imps.insertMessageInDb(
+                        getContentResolver(), false, session.getId(), true, null, uri.toString(),
+                        System.currentTimeMillis(), type,
+                        0, offerId, info.type);
+                return true; // sent
             }
-            else
-            {
-                Toast.makeText(this, R.string.sorry_we_cannot_share_that_file_type, Toast.LENGTH_LONG).show();
-            }
+
         } catch (RemoteException e) {
             Log.e(ImApp.LOG_TAG,"error sending file",e);
         }
@@ -365,7 +343,8 @@ public class ConversationDetailActivity extends AppCompatActivity {
                 Uri uriAudio = Uri.fromFile(mAudioFilePath);
                 boolean deleteFile = true;
                 boolean resizeImage = false;
-                handleSendDelete(uriAudio, deleteFile, resizeImage);
+                boolean importContent = true;
+                handleSendDelete(uriAudio, deleteFile, resizeImage, importContent);
             }
             else
             {

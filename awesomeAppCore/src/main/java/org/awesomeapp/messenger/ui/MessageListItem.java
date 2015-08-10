@@ -463,14 +463,13 @@ public class MessageListItem extends FrameLayout {
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     protected void onClickMediaIcon(String mimeType, Uri mediaUri) {
 
-        if (SecureMediaStore.isVfsUri(mediaUri)) {
-            if (mimeType.startsWith("image")) {
-                Intent intent = new Intent(context, ImageViewActivity.class);
-                intent.putExtra( ImageViewActivity.FILENAME, mediaUri.getPath());
-                context.startActivity(intent);
-                return;
-            }
-            if (mimeType.startsWith("audio")) {
+
+        if (mimeType.startsWith("image")) {
+            Intent intent = new Intent(context, ImageViewActivity.class);
+            intent.putExtra( ImageViewActivity.FILENAME, mediaUri.getPath());
+            context.startActivity(intent);
+        }
+        else if (mimeType.startsWith("audio")) {
 
                 if (mAudioPlayer.getDuration() != -1)
                     mHolder.mTextViewForMessages.setText((mAudioPlayer.getDuration()/1000) + "secs");
@@ -484,31 +483,16 @@ public class MessageListItem extends FrameLayout {
                     mAudioPlayer.play();
                 }
 
-                return;
-            }
-            return;
+
         }
         else
         {
-
 
             String body = convertMediaUriToPath(mediaUri);
 
             if (body == null)
                 body = new File(mediaUri.getPath()).getAbsolutePath();
 
-            if (mimeType.startsWith("audio") || (body.endsWith("3gp")||body.endsWith("3gpp")||body.endsWith("amr")))
-            {
-
-                if (mAudioPlayer.isPlaying())
-                {
-                    mAudioPlayer.pause();
-                }
-                else
-                {
-                    mAudioPlayer.play();
-                }
-            }
 
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

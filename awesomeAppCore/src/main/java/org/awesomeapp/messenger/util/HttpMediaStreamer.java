@@ -26,8 +26,8 @@ public class HttpMediaStreamer {
     private Uri uri;
     private ServerSocket serverSocket;
 
-    public HttpMediaStreamer(String filename, String mimeType) throws IOException {
-        uri = create(filename, mimeType);
+    public HttpMediaStreamer(File fileStream, String mimeType) throws IOException {
+        uri = create(fileStream, mimeType);
     }
 
     public Uri getUri() {
@@ -42,13 +42,8 @@ public class HttpMediaStreamer {
         }
     }
 
-    private Uri create(final String filename, final String mimeType) throws IOException {
+    private Uri create(final File fileStream, final String mimeType) throws IOException {
 
-        // FIXME generate a random token for security
-        final File file = new File(filename);
-        if (!file.exists()) {
-            throw new IOException("File not found " + filename);
-        }
 
         try {
             if (serverSocket != null)
@@ -76,13 +71,13 @@ public class HttpMediaStreamer {
                     StringBuilder sb = new StringBuilder();
                     sb.append("HTTP/1.1 200\r\n");
                     sb.append("Content-Type: " + mimeType + "\r\n");
-                    sb.append("Content-Length: " + file.length() + "\r\n\r\n");
+                    sb.append("Content-Length: " + fileStream.length() + "\r\n\r\n");
 
                     BufferedOutputStream bos = new BufferedOutputStream(socket.getOutputStream());
 
                     bos.write(sb.toString().getBytes());
 
-                    FileInputStream fis = new FileInputStream(file);
+                    FileInputStream fis = new FileInputStream(fileStream);
 
                     int idx = 0;
 
@@ -104,7 +99,7 @@ public class HttpMediaStreamer {
             }
         }.start();
 
-        Uri uri = Uri.parse("http://localhost:" + serverSocket.getLocalPort() + file.getAbsolutePath());
+        Uri uri = Uri.parse("http://localhost:" + serverSocket.getLocalPort() + fileStream.getAbsolutePath());
         return uri;
     }
 }
