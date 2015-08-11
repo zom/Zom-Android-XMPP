@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/*
+ * Copyright (C) 2008 Esmertec AG.
+ * Copyright (C) 2008 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+-->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/acct_act_scrollview"
+	android:layout_height="match_parent"
+	android:layout_width="match_parent"
+	android:fillViewport="true"
+	>
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical"
+		android:padding="3dp"
+		android:background="?listBackground"
+		android:layout_marginTop="12dp"
+		>
+			
+	<LinearLayout 
+	    android:layout_width="match_parent"
+	    android:layout_height="128dp"
+	    android:orientation="horizontal"
+		android:gravity="center"
+		android:padding="3dp"
+		android:background="#ffffff"
+		>
+
+		<ImageView
+			android:layout_width="96dp"
+			android:layout_height="96dp"
+			android:src="@drawable/avatar_unknown"
+			android:id="@+id/imageAvatar" />
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+			android:padding="10dp">
+
+		<TextView android:id="@+id/tvNickname"
+				android:selectAllOnFocus="true"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:hint="@string/account_setup_example_email_address"
+				android:autoLink="none"
+				android:cursorVisible="true"
+				android:inputType="textEmailAddress"
+				android:text="user person"
+				android:textAppearance="?android:attr/textAppearanceLarge"
+
+				/>
+
+			<TextView android:id="@+id/edtName"
+				android:selectAllOnFocus="true"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:hint="@string/account_setup_example_email_address"
+				android:autoLink="none"
+				android:cursorVisible="true"
+				android:inputType="textEmailAddress"
+				android:text="user@domain.com"
+				android:textAppearance="?android:attr/textAppearanceSmall"
+				android:textColor="?contactTextSecondary"
+
+				/>
+
+			<TextView android:id="@+id/edtPass"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:hint="@string/account_setup_password"
+				android:selectAllOnFocus="true" android:inputType="textPassword"
+				android:text="*************"
+				android:textAppearance="?android:attr/textAppearanceSmall"
+
+				/>
+
+		</LinearLayout>
+
+
+		</LinearLayout>
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical"
+		android:gravity="center"
+		android:padding="3dp"
+		android:background="#ffffff"
+		>
+
+		<TextView
+			android:selectAllOnFocus="true"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:autoLink="none"
+			android:text="Zom Secret"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:textStyle="bold"
+			android:textColor="?contactTextSecondary"
+
+			/>
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			android:gravity="left|center"
+			android:padding="3dp"
+			android:background="#ffffff"
+			>
+			<ImageView
+				android:layout_width="48dp"
+				android:layout_height="48dp"
+				android:src="@drawable/qr"
+				android:id="@+id/buttonScan"
+				/>
+		<TextView android:id="@+id/tvFingerprint"
+			android:selectAllOnFocus="true"
+			android:layout_width="260dp"
+			android:layout_height="wrap_content"
+			android:autoLink="none"
+			android:text="AAAAAA AAAAAA AAAAAA AAAAAA AAAAAA"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:textColor="?contactTextSecondary"
+			android:layout_margin="12dp"
+			/>
+			</LinearLayout>
+		</LinearLayout>
+
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+			android:layout_marginTop="20dp"
+			>
+			<Button android:id="@+id/btnFriends"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:text="Friends"
+				android:drawableLeft="@drawable/ic_people_white_24dp"
+				android:background="?colorPrimaryDark"
+				android:textAppearance="?android:attr/textAppearanceMediumInverse"
+				android:padding="6dp"
+				/>
+			<Button android:id="@+id/btnFavorites"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:text="Favorites"
+				android:drawableLeft="@drawable/ic_favorite_border_white_24dp"
+				android:textAppearance="?android:attr/textAppearanceMediumInverse"
+				android:background="?colorPrimaryDark"
+				android:padding="6dp"
+
+				/>
+
+
+		</LinearLayout>
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:layout_marginTop="20dp"
+		>
+		<Button android:id="@+id/btnAdvanced"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="@string/settings_action"
+			android:drawableLeft="@drawable/ic_settings_white_24dp"
+			android:textAppearance="?android:attr/textAppearanceMediumInverse"
+			android:background="?colorPrimaryDark"
+			android:padding="6dp"
+
+			/>
+
+
+		</LinearLayout>
+		<!--
+<Button android:id="@+id/btnQR"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dip"
+        android:text="@string/menu_sidebar_qr" android:layout_width="match_parent"
+                    android:visibility="gone"
+
+        />
+
+
+
+<TextView android:id="@+id/signUp"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:paddingLeft="4dip"
+android:focusable="true"
+android:focusableInTouchMode="true"
+android:textAppearance="?android:attr/textAppearanceSmall" />
+ -->
+	</LinearLayout>
+</ScrollView>

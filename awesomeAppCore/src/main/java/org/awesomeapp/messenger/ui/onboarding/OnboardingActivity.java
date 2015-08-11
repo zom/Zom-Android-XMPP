@@ -376,33 +376,43 @@ public class OnboardingActivity extends ThemeableActivity {
         @Override
         protected void onPostExecute(OnboardingAccount account) {
 
-            mFullUserName = account.username + '@' + account.domain;
+            if (account != null) {
+                mFullUserName = account.username + '@' + account.domain;
 
-            findViewById(R.id.progressImage).setVisibility(View.GONE);
+                findViewById(R.id.progressImage).setVisibility(View.GONE);
 
-            EditText etAccountInfo = (EditText) findViewById(R.id.statusAccountInfo);
-            etAccountInfo.setVisibility(View.VISIBLE);
+                EditText etAccountInfo = (EditText) findViewById(R.id.statusAccountInfo);
+                etAccountInfo.setVisibility(View.VISIBLE);
 
-            StringBuffer sb = new StringBuffer();
-            sb.append(getString(R.string.account_congrats)).append("\n\n");
-            sb.append(getString(R.string.save_account_info));
-            mSetupStatus.setText(sb.toString());
+                StringBuffer sb = new StringBuffer();
+                sb.append(getString(R.string.account_congrats)).append("\n\n");
+                sb.append(getString(R.string.save_account_info));
+                mSetupStatus.setText(sb.toString());
 
-            sb = new StringBuffer();
-            sb.append(getString(R.string.zom_id)).append(account.username).append("\n");
-            sb.append(getString(R.string.account_password_label)).append(account.password).append("\n");
-            sb.append(getString(R.string.account_server_label)).append(account.domain);
-            etAccountInfo.setText(sb.toString());
-            etAccountInfo.setSelected(true);
+                sb = new StringBuffer();
+                sb.append(getString(R.string.zom_id)).append(account.username).append("\n");
+                sb.append(getString(R.string.account_password_label)).append(account.password).append("\n");
+                sb.append(getString(R.string.account_server_label)).append(account.domain);
+                etAccountInfo.setText(sb.toString());
+                etAccountInfo.setSelected(true);
 
-            mEditUsername.setVisibility(View.GONE);
-            mSetupProgress.setVisibility(View.GONE);
+                mEditUsername.setVisibility(View.GONE);
+                mSetupProgress.setVisibility(View.GONE);
 
-            mSetupButton.setVisibility(View.VISIBLE);
+                mSetupButton.setVisibility(View.VISIBLE);
 
-            SignInHelper signInHelper = new SignInHelper(OnboardingActivity.this, mHandler);
-            signInHelper.activateAccount(account.providerId,account.accountId);
-            signInHelper.signIn(account.password, account.providerId, account.accountId, true);
+                SignInHelper signInHelper = new SignInHelper(OnboardingActivity.this, mHandler);
+                signInHelper.activateAccount(account.providerId, account.accountId);
+                signInHelper.signIn(account.password, account.providerId, account.accountId, true);
+            }
+            else
+            {
+                StringBuffer sb = new StringBuffer();
+                sb.append(getString(R.string.account_setup_error_server));
+                mSetupStatus.setText(sb.toString());
+
+                //need to try again somehow
+            }
         }
       }
 

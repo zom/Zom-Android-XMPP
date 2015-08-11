@@ -37,9 +37,6 @@ public class AccountsFragment extends ListFragment implements ProviderListItem.S
             mActivity = (FragmentActivity)activity;
 
             mAccountLayoutView = R.layout.account_view;
-            if (mActivity instanceof MainActivity)
-                mAccountLayoutView = R.layout.account_view_sidebar;
-
 
             initProviderCursor();
 

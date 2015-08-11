@@ -61,6 +61,7 @@ import org.awesomeapp.messenger.ui.ConversationListFragment;
 import org.awesomeapp.messenger.ui.GalleryFragment;
 import org.awesomeapp.messenger.ui.GalleryListFragment;
 import org.awesomeapp.messenger.ui.MoreFragment;
+import org.awesomeapp.messenger.ui.legacy.AccountsFragment;
 import org.awesomeapp.messenger.ui.legacy.SettingActivity;
 import org.awesomeapp.messenger.ui.onboarding.OnboardingActivity;
 import org.awesomeapp.messenger.provider.Imps;

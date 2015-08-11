@@ -500,7 +500,9 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
         ContentValues values = new ContentValues(2);
 
-        values.put(Imps.Chats.LAST_MESSAGE_DATE, System.currentTimeMillis());
+        if (message != null)
+            values.put(Imps.Chats.LAST_MESSAGE_DATE, System.currentTimeMillis());
+
          values.put(Imps.Chats.LAST_UNREAD_MESSAGE, message);
          values.put(Imps.Chats.GROUP_CHAT, mIsGroupChat);
          // ImProvider.insert() will replace the chat if it already exist.

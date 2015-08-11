@@ -6,9 +6,16 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.awesomeapp.messenger.ImApp;
+import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
+import org.awesomeapp.messenger.ui.onboarding.OnboardingManager;
+import org.awesomeapp.messenger.ui.widgets.ImageViewActivity;
+
+import java.io.IOException;
 
 import info.guardianproject.otr.app.im.R;
 
@@ -58,12 +65,42 @@ public class AccountFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.account_activity, container, false);
 
-        TextView tv = (TextView)view.findViewById(R.id.edtName);
+        final ImApp app = ((ImApp)getActivity().getApplication());
 
-        String username = ((ImApp)getActivity().getApplication()).getDefaultUsername();
-        tv.setText(username);
+        View view = inflater.inflate(R.layout.awesome_fragment_account, container, false);
+
+        String fullUserName = app.getDefaultUsername();
+        XmppAddress xAddress = new XmppAddress(fullUserName);
+
+        TextView tvNickname = (TextView)view.findViewById(R.id.tvNickname);
+        TextView tvUsername = (TextView)view.findViewById(R.id.edtName);
+        TextView tvFingerprint = (TextView)view.findViewById(R.id.tvFingerprint);
+
+        ImageView ivScan = (ImageView)view.findViewById(R.id.buttonScan);
+
+        ivScan.setOnClickListener(new View.OnClickListener()
+        {
+
+            @Override
+            public void onClick(View v) {
+
+                String inviteString;
+                try {
+                    inviteString = OnboardingManager.generateInviteLink(getActivity(), app.getDefaultUsername(), app.getDefaultOtrKey());
+                    OnboardingManager.inviteScan(getActivity(), inviteString);
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+
+        });
+
+        tvUsername.setText(fullUserName);
+        tvNickname.setText(xAddress.getUser());
+
+        tvFingerprint.setText(prettyPrintFingerprint(app.getDefaultOtrKey()));
 
         return view;
     }
@@ -85,5 +122,16 @@ public class AccountFragment extends Fragment {
         super.onDetach();
     }
 
+    private String prettyPrintFingerprint (String fingerprint)
+    {
+        StringBuffer spacedFingerprint = new StringBuffer();
 
+        for (int i = 0; i + 8 <= fingerprint.length(); i+=8)
+        {
+            spacedFingerprint.append(fingerprint.subSequence(i,i+8));
+            spacedFingerprint.append(' ');
+        }
+
+        return spacedFingerprint.toString();
+    }
 }
