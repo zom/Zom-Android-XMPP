@@ -84,6 +84,7 @@
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="?contactTextSecondary"
             android:gravity="right|top"
+            android:layout_marginTop="6dp"
             />
         <ImageView
             android:id="@+id/statusIcon"
