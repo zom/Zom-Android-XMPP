@@ -3,10 +3,13 @@ buildscript {
     repositories {
         mavenCentral()
         jcenter()
+        maven { url "https://raw.githubusercontent.com/guardianproject/gpmaven/master" }
+
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:1.2.3'
         classpath files('libs/gradle-witness.jar')
+
     }
 }
 
