@@ -18,6 +18,7 @@ package org.awesomeapp.messenger;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.ContentUris;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -239,20 +240,55 @@ public class MainActivity extends AppCompatActivity {
 
 
         //if VFS is not mounted, then send to WelcomeActivity
-        if (!VirtualFileSystem.get().isMounted())
-        {
+        if (!VirtualFileSystem.get().isMounted()) {
             finish();
-            startActivity(new Intent(this,RouterActivity.class));
+            startActivity(new Intent(this, RouterActivity.class));
 
-        }
-        else
-        {
-            ImApp app = (ImApp)getApplication();
+        } else {
+            ImApp app = (ImApp) getApplication();
             app.getTrustManager().bindDisplayActivity(this);
             app.checkForCrashes(this);
 
             mApp.initAccountInfo();
 
+        }
+
+        handleIntent();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+
+        setIntent(intent);
+
+        handleIntent();
+    }
+
+    private void handleIntent ()
+    {
+
+        Intent intent = getIntent();
+
+        if (intent != null)
+        {
+            Uri data = intent.getData();
+
+            if (data != null) {
+                String type = getContentResolver().getType(data);
+                if (Imps.Chats.CONTENT_ITEM_TYPE.equals(type)) {
+
+                    long chatId = ContentUris.parseId(data);
+
+                    Intent intentChat = new Intent(this, ConversationDetailActivity.class);
+                    intentChat.putExtra("id", chatId);
+                    startActivity(intentChat);
+                }
+
+
+            }
+
+            setIntent(null);
         }
     }
 

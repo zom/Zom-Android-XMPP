@@ -83,8 +83,8 @@ public class StatusBarNotifier {
 
         String title = nickname;
         String snippet = mContext.getString(R.string.new_messages_notify) + ' ' + nickname;// + ": " + msg;
-        Intent intent = new Intent(Intent.ACTION_VIEW, ContentUris.withAppendedId(
-                Imps.Chats.CONTENT_URI, chatId));
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setDataAndType(ContentUris.withAppendedId(Imps.Chats.CONTENT_URI, chatId),Imps.Chats.CONTENT_ITEM_TYPE);
         intent.addCategory(ImApp.IMPS_CATEGORY);
         notify(username, title, snippet, msg, providerId, accountId, intent, lightWeightNotify, R.drawable.ic_discuss);
     }
@@ -224,7 +224,7 @@ public class StatusBarNotifier {
     private void notify(String sender, String title, String tickerText, String message,
             long providerId, long accountId, Intent intent, boolean lightWeightNotify, int icon) {
 
-       // intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP|Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
         NotificationInfo info;
 
@@ -263,6 +263,8 @@ public class StatusBarNotifier {
         }
     }
 
+    private static int UNIQUE_INT_PER_CALL = 10000;
+
     class NotificationInfo {
         class Item {
             String mTitle;
@@ -275,6 +277,7 @@ public class StatusBarNotifier {
                 mIntent = intent;
             }
         }
+
 
       // private HashMap<String, Item> mItems;
 
@@ -319,7 +322,21 @@ public class StatusBarNotifier {
 
         public Notification createNotification(String tickerText, boolean lightWeightNotify, int icon) {
             NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext);
+
             Intent intent = getDefaultIntent();
+
+            if (lastItem.mIntent != null)
+            {
+                intent.setAction(lastItem.mIntent.getAction());
+                intent.setDataAndType(lastItem.mIntent.getData(), lastItem.mIntent.getType());
+
+                if (lastItem.mIntent.getExtras() != null)
+                    intent.putExtras(lastItem.mIntent.getExtras());
+
+                intent.setFlags(lastItem.mIntent.getFlags());
+
+            }
+
             builder
                 .setSmallIcon(icon)
                 .setTicker(lightWeightNotify ? null : tickerText)
@@ -327,7 +344,7 @@ public class StatusBarNotifier {
                 .setLights(0xff00ff00, 300, 1000)
                 .setContentTitle(getTitle())
                 .setContentText(getMessage())
-                .setContentIntent(PendingIntent.getActivity(mContext, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT))
+                .setContentIntent(PendingIntent.getActivity(mContext, UNIQUE_INT_PER_CALL++, intent, PendingIntent.FLAG_UPDATE_CURRENT))
                 .setAutoCancel(true);
                 
 
@@ -343,7 +360,7 @@ public class StatusBarNotifier {
             intent.setType(Imps.Contacts.CONTENT_TYPE);
             intent.setClass(mContext, MainActivity.class);
             intent.putExtra(ImServiceConstants.EXTRA_INTENT_ACCOUNT_ID, mAccountId);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.putExtra(ImServiceConstants.EXTRA_INTENT_PROVIDER_ID, mProviderId);
 
             return intent;
         }
