@@ -33,7 +33,7 @@ android {
 
     defaultConfig {
         applicationId "org.awesomeapp.messenger"
-        minSdkVersion 9
+        minSdkVersion 10
         targetSdkVersion 21
         testApplicationId "org.awesomeapp.messenger.test"
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
@@ -115,5 +115,7 @@ dependencies {
     compile files('libs/sqlcipher.jar')
     compile 'de.hdodenhof:circleimageview:1.3.0'
     compile 'org.ocpsoft.prettytime:prettytime:4.0.0.Final'
+    compile 'com.theartofdev.edmodo:android-image-cropper:1.0.+'
+
 
 }

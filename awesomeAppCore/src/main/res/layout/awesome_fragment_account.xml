@@ -21,8 +21,7 @@
 	android:id="@+id/acct_act_scrollview"
 	android:layout_height="match_parent"
 	android:layout_width="match_parent"
-	android:fillViewport="true"
-	>
+	android:fillViewport="true">
 
 	<LinearLayout
 		android:layout_width="match_parent"
@@ -32,8 +31,16 @@
 		android:background="?listBackground"
 		android:layout_marginTop="12dp"
 		>
-			
-	<LinearLayout 
+
+		<com.theartofdev.edmodo.cropper.CropImageView
+			android:id="@+id/CropImageView"
+			android:layout_width="match_parent"
+			android:layout_height="0dp"
+			android:layout_weight="1"
+			android:visibility="gone"
+			/>
+
+		<LinearLayout
 	    android:layout_width="match_parent"
 	    android:layout_height="128dp"
 	    android:orientation="horizontal"
@@ -81,8 +88,13 @@
 
 				/>
 
-			<TextView android:id="@+id/edtPass"
+			<LinearLayout
 				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal"
+				android:padding="0dp">
+			<TextView android:id="@+id/edtPass"
+				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:hint="@string/account_setup_password"
 				android:selectAllOnFocus="true" android:inputType="textPassword"
@@ -90,6 +102,16 @@
 				android:textAppearance="?android:attr/textAppearanceSmall"
 
 				/>
+				<Button
+					android:layout_width="wrap_content"
+					android:layout_height="20dp"
+					android:id="@+id/btnShowPass"
+					android:text="Show"
+					android:textAppearance="?android:attr/textAppearanceSmall"
+					android:background="@android:color/transparent"
+
+					/>
+				</LinearLayout>
 
 		</LinearLayout>
 

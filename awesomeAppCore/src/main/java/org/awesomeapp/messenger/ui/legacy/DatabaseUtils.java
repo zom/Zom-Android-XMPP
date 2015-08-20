@@ -79,32 +79,32 @@ public class DatabaseUtils {
 
     public static RoundedAvatarDrawable getAvatarFromAddress(ContentResolver cr, String address, int width, int height) throws DecoderException {
 
-        String[] projection =  {Imps.Contacts.AVATAR_DATA};
-        String[] args = {address};
-        String query = Imps.Contacts.USERNAME + " LIKE ?";
-        Cursor cursor = cr.query(Imps.Contacts.CONTENT_URI, projection,
-                query, args, Imps.Contacts.DEFAULT_SORT_ORDER);
+        byte[] data = getAvatarBytesFromAddress(cr, address, width, height);
 
-        if (cursor.moveToFirst())
-        {
-            String hexData = cursor.getString(0);
-            cursor.close();
-            if (hexData.equals("NULL")) {
-                return null;
-            }
-
-            byte[] data = Hex.decodeHex(hexData.substring(2, hexData.length() - 1).toCharArray());
-
+        if (data != null)
             return decodeRoundAvatar(data, width, height);
-        }
         else
-        {
-
-            cursor.close();
             return null;
-        }
+
     }
 
+    public static byte[] getAvatarBytesFromAddress(ContentResolver cr, String address, int width, int height) throws DecoderException {
+
+        String[] projection =  {Imps.Avatars.DATA};
+        String[] args = {address};
+        String query = Imps.Avatars.CONTACT + " LIKE ?";
+        Cursor cursor = cr.query(Imps.Avatars.CONTENT_URI, projection,
+                query, args, Imps.Avatars.DEFAULT_SORT_ORDER);
+
+        byte[] data = null;
+
+        if (cursor.moveToFirst())
+            data = cursor.getBlob(0);
+
+        cursor.close();
+        return data;
+
+    }
 
     public static Uri getAvatarUri(Uri baseUri, long providerId, long accountId) {
         Uri.Builder builder = baseUri.buildUpon();
@@ -165,15 +165,13 @@ public class DatabaseUtils {
     public static void insertAvatarBlob(ContentResolver resolver, Uri updateUri, long providerId, long accountId, byte[] data, String hash,
             String contact) {
 
-        ContentValues values = new ContentValues(3);
-        values.put(Imps.Avatars.DATA, data);
+        ContentValues values = new ContentValues(5);
         values.put(Imps.Avatars.CONTACT, contact);
+        values.put(Imps.Avatars.DATA, data);
         values.put(Imps.Avatars.PROVIDER, providerId);
         values.put(Imps.Avatars.ACCOUNT, accountId);
         values.put(Imps.Avatars.HASH, hash);
         resolver.insert(updateUri, values);
-        
-        
 
     }
 

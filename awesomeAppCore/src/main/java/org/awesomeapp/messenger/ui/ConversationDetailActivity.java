@@ -127,9 +127,11 @@ public class ConversationDetailActivity extends AppCompatActivity {
     }
 
     void startImagePicker() {
-        Intent intent = new Intent(Intent.ACTION_PICK);
+        Intent intent = new Intent();
         intent.setType("image/*");
-        startActivityForResult(intent, REQUEST_SEND_IMAGE);
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent,
+                getString(R.string.choose_photos)), REQUEST_SEND_IMAGE);
     }
 
     Uri mLastPhoto = null;
@@ -164,9 +166,11 @@ public class ConversationDetailActivity extends AppCompatActivity {
 
     public void handleSendDelete( Uri contentUri, boolean delete, boolean resizeImage, boolean importContent) {
         try {
+
             // import
             SystemServices.FileInfo info = SystemServices.getFileInfoFromURI(this, contentUri);
             String sessionId = mConvoView.getChatId()+"";
+
             Uri vfsUri;
             if (resizeImage)
                 vfsUri = SecureMediaStore.resizeAndImportImage(this, sessionId, contentUri, info.type);

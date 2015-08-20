@@ -122,6 +122,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.RemoteException;
 import android.text.TextUtils;
@@ -215,7 +216,7 @@ public class XmppConnection extends ImConnection implements CallbackHandler {
     {
         ContentResolver contentResolver = mContext.getContentResolver();
 
-        Cursor cursor = contentResolver.query(Imps.ProviderSettings.CONTENT_URI,new String[] {Imps.ProviderSettings.NAME, Imps.ProviderSettings.VALUE},Imps.ProviderSettings.PROVIDER + "=?",new String[] { Long.toString(providerId)},null);
+        Cursor cursor = contentResolver.query(Imps.ProviderSettings.CONTENT_URI, new String[]{Imps.ProviderSettings.NAME, Imps.ProviderSettings.VALUE}, Imps.ProviderSettings.PROVIDER + "=?", new String[]{Long.toString(providerId)}, null);
 
         if (cursor == null)
             throw new ImException("unable to query settings");
@@ -231,13 +232,16 @@ public class XmppConnection extends ImConnection implements CallbackHandler {
         providerSettings.close();
     }
 
-    private Contact makeUser(Imps.ProviderSettings.QueryMap providerSettings, ContentResolver contentResolver) {
+    private synchronized Contact makeUser(Imps.ProviderSettings.QueryMap providerSettings, ContentResolver contentResolver) {
+
+        Contact contactUser = null;
 
         String userName = Imps.Account.getUserName(contentResolver, mAccountId);
         String domain = providerSettings.getDomain();
         String xmppName = userName + '@' + domain + '/' + providerSettings.getXmppResource();
+        contactUser = new Contact(new XmppAddress(xmppName), userName);
 
-        return new Contact(new XmppAddress(xmppName), userName);
+        return contactUser;
     }
 
     private void createExecutor() {
@@ -1004,8 +1008,26 @@ public class XmppConnection extends ImConnection implements CallbackHandler {
             XmppAddress xa = new XmppAddress(fullJid);
             mUser = new Contact(xa, xa.getUser());
 
+
             mStreamHandler.notifyInitialLogin();
             initServiceDiscovery();
+
+            try {
+
+                VCard vCard = new VCard();
+                vCard.setFirstName(mUser.getName());
+                vCard.setEmailHome(mUser.getAddress().getBareAddress());
+                vCard.setJabberId(mUser.getAddress().getAddress());
+                vCard.setNickName(mUser.getName());
+
+                byte[] avatar = DatabaseUtils.getAvatarBytesFromAddress(mContext.getContentResolver(), mUser.getAddress().getBareAddress(), 256, 256);
+                vCard.setAvatar(avatar,"image/jpeg");
+                vCard.save(mConnection);
+            }
+            catch (Exception e)
+            {
+                Log.e(ImApp.LOG_TAG,"error saving vcard",e);
+            }
 
             sendPresencePacket();
 
@@ -1013,6 +1035,7 @@ public class XmppConnection extends ImConnection implements CallbackHandler {
             mRoster.setSubscriptionMode(subMode);
 
             getContactListManager().listenToRoster(mRoster);
+
 
         }
         
@@ -3150,6 +3173,10 @@ public class XmppConnection extends ImConnection implements CallbackHandler {
                     p.setPriority(presence.getPriority());
                     contact.setPresence(p);
                     
+                }
+                else
+                {
+                    qAvatar.push(contact.getAddress().getAddress());
                 }
                 
 

@@ -7,7 +7,7 @@
     android:versionName="15.0.0-alpha-11" >
 
     <uses-sdk
-        android:minSdkVersion="9"
+        android:minSdkVersion="10"
         android:targetSdkVersion="21" />
 
     <supports-screens

@@ -108,8 +108,8 @@ public class ImApp extends Application {
     public static final String IMPS_CATEGORY = "org.awesomeapp.messenger.service.IMPS_CATEGORY";
     public static final String ACTION_QUIT = "org.awesomeapp.messenger.service.QUIT";
 
-    public static final int DEFAULT_AVATAR_WIDTH = 128;
-    public static final int DEFAULT_AVATAR_HEIGHT = 128;
+    public static final int DEFAULT_AVATAR_WIDTH = 512;
+    public static final int DEFAULT_AVATAR_HEIGHT = 512;
 
     public static final String HOCKEY_APP_ID = "3cd4c5ff8b666e25466d3b8b66f31766";
 
