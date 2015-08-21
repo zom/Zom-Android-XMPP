@@ -3,8 +3,8 @@
     package="info.guardianproject.otr.app.im"
     android:installLocation="auto"
     android:sharedUserLabel="@string/perm_label"
-    android:versionCode="1500011"
-    android:versionName="15.0.0-alpha-11" >
+    android:versionCode="1500012"
+    android:versionName="15.0.0-alpha-12" >
 
     <uses-sdk
         android:minSdkVersion="10"
