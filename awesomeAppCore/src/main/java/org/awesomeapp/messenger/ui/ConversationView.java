@@ -2739,7 +2739,7 @@ public class ConversationView {
                         @Override
                         public void onStickerSelected(Sticker s) {
 
-                            mActivity.handleSendDelete(s.assetUri, false, false, true);
+                            mActivity.handleSendDelete(s.assetUri,"image/png", false, false, true);
                          //   mActivity.handleSendData(Uri.parse(s.assetPath),"image/png");
 
                             mViewAttach.setVisibility(View.GONE);

@@ -16,6 +16,7 @@
 
 package org.awesomeapp.messenger.ui;
 
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -24,6 +25,7 @@ import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Parcelable;
 import android.os.RemoteException;
 import android.provider.MediaStore;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -41,6 +43,8 @@ import org.awesomeapp.messenger.provider.Imps;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -127,11 +131,49 @@ public class ConversationDetailActivity extends AppCompatActivity {
     }
 
     void startImagePicker() {
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent,
-                getString(R.string.choose_photos)), REQUEST_SEND_IMAGE);
+        startActivityForResult(getPickImageChooserIntent(), REQUEST_SEND_IMAGE);
+
+    }
+
+    /**
+     * Create a chooser intent to select the source to get image from.<br/>
+     * The source can be camera's (ACTION_IMAGE_CAPTURE) or gallery's (ACTION_GET_CONTENT).<br/>
+     * All possible sources are added to the intent chooser.
+     */
+    public Intent getPickImageChooserIntent() {
+
+
+        List<Intent> allIntents = new ArrayList<>();
+        PackageManager packageManager = getPackageManager();
+
+        // collect all gallery intents
+        Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
+        galleryIntent.setType("image/*");
+        List<ResolveInfo> listGallery = packageManager.queryIntentActivities(galleryIntent, 0);
+        for (ResolveInfo res : listGallery) {
+            Intent intent = new Intent(galleryIntent);
+            intent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
+            intent.setPackage(res.activityInfo.packageName);
+            allIntents.add(intent);
+        }
+
+        // the main intent is the last in the list (fucking android) so pickup the useless one
+        Intent mainIntent = allIntents.get(allIntents.size() - 1);
+        for (Intent intent : allIntents) {
+            if (intent.getComponent().getClassName().equals("com.android.documentsui.DocumentsActivity")) {
+                mainIntent = intent;
+                break;
+            }
+        }
+        allIntents.remove(mainIntent);
+
+        // Create a chooser from the main intent
+        Intent chooserIntent = Intent.createChooser(mainIntent, getString(R.string.choose_photos));
+
+        // Add all other intents
+        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, allIntents.toArray(new Parcelable[allIntents.size()]));
+
+        return chooserIntent;
     }
 
     Uri mLastPhoto = null;
@@ -164,11 +206,15 @@ public class ConversationDetailActivity extends AppCompatActivity {
         return list.size() > 0;
     }
 
-    public void handleSendDelete( Uri contentUri, boolean delete, boolean resizeImage, boolean importContent) {
+    public void handleSendDelete( Uri contentUri, String defaultType, boolean delete, boolean resizeImage, boolean importContent) {
         try {
 
             // import
             SystemServices.FileInfo info = SystemServices.getFileInfoFromURI(this, contentUri);
+
+            if (info.type == null)
+                info.type = defaultType;
+
             String sessionId = mConvoView.getChatId()+"";
 
             Uri vfsUri;
@@ -228,10 +274,28 @@ public class ConversationDetailActivity extends AppCompatActivity {
                 if( uri == null ) {
                     return ;
                 }
+
+                /**
+                if (uri.getHost().equals("com.google.android.apps.photos.contentprovider"))
+                {
+
+                    try {
+                        String uriActual = URLDecoder.decode(uri.getPath(), "UTF-8");
+                        uriActual = uriActual.substring(uriActual.indexOf("content://"));
+                        uri = Uri.parse(uriActual);
+                    }
+                    catch (Exception e)
+                    {
+                        Log.e(ImApp.LOG_TAG,"error parsing photos app URI",e);
+                    }
+
+                }*/
+
+
                 boolean deleteFile = false;
                 boolean resizeImage = true;
                 boolean importContent = true;
-                handleSendDelete(uri, deleteFile, resizeImage, importContent);
+                handleSendDelete(uri, "image/jpeg", deleteFile, resizeImage, importContent);
             }
             else if (requestCode == REQUEST_SEND_FILE || requestCode == REQUEST_SEND_AUDIO) {
                 Uri uri = resultIntent.getData() ;
@@ -243,7 +307,7 @@ public class ConversationDetailActivity extends AppCompatActivity {
                 boolean resizeImage = false;
                 boolean importContent = false;
 
-                handleSendDelete(uri, deleteFile, resizeImage, importContent);
+                handleSendDelete(uri, null, deleteFile, resizeImage, importContent);
             }
             else if (requestCode == REQUEST_TAKE_PICTURE)
             {
@@ -252,7 +316,7 @@ public class ConversationDetailActivity extends AppCompatActivity {
                     boolean resizeImage = true;
                     boolean importContent = true;
 
-                    handleSendDelete(mLastPhoto, deleteFile, resizeImage, importContent);
+                    handleSendDelete(mLastPhoto,"image/jpeg", deleteFile, resizeImage, importContent);
                     mLastPhoto = null;
                 }
 
@@ -346,7 +410,7 @@ public class ConversationDetailActivity extends AppCompatActivity {
                 boolean deleteFile = true;
                 boolean resizeImage = false;
                 boolean importContent = true;
-                handleSendDelete(uriAudio, deleteFile, resizeImage, importContent);
+                handleSendDelete(uriAudio,"audio/mp4", deleteFile, resizeImage, importContent);
             }
             else
             {

@@ -261,7 +261,7 @@ public class SecureMediaStore {
         File file = new File(targetPath);
         FileOutputStream out = new FileOutputStream(file);
         
-        if (imagePath.endsWith(".png") || mimeType.contains("png")) //preserve alpha channel
+        if (imagePath.endsWith(".png") || (mimeType != null && mimeType.contains("png"))) //preserve alpha channel
             bmp.compress(Bitmap.CompressFormat.PNG, 100, out);
         else
             bmp.compress(Bitmap.CompressFormat.JPEG, 90, out);
