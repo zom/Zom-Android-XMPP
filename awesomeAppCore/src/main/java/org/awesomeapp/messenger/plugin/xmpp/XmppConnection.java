@@ -77,9 +77,11 @@ import org.jivesoftware.smack.filter.AndFilter;
 import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.filter.PacketIDFilter;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
+import org.jivesoftware.smack.packet.DefaultPacketExtension;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Message.Body;
 import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.PacketExtension;
 import org.jivesoftware.smack.packet.Presence.Mode;
 import org.jivesoftware.smack.packet.Presence.Type;
 import org.jivesoftware.smack.provider.PrivacyProvider;
@@ -336,7 +338,7 @@ public class XmppConnection extends ImConnection implements CallbackHandler {
                 while (qAvatar.size()>0)
                 {
 
-                    loadVCard (resolver, qAvatar.pop(), null);
+                    loadVCard (resolver, qAvatar.pop());
 
                 }
             }
@@ -346,21 +348,9 @@ public class XmppConnection extends ImConnection implements CallbackHandler {
         }
     }
 
-    private boolean loadVCard (ContentResolver resolver, String jid, String hash)
+    private boolean loadVCard (ContentResolver resolver, String jid)
     {
         try {
-
-            boolean loadAvatar = false;
-
-            if (hash != null)
-                loadAvatar = (!DatabaseUtils.doesAvatarHashExist(resolver,  Imps.Avatars.CONTENT_URI, jid, hash));
-            else
-            {
-                loadAvatar = DatabaseUtils.hasAvatarContact(resolver, Imps.Avatars.CONTENT_URI, jid);
-            }
-
-            if (!loadAvatar)
-            {
                 debug(TAG, "loading vcard for: " + jid);
 
                 VCard vCard = new VCard();
@@ -407,7 +397,7 @@ public class XmppConnection extends ImConnection implements CallbackHandler {
                     }
                 }
 
-            }
+
 
         } catch (XMPPException e) {
 
@@ -464,6 +454,19 @@ public class XmppConnection extends ImConnection implements CallbackHandler {
 
         org.jivesoftware.smack.packet.Presence packet = new org.jivesoftware.smack.packet.Presence(
                 type, statusText, priority, mode);
+
+        try {
+            byte[] avatar = DatabaseUtils.getAvatarBytesFromAddress(mContext.getContentResolver(), mUser.getAddress().getBareAddress(), 256, 256);
+            if (avatar != null) {
+                VCardTempXUpdatePresenceExtension vcardExt = new VCardTempXUpdatePresenceExtension(avatar);
+                packet.addExtension(vcardExt);
+            }
+        }
+        catch (Exception e)
+        {
+            debug(TAG,"error upading presence with avatar hash",e);
+        }
+
         return packet;
     }
 
@@ -1785,9 +1788,6 @@ public class XmppConnection extends ImConnection implements CallbackHandler {
             requestPresenceRefresh(participant.getAddress().getAddress());
             
             ChatSession session = super.createChatSession(participant,isNewSession);
-
-            //do avatar check if we have a no dominant presence
-            qAvatar.push(participant.getAddress().getBareAddress());
 
          //   mSessions.put(Address.stripResource(participant.getAddress().getAddress()),session);
             return session;
@@ -3177,7 +3177,22 @@ public class XmppConnection extends ImConnection implements CallbackHandler {
                 }
                 else
                 {
-                    qAvatar.push(contact.getAddress().getBareAddress());
+                    final PacketExtension packetExtension=presence.getExtension("x","vcard-temp:x:update");
+                    if (packetExtension != null) {
+                        DefaultPacketExtension o=(DefaultPacketExtension)packetExtension;
+                        String hash=o.getValue("photo");
+                        if (hash != null) {
+
+
+                            boolean hasMatches = DatabaseUtils.doesAvatarHashExist(mContext.getContentResolver(),  Imps.Avatars.CONTENT_URI, contact.getAddress().getBareAddress(), hash);
+
+                            if (!hasMatches) //we must reload
+                                qAvatar.push(contact.getAddress().getBareAddress());
+
+
+                        }
+                    }
+
                 }
                 
 
