@@ -286,7 +286,7 @@ public class ContactListItem extends FrameLayout {
                         {
                             holder.mMediaThumb.setVisibility(View.VISIBLE);
 
-                            if (fInfo.type.equals("image/png"))
+                            if (fInfo.type != null && fInfo.type.equals("image/png"))
                             {
                                 holder.mMediaThumb.setScaleType(ImageView.ScaleType.FIT_CENTER);
                             }
