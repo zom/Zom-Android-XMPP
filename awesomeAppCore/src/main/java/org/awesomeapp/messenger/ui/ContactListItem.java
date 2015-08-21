@@ -286,6 +286,16 @@ public class ContactListItem extends FrameLayout {
                         {
                             holder.mMediaThumb.setVisibility(View.VISIBLE);
 
+                            if (fInfo.type.equals("image/png"))
+                            {
+                                holder.mMediaThumb.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                            }
+                            else
+                            {
+                                holder.mMediaThumb.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
+                            }
+
                             setThumbnail(getContext().getContentResolver(), holder, Uri.parse(lastMsg));
 
                                     holder.mLine2.setVisibility(View.GONE);

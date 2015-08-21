@@ -178,7 +178,7 @@
 				android:layout_height="wrap_content"
 				android:text="Friends"
 				android:drawableLeft="@drawable/ic_people_white_24dp"
-				android:background="?colorPrimaryDark"
+				android:background="?toolbarBackground"
 				android:textAppearance="?android:attr/textAppearanceMediumInverse"
 				android:padding="6dp"
 				/>
@@ -188,7 +188,7 @@
 				android:text="Favorites"
 				android:drawableLeft="@drawable/ic_favorite_border_white_24dp"
 				android:textAppearance="?android:attr/textAppearanceMediumInverse"
-				android:background="?colorPrimaryDark"
+				android:background="?toolbarBackground"
 				android:padding="6dp"
 
 				/>
@@ -208,7 +208,7 @@
 			android:text="@string/settings_action"
 			android:drawableLeft="@drawable/ic_settings_white_24dp"
 			android:textAppearance="?android:attr/textAppearanceMediumInverse"
-			android:background="?colorPrimaryDark"
+			android:background="?toolbarBackground"
 			android:padding="6dp"
 
 			/>

@@ -37,7 +37,7 @@
       android:layout_gravity="center_horizontal"
       android:gravity="center_horizontal"
       android:orientation="horizontal"
-      android:background="?colorPrimaryDark"
+      android:background="?toolbarBackground"
 
       >
     <Button

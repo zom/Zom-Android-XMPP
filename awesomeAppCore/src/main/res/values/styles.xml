@@ -75,7 +75,7 @@
     <item name="colorPrimary">#E7275A</item>
 
     <!-- colorPrimaryDark is used for the status bar -->
-    <item name="colorPrimaryDark">#333333</item>
+    <item name="colorPrimaryDark">#9b213e</item>
 
     <!-- colorAccent is used as the default value for colorControlActivated,
          which is used to tint widgets -->
@@ -90,7 +90,7 @@
                   
          <item name="listBackground">#eceff1</item>
          
-         <item name="toolbarBackground">@android:color/transparent</item>
+         <item name="toolbarBackground">#263238</item>
          <item name="inputBackground">#CCECEFF1</item>
     <!-- customize the color palette -->
    

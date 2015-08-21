@@ -361,7 +361,7 @@ public class XmppConnection extends ImConnection implements CallbackHandler {
 
             if (!loadAvatar)
             {
-                debug(ImApp.LOG_TAG, "loading vcard for: " + jid);
+                debug(TAG, "loading vcard for: " + jid);
 
                 VCard vCard = new VCard();
 
@@ -379,8 +379,8 @@ public class XmppConnection extends ImConnection implements CallbackHandler {
                     if (avatarBytes != null)
                     {
 
-                        debug(ImApp.LOG_TAG, "found avatar image in vcard for: " + jid);
-                        debug(ImApp.LOG_TAG, "start avatar length: " + avatarBytes.length);
+                        debug(TAG, "found avatar image in vcard for: " + jid);
+                        debug(TAG, "start avatar length: " + avatarBytes.length);
 
                         int width = ImApp.DEFAULT_AVATAR_WIDTH;
                         int height = ImApp.DEFAULT_AVATAR_HEIGHT;
@@ -398,7 +398,7 @@ public class XmppConnection extends ImConnection implements CallbackHandler {
                         b.compress(Bitmap.CompressFormat.JPEG, 80, stream);
                         byte[] avatarBytesCompressed = stream.toByteArray();
 
-                        debug(ImApp.LOG_TAG, "compressed avatar length: " + avatarBytesCompressed.length);
+                        debug(TAG, "compressed avatar length: " + avatarBytesCompressed.length);
 
                         DatabaseUtils.insertAvatarBlob(resolver, Imps.Avatars.CONTENT_URI, mProviderId, mAccountId, avatarBytesCompressed, avatarHash, XmppAddress.stripResource(jid));
 
@@ -411,7 +411,7 @@ public class XmppConnection extends ImConnection implements CallbackHandler {
 
         } catch (XMPPException e) {
 
-            // Log.d(ImApp.LOG_TAG,"err loading vcard");
+            debug(TAG, "err loading vcard: " + e.toString());
 
             if (e.getStreamError() != null)
             {
@@ -582,8 +582,7 @@ public class XmppConnection extends ImConnection implements CallbackHandler {
                     }
                     catch (XMPPException xe)
                     {
-                        if (Debug.DEBUG_ENABLED)
-                            Log.w(ImApp.LOG_TAG,"(ignoring) got an error configuring MUC room: " + xe.getLocalizedMessage());
+                        debug(TAG,"(ignoring) got an error configuring MUC room: " + xe.getLocalizedMessage());
                     }
 
                     muc.join(nickname);
@@ -597,7 +596,7 @@ public class XmppConnection extends ImConnection implements CallbackHandler {
 
                 } catch (XMPPException e) {
 
-                    Log.e(ImApp.LOG_TAG,"error creating MUC",e);
+                    debug(TAG,"error creating MUC",e);
                     return false;
                 }
             }
@@ -626,7 +625,7 @@ public class XmppConnection extends ImConnection implements CallbackHandler {
                     mMUCs.remove(chatRoomJid);
 
                 } catch (XMPPException e) {
-                    Log.e(ImApp.LOG_TAG,"error destroying MUC",e);
+                    debug(TAG,"error destroying MUC",e);
                 }
 
             }
@@ -689,7 +688,7 @@ public class XmppConnection extends ImConnection implements CallbackHandler {
 
 
             } catch (XMPPException e) {
-                Log.e(ImApp.LOG_TAG,"error joining MUC",e);
+                debug(TAG,"error joining MUC",e);
             }
 
         }
@@ -1015,18 +1014,20 @@ public class XmppConnection extends ImConnection implements CallbackHandler {
             try {
 
                 VCard vCard = new VCard();
-                vCard.setFirstName(mUser.getName());
-                vCard.setEmailHome(mUser.getAddress().getBareAddress());
-                vCard.setJabberId(mUser.getAddress().getAddress());
+                vCard.setJabberId(mUser.getAddress().getBareAddress());
                 vCard.setNickName(mUser.getName());
 
                 byte[] avatar = DatabaseUtils.getAvatarBytesFromAddress(mContext.getContentResolver(), mUser.getAddress().getBareAddress(), 256, 256);
-                vCard.setAvatar(avatar,"image/jpeg");
-                vCard.save(mConnection);
+                if (avatar != null) {
+                    vCard.setAvatar(avatar, "image/jpeg");
+
+                    debug(TAG, "Saving VCard for: " + mUser.getAddress().getAddress() + "; avatar length=" + avatar.length);
+                    vCard.save(mConnection);
+                }
             }
             catch (Exception e)
             {
-                Log.e(ImApp.LOG_TAG,"error saving vcard",e);
+                debug(TAG,"error saving vcard",e);
             }
 
             sendPresencePacket();
@@ -1688,7 +1689,7 @@ public class XmppConnection extends ImConnection implements CallbackHandler {
                     participant = mChatGroupManager.getChatGroup(xmppAddress);
                 }
                 catch (Exception e) {
-                    Log.e(ImApp.LOG_TAG,"unable to join group chat",e);
+                    Log.e(TAG,"unable to join group chat",e);
                 }
             }
         }
@@ -1786,7 +1787,7 @@ public class XmppConnection extends ImConnection implements CallbackHandler {
             ChatSession session = super.createChatSession(participant,isNewSession);
 
             //do avatar check if we have a no dominant presence
-            qAvatar.push(participant.getAddress().getAddress());
+            qAvatar.push(participant.getAddress().getBareAddress());
 
          //   mSessions.put(Address.stripResource(participant.getAddress().getAddress()),session);
             return session;
@@ -2220,7 +2221,7 @@ public class XmppConnection extends ImConnection implements CallbackHandler {
                 }
                 catch (Exception e)
                 {
-                    Log.d(ImApp.LOG_TAG,"error adding contacts",e);
+                    Log.d(TAG,"error adding contacts",e);
                 }
             }
         };
@@ -3176,7 +3177,7 @@ public class XmppConnection extends ImConnection implements CallbackHandler {
                 }
                 else
                 {
-                    qAvatar.push(contact.getAddress().getAddress());
+                    qAvatar.push(contact.getAddress().getBareAddress());
                 }
                 
 
@@ -3224,7 +3225,7 @@ public class XmppConnection extends ImConnection implements CallbackHandler {
 
                     }
                     
-                    //Log.d(ImApp.LOG_TAG,"XMPP processed presence q=" + alUpdate.size());                    
+                    //Log.d(TAG,"XMPP processed presence q=" + alUpdate.size());                    
                     mContactListManager.notifyContactsPresenceUpdated(alUpdate.toArray(new Contact[alUpdate.size()]));
                     loadVCardsAsync();
 
@@ -3273,7 +3274,7 @@ public class XmppConnection extends ImConnection implements CallbackHandler {
                 }
                 catch (Exception e)
                 {
-                    Log.e(ImApp.LOG_TAG,"error processing presence",e);
+                    Log.e(TAG,"error processing presence",e);
                 }
 
 
