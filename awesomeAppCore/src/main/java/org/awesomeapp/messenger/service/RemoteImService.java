@@ -339,11 +339,10 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         //if the service restarted, then we need to reconnect/reinit to cacheword
-        if ((flags & START_FLAG_REDELIVERY)!=0)  // if crash restart...
+//        if ((flags & START_FLAG_REDELIVERY)!=0)  // if crash restart..
+       if (intent == null)
                 connectToCacheWord();
-
-
-        if (intent != null)
+        else
         {
             if (HeartbeatService.HEARTBEAT_ACTION.equals(intent.getAction())) {
               //  Log.d(TAG, "HEARTBEAT");
