@@ -16,6 +16,8 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import org.awesomeapp.messenger.ImApp;
+
 @SuppressWarnings("deprecation")
 public class CameraView extends SurfaceView implements SurfaceHolder.Callback,
 AutoFocusCallback {
@@ -50,11 +52,18 @@ AutoFocusCallback {
 			public void run ()
 			{
 				while (camera != null) {
-					camera.autoFocus(CameraView.this);
 					try {
-						Thread.sleep(3000);
+						Thread.sleep(2000);
 					}
 					catch (Exception e){}
+					try {
+						camera.autoFocus(CameraView.this);
+					}
+					catch (Exception e)
+					{
+						Log.w(ImApp.LOG_TAG,"qr code scanning not working: " + e.toString());
+					}
+
 				}
 			}
 		}.start();
