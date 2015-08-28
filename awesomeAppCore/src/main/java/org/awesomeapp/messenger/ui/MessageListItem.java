@@ -588,6 +588,8 @@ public class MessageListItem extends FrameLayout {
         request.mUri = mediaUri;
         request.mResolver = contentResolver;
 
+        aHolder.mMediaThumbnail.setImageResource(R.drawable.ic_photo_library_white_36dp);
+
         new ThumbnailLoaderTask(sBitmapCache).execute(request);
 
 
