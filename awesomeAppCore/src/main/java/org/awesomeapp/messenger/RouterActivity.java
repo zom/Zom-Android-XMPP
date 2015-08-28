@@ -635,7 +635,6 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
     }
 
     private boolean openEncryptedStores(byte[] key) {
-//        String pkey = (key != null) ? new String(SQLCipherOpenHelper.encodeRawKey(key)) : "";
 
         SecureMediaStore.init(this, key);
 

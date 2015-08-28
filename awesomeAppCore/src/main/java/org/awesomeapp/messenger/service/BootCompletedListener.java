@@ -1,5 +1,6 @@
 package org.awesomeapp.messenger.service;
 
+import java.security.GeneralSecurityException;
 import java.util.Date;
 
 import org.awesomeapp.messenger.ImApp;
@@ -37,12 +38,12 @@ public class BootCompletedListener extends BroadcastReceiver {
             Debug.onServiceStart();
             if (prefStartOnBoot)
             {
-                if (Imps.isUnencrypted(context))
+                if (Imps.isUnencrypted(context) || prefs.contains(ImApp.PREFERENCE_KEY_TEMP_PASS))
                 {
                     Log.d(ImApp.LOG_TAG, "autostart");
 
-                    Intent serviceIntent = new Intent();
-                    serviceIntent.setComponent(ImServiceConstants.IM_SERVICE_COMPONENT);
+                    Intent serviceIntent = new Intent(context,RemoteImService.class);
+                 //   serviceIntent.setComponent(ImServiceConstants.IM_SERVICE_COMPONENT);
                     serviceIntent.putExtra(ImServiceConstants.EXTRA_CHECK_AUTO_LOGIN, true);
                     context.startService(serviceIntent);
 

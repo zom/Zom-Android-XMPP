@@ -96,7 +96,7 @@ import de.duenndns.ssl.MemorizingTrustManager;
 
 public class ImApp extends Application {
 
-    public static final String LOG_TAG = "GB.ImApp";
+    public static final String LOG_TAG = "Zom";
 
     public static final String EXTRA_INTENT_SEND_TO_USER = "Send2_U";
     public static final String EXTRA_INTENT_PASSWORD = "password";

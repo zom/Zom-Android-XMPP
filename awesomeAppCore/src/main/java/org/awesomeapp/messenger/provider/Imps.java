@@ -2498,8 +2498,7 @@ public class Imps {
             uri = builder.build();
 
             cursor = context.getContentResolver().query(
-                    uri, null, Imps.Provider.CATEGORY + "=?" /* selection */,
-                    new String[] { ImApp.IMPS_CATEGORY } /* selection args */,
+                    uri, null, null, null,
                     null);
 
             if (cursor != null)

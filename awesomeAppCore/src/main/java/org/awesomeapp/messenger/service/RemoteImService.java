@@ -48,6 +48,7 @@ import org.awesomeapp.messenger.service.adapters.ImConnectionAdapter;
 import org.awesomeapp.messenger.util.Debug;
 import org.awesomeapp.messenger.util.LogCleaner;
 
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
@@ -67,6 +68,7 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -79,6 +81,7 @@ import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.os.RemoteCallbackList;
 import android.os.RemoteException;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
@@ -91,14 +94,18 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
     private static final String SERVICE_DESTROY_TRAIL_TAG = "service_destroy";
     private static final String PREV_SERVICE_CREATE_TRAIL_TAG = "prev_service_create";
     private static final String SERVICE_CREATE_TRAIL_KEY = "service_create";
+
     private static final String[] ACCOUNT_PROJECTION = { Imps.Account._ID, Imps.Account.PROVIDER,
                                                         Imps.Account.USERNAME,
-                                                        Imps.Account.PASSWORD, };
+                                                        Imps.Account.PASSWORD, Imps.Account.ACTIVE, Imps.Account.KEEP_SIGNED_IN};
     // TODO why aren't these Imps.Account.* values?
     private static final int ACCOUNT_ID_COLUMN = 0;
     private static final int ACCOUNT_PROVIDER_COLUMN = 1;
     private static final int ACCOUNT_USERNAME_COLUMN = 2;
-    private static final int ACCOUNT_PASSOWRD_COLUMN = 3; 
+    private static final int ACCOUNT_PASSOWRD_COLUMN = 3;
+    private static final int ACCOUNT_ACTIVE = 4;
+    private static final int ACCOUNT_KEEP_SIGNED_IN = 5;
+
 
     private static final int EVENT_SHOW_TOAST = 100;
 
@@ -226,7 +233,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
             ContentResolver contentResolver = getContentResolver();
 
-            Cursor cursor = contentResolver.query(Imps.ProviderSettings.CONTENT_URI,new String[] {Imps.ProviderSettings.NAME, Imps.ProviderSettings.VALUE},Imps.ProviderSettings.PROVIDER + "=?",new String[] { Long.toString(Imps.ProviderSettings.PROVIDER_ID_FOR_GLOBAL_SETTINGS)},null);
+            Cursor cursor = contentResolver.query(Imps.ProviderSettings.CONTENT_URI, new String[]{Imps.ProviderSettings.NAME, Imps.ProviderSettings.VALUE}, Imps.ProviderSettings.PROVIDER + "=?", new String[]{Long.toString(Imps.ProviderSettings.PROVIDER_ID_FOR_GLOBAL_SETTINGS)}, null);
 
             if (cursor == null)
                 return null;
@@ -240,6 +247,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
     @Override
     public void onCreate() {
         debug("ImService started");
+
         final String prev = Debug.getTrail(this, SERVICE_CREATE_TRAIL_KEY);
         if (prev != null)
             Debug.recordTrail(this, PREV_SERVICE_CREATE_TRAIL_TAG, prev);
@@ -253,6 +261,8 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
         mHandler = new Handler();
 
         Debug.onServiceStart();
+
+        startForegroundCompat();
 
         PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
         mWakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "IM_WAKELOCK");
@@ -279,6 +289,8 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
         // Have the heartbeat start autoLogin, unless onStart turns this off
         mNeedCheckAutoLogin = true;
+
+        ((ImApp)getApplication()).startImServiceIfNeed();
 
         HeartbeatService.startBeating(getApplicationContext());
     }
@@ -340,9 +352,9 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
         //if the service restarted, then we need to reconnect/reinit to cacheword
 //        if ((flags & START_FLAG_REDELIVERY)!=0)  // if crash restart..
-       if (intent == null)
-                connectToCacheWord();
-        else
+        connectToCacheWord();
+
+        if (intent != null)
         {
             if (HeartbeatService.HEARTBEAT_ACTION.equals(intent.getAction())) {
               //  Log.d(TAG, "HEARTBEAT");
@@ -390,14 +402,15 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
         }
 
         debug("ImService.onStart, checkAutoLogin=" + mNeedCheckAutoLogin + " intent =" + intent
-              + " startId =" + startId);
+                + " startId =" + startId);
 
         // Check and login accounts if network is ready, otherwise it's checked
         // when the network becomes available.
+        /**
         if (mNeedCheckAutoLogin && mNetworkState != NetworkConnectivityListener.State.NOT_CONNECTED) {
             mNeedCheckAutoLogin = false;
             autoLogin();
-        }
+        }*/
 
         return START_STICKY;
     }
@@ -459,11 +472,13 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
 
     private boolean autoLogin() {
+        /**
         // Try empty passphrase.  We can't autologin if this fails.
         if (!Imps.setEmptyPassphrase(this, true)) {
             debug("Cannot autologin with non-empty passphrase");
             return false;
         }
+        */
 
         if (!mConnections.isEmpty()) {
             // This can happen because the UI process may be restarted and may think that we need
@@ -476,7 +491,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
         ContentResolver resolver = getContentResolver();
 
-        String where = Imps.Account.KEEP_SIGNED_IN + "=1 AND " + Imps.Account.ACTIVE + "=1";
+        String where = "";//Imps.Account.KEEP_SIGNED_IN + "=1 AND " + Imps.Account.ACTIVE + "=1";
         Cursor cursor = resolver.query(Imps.Account.CONTENT_URI, ACCOUNT_PROJECTION, where, null,
                 null);
         if (cursor == null) {
@@ -486,6 +501,9 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
         while (cursor.moveToNext()) {
             long accountId = cursor.getLong(ACCOUNT_ID_COLUMN);
             long providerId = cursor.getLong(ACCOUNT_PROVIDER_COLUMN);
+            int isActive = cursor.getInt(ACCOUNT_ACTIVE);
+            int isKeepSignedIn = cursor.getInt(ACCOUNT_KEEP_SIGNED_IN);
+
             IImConnection conn = do_createConnection(providerId, accountId);
 
             try
@@ -609,14 +627,6 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
         if (gSettings == null)
             return null;
-
-        if (mConnections.size() == 0)
-        {
-            mUseForeground = gSettings.getUseForegroundPriority();
-
-            if (mUseForeground)
-                startForegroundCompat();
-        }
 
         Map<String, String> settings = loadProviderSettings(providerId);
         ConnectionFactory factory = ConnectionFactory.getInstance();
@@ -918,6 +928,20 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
     @Override
     public void onCacheWordLocked() {
         //do nothing here?
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+
+        if (settings.contains(ImApp.PREFERENCE_KEY_TEMP_PASS))
+        {
+            try {
+                mCacheWord.setPassphrase(settings.getString(ImApp.PREFERENCE_KEY_TEMP_PASS, null).toCharArray());
+
+            } catch (GeneralSecurityException e) {
+
+                Log.d(ImApp.LOG_TAG, "couldn't open cacheword with temp password", e);
+
+            }
+        }
+
     }
 
     @Override
@@ -929,7 +953,16 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
        // this is no longer configurable
      //  int defaultTimeout = 60 * Integer.parseInt(mPrefs.getString("pref_cacheword_timeout",ImApp.DEFAULT_TIMEOUT_CACHEWORD));
      //  mCacheWord.setTimeoutSeconds(defaultTimeout);
-       SecureMediaStore.init(this, encryptionKey);
+       // mCacheWord.setTimeout(0);
+        SecureMediaStore.init(this, encryptionKey);
+
+        // Check and login accounts if network is ready, otherwise it's checked
+        // when the network becomes available.
+        if (mNeedCheckAutoLogin && mNetworkState != NetworkConnectivityListener.State.NOT_CONNECTED) {
+            mNeedCheckAutoLogin = false;
+            autoLogin();
+        }
+
 
     }
 
@@ -940,61 +973,18 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
     }
 
     private boolean openEncryptedStores(byte[] key, boolean allowCreate) {
-        String pkey = (key != null) ? new String(SQLCipherOpenHelper.encodeRawKey(key)) : "";
 
-//        OtrAndroidKeyManagerImpl.setKeyStorePassword(pkey);
+        SecureMediaStore.init(this, key);
 
-        if (cursorUnlocked(pkey, allowCreate)) {
+        if (Imps.isUnlocked(this)) {
 
             return true;
         } else {
             return false;
         }
+
     }
     
-    @SuppressWarnings("deprecation")
-    private boolean cursorUnlocked(String pKey, boolean allowCreate) {
-        try {
-            Uri uri = Imps.Provider.CONTENT_URI_WITH_ACCOUNT;
 
-            Builder builder = uri.buildUpon();
-            if (pKey != null)
-                builder.appendQueryParameter(ImApp.CACHEWORD_PASSWORD_KEY, pKey);
-            if (!allowCreate)
-                builder = builder.appendQueryParameter(ImApp.NO_CREATE_KEY, "1");
-            uri = builder.build();
 
-            String[] PROVIDER_PROJECTION = { Imps.Provider._ID};
-            ContentResolver contentResolver = getContentResolver();
-
-            Cursor providerCursor = contentResolver.query(uri,PROVIDER_PROJECTION, Imps.Provider.CATEGORY + "=?" /* selection */,
-                    new String[] { ImApp.IMPS_CATEGORY } /* selection args */,
-                    Imps.Provider.DEFAULT_SORT_ORDER);
-
-            if (providerCursor != null)
-            {
-                ImPluginHelper.getInstance(this).loadAvailablePlugins();
-
-                providerCursor.moveToFirst();
-                providerCursor.close();
-                
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-
-        } catch (Exception e) {
-            // Only complain if we thought this password should succeed
-            if (allowCreate) {
-                Log.e(ImApp.LOG_TAG, e.getMessage(), e);
-
-            }
-
-            // needs to be unlocked
-            return false;
-        }
-    }
-    
 }
