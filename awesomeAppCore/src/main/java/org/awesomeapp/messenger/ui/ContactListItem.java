@@ -374,7 +374,7 @@ public class ContactListItem extends FrameLayout {
 
              ImApp app = ((ImApp)((Activity) getContext()).getApplication());
 
-             IImConnection conn = app.getConnection(providerId);
+             IImConnection conn = app.getConnection(providerId,-1);
              if (conn == null || conn.getChatSessionManager() == null)
                  return;
 

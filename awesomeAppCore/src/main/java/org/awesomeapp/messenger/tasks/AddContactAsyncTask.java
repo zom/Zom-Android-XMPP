@@ -50,7 +50,7 @@ public class AddContactAsyncTask extends AsyncTask<String, Void, Void> {
         int res = -1;
 
         try {
-            IImConnection conn = mApp.getConnection(mProviderId);
+            IImConnection conn = mApp.getConnection(mProviderId,-1);
             if (conn == null)
                conn = mApp.createConnection(mProviderId,mAccountId);
 

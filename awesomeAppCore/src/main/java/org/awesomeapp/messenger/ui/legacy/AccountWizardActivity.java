@@ -49,7 +49,6 @@ import android.widget.TextView;
 import org.awesomeapp.messenger.ui.AccountViewFragment;
 import org.awesomeapp.messenger.util.OrbotHelper;
 import info.guardianproject.otr.app.im.R;
-import org.awesomeapp.messenger.plugin.xmpp.auth.GTalkOAuth2;
 
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.RouterActivity;
@@ -202,7 +201,7 @@ public class AccountWizardActivity extends ThemeableActivity {
         int accountProviders = 0;
         List<String> listProviders = helper.getProviderNames();
 
-        mGoogleAccounts = AccountManager.get(this).getAccountsByType(GTalkOAuth2.TYPE_GOOGLE_ACCT);
+        mGoogleAccounts = AccountManager.get(this).getAccountsByType("com.google");
 
         if (mGoogleAccounts.length > 0) {
             accountProviders = listProviders.size() + 3; //potentialProviders + google + create account + burner
@@ -287,7 +286,7 @@ public class AccountWizardActivity extends ThemeableActivity {
                                 //get the oauth token
 
                               //don't store anything just make sure it works!
-                               String password = GTalkOAuth2.NAME + ':' + GTalkOAuth2.getGoogleAuthTokenAllow(mNewUser, getApplicationContext(), AccountWizardActivity.this,mHandlerGoogleAuth);
+                               String password = null;// "goog" + ':' + GTalkOAuth2.getGoogleAuthTokenAllow(mNewUser, getApplicationContext(), AccountWizardActivity.this,mHandlerGoogleAuth);
 
                                //use the XMPP type plugin for google accounts, and the .NAME "X-GOOGLE-TOKEN" as the password
                                 showSetupAccountForm(helper.getProviderNames().get(0), mNewUser,password, false, getString(R.string.google_account),false);

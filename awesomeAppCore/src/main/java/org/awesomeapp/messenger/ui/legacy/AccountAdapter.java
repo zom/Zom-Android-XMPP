@@ -164,7 +164,7 @@ public class AccountAdapter extends CursorAdapter {
                     as.port = settings.getPort();
                     as.isTor = settings.getUseTor();
 
-                    IImConnection conn = mApp.getConnection(ai.providerId);
+                    IImConnection conn = mApp.getConnection(ai.providerId,-1);
                     if (conn == null) {
                         as.connectionStatus = ImConnection.DISCONNECTED;
                     } else {

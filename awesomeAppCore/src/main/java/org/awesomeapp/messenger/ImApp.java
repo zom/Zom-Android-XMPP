@@ -268,7 +268,7 @@ public class ImApp extends Application {
         mConnections = new HashMap<Long, IImConnection>();
         mApplicationContext = this;
 
-        initTrustManager();
+        //initTrustManager();
 
         mBroadcaster = new Broadcaster();
 
@@ -519,7 +519,7 @@ public class ImApp extends Application {
 
         if (nInfo != null)
         {
-            Log.d(LOG_TAG,"isNetworkAvailableAndConnected? available=" + nInfo.isAvailable() + " connected=" + nInfo.isConnected());
+            Log.d(LOG_TAG, "isNetworkAvailableAndConnected? available=" + nInfo.isAvailable() + " connected=" + nInfo.isConnected());
             return nInfo.isAvailable() && nInfo.isConnected();
         }
         else
@@ -730,14 +730,12 @@ public class ImApp extends Application {
             return null;
         }
 
-        IImConnection conn = getConnection(providerId);
-        if (conn == null) {
-            conn = mImService.createConnection(providerId, accountId);
-        }
+        IImConnection conn = mImService.createConnection(providerId, accountId);
+
         return conn;
     }
 
-    public IImConnection getConnection(long providerId) {
+    public IImConnection getConnection(long providerId,long accountId) {
         synchronized (mConnections) {
 
             IImConnection im = mConnections.get(providerId);
@@ -754,6 +752,16 @@ public class ImApp extends Application {
                     //something is wrong
                     fetchActiveConnections();
                     im = mConnections.get(providerId);
+                }
+            }
+            else
+            {
+                try {
+                    im = createConnection(providerId, accountId);
+                }
+                catch (RemoteException re)
+                {
+                    Log.e(ImApp.LOG_TAG,"error creating connection",re);
                 }
             }
 
@@ -1008,8 +1016,9 @@ public class ImApp extends Application {
     }
 
 
-    public IChatSession getChatSession(long providerId, String remoteAddress) {
-        IImConnection conn = getConnection(providerId);
+    public IChatSession getChatSession(long providerId, long accountId, String remoteAddress) {
+
+        IImConnection conn = getConnection(providerId,accountId);
 
         IChatSessionManager chatSessionManager = null;
         if (conn != null) {
@@ -1046,7 +1055,7 @@ public class ImApp extends Application {
         });
     }
 
-
+/**
     private void initTrustManager ()
     {
       //  PinningTrustManager trustPinning = new PinningTrustManager(SystemKeyStore.getInstance(this),XMPPCertPins.getPinList(), 0);
@@ -1059,7 +1068,7 @@ public class ImApp extends Application {
     {
         return mTrustManager;
     }
-
+*/
     public boolean initAccountInfo ()
     {
         if (mDefaultProviderId == -1) {

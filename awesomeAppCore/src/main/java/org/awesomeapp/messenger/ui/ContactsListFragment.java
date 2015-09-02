@@ -190,6 +190,7 @@ public class ContactsListFragment extends Fragment {
 
             public final ContactListItem mView;
             public long mProviderId = -1;
+            public long mAccountId = -1;
 
             public ViewHolder(ContactListItem view) {
                 super(view);
@@ -214,23 +215,22 @@ public class ContactsListFragment extends Fragment {
         }
 
         @Override
-        public void onBindViewHolder(ViewHolder viewHolder, Cursor cursor) {
+        public void onBindViewHolder(final ViewHolder viewHolder, Cursor cursor) {
 
             final String chatUsername =  cursor.getString(ContactListItem.COLUMN_CONTACT_USERNAME);
 
             viewHolder.mView.bind(cursor,"", false, false);
             viewHolder.mProviderId = cursor.getLong(ContactListItem.COLUMN_CONTACT_PROVIDER);
-
-            final long chatProviderId = viewHolder.mProviderId;
+            viewHolder.mAccountId = cursor.getLong(ContactListItem.COLUMN_CONTACT_ACCOUNT);
 
             viewHolder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
                     if (mContext instanceof ContactListActivity)
-                        ((ContactListActivity)mContext).startChat(chatProviderId, chatUsername);
+                        ((ContactListActivity)mContext).startChat(viewHolder.mProviderId, viewHolder.mAccountId, chatUsername);
                     else if (mContext instanceof MainActivity)
-                        ((MainActivity)mContext).startChat(chatProviderId, chatUsername);
+                        ((MainActivity)mContext).startChat(viewHolder.mProviderId,viewHolder.mAccountId, chatUsername);
 
                 }
             });

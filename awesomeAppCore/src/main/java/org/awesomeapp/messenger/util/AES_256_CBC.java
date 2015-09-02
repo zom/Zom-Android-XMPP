@@ -1,5 +1,7 @@
 package org.awesomeapp.messenger.util;
 
+import android.util.Base64;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -13,7 +15,6 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.io.FileUtils;
-import org.jivesoftware.smack.util.Base64;
 
 /**
  * Class created for StackOverflow by owlstead. This is open source, you are
@@ -105,7 +106,7 @@ public class AES_256_CBC {
     public static String decryptAscii(File f, String password) throws IOException {
         byte[] headerSaltAndCipherText = null;
         String raw = FileUtils.readFileToString(f);
-        headerSaltAndCipherText = Base64.decode(raw);
+        headerSaltAndCipherText = Base64.decode(raw, Base64.URL_SAFE);
         return decrypt(headerSaltAndCipherText, password);
     }
 

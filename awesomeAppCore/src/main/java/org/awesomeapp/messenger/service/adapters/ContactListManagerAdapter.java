@@ -132,7 +132,9 @@ public class ContactListManagerAdapter extends
 
         mContactUrl = builder.build();
 
-        seedInitialPresences();
+        if (mAccountId != -1)
+            seedInitialPresences();
+
        // loadOfflineContacts();
     }
 

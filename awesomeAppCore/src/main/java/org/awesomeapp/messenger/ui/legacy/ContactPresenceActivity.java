@@ -162,7 +162,7 @@ public class ContactPresenceActivity extends ThemeableActivity {
             try {
 
                 try {
-                    mChatSession = mApp.getChatSession(providerId, remoteAddress);
+                    mChatSession = mApp.getChatSession(providerId,-1, remoteAddress);
 
                     if (mChatSession != null)
                     {
@@ -381,7 +381,7 @@ public class ContactPresenceActivity extends ThemeableActivity {
 
 
         try {
-            IChatSession session = mApp.getChatSession(providerId, remoteAddress);
+            IChatSession session = mApp.getChatSession(providerId, -1, remoteAddress);
 
             if (session != null)
             {
@@ -457,7 +457,7 @@ public class ContactPresenceActivity extends ThemeableActivity {
 
     private void initSmp(String question, String answer) {
         try {
-            IChatSession session = mApp.getChatSession(providerId, remoteAddress);
+            IChatSession session = mApp.getChatSession(providerId, -1,remoteAddress);
 
             if (session != null)
             {

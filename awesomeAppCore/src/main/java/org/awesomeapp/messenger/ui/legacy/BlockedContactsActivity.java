@@ -173,7 +173,7 @@ public class BlockedContactsActivity extends ListActivity {
         }
 
         public void run() {
-            final IImConnection conn = mApp.getConnection(mProviderId);
+            final IImConnection conn = mApp.getConnection(mProviderId,-1);
             if (conn == null) {
                 mHandler.showAlert(R.string.error, R.string.disconnected);
                 return;

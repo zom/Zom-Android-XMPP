@@ -52,6 +52,7 @@ import net.java.otr4j.session.SessionStatus;
 import org.awesomeapp.messenger.service.RemoteImService;
 import org.awesomeapp.messenger.service.StatusBarNotifier;
 import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.util.StringUtils;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -186,7 +187,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             mChatURI = ContentUris.withAppendedId(Imps.Chats.CONTENT_URI, mContactId);
     
             if (isNewSession)
-                insertOrUpdateChat(null);
+                insertOrUpdateChat("");
     
             for (Contact c : group.getMembers()) {
                 mContactStatusMap.put(c.getName(), c.getPresence().getStatus());
@@ -207,12 +208,13 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         
         mContactId = listManager.queryOrInsertContact(contact);
 
-        mMessageURI = Imps.Messages.getContentUriByThreadId(mContactId);
-
         mChatURI = ContentUris.withAppendedId(Imps.Chats.CONTENT_URI, mContactId);
 
         if (isNewSession)
-            insertOrUpdateChat(null);
+            insertOrUpdateChat("");
+
+        mMessageURI = Imps.Messages.getContentUriByThreadId(mContactId);
+
 
         mContactStatusMap.put(contact.getName(), contact.getPresence().getStatus());
     }
@@ -622,7 +624,23 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
     }
 
     Uri insertMessageInDb(String contact, String body, long time, int type) {
-        return insertMessageInDb(contact, body, time, type, 0/*No error*/, Packet.nextID());
+        return insertMessageInDb(contact, body, time, type, 0/*No error*/, nextID());
+    }
+
+    /**
+     * A prefix helps to make sure that ID's are unique across mutliple instances.
+     */
+    private static String prefix = StringUtils.randomString(5) + "-";
+
+    /**
+     * Keeps track of the current increment, which is appended to the prefix to
+     * forum a unique ID.
+     */
+    private static long id = 0;
+
+    static String nextID ()
+    {
+        return prefix + Long.toString(id++);
     }
 
     Uri insertMessageInDb(String contact, String body, long time, int type, int errCode, String id) {
@@ -779,17 +797,19 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         public void onIncomingReceipt(ChatSession ses, String id) {
             Imps.updateConfirmInDb(mContentResolver, id, true);
 
-            int N = mRemoteListeners.beginBroadcast();
-            for (int i = 0; i < N; i++) {
-                IChatListener listener = mRemoteListeners.getBroadcastItem(i);
-                try {
-                    listener.onIncomingReceipt(ChatSessionAdapter.this, id);
-                } catch (RemoteException e) {
-                    // The RemoteCallbackList will take care of removing the
-                    // dead listeners.
+            synchronized (mRemoteListeners) {
+                int N = mRemoteListeners.beginBroadcast();
+                for (int i = 0; i < N; i++) {
+                    IChatListener listener = mRemoteListeners.getBroadcastItem(i);
+                    try {
+                        listener.onIncomingReceipt(ChatSessionAdapter.this, id);
+                    } catch (RemoteException e) {
+                        // The RemoteCallbackList will take care of removing the
+                        // dead listeners.
+                    }
                 }
+                mRemoteListeners.finishBroadcast();
             }
-            mRemoteListeners.finishBroadcast();
         }
 
         @Override
@@ -832,7 +852,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
         @Override
         public void onIncomingDataResponse(ChatSession session, org.awesomeapp.messenger.model.Message msg, byte[] value) {
-            mDataHandler.onIncomingResponse(msg.getFrom(),msg.getTo(), value);
+            mDataHandler.onIncomingResponse(msg.getFrom(), msg.getTo(), value);
         }
 
         @Override

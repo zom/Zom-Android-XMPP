@@ -150,7 +150,8 @@ public class AccountFragment extends Fragment {
         tvUsername.setText(fullUserName);
         tvNickname.setText(xAddress.getUser());
 
-        tvFingerprint.setText(prettyPrintFingerprint(app.getDefaultOtrKey()));
+        if (app.getDefaultOtrKey() != null)
+            tvFingerprint.setText(prettyPrintFingerprint(app.getDefaultOtrKey()));
 
 
         return view;

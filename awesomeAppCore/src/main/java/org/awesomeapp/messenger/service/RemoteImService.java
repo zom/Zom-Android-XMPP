@@ -406,11 +406,11 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
         // Check and login accounts if network is ready, otherwise it's checked
         // when the network becomes available.
-        /**
+
         if (mNeedCheckAutoLogin && mNetworkState != NetworkConnectivityListener.State.NOT_CONNECTED) {
             mNeedCheckAutoLogin = false;
             autoLogin();
-        }*/
+        }
 
         return START_STICKY;
     }

@@ -65,7 +65,7 @@ public class SmpResponseActivity extends Activity {
 
         IOtrChatSession iOtrSession;
         try {
-            IChatSession chatSession = app.getChatSession(mProviderId, Address.stripResource(sid));
+            IChatSession chatSession = app.getChatSession(mProviderId, -1, Address.stripResource(sid));
             iOtrSession = chatSession.getOtrChatSession();
             if (iOtrSession == null) {
                 OtrDebugLogger.log("no session in progress for provider " + mProviderId);

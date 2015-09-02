@@ -461,7 +461,7 @@ public class NewChatActivity extends FragmentActivity implements View.OnCreateCo
     protected void onResume() {
         super.onResume();
 
-        mApp.getTrustManager().bindDisplayActivity(this);
+      //  mApp.getTrustManager().bindDisplayActivity(this);
 
         mApp.checkForCrashes(this);
         
@@ -478,7 +478,7 @@ public class NewChatActivity extends FragmentActivity implements View.OnCreateCo
     protected void onPause() {
         super.onPause();
 
-        mApp.getTrustManager().unbindDisplayActivity(this);
+        //mApp.getTrustManager().unbindDisplayActivity(this);
 
     }
 
@@ -1368,7 +1368,7 @@ public class NewChatActivity extends FragmentActivity implements View.OnCreateCo
     }
 
     private IChatSessionManager getChatSessionManager(long providerId) {
-        IImConnection conn = mApp.getConnection(providerId);
+        IImConnection conn = mApp.getConnection(providerId,-1);
 
         if (conn != null) {
             try {
@@ -1782,7 +1782,7 @@ public class NewChatActivity extends FragmentActivity implements View.OnCreateCo
     public IImConnection initConnection (long accountId, long providerId)
     {
 
-        IImConnection conn = ((ImApp)getApplication()).getConnection(providerId);
+        IImConnection conn = ((ImApp)getApplication()).getConnection(providerId,-1);
 
         if (conn == null)
         {
@@ -1990,7 +1990,7 @@ public class NewChatActivity extends FragmentActivity implements View.OnCreateCo
 
     private void startChat (long providerId, String address,int userType, boolean isNewChat, String message)
     {
-        IImConnection conn = mApp.getConnection(providerId);
+        IImConnection conn = mApp.getConnection(providerId,-1);
 
         if (conn != null)
         {
@@ -2206,7 +2206,7 @@ public class NewChatActivity extends FragmentActivity implements View.OnCreateCo
 
                     try
                     {
-                        IImConnection conn = mApp.getConnection(mLastProviderId);
+                        IImConnection conn = mApp.getConnection(mLastProviderId,-1);
                         if (conn.getState() == ImConnection.LOGGED_IN)
                             startGroupChat (chatRoom, chatServer, nickname, conn);
                         else
@@ -2367,7 +2367,7 @@ public class NewChatActivity extends FragmentActivity implements View.OnCreateCo
     void acceptInvitation(long providerId, long invitationId) {
         try {
 
-            IImConnection conn = mApp.getConnection(providerId);
+            IImConnection conn = mApp.getConnection(providerId,-1);
             if (conn != null) {
                 conn.acceptInvitation(invitationId);
             }
@@ -2380,7 +2380,7 @@ public class NewChatActivity extends FragmentActivity implements View.OnCreateCo
 
     void declineInvitation(long providerId, long invitationId) {
         try {
-            IImConnection conn = mApp.getConnection(providerId);
+            IImConnection conn = mApp.getConnection(providerId,-1);
             if (conn != null) {
                 conn.rejectInvitation(invitationId);
             }
@@ -2427,7 +2427,7 @@ public class NewChatActivity extends FragmentActivity implements View.OnCreateCo
     }
 
     void approveSubscription(long providerId, String userName) {
-        IImConnection conn = mApp.getConnection(providerId);
+        IImConnection conn = mApp.getConnection(providerId,-1);
 
         if (conn != null)
         {
@@ -2444,7 +2444,7 @@ public class NewChatActivity extends FragmentActivity implements View.OnCreateCo
     }
 
     void declineSubscription(long providerId, String userName) {
-        IImConnection conn = mApp.getConnection(providerId);
+        IImConnection conn = mApp.getConnection(providerId,-1);
 
         if (conn != null)
         {

@@ -109,6 +109,7 @@ import org.awesomeapp.messenger.ui.stickers.StickerPagerAdapter;
 import org.awesomeapp.messenger.ui.stickers.StickerSelectListener;
 import org.awesomeapp.messenger.ui.widgets.RoundedAvatarDrawable;
 import org.awesomeapp.messenger.util.LogCleaner;
+import org.awesomeapp.messenger.util.MultiUriCursorWrapper;
 import org.awesomeapp.messenger.util.SystemServices;
 
 import java.util.ArrayList;
@@ -159,7 +160,7 @@ public class ConversationView {
 
     ConversationDetailActivity mActivity;
     ImApp mApp;
-    SimpleAlertHandler mHandler;
+    private SimpleAlertHandler mHandler;
     IImConnection mConn;
 
     //private ImageView mStatusIcon;
@@ -192,9 +193,12 @@ public class ConversationView {
     {
         mIsSelected = isSelected;
 
+
+
         if (mIsSelected)
         {
-            bindChat(mLastChatId);
+          //  bindChat(mLastChatId);
+            startListening();
 
             updateWarningView();
             mComposeMessage.requestFocus();
@@ -204,8 +208,7 @@ public class ConversationView {
             {
                 boolean isConnected = (mConn == null) ? false : mConn.getState() != ImConnection.SUSPENDED;
 
-                        
-                if (mLastSessionStatus == SessionStatus.PLAINTEXT && isConnected) {
+                if ((mLastSessionStatus == null || mLastSessionStatus == SessionStatus.PLAINTEXT) && isConnected) {
 
 
 //                    boolean otrPolicyAuto = mNewChatActivity.getOtrPolicy() == OtrPolicy.OTRL_POLICY_ALWAYS
@@ -228,13 +231,13 @@ public class ConversationView {
                         if (otrPolicyAuto && isChatSecure) //if set to auto, and is chatsecure, then start encryption
                         {
                                //automatically attempt to turn on OTR after 1 second
-                                mHandler.postAtTime(new Runnable (){
+                                mHandler.postDelayed(new Runnable (){
                                     public void run (){
                                         setOTRState(true);
-                                        updateWarningView();
+                                        scheduleRequery(DEFAULT_QUERY_INTERVAL);
 
                                     }
-                                 },1000);
+                                 },100);
                         }
                     }
 
@@ -247,16 +250,15 @@ public class ConversationView {
     }
 
 
-    private boolean checkConnection () throws RemoteException
+    private boolean checkConnection ()
     {
-        if (mConn == null && mProviderId != -1)
-        {
-            mConn = mApp.createConnection(mProviderId,mAccountId);
+            if (mConn == null && mProviderId != -1) {
+                mConn = mApp.getConnection(mProviderId, mAccountId);
 
-            if (mConn != null)
-                return false;
+                if (mConn != null)
+                    return false;
 
-        }
+            }
 
         return true;
 
@@ -438,13 +440,13 @@ public class ConversationView {
         @Override
         public void onIncomingReceipt(IChatSession ses, String packetId) throws RemoteException {
             scheduleRequery(FAST_QUERY_INTERVAL);
+
         }
 
         @Override
         public void onStatusChanged(IChatSession ses) throws RemoteException {
             scheduleRequery(DEFAULT_QUERY_INTERVAL);
             updatePresenceDisplay();
-
         };
 
 
@@ -974,6 +976,8 @@ public class ConversationView {
         if (!isServiceUp)
             return;
         mIsListening = true;
+
+        /*
         if (mViewType == VIEW_TYPE_CHAT) {
             Cursor cursor = getMessageCursor();
             if (cursor == null) {
@@ -983,7 +987,8 @@ public class ConversationView {
             } else {
                 //requeryCursor();
             }
-        }
+        }*/
+
         registerChatListener();
         registerForConnEvents();
 
@@ -1003,7 +1008,7 @@ public class ConversationView {
     }
 
     public void unbind() {
-
+        stopListening();
     }
 
 
@@ -1029,7 +1034,8 @@ public class ConversationView {
             return;
         }*/
 
-        mHistory.invalidate();
+        //mHistory.invalidate();
+        checkConnection();
 
         startQuery(getChatId());
         // This is not needed, now that there is a ChatView per fragment.  It also causes a spurious detection of user action
@@ -1346,24 +1352,6 @@ public class ConversationView {
         else
             mLoaderManager.restartLoader(loaderId++, null, new MyLoaderCallbacks());
 
-
-        /*
-        if (mQueryHandler == null) {
-            mQueryHandler = new QueryHandler(mContext);
-        } else {
-            // Cancel any pending queries
-            mQueryHandler.cancelOperation(QUERY_TOKEN);
-        }
-
-        Uri uri = Imps.Messages.getContentUriByThreadId(chatId);
-
-        if (Log.isLoggable(ImApp.LOG_TAG, Log.DEBUG)) {
-            log("queryCursor: uri=" + uri);
-        }
-
-        mQueryHandler.startQuery(QUERY_TOKEN, null, uri, null, null,
-                null , "date");
-        */
     }
 
     class MyLoaderCallbacks implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -1380,16 +1368,25 @@ public class ConversationView {
 
             if (newCursor != null) {
 
-           //     newCursor.setNotificationUri(mActivity.getContentResolver(), mUri);
+                newCursor = new MultiUriCursorWrapper(newCursor);
+
+                ArrayList<Uri> alUris = new ArrayList<Uri>();
+                alUris.add(Imps.Messages.CONTENT_URI);
+                alUris.add(mUri);
+                ((MultiUriCursorWrapper) newCursor).withNotificationUris(mActivity.getApplicationContext().getContentResolver(), alUris);
+
                 mMessageAdapter.swapCursor(new DeltaCursor(newCursor));
 
-                mHandler.postDelayed(new Runnable () {
+                if (!mMessageAdapter.isScrolling()) {
+                    mHandler.postDelayed(new Runnable() {
 
-                    public void run() {
-                        if (mMessageAdapter.getItemCount() > 0)
-                            mHistory.scrollToPosition(mMessageAdapter.getItemCount() - 1);
-                    }
-                },500);
+                        public void run() {
+                            if (mMessageAdapter.getItemCount() > 0) {
+                                mHistory.scrollToPosition(mMessageAdapter.getItemCount() - 1);
+                            }
+                        }
+                    }, 100);
+                }
 
             }
 
@@ -1434,6 +1431,10 @@ public class ConversationView {
 
     void requeryCursor() {
 
+        mLoaderManager.restartLoader(loaderId++, null, new MyLoaderCallbacks());
+        updateWarningView();
+
+        /**
         if (mMessageAdapter.isScrolling()) {
             mMessageAdapter.setNeedRequeryCursor(true);
             return;
@@ -1441,13 +1442,13 @@ public class ConversationView {
 
         // This is redundant if there are messages in view, because the cursor requery will update everything.
         // However, if there are no messages, no update will trigger below, and we still want this to update.
-        updateWarningView();
+
 
         // TODO: async query?
         Cursor cursor = getMessageCursor();
         if (cursor != null) {
             cursor.requery();
-        }
+        }*/
     }
 
     private Cursor getMessageCursor() {
@@ -1624,7 +1625,7 @@ public class ConversationView {
             public void onClick(DialogInterface dialog, int whichButton) {
                 try {
                     checkConnection();
-                    mConn = mApp.getConnection(mProviderId);
+                    mConn = mApp.getConnection(mProviderId,mAccountId);
                     IContactListManager manager = mConn.getContactListManager();
                     manager.blockContact(Address.stripResource(mRemoteAddress));
                   //  mNewChatActivity.finish();
@@ -2596,14 +2597,14 @@ public class ConversationView {
                 if (Log.isLoggable(ImApp.LOG_TAG, Log.DEBUG)) {
                     log("delta = " + delta + ", showTs=" + showTimeStamp);
                 }
-                */
+                *//*
                 if (!showDelivery) {
                     scheduleRequery(SHOW_DELIVERY_INTERVAL);
                 } else if (!showTimeStamp) {
                     scheduleRequery(SHOW_TIME_STAMP_INTERVAL);
                 } else {
                     cancelRequery();
-                }
+                }*/
             }
         }
 

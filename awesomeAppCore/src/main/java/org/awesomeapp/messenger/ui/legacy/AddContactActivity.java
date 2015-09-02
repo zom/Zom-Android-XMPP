@@ -217,7 +217,7 @@ public class AddContactActivity extends ActionBarActivity {
     void inviteBuddies() {
         Rfc822Token[] recipients = Rfc822Tokenizer.tokenize(mAddressList.getText());
         try {
-            IImConnection conn = mApp.getConnection(mProviderId);
+            IImConnection conn = mApp.getConnection(mProviderId,mAccountId);
             IContactList list = getContactList(conn);
             if (list == null) {
                // Log.e(ImApp.LOG_TAG, "<AddContactActivity> can't find given contact list:"

@@ -84,6 +84,7 @@ public class ChatSessionManagerAdapter extends
                 .getContactListManager();
 
         Contact contact = listManager.getContactByAddress(Address.stripResource(contactAddress));
+        /*
         if (contact == null) {
             try {
                 
@@ -99,11 +100,15 @@ public class ChatSessionManagerAdapter extends
                                 "Invalid contact address:" + contactAddress));
                 return null;
             }
+        }*/
+
+        if (contact != null) {
+            ChatSession session = getChatSessionManager().createChatSession(contact, isNewSession);
+
+            return getChatSessionAdapter(session, isNewSession);
         }
-
-        ChatSession session = getChatSessionManager().createChatSession(contact, isNewSession);
-
-        return getChatSessionAdapter(session, isNewSession);
+        else
+            return null;
     }
 
     public IChatSession createMultiUserChatSession(String roomAddress, String nickname, boolean isNewChat)

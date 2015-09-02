@@ -28,12 +28,15 @@ import android.os.Environment;
 import android.os.Parcelable;
 import android.os.RemoteException;
 import android.provider.MediaStore;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -66,6 +69,9 @@ public class ConversationDetailActivity extends AppCompatActivity {
 
     private ImApp mApp;
 
+    private AppBarLayout appBarLayout;
+    private CoordinatorLayout mRootLayout;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,7 +84,6 @@ public class ConversationDetailActivity extends AppCompatActivity {
 
         mConvoView = new ConversationView(this);
         mConvoView.bindChat(mChatId);
-        mConvoView.setSelected(true);
 
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -87,9 +92,36 @@ public class ConversationDetailActivity extends AppCompatActivity {
         CollapsingToolbarLayout collapsingToolbar =
                 (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         collapsingToolbar.setTitle(mConvoView.getTitle());
+        collapsingToolbar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                expandToolbar();
+            }
+        });
 
+        appBarLayout = (AppBarLayout)findViewById(R.id.appbar);
+        mRootLayout = (CoordinatorLayout)findViewById(R.id.main_content);
+       // appBarLayout.setExpanded(false);
 
         loadBackdrop();
+        collapseToolbar();
+    }
+
+    public void collapseToolbar(){
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) appBarLayout.getLayoutParams();
+        AppBarLayout.Behavior behavior = (AppBarLayout.Behavior) params.getBehavior();
+        if(behavior!=null) {
+            behavior.onNestedFling(mRootLayout, appBarLayout, null, 0, 10000, true);
+        }
+    }
+
+    public void expandToolbar(){
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) appBarLayout.getLayoutParams();
+        AppBarLayout.Behavior behavior = (AppBarLayout.Behavior) params.getBehavior();
+        if(behavior!=null) {
+            behavior.setTopAndBottomOffset(0);
+            behavior.onNestedPreScroll(mRootLayout, appBarLayout, null, 0, 1, new int[2]);
+        }
     }
 
     @Override

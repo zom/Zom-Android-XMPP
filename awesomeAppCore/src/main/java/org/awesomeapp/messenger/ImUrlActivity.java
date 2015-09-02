@@ -188,7 +188,7 @@ public class ImUrlActivity extends Activity {
                         {
                             providerId = cProviderId;
                             accountId = cursorProvider.getLong(ACTIVE_ACCOUNT_ID_COLUMN);
-                            mConn = ((ImApp)getApplication()).getConnection(providerId);
+                            mConn = ((ImApp)getApplication()).getConnection(providerId,accountId);
 
 
                             //now sign in
@@ -240,7 +240,7 @@ public class ImUrlActivity extends Activity {
                             } catch (InterruptedException e1) {
                                 e1.printStackTrace();
                             }//wait here for three seconds
-                            mConn = ((ImApp)getApplication()).getConnection(providerId);
+                            mConn = ((ImApp)getApplication()).getConnection(providerId,accountId);
 
                             break;
                         }
@@ -669,7 +669,7 @@ public class ImUrlActivity extends Activity {
 
         try
         {
-            IImConnection conn = ((ImApp)getApplication()).getConnection(providerId);
+            IImConnection conn = ((ImApp)getApplication()).getConnection(providerId,accountId);
             mChatSessionManager = conn.getChatSessionManager();
 
             IChatSession session = getChatSession(username);

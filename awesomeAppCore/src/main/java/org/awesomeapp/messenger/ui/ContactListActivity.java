@@ -130,11 +130,12 @@ public class ContactListActivity extends AppCompatActivity {
         }
     }
 
-    public void startChat (long providerId, String username)
+    public void startChat (long providerId, long accountId, String username)
     {
 
         Intent data = new Intent();
         data.putExtra(ContactsPickerActivity.EXTRA_RESULT_PROVIDER,providerId);
+        data.putExtra(ContactsPickerActivity.EXTRA_RESULT_ACCOUNT,accountId);
         data.putExtra(ContactsPickerActivity.EXTRA_RESULT_USERNAME,username);
         setResult(RESULT_OK,data);
         finish();

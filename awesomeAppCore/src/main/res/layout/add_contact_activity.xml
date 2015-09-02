@@ -18,15 +18,14 @@
  */
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="6dp"
-    android:background="?listBackground"
+    android:padding="12dp"
     >
 
     <Spinner android:id="@+id/choose_list"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:drawSelectorOnTop="true"
         android:padding="3dip"
@@ -52,7 +51,6 @@
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:text="@string/invite_label" />
-
 
 
     

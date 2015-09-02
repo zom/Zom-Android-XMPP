@@ -394,7 +394,7 @@ public class ContactListFilterView extends LinearLayout {
 
     private IImConnection getConnection (Cursor c)
     {
-        return ImApp.sImApp.getConnection(c.getLong(ContactListItem.COLUMN_CONTACT_PROVIDER));
+        return ImApp.sImApp.getConnection(c.getLong(ContactListItem.COLUMN_CONTACT_PROVIDER),c.getLong(ContactListItem.COLUMN_CONTACT_ACCOUNT));
 
     }
 

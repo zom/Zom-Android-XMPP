@@ -215,7 +215,7 @@ public class SignInHelper {
         IImConnection conn = null;
 
 
-            conn = mApp.getConnection(providerId);
+            conn = mApp.getConnection(providerId,accountId);
 
             if (conn != null) {
                 connections.add(conn);

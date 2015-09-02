@@ -82,7 +82,7 @@ public class SignoutActivity extends ThemeableActivity {
     private void signOut(long providerId, long accountId) {
         try {
 
-            IImConnection conn = mApp.getConnection(providerId);
+            IImConnection conn = mApp.getConnection(providerId,accountId);
             if (conn != null) {
                 conn.logout();
             } else {

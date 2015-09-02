@@ -18,14 +18,15 @@
 
 package org.awesomeapp.messenger.util;
 
+import com.google.zxing.encode.Contents;
+
+import org.jivesoftware.smack.util.dns.SRVRecord;
+import org.jxmpp.util.cache.Cache;
+
+import java.util.HashMap;
 import java.util.Map;
 
-import org.jivesoftware.smack.util.Cache;
-import org.xbill.DNS.Lookup;
-import org.xbill.DNS.Record;
-import org.xbill.DNS.SRVRecord;
-import org.xbill.DNS.TextParseException;
-import org.xbill.DNS.Type;
+import de.measite.minidns.*;
 
 /**
  * Utilty class to perform DNS lookups for XMPP services.
@@ -38,19 +39,21 @@ public class DNSUtil {
      * Create a cache to hold the 100 most recently accessed DNS lookups for a
      * period of 10 minutes.
      */
-    private static Map<String, HostAddress> ccache = new Cache<String, HostAddress>(100,
+
+    private static Map<String, HostAddress> ccache = new HashMap<String, HostAddress>(100,
             1000 * 60 * 10);
-    private static Map<String, HostAddress> scache = new Cache<String, HostAddress>(100,
+    private static Map<String, HostAddress> scache = new HashMap<String, HostAddress>(100,
             1000 * 60 * 10);
 
     private static HostAddress resolveSRV(String domain) {
+        /**
         String bestHost = null;
         int bestPort = -1;
         int bestPriority = Integer.MAX_VALUE;
         int bestWeight = 0;
         Lookup lookup;
         try {
-            lookup = new Lookup(domain, Type.SRV);
+            lookup = new Lookup(domain, Contents.Type.SRV);
             Record recs[] = lookup.run();
             if (recs == null) {
                 return null;
@@ -85,6 +88,8 @@ public class DNSUtil {
             bestHost = bestHost.substring(0, bestHost.length() - 1);
         }
         return new HostAddress(bestHost, bestPort);
+         **/
+        return null;
     }
 
     /**

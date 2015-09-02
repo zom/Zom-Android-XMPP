@@ -246,7 +246,8 @@ public class MainActivity extends AppCompatActivity {
 
         } else {
             ImApp app = (ImApp) getApplication();
-            app.getTrustManager().bindDisplayActivity(this);
+          //  app.getTrustManager().bindDisplayActivity(this);
+
             app.checkForCrashes(this);
 
             mApp.initAccountInfo();
@@ -300,14 +301,18 @@ public class MainActivity extends AppCompatActivity {
             if (requestCode == REQUEST_ADD_CONTACT)
             {
                 String username = data.getStringExtra(ContactsPickerActivity.EXTRA_RESULT_USERNAME);
-                long providerId = data.getLongExtra(ContactsPickerActivity.EXTRA_RESULT_PROVIDER,-1);
-                startChat(providerId, username);
+                long providerId = data.getLongExtra(ContactsPickerActivity.EXTRA_RESULT_PROVIDER, -1);
+                long accountId = data.getLongExtra(ContactsPickerActivity.EXTRA_RESULT_ACCOUNT,-1);
+
+                startChat(providerId, accountId, username);
             }
             else if (requestCode == REQUEST_CHOOSE_CONTACT)
             {
                 String username = data.getStringExtra(ContactsPickerActivity.EXTRA_RESULT_USERNAME);
-                long providerId = data.getLongExtra(ContactsPickerActivity.EXTRA_RESULT_PROVIDER,-1);
-                startChat(providerId, username);
+                long providerId = data.getLongExtra(ContactsPickerActivity.EXTRA_RESULT_PROVIDER, -1);
+                long accountId = data.getLongExtra(ContactsPickerActivity.EXTRA_RESULT_ACCOUNT,-1);
+
+                startChat(providerId, accountId, username);
             }
             else if (requestCode == ConversationDetailActivity.REQUEST_TAKE_PICTURE)
             {
@@ -483,9 +488,9 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void startChat (long providerId, String username)
+    public void startChat (long providerId, long accountId, String username)
     {
-        long chatId = startChat(providerId, username,Imps.ContactsColumns.TYPE_NORMAL,true, null);
+        long chatId = startChat(providerId, accountId, username,Imps.ContactsColumns.TYPE_NORMAL,true, null);
 
         if (chatId != -1) {
             Intent intent = new Intent(this, ConversationDetailActivity.class);
@@ -494,9 +499,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private long startChat (long providerId, String address,int userType, boolean isNewChat, String message)
+    private long startChat (long providerId, long accountId, String address,int userType, boolean isNewChat, String message)
     {
-        IImConnection conn = ((ImApp)getApplication()).getConnection(providerId);
+        IImConnection conn = ((ImApp)getApplication()).getConnection(providerId,accountId);
         long mRequestedChatId = -1;
 
         if (conn != null)
@@ -576,7 +581,7 @@ public class MainActivity extends AppCompatActivity {
 
                         try
                         {
-                            IImConnection conn = mApp.getConnection(mApp.getDefaultProviderId());
+                            IImConnection conn = mApp.getConnection(mApp.getDefaultProviderId(),mApp.getDefaultAccountId());
                             if (conn.getState() == ImConnection.LOGGED_IN)
                                 startGroupChat (chatRoom, chatServer, nickname, conn);
 

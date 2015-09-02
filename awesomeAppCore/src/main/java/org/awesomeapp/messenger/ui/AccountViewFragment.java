@@ -37,11 +37,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.util.Linkify;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -67,7 +63,6 @@ import info.guardianproject.otr.app.im.R;
 import org.awesomeapp.messenger.model.ImConnection;
 import org.awesomeapp.messenger.plugin.BrandingResourceIDs;
 import org.awesomeapp.messenger.plugin.xmpp.XmppConnection;
-import org.awesomeapp.messenger.plugin.xmpp.auth.GTalkOAuth2;
 
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.provider.Imps;
@@ -763,13 +758,7 @@ public class AccountViewFragment extends Fragment {
             settings.setDomain(domain);
         }
         //mEditPass can be NULL if this activity is used in "headless" mode for auto account setup
-        else if (mEditPass != null && mEditPass.getText().toString().startsWith(GTalkOAuth2.NAME))
-        {
-            // this is not @gmail but IS a google account
-            settings.setDoDnsSrv(false);
-            settings.setServer(DEFAULT_SERVER_GOOGLE); //set the google connect server
-            settings.setDomain(domain);
-        }
+
         else if (domain.equals("jabber.org")) {
 
             if (settings.getUseTor())
@@ -897,7 +886,7 @@ public class AccountViewFragment extends Fragment {
 
         try {
 
-            IImConnection conn = mApp.getConnection(providerId);
+            IImConnection conn = mApp.getConnection(providerId,accountId);
             if (conn != null) {
                 conn.logout();
             } else {

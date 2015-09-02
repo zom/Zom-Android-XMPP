@@ -1,4 +1,5 @@
-include ':memorizingActivity', ':otr4jandroid'
+include ':otr4jandroid'
 include ':tibetanTextLibrary'
 include ':awesomeAppCore'
 include ':zxing-core'
+include ':MemorizingTrustManager'

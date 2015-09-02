@@ -114,33 +114,8 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
         mDoSignIn = intent.getBooleanExtra("doSignIn", true);
         mDoLock = intent.getBooleanExtra("doLock", false);
 
-        if (!mDoLock)
-        {
-            if (checkMediaStoreFile()) {
-                return;
-            }
-
-            mApp.maybeInit(this);
-        }
-
         if (ImApp.mUsingCacheword)
             connectToCacheWord();
-        /**
-        else
-        {
-           if (openEncryptedStores(null, false)) {
-               try
-               {
-                   ChatFileStore.initWithoutPassword(this);
-               }
-               catch (Exception e)
-               {
-                   Log.d(ImApp.LOG_TAG,"unable to mount VFS store"); //but let's not crash the whole app right now
-               }
-           } else {
-               connectToCacheWord(); //first time setup
-           }
-        }*/
 
         // if we have an incoming contact, send it to the right place
         String scheme = intent.getScheme();
@@ -482,6 +457,9 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
        byte[] encryptionKey = mCacheWord.getEncryptionKey();
        openEncryptedStores(encryptionKey);
 
+            mApp.maybeInit(this);
+
+
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -636,6 +614,7 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
 
     private boolean openEncryptedStores(byte[] key) {
 
+        checkMediaStoreFile();
         SecureMediaStore.init(this, key);
 
         if (cursorUnlocked()) {

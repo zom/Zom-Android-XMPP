@@ -19,7 +19,6 @@ package org.awesomeapp.messenger.model;
 
 // import org.awesomeapp.messenger.plugin.loopback.LoopbackConnection;
 import org.awesomeapp.messenger.plugin.ImConfigNames;
-import org.awesomeapp.messenger.plugin.xmpp.LLXmppConnection;
 import org.awesomeapp.messenger.plugin.xmpp.XmppConnection;
 
 import java.util.Map;
@@ -66,7 +65,8 @@ public class ConnectionFactory {
             }
         }
         if ("LLXMPP".equals(protocolName)) {
-            return new LLXmppConnection(context);
+            //return new LLXmppConnection(context);
+            return null;
         }
         /*else if ("LOOPBACK".equals(protocolName)) {
         	return new SMSConnection();

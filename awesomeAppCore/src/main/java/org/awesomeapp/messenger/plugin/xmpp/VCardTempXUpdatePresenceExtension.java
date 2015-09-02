@@ -22,8 +22,7 @@ import org.jivesoftware.smack.util.*;
  * @author Vincent Lucas
  */
 public class VCardTempXUpdatePresenceExtension
-        implements PacketExtension,
-        PacketInterceptor
+        implements ExtensionElement
 {
     /**
      * This presence extension element name.

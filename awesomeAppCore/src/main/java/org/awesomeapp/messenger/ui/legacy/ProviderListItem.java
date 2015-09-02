@@ -243,7 +243,7 @@ public class ProviderListItem extends LinearLayout {
                     String userDomain = settings.getDomain();
                     int connectionStatus = dbConnectionStatus;
 
-                    IImConnection conn = mApp.getConnection(providerId);
+                    IImConnection conn = mApp.getConnection(providerId,-1);
                     if (conn == null)
                     {
                         connectionStatus = ImConnection.DISCONNECTED;
