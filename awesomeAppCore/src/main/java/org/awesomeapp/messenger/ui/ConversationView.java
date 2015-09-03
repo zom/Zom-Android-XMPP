@@ -415,26 +415,26 @@ public class ConversationView {
         @Override
         public boolean onIncomingMessage(IChatSession ses,
                 org.awesomeapp.messenger.model.Message msg) {
-            scheduleRequery(FAST_QUERY_INTERVAL);
-            updatePresenceDisplay();
+//            scheduleRequery(FAST_QUERY_INTERVAL);
+  //          updatePresenceDisplay();
 
             return mIsSelected;
         }
 
         @Override
         public void onContactJoined(IChatSession ses, Contact contact) {
-            scheduleRequery(DEFAULT_QUERY_INTERVAL);
+          //  scheduleRequery(DEFAULT_QUERY_INTERVAL);
         }
 
         @Override
         public void onContactLeft(IChatSession ses, Contact contact) {
-            scheduleRequery(DEFAULT_QUERY_INTERVAL);
+         //   scheduleRequery(DEFAULT_QUERY_INTERVAL);
         }
 
         @Override
         public void onSendMessageError(IChatSession ses,
                 org.awesomeapp.messenger.model.Message msg, ImErrorInfo error) {
-            scheduleRequery(FAST_QUERY_INTERVAL);
+        //    scheduleRequery(FAST_QUERY_INTERVAL);
         }
 
         @Override
@@ -474,7 +474,7 @@ public class ConversationView {
             message.getData().putString("file", file);
             message.getData().putInt("progress", percent);
 
-            scheduleRequery(FAST_QUERY_INTERVAL);
+         //   scheduleRequery(FAST_QUERY_INTERVAL);
 
             mHandler.sendMessage(message);
 
@@ -1368,24 +1368,19 @@ public class ConversationView {
 
             if (newCursor != null) {
 
-                newCursor = new MultiUriCursorWrapper(newCursor);
-
-                ArrayList<Uri> alUris = new ArrayList<Uri>();
-                alUris.add(Imps.Messages.CONTENT_URI);
-                alUris.add(mUri);
-                ((MultiUriCursorWrapper) newCursor).withNotificationUris(mActivity.getApplicationContext().getContentResolver(), alUris);
-
+                newCursor.setNotificationUri(mActivity.getApplicationContext().getContentResolver(), mUri);
                 mMessageAdapter.swapCursor(new DeltaCursor(newCursor));
 
                 if (!mMessageAdapter.isScrolling()) {
-                    mHandler.postDelayed(new Runnable() {
+
+                    mHandler.post(new Runnable() {
 
                         public void run() {
                             if (mMessageAdapter.getItemCount() > 0) {
-                                mHistory.scrollToPosition(mMessageAdapter.getItemCount() - 1);
+                                mHistory.getLayoutManager().scrollToPosition(mMessageAdapter.getItemCount() - 1);
                             }
                         }
-                    }, 100);
+                    });
                 }
 
             }
@@ -2047,7 +2042,7 @@ public class ConversationView {
             case SHOW_DATA_PROGRESS:
 
                 int percent = msg.getData().getInt("progress");
-                
+                /**
                 mProgressTransfer.setVisibility(View.VISIBLE);
                 mProgressTransfer.setProgress(percent);
                 mProgressTransfer.setMax(100);
@@ -2058,7 +2053,7 @@ public class ConversationView {
                     //requeryCursor();
                     mMessageAdapter.notifyDataSetChanged();
                     
-                }
+                }*/
 
                 break;
              default:
@@ -2621,6 +2616,7 @@ public class ConversationView {
                 LogCleaner.error(ImApp.LOG_TAG, "send message error",e);
                 }
             }
+
 
             if (oldState == AbsListView.OnScrollListener.SCROLL_STATE_FLING) {
                 if (mNeedRequeryCursor) {

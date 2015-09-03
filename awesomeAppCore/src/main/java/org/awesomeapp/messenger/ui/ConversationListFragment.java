@@ -171,7 +171,7 @@ public class ConversationListFragment extends Fragment {
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             ContactListItem view = (ContactListItem)LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.contact_view, parent, false);
+                    .inflate(R.layout.conversation_view, parent, false);
             view.setBackgroundResource(mBackground);
             return new ViewHolder(view);
         }

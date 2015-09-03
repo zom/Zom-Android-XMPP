@@ -108,20 +108,11 @@ public class ConversationDetailActivity extends AppCompatActivity {
     }
 
     public void collapseToolbar(){
-        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) appBarLayout.getLayoutParams();
-        AppBarLayout.Behavior behavior = (AppBarLayout.Behavior) params.getBehavior();
-        if(behavior!=null) {
-            behavior.onNestedFling(mRootLayout, appBarLayout, null, 0, 10000, true);
-        }
+        
     }
 
     public void expandToolbar(){
-        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) appBarLayout.getLayoutParams();
-        AppBarLayout.Behavior behavior = (AppBarLayout.Behavior) params.getBehavior();
-        if(behavior!=null) {
-            behavior.setTopAndBottomOffset(0);
-            behavior.onNestedPreScroll(mRootLayout, appBarLayout, null, 0, 1, new int[2]);
-        }
+
     }
 
     @Override
