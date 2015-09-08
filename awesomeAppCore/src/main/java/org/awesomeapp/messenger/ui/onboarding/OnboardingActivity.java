@@ -467,7 +467,8 @@ public class OnboardingActivity extends ThemeableActivity {
     {
         String username = ((TextView)findViewById(R.id.edtName)).getText().toString();
         String password = ((TextView)findViewById(R.id.edtPass)).getText().toString();
-
+        new ExistingAccountTask().execute(username, password);
+        /**
         if (mSpinnerDomains.getVisibility() == View.VISIBLE) {
 
             String passwordConf = ((TextView)findViewById(R.id.edtPassConfirm)).getText().toString();
@@ -483,8 +484,8 @@ public class OnboardingActivity extends ThemeableActivity {
             }
         }
         else {
-            new ExistingAccountTask().execute(username, password);
-        }
+
+        }*/
     }
 
     private class ExistingAccountTask extends AsyncTask<String, Void, OnboardingAccount> {

@@ -19,37 +19,18 @@ package org.awesomeapp.messenger.ui;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.media.MediaRecorder;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.RemoteException;
-import android.provider.MediaStore;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ImageView;
-import android.widget.Toast;
 
 import org.awesomeapp.messenger.ImApp;
-import org.awesomeapp.messenger.provider.Imps;
-import org.awesomeapp.messenger.service.IChatSession;
 import org.awesomeapp.messenger.tasks.AddContactAsyncTask;
-import org.awesomeapp.messenger.ui.ConversationView;
-import org.awesomeapp.messenger.ui.legacy.ContactsPickerActivity;
 import org.awesomeapp.messenger.ui.onboarding.OnboardingManager;
-import org.awesomeapp.messenger.util.SecureMediaStore;
-import org.awesomeapp.messenger.util.SystemServices;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 import info.guardianproject.otr.app.im.R;
 

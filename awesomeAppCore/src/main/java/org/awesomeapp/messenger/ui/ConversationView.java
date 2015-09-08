@@ -79,6 +79,7 @@ import net.java.otr4j.session.SessionStatus;
 
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.crypto.IOtrChatSession;
+import org.awesomeapp.messenger.crypto.OtrDebugLogger;
 import org.awesomeapp.messenger.model.Address;
 import org.awesomeapp.messenger.model.Contact;
 import org.awesomeapp.messenger.model.ImConnection;
@@ -108,6 +109,7 @@ import org.awesomeapp.messenger.ui.stickers.StickerManager;
 import org.awesomeapp.messenger.ui.stickers.StickerPagerAdapter;
 import org.awesomeapp.messenger.ui.stickers.StickerSelectListener;
 import org.awesomeapp.messenger.ui.widgets.RoundedAvatarDrawable;
+import org.awesomeapp.messenger.util.Debug;
 import org.awesomeapp.messenger.util.LogCleaner;
 import org.awesomeapp.messenger.util.MultiUriCursorWrapper;
 import org.awesomeapp.messenger.util.SystemServices;
@@ -220,6 +222,7 @@ public class ConversationView {
                         mCurrentChatSession = getChatSession();
                     if (mCurrentChatSession == null)
                         return;
+
                     IOtrChatSession otrChatSession = mCurrentChatSession.getOtrChatSession();
                     
                     if (otrChatSession != null)
@@ -245,7 +248,10 @@ public class ConversationView {
             }
             catch (RemoteException re){}
         }
-
+        else
+        {
+            stopListening();
+        }
 
     }
 
@@ -255,7 +261,7 @@ public class ConversationView {
             if (mConn == null && mProviderId != -1) {
                 mConn = mApp.getConnection(mProviderId, mAccountId);
 
-                if (mConn != null)
+                if (mConn == null)
                     return false;
 
             }
@@ -463,6 +469,8 @@ public class ConversationView {
             mHandler.sendMessage(message);
 
 
+            log("onIncomingFileTransfer: " + transferFrom + " @ " + transferUrl);
+
         }
 
         @Override
@@ -478,6 +486,7 @@ public class ConversationView {
 
             mHandler.sendMessage(message);
 
+            log ("onIncomingFileTransferProgress: " + file + " " + percent + "%");
 
         }
 
@@ -491,6 +500,9 @@ public class ConversationView {
             message.getData().putString("err", err);
 
             mHandler.sendMessage(message);
+
+            log("onIncomingFileTransferProgress: " + file + " err: " + err);
+
         }
 
 
@@ -607,7 +619,8 @@ public class ConversationView {
     private boolean mIsListening;
 
     static final void log(String msg) {
-        Log.d(ImApp.LOG_TAG, "<ChatView> " + msg);
+        if (Debug.DEBUG_ENABLED)
+            Log.d(ImApp.LOG_TAG, "<ChatView> " + msg);
     }
 
     public ConversationView(ConversationDetailActivity activity) {

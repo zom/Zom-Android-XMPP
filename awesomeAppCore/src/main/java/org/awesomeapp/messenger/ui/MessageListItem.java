@@ -590,10 +590,16 @@ public class MessageListItem extends FrameLayout {
 
         //aHolder.mMediaThumbnail.setImageResource(R.drawable.ic_photo_library_white_36dp);
 
-        new ThumbnailLoaderTask(sBitmapCache).execute(request);
+        if (mTask != null)
+            mTask.cancel(true);
+
+        mTask = new ThumbnailLoaderTask(sBitmapCache);
+        mTask.execute(request);
 
 
     }
+
+    ThumbnailLoaderTask mTask;
 
     public final static int THUMBNAIL_SIZE_DEFAULT = 400;
 

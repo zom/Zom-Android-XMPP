@@ -17,23 +17,6 @@
 
 package org.awesomeapp.messenger.ui;
 
-import org.awesomeapp.messenger.crypto.IOtrChatSession;
-import org.awesomeapp.messenger.service.IChatSession;
-import org.awesomeapp.messenger.service.IImConnection;
-import info.guardianproject.otr.app.im.R;
-import org.awesomeapp.messenger.util.SecureMediaStore;
-import org.awesomeapp.messenger.ui.legacy.DatabaseUtils;
-import org.awesomeapp.messenger.ImApp;
-import org.awesomeapp.messenger.model.Presence;
-import org.awesomeapp.messenger.provider.Imps;
-
-import org.awesomeapp.messenger.ui.widgets.LetterAvatar;
-import org.awesomeapp.messenger.ui.widgets.RoundedAvatarDrawable;
-import org.awesomeapp.messenger.util.SystemServices;
-import org.awesomeapp.messenger.util.SystemServices.FileInfo;
-import org.ocpsoft.prettytime.PrettyTime;
-
-import net.java.otr4j.session.SessionStatus;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -56,11 +39,27 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import net.java.otr4j.session.SessionStatus;
+
+import org.awesomeapp.messenger.ImApp;
+import org.awesomeapp.messenger.crypto.IOtrChatSession;
+import org.awesomeapp.messenger.model.Presence;
+import org.awesomeapp.messenger.provider.Imps;
+import org.awesomeapp.messenger.service.IChatSession;
+import org.awesomeapp.messenger.service.IImConnection;
+import org.awesomeapp.messenger.ui.legacy.DatabaseUtils;
+import org.awesomeapp.messenger.ui.widgets.LetterAvatar;
+import org.awesomeapp.messenger.ui.widgets.RoundedAvatarDrawable;
+import org.awesomeapp.messenger.util.SecureMediaStore;
+import org.awesomeapp.messenger.util.SystemServices;
+import org.awesomeapp.messenger.util.SystemServices.FileInfo;
+import org.ocpsoft.prettytime.PrettyTime;
+
 import java.util.Date;
 
-public class ContactListItem extends FrameLayout {
+import info.guardianproject.otr.app.im.R;
+
+public class ConversationListItem extends FrameLayout {
     public static final String[] CONTACT_PROJECTION = { Imps.Contacts._ID, Imps.Contacts.PROVIDER,
                                                 Imps.Contacts.ACCOUNT, Imps.Contacts.USERNAME,
                                                 Imps.Contacts.NICKNAME, Imps.Contacts.TYPE,
@@ -94,7 +93,7 @@ public class ContactListItem extends FrameLayout {
     static Drawable AVATAR_DEFAULT_GROUP = null;
     private final static PrettyTime sPrettyTime = new PrettyTime();
 
-    public ContactListItem(Context context, AttributeSet attrs) {
+    public ConversationListItem(Context context, AttributeSet attrs) {
         super(context, attrs);
 
     }
@@ -132,7 +131,7 @@ public class ContactListItem extends FrameLayout {
 
             holder.mContainer = findViewById(R.id.message_container);
 
-           // holder.mMediaThumb = (ImageView)findViewById(R.id.media_thumbnail);
+            holder.mMediaThumb = (ImageView)findViewById(R.id.media_thumbnail);
             setTag(holder);
         }
 
@@ -213,11 +212,13 @@ public class ContactListItem extends FrameLayout {
             }
             else if (cursor.getColumnIndex(Imps.Contacts.AVATAR_DATA)!=-1)
             {
+//                holder.mAvatar.setVisibility(View.GONE);
 
                 RoundedAvatarDrawable avatar = null;
 
                 try
                 {
+                  //  avatar = DatabaseUtils.getAvatarFromAddress(this.getContext().getContentResolver(),address, ImApp.DEFAULT_AVATAR_WIDTH,ImApp.DEFAULT_AVATAR_HEIGHT);
                    avatar = DatabaseUtils.getAvatarFromCursor(cursor, COLUMN_AVATAR_DATA, ImApp.SMALL_AVATAR_WIDTH, ImApp.SMALL_AVATAR_HEIGHT);
                 }
                 catch (Exception e)
@@ -268,10 +269,90 @@ public class ContactListItem extends FrameLayout {
             }
         }
 
-        holder.mStatusText.setText("");
+        if (showChatMsg && lastMsg != null) {
 
-        statusText = address;
-        holder.mLine2.setText(statusText);
+
+            if (holder.mLine2 != null)
+            {
+                if (SecureMediaStore.isVfsUri(lastMsg))
+                {
+                    FileInfo fInfo = SystemServices.getFileInfoFromURI(getContext(), Uri.parse(lastMsg));
+                    
+                    if (fInfo.type == null || fInfo.type.startsWith("image"))
+                    {
+                        
+                        if (holder.mMediaThumb != null)
+                        {
+                            holder.mMediaThumb.setVisibility(View.VISIBLE);
+
+                            if (fInfo.type != null && fInfo.type.equals("image/png"))
+                            {
+                                holder.mMediaThumb.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                            }
+                            else
+                            {
+                                holder.mMediaThumb.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
+                            }
+
+                            setThumbnail(getContext().getContentResolver(), holder, Uri.parse(lastMsg));
+
+                                    holder.mLine2.setVisibility(View.GONE);
+                                    
+                        }
+                    }
+                    else
+                    {
+                        holder.mLine2.setText("");
+                    }
+
+                }
+                else
+                {
+                    if (holder.mMediaThumb != null)
+                        holder.mMediaThumb.setVisibility(View.GONE);
+                    
+                    holder.mLine2.setVisibility(View.VISIBLE);
+                    holder.mLine2.setText(android.text.Html.fromHtml(lastMsg).toString());
+                }
+            }
+
+            if (lastMsgDate != -1)
+            {
+                Date dateLast = new Date(lastMsgDate);
+                holder.mStatusText.setText(sPrettyTime.format(dateLast));
+
+            }
+            else
+            {
+                holder.mStatusText.setText("");
+            }
+
+        }
+        else if (holder.mLine2 != null)
+        {
+
+            /*
+            if (statusText == null || statusText.length() == 0)
+            {
+                if (Imps.Contacts.TYPE_GROUP == type)
+                {
+                    statusText = getContext().getString(R.string.menu_new_group_chat);
+                }
+                else
+                {
+                    statusText = address;//brandingRes.getString(PresenceUtils.getStatusStringRes(presence));
+                }
+            }
+
+            holder.mLine2.setText(statusText);
+            */
+
+            statusText = address;
+            holder.mLine2.setText(statusText);
+        }
+
+
 
 
         if (subType == Imps.ContactsColumns.SUBSCRIPTION_TYPE_INVITATIONS)
@@ -282,9 +363,48 @@ public class ContactListItem extends FrameLayout {
 
         holder.mLine1.setVisibility(View.VISIBLE);
 
-
+        getEncryptionState (providerId, address, holder);
     }
 
+    private void getEncryptionState (long providerId, String address, ViewHolder holder)
+    {
+
+         try {
+
+             ImApp app = ((ImApp)((Activity) getContext()).getApplication());
+
+             IImConnection conn = app.getConnection(providerId,-1);
+             if (conn == null || conn.getChatSessionManager() == null)
+                 return;
+
+            IChatSession chatSession = conn.getChatSessionManager().getChatSession(address);
+
+            if (chatSession != null)
+            {
+                IOtrChatSession otrChatSession = chatSession.getOtrChatSession();
+                if (otrChatSession != null)
+                {
+                    SessionStatus chatStatus = SessionStatus.values()[otrChatSession.getChatStatus()];
+
+                    if (chatStatus == SessionStatus.ENCRYPTED)
+                    {
+                        boolean isVerified = otrChatSession.isKeyVerified(address);
+                        holder.mStatusIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_lock_outline_black_18dp));
+                        holder.mStatusIcon.setVisibility(View.VISIBLE);
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+
+
+                //mCurrentChatSession.getOtrChatSession();
+
+    }
 
     public void setAvatarBorder(int status, RoundedAvatarDrawable avatar) {
         switch (status) {

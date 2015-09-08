@@ -152,9 +152,9 @@ public class ConversationListFragment extends Fragment {
 
         public static class ViewHolder extends RecyclerView.ViewHolder {
 
-            public final ContactListItem mView;
+            public final ConversationListItem mView;
 
-            public ViewHolder(ContactListItem view) {
+            public ViewHolder(ConversationListItem view) {
                 super(view);
                 mView = view;
             }
@@ -170,7 +170,7 @@ public class ConversationListFragment extends Fragment {
 
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            ContactListItem view = (ContactListItem)LayoutInflater.from(parent.getContext())
+            ConversationListItem view = (ConversationListItem)LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.conversation_view, parent, false);
             view.setBackgroundResource(mBackground);
             return new ViewHolder(view);
@@ -179,7 +179,7 @@ public class ConversationListFragment extends Fragment {
         @Override
         public void onBindViewHolder(ViewHolder viewHolder, Cursor cursor) {
 
-            final long chatId =  cursor.getLong(ContactListItem.COLUMN_CONTACT_ID);
+            final long chatId =  cursor.getLong(ConversationListItem.COLUMN_CONTACT_ID);
 
             viewHolder.mView.bind(cursor, null, true, false);
 

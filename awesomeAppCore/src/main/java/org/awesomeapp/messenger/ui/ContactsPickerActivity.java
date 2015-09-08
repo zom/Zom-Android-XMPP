@@ -15,14 +15,14 @@
  * the License.
  */
 
-package org.awesomeapp.messenger.ui.legacy;
+package org.awesomeapp.messenger.ui;
 
 import info.guardianproject.otr.app.im.R;
+
 import org.awesomeapp.messenger.ui.legacy.ContactListFilterView.ContactListListener;
 
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.provider.Imps;
-import org.awesomeapp.messenger.ui.ContactListItem;
 
 import android.app.SearchManager;
 import android.content.ContentResolver;
@@ -39,18 +39,21 @@ import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.ResourceCursorAdapter;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.view.ActionMode;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
 /** Activity used to pick a contact. */
-public class ContactsPickerActivity extends ActionBarActivity  {
+public class ContactsPickerActivity extends ActionBarActivity {
+
     public final static String EXTRA_EXCLUDED_CONTACTS = "excludes";
 
     public final static String EXTRA_RESULT_USERNAME = "result";
@@ -87,7 +90,8 @@ public class ContactsPickerActivity extends ActionBarActivity  {
 
     private boolean mHideOffline = false;
     private boolean mShowInvitations = false;
-    
+
+
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
@@ -100,6 +104,62 @@ public class ContactsPickerActivity extends ActionBarActivity  {
             mUri = getIntent().getData();
 
         mListView = (ListView)findViewById(R.id.contactsList);
+        mListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+
+        mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+
+                return true;
+            }
+        });
+
+        mListView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
+
+            private int nr = 0;
+
+            @Override
+            public boolean onCreateActionMode(android.view.ActionMode mode, Menu menu) {
+                MenuInflater inflater = getMenuInflater();
+              //  inflater.inflate(R.menu.cabselection_menu, menu);
+
+                return true;
+            }
+
+            @Override
+            public boolean onPrepareActionMode(android.view.ActionMode mode, Menu menu) {
+                return false;
+            }
+
+            @Override
+            public boolean onActionItemClicked(android.view.ActionMode mode, MenuItem item) {
+                return false;
+            }
+
+            @Override
+            public void onDestroyActionMode(android.view.ActionMode mode) {
+                nr = 0;
+                //applicationsAdapter.clearSelection();
+
+            }
+
+            @Override
+            public void onItemCheckedStateChanged(android.view.ActionMode mode, int position, long id, boolean checked) {
+                if (checked) {
+                    nr++;
+                    //applicationsAdapter.setNewSelection(position, checked);
+                  //  L.d(TAG, applicationsAdapter.getItem(position).getAppName());
+                } else {
+                    nr--;
+                   // applicationsAdapter.removeSelection(position);
+                }
+               // mode.setTitle(nr + " rows selected!");
+
+            }
+
+        });
 
         mListView.setOnItemClickListener(new OnItemClickListener ()
         {
@@ -107,14 +167,23 @@ public class ContactsPickerActivity extends ActionBarActivity  {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
 
-                Cursor cursor = (Cursor) mAdapter.getItem(position);
-                Intent data = new Intent();
-                data.putExtra(EXTRA_RESULT_USERNAME, cursor.getString(ContactListItem.COLUMN_CONTACT_USERNAME));
-                data.putExtra(EXTRA_RESULT_PROVIDER, cursor.getLong(ContactListItem.COLUMN_CONTACT_PROVIDER));
-                data.putExtra(EXTRA_RESULT_ACCOUNT, cursor.getLong(ContactListItem.COLUMN_CONTACT_ACCOUNT));
+                if (mListView.getChoiceMode() == ListView.CHOICE_MODE_MULTIPLE_MODAL)
+                {
+                    //mAdapter.getItem(position);
 
-                setResult(RESULT_OK, data);
-                finish();
+                    mListView.setItemChecked(position, !mListView.isItemChecked(position));
+
+                }
+                else {
+                    Cursor cursor = (Cursor) mAdapter.getItem(position);
+                    Intent data = new Intent();
+                    data.putExtra(EXTRA_RESULT_USERNAME, cursor.getString(ContactListItem.COLUMN_CONTACT_USERNAME));
+                    data.putExtra(EXTRA_RESULT_PROVIDER, cursor.getLong(ContactListItem.COLUMN_CONTACT_PROVIDER));
+                    data.putExtra(EXTRA_RESULT_ACCOUNT, cursor.getLong(ContactListItem.COLUMN_CONTACT_ACCOUNT));
+
+                    setResult(RESULT_OK, data);
+                    finish();
+                }
             }
 
         });
@@ -209,16 +278,7 @@ public class ContactsPickerActivity extends ActionBarActivity  {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
 
-        case R.id.menu_search:
-            Intent i = new Intent(ContactsPickerActivity.this, AddContactActivity.class);
-
-            this.startActivityForResult(i, REQUEST_CODE_ADD_CONTACT);
-            return true;
-
-
-        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -378,6 +438,7 @@ public class ContactsPickerActivity extends ActionBarActivity  {
         }
 
     }
+
 
 
 }

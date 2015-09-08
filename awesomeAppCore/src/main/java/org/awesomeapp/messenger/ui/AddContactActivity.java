@@ -15,7 +15,7 @@
  * the License.
  */
 
-package org.awesomeapp.messenger.ui.legacy;
+package org.awesomeapp.messenger.ui;
 
 import org.awesomeapp.messenger.crypto.OtrAndroidKeyManagerImpl;
 import org.awesomeapp.messenger.service.IContactList;
@@ -27,6 +27,10 @@ import org.awesomeapp.messenger.plugin.BrandingResourceIDs;
 
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.provider.Imps;
+import org.awesomeapp.messenger.ui.legacy.BrandingResources;
+import org.awesomeapp.messenger.ui.legacy.ErrorResUtils;
+import org.awesomeapp.messenger.ui.legacy.ProviderListItem;
+import org.awesomeapp.messenger.ui.legacy.SimpleAlertHandler;
 import org.awesomeapp.messenger.util.XmppUriHelper;
 
 import java.util.List;

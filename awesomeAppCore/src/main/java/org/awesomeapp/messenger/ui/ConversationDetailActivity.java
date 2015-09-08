@@ -123,6 +123,15 @@ public class ConversationDetailActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+
+        mConvoView.setSelected(false);
+    }
+
+
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
@@ -369,14 +378,20 @@ public class ConversationDetailActivity extends AppCompatActivity {
                         info.type = "application/octet-stream";
 
                 String offerId = UUID.randomUUID().toString();
-                session.offerData(offerId, info.path, info.type );
+                boolean canSend = session.offerData(offerId, info.path, info.type );
 
-                int type = mConvoView.isOtrSessionVerified() ? Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED : Imps.MessageType.OUTGOING_ENCRYPTED;
-                Imps.insertMessageInDb(
-                        getContentResolver(), false, session.getId(), true, null, uri.toString(),
-                        System.currentTimeMillis(), type,
-                        0, offerId, info.type);
-                return true; // sent
+                if (canSend) {
+                    int type = mConvoView.isOtrSessionVerified() ? Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED : Imps.MessageType.OUTGOING_ENCRYPTED;
+                    Imps.insertMessageInDb(
+                            getContentResolver(), false, session.getId(), true, null, uri.toString(),
+                            System.currentTimeMillis(), type,
+                            0, offerId, info.type);
+                    return true; // sent
+                }
+                else
+                {
+                    return false;
+                }
             }
 
         } catch (RemoteException e) {

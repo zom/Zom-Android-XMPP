@@ -34,11 +34,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
 
 import org.awesomeapp.messenger.MainActivity;
 import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
-import org.awesomeapp.messenger.ui.legacy.AddContactActivity;
 import org.awesomeapp.messenger.ui.onboarding.OnboardingManager;
 import org.awesomeapp.messenger.provider.Imps;
 

@@ -28,6 +28,9 @@ import org.awesomeapp.messenger.service.IContactListManager;
 import org.awesomeapp.messenger.service.IImConnection;
 import org.awesomeapp.messenger.service.ISubscriptionListener;
 import info.guardianproject.otr.app.im.R;
+
+import org.awesomeapp.messenger.ui.AddContactActivity;
+import org.awesomeapp.messenger.ui.ContactsPickerActivity;
 import org.awesomeapp.messenger.ui.legacy.ContactListFilterView.ContactListListener;
 import org.awesomeapp.messenger.model.Contact;
 import org.awesomeapp.messenger.model.ImConnection;
