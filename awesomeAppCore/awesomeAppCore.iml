@@ -115,7 +115,7 @@
       <excludeFolder url="file://$MODULE_DIR$/build/outputs" />
       <excludeFolder url="file://$MODULE_DIR$/build/tmp" />
     </content>
-    <orderEntry type="jdk" jdkName="Android API 22 Platform" jdkType="Android SDK" />
+    <orderEntry type="jdk" jdkName="Android API 22 Platform (1)" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="design-22.2.1" level="project" />
     <orderEntry type="library" exported="" name="smack-tcp-4.1.0" level="project" />
@@ -124,8 +124,8 @@
     <orderEntry type="library" exported="" name="smack-resolver-minidns-4.1.0" level="project" />
     <orderEntry type="library" exported="" name="commons-io-2.4" level="project" />
     <orderEntry type="library" exported="" name="guava-18.0" level="project" />
-    <orderEntry type="library" exported="" name="smack-android-extensions-4.1.0" level="project" />
     <orderEntry type="library" exported="" name="smack-android-4.1.0" level="project" />
+    <orderEntry type="library" exported="" name="smack-android-extensions-4.1.0" level="project" />
     <orderEntry type="library" exported="" name="smack-core-4.1.0" level="project" />
     <orderEntry type="library" exported="" name="HockeySDK-3.5.0" level="project" />
     <orderEntry type="library" exported="" name="commons-codec-1.9" level="project" />
@@ -134,12 +134,12 @@
     <orderEntry type="library" exported="" name="AndroidPinning-1.0.0" level="project" />
     <orderEntry type="library" exported="" name="jsoup-1.5.2" level="project" />
     <orderEntry type="library" exported="" name="recyclerview-v7-22.2.0" level="project" />
-    <orderEntry type="library" exported="" name="jxmpp-core-0.4.2-beta1" level="project" />
     <orderEntry type="library" exported="" name="prettytime-4.0.0.Final" level="project" />
+    <orderEntry type="library" exported="" name="jxmpp-core-0.4.2-beta1" level="project" />
     <orderEntry type="library" exported="" name="smack-extensions-4.1.0" level="project" />
     <orderEntry type="library" exported="" name="cardview-v7-22.2.0" level="project" />
-    <orderEntry type="library" exported="" name="support-annotations-22.2.1" level="project" />
     <orderEntry type="library" exported="" name="minidns-0.1.7" level="project" />
+    <orderEntry type="library" exported="" name="support-annotations-22.2.1" level="project" />
     <orderEntry type="library" exported="" name="jxmpp-util-cache-0.4.2-beta1" level="project" />
     <orderEntry type="library" exported="" name="smack-sasl-provided-4.1.0" level="project" />
     <orderEntry type="library" exported="" name="sqlcipher" level="project" />

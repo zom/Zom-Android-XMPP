@@ -33,7 +33,7 @@ android {
 
     defaultConfig {
         applicationId "org.awesomeapp.messenger"
-        minSdkVersion 10
+        minSdkVersion 11
         targetSdkVersion 22
         testApplicationId "org.awesomeapp.messenger.test"
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
