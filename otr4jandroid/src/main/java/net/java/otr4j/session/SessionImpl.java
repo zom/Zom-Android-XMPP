@@ -62,7 +62,7 @@ public class SessionImpl implements Session {
     private long lastStart;
     private OtrAssembler assembler;
 
-    private final static boolean DEBUG_ENABLED = false;
+    private final static boolean DEBUG_ENABLED = true;
     private final static String LOG_TAG = "OTR4J";
 
     public SessionImpl(SessionID sessionID, OtrEngineHost listener) {
@@ -408,7 +408,7 @@ public class SessionImpl implements Session {
         }
     }
 
-    private String handleDataMessage(DataMessage data, List<TLV> tlvs) throws OtrException {
+    private synchronized String handleDataMessage(DataMessage data, List<TLV> tlvs) throws OtrException {
         if (DEBUG_ENABLED) Log.d(LOG_TAG,getSessionID().getLocalUserId() + " received a data message from "
                       + getSessionID().getRemoteUserId() + ".");
 
