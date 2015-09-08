@@ -211,7 +211,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         mChatURI = ContentUris.withAppendedId(Imps.Chats.CONTENT_URI, mContactId);
 
         if (isNewSession)
-            insertOrUpdateChat("");
+            insertOrUpdateChat(null);
 
         mMessageURI = Imps.Messages.getContentUriByThreadId(mContactId);
 
@@ -342,6 +342,8 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         long now = System.currentTimeMillis();
         
         insertMessageInDb(null, text, now, newType, 0, msg.getID());
+        insertOrUpdateChat(text);
+
     }
 
     public boolean offerData(String offerId, String url, String type) {
@@ -395,22 +397,17 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             return;
         }
 
-        while (c.moveToNext()) {
-            String id = c.getString(2);
-            String body = c.getString(1);
-            
-            org.awesomeapp.messenger.model.Message msg = new org.awesomeapp.messenger.model.Message(body);
-            // TODO OTRCHAT move setFrom() to ChatSession.sendMessageAsync()
-            msg.setFrom(mConnection.getLoginUser().getAddress());
-            msg.setID(id);
-            msg.setType(Imps.MessageType.OUTGOING);
+        ArrayList<String> messages = new ArrayList<String>();
 
-            int newType = mChatSession.sendMessageAsync(msg);
-            updateMessageInDb(id, newType, System.currentTimeMillis());
+        while (c.moveToNext())
+            messages.add(c.getString(1));
 
-        }
-        
         c.close();
+
+        removeMessageInDb(Imps.MessageType.POSTPONED);
+
+        for (String body : messages)
+            sendMessage(body);
     }
 
     public void registerChatListener(IChatListener listener) {
@@ -502,10 +499,9 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
         ContentValues values = new ContentValues(2);
 
-        if (message != null)
-            values.put(Imps.Chats.LAST_MESSAGE_DATE, System.currentTimeMillis());
+        values.put(Imps.Chats.LAST_MESSAGE_DATE, System.currentTimeMillis());
+        values.put(Imps.Chats.LAST_UNREAD_MESSAGE, message);
 
-         values.put(Imps.Chats.LAST_UNREAD_MESSAGE, message);
          values.put(Imps.Chats.GROUP_CHAT, mIsGroupChat);
          // ImProvider.insert() will replace the chat if it already exist.
          mContentResolver.insert(mChatURI, values);
@@ -818,7 +814,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         }
 
         @Override
-        public void onReceiptsExpected(ChatSession ses) {
+        public void onReceiptsExpected(ChatSession ses, boolean isExpected) {
             // TODO
 
         }

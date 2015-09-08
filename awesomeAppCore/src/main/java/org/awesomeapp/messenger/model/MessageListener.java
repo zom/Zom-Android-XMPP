@@ -69,7 +69,7 @@ public interface MessageListener {
      *
      * @param ses the ChatSession.
      */
-    public void onReceiptsExpected(ChatSession ses);
+    public void onReceiptsExpected(ChatSession ses, boolean isExpected);
 
     /** Called when OTR status changes */
     public void onStatusChanged(ChatSession session, SessionStatus status);

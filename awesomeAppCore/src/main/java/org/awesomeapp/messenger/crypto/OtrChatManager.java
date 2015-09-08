@@ -339,6 +339,7 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
                 }
             } catch (OtrException e) {
                 OtrDebugLogger.log("error encrypting", e);
+                return false;
             }
         }
 

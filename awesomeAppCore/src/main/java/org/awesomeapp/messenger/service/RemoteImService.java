@@ -356,6 +356,10 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
         if (intent != null)
         {
+            if (intent.hasExtra(ImServiceConstants.EXTRA_CHECK_AUTO_LOGIN))
+                mNeedCheckAutoLogin = intent.getBooleanExtra(ImServiceConstants.EXTRA_CHECK_AUTO_LOGIN,
+                        false);
+
             if (HeartbeatService.HEARTBEAT_ACTION.equals(intent.getAction())) {
               //  Log.d(TAG, "HEARTBEAT");
                 if (!mWakeLock.isHeld())
@@ -395,9 +399,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
             }
 
 
-            if (intent.hasExtra(ImServiceConstants.EXTRA_CHECK_AUTO_LOGIN))
-                mNeedCheckAutoLogin = intent.getBooleanExtra(ImServiceConstants.EXTRA_CHECK_AUTO_LOGIN,
-                    false);
+
 
         }
 
@@ -407,9 +409,11 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
         // Check and login accounts if network is ready, otherwise it's checked
         // when the network becomes available.
 
-        if (mNeedCheckAutoLogin && mNetworkState != NetworkConnectivityListener.State.NOT_CONNECTED) {
-            mNeedCheckAutoLogin = false;
-            autoLogin();
+        if (!mCacheWord.isLocked()) {
+            if (mNeedCheckAutoLogin) {
+                mNeedCheckAutoLogin = false;
+                autoLogin();
+            }
         }
 
         return START_STICKY;
@@ -479,13 +483,6 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
             return false;
         }
         */
-
-        if (!mConnections.isEmpty()) {
-            // This can happen because the UI process may be restarted and may think that we need
-            // to autologin, while we (the Service process) are already up.
-            debug("Got autoLogin request, but we have one or more connections");
-            return false;
-        }
 
         debug("Scanning accounts and login automatically");
 

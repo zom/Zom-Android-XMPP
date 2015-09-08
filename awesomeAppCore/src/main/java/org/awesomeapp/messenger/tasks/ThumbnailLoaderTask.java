@@ -61,13 +61,13 @@ public void onPostExecute(ThumbnailLoaderResult result){
         return;
         }
         // set the thumbnail
-        result.mHolder.mMediaThumbnail.setImageBitmap(result.mBitmap);
+         result.mHolder.mMediaThumbnail.setImageBitmap(result.mBitmap);
         }
         else
         {
-        if(result.mHolder!=null&&result.mHolder.mContainer!=null)
-        result.mHolder.mContainer.setVisibility(View.GONE);
-        }
+            if(result.mHolder!=null&&result.mHolder.mContainer!=null)
+            result.mHolder.mContainer.setVisibility(View.GONE);
+            }
         }
 
 public static Bitmap getThumbnail(ContentResolver cr,Uri uri, int thumbnailSize){

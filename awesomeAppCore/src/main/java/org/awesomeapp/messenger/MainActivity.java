@@ -21,7 +21,6 @@ import android.app.ProgressDialog;
 import android.content.ContentUris;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -30,14 +29,11 @@ import android.os.RemoteException;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -46,7 +42,6 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 
@@ -55,14 +50,10 @@ import net.hockeyapp.android.UpdateManager;
 import org.awesomeapp.messenger.model.ImConnection;
 import org.awesomeapp.messenger.tasks.AddContactAsyncTask;
 import org.awesomeapp.messenger.ui.AccountFragment;
-import org.awesomeapp.messenger.ui.ContactListActivity;
 import org.awesomeapp.messenger.ui.ContactsListFragment;
 import org.awesomeapp.messenger.ui.ConversationDetailActivity;
 import org.awesomeapp.messenger.ui.ConversationListFragment;
-import org.awesomeapp.messenger.ui.GalleryFragment;
 import org.awesomeapp.messenger.ui.GalleryListFragment;
-import org.awesomeapp.messenger.ui.MoreFragment;
-import org.awesomeapp.messenger.ui.legacy.AccountsFragment;
 import org.awesomeapp.messenger.ui.legacy.SettingActivity;
 import org.awesomeapp.messenger.ui.onboarding.OnboardingActivity;
 import org.awesomeapp.messenger.provider.Imps;
@@ -81,8 +72,8 @@ import org.awesomeapp.messenger.service.IChatSession;
 import org.awesomeapp.messenger.service.IChatSessionManager;
 import org.awesomeapp.messenger.service.IImConnection;
 import info.guardianproject.otr.app.im.R;
-import org.awesomeapp.messenger.ui.legacy.AddContactActivity;
-import org.awesomeapp.messenger.ui.legacy.ContactsPickerActivity;
+import org.awesomeapp.messenger.ui.AddContactActivity;
+import org.awesomeapp.messenger.ui.ContactsPickerActivity;
 import org.awesomeapp.messenger.util.LogCleaner;
 import org.awesomeapp.messenger.util.SecureMediaStore;
 import org.awesomeapp.messenger.util.SystemServices;
@@ -185,10 +176,19 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 mToolbar.setTitle(sb.toString());
+                mFab.setVisibility(View.VISIBLE);
 
-                if (tab.getPosition() == 2) {
+                if (tab.getPosition() == 1) {
+                    mFab.setImageResource(R.drawable.ic_person_add_white_36dp);
+                }
+                else if (tab.getPosition() == 2) {
                     mFab.setImageResource(R.drawable.ic_photo_camera_white_36dp);
-                } else {
+                }
+                else if (tab.getPosition() == 3)
+                {
+                    mFab.setVisibility(View.GONE);
+                }
+                else {
                     mFab.setImageResource(R.drawable.ic_add_white_24dp);
                 }
 
@@ -238,7 +238,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-
         //if VFS is not mounted, then send to WelcomeActivity
         if (!VirtualFileSystem.get().isMounted()) {
             finish();
@@ -251,6 +250,9 @@ public class MainActivity extends AppCompatActivity {
             app.checkForCrashes(this);
 
             mApp.initAccountInfo();
+
+            mApp.maybeInit(this);
+
 
         }
 

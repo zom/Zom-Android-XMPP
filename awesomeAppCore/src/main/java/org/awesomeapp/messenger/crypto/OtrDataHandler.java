@@ -3,6 +3,8 @@ package org.awesomeapp.messenger.crypto;
 import info.guardianproject.iocipher.File;
 import info.guardianproject.iocipher.FileInputStream;
 import info.guardianproject.iocipher.RandomAccessFile;
+
+import org.apache.http.Header;
 import org.awesomeapp.messenger.service.IDataListener;
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.util.SecureMediaStore;
@@ -68,16 +70,17 @@ import android.util.Log;
 
 
 public class OtrDataHandler implements DataHandler {
-    public static final String URI_PREFIX_OTR_IN_BAND = "otr-in-band:/storage/";
-    private static final int MAX_OUTSTANDING = 5;
 
+    public static final String URI_PREFIX_OTR_IN_BAND = "otr-in-band:/storage/";
+
+    private static final int MAX_OUTSTANDING = 10;
     private static final int MAX_CHUNK_LENGTH = 32768/2;
 
-    private static final int MAX_TRANSFER_LENGTH = 1024*1024*64;
+    private static final int MAX_TRANSFER_LENGTH = 1024*1024*10; //10MB max file size
 
     private static final byte[] EMPTY_BODY = new byte[0];
 
-    private static final String TAG = "GB.OtrDataHandler";
+    private static final String TAG = "Zom.Data";
 
     private static final ProtocolVersion PROTOCOL_VERSION = new ProtocolVersion("HTTP", 1, 1);
     private static HttpParams params = new BasicHttpParams();
@@ -185,28 +188,38 @@ public class OtrDataHandler implements DataHandler {
 
         if (requestMethod.equals("OFFER")) {
             debug("incoming OFFER " + url);
+            for (Header header :req.getAllHeaders())
+            {
+                debug("incoming header: " + header.getName() + "=" + header.getValue());
+            }
+
             if (!url.startsWith(URI_PREFIX_OTR_IN_BAND)) {
                 debug("Unknown url scheme " + url);
                 sendResponse(requestUs, 400, "Unknown scheme", uid, EMPTY_BODY);
                 return;
             }
-            sendResponse(requestUs, 200, "OK", uid, EMPTY_BODY);
+
             if (!req.containsHeader("File-Length"))
             {
                 sendResponse(requestUs, 400, "File-Length must be supplied", uid, EMPTY_BODY);
                 return;
             }
+
             int length = Integer.parseInt(req.getFirstHeader("File-Length").getValue());
             if (!req.containsHeader("File-Hash-SHA1"))
             {
                 sendResponse(requestUs, 400, "File-Hash-SHA1 must be supplied", uid, EMPTY_BODY);
                 return;
             }
+
+            sendResponse(requestUs, 200, "OK", uid, EMPTY_BODY);
+
             String sum = req.getFirstHeader("File-Hash-SHA1").getValue();
             String type = null;
             if (req.containsHeader("Mime-Type")) {
                 type = req.getFirstHeader("Mime-Type").getValue();
             }
+
             debug("Incoming sha1sum " + sum);
 
             Transfer transfer;

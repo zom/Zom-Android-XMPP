@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.java.otr4j.OtrException;
+import net.java.otr4j.session.Session;
 import net.java.otr4j.session.SessionID;
 import net.java.otr4j.session.SessionStatus;
 import net.java.otr4j.session.TLV;
@@ -31,6 +32,8 @@ public class OtrChatListener implements MessageListener {
 
   //      OtrDebugLogger.log("processing incoming message: " + msg.getID());
 
+        boolean result = false;
+
         String body = msg.getBody();
         String from = msg.getFrom().getAddress();
         String to = msg.getTo().getAddress();
@@ -44,8 +47,14 @@ public class OtrChatListener implements MessageListener {
 
         try {
             // No OTR for groups (yet)
-            if (!session.getParticipant().isGroup()) {
+            if (!session.getParticipant().isGroup() && otrStatus != SessionStatus.FINISHED) {
                 body = mOtrChatManager.decryptMessage(to, from, body, tlvs);
+
+                if (body != null)
+                    result = true;
+                else
+                    OtrDebugLogger.log("Decrypted incoming body was null (otrdata?)");
+
             }
 
             if (body != null) {
@@ -53,9 +62,9 @@ public class OtrChatListener implements MessageListener {
                 mMessageListener.onIncomingMessage(session, msg);
             }
 
-        } catch (OtrException e) {
+        } catch (OtrException oe) {
 
-         //   OtrDebugLogger.log("error decrypting message",e);
+            OtrDebugLogger.log("error decrypting message",oe);
 
            // msg.setBody("[" + "You received an unreadable encrypted message" + "]");
            // mMessageListener.onIncomingMessage(session, msg);
@@ -65,9 +74,18 @@ public class OtrChatListener implements MessageListener {
 
         for (TLV tlv : tlvs) {
             if (tlv.getType() == TLV_DATA_REQUEST) {
+                OtrDebugLogger.log("Got a TLV Data Request: " + new String(tlv.getValue()));
+
                 mMessageListener.onIncomingDataRequest(session, msg, tlv.getValue());
+                result = true;
+
             } else if (tlv.getType() == TLV_DATA_RESPONSE) {
+
+                OtrDebugLogger.log("Got a TLV Data Response: " + new String(tlv.getValue()));
+
                 mMessageListener.onIncomingDataResponse(session, msg, tlv.getValue());
+                result = true;
+
             }
         }
 
@@ -76,7 +94,7 @@ public class OtrChatListener implements MessageListener {
             mMessageListener.onStatusChanged(session, newStatus);
         }
 
-        return true;
+        return result;
     }
 
     @Override
@@ -107,8 +125,8 @@ public class OtrChatListener implements MessageListener {
     }
 
     @Override
-    public void onReceiptsExpected(ChatSession ses) {
-        mMessageListener.onReceiptsExpected(ses);
+    public void onReceiptsExpected(ChatSession ses, boolean isExpected) {
+        mMessageListener.onReceiptsExpected(ses, isExpected);
     }
 
     @Override

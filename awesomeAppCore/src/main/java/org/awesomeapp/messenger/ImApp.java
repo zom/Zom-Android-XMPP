@@ -108,8 +108,11 @@ public class ImApp extends Application {
     public static final String IMPS_CATEGORY = "org.awesomeapp.messenger.service.IMPS_CATEGORY";
     public static final String ACTION_QUIT = "org.awesomeapp.messenger.service.QUIT";
 
-    public static final int DEFAULT_AVATAR_WIDTH = 512;
-    public static final int DEFAULT_AVATAR_HEIGHT = 512;
+    public static final int SMALL_AVATAR_WIDTH = 48;
+    public static final int SMALL_AVATAR_HEIGHT = 48;
+
+    public static final int DEFAULT_AVATAR_WIDTH = 256;
+    public static final int DEFAULT_AVATAR_HEIGHT = 256;
 
     public static final String HOCKEY_APP_ID = "3cd4c5ff8b666e25466d3b8b66f31766";
 
@@ -418,18 +421,15 @@ public class ImApp extends Application {
         //serviceIntent.setComponent(ImServiceConstants.IM_SERVICE_COMPONENT);
         serviceIntent.putExtra(ImServiceConstants.EXTRA_CHECK_AUTO_LOGIN, true);
 
-        if (mImService == null)
-        {
+        if (mImService == null) {
+
             mApplicationContext.startService(serviceIntent);
-            if (!isBoot) {
-                mConnectionListener = new MyConnListener(new Handler());
-            }
-        }
+            mConnectionListener = new MyConnListener(new Handler());
 
-        if (mImServiceConn != null && !isBoot)
             mApplicationContext
-                .bindService(serviceIntent, mImServiceConn, Context.BIND_AUTO_CREATE);
+                    .bindService(serviceIntent, mImServiceConn, Context.BIND_AUTO_CREATE);
 
+        }
 
     }
 

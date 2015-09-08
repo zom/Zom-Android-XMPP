@@ -111,7 +111,7 @@ public class ChatSession {
     public int sendMessageAsync(Message message) {
 
         OtrChatManager cm = OtrChatManager.getInstance();
-        SessionID sId = cm.getSessionId(message.getFrom().getAddress(),mParticipant.getAddress().getAddress());
+        SessionID sId = cm.getSessionId(message.getFrom().getAddress(), mParticipant.getAddress().getAddress());
         SessionStatus otrStatus = cm.getSessionStatus(sId);
 
         message.setTo(new XmppAddress(sId.getRemoteUserId()));
@@ -171,14 +171,29 @@ public class ChatSession {
      * @param data the data to send.
      */
     public void sendDataAsync(Message message, boolean isResponse, byte[] data) {
-        if (message.getTo() == null)
-            message.setTo(mParticipant.getAddress());
 
         OtrChatManager cm = OtrChatManager.getInstance();
+        SessionID sId = cm.getSessionId(message.getFrom().getAddress(),mParticipant.getAddress().getAddress());
+        SessionStatus otrStatus = cm.getSessionStatus(sId);
 
-        cm.transformSending(message, isResponse, data);
+        message.setTo(new XmppAddress(sId.getRemoteUserId()));
 
-        mManager.sendMessageAsync(this, message);
+        if (otrStatus == SessionStatus.ENCRYPTED) {
+            boolean verified = cm.getKeyManager().isVerified(sId);
+
+            if (verified) {
+                message.setType(Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED);
+            } else {
+                message.setType(Imps.MessageType.OUTGOING_ENCRYPTED);
+            }
+
+            boolean canSend = cm.transformSending(message, isResponse, data);
+
+            if (canSend)
+                mManager.sendMessageAsync(this, message);
+
+        }
+
     }
 
     /**
@@ -219,9 +234,9 @@ public class ChatSession {
         }
 
         if (mListener != null)
-            mListener.onIncomingMessage(this, message);
-
-        return true;
+            return mListener.onIncomingMessage(this, message);
+        else
+            return false;
     }
 
     public void onMessageReceipt(String id) {
@@ -235,9 +250,9 @@ public class ChatSession {
             mListener.onMessagePostponed(this, id);
     }
 
-    public void onReceiptsExpected() {
+    public void onReceiptsExpected(boolean isExpected) {
         if (mListener != null)
-            mListener.onReceiptsExpected(this);
+            mListener.onReceiptsExpected(this, isExpected);
     }
 
     /**

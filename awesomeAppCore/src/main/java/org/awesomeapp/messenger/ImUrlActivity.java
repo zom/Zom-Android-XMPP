@@ -22,7 +22,7 @@ import org.awesomeapp.messenger.service.IChatSessionManager;
 import org.awesomeapp.messenger.service.IImConnection;
 import info.guardianproject.otr.app.im.R;
 import org.awesomeapp.messenger.ui.AccountViewFragment;
-import org.awesomeapp.messenger.ui.legacy.ContactsPickerActivity;
+import org.awesomeapp.messenger.ui.ContactsPickerActivity;
 import org.awesomeapp.messenger.ui.legacy.LockScreenActivity;
 import org.awesomeapp.messenger.ui.legacy.NewChatActivity;
 import org.awesomeapp.messenger.ui.legacy.SignInHelper;

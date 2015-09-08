@@ -40,12 +40,14 @@ import org.jivesoftware.smack.PacketCollector;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.SASLAuthentication;
 import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.AndFilter;
 import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.filter.PacketIDFilter;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
+import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.DefaultExtensionElement;
 import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.packet.IQ;
@@ -80,6 +82,7 @@ import org.jivesoftware.smackx.ping.PingFailedListener;
 import org.jivesoftware.smackx.ping.PingManager;
 import org.jivesoftware.smackx.privacy.provider.PrivacyProvider;
 import org.jivesoftware.smackx.receipts.DeliveryReceipt;
+import org.jivesoftware.smackx.receipts.DeliveryReceiptManager;
 import org.jivesoftware.smackx.receipts.DeliveryReceiptRequest;
 import org.jivesoftware.smackx.search.UserSearch;
 import org.jivesoftware.smackx.sharedgroups.packet.SharedGroupsInfo;
@@ -292,17 +295,15 @@ public class XmppConnection extends ImConnection {
         return false;
     }
 
-    public void sendPacket(final org.jivesoftware.smack.packet.Stanza packet) {
+    public void sendPacket(org.jivesoftware.smack.packet.Stanza packet) {
         qPacket.add(packet);
-       
     }
 
-
-    void postpone(final org.jivesoftware.smack.packet.Packet packet) {
+    void postpone(final org.jivesoftware.smack.packet.Stanza packet) {
         if (packet instanceof org.jivesoftware.smack.packet.Message) {
             boolean groupChat = ((org.jivesoftware.smack.packet.Message) packet).getType().equals( org.jivesoftware.smack.packet.Message.Type.groupchat);
             ChatSession session = findOrCreateSession(packet.getTo(), groupChat);
-            session.onMessagePostponed(packet.getPacketID());
+            session.onMessagePostponed(packet.getStanzaId());
         }
     }
 
@@ -1229,7 +1230,7 @@ public class XmppConnection extends ImConnection {
         if (trustManager instanceof MemorizingTrustManager) {
             HostnameVerifier hv = ((MemorizingTrustManager)trustManager).wrapHostnameVerifier(HttpsURLConnection.getDefaultHostnameVerifier());
 
-            mConfig.setHostnameVerifier(hv);
+            mConfig.setHostnameVerifier(hv);compression
         }
         else
         {
@@ -1264,7 +1265,7 @@ public class XmppConnection extends ImConnection {
         //debug(TAG,"is secure connection? " + mConnection.isSecureConnection());
         //debug(TAG,"is using TLS? " + mConnection.isUsingTLS());
 
-        mConnection.addAsyncStanzaListener(new PacketListener() {
+        mConnection.addAsyncStanzaListener(new StanzaListener() {
 
             @Override
             public void processPacket(Stanza stanza) {
@@ -1345,21 +1346,25 @@ public class XmppConnection extends ImConnection {
                                 debug(TAG, "sending delivery receipt");
                                 // got XEP-0184 request, send receipt
                                 sendReceipt(smackMessage);
-                                session.onReceiptsExpected();
+                                session.onReceiptsExpected(true);
                             } else {
                                 debug(TAG, "not sending delivery receipt due to processing error");
                             }
 
-                        } else if (!good) {
-                            debug(TAG, "packet processing error");
+                        }
+                        else
+                        {
+                            //no request for delivery receipt
+
+                            session.onReceiptsExpected(false);
                         }
                     }
 
                 }
             }
-        }, new PacketTypeFilter(org.jivesoftware.smack.packet.Message.class));
+        }, new StanzaTypeFilter(org.jivesoftware.smack.packet.Message.class));
 
-        mConnection.addAsyncStanzaListener(new PacketListener() {
+        mConnection.addAsyncStanzaListener(new StanzaListener() {
 
             @Override
             public void processPacket(Stanza packet) {
@@ -1368,7 +1373,7 @@ public class XmppConnection extends ImConnection {
                 qPresence.push(presence);
 
             }
-        }, new PacketTypeFilter(org.jivesoftware.smack.packet.Presence.class));
+        }, new StanzaTypeFilter(org.jivesoftware.smack.packet.Presence.class));
 
         if (mTimerPackets == null)
             initPacketProcessor();
@@ -1502,11 +1507,11 @@ public class XmppConnection extends ImConnection {
         qPacket.add(makePresencePacket(mUserPresence));        
     }
 
-    public void sendReceipt(org.jivesoftware.smack.packet.Message msg) {
+    private void sendReceipt(org.jivesoftware.smack.packet.Message msg) {
         debug(TAG, "sending XEP-0184 ack to " + msg.getFrom() + " id=" + msg.getPacketID());
         org.jivesoftware.smack.packet.Message ack = new org.jivesoftware.smack.packet.Message(
                 msg.getFrom(), msg.getType());
-        ack.addExtension(new DeliveryReceipt(msg.getPacketID()));
+        ack.addExtension(new DeliveryReceipt(msg.getStanzaId()));
         sendPacket(ack);
     }
 
@@ -1761,9 +1766,9 @@ public class XmppConnection extends ImConnection {
             msgXmpp.setBody(message.getBody());
 
             if (message.getID() != null)
-                msgXmpp.setPacketID(message.getID());
+                msgXmpp.setStanzaId(message.getID());
             else
-                message.setID(msgXmpp.getPacketID());
+                message.setID(msgXmpp.getStanzaId());
             
             sendPacket(msgXmpp);            
 
@@ -2801,6 +2806,9 @@ public class XmppConnection extends ImConnection {
         if (!sdm.includesFeature(DeliveryReceipt.NAMESPACE))
             sdm.addFeature(DeliveryReceipt.NAMESPACE);
 
+        DeliveryReceiptManager.getInstanceFor(mConnection).dontAutoAddDeliveryReceiptRequests();
+        DeliveryReceiptManager.getInstanceFor(mConnection).setAutoReceiptMode(DeliveryReceiptManager.AutoReceiptMode.disabled);
+
     }
 
 
@@ -2828,16 +2836,16 @@ public class XmppConnection extends ImConnection {
 //        ProviderManager.addExtensionProvider("x","jabber:x:roster", new RosterExchangeProvider());
 
         //  Message Events
-  //      ProviderManager.addExtensionProvider("x","jabber:x:event", new MessageEventProvider());
+       // ProviderManager.addExtensionProvider("x","jabber:x:event", new MessageEventProvider());
 
         //  Chat State
-            /**
+
         ProviderManager.addExtensionProvider("active","http://jabber.org/protocol/chatstates", new ChatStateExtension.Provider());
         ProviderManager.addExtensionProvider("composing","http://jabber.org/protocol/chatstates", new ChatStateExtension.Provider());
         ProviderManager.addExtensionProvider("paused","http://jabber.org/protocol/chatstates", new ChatStateExtension.Provider());
         ProviderManager.addExtensionProvider("inactive","http://jabber.org/protocol/chatstates", new ChatStateExtension.Provider());
         ProviderManager.addExtensionProvider("gone","http://jabber.org/protocol/chatstates", new ChatStateExtension.Provider());
-            */
+
 
         //  XHTML
         ProviderManager.addExtensionProvider("html","http://jabber.org/protocol/xhtml-im", new XHTMLExtensionProvider());

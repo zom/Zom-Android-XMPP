@@ -22,7 +22,7 @@ import info.guardianproject.cacheword.CacheWordHandler;
 import info.guardianproject.cacheword.ICacheWordSubscriber;
 import org.awesomeapp.messenger.service.IImConnection;
 import info.guardianproject.otr.app.im.R;
-import org.awesomeapp.messenger.ui.legacy.AddContactActivity;
+import org.awesomeapp.messenger.ui.AddContactActivity;
 import org.awesomeapp.messenger.ui.legacy.ImPluginHelper;
 import org.awesomeapp.messenger.ui.legacy.LockScreenActivity;
 import org.awesomeapp.messenger.ui.legacy.MissingChatFileStoreActivity;

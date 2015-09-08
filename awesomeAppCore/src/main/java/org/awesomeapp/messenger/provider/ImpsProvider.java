@@ -1342,7 +1342,7 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
             //log("query " + url + ", match " + match + ", where " + selection);
             if (selectionArgs != null) {
                 for (String selectionArg : selectionArgs) {
-                    log("     selectionArg: " + selectionArg);
+                  //  log("     selectionArg: " + selectionArg);
                 }
             }
         }
@@ -1690,7 +1690,7 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
                     break;
                 }
                 
-                    log("set notify url " + url);
+               //     log("set notify url " + url);
 
                 c.setNotificationUri(getContext().getContentResolver(), url);
             }
