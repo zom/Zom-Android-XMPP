@@ -2,6 +2,22 @@
 {
   "servers":[
     {
+      "domain": "dukgo.com",
+      "server": "dukgo.com",
+      "port": 5222,
+      "certificate": "",
+      "logoUrl": "https://s3....",
+      "country": "US"
+    },
+    {
+      "domain": "rows.io",
+      "server": "rows.io",
+      "port": 5222,
+      "certificate": "",
+      "logoUrl": "https://s3....",
+      "country": "EU"
+    },
+    {
       "domain": "jabber.otr.im",
       "server": "jabber.otr.im",
       "port": 5222,
