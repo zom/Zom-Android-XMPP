@@ -94,20 +94,18 @@
 				android:orientation="horizontal"
 				android:padding="0dp">
 			<TextView android:id="@+id/edtPass"
-				android:layout_width="wrap_content"
+				android:layout_width="100dp"
 				android:layout_height="wrap_content"
-				android:hint="@string/account_setup_password"
-				android:selectAllOnFocus="true" android:inputType="textPassword"
+				android:selectAllOnFocus="true"
 				android:text="*************"
 				android:textAppearance="?android:attr/textAppearanceSmall"
 
 				/>
-				<Button
+				<ImageView
 					android:layout_width="wrap_content"
 					android:layout_height="20dp"
 					android:id="@+id/btnShowPass"
-					android:text="Show"
-					android:textAppearance="?android:attr/textAppearanceSmall"
+					android:src="@drawable/ic_visibility_black_24dp"
 					android:background="@android:color/transparent"
 
 					/>

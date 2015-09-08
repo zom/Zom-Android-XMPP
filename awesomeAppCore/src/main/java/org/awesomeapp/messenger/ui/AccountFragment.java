@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -54,6 +55,7 @@ public class AccountFragment extends Fragment {
 
     ImageView mIvAvatar;
     CropImageView mCropImageView;
+    TextView mTvPassword;
 
     /**
      * Use this factory method to create a new instance of
@@ -100,7 +102,18 @@ public class AccountFragment extends Fragment {
         XmppAddress xAddress = new XmppAddress(fullUserName);
 
         TextView tvNickname = (TextView)view.findViewById(R.id.tvNickname);
+
         TextView tvUsername = (TextView)view.findViewById(R.id.edtName);
+        mTvPassword = (TextView)view.findViewById(R.id.edtPass);
+        View btnShowPassword = view.findViewById(R.id.btnShowPass);
+        btnShowPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                mTvPassword.setText(getAccountPassword(app.getDefaultProviderId()));
+            }
+        });
+
         TextView tvFingerprint = (TextView)view.findViewById(R.id.tvFingerprint);
 
         ImageView ivScan = (ImageView)view.findViewById(R.id.buttonScan);
@@ -155,6 +168,26 @@ public class AccountFragment extends Fragment {
 
 
         return view;
+    }
+
+    private String getAccountPassword (long providerId)
+    {
+
+        String result = "";
+
+        Cursor c = getActivity().getContentResolver().query(Imps.Provider.CONTENT_URI_WITH_ACCOUNT,
+                new String[]{Imps.Provider.ACTIVE_ACCOUNT_PW}, Imps.Provider.CATEGORY + "=? AND providers." + Imps.Provider._ID + "=?" /* selection */,
+                new String[]{ImApp.IMPS_CATEGORY,providerId+""} /* selection args */,
+                Imps.Provider.DEFAULT_SORT_ORDER);
+
+        if (c != null) {
+            c.moveToFirst();
+            result = c.getString(0);
+            c.close();
+        }
+
+        return result;
+
     }
 
     @Override
