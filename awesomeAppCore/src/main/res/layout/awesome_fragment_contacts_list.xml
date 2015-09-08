@@ -26,7 +26,7 @@
         android:gravity="center"
         android:text="@string/invite_friends"
         android:paddingTop="6dp"
-        android:background="?colorPrimaryDark"
+        android:background="?toolbarBackground"
         android:textColor="@android:color/white"
         />
   <LinearLayout
