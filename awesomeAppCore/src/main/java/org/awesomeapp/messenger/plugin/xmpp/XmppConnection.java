@@ -71,6 +71,7 @@ import org.jivesoftware.smackx.disco.provider.DiscoverItemsProvider;
 import org.jivesoftware.smackx.iqlast.packet.LastActivity;
 import org.jivesoftware.smackx.iqprivate.PrivateDataManager;
 import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.smackx.muc.RoomInfo;
 import org.jivesoftware.smackx.muc.packet.GroupChatInvitation;
 import org.jivesoftware.smackx.muc.provider.MUCAdminProvider;
@@ -87,6 +88,7 @@ import org.jivesoftware.smackx.receipts.DeliveryReceiptRequest;
 import org.jivesoftware.smackx.search.UserSearch;
 import org.jivesoftware.smackx.sharedgroups.packet.SharedGroupsInfo;
 import org.jivesoftware.smackx.si.provider.StreamInitiationProvider;
+import org.jivesoftware.smackx.vcardtemp.VCardManager;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 import org.jivesoftware.smackx.vcardtemp.provider.VCardProvider;
 import org.jivesoftware.smackx.xdata.Form;
@@ -347,11 +349,8 @@ public class XmppConnection extends ImConnection {
         try {
                 debug(TAG, "loading vcard for: " + jid);
 
-                VCard vCard = new VCard();
-
-            //    vCard.load(mContext.getContentResolver(), jid);
-
-
+                VCardManager vCardManager = VCardManager.getInstanceFor(mConnection);
+                VCard vCard = vCardManager.loadVCard(jid);
 
                 // If VCard is loaded, then save the avatar to the personal folder.
                 String avatarHash = vCard.getAvatarHash();
@@ -516,6 +515,16 @@ public class XmppConnection extends ImConnection {
             
             RoomInfo roomInfo = null;
 
+            // Create a MultiUserChat using a Connection for a room
+            MultiUserChatManager mucMgr = MultiUserChatManager.getInstanceFor(mConnection);
+
+            if (chatRoomJid.endsWith("@"))
+            {
+                 //let's add a host to that!
+                Collection<String> servers = mucMgr.getServiceNames();
+                chatRoomJid += servers.iterator().next();
+             }
+
             Address address = new XmppAddress (chatRoomJid);
 
             try
@@ -545,13 +554,14 @@ public class XmppConnection extends ImConnection {
                 
                 try {
 
-                    // Create a MultiUserChat using a Connection for a room
-                    MultiUserChat muc = null;//new MultiUserChat(mConnection, chatRoomJid);
+
+                    MultiUserChat muc = mucMgr.getMultiUserChat(chatRoomJid);
 
                     try
                     {
+
                         // Create the room
-                        muc.create(nickname);
+                        muc.createOrJoin(nickname);
                         
                     }
                     catch (XMPPException iae)
@@ -571,23 +581,22 @@ public class XmppConnection extends ImConnection {
                         Form form = muc.getConfigurationForm();
                         Form submitForm = form.createAnswerForm();
 
-
-
                         for (FormField field : form.getFields())
                         {
                             if(!(field.getType() == FormField.Type.hidden) && field.getVariable()!= null){
                                 submitForm.setDefaultAnswer(field.getVariable());
                             }
                         }
+
                         submitForm.setAnswer("muc#roomconfig_publicroom", true);
+                        submitForm.setAnswer("muc#roomconfig_persistentroom", true);
+
                         muc.sendConfigurationForm(submitForm);
                     }
                     catch (XMPPException xe)
                     {
                         debug(TAG,"(ignoring) got an error configuring MUC room: " + xe.getLocalizedMessage());
                     }
-
-                    muc.join(nickname);
 
                     ChatGroup chatGroup = new ChatGroup(address,room,this);
                     
@@ -1038,7 +1047,8 @@ public class XmppConnection extends ImConnection {
 
                     debug(TAG, "Saving VCard for: " + mUser.getAddress().getAddress() + "; avatar length=" + avatar.length);
 
-                    vCard.save(mConnection);
+                    VCardManager vCardManager = VCardManager.getInstanceFor(mConnection);
+                    vCardManager.saveVCard(vCard);
                 }
 
             }
