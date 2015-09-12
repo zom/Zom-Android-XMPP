@@ -4,9 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center_horizontal|center_vertical"
-    android:background="?colorPrimary"
-     >
+    android:gravity="center_horizontal"
+    android:background="@color/background_material_light"
+
+    >
+
+
+
 
             <ViewFlipper
                 android:id="@+id/viewFlipper1"
@@ -14,6 +18,7 @@
                 android:layout_height="match_parent"
                 android:inAnimation="@anim/push_right_in"
                 android:layout_margin="0dp"
+
                 >
 
 
@@ -23,8 +28,7 @@
                     android:layout_height="match_parent"
                     android:layout_margin="5dp"
                     android:gravity="center"
-                    android:orientation="vertical"
-                    >
+                    android:orientation="vertical">
 
                     <ImageButton
                         android:id="@+id/languageButton"
@@ -87,10 +91,12 @@
                     android:id="@+id/flipView2"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_margin="5dp"
+                    android:layout_margin="0dp"
                     android:padding="10dp"
                     android:gravity="center_horizontal"
                     android:orientation="vertical"
+                    android:background="@color/primary_material_light"
+
                     >
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -105,7 +111,7 @@
                             android:layout_margin="20dp"
                             android:text="@string/create_id"
                             android:textSize="18dp"
-                            android:textColor="@android:color/white"
+                            android:textColor="@android:color/black"
                             />
                         <EditText android:id="@+id/edtNewName"
                             android:selectAllOnFocus="true"
@@ -162,6 +168,7 @@
                             android:selectAllOnFocus="true"
                             />
 
+                        android:layout_gravity="bottom|center"
                         <Button android:id="@+id/btnRegister"
                             android:text="@string/btn_next"
                             android:layout_height="wrap_content"
@@ -195,7 +202,9 @@
                     android:layout_height="match_parent"
                     android:layout_margin="0dp"
                     android:gravity="center_horizontal|top"
-                    android:orientation="vertical" >
+                    android:orientation="vertical"
+                    android:background="@color/primary_material_light"
+                    >
 
 
                     <ImageView
@@ -213,7 +222,7 @@
                         android:text="____________________"
                         android:textSize="18dp"
                         android:textAlignment="center"
-                        android:textColor="@android:color/white"
+                        android:textColor="@android:color/black"
                         />
 
                     <LinearLayout
@@ -228,34 +237,35 @@
                             android:id="@+id/btnInviteSMS"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_margin="10dp"
+                            android:layout_margin="5dp"
                             android:textSize="10dp"
                             android:text="Invite SMS"
                             android:drawableLeft="@android:drawable/ic_menu_send"
-                            android:background="@android:color/transparent"
                             android:textColor="@android:color/white"
+                            android:background="?colorPrimary"
+
                             />   <Button
                         android:id="@+id/btnInviteShare"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
+                        android:layout_margin="5dp"
                         android:textSize="10dp"
                         android:text="Invite Share"
                         android:drawableLeft="@android:drawable/ic_menu_share"
-                        android:background="@android:color/transparent"
                         android:textColor="@android:color/white"
+                        android:background="?colorPrimary"
 
                         />
                         <Button
                             android:id="@+id/btnInviteScan"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_margin="10dp"
+                            android:layout_margin="5dp"
                             android:textSize="10dp"
                             android:text="Scan QR"
                             android:drawableLeft="@android:drawable/ic_menu_camera"
-                            android:background="@android:color/transparent"
                             android:textColor="@android:color/white"
+                            android:background="?colorPrimary"
 
                             />
 
@@ -265,11 +275,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/lock_screen_skip"
-                        android:layout_margin="10dp"
+                        android:layout_marginTop="40dp"
                         android:textSize="14dp"
                         android:background="?colorPrimary"
                         android:textColor="@android:color/white"
-
                         />
                 </LinearLayout>
                 <LinearLayout
@@ -277,7 +286,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
-                    android:background="?colorAccent"
                     android:padding="10dp"
                     android:paddingTop="40dp"
                     >
@@ -288,7 +296,7 @@
                         android:layout_margin="20dp"
                         android:text="You can use Zom with an existing XMPP/Jabber account on any server you would like."
                         android:textSize="18dp"
-                        android:textColor="@android:color/white"
+                        android:textColor="@android:color/black"
                         />
 
                     <EditText android:id="@+id/edtName"
@@ -331,12 +339,12 @@
                         />
 
                 </LinearLayout>
+
                 <LinearLayout
                     android:id="@+id/flip_view_advanced"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
-                    android:background="?colorAccent"
                     android:padding="10dp"
                     android:paddingTop="40dp"
                     >
@@ -346,7 +354,7 @@
                         android:selectAllOnFocus="true"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/account_setup_example_email_address"
+                        android:hint="@string/create_id"
                         android:autoLink="none"
                         android:cursorVisible="true"
                         android:inputType="textEmailAddress"
@@ -406,7 +414,6 @@
                         />
 
                 </LinearLayout>
-
 
 
 
