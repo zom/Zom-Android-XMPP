@@ -311,10 +311,26 @@ public class MainActivity extends AppCompatActivity {
             else if (requestCode == REQUEST_CHOOSE_CONTACT)
             {
                 String username = data.getStringExtra(ContactsPickerActivity.EXTRA_RESULT_USERNAME);
-                long providerId = data.getLongExtra(ContactsPickerActivity.EXTRA_RESULT_PROVIDER, -1);
-                long accountId = data.getLongExtra(ContactsPickerActivity.EXTRA_RESULT_ACCOUNT,-1);
 
-                startChat(providerId, accountId, username);
+                if (username != null) {
+                    long providerId = data.getLongExtra(ContactsPickerActivity.EXTRA_RESULT_PROVIDER, -1);
+                    long accountId = data.getLongExtra(ContactsPickerActivity.EXTRA_RESULT_ACCOUNT, -1);
+
+                    startChat(providerId, accountId, username);
+                }
+                else {
+
+                    String[] users = data.getStringArrayExtra(ContactsPickerActivity.EXTRA_RESULT_USERNAME);
+                    if (users != null)
+                    {
+                        int[] providers = data.getIntArrayExtra(ContactsPickerActivity.EXTRA_RESULT_PROVIDER);
+                        int[] accounts = data.getIntArrayExtra(ContactsPickerActivity.EXTRA_RESULT_ACCOUNT);
+
+                        //start group and do invite here
+
+                    }
+
+                }
             }
             else if (requestCode == ConversationDetailActivity.REQUEST_TAKE_PICTURE)
             {

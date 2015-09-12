@@ -526,6 +526,8 @@ public class Imps {
         /** The default sort order for this table */
         public static final String DEFAULT_SORT_ORDER = "subscriptionType DESC, last_message_date DESC,"
                                                         + " mode DESC, nickname COLLATE NOCASE ASC";
+        /** The default sort order for this table */
+        public static final String TIME_ORDER = "last_message_date DESC";
 
         /** The default sort order for this table */
         public static final String ALPHA_SORT_ORDER = "nickname COLLATE NOCASE ASC";

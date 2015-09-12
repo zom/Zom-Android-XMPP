@@ -41,6 +41,7 @@ import android.support.v4.widget.ResourceCursorAdapter;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.SearchView;
+import android.util.SparseBooleanArray;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -51,6 +52,10 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Set;
+
 /** Activity used to pick a contact. */
 public class ContactsPickerActivity extends ActionBarActivity {
 
@@ -60,7 +65,6 @@ public class ContactsPickerActivity extends ActionBarActivity {
     public final static String EXTRA_RESULT_PROVIDER = "provider";
     public final static String EXTRA_RESULT_ACCOUNT = "account";
     public final static String EXTRA_RESULT_MESSAGE = "message";
-    
 
     private int REQUEST_CODE_ADD_CONTACT = 9999;
 
@@ -91,6 +95,7 @@ public class ContactsPickerActivity extends ActionBarActivity {
     private boolean mHideOffline = false;
     private boolean mShowInvitations = false;
 
+    private boolean mIsCABDestroyed= true;
 
     @Override
     public void onCreate(Bundle icicle) {
@@ -111,6 +116,8 @@ public class ContactsPickerActivity extends ActionBarActivity {
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
 
                 mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+                mAdapter.setNewSelection(i, true);
+                mIsCABDestroyed = false; // mark readiness to switch back to SINGLE CHOICE after the CABis destroyed
 
                 return true;
             }
@@ -123,8 +130,7 @@ public class ContactsPickerActivity extends ActionBarActivity {
             @Override
             public boolean onCreateActionMode(android.view.ActionMode mode, Menu menu) {
                 MenuInflater inflater = getMenuInflater();
-              //  inflater.inflate(R.menu.cabselection_menu, menu);
-
+                inflater.inflate(R.menu.menu_contact_picker_multi, menu);
                 return true;
             }
 
@@ -135,28 +141,32 @@ public class ContactsPickerActivity extends ActionBarActivity {
 
             @Override
             public boolean onActionItemClicked(android.view.ActionMode mode, MenuItem item) {
+
+                if (item.getItemId() == R.id.action_start_chat)
+                {
+                    SparseBooleanArray checkedPos = mListView.getCheckedItemPositions();
+                    multiFinish(checkedPos);
+
+                    return true;
+                }
+
                 return false;
             }
 
             @Override
             public void onDestroyActionMode(android.view.ActionMode mode) {
                 nr = 0;
-                //applicationsAdapter.clearSelection();
-
+                mAdapter.clearSelection();
+                mIsCABDestroyed = true;
             }
 
             @Override
             public void onItemCheckedStateChanged(android.view.ActionMode mode, int position, long id, boolean checked) {
-                if (checked) {
-                    nr++;
-                    //applicationsAdapter.setNewSelection(position, checked);
-                  //  L.d(TAG, applicationsAdapter.getItem(position).getAppName());
-                } else {
-                    nr--;
-                   // applicationsAdapter.removeSelection(position);
-                }
-               // mode.setTitle(nr + " rows selected!");
 
+                mAdapter.setNewSelection(position, checked);
+
+                if (!checked)
+                    mAdapter.removeSelection(position);
             }
 
         });
@@ -166,6 +176,11 @@ public class ContactsPickerActivity extends ActionBarActivity {
 
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
+
+                if(mIsCABDestroyed) {
+                    mListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+                    //do your action command  here
+                }
 
                 if (mListView.getChoiceMode() == ListView.CHOICE_MODE_MULTIPLE_MODAL)
                 {
@@ -204,6 +219,32 @@ public class ContactsPickerActivity extends ActionBarActivity {
         
 
         doFilterAsync("");
+    }
+
+    private void multiFinish (SparseBooleanArray positions)
+    {
+
+        ArrayList<String> users = new ArrayList<String>();
+        ArrayList<Integer> providers = new ArrayList<Integer>();
+        ArrayList<Integer> accounts = new ArrayList<Integer>();
+
+        for (int i = 0; i < positions.size(); i++)
+        {
+            if (positions.get(i)) {
+                Cursor cursor = (Cursor) mAdapter.getItem(i);
+
+                users.add(cursor.getString(ContactListItem.COLUMN_CONTACT_USERNAME));
+                providers.add((int) cursor.getLong(ContactListItem.COLUMN_CONTACT_PROVIDER));
+                accounts.add((int) cursor.getLong(ContactListItem.COLUMN_CONTACT_ACCOUNT));
+            }
+        }
+
+        Intent data = new Intent();
+        data.putStringArrayListExtra(EXTRA_RESULT_USERNAME, users);
+        data.putIntegerArrayListExtra(EXTRA_RESULT_PROVIDER, providers);
+        data.putIntegerArrayListExtra(EXTRA_RESULT_PROVIDER, accounts);
+        setResult(RESULT_OK, data);
+        finish();
     }
 
 
@@ -337,17 +378,44 @@ public class ContactsPickerActivity extends ActionBarActivity {
 
     private class ContactAdapter extends ResourceCursorAdapter {
 
+        private HashMap<Integer, Boolean> mSelection = new HashMap<Integer, Boolean>();
 
         public ContactAdapter(Context context, int view) {
             super(context, view, null,0);
 
         }
 
+        public void setNewSelection(int position, boolean value) {
+            mSelection.put(position, value);
+            notifyDataSetChanged();
+        }
+
+        public boolean isPositionChecked(int position) {
+            Boolean result = mSelection.get(position);
+            return result == null ? false : result;
+        }
+
+        public Set<Integer> getCurrentCheckedPosition() {
+            return mSelection.keySet();
+        }
+
+        public void removeSelection(int position) {
+            mSelection.remove(position);
+            notifyDataSetChanged();
+        }
+
+        public void clearSelection() {
+            mSelection = new HashMap<Integer, Boolean>();
+            notifyDataSetChanged();
+
+        }
+
+        /**
         @Override
         public View newView(Context context, Cursor cursor, ViewGroup parent) {
 
             View view = super.newView(context, cursor, parent);
-            /**
+
             ContactListItem.ViewHolder holder = null;
 
             holder = new ContactListItem.ViewHolder();
@@ -363,13 +431,28 @@ public class ContactsPickerActivity extends ActionBarActivity {
             holder.mMediaThumb = (ImageView)view.findViewById(R.id.media_thumbnail);
 
             view.setTag(holder);
-                */
+
            return view;
 
 
 
         }
+*/
 
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+
+            View v = super.getView(position, convertView, parent);//let the adapter handle setting up the row views
+            v.setBackgroundColor(getResources().getColor(R.color.background_light));
+
+            if (mSelection.get(position) != null) {
+                v.setBackgroundColor(getResources().getColor(R.color.holo_blue_light));
+            }
+
+            return super.getView(position, convertView, parent);
+
+
+        }
 
         @Override
         public void bindView(View view, Context context, Cursor cursor) {
@@ -416,7 +499,7 @@ public class ContactsPickerActivity extends ActionBarActivity {
 
             CursorLoader loader = new CursorLoader(ContactsPickerActivity.this, mUri, ContactListItem.CONTACT_PROJECTION,
                     buf == null ? null : buf.toString(), null, Imps.Contacts.MODE_AND_ALPHA_SORT_ORDER);
-            loader.setUpdateThrottle(50L);
+        //    loader.setUpdateThrottle(50L);
             return loader;
         }
 

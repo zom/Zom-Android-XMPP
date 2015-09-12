@@ -320,18 +320,8 @@ public class MessageListItem extends FrameLayout {
             } else {
 
                 mHolder.mContainer.setBackgroundResource(R.drawable.message_view_rounded_light);
+                lastMessage = formatMessage(body);
 
-                if (showContact)
-                {
-                    String[] nickParts = nickname.split("/");
-
-                    lastMessage = nickParts[nickParts.length-1] + ": " + formatMessage(body);
-
-                }
-                else
-                {
-                    lastMessage = formatMessage(body);
-                }
             }
 	}
 
@@ -350,7 +340,15 @@ public class MessageListItem extends FrameLayout {
 
         if (date != null)
         {
-           CharSequence tsText = formatTimeStamp(date,messageType, null, encryption);
+
+            String contact = null;
+            if (showContact) {
+                String[] nickParts = nickname.split("/");
+                contact = nickParts[nickParts.length-1];
+            }
+
+           CharSequence tsText = formatTimeStamp(date,messageType, null, encryption, contact);
+
 
          mHolder.mTextViewForTimestamp.setText(tsText);
          mHolder.mTextViewForTimestamp.setVisibility(View.VISIBLE);
@@ -704,7 +702,7 @@ public class MessageListItem extends FrameLayout {
         if (date != null)
         {
 
-            CharSequence tsText = formatTimeStamp(date,messageType, delivery, encryption);
+            CharSequence tsText = formatTimeStamp(date,messageType, delivery, encryption, null);
 
             mHolder.mTextViewForTimestamp.setText(tsText);
 
@@ -797,10 +795,17 @@ public class MessageListItem extends FrameLayout {
 
     }
 
-    private SpannableString formatTimeStamp(Date date, int messageType, MessageListItem.DeliveryState delivery, EncryptionState encryptionState) {
+    private SpannableString formatTimeStamp(Date date, int messageType, MessageListItem.DeliveryState delivery, EncryptionState encryptionState, String nickname) {
 
 
         StringBuilder deliveryText = new StringBuilder();
+
+        if (nickname != null)
+        {
+            deliveryText.append(nickname);
+            deliveryText.append(' ');
+        }
+
         deliveryText.append(sPrettyTime.format(date));
         deliveryText.append(' ');
 

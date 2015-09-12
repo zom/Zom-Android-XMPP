@@ -210,6 +210,7 @@ public class ConversationListFragment extends Fragment {
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
             StringBuilder buf = new StringBuilder();
 
+            //search nickname, jabber id, or last message
             if (mSearchString != null) {
 
                 buf.append(Imps.Contacts.NICKNAME);
@@ -218,11 +219,15 @@ public class ConversationListFragment extends Fragment {
                 buf.append(" OR ");
                 buf.append(Imps.Contacts.USERNAME);
                 buf.append(" LIKE ");
+                buf.append(" OR ");
+                DatabaseUtils.appendValueToSql(buf, "%" + mSearchString + "%");
+                buf.append(Imps.Chats.LAST_UNREAD_MESSAGE);
+                buf.append(" LIKE ");
                 DatabaseUtils.appendValueToSql(buf, "%" + mSearchString + "%");
             }
 
             CursorLoader loader = new CursorLoader(getActivity(), mUri, CHAT_PROJECTION,
-                    buf == null ? null : buf.toString(), null, Imps.Contacts.DEFAULT_SORT_ORDER);
+                    buf == null ? null : buf.toString(), null, Imps.Contacts.TIME_ORDER);
 
             //     loader.setUpdateThrottle(10L);
             return loader;
