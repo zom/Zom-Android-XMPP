@@ -554,7 +554,6 @@ public class XmppConnection extends ImConnection {
                 
                 try {
 
-
                     MultiUserChat muc = mucMgr.getMultiUserChat(chatRoomJid);
 
                     try
@@ -646,14 +645,7 @@ public class XmppConnection extends ImConnection {
         @Override
         protected void addGroupMemberAsync(ChatGroup group, Contact contact) {
 
-            String chatRoomJid = group.getAddress().getAddress();
-
-            if (mMUCs.containsKey(chatRoomJid))
-            {
-                MultiUserChat muc = mMUCs.get(chatRoomJid);
-//                muc.invite(contact.getAddress().getBareAddress(),"");
-            }
-
+            inviteUserAsync(group, contact);
 
         }
 
@@ -667,6 +659,8 @@ public class XmppConnection extends ImConnection {
             {
                 MultiUserChat muc = mMUCs.get(chatRoomJid);
                 try {
+                    String reason = "";
+                    muc.kickParticipant(contact.getName(),reason);
                   //  muc.kickParticipant(chatRoomJid, contact.getAddress().getBareAddress());
                 } catch (Exception e) {
                     // TODO Auto-generated catch block
@@ -687,10 +681,13 @@ public class XmppConnection extends ImConnection {
             try {
 
                 // Create a MultiUserChat using a Connection for a room
-               MultiUserChat muc = null;//new MultiUserChat(mConnection, chatRoomJid);
+
+                MultiUserChatManager mucMgr = MultiUserChatManager.getInstanceFor(mConnection);
+
+                MultiUserChat muc = mucMgr.getMultiUserChat(chatRoomJid);
 
                 // Create the room
-             //   muc.join(nickname);
+                muc.join(nickname);
 
                 ChatGroup chatGroup = new ChatGroup(address,room,this);
                 mGroups.put(address.getAddress(), chatGroup);
@@ -716,6 +713,7 @@ public class XmppConnection extends ImConnection {
                 }
                 catch (SmackException.NotConnectedException nce)
                 {
+                    Log.e(ImApp.LOG_TAG,"not connected error trying to leave group",nce);
 
                 }
 
@@ -741,6 +739,7 @@ public class XmppConnection extends ImConnection {
                 }
                 catch (SmackException.NotConnectedException nce)
                 {
+                    Log.e(ImApp.LOG_TAG,"not connected error trying to add invite",nce);
 
                 }
 
@@ -764,9 +763,16 @@ public class XmppConnection extends ImConnection {
 
             String reason = ""; // no reason for now
 
-          //  MultiUserChat.decline(mConnection, addressGroup.getAddress(),invitation.getSender().getAddress(),reason);
+            MultiUserChatManager mucMgr = MultiUserChatManager.getInstanceFor(mConnection);
+            try {
 
+                    mucMgr.decline(addressGroup.getAddress(), invitation.getSender().getAddress(), reason);
 
+                }
+                catch (SmackException.NotConnectedException nce)
+                {
+                    Log.e(ImApp.LOG_TAG,"not connected error trying to reject invite",nce);
+                }
         }
 
     };

@@ -40,6 +40,7 @@ interface IChatSessionManager {
     IChatSession createMultiUserChatSession(String roomAddress, String nickname, boolean isNewSession);
 
 
+
     /**
      * Get the ChatSession that is associated with the specified contact or group.
      *

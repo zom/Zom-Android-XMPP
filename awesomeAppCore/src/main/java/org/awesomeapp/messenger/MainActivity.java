@@ -320,14 +320,15 @@ public class MainActivity extends AppCompatActivity {
                 }
                 else {
 
-                    String[] users = data.getStringArrayExtra(ContactsPickerActivity.EXTRA_RESULT_USERNAME);
+                    ArrayList<String> users = data.getStringArrayListExtra(ContactsPickerActivity.EXTRA_RESULT_USERNAME);
                     if (users != null)
                     {
-                        int[] providers = data.getIntArrayExtra(ContactsPickerActivity.EXTRA_RESULT_PROVIDER);
-                        int[] accounts = data.getIntArrayExtra(ContactsPickerActivity.EXTRA_RESULT_ACCOUNT);
+                        //int[] providers = data.getIntArrayExtra(ContactsPickerActivity.EXTRA_RESULT_PROVIDER);
+                        //int[] accounts = data.getIntArrayExtra(ContactsPickerActivity.EXTRA_RESULT_ACCOUNT);
 
                         //start group and do invite here
 
+                        startGroupChat(users);
                     }
 
                 }
@@ -358,6 +359,24 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             }
+        }
+    }
+
+    private void startGroupChat (ArrayList<String> invitees)
+    {
+        String chatRoom = "groupchat " + UUID.randomUUID().toString().substring(0,8);
+        String chatServer = "conference.rows.io";
+        String nickname = mApp.getDefaultUsername().split("@")[0];
+        try
+        {
+            IImConnection conn = mApp.getConnection(mApp.getDefaultProviderId(),mApp.getDefaultAccountId());
+            if (conn.getState() == ImConnection.LOGGED_IN)
+            {
+                this.startGroupChat(chatRoom, chatServer, nickname, invitees, conn);
+
+            }
+        } catch (RemoteException re) {
+
         }
     }
 
@@ -601,7 +620,7 @@ public class MainActivity extends AppCompatActivity {
                         {
                             IImConnection conn = mApp.getConnection(mApp.getDefaultProviderId(),mApp.getDefaultAccountId());
                             if (conn.getState() == ImConnection.LOGGED_IN)
-                                startGroupChat (chatRoom, chatServer, nickname, conn);
+                                startGroupChat (chatRoom, chatServer, nickname, null, conn);
 
                         } catch (RemoteException re) {
 
@@ -628,7 +647,7 @@ public class MainActivity extends AppCompatActivity {
     private IImConnection mLastConnGroup = null;
     private long mRequestedChatId = -1;
 
-    public void startGroupChat (String room, String server, String nickname, IImConnection conn)
+    public void startGroupChat (String room, String server, String nickname, final ArrayList<String> invitees, IImConnection conn)
     {
         mLastConnGroup = conn;
 
@@ -653,10 +672,13 @@ public class MainActivity extends AppCompatActivity {
                 String nickname = params[2];
 
                 try {
+
                     IChatSessionManager manager = mLastConnGroup.getChatSessionManager();
                     IChatSession session = manager.getChatSession(roomAddress);
+
                     if (session == null) {
                         session = manager.createMultiUserChatSession(roomAddress, nickname, true);
+
                         if (session != null)
                         {
                             mRequestedChatId = session.getId();
@@ -670,6 +692,10 @@ public class MainActivity extends AppCompatActivity {
                         mRequestedChatId = session.getId();
                         publishProgress(mRequestedChatId);
                     }
+
+                    if (invitees != null)
+                        for (String invitee : invitees)
+                            session.inviteContact(invitee);
 
                     return null;
 

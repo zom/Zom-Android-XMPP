@@ -24,6 +24,7 @@ import org.awesomeapp.messenger.crypto.OtrChatSessionAdapter;
 import org.awesomeapp.messenger.crypto.OtrDataHandler;
 import org.awesomeapp.messenger.crypto.OtrDataHandler.Transfer;
 import org.awesomeapp.messenger.crypto.OtrDebugLogger;
+import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
 import  org.awesomeapp.messenger.service.IChatListener;
 import org.awesomeapp.messenger.service.IDataListener;
 import info.guardianproject.otr.app.im.R;
@@ -295,14 +296,9 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         }
         ContactListManagerAdapter listManager = (ContactListManagerAdapter) mConnection
                 .getContactListManager();
-        Contact invitee = listManager.getContactByAddress(contact);
-        if (invitee == null) {
-            ImErrorInfo error = new ImErrorInfo(ImErrorInfo.ILLEGAL_CONTACT_ADDRESS,
-                    "Cannot find contact with address: " + contact);
-            mListenerAdapter.onError((ChatGroup) mChatSession.getParticipant(), error);
-        } else {
-            getGroupManager().inviteUserAsync((ChatGroup) mChatSession.getParticipant(), invitee);
-        }
+        Contact invitee = new Contact(new XmppAddress(contact),contact);
+        getGroupManager().inviteUserAsync((ChatGroup) mChatSession.getParticipant(), invitee);
+
     }
 
     public void leave() {
