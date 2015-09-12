@@ -95,6 +95,7 @@ public class MessageListItem extends FrameLayout {
         NONE, ENCRYPTED, ENCRYPTED_AND_VERIFIED
 
     }
+
     private CharSequence lastMessage = null;
 
     private Context context;
@@ -280,50 +281,44 @@ public class MessageListItem extends FrameLayout {
         if (nickname == null)
             nickname = address;
 
-        if (showContact && nickname != null)
-        {
-            lastMessage = nickname + ": " + formatMessage(body);
-            showAvatar(address,nickname,true,presenceStatus);
-        }
-        else
-        {
-            lastMessage = formatMessage(body);
-            showAvatar(address, nickname, true, presenceStatus);
 
-            mHolder.resetOnClickListenerMediaThumbnail();
+        lastMessage = formatMessage(body);
+        showAvatar(address, nickname, true, presenceStatus);
+
+        mHolder.resetOnClickListenerMediaThumbnail();
 
 
-            if( mimeType != null ) {
+        if( mimeType != null ) {
 
-                Uri mediaUri = Uri.parse(body);
-                lastMessage = "";
+            Uri mediaUri = Uri.parse(body);
+            lastMessage = "";
 
-                if (mimeType.startsWith("audio"))
+            if (mimeType.startsWith("audio"))
+            {
+                try {
+                    mHolder.mAudioContainer.setVisibility(View.VISIBLE);
+                    showAudioPlayer(mimeType, mediaUri, id, mHolder);
+                }
+                catch (Exception e)
                 {
-                    try {
-                        mHolder.mAudioContainer.setVisibility(View.VISIBLE);
-                        showAudioPlayer(mimeType, mediaUri, id, mHolder);
-                    }
-                    catch (Exception e)
-                    {
-                        mHolder.mAudioContainer.setVisibility(View.GONE);
-                    }
-
+                    mHolder.mAudioContainer.setVisibility(View.GONE);
                 }
-                else {
-                    mHolder.mTextViewForMessages.setVisibility(View.GONE);
-                    mHolder.mMediaContainer.setVisibility(View.VISIBLE);
-
-                    showMediaThumbnail(mimeType, mediaUri, id, mHolder);
-                }
-
-            } else {
-
-                mHolder.mContainer.setBackgroundResource(R.drawable.message_view_rounded_light);
-                lastMessage = formatMessage(body);
 
             }
-	}
+            else {
+                mHolder.mTextViewForMessages.setVisibility(View.GONE);
+                mHolder.mMediaContainer.setVisibility(View.VISIBLE);
+
+                showMediaThumbnail(mimeType, mediaUri, id, mHolder);
+            }
+
+        } else {
+
+            mHolder.mContainer.setBackgroundResource(R.drawable.message_view_rounded_light);
+            lastMessage = formatMessage(body);
+
+        }
+
 
         if (lastMessage.length() > 0)
         {
