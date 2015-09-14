@@ -54,6 +54,8 @@ import java.util.UUID;
 
 import org.awesomeapp.messenger.service.IChatSession;
 import info.guardianproject.otr.app.im.R;
+
+import org.awesomeapp.messenger.service.IChatSessionManager;
 import org.awesomeapp.messenger.util.SecureMediaStore;
 
 import org.awesomeapp.messenger.ImApp;
@@ -137,6 +139,9 @@ public class ConversationDetailActivity extends AppCompatActivity {
             case android.R.id.home:
                 finish();
                 return true;
+            case R.id.menu_add_person:
+                showAddContact();
+                return true;
             case R.id.menu_end_conversation:
                 mConvoView.closeChatSession(true);
                 finish();
@@ -158,8 +163,22 @@ public class ConversationDetailActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_conversation_detail, menu);
+
+        if (mConvoView.isGroupChat())
+        {
+            getMenuInflater().inflate(R.menu.menu_conversation_detail_group, menu);
+        }
+        else {
+            getMenuInflater().inflate(R.menu.menu_conversation_detail, menu);
+        }
+
         return true;
+    }
+
+    void showAddContact ()
+    {
+        Intent intent = new Intent(this, ContactsPickerActivity.class);
+        startActivityForResult(intent, REQUEST_PICK_CONTACTS);
     }
 
     void startImagePicker() {
@@ -300,6 +319,20 @@ public class ConversationDetailActivity extends AppCompatActivity {
 
         if (resultCode == RESULT_OK) {
 
+            if (requestCode == REQUEST_PICK_CONTACTS) {
+
+                ArrayList<String> invitees = new ArrayList<String>();
+
+                String username = resultIntent.getStringExtra(ContactsPickerActivity.EXTRA_RESULT_USERNAME);
+
+                if (username != null)
+                    invitees.add(username);
+                else
+                    invitees = resultIntent.getStringArrayListExtra(ContactsPickerActivity.EXTRA_RESULT_USERNAME);
+
+                mConvoView.inviteContacts(invitees);
+
+            }
             if (requestCode == REQUEST_SEND_IMAGE) {
                 Uri uri = resultIntent.getData() ;
 

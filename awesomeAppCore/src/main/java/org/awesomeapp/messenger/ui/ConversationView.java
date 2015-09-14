@@ -253,6 +253,24 @@ public class ConversationView {
 
     }
 
+    public void inviteContacts (ArrayList<String> invitees)
+    {
+        if (mConn == null)
+            return;
+
+        try {
+            IChatSessionManager manager = mConn.getChatSessionManager();
+            IChatSession session = manager.getChatSession(mRemoteAddress);
+
+            for (String invitee : invitees)
+                session.inviteContact(invitee);
+        }
+        catch (Exception e)
+        {
+            Log.e(ImApp.LOG_TAG,"error inviting contacts to group",e);
+        }
+
+    }
 
     private boolean checkConnection ()
     {
