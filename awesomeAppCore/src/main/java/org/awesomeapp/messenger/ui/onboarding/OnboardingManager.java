@@ -192,13 +192,17 @@ public class OnboardingManager {
 
         settings.setDoDnsSrv(doDnsSrvLookup);
 
+        int maxAttempts = 5;
+
         if (domain == null) {
             int nameIdx = 0;
 
             for (int i = 1; i < 10; i++) {
-                for (int n = 0; n < servers.length(); n++) {
 
-                    JSONObject server = servers.getJSONObject(n);
+                JSONObject server = servers.getJSONObject(i);
+
+                for (int n = 0; n < maxAttempts; n++) {
+
 
                     try {
 
@@ -229,17 +233,19 @@ public class OnboardingManager {
                         settings.close();
 
                         return result;
-                        // settings closed in registerAccount
+
                     } catch (Exception e) {
                         LogCleaner.error(ImApp.LOG_TAG, "error registering new account", e);
 
 
                     }
+
+                    username = username + i; //add a number to the end of the username
+                    ImApp.insertOrUpdateAccount(cr, providerId, username, password);
+                    settings.requery();
+
                 }
 
-                username = username + i; //add a number to the end of the username
-                ImApp.insertOrUpdateAccount(cr, providerId, username, password);
-                settings.requery();
 
             }
         }
