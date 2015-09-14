@@ -229,7 +229,7 @@ public class ConversationView {
                     {
                         String remoteJID = otrChatSession.getRemoteUserId();
                         
-                        boolean isChatSecure = true;//(remoteJID != null && remoteJID.contains("ChatSecure"));
+                        boolean isChatSecure = (remoteJID != null && remoteJID.contains("ChatSecure"));
                             
                         if (otrPolicyAuto && isChatSecure) //if set to auto, and is chatsecure, then start encryption
                         {
@@ -1079,6 +1079,8 @@ public class ConversationView {
                 && (mSubscriptionStatus == Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING)) {
                 bindSubscription(mProviderId, mRemoteAddress);
             }
+
+            setGroupTitle();
         }
 
     }
@@ -1135,26 +1137,25 @@ public class ConversationView {
         }
     }
 
-    /*
-    private void setTitle() {
 
-        if (mType == Imps.Contacts.TYPE_GROUP) {
+    private void setGroupTitle() {
+
+        if (mContactType == Imps.Contacts.TYPE_GROUP) {
+
+            mPresenceStatus = Presence.AVAILABLE;
+
             final String[] projection = { Imps.GroupMembers.NICKNAME };
-            Uri memberUri = ContentUris.withAppendedId(Imps.GroupMembers.CONTENT_URI, mChatId);
-            ContentResolver cr = mNewChatActivity.getContentResolver();
+            Uri memberUri = ContentUris.withAppendedId(Imps.GroupMembers.CONTENT_URI, mLastChatId);
+            ContentResolver cr = mActivity.getContentResolver();
             Cursor c = cr.query(memberUri, projection, null, null, null);
             StringBuilder buf = new StringBuilder();
-            BrandingResources brandingRes = mApp.getBrandingResource(mProviderId);
 
             if (c != null) {
                 while (c.moveToNext()) {
 
                     String nickname = c.getString(c.getColumnIndexOrThrow(Imps.Contacts.NICKNAME));
-                    int status = c.getInt(c.getColumnIndexOrThrow(Imps.Contacts.PRESENCE_STATUS));
+//                    int status = c.getInt(c.getColumnIndexOrThrow(Imps.Contacts.PRESENCE_STATUS));
                     buf.append(nickname);
-                    buf.append(" (");
-                    buf.append(brandingRes.getString(PresenceUtils.getStatusStringRes(this.mPresenceStatus)));
-                    buf.append(")");
                     if (!c.isLast()) {
                         buf.append(',');
                     }
@@ -1162,29 +1163,12 @@ public class ConversationView {
 
             }
 
-            mNewChatActivity.setTitle(buf.toString());
+            if (buf.length() > 0)
+                mRemoteNickname += ": " + (buf.toString());
 
-        } else {
-
-
-            StringBuilder buf = new StringBuilder();
-
-            BrandingResources brandingRes = mApp.getBrandingResource(mProviderId);
-
-            buf.append(this.mNickName);
-            buf.append(" (");
-            buf.append(brandingRes.getString(PresenceUtils.getStatusStringRes(this.mPresenceStatus)));
-            buf.append(")");
-
-            mNewChatActivity.setTitle(buf.toString());
-
-            Drawable avatar = loadAvatar(mUserName);
-
-           // if (avatar != null)
-           // mNewChatActivity.setHomeIcon(avatar);
-
-       // }
-    }*/
+            c.close();
+        }
+    }
 
 
     private void setStatusIcon() {
@@ -1248,7 +1232,7 @@ public class ConversationView {
 
             if (mRemoteHeader == null)
             {
-                try {mRemoteHeader = DatabaseUtils.getHeaderImageFromCursor(c, AVATAR_COLUMN, 512,512);}
+                try {mRemoteHeader = DatabaseUtils.getHeaderImageFromCursor(c, AVATAR_COLUMN, ImApp.DEFAULT_AVATAR_WIDTH,ImApp.DEFAULT_AVATAR_HEIGHT);}
                 catch (Exception e){}
             }
 
@@ -1269,6 +1253,7 @@ public class ConversationView {
         }
 
     }
+
 
     public void bindInvitation(long invitationId) {
         Uri uri = ContentUris.withAppendedId(Imps.Invitation.CONTENT_URI, invitationId);
@@ -1783,6 +1768,7 @@ public class ConversationView {
             {
                 IContactListManager listMgr = mConn.getContactListManager();
                 listMgr.registerContactListListener(mContactListListener);
+
             }
 
         } catch (Exception e) {
@@ -2509,17 +2495,6 @@ public class ConversationView {
             MessageListItem messageView = (MessageListItem) viewHolder.mView;
 
             setLinkifyForMessageView(messageView);
-
-            /**
-            if (mApp.isThemeDark())
-            {
-                messageView.setMessageBackground(mActivity.getResources().getDrawable(R.drawable.message_view_rounded_dark));
-            }
-            else
-            {
-                messageView.setMessageBackground(mActivity.getResources().getDrawable(R.drawable.message_view_rounded_light));
-
-            }*/
 
             int messageType = cursor.getInt(mTypeColumn);
 

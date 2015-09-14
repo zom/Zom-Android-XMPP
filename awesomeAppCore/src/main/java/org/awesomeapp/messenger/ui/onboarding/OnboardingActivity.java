@@ -381,20 +381,21 @@ public class OnboardingActivity extends ThemeableActivity {
 
                 findViewById(R.id.progressImage).setVisibility(View.GONE);
 
-                EditText etAccountInfo = (EditText) findViewById(R.id.statusAccountInfo);
-                etAccountInfo.setVisibility(View.VISIBLE);
+                //EditText etAccountInfo = (EditText) findViewById(R.id.statusAccountInfo);
+                //tAccountInfo.setVisibility(View.VISIBLE);
 
                 StringBuffer sb = new StringBuffer();
                 sb.append(getString(R.string.account_congrats)).append("\n\n");
                 sb.append(getString(R.string.save_account_info));
                 mSetupStatus.setText(sb.toString());
 
+                /*
                 sb = new StringBuffer();
                 sb.append(getString(R.string.zom_id)).append(account.username).append("\n");
                 sb.append(getString(R.string.account_password_label)).append(account.password).append("\n");
                 sb.append(getString(R.string.account_server_label)).append(account.domain);
                 etAccountInfo.setText(sb.toString());
-                etAccountInfo.setSelected(true);
+                etAccountInfo.setSelected(true);*/
 
                 mEditUsername.setVisibility(View.GONE);
                 mSetupProgress.setVisibility(View.GONE);

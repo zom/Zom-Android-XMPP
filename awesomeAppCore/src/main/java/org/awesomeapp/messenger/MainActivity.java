@@ -77,6 +77,7 @@ import org.awesomeapp.messenger.ui.ContactsPickerActivity;
 import org.awesomeapp.messenger.util.LogCleaner;
 import org.awesomeapp.messenger.util.SecureMediaStore;
 import org.awesomeapp.messenger.util.SystemServices;
+import org.awesomeapp.messenger.util.XmppUriHelper;
 
 
 /**
@@ -346,10 +347,20 @@ public class MainActivity extends AppCompatActivity {
                 {
 
                     try {
-                        //parse each string and if they are for a new user then add the user
-                        String[] parts = OnboardingManager.decodeInviteLink(resultScan);
+                        if (resultScan.startsWith("xmpp:"))
+                        {
+                            String address = XmppUriHelper.parse(Uri.parse(resultScan)).get(XmppUriHelper.KEY_ADDRESS);
+                            String fingerprint =  XmppUriHelper.getOtrFingerprint(resultScan);
 
-                        new AddContactAsyncTask(mApp.getDefaultProviderId(),mApp.getDefaultAccountId(), mApp).execute(parts[0],parts[1]);
+                            new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).execute(address, fingerprint);
+
+                        }
+                        else {
+                            //parse each string and if they are for a new user then add the user
+                            String[] parts = OnboardingManager.decodeInviteLink(resultScan);
+
+                            new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).execute(parts[0], parts[1]);
+                        }
 
                         //if they are for a group chat, then add the group
                     }

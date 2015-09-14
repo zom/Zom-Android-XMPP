@@ -19,6 +19,7 @@ package org.awesomeapp.messenger.ui;
 
 import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -162,7 +163,10 @@ public class ConversationListItem extends FrameLayout {
             nickname = nickname.split("@")[0];
         }
 
+        if (Imps.Contacts.TYPE_GROUP == type) {
 
+            nickname += ": " + queryGroupMembers(getContext().getContentResolver(), cursor.getLong(COLUMN_CONTACT_ID));
+        }
 
         if (!TextUtils.isEmpty(underLineText)) {
             // highlight/underline the word being searched 
@@ -499,7 +503,6 @@ public class ConversationListItem extends FrameLayout {
     private static int sCacheSize = 10; // 1MiB
     private static LruCache<String,Bitmap> mBitmapCache = new LruCache<String,Bitmap>(sCacheSize);
 
-    /*
     private String queryGroupMembers(ContentResolver resolver, long groupId) {
         String[] projection = { Imps.GroupMembers.NICKNAME };
         Uri uri = ContentUris.withAppendedId(Imps.GroupMembers.CONTENT_URI, groupId);
@@ -508,7 +511,6 @@ public class ConversationListItem extends FrameLayout {
         if (c != null) {
             while (c.moveToNext()) {
                 buf.append(c.getString(0));
-                                                Imps.Avatars.DATA
                 if (!c.isLast()) {
                     buf.append(',');
                 }
@@ -517,7 +519,6 @@ public class ConversationListItem extends FrameLayout {
         c.close();
 
         return buf.toString();
-    }*/
-
+    }
 
 }

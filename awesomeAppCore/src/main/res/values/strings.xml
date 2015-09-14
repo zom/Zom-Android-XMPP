@@ -699,7 +699,7 @@
 			<string name="account_burner_full">Create an anonymous, disposable \"burner\" chat account in one, simple tap (requires Orbot: Tor for Android)</string>
 			<string name="account_burner_button">Generate Identity</string>
 			
-			<string name="this_is_a_group_chat">This is a group chat</string>
+			<string name="this_is_a_group_chat">Send a group message</string>
 			
 			<string name="_resent_">"[resent] "</string>
 			

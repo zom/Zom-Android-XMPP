@@ -38,6 +38,7 @@ import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.PacketCollector;
 import org.jivesoftware.smack.PacketListener;
+import org.jivesoftware.smack.PresenceListener;
 import org.jivesoftware.smack.SASLAuthentication;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaListener;
@@ -70,8 +71,10 @@ import org.jivesoftware.smackx.disco.provider.DiscoverInfoProvider;
 import org.jivesoftware.smackx.disco.provider.DiscoverItemsProvider;
 import org.jivesoftware.smackx.iqlast.packet.LastActivity;
 import org.jivesoftware.smackx.iqprivate.PrivateDataManager;
+import org.jivesoftware.smackx.muc.InvitationListener;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
+import org.jivesoftware.smackx.muc.Occupant;
 import org.jivesoftware.smackx.muc.RoomInfo;
 import org.jivesoftware.smackx.muc.packet.GroupChatInvitation;
 import org.jivesoftware.smackx.muc.provider.MUCAdminProvider;
@@ -111,6 +114,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Timer;
@@ -587,7 +591,7 @@ public class XmppConnection extends ImConnection {
                             }
                         }
 
-                        submitForm.setAnswer("muc#roomconfig_publicroom", true);
+                        submitForm.setAnswer("muc#roomconfig_publicroom", false);
                         submitForm.setAnswer("muc#roomconfig_persistentroom", true);
 
                         muc.sendConfigurationForm(submitForm);
@@ -645,7 +649,8 @@ public class XmppConnection extends ImConnection {
         @Override
         protected void addGroupMemberAsync(ChatGroup group, Contact contact) {
 
-            inviteUserAsync(group, contact);
+         //   inviteUserAsync(group, contact);
+        //we already have invite, so... what is this?
 
         }
 
@@ -672,7 +677,7 @@ public class XmppConnection extends ImConnection {
         @Override
         public void joinChatGroupAsync(Address address) {
 
-            String chatRoomJid = address.getAddress();
+            String chatRoomJid = address.getBareAddress();
             String[] parts = chatRoomJid.split("@");
             String room = parts[0];
             String server = parts[1];
@@ -690,10 +695,40 @@ public class XmppConnection extends ImConnection {
                 muc.join(nickname);
 
                 ChatGroup chatGroup = new ChatGroup(address,room,this);
-                mGroups.put(address.getAddress(), chatGroup);
+                mGroups.put(chatRoomJid, chatGroup);
                 mMUCs.put(chatRoomJid, muc);
 
+                List<String> mucOccupant = muc.getOccupants();
 
+                for (String occupant : mucOccupant) {
+                    XmppAddress xa = new XmppAddress(occupant);
+                    Contact mucContact = new Contact(xa,xa.getResource());
+                    //org.jivesoftware.smack.packet.Presence presence = muc.getOccupantPresence(occupant);
+                    //Presence p = new Presence(parsePresence(presence), presence.getStatus(), null, null, Presence.CLIENT_TYPE_DEFAULT);
+                    //mucContact.setPresence(p);
+                    chatGroup.addMemberAsync(mucContact);
+                }
+
+
+                muc.addParticipantListener(new PresenceListener() {
+                    @Override
+                    public void processPresence(org.jivesoftware.smack.packet.Presence presence) {
+
+                        if (presence.isAvailable()) {
+                            XmppAddress xa = new XmppAddress(presence.getFrom());
+                            MultiUserChat muc = mChatGroupManager.getMultiUserChat(xa.getBareAddress());
+                            ChatGroup chatGroup = mChatGroupManager.getChatGroup(xa);
+                            Contact mucContact = new Contact(xa, xa.getResource());
+                            Presence p = new Presence(parsePresence(presence), presence.getStatus(), null, null, Presence.CLIENT_TYPE_DEFAULT);
+                            mucContact.setPresence(p);
+                            chatGroup.addMemberAsync(mucContact);
+                            Contact[] contacts = {mucContact};
+                            mContactListManager.notifyContactsPresenceUpdated(contacts);
+                        }
+                    }
+                });
+
+                //ChatSession session = findOrCreateSession(chatRoomJid,true);
 
             } catch (Exception e) {
                 debug(TAG,"error joining MUC",e);
@@ -869,7 +904,7 @@ public class XmppConnection extends ImConnection {
 
         ContentResolver contentResolver = mContext.getContentResolver();
 
-        Cursor cursor = contentResolver.query(Imps.ProviderSettings.CONTENT_URI,new String[] {Imps.ProviderSettings.NAME, Imps.ProviderSettings.VALUE},Imps.ProviderSettings.PROVIDER + "=?",new String[] { Long.toString(mProviderId)},null);
+        Cursor cursor = contentResolver.query(Imps.ProviderSettings.CONTENT_URI, new String[]{Imps.ProviderSettings.NAME, Imps.ProviderSettings.VALUE}, Imps.ProviderSettings.PROVIDER + "=?", new String[]{Long.toString(mProviderId)}, null);
 
         if (cursor == null)
             return; //not going to work
@@ -1071,6 +1106,18 @@ public class XmppConnection extends ImConnection {
             mRoster.setSubscriptionMode(subMode);
 
             getContactListManager().listenToRoster(mRoster);
+
+            MultiUserChatManager.getInstanceFor(mConnection).addInvitationListener(new InvitationListener() {
+                @Override
+                public void invitationReceived(XMPPConnection conn, MultiUserChat muc, String inviter, String reason, String password, org.jivesoftware.smack.packet.Message message) {
+
+                    //getChatGroupManager().acceptInvitationAsync(muc.getRoom());
+                  //  mChatGroupManager.joinChatGroupAsync(new XmppAddress(muc.getRoom()));
+                    findOrCreateSession(muc.getRoom(),true);
+                }
+
+
+            });
 
 
         }
@@ -1349,11 +1396,13 @@ public class XmppConnection extends ImConnection {
 
                         rec.setType(Imps.MessageType.INCOMING);
 
-                        /*
                         // Detect if this was said by us, and mark message as outgoing
                         if (isGroupMessage && rec.getFrom().getResource().equals(rec.getTo().getUser())) {
-                            rec.setType(Imps.MessageType.OUTGOING);
-                        }*/
+                            //rec.setType(Imps.MessageType.OUTGOING);
+                            Occupant oc = mChatGroupManager.getMultiUserChat(rec.getFrom().getBareAddress()).getOccupant(rec.getFrom().getAddress());
+                            if (oc.getJid().equals(mUser.getAddress().getAddress()))
+                                return; //do nothing if it is from us
+                        }
 
                         boolean good = session.onReceiveMessage(rec);
 
@@ -1676,7 +1725,12 @@ public class XmppConnection extends ImConnection {
     }
 
     private ChatSession findOrCreateSession(String address, boolean groupChat) {
-        ChatSession session = mSessionManager.findSession(address);
+        ChatSession session = null;
+
+        if (groupChat)
+            session = mSessionManager.findSession(XmppAddress.stripResource(address));
+        else
+            session = mSessionManager.findSession(address);
 
         if (session == null) {
             ImEntity participant = findOrCreateParticipant(address, groupChat);
@@ -1689,25 +1743,26 @@ public class XmppConnection extends ImConnection {
         return session;
     }
 
-    ImEntity findOrCreateParticipant(String address, boolean groupChat) {
-        ImEntity participant = mContactListManager.getContact(address);
-        if (participant == null) {
-            if (!groupChat) {
-             //   participant = makeContact(address);
-                // don't allow messages from non contacts
-            }
-            else {
+    ImEntity findOrCreateParticipant(String address, boolean isGroupChat) {
+        ImEntity participant = null;
+
+        if (isGroupChat) {
+            Address xmppAddress = new XmppAddress(address);
+            participant = mChatGroupManager.getChatGroup(xmppAddress);
+
+            if (participant == null) {
                 try {
                     mChatGroupManager.createChatGroupAsync(address, mUser.getName());
-
-                    Address xmppAddress = new XmppAddress(address);
-
                     participant = mChatGroupManager.getChatGroup(xmppAddress);
-                }
-                catch (Exception e) {
-                    Log.e(TAG,"unable to join group chat",e);
+                } catch (Exception e) {
+                    Log.w(TAG, "unable to join group chat: " + e.toString());
+                    return null;
                 }
             }
+        } else
+        {
+           return mContactListManager.getContact(address);
+
         }
 
         return participant;
@@ -1751,8 +1806,7 @@ public class XmppConnection extends ImConnection {
         @Override
         public void sendMessageAsync(ChatSession session, Message message) {
 
-            String chatRoomJid = message.getTo().getAddress();
-            MultiUserChat muc = ((XmppChatGroupManager)getChatGroupManager()).getMultiUserChat(chatRoomJid);
+            MultiUserChat muc = ((XmppChatGroupManager)getChatGroupManager()).getMultiUserChat(message.getTo().getBareAddress());
 
             org.jivesoftware.smack.packet.Message msgXmpp = null;
             
@@ -2180,8 +2234,7 @@ public class XmppConnection extends ImConnection {
                 try {
                     cl = mContactListManager.getDefaultContactList();
 
-                    for (String address : addresses)
-                    {
+                    for (String address : addresses) {
                         requestPresenceRefresh(address);
 
                         Contact contact = mContactListManager.getContact(XmppAddress.stripResource(address));
@@ -2867,7 +2920,7 @@ public class XmppConnection extends ImConnection {
         ProviderManager.addExtensionProvider("html","http://jabber.org/protocol/xhtml-im", new XHTMLExtensionProvider());
 
         //  Group Chat Invitations
-        ProviderManager.addExtensionProvider("x","jabber:x:conference", new GroupChatInvitation.Provider());
+      //  ProviderManager.addExtensionProvider("x","jabber:x:conference", new GroupChatInvitation.Provider());
 
         //  Service Discovery # Items
         ProviderManager.addIQProvider("query","http://jabber.org/protocol/disco#items", new DiscoverItemsProvider());

@@ -348,6 +348,9 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             return false;
         }
 
+        if (isGroupChatSession()) //for now
+            return false;
+
         HashMap<String, String> headers = null;
         if (type != null) {
             headers = new HashMap<>();

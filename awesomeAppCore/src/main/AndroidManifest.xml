@@ -190,16 +190,12 @@
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
                 <data
                     android:host="zom.im"
-                    android:scheme="https" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.SEND" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data
-                    android:host="zom.im"
-                    android:scheme="https" />
+                    android:scheme="https"
+                    android:pathPrefix="/i/"
+                    />
             </intent-filter>
         </activity>
         <activity

@@ -17,8 +17,10 @@
 
 package org.awesomeapp.messenger.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -27,7 +29,7 @@ public class ChatGroup extends ImEntity {
     private ChatGroupManager mManager;
     private Address mAddress;
     private String mName;
-    private Vector<Contact> mMembers;
+    private HashMap<String, Contact> mMembers;
     private CopyOnWriteArrayList<GroupMemberListener> mMemberListeners;
 
     public ChatGroup(Address address, String name, ChatGroupManager manager) {
@@ -40,11 +42,12 @@ public class ChatGroup extends ImEntity {
         mAddress = address;
         mName = name;
         mManager = manager;
-        mMembers = new Vector<Contact>();
+        mMembers = new HashMap<String,Contact>();
 
-        if (members != null) {
-            mMembers.addAll(members);
-        }
+        if (members != null)
+            for (Contact contact : members)
+                mMembers.put(contact.getAddress().getAddress(), contact);
+
         mMemberListeners = new CopyOnWriteArrayList<GroupMemberListener>();
     }
 
@@ -76,7 +79,7 @@ public class ChatGroup extends ImEntity {
      * @return an unmodifiable collection of the members of the group.
      */
     public List<Contact> getMembers() {
-        return Collections.unmodifiableList(mMembers);
+        return Collections.unmodifiableList(new ArrayList(mMembers.values()));
     }
 
     /**
@@ -85,7 +88,9 @@ public class ChatGroup extends ImEntity {
      * @param contact the member to add.
      */
     public synchronized void addMemberAsync(Contact contact) {
-        mManager.addGroupMemberAsync(this, contact);
+        //mManager.addGroupMemberAsync(this, contact);
+
+        notifyMemberJoined(contact);
     }
 
     /**
@@ -94,7 +99,9 @@ public class ChatGroup extends ImEntity {
      * @param contact the member to remove.
      */
     public synchronized void removeMemberAsync(Contact contact) {
-        mManager.removeGroupMemberAsync(this, contact);
+        //mManager.removeGroupMemberAsync(this, contact);
+
+        notifyMemberLeft(contact);
     }
 
     /**
@@ -102,10 +109,21 @@ public class ChatGroup extends ImEntity {
      *
      * @param contact the contact who has joined into the group.
      */
-    void notifyMemberJoined(Contact contact) {
-        mMembers.add(contact);
-        for (GroupMemberListener listener : mMemberListeners) {
-            listener.onMemberJoined(this, contact);
+    void notifyMemberJoined(Contact newContact) {
+
+        Contact contact = mMembers.get(newContact.getAddress().getAddress());
+
+        if (contact != null) {
+            mMembers.put(contact.getAddress().getAddress(), newContact);
+            for (GroupMemberListener listener : mMemberListeners) {
+                listener.onMemberJoined(this, newContact);
+            }
+        }
+        else
+        {
+
+            //just update the presence
+            contact.setPresence(newContact.getPresence());
         }
     }
 
@@ -115,7 +133,7 @@ public class ChatGroup extends ImEntity {
      * @param contact the contact who has left this group.
      */
     void notifyMemberLeft(Contact contact) {
-        if (mMembers.remove(contact)) {
+        if (mMembers.remove(contact.getAddress().getAddress())!=null) {
             for (GroupMemberListener listener : mMemberListeners) {
                 listener.onMemberLeft(this, contact);
             }

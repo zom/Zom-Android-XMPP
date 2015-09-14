@@ -5,7 +5,7 @@
     <string name="create_an_account">Create an Account</string>
     <string name="create_id">Create a Zom ID</string>
     <string name="advanced">Advanced</string>
-    <string name="account_congrats">Congratulations! Your account has been created!</string>
+    <string name="account_congrats">Congratulations, you are ready to Zom!</string>
     <string name="invite_friends">Invite your friends to join!</string>
     <string name="invite_sms">SMS</string>
     <string name="invite_share">Share</string>
@@ -123,7 +123,7 @@
 
     <string name="features">Features</string>
     <string name="help">Help</string>
-    <string name="save_account_info">Write down or save this info in a safe place, in case you need to setup the app again:</string>
+    <string name="save_account_info">You can find your username and automatic password in the "Me" tab anytime you need it.</string>
     <string name="zom_id">"Zom ID: "</string>
     <string name="account_password_label">"Password: "</string>
     <string name="account_server_label">"Server: "</string>

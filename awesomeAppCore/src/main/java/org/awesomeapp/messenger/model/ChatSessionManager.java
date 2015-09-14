@@ -86,8 +86,8 @@ public abstract class ChatSessionManager {
         {
             session = new ChatSession(participant, this);
             ChatSessionAdapter csa = mAdapter.getChatSessionAdapter(session, isNewSession);
-            
-            
+            session.setMessageListener(csa.getAdaptee().getMessageListener());
+
             mSessions.put(sessionKey,session);
 
             for (ChatSessionListener listener : mListeners) {
