@@ -41,7 +41,7 @@
     <string name="push_to_talk">Push to talk</string>
     <string name="recording_release">Recording... Release to send</string>
     <string name="recording_delete">Recording... Release to delete</string>
-
+    <string name="swipe_up_delete">Swipe up to delete</string>
 
     <string name="contact_offline_message">Contact is offline</string>
     <string name="message_failed">Whoops! Message failed to send. Please try again.</string>

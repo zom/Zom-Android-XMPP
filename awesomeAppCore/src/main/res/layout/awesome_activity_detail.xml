@@ -62,7 +62,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#cc626262"
+        android:background="#77000000"
         android:orientation="vertical"
         android:gravity="center"
         android:id="@+id/viewDeleteVoice"
@@ -79,7 +79,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Swipe up to delete"
+            android:text="@string/swipe_up_delete"
             android:textColor="@android:color/white"
             />
 
@@ -152,7 +152,7 @@
             android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Hold to talk"
+            android:text="@string/push_to_talk"
             android:padding="2dp"
             android:id="@+id/buttonHoldToTalk"
             android:visibility="gone"

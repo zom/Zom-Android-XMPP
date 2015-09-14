@@ -195,8 +195,6 @@ public class ConversationView {
     {
         mIsSelected = isSelected;
 
-
-
         if (mIsSelected)
         {
           //  bindChat(mLastChatId);
@@ -745,9 +743,16 @@ public class ConversationView {
             public void onClick(View v) {
 
                 //this is the tap to change to hold to talk mode
-                if (!mActivity.isAudioRecording()) {
+                if (mMicButton.getVisibility() == View.VISIBLE) {
                     mComposeMessage.setVisibility(View.GONE);
                     mMicButton.setVisibility(View.GONE);
+
+                    // Check if no view has focus:
+                    View view = mActivity.getCurrentFocus();
+                    if (view != null) {
+                        InputMethodManager imm = (InputMethodManager)mActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                    }
 
                     mSendButton.setImageResource(R.drawable.ic_keyboard_black_36dp);
                     mSendButton.setVisibility(View.VISIBLE);
@@ -794,21 +799,21 @@ public class ConversationView {
                 switch ( theMotion.getAction() ) {
                     case MotionEvent.ACTION_DOWN:
                         mActivity.startAudioRecording();
-                        mButtonTalk.setText("Recording... release to send");
+                        mButtonTalk.setText(mActivity.getString(R.string.recording_release));
                         mViewDeleteVoice.setVisibility(View.VISIBLE);
 
                         break;
                     case MotionEvent.ACTION_MOVE:
                         boolean inBounds = inViewInBounds(btnTalk,(int)theMotion.getX(),(int)theMotion.getY());
                         if (!inBounds)
-                            mButtonTalk.setText("Recording... release to delete");
+                            mButtonTalk.setText(mActivity.getString(R.string.recording_delete));
                         else {
-                            mButtonTalk.setText("Recording... release to send");
+                            mButtonTalk.setText(mActivity.getString(R.string.recording_release));
                             mViewDeleteVoice.setVisibility(View.VISIBLE);
                         }
                             break;
                     case MotionEvent.ACTION_UP:
-                        mButtonTalk.setText("Hold to talk");
+                        mButtonTalk.setText(mActivity.getString(R.string.push_to_talk));
                         boolean send = inViewInBounds(btnTalk,(int)theMotion.getX(),(int)theMotion.getY());
                         mActivity.stopAudioRecording(send);
                         mViewDeleteVoice.setVisibility(View.GONE);
@@ -924,12 +929,17 @@ public class ConversationView {
                     sendMessage();
                 else
                 {
+                    if (mLastSessionStatus == SessionStatus.PLAINTEXT)
+                        mSendButton.setImageResource(R.drawable.ic_send_holo_light);
+                    else if (mLastSessionStatus == SessionStatus.ENCRYPTED)
+                        mSendButton.setImageResource(R.drawable.ic_send_secure);
+
                     mSendButton.setVisibility(View.GONE);
                     mButtonTalk.setVisibility(View.GONE);
                     mComposeMessage.setVisibility(View.VISIBLE);
                     mMicButton.setVisibility(View.VISIBLE);
 
-                    mSendButton.setImageResource(R.drawable.ic_keyboard_black_18dp);
+
                 }
             }
         });
@@ -1876,13 +1886,14 @@ public class ConversationView {
             }
             else if (mLastSessionStatus == SessionStatus.ENCRYPTED) {
 
-                if (mIsStartingOtr)
-                {
+                if (mIsStartingOtr) {
                     mIsStartingOtr = false; //it's started!
                 }
 
-                mComposeMessage.setHint(R.string.compose_hint_secure);
-                mSendButton.setImageResource(R.drawable.ic_send_secure);
+                if (mSendButton.getVisibility() == View.GONE) {
+                    mComposeMessage.setHint(R.string.compose_hint_secure);
+                    mSendButton.setImageResource(R.drawable.ic_send_secure);
+                }
 
                 try
                 {
@@ -1994,15 +2005,22 @@ public class ConversationView {
             }
         }
 
-        if (mComposeMessage.getText().length() > 0 &&  mSendButton.getVisibility() == View.GONE) {
-            mMicButton.setVisibility(View.GONE);
-            mSendButton.setVisibility(View.VISIBLE);
+        toggleInputMode ();
 
-        }
-        else if (mComposeMessage.getText().length() == 0) {
-            mMicButton.setVisibility(View.VISIBLE);
-            mSendButton.setVisibility(View.GONE);
+    }
 
+    private void toggleInputMode ()
+    {
+        if (mButtonTalk.getVisibility() == View.GONE) {
+            if (mComposeMessage.getText().length() > 0 && mSendButton.getVisibility() == View.GONE) {
+                mMicButton.setVisibility(View.GONE);
+                mSendButton.setVisibility(View.VISIBLE);
+
+            } else if (mComposeMessage.getText().length() == 0) {
+                mMicButton.setVisibility(View.VISIBLE);
+                mSendButton.setVisibility(View.GONE);
+
+            }
         }
     }
 

@@ -416,6 +416,9 @@ public class ConversationDetailActivity extends AppCompatActivity {
         mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
         mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+        mMediaRecorder.setAudioChannels(1);
+        mMediaRecorder.setAudioEncodingBitRate(22050);
+        mMediaRecorder.setAudioSamplingRate(64000);
         mMediaRecorder.setOutputFile(mAudioFilePath.getAbsolutePath());
 
         try {
