@@ -197,17 +197,27 @@ public class OnboardingManager {
         if (domain == null) {
             int nameIdx = 0;
 
-            for (int i = 1; i < 10; i++) {
+            for (int i = 0; i < servers.length(); i++) {
 
                 JSONObject server = servers.getJSONObject(i);
 
                 for (int n = 0; n < maxAttempts; n++) {
 
-
                     try {
 
                         domain = server.getString("domain");
-                        //settings.setServer(DEFAULT_SERVER_GOOGLE); //set the google connect server
+                        String host = server.getString("server");
+
+                        if (host != null) {
+                            settings.setServer(host); //set the google connect server
+                            settings.setDoDnsSrv(false);
+                        }
+                        else
+                        {
+                            settings.setServer(null);
+                            settings.setDoDnsSrv(true);
+                        }
+
                         settings.setDomain(domain);
                         settings.setPort(server.getInt("port"));
                         settings.requery();
@@ -216,23 +226,25 @@ public class OnboardingManager {
 
                         XmppConnection xmppConn = new XmppConnection(context);
                         xmppConn.initUser(providerId, accountId);
-                        xmppConn.registerAccount(settings, username, password, aParams);
 
-                        result = new OnboardingAccount();
-                        result.username = username;
-                        result.domain = domain;
-                        result.password = password;
-                        result.providerId = providerId;
-                        result.accountId = accountId;
+                        boolean success = xmppConn.registerAccount(settings, username, password, aParams);
 
-                        //now keep this account signed-in
-                        ContentValues values = new ContentValues();
-                        values.put(Imps.AccountColumns.KEEP_SIGNED_IN, 1);
-                        cr.update(accountUri, values, null, null);
+                        if (success) {
+                            result = new OnboardingAccount();
+                            result.username = username;
+                            result.domain = domain;
+                            result.password = password;
+                            result.providerId = providerId;
+                            result.accountId = accountId;
 
-                        settings.close();
+                            //now keep this account signed-in
+                            ContentValues values = new ContentValues();
+                            values.put(Imps.AccountColumns.KEEP_SIGNED_IN, 1);
+                            cr.update(accountUri, values, null, null);
+                            settings.close();
+                            return result;
+                        }
 
-                        return result;
 
                     } catch (Exception e) {
                         LogCleaner.error(ImApp.LOG_TAG, "error registering new account", e);

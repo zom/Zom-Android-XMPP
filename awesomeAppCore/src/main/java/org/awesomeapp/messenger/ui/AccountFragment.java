@@ -196,6 +196,9 @@ public class AccountFragment extends Fragment {
 
             Uri imageUri = getPickImageResultUri(data);
 
+            if (imageUri == null)
+                return;
+
             mCropImageView = new CropImageView(getActivity());// (CropImageView)view.findViewById(R.id.CropImageView);
             mCropImageView.setAspectRatio(1, 1);
             mCropImageView.setFixedAspectRatio(true);

@@ -163,7 +163,9 @@ public class ConversationListItem extends FrameLayout {
 
         if (Imps.Contacts.TYPE_GROUP == type) {
 
-            nickname += ": " + queryGroupMembers(getContext().getContentResolver(), cursor.getLong(COLUMN_CONTACT_ID));
+            String groupMembers = queryGroupMembers(getContext().getContentResolver(), cursor.getLong(COLUMN_CONTACT_ID));
+            if (!TextUtils.isEmpty(groupMembers))
+                nickname = groupMembers;
         }
 
         if (!TextUtils.isEmpty(underLineText)) {

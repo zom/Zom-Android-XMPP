@@ -37,6 +37,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -424,6 +425,7 @@ public class MainActivity extends AppCompatActivity {
 
             delete(mLastPhoto);
 
+            //adds in an empty message, so it can exist in the gallery and be forwarded
             Imps.insertMessageInDb(
                     getContentResolver(), false, new Date().getTime(), true, null, vfsUri.toString(),
                     System.currentTimeMillis(), Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED,
@@ -606,7 +608,7 @@ public class MainActivity extends AppCompatActivity {
        // setupAccountSpinner(listAccounts);
 
         new AlertDialog.Builder(this)
-                .setTitle(R.string.create_or_join_group_chat)
+                .setTitle(R.string.create_group)
                 .setView(dialogGroup)
                 .setPositiveButton(R.string.connect, new DialogInterface.OnClickListener() {
                     @Override
@@ -682,6 +684,10 @@ public class MainActivity extends AppCompatActivity {
                 String subject = params[0];
                 String chatRoom = "groupchat" + UUID.randomUUID().toString().substring(0,8);
                 String server = params[1];
+
+                if (TextUtils.isEmpty(server))
+                    server = "conference.rows.io";
+
                 String roomAddress = (chatRoom + '@' + server).toLowerCase(Locale.US);
                 String nickname = params[2];
 
@@ -716,7 +722,7 @@ public class MainActivity extends AppCompatActivity {
                         }
 
                         //make sure we have a clean active session
-                        session = manager.getChatSession(roomAddress);
+                       // session = manager.getChatSession(roomAddress);
 
                         for (String invitee : invitees)
                             session.inviteContact(invitee);

@@ -38,10 +38,10 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.ResourceCursorAdapter;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.view.ActionMode;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.util.SparseBooleanArray;
+import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -57,7 +57,7 @@ import java.util.HashMap;
 import java.util.Set;
 
 /** Activity used to pick a contact. */
-public class ContactsPickerActivity extends ActionBarActivity {
+public class ContactsPickerActivity extends AppCompatActivity {
 
     public final static String EXTRA_EXCLUDED_CONTACTS = "excludes";
 
@@ -99,6 +99,38 @@ public class ContactsPickerActivity extends ActionBarActivity {
 
     private boolean mIsCABDestroyed= true;
 
+    private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
+        @Override
+        public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+            MenuInflater inflater = getMenuInflater();
+            inflater.inflate(R.menu.menu_contact_picker_multi, menu);
+            return false;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+            if (menuItem.getItemId() == R.id.action_start_chat)
+            {
+                SparseBooleanArray checkedPos = mListView.getCheckedItemPositions();
+                multiFinish(checkedPos);
+
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode actionMode) {
+            mAdapter.clearSelection();
+            mIsCABDestroyed = true;
+        }
+    };
+
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
@@ -117,13 +149,13 @@ public class ContactsPickerActivity extends ActionBarActivity {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
 
-                mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-                mAdapter.setNewSelection(i, true);
-                mIsCABDestroyed = false; // mark readiness to switch back to SINGLE CHOICE after the CABis destroyed
+                multiStart(i);
+                //getSupportActionBar().startActionMode(mActionModeCallback);
 
                 return true;
             }
         });
+
 
         mListView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
 
@@ -184,11 +216,15 @@ public class ContactsPickerActivity extends ActionBarActivity {
                     //do your action command  here
                 }
 
-                if (mListView.getChoiceMode() == ListView.CHOICE_MODE_MULTIPLE_MODAL)
-                {
+                if (mListView.getChoiceMode() == ListView.CHOICE_MODE_MULTIPLE_MODAL) {
                     //mAdapter.getItem(position);
+                    boolean newChecked = !mListView.isItemChecked(position);
 
-                    mListView.setItemChecked(position, !mListView.isItemChecked(position));
+                    mListView.setItemChecked(position, newChecked);
+                    mAdapter.setNewSelection(position, newChecked);
+
+                    if (!newChecked)
+                        mAdapter.removeSelection(position);
 
                 }
                 else {
@@ -221,6 +257,19 @@ public class ContactsPickerActivity extends ActionBarActivity {
         
 
         doFilterAsync("");
+    }
+
+    private void multiStart (int i)
+    {
+
+        mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+        mListView.startActionMode(mActionModeCallback);
+
+        if (i != -1)
+            mAdapter.setNewSelection(i, true);
+
+        mIsCABDestroyed = false; // mark readiness to switch back to SINGLE CHOICE after the CABis destroyed
+
     }
 
     private void multiFinish (SparseBooleanArray positions)
@@ -321,6 +370,17 @@ public class ContactsPickerActivity extends ActionBarActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId())
+        {
+            case R.id.menu_new_group_chat:
+                multiStart(-1);
+             //   getSupportActionBar().startActionMode(mActionModeCallback);
+                return true;
+
+
+
+        }
 
         return super.onOptionsItemSelected(item);
     }

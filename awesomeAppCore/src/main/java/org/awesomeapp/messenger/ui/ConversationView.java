@@ -1194,7 +1194,7 @@ public class ConversationView {
             }
 
             if (buf.length() > 0)
-                mRemoteNickname += ": " + (buf.toString());
+                mRemoteNickname = buf.toString();
 
             c.close();
         }
