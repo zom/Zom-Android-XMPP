@@ -526,10 +526,10 @@ public class ImApp extends Application {
             return false; //no network info is a bad idea
     }
 
-    public static long insertOrUpdateAccount(ContentResolver cr, long providerId, String userName,
+    public static long insertOrUpdateAccount(ContentResolver cr, long providerId, long accountId, String userName,
             String pw) {
-        String selection = Imps.Account.PROVIDER + "=? AND " + Imps.Account.USERNAME + "=?";
-        String[] selectionArgs = { Long.toString(providerId), userName };
+        String selection = Imps.Account.PROVIDER + "=? AND (" + Imps.Account._ID + "=?" + " OR " + Imps.Account.USERNAME + "=?)";
+        String[] selectionArgs = { Long.toString(providerId), Long.toString(accountId), userName };
 
         Cursor c = cr.query(Imps.Account.CONTENT_URI, ACCOUNT_PROJECTION, selection, selectionArgs,
                 null);
@@ -801,10 +801,8 @@ public class ImApp extends Application {
         }
     }
 
-    public void deleteAccount (long accountId, long providerId)
+    public static void deleteAccount (ContentResolver resolver, long accountId, long providerId)
     {
-        ContentResolver resolver = getContentResolver();
-
         Uri accountUri = ContentUris.withAppendedId(Imps.Account.CONTENT_URI, accountId);
         resolver.delete(accountUri, null, null);
 

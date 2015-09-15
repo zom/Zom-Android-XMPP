@@ -161,14 +161,13 @@ public class OnboardingManager {
     }
 
     public static OnboardingAccount registerAccount (Activity context, Handler handler, String username, String domain, int port) throws JSONException {
-        OnboardingAccount result = null;
         String password = generatePassword();
 
         ContentResolver cr = context.getContentResolver();
         ImPluginHelper helper = ImPluginHelper.getInstance(context);
         long providerId = helper.createAdditionalProvider(helper.getProviderNames().get(0)); //xmpp FIXME
 
-        long accountId = ImApp.insertOrUpdateAccount(cr, providerId, username, password);
+        long accountId = ImApp.insertOrUpdateAccount(cr, providerId, -1, username, password);
 
         Uri accountUri = ContentUris.withAppendedId(Imps.Account.CONTENT_URI, accountId);
 
@@ -230,6 +229,8 @@ public class OnboardingManager {
                         boolean success = xmppConn.registerAccount(settings, username, password, aParams);
 
                         if (success) {
+                            OnboardingAccount result = null;
+
                             result = new OnboardingAccount();
                             result.username = username;
                             result.domain = domain;
@@ -253,19 +254,20 @@ public class OnboardingManager {
                     }
 
                     username = username + i; //add a number to the end of the username
-                    ImApp.insertOrUpdateAccount(cr, providerId, username, password);
+                    ImApp.insertOrUpdateAccount(cr, providerId, accountId, username, password);
                     settings.requery();
 
                 }
 
 
             }
+
+
         }
         else
         {
             try
             {
-                //settings.setServer(DEFAULT_SERVER_GOOGLE); //set the google connect server
                 settings.setDomain(domain);
                 settings.setPort(port);
                 settings.requery();
@@ -274,23 +276,28 @@ public class OnboardingManager {
 
                 XmppConnection xmppConn = new XmppConnection(context);
                 xmppConn.initUser(providerId, accountId);
-                xmppConn.registerAccount(settings, username, password, aParams);
 
-                result = new OnboardingAccount();
-                result.username = username;
-                result.domain = domain;
-                result.password = password;
-                result.providerId = providerId;
-                result.accountId = accountId;
+                boolean success = xmppConn.registerAccount(settings, username, password, aParams);
 
-                //now keep this account signed-in
-                ContentValues values = new ContentValues();
-                values.put(Imps.AccountColumns.KEEP_SIGNED_IN, 1);
-                cr.update(accountUri, values, null, null);
+                if (success) {
+                    OnboardingAccount result = null;
 
-                settings.close();
+                    result = new OnboardingAccount();
+                    result.username = username;
+                    result.domain = domain;
+                    result.password = password;
+                    result.providerId = providerId;
+                    result.accountId = accountId;
 
-                return result;
+                    //now keep this account signed-in
+                    ContentValues values = new ContentValues();
+                    values.put(Imps.AccountColumns.KEEP_SIGNED_IN, 1);
+                    cr.update(accountUri, values, null, null);
+
+                    settings.close();
+
+                    return result;
+                }
             } catch (Exception e) {
                 LogCleaner.error(ImApp.LOG_TAG, "error registering new account", e);
 
@@ -299,7 +306,7 @@ public class OnboardingManager {
         }
 
         settings.close();
-        return result;//unable to setup an account
+        return null;
 
     }
 
@@ -316,7 +323,7 @@ public class OnboardingManager {
         ImPluginHelper helper = ImPluginHelper.getInstance(context);
         long providerId = helper.createAdditionalProvider(helper.getProviderNames().get(0)); //xmpp FIXME
 
-        long accountId = ImApp.insertOrUpdateAccount(cr, providerId, username, password);
+        long accountId = ImApp.insertOrUpdateAccount(cr, providerId, -1, username, password);
 
         Uri accountUri = ContentUris.withAppendedId(Imps.Account.CONTENT_URI, accountId);
 

@@ -40,6 +40,7 @@ import org.jivesoftware.smack.PacketCollector;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.PresenceListener;
 import org.jivesoftware.smack.SASLAuthentication;
+import org.jivesoftware.smack.SmackConfiguration;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.XMPPConnection;
@@ -206,7 +207,7 @@ public class XmppConnection extends ImConnection {
 
         Debug.onConnectionStart();
 
-     //   SmackConfiguration.setPacketReplyTimeout(SOTIMEOUT);
+        SmackConfiguration.setDefaultPacketReplyTimeout(SOTIMEOUT);
 
         // Create a single threaded executor.  This will serialize actions on the underlying connection.
         createExecutor();

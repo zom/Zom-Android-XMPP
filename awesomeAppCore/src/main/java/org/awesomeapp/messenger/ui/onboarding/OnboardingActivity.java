@@ -270,7 +270,16 @@ public class OnboardingActivity extends ThemeableActivity {
                 mViewFlipper.showPrevious();
                 getSupportActionBar().setTitle("");                
             }
-            
+            else if (mViewFlipper.getCurrentView().getId()==R.id.flip_view_login)
+            {
+                setAnimRight();
+                showSplashScreen();
+            }
+            else if (mViewFlipper.getCurrentView().getId()==R.id.flip_view_advanced)
+            {
+                setAnimRight ();
+                showLoginScreen();
+            }
             
             
             return true;
@@ -300,6 +309,8 @@ public class OnboardingActivity extends ThemeableActivity {
     {
 
         mViewFlipper.setDisplayedChild(3);
+        findViewById(R.id.progressExistingUser).setVisibility(View.GONE);
+        findViewById(R.id.progressExistingImage).setVisibility(View.GONE);
 
         getSupportActionBar().show();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -468,6 +479,10 @@ public class OnboardingActivity extends ThemeableActivity {
     {
         String username = ((TextView)findViewById(R.id.edtName)).getText().toString();
         String password = ((TextView)findViewById(R.id.edtPass)).getText().toString();
+
+        findViewById(R.id.progressExistingUser).setVisibility(View.VISIBLE);
+        findViewById(R.id.progressExistingImage).setVisibility(View.VISIBLE);
+
         new ExistingAccountTask().execute(username, password);
         /**
         if (mSpinnerDomains.getVisibility() == View.VISIBLE) {
