@@ -3,7 +3,7 @@
   "servers":[
     {
       "domain": "dukgo.com",
-      "server": "dukgo.com",
+      "server": "xmpp.dukgo.com",
       "port": 5222,
       "certificate": "",
       "logoUrl": "https://s3....",
@@ -11,7 +11,7 @@
     },
     {
       "domain": "rows.io",
-      "server": "rows.io",
+      "server": "xmpp.rows.io",
       "port": 5222,
       "certificate": "",
       "logoUrl": "https://s3....",
