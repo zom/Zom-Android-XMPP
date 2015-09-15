@@ -97,7 +97,8 @@
                     android:padding="10dp"
                     android:gravity="center_horizontal"
                     android:orientation="vertical"
-                    android:background="?colorPrimary"
+                    android:background="@color/primary_material_light"
+
                     >
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -153,7 +154,6 @@
                             android:text=""
                             android:textSize="18dp"
                             android:visibility="gone"
-                            android:textColor="@android:color/white"
                             />
 
                         <!--
@@ -170,7 +170,6 @@
                             android:selectAllOnFocus="true"
                             />-->
 
-                        android:layout_gravity="bottom|center"
                         <Button android:id="@+id/btnRegister"
                             android:text="@string/btn_next"
                             android:layout_height="wrap_content"
@@ -178,9 +177,8 @@
                             android:layout_width="match_parent"
                             android:layout_gravity="bottom"
                             android:visibility="gone"
-
-                            android:background="?colorPrimary"
                             android:textColor="@android:color/white"
+                            android:background="?colorPrimary"
                             />
                     </LinearLayout>
 
@@ -192,8 +190,8 @@
                         android:layout_width="match_parent"
                         android:layout_gravity="bottom|center"
 
-                        android:background="?colorPrimary"
-                        android:textColor="@android:color/white"
+                        android:background="@android:color/transparent"
+                        android:textColor="?colorPrimary"
                         />
 
 

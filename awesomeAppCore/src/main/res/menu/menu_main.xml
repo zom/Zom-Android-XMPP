@@ -15,7 +15,7 @@
         app:showAsAction="never" />
 
     <item android:id="@+id/menu_group_chat"
-        android:title="@string/menu_new_group_chat"
+        android:title="@string/create_group"
         android:icon="@drawable/social_add_person"
         app:showAsAction="never"
 

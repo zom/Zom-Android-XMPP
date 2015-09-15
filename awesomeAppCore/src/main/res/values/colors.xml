@@ -95,7 +95,8 @@
     <color name="contact_status_avatar_overlay">#aa555555</color>
     
     <color name="background_gray">#37474F</color>
-        
+
+    <color name="zom_primary">#E7275A</color>
     
     
 </resources>

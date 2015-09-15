@@ -72,7 +72,7 @@
 
 
            <!-- colorPrimary is used for the default action bar background -->
-    <item name="colorPrimary">#E7275A</item>
+    <item name="colorPrimary">@color/zom_primary</item>
 
     <!-- colorPrimaryDark is used for the status bar -->
     <item name="colorPrimaryDark">#9b213e</item>
@@ -108,7 +108,12 @@
 
         <item name="actionBarTheme">@style/AppBaseTheme.Toolbar</item>
 
+        <item name="actionModeStyle">@style/LStyled.ActionMode</item>
+        <item name="actionMenuTextColor">@android:color/white</item>
+    </style>
 
+    <style name="LStyled.ActionMode" parent="@style/Widget.AppCompat.ActionMode">
+        <item name="background">@color/zom_primary</item>
     </style>
 
     <!--Action bar-->
