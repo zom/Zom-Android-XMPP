@@ -71,6 +71,7 @@ import org.jivesoftware.smackx.disco.provider.DiscoverInfoProvider;
 import org.jivesoftware.smackx.disco.provider.DiscoverItemsProvider;
 import org.jivesoftware.smackx.iqlast.packet.LastActivity;
 import org.jivesoftware.smackx.iqprivate.PrivateDataManager;
+import org.jivesoftware.smackx.muc.DiscussionHistory;
 import org.jivesoftware.smackx.muc.InvitationListener;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
@@ -97,6 +98,7 @@ import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 import org.jivesoftware.smackx.vcardtemp.provider.VCardProvider;
 import org.jivesoftware.smackx.xdata.Form;
 import org.jivesoftware.smackx.xdata.FormField;
+import org.jivesoftware.smackx.xdata.packet.DataForm;
 import org.jivesoftware.smackx.xdata.provider.DataFormProvider;
 import org.jivesoftware.smackx.xhtmlim.provider.XHTMLExtensionProvider;
 
@@ -110,6 +112,7 @@ import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -552,8 +555,8 @@ public class XmppConnection extends ImConnection {
                     // Create the room
                     muc.createOrJoin(nickname);
 
-                    if ((TextUtils.isEmpty(muc.getSubject())))
-                        muc.changeSubject(subject);
+//                    if ((TextUtils.isEmpty(muc.getSubject())))
+  //                      muc.changeSubject(subject);
                 }
                 catch (XMPPException iae)
                 {
@@ -579,15 +582,45 @@ public class XmppConnection extends ImConnection {
                         }
                     }
 
+               //     submitForm.setAnswer("muc#roomconfig_roomname", subject);
+               //     submitForm.setAnswer("muc#roomconfig_roomdesc", subject);
+               //     submitForm.setAnswer("muc#roomconfig_roomdesc", subject);
+                //    submitForm.setAnswer("muc#roomconfig_changesubject", false);
+                    //submitForm.setAnswer("muc#roomconfig_anonymity","anonymous");
+
                     submitForm.setAnswer("muc#roomconfig_publicroom", false);
                     submitForm.setAnswer("muc#roomconfig_persistentroom", true);
+                    submitForm.setAnswer("muc#roomconfig_whois", Arrays.asList("anyone"));
+
+
+                    /*
+                    if (submitForm.getField("muc#roomconfig_historylength")!=null)
+                        submitForm.setAnswer("muc#roomconfig_historylength", 0);
+
+                    if (submitForm.getField("muc#maxhistoryfetch")!=null)
+                        submitForm.setAnswer("muc#maxhistoryfetch", 0);
+                       */
+                    /**
+                    if (submitForm.getField("muc#roomconfig_whois")!=null)
+                    {
+                        // what to do??
+                    }*/
+
+                    /**
+                    if (submitForm.getField("muc#roomconfig_enablelogging")!=null)
+                        submitForm.setAnswer("muc#roomconfig_enablelogging", false);
+
+                    if (submitForm.getField("muc#maxhistoryfetch")!=null)
+                       submitForm.setAnswer("muc#maxhistoryfetch", 0);
+                    */
 
                     muc.sendConfigurationForm(submitForm);
 
                 }
                 catch (XMPPException xe)
                 {
-                    debug(TAG,"(ignoring) got an error configuring MUC room: " + xe.getLocalizedMessage());
+                    debug(TAG, "(ignoring) got an error configuring MUC room: " + xe.getLocalizedMessage());
+
                 }
 
                 ChatGroup chatGroup = new ChatGroup(address,subject,this);
@@ -673,7 +706,10 @@ public class XmppConnection extends ImConnection {
 
                 MultiUserChat muc = mucMgr.getMultiUserChat(chatRoomJid);
 
+                DiscussionHistory history = new DiscussionHistory();
+                history.setMaxStanzas(0);
                 // Create the room
+                //muc.join(nickname, null, history, mConnection.getPacketReplyTimeout());
                 muc.join(nickname);
 
                 String subject = muc.getSubject();
@@ -1126,7 +1162,7 @@ public class XmppConnection extends ImConnection {
 
 
     // Runs in executor thread
-    private void initConnection(Imps.ProviderSettings.QueryMap providerSettings, String userName) throws NoSuchAlgorithmException, KeyManagementException, XMPPException  {
+    private boolean initConnection(Imps.ProviderSettings.QueryMap providerSettings, String userName) throws NoSuchAlgorithmException, KeyManagementException, XMPPException  {
 
 
         boolean allowPlainAuth = providerSettings.getAllowPlainAuth();
@@ -1167,7 +1203,7 @@ public class XmppConnection extends ImConnection {
             //java.lang.System.setProperty("java.net.preferIPv6Addresses", "false");
 
             debug(TAG, "(DNS SRV) resolving: " + domain);
-            DNSUtil.HostAddress srvHost = DNSUtil.resolveXMPPDomain(domain);
+            DNSUtil.HostAddress srvHost = DNSUtil.resolveXMPPServerDomain(domain);
             server = srvHost.getHost();
             if (serverPort <= 0) {
                 // If user did not override port, use port from SRV record
@@ -1554,7 +1590,7 @@ public class XmppConnection extends ImConnection {
             try
             {
                 mConnection.connect();
-                break;
+                return true;
             }
             catch (Exception uhe)
             {
@@ -1565,6 +1601,7 @@ public class XmppConnection extends ImConnection {
 
         }
 
+        return false;
     }
 
     private void sendPresencePacket() {        
@@ -3018,22 +3055,20 @@ public class XmppConnection extends ImConnection {
     public boolean registerAccount (Imps.ProviderSettings.QueryMap providerSettings, String username, String password, Map<String,String> params) throws Exception
     {
 
-        initConnection(providerSettings, username);
+        boolean success = initConnection(providerSettings, username);
 
-        org.jivesoftware.smackx.iqregister.AccountManager aMgr = org.jivesoftware.smackx.iqregister.AccountManager.getInstance(mConnection);
+        if (success && mConnection.isConnected()) {
+            org.jivesoftware.smackx.iqregister.AccountManager aMgr = org.jivesoftware.smackx.iqregister.AccountManager.getInstance(mConnection);
 
-        if (aMgr.supportsAccountCreation())
-        {
-            aMgr.createAccount(username, password, params);
+            if (aMgr.supportsAccountCreation()) {
+                aMgr.createAccount(username, password, params);
 
-            return true;
+                return true;
 
-        }
-        else
-        {
-            return false;//not supported
+            }
         }
 
+        return false;
 
     }
 
