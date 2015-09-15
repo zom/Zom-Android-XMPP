@@ -65,6 +65,13 @@ public class ChatGroup extends ImEntity {
         return mName;
     }
 
+    /*
+    Set's the name of the group. The XMPP "subject" can change
+     */
+    public void setName (String name) {
+        mName = name;
+    }
+
     public void addMemberListener(GroupMemberListener listener) {
         mMemberListeners.add(listener);
     }

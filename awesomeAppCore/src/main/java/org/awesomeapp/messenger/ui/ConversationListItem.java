@@ -139,7 +139,7 @@ public class ConversationListItem extends FrameLayout {
         final long providerId = cursor.getLong(COLUMN_CONTACT_PROVIDER);
         final String address = cursor.getString(COLUMN_CONTACT_USERNAME);
 
-        final String displayName = cursor.getString(COLUMN_CONTACT_NICKNAME);
+        String nickname = cursor.getString(COLUMN_CONTACT_NICKNAME);
 
         final int type = cursor.getInt(COLUMN_CONTACT_TYPE);
         final String lastMsg = cursor.getString(COLUMN_LAST_MESSAGE);
@@ -151,8 +151,6 @@ public class ConversationListItem extends FrameLayout {
         final int subStatus = cursor.getInt(COLUMN_SUBSCRIPTION_STATUS);
 
         String statusText = cursor.getString(COLUMN_CONTACT_CUSTOM_STATUS);
-
-        String nickname = displayName;
 
         if (nickname == null)
         {

@@ -479,11 +479,11 @@ public class ContactsPickerActivity extends ActionBarActivity {
                 buf.append(" LIKE ");
                 android.database.DatabaseUtils.appendValueToSql(buf, "%" + mSearchString + "%");
                 buf.append(')');
-                
+                buf.append(" AND ");
             }
 
 //            normal types not temporary
-            buf.append(" AND ");  
+
             buf.append(Imps.Contacts.TYPE).append('=').append(Imps.Contacts.TYPE_NORMAL);
 
             if (mShowInvitations)

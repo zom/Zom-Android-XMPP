@@ -629,6 +629,8 @@ public class ConversationView {
                     break;
                 }
             }
+
+            setGroupTitle();
         }
     };
 
