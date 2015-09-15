@@ -35,10 +35,7 @@ public class ThumbnailLoaderTask extends AsyncTask<ThumbnailLoaderRequest, Void,
     public ThumbnailLoaderTask.ThumbnailLoaderResult doInBackground(ThumbnailLoaderRequest...request)
     {
 
-        Bitmap result=sBitmapCache.get(request[0].mUri.toString());
-
-        if(result==null)
-        result=getThumbnail(request[0].mResolver,request[0].mUri,THUMBNAIL_SIZE_DEFAULT);
+        Bitmap result=getThumbnail(request[0].mResolver,request[0].mUri,THUMBNAIL_SIZE_DEFAULT);
 
         ThumbnailLoaderTask.ThumbnailLoaderResult tlr=new ThumbnailLoaderTask.ThumbnailLoaderResult();
         tlr.mBitmap=result;
@@ -49,8 +46,8 @@ public class ThumbnailLoaderTask extends AsyncTask<ThumbnailLoaderRequest, Void,
 
        }
 
-@Override
-public void onPostExecute(ThumbnailLoaderResult result){
+    @Override
+    public void onPostExecute(ThumbnailLoaderResult result){
 
         if(result.mBitmap!=null)
         {
@@ -73,7 +70,7 @@ public void onPostExecute(ThumbnailLoaderResult result){
 public static Bitmap getThumbnail(ContentResolver cr,Uri uri, int thumbnailSize){
         //   Log.e( MessageView.class.getSimpleName(), "getThumbnail uri:" + uri);
         if(SecureMediaStore.isVfsUri(uri)){
-        return SecureMediaStore.getThumbnailVfs(uri,thumbnailSize);
+            return SecureMediaStore.getThumbnailVfs(uri,thumbnailSize);
         }
         return getThumbnailFile(cr,uri,thumbnailSize);
         }
