@@ -243,7 +243,7 @@ public class ContactsListFragment extends Fragment {
             StringBuilder buf = new StringBuilder();
 
             if (mSearchString != null) {
-
+                buf.append('(');
                 buf.append(Imps.Contacts.NICKNAME);
                 buf.append(" LIKE ");
                 DatabaseUtils.appendValueToSql(buf, "%" + mSearchString + "%");
@@ -251,9 +251,10 @@ public class ContactsListFragment extends Fragment {
                 buf.append(Imps.Contacts.USERNAME);
                 buf.append(" LIKE ");
                 DatabaseUtils.appendValueToSql(buf, "%" + mSearchString + "%");
+                buf.append(')');
+                buf.append(" AND ");
             }
 
-            buf.append(" AND ");
             buf.append(Imps.Contacts.TYPE).append('=').append(Imps.Contacts.TYPE_NORMAL);
 
             CursorLoader loader = new CursorLoader(getActivity(), mUri, CHAT_PROJECTION,
