@@ -386,7 +386,13 @@ public class GalleryListItem extends FrameLayout {
         request.mResolver = contentResolver;
 
         aHolder.mMediaThumbnail.setImageResource(R.drawable.ic_photo_library_white_36dp);
-        new ThumbnailLoaderTask(sBitmapCache).execute(request);
+        Bitmap result=sBitmapCache.get(uri.toString());
+        if (result == null)
+            new ThumbnailLoaderTask(sBitmapCache).execute(request);
+        else
+        {
+            aHolder.mMediaThumbnail.setImageBitmap(result);
+        }
 
     }
 
