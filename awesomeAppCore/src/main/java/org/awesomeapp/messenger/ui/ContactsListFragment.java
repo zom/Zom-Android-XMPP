@@ -253,6 +253,9 @@ public class ContactsListFragment extends Fragment {
                 DatabaseUtils.appendValueToSql(buf, "%" + mSearchString + "%");
             }
 
+            buf.append(" AND ");
+            buf.append(Imps.Contacts.TYPE).append('=').append(Imps.Contacts.TYPE_NORMAL);
+
             CursorLoader loader = new CursorLoader(getActivity(), mUri, CHAT_PROJECTION,
                     buf == null ? null : buf.toString(), null, Imps.Contacts.ALPHA_SORT_ORDER);
 

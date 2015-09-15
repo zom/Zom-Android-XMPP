@@ -512,7 +512,7 @@ public class XmppConnection extends ImConnection {
         }
 
         @Override
-        public boolean createChatGroupAsync(String chatRoomJid, String nickname) throws Exception {
+        public boolean createChatGroupAsync(String chatRoomJid, String subject, String nickname) throws Exception {
 
             if (mConnection == null || getState() != ImConnection.LOGGED_IN)
                 return false;
@@ -551,11 +551,12 @@ public class XmppConnection extends ImConnection {
                 String room = parts[0];
                 String server = parts[1];
 
-                if (nickname == null || nickname.length() == 0)
-                {
+                if (TextUtils.isEmpty(subject))
+                    subject = room;
+
+                if (TextUtils.isEmpty(nickname))
                     nickname = mUsername;
-                }
-                
+
                 try {
 
                     MultiUserChat muc = mucMgr.getMultiUserChat(chatRoomJid);
@@ -565,7 +566,9 @@ public class XmppConnection extends ImConnection {
 
                         // Create the room
                         muc.createOrJoin(nickname);
-                        
+
+                        if ((TextUtils.isEmpty(muc.getSubject())))
+                            muc.changeSubject(subject);
                     }
                     catch (XMPPException iae)
                     {
@@ -595,14 +598,15 @@ public class XmppConnection extends ImConnection {
                         submitForm.setAnswer("muc#roomconfig_persistentroom", true);
 
                         muc.sendConfigurationForm(submitForm);
+
                     }
                     catch (XMPPException xe)
                     {
                         debug(TAG,"(ignoring) got an error configuring MUC room: " + xe.getLocalizedMessage());
                     }
 
-                    ChatGroup chatGroup = new ChatGroup(address,room,this);
-                    
+                    ChatGroup chatGroup = new ChatGroup(address,subject,this);
+
                     mGroups.put(address.getAddress(), chatGroup);
                     mMUCs.put(chatRoomJid, muc);
 
@@ -694,7 +698,12 @@ public class XmppConnection extends ImConnection {
                 // Create the room
                 muc.join(nickname);
 
-                ChatGroup chatGroup = new ChatGroup(address,room,this);
+                String subject = muc.getSubject();
+
+                if (TextUtils.isEmpty(subject))
+                    subject = room;
+
+                ChatGroup chatGroup = new ChatGroup(address,subject,this);
                 mGroups.put(chatRoomJid, chatGroup);
                 mMUCs.put(chatRoomJid, muc);
 
@@ -728,8 +737,6 @@ public class XmppConnection extends ImConnection {
                     }
                 });
 
-                //ChatSession session = findOrCreateSession(chatRoomJid,true);
-
             } catch (Exception e) {
                 debug(TAG,"error joining MUC",e);
             }
@@ -760,7 +767,6 @@ public class XmppConnection extends ImConnection {
 
         @Override
         public void inviteUserAsync(ChatGroup group, Contact invitee) {
-
             String chatRoomJid = group.getAddress().getAddress();
 
             if (mMUCs.containsKey(chatRoomJid))
@@ -1112,7 +1118,7 @@ public class XmppConnection extends ImConnection {
                 public void invitationReceived(XMPPConnection conn, MultiUserChat muc, String inviter, String reason, String password, org.jivesoftware.smack.packet.Message message) {
 
                     //getChatGroupManager().acceptInvitationAsync(muc.getRoom());
-                  //  mChatGroupManager.joinChatGroupAsync(new XmppAddress(muc.getRoom()));
+                    mChatGroupManager.joinChatGroupAsync(new XmppAddress(muc.getRoom()));
                     findOrCreateSession(muc.getRoom(),true);
                 }
 
@@ -1752,7 +1758,7 @@ public class XmppConnection extends ImConnection {
 
             if (participant == null) {
                 try {
-                    mChatGroupManager.createChatGroupAsync(address, mUser.getName());
+                    mChatGroupManager.createChatGroupAsync(address, xmppAddress.getUser(), mUser.getName());
                     participant = mChatGroupManager.getChatGroup(xmppAddress);
                 } catch (Exception e) {
                     Log.w(TAG, "unable to join group chat: " + e.toString());

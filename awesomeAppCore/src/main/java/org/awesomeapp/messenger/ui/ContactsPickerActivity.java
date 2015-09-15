@@ -62,6 +62,8 @@ public class ContactsPickerActivity extends ActionBarActivity {
     public final static String EXTRA_EXCLUDED_CONTACTS = "excludes";
 
     public final static String EXTRA_RESULT_USERNAME = "result";
+    public final static String EXTRA_RESULT_USERNAMES = "results";
+
     public final static String EXTRA_RESULT_PROVIDER = "provider";
     public final static String EXTRA_RESULT_ACCOUNT = "account";
     public final static String EXTRA_RESULT_MESSAGE = "message";
@@ -240,7 +242,7 @@ public class ContactsPickerActivity extends ActionBarActivity {
         }
 
         Intent data = new Intent();
-        data.putStringArrayListExtra(EXTRA_RESULT_USERNAME, users);
+        data.putStringArrayListExtra(EXTRA_RESULT_USERNAMES, users);
         data.putIntegerArrayListExtra(EXTRA_RESULT_PROVIDER, providers);
         data.putIntegerArrayListExtra(EXTRA_RESULT_PROVIDER, accounts);
         setResult(RESULT_OK, data);

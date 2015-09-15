@@ -321,7 +321,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 else {
 
-                    ArrayList<String> users = data.getStringArrayListExtra(ContactsPickerActivity.EXTRA_RESULT_USERNAME);
+                    ArrayList<String> users = data.getStringArrayListExtra(ContactsPickerActivity.EXTRA_RESULT_USERNAMES);
                     if (users != null)
                     {
                         //int[] providers = data.getIntArrayExtra(ContactsPickerActivity.EXTRA_RESULT_PROVIDER);
@@ -375,7 +375,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void startGroupChat (ArrayList<String> invitees)
     {
-        String chatRoom = "groupchat " + UUID.randomUUID().toString().substring(0,8);
+        String chatRoom = "groupchat" + UUID.randomUUID().toString().substring(0,8);
         String chatServer = "conference.rows.io";
         String nickname = mApp.getDefaultUsername().split("@")[0];
         try
@@ -564,7 +564,7 @@ public class MainActivity extends AppCompatActivity {
 
                     // Create session.  Stash requested contact ID for when we get called back.
                     if (userType == Imps.ContactsColumns.TYPE_GROUP)
-                        session = manager.createMultiUserChatSession(address, null, isNewChat);
+                        session = manager.createMultiUserChatSession(address, null, null, isNewChat);
                     else
                         session = manager.createChatSession(address, isNewChat);
 
@@ -679,7 +679,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             protected String doInBackground(String... params) {
 
-                String roomAddress = (params[0] + '@' + params[1]).toLowerCase(Locale.US).replace(' ', '_');
+                String subject = params[0];
+                String chatRoom = "groupchat" + UUID.randomUUID().toString().substring(0,8);
+                String server = params[1];
+                String roomAddress = (chatRoom + '@' + server).toLowerCase(Locale.US);
                 String nickname = params[2];
 
                 try {
@@ -688,7 +691,7 @@ public class MainActivity extends AppCompatActivity {
                     IChatSession session = manager.getChatSession(roomAddress);
 
                     if (session == null) {
-                        session = manager.createMultiUserChatSession(roomAddress, nickname, true);
+                        session = manager.createMultiUserChatSession(roomAddress, subject, nickname, true);
 
                         if (session != null)
                         {
@@ -704,9 +707,20 @@ public class MainActivity extends AppCompatActivity {
                         publishProgress(mRequestedChatId);
                     }
 
-                    if (invitees != null)
+                    if (invitees != null && invitees.size() > 0) {
+
+                        //wait a second for the server to sort itself out
+                        try {
+                            Thread.sleep(500);
+                        } catch (Exception e) {
+                        }
+
+                        //make sure we have a clean active session
+                        session = manager.getChatSession(roomAddress);
+
                         for (String invitee : invitees)
                             session.inviteContact(invitee);
+                    }
 
                     return null;
 

@@ -871,7 +871,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             mGroupName = "G" + System.currentTimeMillis();
             try
             {
-                mGroupMgr.createChatGroupAsync(mGroupName, nickname);
+                mGroupMgr.createChatGroupAsync(mGroupName, nickname, nickname);
             }
             catch (Exception e){
                 e.printStackTrace();

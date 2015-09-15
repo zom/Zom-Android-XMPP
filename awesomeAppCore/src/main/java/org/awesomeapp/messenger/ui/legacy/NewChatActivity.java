@@ -2005,7 +2005,7 @@ public class NewChatActivity extends FragmentActivity implements View.OnCreateCo
                     
                     // Create session.  Stash requested contact ID for when we get called back.
                     if (userType == Imps.ContactsColumns.TYPE_GROUP)
-                        session = manager.createMultiUserChatSession(address, null, isNewChat);
+                        session = manager.createMultiUserChatSession(address, null,null, isNewChat);
                     else
                         session = manager.createChatSession(address, isNewChat);
                     
@@ -2317,7 +2317,7 @@ public class NewChatActivity extends FragmentActivity implements View.OnCreateCo
                     IChatSessionManager manager = mLastConnGroup.getChatSessionManager();
                     IChatSession session = manager.getChatSession(roomAddress);
                     if (session == null) {
-                        session = manager.createMultiUserChatSession(roomAddress, nickname, true);
+                        session = manager.createMultiUserChatSession(roomAddress, params[0], nickname, true);
                         if (session != null)
                         {
                             mRequestedChatId = session.getId();

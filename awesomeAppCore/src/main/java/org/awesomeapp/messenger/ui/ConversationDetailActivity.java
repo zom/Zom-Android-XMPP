@@ -328,7 +328,7 @@ public class ConversationDetailActivity extends AppCompatActivity {
                 if (username != null)
                     invitees.add(username);
                 else
-                    invitees = resultIntent.getStringArrayListExtra(ContactsPickerActivity.EXTRA_RESULT_USERNAME);
+                    invitees = resultIntent.getStringArrayListExtra(ContactsPickerActivity.EXTRA_RESULT_USERNAMES);
 
                 mConvoView.inviteContacts(invitees);
 
