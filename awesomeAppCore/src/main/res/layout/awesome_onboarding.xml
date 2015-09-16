@@ -38,6 +38,8 @@
                         android:layout_height="wrap_content"
                         android:background="@android:color/transparent"
                         android:contentDescription="@string/menu_locale"
+                        android:layout_marginRight="16dp"
+                        android:layout_marginTop="16dp"
                         android:padding="0dp"
                         android:layout_gravity="right|top"
                         android:src="@drawable/ic_language_white_36dp" />
@@ -46,7 +48,7 @@
 
                     <ImageView
                         android:layout_width="256dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="256dp"
                         android:src="@drawable/whitelogo"
                         />
 
@@ -57,10 +59,10 @@
                         android:text="@string/create_an_account"
                         android:layout_margin="0dp"
                         android:layout_gravity="bottom"
-                        android:background="?colorPrimary"
+                        android:background="?android:attr/selectableItemBackground"
                         android:textColor="@android:color/white"
                         android:textStyle="bold"
-                        android:gravity="center_horizontal"
+                        android:gravity="center"
                         android:textAppearance="?android:attr/textAppearanceLarge"
 
                         />
@@ -76,13 +78,13 @@
                         >
                         <Button
                             android:id="@+id/btnShowLogin"
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:textAppearance="?android:attr/textAppearanceSmall"
                             android:text="@string/sign_in_message"
                             android:layout_margin="0dp"
                             android:layout_gravity="bottom"
-                            android:background="?colorPrimary"
+                            android:background="?android:attr/selectableItemBackground"
                             android:textColor="@android:color/white"
                             />
 

@@ -259,32 +259,47 @@ public class OnboardingActivity extends ThemeableActivity {
         switch (item.getItemId()) {
         case android.R.id.home:
                         
-            if (mViewFlipper.getCurrentView().getId()==R.id.flipView2)
-            { 
-                setAnimRight ();
-                showSplashScreen();
-            }
-            else if (mViewFlipper.getCurrentView().getId()==R.id.flipView3)
-            { 
-                setAnimRight ();
-                mViewFlipper.showPrevious();
-                getSupportActionBar().setTitle("");                
-            }
-            else if (mViewFlipper.getCurrentView().getId()==R.id.flip_view_login)
-            {
-                setAnimRight();
-                showSplashScreen();
-            }
-            else if (mViewFlipper.getCurrentView().getId()==R.id.flip_view_advanced)
-            {
-                setAnimRight ();
-                showLoginScreen();
-            }
-            
-            
+            showPrevious();
+
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        // Back button should bring us to the previous screen, unless we're on the first screen
+        if (mViewFlipper.getCurrentView().getId()==R.id.flipView1)
+        {
+            super.onBackPressed();
+        } else {
+            showPrevious();
+        }
+    }
+
+    private void showPrevious()
+    {
+        if (mViewFlipper.getCurrentView().getId()==R.id.flipView2)
+        {
+            setAnimRight();
+            showSplashScreen();
+        }
+        else if (mViewFlipper.getCurrentView().getId()==R.id.flipView3)
+        {
+            setAnimRight();
+            mViewFlipper.showPrevious();
+            getSupportActionBar().setTitle("");
+        }
+        else if (mViewFlipper.getCurrentView().getId()==R.id.flip_view_login)
+        {
+            setAnimRight();
+            showSplashScreen();
+        }
+        else if (mViewFlipper.getCurrentView().getId()==R.id.flip_view_advanced)
+        {
+            setAnimRight();
+            showLoginScreen();
+        }
     }
 
     private void showSplashScreen ()
