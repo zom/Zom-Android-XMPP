@@ -1,0 +1,3 @@
+[submodule "external/ChatSecure-Push"]
+	path = external/ChatSecure-Push
+	url = https://github.com/OnlyInAmerica/PushSecureDemo-Android.git

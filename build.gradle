@@ -11,7 +11,8 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:1.2.3'
         classpath files('libs/gradle-witness.jar')
-
+        // Currently required by ChatSecure-Push:sdk
+        classpath 'me.tatarka:gradle-retrolambda:3.1.0'
     }
 }
 
