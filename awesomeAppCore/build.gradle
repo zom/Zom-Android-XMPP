@@ -65,7 +65,20 @@ android {
 
     dependencyVerification {
         verify = [
-
+                'com.android.support:design:41ff5f700d1bf8c190e1d3ac33582f92ad6e1f3b1080c8b8e2ac4f7b703be76a',
+                'commons-codec:commons-codec:ad19d2601c3abf0b946b5c3a4113e226a8c1e3305e395b90013b78dd94a723ce',
+                'commons-io:commons-io:cc6a41dc3eaacc9e440a6bd0d2890b20d36b4ee408fe2d67122f328bb6e01581',
+                'com.google.guava:guava:1b5a500b3017a65d6b99fb92dbc9047684d7ffb937c1e53a86c22b6977f7da4e',
+                'info.guardianproject.cacheword:cachewordlib:933d8119f14af5024b90c17c3c64c13efccf48c8f37080c7c09a9fb0318cd1fe',
+                'org.thoughtcrime.ssl.pinning:AndroidPinning:afa1d74e699257fa75cb109ff29bac50726ef269c6e306bdeffe8223cee06ef4',
+                'Gibberbot:memorizingActivity:763891b22ee577e6b95695e1e49204fcdb5dd5e0a57b8cc3b2059a6b13c0cc8c',
+                'Gibberbot:tibetanTextLibrary:8cbe3ba4954862dbc6908ad10ddac18fbf32e83458d618761accd05088252131',
+                'Gibberbot:cachewordlib:d9a24eb80f57dc847184ac87ee9ff1d5b8419553fba0ad3e6cd03140c0ae231c',
+                'Gibberbot:emojilib:3095f99ea2659c51926391e9c562cf6659fde1d753427eb638deadef101429ec',
+                'com.google.code.findbugs:jsr305:905721a0eea90a81534abb7ee6ef4ea2e5e645fa1def0a5cd88402df1b46c9ed',
+                'com.google.code.gson:gson:c0328cd07ca9e363a5acd00c1cf4afe8cf554bd6d373834981ba05cebec687fb',
+                'com.android.support:appcompat-v7:2d5867698410b41f75140c91d6c1e58da74ae0f97baf6e0bdd1f7cc1017ceb2c',
+                'com.android.support:support-v4:7bb6e40a18774aa2595e4d8f9fe0ae14e61670f71a1279272fb0b79b8be71180',
         ]
     }
 
@@ -91,6 +104,7 @@ dependencies {
     compile group: 'com.google.guava', name: 'guava', version: '18.0'
     compile 'commons-codec:commons-codec:1.9'
     compile 'commons-io:commons-io:2.4'
+    compile 'info.guardianproject.cacheword:cachewordlib:0.1'
     compile 'org.thoughtcrime.ssl.pinning:AndroidPinning:1.0.0'
     compile "org.igniterealtime.smack:smack-android-extensions:4.1.4"
     compile "org.igniterealtime.smack:smack-tcp:4.1.4"
