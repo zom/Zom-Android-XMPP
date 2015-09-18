@@ -70,6 +70,7 @@ android {
                 'commons-io:commons-io:cc6a41dc3eaacc9e440a6bd0d2890b20d36b4ee408fe2d67122f328bb6e01581',
                 'com.google.guava:guava:1b5a500b3017a65d6b99fb92dbc9047684d7ffb937c1e53a86c22b6977f7da4e',
                 'info.guardianproject.cacheword:cachewordlib:933d8119f14af5024b90c17c3c64c13efccf48c8f37080c7c09a9fb0318cd1fe',
+                'info.guardianproject.iocipher:IOCipher:898b3b8d113b2e83b76998101655944f6c5a14475deeb81159fdf6375d70258d',
                 'org.thoughtcrime.ssl.pinning:AndroidPinning:afa1d74e699257fa75cb109ff29bac50726ef269c6e306bdeffe8223cee06ef4',
                 'Gibberbot:memorizingActivity:763891b22ee577e6b95695e1e49204fcdb5dd5e0a57b8cc3b2059a6b13c0cc8c',
                 'Gibberbot:tibetanTextLibrary:8cbe3ba4954862dbc6908ad10ddac18fbf32e83458d618761accd05088252131',
@@ -105,6 +106,7 @@ dependencies {
     compile 'commons-codec:commons-codec:1.9'
     compile 'commons-io:commons-io:2.4'
     compile 'info.guardianproject.cacheword:cachewordlib:0.1'
+    compile 'info.guardianproject.iocipher:IOCipher:0.3'
     compile 'org.thoughtcrime.ssl.pinning:AndroidPinning:1.0.0'
     compile "org.igniterealtime.smack:smack-android-extensions:4.1.4"
     compile "org.igniterealtime.smack:smack-tcp:4.1.4"
