@@ -61,7 +61,7 @@ android {
     }
 
     lintOptions {
-        disable 'MissingTranslation'
+        disable 'MissingTranslation', 'LocaleFolder'
     }
 
     // where to find the native binaries, e.g. for sqlcipher
