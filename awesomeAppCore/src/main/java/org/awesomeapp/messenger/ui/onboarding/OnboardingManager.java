@@ -253,7 +253,7 @@ public class OnboardingManager {
 
                     }
 
-                    username = username + i; //add a number to the end of the username
+                    username = username + (i+1); //add a number to the end of the username
                     ImApp.insertOrUpdateAccount(cr, providerId, accountId, username, password);
                     settings.requery();
 
