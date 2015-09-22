@@ -2179,7 +2179,7 @@ public class NewChatActivity extends FragmentActivity implements View.OnCreateCo
         LayoutInflater factory = LayoutInflater.from(this);
 
         final View dialogGroup = factory.inflate(R.layout.alert_dialog_group_chat, null);
-        TextView tvServer = (TextView) dialogGroup.findViewById(R.id.chat_server);
+        //TextView tvServer = (TextView) dialogGroup.findViewById(R.id.chat_server);
        // tvServer.setText(ImApp.DEFAULT_GROUPCHAT_SERVER);// need to make this a list
 
         final Spinner listAccounts = (Spinner) dialogGroup.findViewById(R.id.choose_list);
@@ -2201,11 +2201,11 @@ public class NewChatActivity extends FragmentActivity implements View.OnCreateCo
                     TextView tv = (TextView)dialogGroup.findViewById(R.id.chat_room);
                     chatRoom = tv.getText().toString();
 
-                    tv = (TextView) dialogGroup.findViewById(R.id.chat_server);
-                    chatServer = tv.getText().toString();
+                   // tv = (TextView) dialogGroup.findViewById(R.id.chat_server);
+                    //chatServer = tv.getText().toString();
 
-                    tv = (TextView) dialogGroup.findViewById(R.id.nickname);
-                    nickname = tv.getText().toString();
+                    //tv = (TextView) dialogGroup.findViewById(R.id.nickname);
+                    //nickname = tv.getText().toString();
 
                     try
                     {
