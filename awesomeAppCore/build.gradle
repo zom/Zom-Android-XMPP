@@ -80,6 +80,7 @@ android {
                 'com.google.code.gson:gson:c0328cd07ca9e363a5acd00c1cf4afe8cf554bd6d373834981ba05cebec687fb',
                 'com.android.support:appcompat-v7:2d5867698410b41f75140c91d6c1e58da74ae0f97baf6e0bdd1f7cc1017ceb2c',
                 'com.android.support:support-v4:7bb6e40a18774aa2595e4d8f9fe0ae14e61670f71a1279272fb0b79b8be71180',
+                'org.jsoup:jsoup:ea201bf133aa542291ce9c5a8c52386f8f856a3bec2fd84e217e1ca9f6f5fe4e',
         ]
     }
 
@@ -118,7 +119,7 @@ dependencies {
     compile project(':otr4jandroid')
     compile project(':MemorizingTrustManager')
     compile files('libs/gp-bcc-lib.jar')
-    compile files('libs/jsoup-1.5.2.jar')
+    compile 'org.jsoup:jsoup:1.5.2'
     compile files('libs/sqlcipher.jar')
 
 
