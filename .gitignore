@@ -51,3 +51,6 @@ build/
 */build/
 .idea/*
 .idea/workspace.xml
+
+# Google Cloud Messaging
+google-services.json
