@@ -66,7 +66,7 @@ import android.view.ViewGroup;
  *      complete}
  */
 public abstract class DynamicPagerAdapter extends PagerAdapter {
-    private static final String TAG = "FragmentStatePagerAdapter";
+    private static final String TAG = "DynamicPagerAdapter";
     private static final boolean DEBUG = false;
 
     private final FragmentManager mFragmentManager;
