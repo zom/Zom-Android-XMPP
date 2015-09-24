@@ -402,7 +402,7 @@ Trykk for å invitere.</string>
   <string name="domain_not_supported">Tjeneren støtter ikke videresending til domenet.</string>
   <string name="unknown_user">Brukernavnet du skrev inn ble ikke gjenkjent.</string>
   <string name="recipient_blocked_the_user">Beklager, du er blokkert av brukeren.</string>
-  <string name="session_expired">Sesjonen har gått ut, logg på på nytt.</string>
+  <string name="session_expired">Sesjonen har gått ut, logg på nytt.</string>
   <string name="forced_logout">du er pålogget med en annen klient.</string>
   <string name="already_logged_in">du allerede er pålogget med en annen klient.</string>
   <string name="msisdn_error">Beklager, kan ikke lese telefonnummeret fra SIM-kortet. Kontakt operatøren for hjelp.</string>

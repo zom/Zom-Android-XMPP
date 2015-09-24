@@ -500,10 +500,10 @@
 		<string name="already_logged_in">you have signed in from another client.</string>
 		<string name="msisdn_error">Sorry, the phone number cannot be read from your SIM card. Please contact your operator for help.</string>
 		<string name="not_signed_in">You are currently not signed in.</string>
-		<string name="account_setup_error_validating">An error occured while validating your username or password - please check them and try again.</string>
-		<string name="account_setup_error_keypair">An error occured while generating a keypair.</string>
-		<string name="account_setup_error_server">An error occured while connecting to the chat server - please check your configuration and try again.</string>
-		<string name="account_setup_error_connectivity">An error occured while connecting - please doublecheck your network connectivity and try again.</string>
+		<string name="account_setup_error_validating">An error occurred while validating your username or password - please check them and try again.</string>
+		<string name="account_setup_error_keypair">An error occurred while generating a keypair.</string>
+		<string name="account_setup_error_server">An error occurred while connecting to the chat server - please check your configuration and try again.</string>
+		<string name="account_setup_error_connectivity">An error occurred while connecting - please doublecheck your network connectivity and try again.</string>
 		<string name="error_suspended_connection">Network is offline</string>
 		<string name="error_reestablish_connection">ChatSecure is attempting to restablish a connection</string>
 		<string name="account_wizard_no_domain_warning">You didn\'t enter an @hostname.com part for your account ID. Try again!</string>
