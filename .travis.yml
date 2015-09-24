@@ -9,6 +9,13 @@ env:
     # wait up to 10 minutes for adb to connect to emulator
     - ADB_INSTALL_TIMEOUT=10
 
+jdk:
+  # the release build infrastructure uses OpenJDK from Debian
+  - openjdk7
+  # many developers use the Oracle JDK
+  - oraclejdk8
+  - oraclejdk7
+
 android:
   components:
     - platform-tools
