@@ -6,10 +6,6 @@
     android:versionCode="1500017"
     android:versionName="15.0.0-alpha-17" >
 
-    <uses-sdk
-        android:minSdkVersion="11"
-        android:targetSdkVersion="21" />
-
     <supports-screens
         android:anyDensity="true"
         android:largeScreens="true"
