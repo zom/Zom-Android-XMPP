@@ -427,7 +427,7 @@ Davet etmek için buraya basın.</string>
   <string name="error_chat_file_transfer_title">Aktarım Hatası</string>
   <string name="account_settings_title">Hesap Ayarları</string>
 
-  <string name="warning_alpha">DİKKAT: ChatSecure\'ün bu eski sürümü güvenlik açıkları barındırıyor olabilir.</string>
+
   <!--added 2011/09/01-->
   <string name="menu_view_groups">Gruplar</string>
   <string name="_open_conversations">Görüşme(ler)i aç</string>
@@ -531,7 +531,7 @@ Davet etmek için buraya basın.</string>
   <string name="always">Her zaman</string>
   <string name="start_orbot_">Orbot\'u  Başlat?</string>
   <string name="muc_dialog_nickname">odada kullanmak için takma ad</string>
-  <string name="muc_dialog_room">oluşturmak veya katılma için oda adı</string>
+
   <string name="muc_dialog_server">grup sohbet sunucusu (konferans.sitesi.com)</string>
   <string name="you_received_an_unreadable_encrypted_message">Okunamayan bir şifreli mesaj aldınız</string>
 </resources>

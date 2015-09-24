@@ -400,7 +400,7 @@ Rør skærm for at invitere.</string>
   <string name="contact_not_in_list_warning"><xliff:g id="USER">%1$s</xliff:g> er ikke på din liste over kontakter.</string>
   <string name="account_settings_title">Account Settings</string>
 
-  <string name="warning_alpha">ADVARSEL: Dette er en tidlig udgave af ChatSecure som kan indeholde sikkerhedshuller eller andre fejl.</string>
+
   <!--added 2011/09/01-->
   <string name="menu_view_groups">Grupper</string>
   <string name="_open_conversations">åbne samtaler</string>

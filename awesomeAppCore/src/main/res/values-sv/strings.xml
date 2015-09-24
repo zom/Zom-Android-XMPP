@@ -454,7 +454,7 @@ Nätverkstrafik (även i bakgrunden) krävs för att kunna logga in med appen.</
   <string name="error_no_app_to_handle_url">Ingen installerad applikation kan hantera den länken!</string>
   <string name="account_settings_title">Kontoinställningar</string>
 
-  <string name="warning_alpha">VARNING: Detta är en tidig release av ChatSecure som fortfarande kan innehålla säkerhetshål eller buggar.</string>
+
   <!--added 2011/09/01-->
   <string name="menu_view_groups">Grupper</string>
   <string name="_open_conversations">öppna konversation(er)</string>
@@ -567,7 +567,7 @@ Nätverkstrafik (även i bakgrunden) krävs för att kunna logga in med appen.</
   <string name="start_orbot_">Starta Orbot?</string>
   <string name="orbot_doesn_t_appear_to_be_running_would_you_like_to_start_it_up_and_connect_to_tor_">Orbot verkar inte köras. Vill du starta Orbot och ansluta till Tor?</string>
   <string name="muc_dialog_nickname">nick att använda i chattrum</string>
-  <string name="muc_dialog_room">namn på chattrum att skapa eller ansluta till\"</string>
+
   <string name="muc_dialog_server">gruppchattserver conference.foo.com)</string>
   <string name="your_keystore_is_corrupted_please_re_install_chatsecure_or_clear_data_for_the_app">Din nyckellagring är korrupt. Installera om ChatSecure eller radera data för appen</string>
   <string name="you_received_an_unreadable_encrypted_message">Du tog emot ett oläsbart krypterat meddelande</string>

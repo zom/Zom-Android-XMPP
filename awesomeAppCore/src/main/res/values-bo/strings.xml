@@ -459,7 +459,7 @@ OTR-protocol ཡིས་དྲ་ཐོག་གླེང་མོལ་ Adium 
   <string name="error_no_app_to_handle_url">འབྲེལ་ཐག་དེར་འགྲོ་ཐུབ་ཆེད་མཉེན་ཆས་མ་ལག་གཅིག་ཀྱང་མི་འདུག</string>
   <string name="account_settings_title">ཐོ་བྱང་སྒྲིག་བཟོ།</string>
 
-  <string name="warning_alpha">ཉེན་བརྡ། འདི་ནི་ཉེན་སྲུང་གླེང་མོལ་སྔོན་མའི་གྲས་ཤིག་ཡིན་པས། ད་དུང་ཉེན་སྲུང་གི་དཀའ་ངལ་དང་ནོར་འཁྲུལ་སོགས་ཡོད་སྲིད།</string>
+
   <!--added 2011/09/01-->
   <string name="menu_view_groups"> ཚན་པ་ཁག</string>
   <string name="_open_conversations">སྒོ་ཕྱེ་ཡོད་པའི་གླེང་མོལ་ཁག</string>
@@ -573,7 +573,7 @@ OTR-protocol ཡིས་དྲ་ཐོག་གླེང་མོལ་ Adium 
   <string name="start_orbot_">Orbot འགོ་ཚུགས་ཀྱི་ཡིན་ནམ།</string>
   <string name="orbot_doesn_t_appear_to_be_running_would_you_like_to_start_it_up_and_connect_to_tor_">Orbot ལས་ཀ་བྱེད་ཀྱི་མེད་པ་འདྲ་པོ་འདུག ཁྱེད་ཀྱིས་དེ་ཡང་བསྐྱར་འགོ་བཙུགས་ནས་ Tor ལ་མཐུད་འདོད་ཡོད་དམ།</string>
   <string name="muc_dialog_nickname">གླེང་མོལ་གྱི་ཆེད་བེད་སྤྱོད་གཏོང་རྒྱུའི་མིང་བརྫུན་མ།</string>
-  <string name="muc_dialog_room">གླེང་མོལ་དུ་འཛུལ་རྒྱུའི་དྲ་ཁང་གི་མིང་དང་། དེ་མིན་མིང་གླེང་མོལ་ཁང་གསར་པ་ཞིག་བཟོས།</string>
+
   <string name="muc_dialog_server">མཉམ་འདུས་གླེང་མོལ་གྱི་ཞབས་ཞུ། (conference.foo.com)</string>
   <string name="your_keystore_is_corrupted_please_re_install_chatsecure_or_clear_data_for_the_app">ཁྱོད་ཀྱི་ཉར་ཁང་ལྟེ་བ་དེ་འཕྲོ་བརླག་ཕྱིན་འདུག དེར་རྟེན་ཉེན་སྲུང་གླེང་མོལ་ཡང་བསྐྱར་ནང་འཇུག་བྱོས། དེ་མིན་མཉེན་ཆས་མ་ལག་ཆེད་དུ་ལས་གཞི་རིའུ་མིག་ \'clear data\' གཙང་མ་བཟོས།
 </string>

@@ -446,7 +446,7 @@
   <string name="error_no_app_to_handle_url">Aucune appli installée pour gérer ce lien!</string>
   <string name="account_settings_title">Paramètres des comptes</string>
 
-  <string name="warning_alpha">AVERTISSEMENT : ceci est une pré-version de ChatSecure qui pourrait contenir des failles de sécurité ou des bogues.</string>
+
   <!--added 2011/09/01-->
   <string name="menu_view_groups">Groupes</string>
   <string name="_open_conversations">conversation(s) en cours</string>
@@ -560,7 +560,7 @@
   <string name="start_orbot_">Démarrer Orbot ?</string>
   <string name="orbot_doesn_t_appear_to_be_running_would_you_like_to_start_it_up_and_connect_to_tor_">Orbot ne semble pas tourner. Voulez-vous le démarrer et vous connecter à Tor ?</string>
   <string name="muc_dialog_nickname">pseudonyme à utiliser dans le clavardoir</string>
-  <string name="muc_dialog_room">nom du clavardoir à créer ou à rejoindre</string>
+
   <string name="muc_dialog_server">serveur de clavardage de groupe (conference.foo.com)</string>
   <string name="your_keystore_is_corrupted_please_re_install_chatsecure_or_clear_data_for_the_app">Votre magasin de clefs est corrompu. Veuillez réinstaller ChatSecure ou « effacer les données » de l\'appli.</string>
   <string name="you_received_an_unreadable_encrypted_message">Vous avez reçu un message chiffré illisible</string>

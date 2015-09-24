@@ -460,7 +460,7 @@ OTR протоколът е съвместим с други приложени�
   <string name="error_no_app_to_handle_url">Не е намерено инсталирано приложение, което да може да изпозлва тази препратки!</string>
   <string name="account_settings_title">Account Settings</string>
 
-  <string name="warning_alpha">ВНИМАНИЕ: Тази стара версия на ChatSecure може да има бъгове или да не сигурна.</string>
+
   <!--added 2011/09/01-->
   <string name="menu_view_groups">Групи</string>
   <string name="_open_conversations">текущи дискусии</string>
@@ -574,7 +574,7 @@ OTR протоколът е съвместим с други приложени�
   <string name="start_orbot_">Стартиране на Orbot?</string>
   <string name="orbot_doesn_t_appear_to_be_running_would_you_like_to_start_it_up_and_connect_to_tor_">Orbot не изглежда да е активен. Желаете ли да го стартирате и свържете към Tor?</string>
   <string name="muc_dialog_nickname">прякор, който да бъде използван в тази стая</string>
-  <string name="muc_dialog_room">име на стаята за създаване или присъединяване\"</string>
+
   <string name="muc_dialog_server">groupchat server (conference.foo.com)</string>
   <string name="your_keystore_is_corrupted_please_re_install_chatsecure_or_clear_data_for_the_app">Складът за ключове е развален. Моля, преинсталирайте ChatSecure или изберете \'изтриване на информацията\' за приложението</string>
   <string name="you_received_an_unreadable_encrypted_message">Получихте нечетливо криптирано съобщение</string>
