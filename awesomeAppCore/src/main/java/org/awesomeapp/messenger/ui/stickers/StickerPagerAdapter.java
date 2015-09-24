@@ -1,21 +1,17 @@
 package org.awesomeapp.messenger.ui.stickers;
 
-import java.io.IOException;
-import java.util.List;
-
-import android.app.Activity;
 import android.content.Context;
 import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.EditText;
 import android.widget.GridView;
+
+import java.util.List;
 
 import info.guardianproject.otr.app.im.R;
 
@@ -46,7 +42,7 @@ public class StickerPagerAdapter extends PagerAdapter {
 		
 		   gias[position] = new StickerGridAdapter(mContext,mEmojiGroups.get(position).emojis);
 			
-		   LayoutInflater inflater = (LayoutInflater)   mContext.getSystemService(mContext.LAYOUT_INFLATER_SERVICE);
+		   LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
 		   GridView imagegrid = (GridView) inflater.inflate(R.layout.stickergrid, null);
 
