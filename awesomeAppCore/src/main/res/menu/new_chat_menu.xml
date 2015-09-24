@@ -19,8 +19,10 @@
 -->
 
 
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-   xmlns:app="http://schemas.android.com/apk/res-auto">
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+   xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:ignore="DuplicateIds">
      
      <group android:enabled="true" android:id="@+id/menu_group_otr_off" android:visible="false">
         
