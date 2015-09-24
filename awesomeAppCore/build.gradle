@@ -60,6 +60,13 @@ android {
 
     }
 
+    lintOptions {
+        disable 'MissingTranslation'
+    }
+
+    // where to find the native binaries, e.g. for sqlcipher
+    sourceSets.main.jniLibs.srcDirs 'libs'
+
     dependencyVerification {
         verify = [
                 'commons-codec:commons-codec:ad19d2601c3abf0b946b5c3a4113e226a8c1e3305e395b90013b78dd94a723ce',
@@ -92,13 +99,6 @@ android {
                 'org.thoughtcrime.ssl.pinning:AndroidPinning:afa1d74e699257fa75cb109ff29bac50726ef269c6e306bdeffe8223cee06ef4',
                 'xpp3:xpp3:0341395a481bb887803957145a6a37879853dd625e9244c2ea2509d9bb7531b9',
         ]
-    }
-
-    lintOptions {
-        checkReleaseBuilds false
-        // Or, if you prefer, you can continue to check for errors in release builds,
-        // but continue the build even when errors are found:
-        abortOnError false
     }
 }
 
