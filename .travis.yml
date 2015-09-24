@@ -1,5 +1,14 @@
 sudo: false
+
 language: android
+
+env:
+  global:
+    # switch glibc to a memory conserving mode
+    - MALLOC_ARENA_MAX=2
+    # wait up to 10 minutes for adb to connect to emulator
+    - ADB_INSTALL_TIMEOUT=10
+
 android:
   components:
     - platform-tools
@@ -7,9 +16,13 @@ android:
     - build-tools-22.0.1
     - android-22
     - sys-img-armeabi-v7a-android-22
-# Emulator Management: Create, Start and Wait
-before_script:
+
+script:
+  - ./gradlew assemble lint
+  # start the emulator after the build to conserve memory
   - echo no | android create avd --force -n test -t android-22 --abi armeabi-v7a
   - emulator -avd test -no-skin -no-audio -no-window &
   - android-wait-for-emulator
   - adb shell input keyevent 82 &
+  # now run the tests
+  - ./gradlew connectedCheck
