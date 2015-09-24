@@ -1980,7 +1980,7 @@ public class ConversationView {
         return mPresenceStatus;
     }
 
-    /**
+    /*
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         userActionDetected();

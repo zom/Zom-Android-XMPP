@@ -223,10 +223,9 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
 
     /**
      * Start a new OTR encryption session for the chat session represented by a
-     * local user address and a remote user address.
+     * {@link SessionID}.
      *
-     * @param localUserId i.e. the account of the user of this phone
-     * @param remoteUserId i.e. the account that this user is talking to
+     * @param sessionId the {@link SessionID} of the OTR session
      */
     public SessionID startSession(SessionID sessionId) {
 

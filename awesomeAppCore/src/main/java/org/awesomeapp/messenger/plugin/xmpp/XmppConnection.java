@@ -2810,7 +2810,7 @@ public class XmppConnection extends ImConnection {
         }
     }
 
-    /**
+    /*
     @Override
     public void handle(Callback[] arg0) throws IOException {
 
