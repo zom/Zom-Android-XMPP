@@ -84,16 +84,16 @@
                 <data android:scheme="file" />
                 <data android:scheme="content" />
                 <!-- this crack smoking pattern is required to match file extensions in folders -->
-                <data android:pathPattern=".*\\.ofcaes" />
-                <data android:pathPattern=".*\\..*\\.ofcaes" />
-                <data android:pathPattern=".*\\..*\\..*\\.ofcaes" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\.ofcaes" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.ofcaes" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.ofcaes" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.ofcaes" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.ofcaes" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.ofcaes" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.ofcaes" />
+                <data android:pathPattern="/.*\\.ofcaes" />
+                <data android:pathPattern="/.*\\..*\\.ofcaes" />
+                <data android:pathPattern="/.*\\..*\\..*\\.ofcaes" />
+                <data android:pathPattern="/.*\\..*\\..*\\..*\\.ofcaes" />
+                <data android:pathPattern="/.*\\..*\\..*\\..*\\..*\\.ofcaes" />
+                <data android:pathPattern="/.*\\..*\\..*\\..*\\..*\\..*\\.ofcaes" />
+                <data android:pathPattern="/.*\\..*\\..*\\..*\\..*\\..*\\..*\\.ofcaes" />
+                <data android:pathPattern="/.*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.ofcaes" />
+                <data android:pathPattern="/.*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.ofcaes" />
+                <data android:pathPattern="/.*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.ofcaes" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -111,16 +111,16 @@
                 -->
                 <data android:mimeType="*/*" />
                 <!-- this crack smoking pattern is required to match file extensions in folders -->
-                <data android:pathPattern=".*\\.ofcaes" />
-                <data android:pathPattern=".*\\..*\\.ofcaes" />
-                <data android:pathPattern=".*\\..*\\..*\\.ofcaes" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\.ofcaes" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.ofcaes" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.ofcaes" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.ofcaes" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.ofcaes" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.ofcaes" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.ofcaes" />
+                <data android:pathPattern="/.*\\.ofcaes" />
+                <data android:pathPattern="/.*\\..*\\.ofcaes" />
+                <data android:pathPattern="/.*\\..*\\..*\\.ofcaes" />
+                <data android:pathPattern="/.*\\..*\\..*\\..*\\.ofcaes" />
+                <data android:pathPattern="/.*\\..*\\..*\\..*\\..*\\.ofcaes" />
+                <data android:pathPattern="/.*\\..*\\..*\\..*\\..*\\..*\\.ofcaes" />
+                <data android:pathPattern="/.*\\..*\\..*\\..*\\..*\\..*\\..*\\.ofcaes" />
+                <data android:pathPattern="/.*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.ofcaes" />
+                <data android:pathPattern="/.*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.ofcaes" />
+                <data android:pathPattern="/.*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.ofcaes" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.SENDTO" />
