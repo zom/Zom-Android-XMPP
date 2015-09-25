@@ -16,37 +16,6 @@
  */
 package org.awesomeapp.messenger;
 
-import org.awesomeapp.messenger.crypto.OtrDataHandler;
-import org.awesomeapp.messenger.service.IChatSession;
-import org.awesomeapp.messenger.service.IChatSessionManager;
-import org.awesomeapp.messenger.service.IImConnection;
-import info.guardianproject.otr.app.im.R;
-import org.awesomeapp.messenger.ui.AccountViewFragment;
-import org.awesomeapp.messenger.ui.ContactsPickerActivity;
-import org.awesomeapp.messenger.ui.legacy.LockScreenActivity;
-import org.awesomeapp.messenger.ui.legacy.NewChatActivity;
-import org.awesomeapp.messenger.ui.legacy.SignInHelper;
-import org.awesomeapp.messenger.ui.legacy.SimpleAlertHandler;
-import org.awesomeapp.messenger.model.ImConnection;
-
-import org.awesomeapp.messenger.util.SecureMediaStore;
-import org.awesomeapp.messenger.provider.Imps;
-import org.awesomeapp.messenger.tasks.AddContactAsyncTask;
-import org.awesomeapp.messenger.ui.onboarding.OnboardingManager;
-
-import org.awesomeapp.messenger.service.ImServiceConstants;
-import org.awesomeapp.messenger.util.LogCleaner;
-import org.awesomeapp.messenger.util.SystemServices;
-import org.awesomeapp.messenger.util.SystemServices.FileInfo;
-
-import java.io.File;
-import java.io.InputStream;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Set;
-import java.util.UUID;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
@@ -62,6 +31,35 @@ import android.os.RemoteException;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
+
+import org.awesomeapp.messenger.crypto.OtrDataHandler;
+import org.awesomeapp.messenger.model.ImConnection;
+import org.awesomeapp.messenger.provider.Imps;
+import org.awesomeapp.messenger.service.IChatSession;
+import org.awesomeapp.messenger.service.IChatSessionManager;
+import org.awesomeapp.messenger.service.IImConnection;
+import org.awesomeapp.messenger.service.ImServiceConstants;
+import org.awesomeapp.messenger.tasks.AddContactAsyncTask;
+import org.awesomeapp.messenger.ui.AccountViewFragment;
+import org.awesomeapp.messenger.ui.ContactsPickerActivity;
+import org.awesomeapp.messenger.ui.legacy.LockScreenActivity;
+import org.awesomeapp.messenger.ui.legacy.SignInHelper;
+import org.awesomeapp.messenger.ui.legacy.SimpleAlertHandler;
+import org.awesomeapp.messenger.ui.onboarding.OnboardingManager;
+import org.awesomeapp.messenger.util.LogCleaner;
+import org.awesomeapp.messenger.util.SecureMediaStore;
+import org.awesomeapp.messenger.util.SystemServices;
+import org.awesomeapp.messenger.util.SystemServices.FileInfo;
+
+import java.io.File;
+import java.io.InputStream;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Set;
+import java.util.UUID;
+
+import info.guardianproject.otr.app.im.R;
 
 public class ImUrlActivity extends Activity {
     private static final String TAG = "ImUrlActivity";
@@ -253,12 +251,9 @@ public class ImUrlActivity extends Activity {
 
                     Uri data = getIntent().getData();
 
-                    if (data.getScheme().equals("immu"))
-                    {
-                        this.openMultiUserChat(data);
-
-                    }
-                    else if (!isValidToAddress()) {
+                    if (data.getScheme().equals("immu")) {
+                        Toast.makeText(this, "immu: URI handling not yet implemented!", Toast.LENGTH_LONG).show();
+                    } else if (!isValidToAddress()) {
                         showContactList(accountId);
                     } else {
                         openChat(providerId, accountId);
@@ -513,35 +508,6 @@ public class ImUrlActivity extends Activity {
 
     private static void log(String msg) {
         Log.d(ImApp.LOG_TAG, "<ImUrlActivity> " + msg);
-    }
-
-
-    void openMultiUserChat(final Uri data) {
-
-        new AlertDialog.Builder(this)
-        .setTitle(getString(R.string.dialog_connect_chatroom_title))
-        .setMessage(getString(R.string.dialog_connect_chatroom_message))
-        .setPositiveButton(R.string.connect, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-
-                Intent intent = new Intent(ImUrlActivity.this, NewChatActivity.class);
-                intent.setData(data);
-                ImUrlActivity.this.startActivityForResult(intent, REQUEST_START_MUC);
-
-                dialog.dismiss();
-                finish();
-            }
-        })
-        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-
-                /* User clicked cancel so do some stuff */
-                finish();
-            }
-        })
-        .create().show();
-
-
     }
 
     void createNewAccount() {
@@ -862,13 +828,6 @@ public class ImUrlActivity extends Activity {
                 new String[] { ImApp.IMPS_CATEGORY } /* selection args */,
                 Imps.Provider.DEFAULT_SORT_ORDER);
 
-    }
-
-
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
     }
 
     private static final String[] PROVIDER_PROJECTION = {
