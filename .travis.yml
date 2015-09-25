@@ -33,3 +33,6 @@ script:
   - adb shell input keyevent 82 &
   # now run the tests
   - ./gradlew connectedCheck
+
+after_failure:
+  - find * -name lint-results.xml | xargs cat
