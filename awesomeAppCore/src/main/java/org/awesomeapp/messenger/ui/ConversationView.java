@@ -2699,7 +2699,7 @@ public class ConversationView {
     {
         if (sStickerManager == null)
         {
-            sStickerManager = sStickerManager.getInstance(mContext);
+            sStickerManager = StickerManager.getInstance(mContext);
 
             try {
 
