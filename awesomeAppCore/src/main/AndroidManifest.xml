@@ -31,6 +31,7 @@
     <uses-permission android:name="com.google.android.googleapps.permission.GOOGLE_AUTH" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature
@@ -55,8 +56,6 @@
         android:label="@string/wo_perm_label"
         android:permissionGroup="android.permission-group.MESSAGES"
         android:protectionLevel="dangerous" />
-
-    <android:uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <application
         android:name="org.awesomeapp.messenger.ImApp"
