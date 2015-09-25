@@ -18,6 +18,7 @@ jdk:
 
 android:
   components:
+    - tools
     - platform-tools
     - extra-android-m2repository
     - build-tools-22.0.1
