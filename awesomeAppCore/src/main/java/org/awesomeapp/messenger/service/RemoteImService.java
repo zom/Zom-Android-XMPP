@@ -17,49 +17,6 @@
 
 package org.awesomeapp.messenger.service;
 
-import info.guardianproject.cacheword.CacheWordHandler;
-import info.guardianproject.cacheword.ICacheWordSubscriber;
-
-import org.awesomeapp.messenger.MainActivity;
-import org.awesomeapp.messenger.crypto.IOtrKeyManager;
-import org.awesomeapp.messenger.crypto.OtrAndroidKeyManagerImpl;
-import org.awesomeapp.messenger.crypto.OtrChatManager;
-import org.awesomeapp.messenger.crypto.OtrDebugLogger;
-import org.awesomeapp.messenger.service.IConnectionCreationListener;
-import org.awesomeapp.messenger.service.IImConnection;
-import org.awesomeapp.messenger.service.IRemoteImService;
-import info.guardianproject.otr.app.im.R;
-import org.awesomeapp.messenger.util.SecureMediaStore;
-import org.awesomeapp.messenger.ui.legacy.DummyActivity;
-import org.awesomeapp.messenger.ImApp;
-import org.awesomeapp.messenger.ui.legacy.ImPluginHelper;
-import org.awesomeapp.messenger.ui.legacy.NetworkConnectivityListener;
-import org.awesomeapp.messenger.ui.legacy.NetworkConnectivityListener.State;
-import org.awesomeapp.messenger.ui.legacy.NewChatActivity;
-import org.awesomeapp.messenger.model.ConnectionFactory;
-import org.awesomeapp.messenger.model.ImConnection;
-import org.awesomeapp.messenger.model.ImException;
-import org.awesomeapp.messenger.plugin.ImPluginInfo;
-import org.awesomeapp.messenger.provider.Imps;
-import org.awesomeapp.messenger.provider.Imps.ProviderSettings.QueryMap;
-import org.awesomeapp.messenger.provider.SQLCipherOpenHelper;
-import org.awesomeapp.messenger.service.adapters.ImConnectionAdapter;
-
-import org.awesomeapp.messenger.util.Debug;
-import org.awesomeapp.messenger.util.LogCleaner;
-
-import java.security.GeneralSecurityException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
-
-import net.java.otr4j.OtrEngineListener;
-import net.java.otr4j.OtrKeyManager;
-import net.java.otr4j.OtrKeyManagerListener;
-import net.java.otr4j.OtrPolicy;
-import net.java.otr4j.session.SessionID;
 import android.annotation.TargetApi;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -71,8 +28,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.NetworkInfo;
-import android.net.Uri;
-import android.net.Uri.Builder;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
@@ -85,6 +40,44 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
+
+import net.java.otr4j.OtrEngineListener;
+import net.java.otr4j.OtrKeyManager;
+import net.java.otr4j.OtrKeyManagerListener;
+import net.java.otr4j.OtrPolicy;
+import net.java.otr4j.session.SessionID;
+
+import org.awesomeapp.messenger.ImApp;
+import org.awesomeapp.messenger.MainActivity;
+import org.awesomeapp.messenger.crypto.IOtrKeyManager;
+import org.awesomeapp.messenger.crypto.OtrAndroidKeyManagerImpl;
+import org.awesomeapp.messenger.crypto.OtrChatManager;
+import org.awesomeapp.messenger.crypto.OtrDebugLogger;
+import org.awesomeapp.messenger.model.ConnectionFactory;
+import org.awesomeapp.messenger.model.ImConnection;
+import org.awesomeapp.messenger.model.ImException;
+import org.awesomeapp.messenger.plugin.ImPluginInfo;
+import org.awesomeapp.messenger.provider.Imps;
+import org.awesomeapp.messenger.provider.Imps.ProviderSettings.QueryMap;
+import org.awesomeapp.messenger.service.adapters.ImConnectionAdapter;
+import org.awesomeapp.messenger.ui.legacy.DummyActivity;
+import org.awesomeapp.messenger.ui.legacy.ImPluginHelper;
+import org.awesomeapp.messenger.ui.legacy.NetworkConnectivityListener;
+import org.awesomeapp.messenger.ui.legacy.NetworkConnectivityListener.State;
+import org.awesomeapp.messenger.util.Debug;
+import org.awesomeapp.messenger.util.LogCleaner;
+import org.awesomeapp.messenger.util.SecureMediaStore;
+
+import java.security.GeneralSecurityException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
+
+import info.guardianproject.cacheword.CacheWordHandler;
+import info.guardianproject.cacheword.ICacheWordSubscriber;
+import info.guardianproject.otr.app.im.R;
 
 public class RemoteImService extends Service implements OtrEngineListener, ImService, ICacheWordSubscriber {
 

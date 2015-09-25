@@ -196,9 +196,6 @@
                     />
             </intent-filter>
         </activity>
-        <activity
-            android:name="org.awesomeapp.messenger.ui.widgets.AboutActivity"
-            android:exported="false" />
 
         <service
             android:name="org.awesomeapp.messenger.plugin.xmpp.XmppImPlugin"
@@ -258,24 +255,6 @@
         <activity android:name="org.awesomeapp.messenger.ImUrlActivity" >
         </activity>
         <activity
-            android:name="org.awesomeapp.messenger.ui.legacy.AccountWizardActivity"
-            android:exported="false" >
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <data android:mimeType="vnd.android.cursor.dir/imps-providers" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="info.guardianproject.otr.app.im.QUIT" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <data android:mimeType="vnd.android.cursor.dir/imps-providers" />
-            </intent-filter>
-        </activity>
-        <activity
             android:name="org.awesomeapp.messenger.ui.AccountViewFragment"
             android:exported="false"
             android:windowSoftInputMode="stateUnchanged" >
@@ -309,38 +288,7 @@
             android:name="org.awesomeapp.messenger.ui.AddContactActivity"
             android:exported="false"
             android:label="@string/add_contact_title" />
-        <!--
-        <activity
-            android:name=".app.NewChatActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:exported="false"
-            android:launchMode="singleTop"
-            android:windowSoftInputMode="stateUnchanged" >
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="info.guardianproject.otr.app.im.IMPS_CATEGORY" />
-
-                <data android:mimeType="vnd.android.cursor.item/imps-chats" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <data android:mimeType="vnd.android.cursor.item/imps-invitations" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.IM_MANAGE_SUBSCRIPTION" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <data android:mimeType="vnd.android.cursor.item/imps-contacts" />
-            </intent-filter>
-        </activity>
-        -->
-        <activity
+      <activity
             android:name="org.awesomeapp.messenger.ui.ContactsPickerActivity"
             android:exported="false"
             android:label="@string/choose_friend" >
@@ -357,30 +305,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <data android:mimeType="vnd.android.cursor.dir/imps-chats" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name="org.awesomeapp.messenger.ui.legacy.BlockedContactsActivity"
-            android:exported="false"
-            android:label="@string/blocked_list_title" >
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <data android:mimeType="vnd.android.cursor.dir/imps-blockedList" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name="org.awesomeapp.messenger.ui.legacy.ContactPresenceActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:exported="false" >
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <data android:mimeType="vnd.android.cursor.item/imps-contacts" />
             </intent-filter>
         </activity>
         <activity
