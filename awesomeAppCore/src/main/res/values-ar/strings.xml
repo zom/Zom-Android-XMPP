@@ -454,7 +454,7 @@
   <string name="error_welcome_database">خطأ كبير: لا يمكن فتح أو تحميل قاعدة بيانات التطبيق. الرجاء إعادة تثبيت التطبيق أو محو البيانات.</string>
   <string name="account_settings_title">إعدادات الحساب</string>
 
-  <string name="warning_alpha">تحذير: هذه نسخة تجريبية من شات سيكيور (ChatSecure) وقد تحتوي على بعض الأخطاء أو الثغرات الأمنية.</string>
+
   <!--added 2011/09/01-->
   <string name="menu_view_groups">المجموعات</string>
   <string name="_open_conversations">المحادثة (أوالمحادثات) المفتوحة</string>
@@ -566,7 +566,7 @@
   <string name="start_orbot_">إبدأ Orbot؟</string>
   <string name="orbot_doesn_t_appear_to_be_running_would_you_like_to_start_it_up_and_connect_to_tor_">لا يبدو أن Orbot مشغَّل. هل تريد تشغيلِه والاتصال بشبكة Tor؟</string>
   <string name="muc_dialog_nickname">اللقب المُراد استخدامِه في الغرفة</string>
-  <string name="muc_dialog_room">إسم الغرفة المُراد إنشاؤها أو الانضمام إليها\"</string>
+
   <string name="muc_dialog_server">خادم الدردشة الجماعية (conference.foo.com)</string>
   <string name="your_keystore_is_corrupted_please_re_install_chatsecure_or_clear_data_for_the_app">مخزن مفاتيح التعمية مشوَّه. الرجاء إعادة تثبيت شات سيكيور أو \'إفراغ البيانات\' لهذا التطبيق</string>
   <string name="you_received_an_unreadable_encrypted_message">وصلتك رسالة مشفرة غير قابلة للقراءة</string>

@@ -398,7 +398,7 @@
   <string name="contact_not_in_list_warning">Пользователь <xliff:g id="USER">%1$s</xliff:g> отсутствует в списке контактов.</string>
   <string name="account_settings_title">Настройки учетной записи</string>
 
-  <string name="warning_alpha">ВНИМАНИЕ: Это - ранний релиз программы ChatSecure и все еще может содержать ошибки или иметь проблемы безопасности.</string>
+
   <!--added 2011/09/01-->
   <string name="menu_view_groups">Группы</string>
   <string name="_open_conversations">открытый разговор (ы)</string>

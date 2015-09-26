@@ -46,7 +46,6 @@ import android.provider.Browser;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -79,7 +78,6 @@ import net.java.otr4j.session.SessionStatus;
 
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.crypto.IOtrChatSession;
-import org.awesomeapp.messenger.crypto.OtrDebugLogger;
 import org.awesomeapp.messenger.model.Address;
 import org.awesomeapp.messenger.model.Contact;
 import org.awesomeapp.messenger.model.ImConnection;
@@ -111,7 +109,6 @@ import org.awesomeapp.messenger.ui.stickers.StickerSelectListener;
 import org.awesomeapp.messenger.ui.widgets.RoundedAvatarDrawable;
 import org.awesomeapp.messenger.util.Debug;
 import org.awesomeapp.messenger.util.LogCleaner;
-import org.awesomeapp.messenger.util.MultiUriCursorWrapper;
 import org.awesomeapp.messenger.util.SystemServices;
 
 import java.util.ArrayList;
@@ -469,7 +466,7 @@ public class ConversationView {
         public void onStatusChanged(IChatSession ses) throws RemoteException {
             scheduleRequery(DEFAULT_QUERY_INTERVAL);
             updatePresenceDisplay();
-        };
+        }
 
 
         @Override
@@ -681,7 +678,8 @@ public class ConversationView {
 
                 if(motionEvent.getAction() == MotionEvent.ACTION_MOVE)
                 {
-                    mButtonDeleteVoice.setBackgroundColor(android.R.color.holo_red_light);
+                    int resolvedColor = mHistory.getResources().getColor(android.R.color.holo_red_light);
+                    mButtonDeleteVoice.setBackgroundColor(resolvedColor);
                 }
 
                 return false;
@@ -1982,7 +1980,7 @@ public class ConversationView {
         return mPresenceStatus;
     }
 
-    /**
+    /*
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         userActionDetected();
@@ -2701,7 +2699,7 @@ public class ConversationView {
     {
         if (sStickerManager == null)
         {
-            sStickerManager = sStickerManager.getInstance(mContext);
+            sStickerManager = StickerManager.getInstance(mContext);
 
             try {
 

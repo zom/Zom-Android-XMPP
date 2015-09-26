@@ -33,10 +33,7 @@ android:layout_height="wrap_content"
 android:gravity="center"
 android:visibility="gone"
 android:text="@string/no_photos"
-    android:layout_margin="20dp"
-
-    />
-    />
+    android:layout_margin="20dp"/>
     <ImageView
         android:id="@+id/empty_view_image"
         android:layout_width="wrap_content"

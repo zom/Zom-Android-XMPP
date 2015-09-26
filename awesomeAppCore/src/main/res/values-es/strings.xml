@@ -312,7 +312,7 @@
   <string name="contact_not_in_list_warning"><xliff:g id="USER">%1$s</xliff:g> no figura en tu lista de contactos.</string>
   <string name="account_settings_title">Configuración de la cuenta</string>
 
-  <string name="warning_alpha">ADVERTENCIA: Esta es una versión anticipada de ChatSecure que puede contener vulnerabilidades de seguridad o errores.</string>
+
   <!--added 2011/09/01-->
   <string name="menu_view_groups">Grupos</string>
   <string name="_open_conversations">conversaciones abiertas</string>

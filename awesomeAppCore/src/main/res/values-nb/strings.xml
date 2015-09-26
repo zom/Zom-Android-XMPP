@@ -402,7 +402,7 @@ Trykk for å invitere.</string>
   <string name="domain_not_supported">Tjeneren støtter ikke videresending til domenet.</string>
   <string name="unknown_user">Brukernavnet du skrev inn ble ikke gjenkjent.</string>
   <string name="recipient_blocked_the_user">Beklager, du er blokkert av brukeren.</string>
-  <string name="session_expired">Sesjonen har gått ut, logg på på nytt.</string>
+  <string name="session_expired">Sesjonen har gått ut, logg på nytt.</string>
   <string name="forced_logout">du er pålogget med en annen klient.</string>
   <string name="already_logged_in">du allerede er pålogget med en annen klient.</string>
   <string name="msisdn_error">Beklager, kan ikke lese telefonnummeret fra SIM-kortet. Kontakt operatøren for hjelp.</string>
@@ -438,7 +438,7 @@ Trykk for å invitere.</string>
   <string name="error_welcome_database">Kjempefeil: Kunne ikke låse opp eller laste inn programdatabase. Installer programmet på ny eller tøm data.</string>
   <string name="account_settings_title">Kontoinnstillinger</string>
 
-  <string name="warning_alpha">ADVARSEL: Dette er en tidlig utgave av ChatSecure som fortsatt kan inneholde sikkerhetshull og feil.</string>
+
   <!--added 2011/09/01-->
   <string name="menu_view_groups">Grupper</string>
   <string name="_open_conversations">åpne samtale(r)</string>
@@ -546,7 +546,7 @@ Trykk for å invitere.</string>
   <string name="start_orbot_">Start Orbot?</string>
   <string name="orbot_doesn_t_appear_to_be_running_would_you_like_to_start_it_up_and_connect_to_tor_">Det later til at Orbot ikke kjører. Vil du starte det opp og koble til Tor?</string>
   <string name="muc_dialog_nickname">kallenavn for bruk i rom</string>
-  <string name="muc_dialog_room">navn på rom som skal opprettes eller tas del i</string>
+
   <string name="muc_dialog_server">tjener for gruppesamtaler (konferanse.noe.org)</string>
   <string name="your_keystore_is_corrupted_please_re_install_chatsecure_or_clear_data_for_the_app">Ditt nøkkelvelv er skadet. Installer ChatSecure på ny, eller \'tøm data\' i programmet</string>
   <string name="you_received_an_unreadable_encrypted_message">Du har mottat en uleselig, kryptert melding.</string>

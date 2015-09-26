@@ -443,7 +443,7 @@ Klikněte pro pozvání.</string>
   <string name="error_welcome_database">Kritická chyba: Nelze odemknout nebo načíst databázy aplikace. Nainstalujte prosím znovu aplikaci nebo vyčistěte data.</string>
   <string name="account_settings_title">Nastavení účtu</string>
 
-  <string name="warning_alpha">Varování: Toto je předčasně vypuštěné ChatSecure které ještě může obsahovat bezpečnostní díry nebo chyby.</string>
+
   <!--added 2011/09/01-->
   <string name="menu_view_groups">Skupiny</string>
   <string name="_open_conversations">otevřít konverzaci(e)</string>
@@ -557,7 +557,7 @@ Klikněte pro pozvání.</string>
   <string name="start_orbot_">Spustit Orbot?</string>
   <string name="orbot_doesn_t_appear_to_be_running_would_you_like_to_start_it_up_and_connect_to_tor_">Orbot nezdá být spuštěn. Chtěli byste jej spustit a připojit se k síti Tor?</string>
   <string name="muc_dialog_nickname">přezdívka pro tuto místnost</string>
-  <string name="muc_dialog_room">název místnosti pro vytvoření nebo připojení\"</string>
+
   <string name="muc_dialog_server">server skupinového chatu (conference.foo.com)</string>
   <string name="your_keystore_is_corrupted_please_re_install_chatsecure_or_clear_data_for_the_app">Vaše úložiště klíčů je poškozeno. Nainstalujte znovu ChatSecure nebo zkuste \"Vymazat data\" aplikace</string>
   <string name="you_received_an_unreadable_encrypted_message">Obdrželi jste nečitelnou zašifrovanou zprávu</string>

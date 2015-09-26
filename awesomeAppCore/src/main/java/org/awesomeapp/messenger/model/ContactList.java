@@ -119,13 +119,12 @@ public class ContactList extends ImEntity {
     }
 
     /**
-     * Add a contact to the list. The contact is specified by its address
-     * string.
+     * Add a {@link Contact} to the list.
      *
-     * @param address the address string specifies the contact.
+     * @param contact the {@link Contact} to add
      * @throws IllegalArgumentException if the address is invalid.
      * @throws NullPointerException if the address string is null
-     * @throws ImException if the contact is not allowed to be added
+     * @throws ImException if the {@link Contact} is not allowed to be added
      */
     public void addExistingContact(Contact contact) throws ImException {
 
@@ -151,7 +150,7 @@ public class ContactList extends ImEntity {
      * nothing will happen. Otherwise, the contact will be removed from the list
      * on the server asynchronously.
      *
-     * @param address the address of the contact to be removed from the list
+     * @param address the {@link Address} of the contact to be removed from the list
      * @throws NullPointerException If the address is null
      */
     public void removeContact(Address address) throws ImException {
@@ -165,11 +164,11 @@ public class ContactList extends ImEntity {
     }
 
     /**
-     * Remove a contact from the list. If the contact is not in the list,
-     * nothing will happen. Otherwise, the contact will be removed from the list
+     * Remove a {@link Contact} from the list. If the {@link Contact} is not in the list,
+     * nothing will happen. Otherwise, the {@link Contact} will be removed from the list
      * on the server asynchronously.
      *
-     * @param contact the contact to be removed from the list
+     * @param contact the {@link Contact} to be removed from the list
      * @throws NullPointerException If the contact is null
      */
     public void removeContact(Contact contact) throws ImException {

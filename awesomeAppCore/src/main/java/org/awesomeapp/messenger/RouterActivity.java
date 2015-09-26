@@ -387,7 +387,7 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
         try {
             String tempPassphrase = UUID.randomUUID().toString();
             SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-            settings.edit().putString(ImApp.PREFERENCE_KEY_TEMP_PASS, tempPassphrase).commit();
+            settings.edit().putString(ImApp.PREFERENCE_KEY_TEMP_PASS, tempPassphrase).apply();
             mCacheWord.setPassphrase(tempPassphrase.toCharArray());
                 
            

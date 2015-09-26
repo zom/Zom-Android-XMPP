@@ -467,7 +467,7 @@ Klikkaa kutsuaksesi.</string>
   <string name="start_orbot_">Käynnistetäänkö Orbot?</string>
   <string name="orbot_doesn_t_appear_to_be_running_would_you_like_to_start_it_up_and_connect_to_tor_">Orbot ei näytä olevan käynnissä. Haluatko käynnistää sen ja yhdistää Torriin?</string>
   <string name="muc_dialog_nickname">lempinimesi tähän huoneeseen</string>
-  <string name="muc_dialog_room">huoneen nimi, jonka luot tai johon liityt</string>
+
   <string name="muc_dialog_server">ryhmächatpalvelin (conference.foo.com)</string>
   <string name="you_received_an_unreadable_encrypted_message">Vastaanotit lukukelvottoman salatun viestin</string>
   <string name="i_could_not_decrypt_the_message_you_sent">En voinut purkaa lähettämäsi viestin salausta</string>

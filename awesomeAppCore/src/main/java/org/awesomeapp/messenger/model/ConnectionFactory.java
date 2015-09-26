@@ -18,12 +18,12 @@
 package org.awesomeapp.messenger.model;
 
 // import org.awesomeapp.messenger.plugin.loopback.LoopbackConnection;
+import android.content.Context;
+
 import org.awesomeapp.messenger.plugin.ImConfigNames;
 import org.awesomeapp.messenger.plugin.xmpp.XmppConnection;
 
 import java.util.Map;
-
-import android.content.Context;
 
 /** The factory used to create an instance of ImConnection. */
 public class ConnectionFactory {
@@ -45,10 +45,10 @@ public class ConnectionFactory {
     }
 
     /**
-     * Creates a new ImConnection.
+     * Creates a new {@link ImConnection}.
      *
-     * @return the new ImConnection.
-     * @throws IMException if an error occurs during creating a connection.
+     * @return the new {@link ImConnection}.
+     * @throws ImException if an error occurs during creating a connection.
      */
     public synchronized ImConnection createConnection(Map<String, String> settings, Context context)
             throws ImException {

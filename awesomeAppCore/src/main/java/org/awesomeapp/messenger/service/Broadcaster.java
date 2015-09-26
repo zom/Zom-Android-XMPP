@@ -19,7 +19,7 @@ package org.awesomeapp.messenger.service;
 import android.os.Handler;
 import android.os.Message;
 
-/** @hide */
+/* @hide */
 public class Broadcaster {
     public Broadcaster() {
     }

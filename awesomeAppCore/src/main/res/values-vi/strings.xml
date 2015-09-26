@@ -401,7 +401,7 @@ Chạm vào để mời kết nối.</string>
   <string name="contact_not_in_list_warning">&lt;xliff id="user"&gt;%1$s&lt;/xliff&gt; không nằm trong  Danh Sách Bạn Chat của bạn.</string>
   <string name="account_settings_title">Thiết lập tài khoản</string>
 
-  <string name="warning_alpha">Cảnh Báo: Đây là phiên bản cũ của ChatSecure và có thể có những lổ hỗng an ninh hoặc lỗi.</string>
+
   <!--added 2011/09/01-->
   <string name="menu_view_groups">Nhóm</string>
   <string name="_open_conversations">Mở xem các trao đổi</string>

@@ -64,20 +64,20 @@ public class ImException extends Exception {
     }
 
     /**
-     * Creates a new ImException with specified IM error code and description
+     * Creates a new {@link ImException} with specified IM error code and description
      *
      * @param imErrorCode
-     * @param string
+     * @param description
      */
     public ImException(int imErrorCode, String description) {
         this(new ImErrorInfo(imErrorCode, description));
     }
 
     /**
-     * Gets the IMError which caused the exception or <code>null</code> if there
+     * Gets the {@link ImErrorInfo} which caused the exception or <code>null</code> if there
      * isn't one.
      *
-     * @return the IMError which caused the exception.
+     * @return the {@link ImErrorInfo} which caused the exception.
      */
     public ImErrorInfo getImError() {
         return mError;

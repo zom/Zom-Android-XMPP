@@ -41,7 +41,7 @@ public abstract class ChatGroupManager {
     }
 
     /**
-     * Adds a GroupListener to this manager so that it will be notified when a
+     * Adds a {@link GroupListener} to this manager so that it will be notified when a
      * certain group changes.
      *
      * @param listener the listener to be notified.
@@ -51,7 +51,7 @@ public abstract class ChatGroupManager {
     }
 
     /**
-     * Removes a GroupListener from this manager so that it won't be notified
+     * Removes a {@link GroupListener} from this manager so that it won't be notified
      * any more.
      *
      * @param listener the listener to remove.
@@ -61,29 +61,29 @@ public abstract class ChatGroupManager {
     }
 
     /**
-     * Sets the InvitationListener to the manager so that it will be notified
+     * Sets the {@link InvitationListener} to the manager so that it will be notified
      * when an invitation from another users received.
      *
-     * @param listener the InvitationListener.
+     * @param listener the {@link InvitationListener}.
      */
     public synchronized void setInvitationListener(InvitationListener listener) {
         mInvitationListener = listener;
     }
 
     /**
-     * Creates a new ChatGroup with specified name. This method returns
-     * immediately and the registered GroupListeners will be notified when the
+     * Creates a new {@link ChatGroup} with specified name. This method returns
+     * immediately and the registered {@link GroupListener}s will be notified when the
      * group is created or any error occurs. The newly created group is a
      * temporary group and will be automatically deleted when all joined users
      * have left.
      *
-     * @param name the name of the ChatGroup to be created.
+     * @param address the name of the ChatGroup to be created.
      * @throws Exception
      */
     public abstract boolean createChatGroupAsync(String address, String subject, String nickname) throws Exception;
 
     /**
-     * Deletes a certain ChatGroup. This method returns immediately and the
+     * Deletes a certain {@link ChatGroup}. This method returns immediately and the
      * registered GroupListeners will be notified when the group is deleted or
      * any error occurs. Only the administrator of the ChatGroup can delete it.
      *
@@ -92,7 +92,7 @@ public abstract class ChatGroupManager {
     public abstract void deleteChatGroupAsync(ChatGroup group);
 
     /**
-     * Adds a member to a certain ChatGroup. This method returns immediately and
+     * Adds a member to a certain {@link ChatGroup}. This method returns immediately and
      * the GroupGroupListeners registered on the group will be notified when the
      * member is added or any error occurs. Only the administrator of the
      * ChatGroup can add member to it.
@@ -103,28 +103,28 @@ public abstract class ChatGroupManager {
     protected abstract void addGroupMemberAsync(ChatGroup group, Contact contact);
 
     /**
-     * Removes a member from certain ChatGroup. This method returns immediately
-     * and the GroupGroupListeners registered on the group will be notified when
+     * Removes a member from certain {@link ChatGroup}. This method returns immediately
+     * and the {@link GroupListener}s registered on the group will be notified when
      * the member is added or any error occurs. Only the administrator of the
      * ChatGroup can remove its members.
      *
-     * @param group the ChatGroup whose member will be removed.
-     * @param contact the member to be removed.
+     * @param group the {@link ChatGroup} whose member will be removed.
+     * @param contact the member {@link Contact} to be removed.
      */
     protected abstract void removeGroupMemberAsync(ChatGroup group, Contact contact);
 
     /**
-     * Joins into a certain ChatGroup. This method returns immediately and the
-     * registered GroupListeners will be notified when the user joined into the
+     * Joins into a certain {@link ChatGroup}. This method returns immediately and the
+     * registered {@link GroupListener}s will be notified when the user joined into the
      * group or any error occurs.
      *
-     * @param address the address of the ChatGroup.
+     * @param address the address of the {@link ChatGroup}.
      */
     public abstract void joinChatGroupAsync(Address address);
 
     /**
-     * Leaves a certain ChatGroup.This method returns immediately and the
-     * registered GroupListeners will be notified when the the user left the
+     * Leaves a certain {@link ChatGroup}.This method returns immediately and the
+     * registered {@link GroupListener}s will be notified when the the user left the
      * group or any error occurs.
      *
      * @param group the ChatGroup.
@@ -132,28 +132,28 @@ public abstract class ChatGroupManager {
     public abstract void leaveChatGroupAsync(ChatGroup group);
 
     /**
-     * Invites a user to join a certain ChatGroup. If success, the invitee will
+     * Invites a user to join a certain {@link ChatGroup}. If success, the invitee will
      * receive an invitation with information of the group. Otherwise, the
-     * registered GroupListeners will be notified if any error occurs.
+     * registered {@link GroupListener}s will be notified if any error occurs.
      *
-     * @param group the ChatGroup.
+     * @param group the {@link ChatGroup}.
      * @param invitee the invitee.
      */
     public abstract void inviteUserAsync(ChatGroup group, Contact invitee);
 
     /**
-     * Accepts an invitation. The user will join the group automatically after
+     * Accepts an {@link Invitation}. The user will join the group automatically after
      * accept the invitation.
      *
-     * @param invitation the invitation to accept.
+     * @param invitation the {@link Invitation} to accept.
      */
     public abstract void acceptInvitationAsync(Invitation invitation);
 
     /**
-     * Accepts an invitation. The user can only accept or reject the same
+     * Accepts an {@link Invitation}. The user can only accept or reject the same
      * invitation only once.
      *
-     * @param inviteId the id of the invitation to accept.
+     * @param inviteId the id of the {@link Invitation} to accept.
      * @see #acceptInvitationAsync(Invitation)
      */
     public void acceptInvitationAsync(String inviteId) {
@@ -164,9 +164,9 @@ public abstract class ChatGroupManager {
     }
 
     /**
-     * Rejects an invitation.
+     * Rejects an {@link Invitation}.
      *
-     * @param inviteId the id of the invitation to reject.
+     * @param inviteId the id of the {@link Invitation} to reject.
      * @see #rejectInvitationAsync(Invitation)
      */
     public void rejectInvitationAsync(String inviteId) {
@@ -177,28 +177,28 @@ public abstract class ChatGroupManager {
     }
 
     /**
-     * Rejects an invitation.
+     * Rejects an {@link Invitation}
      *
-     * @param invitation the invitation to reject.
+     * @param invitation the {@link Invitation} to reject.
      */
     public abstract void rejectInvitationAsync(Invitation invitation);
 
     /**
-     * Gets a ChatGroup by address.
+     * Gets a {@link ChatGroup} by address.
      *
-     * @param address the address of the ChatGroup.
-     * @return a ChatGroup.
+     * @param address the address of the {@link ChatGroup}
+     * @return a {@link ChatGroup}.
      */
     public ChatGroup getChatGroup(Address address) {
         return mGroups.get(address.getBareAddress());
     }
 
     /**
-     * Notifies the GroupListeners that a ChatGroup has changed.
+     * Notifies the {@link GroupListener}s that a {@link ChatGroup} has changed.
      *
-     * @param groupAddress the address of group which has changed.
-     * @param joined a list of users that have joined the group.
-     * @param left a list of users that have left the group.
+     * @param groupAddress the {@link Address} of {@link ChatGroup} which has changed.
+     * @param joined a list of {@link Contact}s that have joined the group.
+     * @param left a list of {@link Contact}s that have left the group.
      */
     protected void notifyGroupChanged(Address groupAddress, ArrayList<Contact> joined,
             ArrayList<Contact> left) {
@@ -241,9 +241,9 @@ public abstract class ChatGroupManager {
     }
 
     /**
-     * Notifies the GroupListeners that the user has left a certain group.
+     * Notifies the {@link GroupListener}s that the user has left a certain group.
      *
-     * @param groupAddress the address of the group.
+     * @param group the address of the {@link ChatGroup}.
      */
     protected synchronized void notifyLeftGroup(ChatGroup group) {
         mGroups.remove(group.getAddress().getAddress());

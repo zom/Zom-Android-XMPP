@@ -370,7 +370,7 @@ Es necesario tener conexión a la red de datos (incluyendo datos en segundo plan
   <string name="contact_not_in_list_warning"><xliff:g id="user">%1$s</xliff:g> no está en su lista de contactos.</string>
   <string name="account_settings_title">Configuración de cuenta</string>
 
-  <string name="warning_alpha">ADVERTENCIA: Esta es una versión temprana de ChatSecure que todavía podría tener fallos de seguridad o bugs.</string>
+
   <!--added 2011/09/01-->
   <string name="menu_view_groups">Grupos</string>
   <string name="_open_conversations">conversación(es) abierta(s)</string>

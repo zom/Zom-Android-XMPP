@@ -18,6 +18,7 @@ jdk:
 
 android:
   components:
+    - tools
     - platform-tools
     - extra-android-m2repository
     - build-tools-22.0.1
@@ -33,3 +34,6 @@ script:
   - adb shell input keyevent 82 &
   # now run the tests
   - ./gradlew connectedCheck
+
+after_failure:
+  - find * -name lint-results.xml | xargs cat

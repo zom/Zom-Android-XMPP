@@ -447,7 +447,7 @@ cuentas configuradas.\n\n¡Pulse aquí para añadir una!</string>
   <string name="error_no_app_to_handle_url">¡No hay ninguna aplicación instalada que pueda manejar ese enlace!</string>
   <string name="account_settings_title">Configuración de la cuenta</string>
 
-  <string name="warning_alpha">Advertencia: Esta es una primera versión de ChatSecure y puede que aun contenga fallos de seguridad y errores.</string>
+
   <!--added 2011/09/01-->
   <string name="menu_view_groups">Grupos</string>
   <string name="_open_conversations">conversaciones abiertas</string>
@@ -561,7 +561,7 @@ cuentas configuradas.\n\n¡Pulse aquí para añadir una!</string>
   <string name="start_orbot_">¿Iniciar Orbot?</string>
   <string name="orbot_doesn_t_appear_to_be_running_would_you_like_to_start_it_up_and_connect_to_tor_">Orbot no parece estar ejecutándose. ¿Desea inicializarlo y conectarlo a Tor?</string>
   <string name="muc_dialog_nickname">apodo a usar en la sala</string>
-  <string name="muc_dialog_room">nombre de la sala a crear o a la que unirse\"</string>
+
   <string name="muc_dialog_server">servidor de chat en grupo (conference.foo.com)</string>
   <string name="your_keystore_is_corrupted_please_re_install_chatsecure_or_clear_data_for_the_app">Su almacen de claves está estropeado. Por favor re-instale ChatSecure o limpie los datos para la aplicación</string>
   <string name="you_received_an_unreadable_encrypted_message">Ha recibido un mensaje cifrado ilegible</string>
