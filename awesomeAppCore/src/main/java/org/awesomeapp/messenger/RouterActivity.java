@@ -16,31 +16,9 @@
 
 package org.awesomeapp.messenger;
 
-import org.awesomeapp.messenger.util.SecureMediaStore;
-import org.awesomeapp.messenger.ui.onboarding.OnboardingActivity;
-import info.guardianproject.cacheword.CacheWordHandler;
-import info.guardianproject.cacheword.ICacheWordSubscriber;
-import org.awesomeapp.messenger.service.IImConnection;
-import info.guardianproject.otr.app.im.R;
-import org.awesomeapp.messenger.ui.AddContactActivity;
-import org.awesomeapp.messenger.ui.legacy.ImPluginHelper;
-import org.awesomeapp.messenger.ui.legacy.LockScreenActivity;
-import org.awesomeapp.messenger.ui.legacy.MissingChatFileStoreActivity;
-import org.awesomeapp.messenger.ui.legacy.SignInHelper;
-import org.awesomeapp.messenger.ui.legacy.SimpleAlertHandler;
-import org.awesomeapp.messenger.ui.legacy.ThemeableActivity;
-import org.awesomeapp.messenger.model.ImConnection;
-import org.awesomeapp.messenger.provider.Imps;
-import org.ironrabbit.type.CustomTypefaceManager;
-
-import java.io.File;
-import java.security.GeneralSecurityException;
-import java.util.List;
-import java.util.UUID;
-
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.app.Service;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
@@ -50,7 +28,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.net.Uri.Builder;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
 import android.os.RemoteException;
@@ -61,6 +38,30 @@ import android.util.Log;
 import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
+
+import org.awesomeapp.messenger.model.ImConnection;
+import org.awesomeapp.messenger.provider.Imps;
+import org.awesomeapp.messenger.service.IImConnection;
+import org.awesomeapp.messenger.ui.AddContactActivity;
+import org.awesomeapp.messenger.ui.legacy.ImPluginHelper;
+import org.awesomeapp.messenger.ui.legacy.LockScreenActivity;
+import org.awesomeapp.messenger.ui.legacy.MissingChatFileStoreActivity;
+import org.awesomeapp.messenger.ui.legacy.SignInHelper;
+import org.awesomeapp.messenger.ui.legacy.SimpleAlertHandler;
+import org.awesomeapp.messenger.ui.legacy.ThemeableActivity;
+import org.awesomeapp.messenger.ui.onboarding.OnboardingActivity;
+import org.awesomeapp.messenger.util.SecureMediaStore;
+import org.ironrabbit.type.CustomTypefaceManager;
+
+import java.io.File;
+import java.security.GeneralSecurityException;
+import java.util.List;
+import java.util.UUID;
+
+import info.guardianproject.cacheword.CacheWordHandler;
+import info.guardianproject.cacheword.ICacheWordSubscriber;
+import info.guardianproject.otr.app.im.R;
+import info.guardianproject.panic.Panic;
 
 public class RouterActivity extends ThemeableActivity implements ICacheWordSubscriber  {
 
@@ -249,10 +250,24 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
         }
 
         Intent intent = getIntent();
+        if (intent != null && intent.getAction() != null && !intent.getAction().equals(Intent.ACTION_MAIN)) {
+            String action = intent.getAction();
+            if (Panic.ACTION_TRIGGER.equals(action)) {
+                RouterActivity.shutdownAndLock(this);
+            } else {
+                Intent imUrlIntent = new Intent(this, ImUrlActivity.class);
+                imUrlIntent.setAction(action);
 
-        if (intent != null && intent.getAction() != null && (!intent.getAction().equals(Intent.ACTION_MAIN)))
-        {
-            handleIntentAPILaunch(intent);
+                if (intent.getData() != null)
+                    imUrlIntent.setData(intent.getData());
+
+                imUrlIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                if (intent.getExtras() != null)
+                    imUrlIntent.putExtras(intent.getExtras());
+                startActivity(imUrlIntent);
+            }
+            setIntent(null);
+            finish();
         }
         else if (countAvailable > 0)
         {
@@ -319,23 +334,6 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
         } while (mProviderCursor.moveToNext());
 
         return count;
-    }
-
-    void handleIntentAPILaunch (Intent srcIntent)
-    {
-        Intent intent = new Intent(this, ImUrlActivity.class);
-        intent.setAction(srcIntent.getAction());
-
-        if (srcIntent.getData() != null)
-            intent.setData(srcIntent.getData());
-
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        if (srcIntent.getExtras()!= null)
-            intent.putExtras(srcIntent.getExtras());
-        startActivity(intent);
-
-        setIntent(null);
-        finish();
     }
 
     Intent getEditAccountIntent() {
