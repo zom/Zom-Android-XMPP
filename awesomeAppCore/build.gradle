@@ -64,6 +64,12 @@ android {
         disable 'MissingTranslation', 'LocaleFolder'
     }
 
+    // set timeouts to 10 minutes to prevent random failures
+    com.android.ddmlib.DdmPreferences.setTimeOut(600000)
+    adbOptions {
+        timeOutInMs 600000
+    }
+
     // where to find the native binaries, e.g. for sqlcipher
     sourceSets.main.jniLibs.srcDirs 'libs'
 
