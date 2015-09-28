@@ -465,9 +465,16 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
 
     }
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public static void shutdownAndLock(Activity activity) {
-        ImApp app = (ImApp) activity.getApplication();
+    public static void shutdownAndLock(Context context) {
+        Activity activity = null;
+        ImApp app = null;
+        if (context instanceof Activity) {
+            activity = (Activity) context;
+            app = (ImApp) activity.getApplication();
+        } else if (context instanceof Service) {
+            Service service = (Service) context;
+            app = (ImApp) service.getApplication();
+        }
         if (app != null) {
             for (IImConnection conn : app.getActiveConnections()) {
                 try {
@@ -478,15 +485,17 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
             }
         }
 
-        Intent intent = new Intent(activity, RouterActivity.class);
+        Intent intent = new Intent(context, RouterActivity.class);
         // Request lock
         intent.putExtra(EXTRA_DO_LOCK, true);
         // Clear the backstack
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        if (Build.VERSION.SDK_INT >= 11)
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        activity.startActivity(intent);
-        activity.finish();
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        context.startActivity(intent);
+
+        if (activity != null) {
+            activity.finish();
+        }
     }
 
     private void completeShutdown ()
@@ -537,7 +546,7 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
 
 
                            Thread.sleep(500);
-                       }catch(Exception e){}
+                       } catch(Exception e){}
 
 
                 }
