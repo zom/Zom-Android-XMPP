@@ -31,6 +31,7 @@ import info.guardianproject.cacheword.ICacheWordSubscriber;
 import info.guardianproject.otr.app.im.R;
 
 import org.awesomeapp.messenger.ImApp;
+import org.awesomeapp.messenger.RouterActivity;
 import org.awesomeapp.messenger.util.SecureMediaStore;
 
 import org.awesomeapp.messenger.util.Languages;
@@ -411,7 +412,7 @@ public class LockScreenActivity extends ThemeableActivity implements ICacheWordS
 
         Intent intentOrig;
 
-        if ((intentOrig = getIntent().getParcelableExtra("originalIntent"))!=null)
+        if ((intentOrig = getIntent().getParcelableExtra(RouterActivity.EXTRA_ORIGINAL_INTENT))!=null)
         {
             if (intentOrig.getData() != null)
             {
@@ -445,12 +446,12 @@ public class LockScreenActivity extends ThemeableActivity implements ICacheWordS
      *
      */
     private void afterCacheWordOpened() {
-        Intent intent = (Intent) getIntent().getParcelableExtra("originalIntent");
+        Intent intent = (Intent) getIntent().getParcelableExtra(RouterActivity.EXTRA_ORIGINAL_INTENT);
 
         if (intent != null)
         {
 
-            getIntent().removeExtra("originalIntent");
+            getIntent().removeExtra(RouterActivity.EXTRA_ORIGINAL_INTENT);
             finish();
 //            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);

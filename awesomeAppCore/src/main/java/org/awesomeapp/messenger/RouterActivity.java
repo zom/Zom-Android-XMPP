@@ -72,6 +72,10 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
 
     private boolean mDoSignIn = true;
 
+    private static String EXTRA_DO_LOCK = "doLock";
+    private static String EXTRA_DO_SIGNIN = "doSignIn";
+    public static String EXTRA_ORIGINAL_INTENT = "originalIntent";
+
     static final String[] PROVIDER_PROJECTION = { Imps.Provider._ID, Imps.Provider.NAME,
                                                  Imps.Provider.FULLNAME, Imps.Provider.CATEGORY,
                                                  Imps.Provider.ACTIVE_ACCOUNT_ID,
@@ -111,8 +115,8 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
         mSignInHelper = new SignInHelper(this, mHandler);
 
         Intent intent = getIntent();
-        mDoSignIn = intent.getBooleanExtra("doSignIn", true);
-        mDoLock = intent.getBooleanExtra("doLock", false);
+        mDoSignIn = intent.getBooleanExtra(EXTRA_DO_SIGNIN, true);
+        mDoLock = intent.getBooleanExtra(EXTRA_DO_LOCK, false);
 
         if (ImApp.mUsingCacheword)
             connectToCacheWord();
@@ -408,8 +412,8 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
         //now show onboarding UI
         Intent intent = new Intent(this, OnboardingActivity.class);
         Intent returnIntent = getIntent();
-        returnIntent.putExtra("doSignIn", mDoSignIn);
-        intent.putExtra("originalIntent", returnIntent);
+        returnIntent.putExtra(EXTRA_DO_SIGNIN, mDoSignIn);
+        intent.putExtra(EXTRA_ORIGINAL_INTENT, returnIntent);
         startActivity(intent);
 
     }
@@ -417,8 +421,8 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
     void showLockScreen() {
         Intent intent = new Intent(this, LockScreenActivity.class);
         Intent returnIntent = getIntent();
-        returnIntent.putExtra("doSignIn", mDoSignIn);
-        intent.putExtra("originalIntent", returnIntent);
+        returnIntent.putExtra(EXTRA_DO_SIGNIN, mDoSignIn);
+        intent.putExtra(EXTRA_ORIGINAL_INTENT, returnIntent);
         startActivity(intent);
 
     }
@@ -476,7 +480,7 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
 
         Intent intent = new Intent(activity, RouterActivity.class);
         // Request lock
-        intent.putExtra("doLock", true);
+        intent.putExtra(EXTRA_DO_LOCK, true);
         // Clear the backstack
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         if (Build.VERSION.SDK_INT >= 11)

@@ -750,7 +750,7 @@ public class ImUrlActivity extends Activity {
     void showLockScreen() {
         Intent intent = new Intent(this, LockScreenActivity.class);
       //  intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        intent.putExtra("originalIntent", getIntent());
+        intent.putExtra(RouterActivity.EXTRA_ORIGINAL_INTENT, getIntent());
         startActivity(intent);
         finish();
 
