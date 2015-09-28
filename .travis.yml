@@ -13,8 +13,9 @@ jdk:
   # the release build infrastructure uses OpenJDK from Debian
   - openjdk7
   # many developers use the Oracle JDK
-  - oraclejdk8
-  - oraclejdk7
+  # (disabled because Travis cannot reliably start the emulator with these)
+  #- oraclejdk8
+  #- oraclejdk7
 
 android:
   components:
