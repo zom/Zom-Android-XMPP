@@ -504,9 +504,16 @@ public class PushManager {
                 new String[]{"0"},
                 null);
 
-        if (accountCursor == null || !accountCursor.moveToFirst()) return null;
+        if (accountCursor == null)
+            return null;
+        else if (!accountCursor.moveToFirst()) {
+            accountCursor.close();
+            return null;
+        }
 
-        return new PersistedAccount(accountCursor);
+        PersistedAccount account = new PersistedAccount(accountCursor);
+        accountCursor.close();
+        return account;
     }
 
     private void setPersistedAccount(@NonNull Account account,
@@ -539,10 +546,18 @@ public class PushManager {
                 new String[]{"0"},
                 null);
 
-        if (deviceCursor == null || !deviceCursor.moveToFirst()) return null;
+        if (deviceCursor == null)
+            return null;
+        else if (!deviceCursor.moveToFirst()) {
+            deviceCursor.close();
+            return null;
+        }
+
 
         try {
-            return new PersistedDevice(deviceCursor);
+            PersistedDevice device = new PersistedDevice(deviceCursor);
+            deviceCursor.close();
+            return device;
         } catch (ParseException e) {
             Timber.e(e, "Failed to create PersistedDevice from Cursor");
             return null;
