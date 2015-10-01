@@ -60,7 +60,6 @@ public class PushManager {
         this.context = context;
         this.providerUrl = chatsecurePushServerUrl;
 
-        // Testing: "https://chatsecure-push.herokuapp.com/api/v1/"
         client = new PushSecureClient(providerUrl);
 
     }
@@ -571,6 +570,7 @@ public class PushManager {
         deviceValues.put(PushDatabase.Devices.DATE_CREATED, PushDatabase.DATE_FORMATTER.format(device.dateCreated));
         deviceValues.put(PushDatabase.Devices.REGISTRATION_ID, device.registrationId);
         deviceValues.put(PushDatabase.Devices.DEVICE_ID, device.deviceId);
+        deviceValues.put(PushDatabase.Devices.SERVER_ID, device.id);
         deviceValues.put(PushDatabase.Devices.ACTIVE, device.active);
 
         // Update or Insert
