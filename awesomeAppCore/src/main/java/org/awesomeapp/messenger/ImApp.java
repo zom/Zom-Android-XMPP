@@ -92,12 +92,14 @@ import android.os.Message;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.multidex.MultiDex;
+import android.support.multidex.MultiDexApplication;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
 import de.duenndns.ssl.MemorizingTrustManager;
 
-public class ImApp extends Application {
+public class ImApp extends MultiDexApplication {
 
     public static final String LOG_TAG = "Zom";
 
@@ -222,6 +224,12 @@ public class ImApp extends Application {
         sImApp.onCreate();
     }
 */
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
+    }
 
     @Override
     public Resources getResources() {
