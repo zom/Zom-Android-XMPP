@@ -8,6 +8,7 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
 
 import java.io.IOException;
+import java.util.concurrent.Executors;
 
 import info.guardianproject.otr.app.im.R;
 import timber.log.Timber;
@@ -45,7 +46,8 @@ public class GcmRegistration {
                 // TODO: Ensure instanceID.getToken never returns null
             }
 
-        }.execute(packageContext);
+        }.executeOnExecutor(Executors.newSingleThreadExecutor(), packageContext);
+        // We execute on a separate Executor so that this method can be used within an AsyncTask
     }
 
     public static String getRegistrationId(@NonNull final Context packageContext) throws IOException {
