@@ -17,6 +17,8 @@
 
 package org.awesomeapp.messenger;
 
+import info.guardianproject.cacheword.CacheWordHandler;
+import info.guardianproject.cacheword.ICacheWordSubscriber;
 import info.guardianproject.cacheword.PRNGFixes;
 import info.guardianproject.iocipher.VirtualFileSystem;
 
@@ -99,7 +101,7 @@ import android.util.Log;
 
 import de.duenndns.ssl.MemorizingTrustManager;
 
-public class ImApp extends MultiDexApplication {
+public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
     public static final String LOG_TAG = "Zom";
 
@@ -150,6 +152,8 @@ public class ImApp extends MultiDexApplication {
     public MemorizingTrustManager mTrustManager;
 
     private PushManager mPushManager;
+
+    private CacheWordHandler mCacheWord;
 
     public static boolean mUsingCacheword = true;
 
@@ -288,11 +292,13 @@ public class ImApp extends MultiDexApplication {
 
         mBroadcaster = new Broadcaster();
 
-        setAppTheme(null,null);
+        setAppTheme(null, null);
 
         checkLocale();
 
-        setupChatSecurePush();
+        // ChatSecure-Push needs to do initial setup as soon as Cacheword is ready
+        mCacheWord = new CacheWordHandler(this, this);
+        mCacheWord.connectToService();
     }
 
     private boolean mThemeDark = false;
@@ -944,6 +950,22 @@ public class ImApp extends MultiDexApplication {
         }
     };
 
+    @Override
+    public void onCacheWordUninitialized() {
+        // unused
+    }
+
+    @Override
+    public void onCacheWordLocked() {
+        // unused
+    }
+
+    @Override
+    public void onCacheWordOpened() {
+        // setupChatSecurePush will disconnect the CacheWordHandler when it's done
+        setupChatSecurePush();
+    }
+
     private final class MyConnListener extends ConnectionListenerAdapter {
         public MyConnListener(Handler handler) {
             super(handler);
@@ -1167,6 +1189,10 @@ public class ImApp extends MultiDexApplication {
             @Override
             public void onSuccess(@NonNull Account response) {
                 Log.d(LOG_TAG, "Registered ChatSecure-Push account!");
+                if (mCacheWord != null) {
+                    mCacheWord.disconnectFromService();
+                    mCacheWord = null;
+                }
             }
 
             @Override
