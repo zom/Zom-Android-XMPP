@@ -1,5 +1,7 @@
 package net.java.otr4j.session;
 
+import android.support.annotation.Nullable;
+
 import info.guardianproject.bouncycastle.util.encoders.Hex;
 
 import java.io.ByteArrayOutputStream;
@@ -173,6 +175,7 @@ public class OtrSm implements OtrTlvHandler {
         return makeTlvList(sendtlv);
     }
 
+    @Nullable
     public List<TLV> getPendingTlvs() {
         return pendingTlvs;
     }

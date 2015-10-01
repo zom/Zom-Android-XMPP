@@ -149,6 +149,8 @@ public class ImApp extends MultiDexApplication {
 
     public MemorizingTrustManager mTrustManager;
 
+    private PushManager mPushManager;
+
     public static boolean mUsingCacheword = true;
 
     /**
@@ -1148,16 +1150,16 @@ public class ImApp extends MultiDexApplication {
     }
 
     public void setupChatSecurePush() {
-        PushManager pushManager = new PushManager(this);
+        mPushManager = new PushManager(this);
 
-        PersistedAccount chatSecurePushAccount = pushManager.getPersistedAccount();
+        PersistedAccount chatSecurePushAccount = mPushManager.getPersistedAccount();
 
         // Use the existing account credentials if available, else a new random username & password
-        final String username = isCspAccountValid(chatSecurePushAccount, pushManager.getProviderUrl()) ?
+        final String username = isCspAccountValid(chatSecurePushAccount, mPushManager.getProviderUrl()) ?
                 chatSecurePushAccount.username :
                 UUID.randomUUID().toString().substring(0, 30); // ChatSecure-Push usernames are 30 characters max
 
-        final String password = isCspAccountValid(chatSecurePushAccount, pushManager.getProviderUrl()) ?
+        final String password = isCspAccountValid(chatSecurePushAccount, mPushManager.getProviderUrl()) ?
                 chatSecurePushAccount.pasword :
                 UUID.randomUUID().toString();
 
@@ -1174,7 +1176,11 @@ public class ImApp extends MultiDexApplication {
         };
 
         // authenticateAccount will persist the account to our secure database if auth is successful
-        pushManager.authenticateAccount(username, password, authCallback);
+        mPushManager.authenticateAccount(username, password, authCallback);
+    }
+
+    public PushManager getPushManager() {
+        return mPushManager;
     }
 
     /**

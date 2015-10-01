@@ -80,7 +80,8 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
         mSessions = new Hashtable<String, SessionID>();
         mOtrSms = new Hashtable<String, OtrSm>();
 
-        mPushManager = new PushManager(mContext);
+        // Use the Application-managed PushManager which has a push account already authenticated
+        mPushManager = ((ImApp) mContext.getApplicationContext()).getPushManager();
         mWhitelistTokenHandlers = new Hashtable<>();
         mWhitelistTokenExchangedSessions = new HashSet<>();
     }
@@ -306,7 +307,7 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
 
             List<TLV> outboundTlvs = new ArrayList<>();
 
-            if (otrSm != null) {
+            if (otrSm != null && otrSm.getPendingTlvs() != null) {
                 outboundTlvs.addAll(otrSm.getPendingTlvs());
             }
 
