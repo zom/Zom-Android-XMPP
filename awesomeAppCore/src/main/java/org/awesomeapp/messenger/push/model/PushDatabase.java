@@ -103,17 +103,17 @@ public class PushDatabase {
          * The content:// style URL for this table
          */
         public static final Uri CONTENT_URI = Uri
-                .parse("content://org.awesomeapp.messenger.provider.Imps/csp-accounts");
+                .parse("content://org.awesomeapp.messenger.provider.Imps/csp-devices");
 
         /**
-         * The MIME type of {@link #CONTENT_URI} providing a directory of ChatSecure-Push Accounts.
+         * The MIME type of {@link #CONTENT_URI} providing a directory of ChatSecure-Push Devices.
          */
-        public static final String CONTENT_TYPE = "vnd.android.cursor.dir/imps-csp-accounts";
+        public static final String CONTENT_TYPE = "vnd.android.cursor.dir/imps-csp-devices";
 
         /**
-         * The MIME type of a {@link #CONTENT_URI} subdirectory of a single ChatSecure-Push Account.
+         * The MIME type of a {@link #CONTENT_URI} subdirectory of a single ChatSecure-Push Devices.
          */
-        public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/imps-csp-accounts";
+        public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/imps-csp-devices";
 
         /**
          * The default sort order for this table
