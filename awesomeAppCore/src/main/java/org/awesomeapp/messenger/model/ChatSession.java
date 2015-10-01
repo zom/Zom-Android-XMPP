@@ -27,6 +27,8 @@ import java.util.Vector;
 
 import net.java.otr4j.session.SessionID;
 import net.java.otr4j.session.SessionStatus;
+
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 /**
@@ -118,6 +120,10 @@ public class ChatSession {
         
         if (otrStatus == SessionStatus.ENCRYPTED)
         {
+            // ChatSecure-Push : If OTR session is available when sending peer message,
+            // ensure we have exchanged Push Whitelist tokens with that peer
+            cm.maybeBeginPushWhitelistTokenExchange(sId);
+
             boolean verified = cm.getKeyManager().isVerified(sId);
 
             if (verified)
@@ -133,6 +139,10 @@ public class ChatSession {
         }
         else if (otrStatus == SessionStatus.FINISHED)
         {
+            // ChatSecure-Push : If no session is available when sending peer message,
+            // attempt to send a "Knock" push message to the peer asking them to come online
+            cm.sendKnockPushMessage(sId);
+
             message.setType(Imps.MessageType.POSTPONED);
           //  onSendMessageError(message, new ImErrorInfo(ImErrorInfo.INVALID_SESSION_CONTEXT,"error - session finished"));
             return message.getType();
@@ -194,6 +204,32 @@ public class ChatSession {
 
         }
 
+    }
+
+    public void sendPushWhitelistTokenAsync(@NonNull Message message,
+                                            @NonNull String[] whitelistTokens) {
+
+        OtrChatManager cm = OtrChatManager.getInstance();
+        SessionID sId = cm.getSessionId(message.getFrom().getAddress(), mParticipant.getAddress().getAddress());
+        SessionStatus otrStatus = cm.getSessionStatus(sId);
+
+        message.setTo(new XmppAddress(sId.getRemoteUserId()));
+
+        if (otrStatus == SessionStatus.ENCRYPTED) {
+            boolean verified = cm.getKeyManager().isVerified(sId);
+
+            if (verified) {
+                message.setType(Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED);
+            } else {
+                message.setType(Imps.MessageType.OUTGOING_ENCRYPTED);
+            }
+
+            boolean canSend = cm.transformPushWhitelistTokenSending(message, whitelistTokens);
+
+            if (canSend)
+                mManager.sendMessageAsync(this, message);
+
+        }
     }
 
     /**

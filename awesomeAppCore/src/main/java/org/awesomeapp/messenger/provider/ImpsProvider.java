@@ -21,6 +21,7 @@ import info.guardianproject.cacheword.ICacheWordSubscriber;
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.provider.Imps.Contacts;
 
+import org.awesomeapp.messenger.push.model.PushDatabase;
 import org.awesomeapp.messenger.util.Debug;
 import org.awesomeapp.messenger.util.LogCleaner;
 
@@ -89,10 +90,15 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
     private static final String TABLE_LAST_RMQ_ID = "lastrmqid";
     private static final String TABLE_S2D_RMQ_IDS = "s2dRmqIds";
 
+    // ChatSecure-Push Tables
+    private static final String TABLE_CSP_ACCOUNTS = "csp_accounts";
+    private static final String TABLE_CSP_DEVICES = "csp_device";
+    private static final String TABLE_CSP_TOKENS = "csp_tokens";
+
     private static final String ENCRYPTED_DATABASE_NAME = "impsenc.db";
     private static final String UNENCRYPTED_DATABASE_NAME = "imps.db";
 
-    private static final int DATABASE_VERSION = 105;
+    private static final int DATABASE_VERSION = 106;
 
     protected static final int MATCH_PROVIDERS = 1;
     protected static final int MATCH_PROVIDERS_BY_ID = 2;
@@ -165,6 +171,14 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
     protected static final int MATCH_OUTGOING_HIGHEST_RMQ_ID = 202;
     protected static final int MATCH_LAST_RMQ_ID = 203;
     protected static final int MATCH_S2D_RMQ_IDS = 204;
+
+    // ChatSecure-Push url matcher
+    protected static final int MATCH_CSP_ACCOUNTS = 300;
+    protected static final int MATCH_CSP_ACCOUNT = 301;
+    protected static final int MATCH_CSP_DEVICES = 302;
+    protected static final int MATCH_CSP_DEVICE = 303;
+    protected static final int MATCH_CSP_TOKENS = 304;
+    protected static final int MATCH_CSP_TOKEN = 305;
 
     protected final UriMatcher mUrlMatcher = new UriMatcher(UriMatcher.NO_MATCH);
     private String mTransientDbName;
@@ -398,6 +412,11 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
          
             //DELETE FROM cache WHERE id IN (SELECT cache.id FROM cache LEFT JOIN main ON cache.id=main.id WHERE main.id IS NULL);
 
+            // ChatSecure-Push tables
+            db.execSQL(PushDatabase.getAccountsTableSqlWithName(TABLE_CSP_ACCOUNTS));
+            db.execSQL(PushDatabase.getDeviceTableSqlWithName(TABLE_CSP_DEVICES));
+            db.execSQL(PushDatabase.getTokenTableSqlWithName(TABLE_CSP_TOKENS));
+
         }
 
         @Override
@@ -572,6 +591,23 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
                 db.rawExecSQL("PRAGMA cipher_migrate;");
 
                 return;
+            case 105:
+                    // Add ChatSecure-Push
+                    db.beginTransaction();
+
+                    try {
+                        db.execSQL(PushDatabase.getAccountsTableSqlWithName(TABLE_CSP_ACCOUNTS));
+                        db.execSQL(PushDatabase.getDeviceTableSqlWithName(TABLE_CSP_DEVICES));
+                        db.execSQL(PushDatabase.getTokenTableSqlWithName(TABLE_CSP_TOKENS));
+
+                        db.setTransactionSuccessful();
+                    } catch (Throwable ex) {
+                        LogCleaner.error(LOG_TAG, ex.getMessage(), ex);
+                    } finally {
+                        db.endTransaction();
+                    }
+                return; // TODO : Why do other case blocks return at their conclusion?
+                        // Wouldn't we want all applicable upgrades?
             case 1:
                 if (newVersion <= 100) {
                     return;
@@ -613,6 +649,11 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_OUTGOING_RMQ_MESSAGES);
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_LAST_RMQ_ID);
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_S2D_RMQ_IDS);
+
+            // ChatSecure-Push tables
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_CSP_ACCOUNTS);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_CSP_DEVICES);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_CSP_TOKENS);
         }
 
         private void createContactsTables(SQLiteDatabase db) {
@@ -1040,6 +1081,7 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
 
         setupImUrlMatchers(AUTHORITY);
         setupMcsUrlMatchers(AUTHORITY);
+        setupChatSecurePushMatchers(AUTHORITY);
     }
 
     protected ImpsProvider(int dbVersion) {
@@ -1131,6 +1173,15 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
         mUrlMatcher.addURI(authority, "outgoingHighestRmqId", MATCH_OUTGOING_HIGHEST_RMQ_ID);
         mUrlMatcher.addURI(authority, "lastRmqId", MATCH_LAST_RMQ_ID);
         mUrlMatcher.addURI(authority, "s2dids", MATCH_S2D_RMQ_IDS);
+    }
+
+    private void setupChatSecurePushMatchers(String authority) {
+        mUrlMatcher.addURI(authority, "csp-accounts", MATCH_CSP_ACCOUNTS);
+        mUrlMatcher.addURI(authority, "csp-accounts/#", MATCH_CSP_ACCOUNT);
+        mUrlMatcher.addURI(authority, "csp-devices", MATCH_CSP_DEVICES);
+        mUrlMatcher.addURI(authority, "csp-devices/#", MATCH_CSP_DEVICE);
+        mUrlMatcher.addURI(authority, "csp-tokens", MATCH_CSP_TOKENS);
+        mUrlMatcher.addURI(authority, "csp-tokens/#", MATCH_CSP_TOKEN);
     }
 
     @Override
@@ -1649,6 +1700,25 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
 
         case MATCH_S2D_RMQ_IDS:
             qb.setTables(TABLE_S2D_RMQ_IDS);
+            break;
+
+        // ChatSecure-Push queries
+        case MATCH_CSP_ACCOUNT:
+            appendWhere(whereClause, PushDatabase.Accounts._ID, "=", url.getPathSegments().get(1));
+        case MATCH_CSP_ACCOUNTS:
+            qb.setTables(TABLE_CSP_ACCOUNTS);
+            break;
+
+        case MATCH_CSP_DEVICE:
+            appendWhere(whereClause, PushDatabase.Devices._ID, "=", url.getPathSegments().get(1));
+        case MATCH_CSP_DEVICES:
+            qb.setTables(TABLE_CSP_DEVICES);
+            break;
+
+        case MATCH_CSP_TOKEN:
+            appendWhere(whereClause, PushDatabase.Tokens._ID, "=", url.getPathSegments().get(1));
+        case MATCH_CSP_TOKENS:
+            qb.setTables(TABLE_CSP_TOKENS);
             break;
 
         default:
@@ -2688,6 +2758,28 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
             }
             break;
 
+        // ChatSecure-Push
+        case MATCH_CSP_ACCOUNTS:
+            rowID = db.insert(TABLE_CSP_ACCOUNTS, null, initialValues);
+            if (rowID > 0) {
+                resultUri = Uri.parse(PushDatabase.Accounts.CONTENT_URI + "/" + rowID);
+            }
+            break;
+
+        case MATCH_CSP_DEVICES:
+            rowID = db.insert(TABLE_CSP_DEVICES, null, initialValues);
+            if (rowID > 0) {
+                resultUri = Uri.parse(PushDatabase.Devices.CONTENT_URI + "/" + rowID);
+            }
+            break;
+
+        case MATCH_CSP_TOKENS:
+            rowID = db.insert(TABLE_CSP_TOKENS, null, initialValues);
+            if (rowID > 0) {
+                resultUri = Uri.parse(PushDatabase.Tokens.CONTENT_URI + "/" + rowID);
+            }
+            break;
+
         default:
             throw new UnsupportedOperationException("Cannot insert into URL: " + url);
         }
@@ -3330,6 +3422,19 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
             tableToChange = TABLE_S2D_RMQ_IDS;
             break;
 
+        // ChatSecure-Push
+        case MATCH_CSP_ACCOUNTS:
+            tableToChange = TABLE_CSP_ACCOUNTS;
+            break;
+
+        case MATCH_CSP_DEVICES:
+            tableToChange = TABLE_CSP_DEVICES;
+            break;
+
+        case MATCH_CSP_TOKENS:
+            tableToChange = TABLE_CSP_TOKENS;
+            break;
+
         default:
             throw new UnsupportedOperationException("Cannot delete that URL: " + url);
         }
@@ -3672,6 +3777,19 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
 
         case MATCH_S2D_RMQ_IDS:
             tableToChange = TABLE_S2D_RMQ_IDS;
+            break;
+
+        // ChatSecure-Push
+        case MATCH_CSP_ACCOUNTS:
+            tableToChange = TABLE_CSP_ACCOUNTS;
+            break;
+
+        case MATCH_CSP_DEVICES:
+            tableToChange = TABLE_CSP_DEVICES;
+            break;
+
+        case MATCH_CSP_TOKENS:
+            tableToChange = TABLE_CSP_TOKENS;
             break;
 
         default:

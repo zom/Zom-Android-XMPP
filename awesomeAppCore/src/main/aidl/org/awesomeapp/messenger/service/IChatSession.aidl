@@ -85,6 +85,11 @@ interface IChatSession {
     void sendMessage(String text);
 
     /**
+     * Sends a ChatSecure-Push Whitelist token to all participants in this ChatSession.
+     */
+    boolean sendPushWhitelistToken(String token);
+
+    /**
      * Sends data to all participants in this ChatSession.
      */
     boolean offerData(String offerId, String localUri, String type);

@@ -3,6 +3,9 @@ package org.awesomeapp.messenger.crypto;
 // Originally: package com.zadov.beem;
 
 import org.awesomeapp.messenger.ImApp;
+import org.awesomeapp.messenger.push.PushManager;
+import org.awesomeapp.messenger.push.WhitelistTokenTlv;
+import org.awesomeapp.messenger.push.WhitelistTokenTlvHandler;
 import org.awesomeapp.messenger.ui.legacy.SmpResponseActivity;
 import org.awesomeapp.messenger.model.Contact;
 import org.awesomeapp.messenger.model.Message;
@@ -10,11 +13,17 @@ import org.awesomeapp.messenger.service.adapters.ImConnectionAdapter;
 import org.awesomeapp.messenger.service.ImServiceConstants;
 import org.awesomeapp.messenger.service.RemoteImService;
 import org.awesomeapp.messenger.util.Debug;
+import org.chatsecure.pushsecure.PushSecureClient;
+import org.chatsecure.pushsecure.response.PushToken;
+import org.json.JSONException;
 
+import java.io.UnsupportedEncodingException;
 import java.security.KeyPair;
 import java.security.PublicKey;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -30,14 +39,18 @@ import net.java.otr4j.session.Session;
 import net.java.otr4j.session.SessionID;
 import net.java.otr4j.session.SessionStatus;
 import net.java.otr4j.session.TLV;
+
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 /*
  * OtrChatManager keeps track of the status of chats and their OTR stuff
  */
 public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
+
+    private static final String TAG = "OtrChatManager";
 
     //the singleton instance
     private static OtrChatManager mInstance;
@@ -46,6 +59,11 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
     private OtrEngineImpl mOtrEngine;
     private Hashtable<String, SessionID> mSessions;
     private Hashtable<String, OtrSm> mOtrSms;
+
+    // ChatSecure-Push
+    private PushManager mPushManager;
+    private Hashtable<String, WhitelistTokenTlvHandler> mWhitelistTokenHandlers;
+    private HashSet<String> mWhitelistTokenExchangedSessions;
 
     private Context mContext;
 
@@ -62,8 +80,9 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
         mSessions = new Hashtable<String, SessionID>();
         mOtrSms = new Hashtable<String, OtrSm>();
 
-
-
+        mPushManager = new PushManager(mContext);
+        mWhitelistTokenHandlers = new Hashtable<>();
+        mWhitelistTokenExchangedSessions = new HashSet<>();
     }
 
 
@@ -283,13 +302,22 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
             mOtrEngineHost.putSessionResource(sessionId, processResource(remoteUserId));
             plain = mOtrEngine.transformReceiving(sessionId, msg, tlvs);
             OtrSm otrSm = mOtrSms.get(sessionId.toString());
+            WhitelistTokenTlvHandler tokenTlvHandler = mWhitelistTokenHandlers.get(sessionId.toString());
+
+            List<TLV> outboundTlvs = new ArrayList<>();
 
             if (otrSm != null) {
-                List<TLV> smTlvs = otrSm.getPendingTlvs();
-                if (smTlvs != null) {
-                    String encrypted = mOtrEngine.transformSending(sessionId, "", smTlvs);
-                    mOtrEngineHost.injectMessage(sessionId, encrypted);
-                }
+                outboundTlvs.addAll(otrSm.getPendingTlvs());
+            }
+
+            if (tokenTlvHandler != null) {
+                outboundTlvs.addAll(tokenTlvHandler.getPendingTlvs());
+            }
+
+            // TODO : Is it kosher to send multiple TLVs spanning separate types in a single message?
+            if (outboundTlvs.size() > 0) {
+                String encrypted = mOtrEngine.transformSending(sessionId, "", outboundTlvs);
+                mOtrEngineHost.injectMessage(sessionId, encrypted);
             }
 
             if (plain != null && plain.length() == 0)
@@ -348,14 +376,67 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
         return true;
     }
 
+    /**
+     * Create a message body describing the ChatSecure-Push Whitelist Token Exchange.
+     * See <a href="https://github.com/ChatSecure/ChatSecure-Push-Server/wiki/Chat-Client-Implementation-Notes#json-whitelist-token-exchange">JSON Whitelist Token Exchange</a>
+     *
+     * @param message         A {@link Message} providing the 'to' & 'from' addresses, as well as
+     *                        any message body text (this is currently unused by the ChatSecure-Push
+     *                        spec).
+     * @param whitelistTokens An Array of one or more ChatSecure-Push Whitelist tokens
+     */
+    public boolean transformPushWhitelistTokenSending(@NonNull Message message,
+                                                      @NonNull String[] whitelistTokens) {
+
+        String localUserId = message.getFrom().getAddress();
+        String remoteUserId = message.getTo().getAddress();
+        String body = message.getBody();
+
+        SessionID sessionId = getSessionId(localUserId, remoteUserId);
+
+        try {
+
+            TLV tokenTlv = mPushManager.createWhitelistTokenExchangeTlvWithToken(whitelistTokens, null);
+
+            List<TLV> tlvs = new ArrayList<>(1);
+            tlvs.add(tokenTlv);
+
+            if (mOtrEngine != null && sessionId != null) {
+                SessionStatus sessionStatus = mOtrEngine.getSessionStatus(sessionId);
+                if (sessionStatus != SessionStatus.ENCRYPTED) {
+                    // Cannot send Whitelist token without OTR.
+                    // TODO: Is it possible to Postpone-send a TLV message?
+                    OtrDebugLogger.log("Could not send ChatSecure-Push Whitelist Token TLV. Session not encrypted.");
+                    return false;
+                }
+                OtrDebugLogger.log("session status: " + sessionStatus);
+
+                body = mOtrEngine.transformSending(sessionId, body, tlvs);
+                message.setTo(mOtrEngineHost.appendSessionResource(sessionId, message.getTo()));
+            }
+
+            message.setBody(body);
+
+            return true;
+
+        } catch (UnsupportedEncodingException e) {
+            Log.e(TAG, "Failed to craft ChatSecure-Push Whitelist Token TLV", e);
+            return false;
+        } catch (OtrException e) {
+            OtrDebugLogger.log("error encrypting", e);
+            return false;
+        }
+    }
+
     @Override
-    public void sessionStatusChanged(SessionID sessionID) {
+    public void sessionStatusChanged(final SessionID sessionID) {
         SessionStatus sStatus = mOtrEngine.getSessionStatus(sessionID);
 
         OtrDebugLogger.log("session status changed: " + sStatus);
 
         final Session session = mOtrEngine.getSession(sessionID);
         OtrSm otrSm = mOtrSms.get(sessionID.toString());
+        WhitelistTokenTlvHandler tokenTlvHandler = mWhitelistTokenHandlers.get(sessionID.toString());
 
         if (sStatus == SessionStatus.ENCRYPTED) {
 
@@ -370,10 +451,38 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
 
                 mOtrSms.put(sessionID.toString(), otrSm);
             }
+
+            if (tokenTlvHandler == null) {
+                // ChatSecure-Push Whitelist Token Handler - One per session
+                tokenTlvHandler = new WhitelistTokenTlvHandler(mPushManager, sessionID);
+                session.addTlvHandler(tokenTlvHandler);
+                mWhitelistTokenHandlers.put(sessionID.toString(), tokenTlvHandler);
+
+                // Ensure we have a ChatSecure-Push Whitelist Token available
+                // to send to this Session's participant when the first message is sent
+                mPushManager.createReceivingWhitelistTokenForPeer(sessionID.getRemoteUserId(),
+                        new PushSecureClient.RequestCallback<PushToken>() {
+                            @Override
+                            public void onSuccess(@NonNull PushToken response) {
+                                Log.d(TAG, "Prepared push whitelist token for " + sessionID.getRemoteUserId());
+                                // the token has already been persisted by pushManager
+                            }
+
+                            @Override
+                            public void onFailure(@NonNull Throwable t) {
+                                Log.e(TAG, "Failed to prepare push whitelist token for " + sessionID.getRemoteUserId(), t);
+                            }
+                        });
+            }
         } else if (sStatus == SessionStatus.PLAINTEXT) {
             if (otrSm != null) {
                 session.removeTlvHandler(otrSm);
                 mOtrSms.remove(sessionID.toString());
+            }
+
+            if (tokenTlvHandler != null) {
+                session.removeTlvHandler(tokenTlvHandler);
+                mWhitelistTokenHandlers.remove(sessionID.toString());
             }
             mOtrEngineHost.removeSessionResource(sessionID);
         } else if (sStatus == SessionStatus.FINISHED) {
@@ -480,5 +589,61 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
         mOtrEngineHost.injectMessage(sessionID, encrypted);
     }
 
+    /**
+     * Begins the ChatSecure-Push Whitelist Token Exchange if not yet performed for the
+     * given {@param sessionID}.
+     */
+    public void maybeBeginPushWhitelistTokenExchange(@NonNull final SessionID sessionID) {
+        if (mWhitelistTokenExchangedSessions.contains(sessionID.toString())) return;
 
+        mWhitelistTokenExchangedSessions.add(sessionID.toString());
+        try {
+            mPushManager.createWhitelistTokenExchangeTlv(
+                    sessionID.getLocalUserId(),
+                    sessionID.getRemoteUserId(),
+                    new PushSecureClient.RequestCallback<TLV>() {
+                        @Override
+                        public void onSuccess(@NonNull TLV response) {
+
+                            try {
+                                ArrayList<TLV> outboundTlvs = new ArrayList<>();
+                                outboundTlvs.add(response);
+                                String encrypted = mOtrEngine.transformSending(sessionID, "", outboundTlvs);
+                                mOtrEngineHost.injectMessage(sessionID, encrypted);
+                                Log.d(TAG, "Began Push Whitelist Token TLV Exchange");
+                            } catch (OtrException e) {
+                                Log.e(TAG, "Failed to encrypt outbound Whitelist Token TLV");
+                                mWhitelistTokenExchangedSessions.remove(sessionID.toString());
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(@NonNull Throwable t) {
+                            Log.e(TAG, "Failed to obtain Whitelist Token", t);
+                            mWhitelistTokenExchangedSessions.remove(sessionID.toString());
+                        }
+                    }, null);
+        } catch (UnsupportedEncodingException e) {
+            Log.e(TAG, "Failed to begin Push Whitelist Token Exchange", e);
+            mWhitelistTokenExchangedSessions.remove(sessionID.toString());
+        }
+    }
+
+    /**
+     * Send a ChatSecure-Push "Knock" Push Message to the remote peer in the
+     * given {@param sessionID}.
+     */
+    public void sendKnockPushMessage(@NonNull final SessionID sessionID) {
+        mPushManager.sendPushMessageToPeer(sessionID.getRemoteUserId(), new PushSecureClient.RequestCallback<org.chatsecure.pushsecure.response.Message>() {
+            @Override
+            public void onSuccess(@NonNull org.chatsecure.pushsecure.response.Message response) {
+                Log.d(TAG, "Sent push message to " + sessionID.getRemoteUserId());
+            }
+
+            @Override
+            public void onFailure(@NonNull Throwable t) {
+                Log.e(TAG, "Failed to send push message to " + sessionID.getRemoteUserId(), t);
+            }
+        });
+    }
 }

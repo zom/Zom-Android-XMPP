@@ -19,14 +19,19 @@ package org.awesomeapp.messenger;
 
 import info.guardianproject.cacheword.PRNGFixes;
 import info.guardianproject.iocipher.VirtualFileSystem;
+
 import org.awesomeapp.messenger.crypto.OtrAndroidKeyManagerImpl;
+import org.awesomeapp.messenger.push.PushManager;
+import org.awesomeapp.messenger.push.model.PersistedAccount;
 import org.awesomeapp.messenger.service.Broadcaster;
 import org.awesomeapp.messenger.service.IChatSession;
 import org.awesomeapp.messenger.service.IChatSessionManager;
 import org.awesomeapp.messenger.service.IConnectionCreationListener;
 import org.awesomeapp.messenger.service.IImConnection;
 import org.awesomeapp.messenger.service.IRemoteImService;
+
 import info.guardianproject.otr.app.im.R;
+
 import org.awesomeapp.messenger.ui.legacy.BrandingResources;
 import org.awesomeapp.messenger.ui.legacy.ImPluginHelper;
 import org.awesomeapp.messenger.ui.legacy.ProviderDef;
@@ -50,14 +55,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import java.util.UUID;
 
 import net.hockeyapp.android.CrashManager;
 import net.hockeyapp.android.CrashManagerListener;
 import net.sqlcipher.database.SQLiteDatabase;
 
 import org.awesomeapp.messenger.service.RemoteImService;
-import org.thoughtcrime.ssl.pinning.PinningTrustManager;
-import org.thoughtcrime.ssl.pinning.SystemKeyStore;
+import org.chatsecure.pushsecure.PushSecureClient;
+import org.chatsecure.pushsecure.response.Account;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -85,12 +91,9 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.TrustManager;
 
 import de.duenndns.ssl.MemorizingTrustManager;
 
@@ -278,6 +281,8 @@ public class ImApp extends Application {
         setAppTheme(null,null);
 
         checkLocale();
+
+        setupChatSecurePush();
     }
 
     private boolean mThemeDark = false;
@@ -1132,6 +1137,50 @@ public class ImApp extends Application {
     public long getDefaultAccountId ()
     {
         return mDefaultAccountId;
+    }
+
+    public void setupChatSecurePush() {
+        PushManager pushManager = new PushManager(this);
+
+        PersistedAccount chatSecurePushAccount = pushManager.getPersistedAccount();
+
+        // Use the existing account credentials if available, else a new random username & password
+        final String username = isCspAccountValid(chatSecurePushAccount, pushManager.getProviderUrl()) ?
+                chatSecurePushAccount.username :
+                UUID.randomUUID().toString().substring(0, 30); // ChatSecure-Push usernames are 30 characters max
+
+        final String password = isCspAccountValid(chatSecurePushAccount, pushManager.getProviderUrl()) ?
+                chatSecurePushAccount.pasword :
+                UUID.randomUUID().toString();
+
+        PushSecureClient.RequestCallback<Account> authCallback = new PushSecureClient.RequestCallback<Account>() {
+            @Override
+            public void onSuccess(@NonNull Account response) {
+                Log.d(LOG_TAG, "Registered ChatSecure-Push account!");
+            }
+
+            @Override
+            public void onFailure(@NonNull Throwable t) {
+                Log.e(LOG_TAG, "Failed to register ChatSecure-Push account!", t);
+            }
+        };
+
+        // authenticateAccount will persist the account to our secure database if auth is successful
+        pushManager.authenticateAccount(username, password, authCallback);
+    }
+
+    /**
+     * Reports whether the persisted ChatSecure-Push account is valid.
+     *
+     * @param account              the persisted ChatSecure-Push account
+     * @param requestedProviderUrl the URL describing the desired ChatSecure-Push server instance
+     *                             where the user's account should be registered
+     * @return true if the given account is valid, false if a new account should be registered.
+     */
+    private static boolean isCspAccountValid(PersistedAccount account,
+                                             @NonNull String requestedProviderUrl) {
+
+        return account != null && account.providerUrl.equals(requestedProviderUrl);
     }
 
 }
