@@ -171,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
                         sb.append(getString(R.string.friends));
                         break;
                     case 2:
-                        sb.append(getString(R.string.photo_gallery));
+                        sb.append(getString(R.string.title_more));
                         break;
                     case 3:
                         sb.append(getString(R.string.me_title));
@@ -185,7 +185,9 @@ public class MainActivity extends AppCompatActivity {
                     mFab.setImageResource(R.drawable.ic_person_add_white_36dp);
                 }
                 else if (tab.getPosition() == 2) {
-                    mFab.setImageResource(R.drawable.ic_photo_camera_white_36dp);
+//                    mFab.setImageResource(R.drawable.ic_photo_camera_white_36dp);
+                    mFab.setVisibility(View.GONE);
+
                 }
                 else if (tab.getPosition() == 3)
                 {
