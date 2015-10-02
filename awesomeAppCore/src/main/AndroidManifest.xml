@@ -287,7 +287,9 @@
         <activity
             android:name="org.awesomeapp.messenger.ui.AddContactActivity"
             android:exported="false"
-            android:label="@string/add_contact_title" />
+            android:label="@string/add_contact_title"
+            android:theme="@style/InviteDialog"
+            />
       <activity
             android:name="org.awesomeapp.messenger.ui.ContactsPickerActivity"
             android:exported="false"

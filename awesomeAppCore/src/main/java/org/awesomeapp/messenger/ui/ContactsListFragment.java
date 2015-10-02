@@ -70,7 +70,6 @@ public class ContactsListFragment extends Fragment {
 
         setupRecyclerView(mRecView);
 
-        setupActions (view);
 
 // ...
 
@@ -107,75 +106,6 @@ public class ContactsListFragment extends Fragment {
 
     }
 
-    private void setupActions (View view)
-    {
-        /**
-        Button btnInviteSms = (Button)view.findViewById(R.id.btnInviteSMS);
-        btnInviteSms.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-
-                ImApp app = ((ImApp)getActivity().getApplication());
-                String nickname = new XmppAddress(app.getDefaultUsername()).getUser();
-                String inviteString = OnboardingManager.generateInviteMessage(getActivity(), nickname, app.getDefaultUsername(), app.getDefaultOtrKey());
-                OnboardingManager.inviteSMSContact(getActivity(), null, inviteString);
-            }
-
-        });
-
-        Button btnInviteShare = (Button)view.findViewById(R.id.btnInviteShare);
-        btnInviteShare.setOnClickListener(new View.OnClickListener()
-        {
-
-            @Override
-            public void onClick(View v) {
-
-                ImApp app = ((ImApp)getActivity().getApplication());
-
-                String nickname = new XmppAddress(app.getDefaultUsername()).getUser();
-
-                String inviteString = OnboardingManager.generateInviteMessage(getActivity(),  nickname, app.getDefaultUsername(), app.getDefaultOtrKey());
-                OnboardingManager.inviteShare(getActivity(), inviteString);
-
-            }
-
-        });
-
-        Button btnInviteQR = (Button)view.findViewById(R.id.btnInviteScan);
-        btnInviteQR.setOnClickListener(new View.OnClickListener()
-        {
-
-            @Override
-            public void onClick(View v) {
-                ImApp app = ((ImApp)getActivity().getApplication());
-
-                String inviteString;
-                try {
-                    inviteString = OnboardingManager.generateInviteLink(getActivity(), app.getDefaultUsername(), app.getDefaultOtrKey());
-                    OnboardingManager.inviteScan(getActivity(), inviteString);
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-            }
-
-        });
-
-        Button btnInviteAdd = (Button)view.findViewById(R.id.btnInviteAdd);
-        btnInviteAdd.setOnClickListener(new View.OnClickListener()
-        {
-
-            @Override
-            public void onClick(View v) {
-
-                Intent i = new Intent(getActivity(), AddContactActivity.class);
-                getActivity().startActivityForResult(i,MainActivity.REQUEST_ADD_CONTACT);
-            }
-
-        });
-        */
-    }
 
 
     public static class ContactListRecyclerViewAdapter

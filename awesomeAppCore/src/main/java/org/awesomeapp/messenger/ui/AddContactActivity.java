@@ -17,7 +17,9 @@
 
 package org.awesomeapp.messenger.ui;
 
+import org.awesomeapp.messenger.MainActivity;
 import org.awesomeapp.messenger.crypto.OtrAndroidKeyManagerImpl;
+import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
 import org.awesomeapp.messenger.service.IContactList;
 import org.awesomeapp.messenger.service.IContactListManager;
 import org.awesomeapp.messenger.service.IImConnection;
@@ -27,12 +29,16 @@ import org.awesomeapp.messenger.plugin.BrandingResourceIDs;
 
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.provider.Imps;
+import org.awesomeapp.messenger.tasks.AddContactAsyncTask;
 import org.awesomeapp.messenger.ui.legacy.BrandingResources;
 import org.awesomeapp.messenger.ui.legacy.ErrorResUtils;
 import org.awesomeapp.messenger.ui.legacy.ProviderListItem;
 import org.awesomeapp.messenger.ui.legacy.SimpleAlertHandler;
+import org.awesomeapp.messenger.ui.onboarding.OnboardingManager;
 import org.awesomeapp.messenger.util.XmppUriHelper;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -53,8 +59,11 @@ import android.text.util.Rfc822Token;
 import android.text.util.Rfc822Tokenizer;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
@@ -71,8 +80,8 @@ public class AddContactActivity extends ActionBarActivity {
     private static final int CONTACT_LIST_NAME_COLUMN = 1;
 
     private MultiAutoCompleteTextView mAddressList;
-    private Spinner mListSpinner;
-    Button mInviteButton;
+    //private Spinner mListSpinner;
+  //  Button mInviteButton;
     ImApp mApp;
     SimpleAlertHandler mHandler;
 
@@ -99,14 +108,21 @@ public class AddContactActivity extends ActionBarActivity {
         mAddressList.setTokenizer(new Rfc822Tokenizer());
         mAddressList.addTextChangedListener(mTextWatcher);
 
-        mListSpinner = (Spinner) findViewById(R.id.choose_list);
+        mAddressList.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
+                if (actionId == EditorInfo.IME_ACTION_SEND) {
 
-        setupAccountSpinner();
+                    inviteBuddies();
+                }
+                return false;
+            }
+        });
 
-        mInviteButton = (Button) findViewById(R.id.invite);
-        mInviteButton.setText(brandingRes.getString(BrandingResourceIDs.STRING_BUTTON_ADD_CONTACT));
-        mInviteButton.setOnClickListener(mButtonHandler);
-        mInviteButton.setEnabled(false);
+  //      mListSpinner = (Spinner) findViewById(R.id.choose_list);
+
+//        setupAccountSpinner();
+
 
         Intent intent = getIntent();
         String scheme = intent.getScheme();
@@ -114,9 +130,68 @@ public class AddContactActivity extends ActionBarActivity {
         {
             addContactFromUri(intent.getData());
         }
+
+        setupActions ();
     }
-    
-    
+
+
+    private void setupActions ()
+    {
+
+        Button btnInviteSms = (Button)findViewById(R.id.btnInviteSMS);
+        btnInviteSms.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                ImApp app = ((ImApp)getApplication());
+                String nickname = new XmppAddress(app.getDefaultUsername()).getUser();
+                String inviteString = OnboardingManager.generateInviteMessage(AddContactActivity.this, nickname, app.getDefaultUsername(), app.getDefaultOtrKey());
+                OnboardingManager.inviteSMSContact(AddContactActivity.this, null, inviteString);
+            }
+
+        });
+
+        Button btnInviteShare = (Button)findViewById(R.id.btnInviteShare);
+        btnInviteShare.setOnClickListener(new View.OnClickListener()
+        {
+
+            @Override
+            public void onClick(View v) {
+
+                ImApp app = ((ImApp)getApplication());
+
+                String nickname = new XmppAddress(app.getDefaultUsername()).getUser();
+
+                String inviteString = OnboardingManager.generateInviteMessage(AddContactActivity.this,  nickname, app.getDefaultUsername(), app.getDefaultOtrKey());
+                OnboardingManager.inviteShare(AddContactActivity.this, inviteString);
+
+            }
+
+        });
+
+        Button btnInviteQR = (Button)findViewById(R.id.btnInviteScan);
+        btnInviteQR.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                ImApp app = ((ImApp) getApplication());
+
+                String inviteString;
+                try {
+                    inviteString = OnboardingManager.generateInviteLink(AddContactActivity.this, app.getDefaultUsername(), app.getDefaultOtrKey());
+                    OnboardingManager.inviteScan(AddContactActivity.this, inviteString);
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+
+        });
+
+
+    }
+
 
     @Override
     protected void onDestroy() {
@@ -154,6 +229,7 @@ public class AddContactActivity extends ActionBarActivity {
             mAccountId = mCursorProviders.getLong(ACTIVE_ACCOUNT_ID_COLUMN);
         }
 
+        /**
         mListSpinner.setAdapter(adapter);
         mListSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 
@@ -173,7 +249,7 @@ public class AddContactActivity extends ActionBarActivity {
 
             }
         });
-
+*/
     }
     
     public class ProviderListItemFactory implements LayoutInflater.Factory {
@@ -326,7 +402,7 @@ public class AddContactActivity extends ActionBarActivity {
 
     private TextWatcher mTextWatcher = new TextWatcher() {
         public void afterTextChanged(Editable s) {
-            mInviteButton.setEnabled(s.length() != 0);
+
         }
 
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -344,17 +420,40 @@ public class AddContactActivity extends ActionBarActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent resultIntent) {
-        if (resultCode == RESULT_OK) {
 
-            /**
-            IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode,
-                    resultIntent);
-            if (scanResult != null) {
-                String qrContents = scanResult.getContents();
-                if (!TextUtils.isEmpty(qrContents))
-                    addContactFromUri(Uri.parse(qrContents));
-            }*/
+        if (resultCode == RESULT_OK) {
+            if (requestCode == OnboardingManager.REQUEST_SCAN) {
+
+                ArrayList<String> resultScans = resultIntent.getStringArrayListExtra("result");
+                for (String resultScan : resultScans)
+                {
+
+                    try {
+                        if (resultScan.startsWith("xmpp:"))
+                        {
+                            String address = XmppUriHelper.parse(Uri.parse(resultScan)).get(XmppUriHelper.KEY_ADDRESS);
+                            String fingerprint =  XmppUriHelper.getOtrFingerprint(resultScan);
+
+                            new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).execute(address, fingerprint);
+
+                        }
+                        else {
+                            //parse each string and if they are for a new user then add the user
+                            String[] parts = OnboardingManager.decodeInviteLink(resultScan);
+
+                            new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).execute(parts[0], parts[1]);
+                        }
+
+                        //if they are for a group chat, then add the group
+                    }
+                    catch (Exception e)
+                    {
+                        Log.w(ImApp.LOG_TAG, "error parsing QR invite link", e);
+                    }
+                }
+            }
         }
+
     }
 
     /**
@@ -370,7 +469,7 @@ public class AddContactActivity extends ActionBarActivity {
         }
         String address = parsedUri.get(XmppUriHelper.KEY_ADDRESS);
         this.mAddressList.setText(address);
-        this.mInviteButton.setBackgroundColor(R.drawable.btn_green);
+      //  this.mInviteButton.setBackgroundColor(R.drawable.btn_green);
 
         //store this for future use... ideally the user comes up as verified the first time!
         String fingerprint = parsedUri.get(XmppUriHelper.KEY_OTR_FINGERPRINT);
@@ -378,6 +477,17 @@ public class AddContactActivity extends ActionBarActivity {
             Log.i(TAG, "fingerprint: " + fingerprint);
             OtrAndroidKeyManagerImpl.getInstance(this).verifyUser(address, fingerprint);
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private static final String[] PROVIDER_PROJECTION = {

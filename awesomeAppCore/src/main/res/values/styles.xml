@@ -68,6 +68,13 @@
         <item name="android:backgroundDimAmount">0.7</item>
     </style>
 
+    <style name="InviteDialog" parent="Base.Theme.AppCompat.Dialog">
+        <item name="android:windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:textColor">#ffffff</item>
+
+    </style>
+
     <style name="AppTheme" parent="@style/Theme.AppCompat.Light" >    
 
 
