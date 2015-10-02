@@ -48,4 +48,10 @@ public class WhitelistTokenTlv {
         this.tokens = tokens;
         this.extraData = extraData;
     }
+
+
+    @Override
+    public String toString() {
+        return createGson().toJson(this);
+    }
 }

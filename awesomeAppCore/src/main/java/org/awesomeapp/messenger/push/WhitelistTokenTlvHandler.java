@@ -8,15 +8,20 @@ import net.java.otr4j.crypto.OtrTlvHandler;
 import net.java.otr4j.session.SessionID;
 import net.java.otr4j.session.TLV;
 
-import org.awesomeapp.messenger.crypto.OtrChatManager;
 import org.chatsecure.pushsecure.PushSecureClient;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import timber.log.Timber;
 
 /**
+ * Facilitates the ChatSecure-Push Whitelist Token Exchange over OTR TLV.
+ * Call {@link #processTlv(TLV)} whenever new TLV messages arrive, and subsequently call
+ * {@link #getPendingTlvs()} for outgoing TLVs in response to those received.
  * Created by dbro on 9/28/15.
  */
 public class WhitelistTokenTlvHandler implements OtrTlvHandler {
@@ -24,6 +29,7 @@ public class WhitelistTokenTlvHandler implements OtrTlvHandler {
     private static final String TAG = "TokenTlvHandler";
 
     private final List<TLV> pendingTlvs = new ArrayList<>();
+    private boolean processing;
     private SessionID sessionID;
     private PushManager pushManager;
 
@@ -34,31 +40,51 @@ public class WhitelistTokenTlvHandler implements OtrTlvHandler {
         this.sessionID = sessionID;
     }
 
+    /**
+     * Processes the given tlv, blocking until complete
+     *
+     * @throws OtrException
+     */
     @Override
     public void processTlv(TLV tlv) throws OtrException {
 
         if (tlv.getType() == WhitelistTokenTlv.TLV_WHITELIST_TOKEN) {
             try {
-                WhitelistTokenTlv tokenTlv = WhitelistTokenTlv.parseTlv(tlv);
-                pushManager.insertReceivedWhitelistTokensTlv(tokenTlv, sessionID);
+                synchronized (pendingTlvs) {
+                    processing = true;
+                    WhitelistTokenTlv tokenTlv = WhitelistTokenTlv.parseTlv(tlv);
+                    Timber.d("Got TLV: %s", tokenTlv);
+                    pushManager.insertReceivedWhitelistTokensTlv(tokenTlv, sessionID);
 
-                pushManager.createWhitelistTokenExchangeTlv(
-                        sessionID.getLocalUserId(),
-                        sessionID.getRemoteUserId(),
-                        new PushSecureClient.RequestCallback<TLV>() {
-                            @Override
-                            public void onSuccess(@NonNull TLV response) {
-                                pendingTlvs.add(response);
-                            }
+                    pushManager.createWhitelistTokenExchangeTlv(
+                            sessionID.getLocalUserId(),
+                            sessionID.getRemoteUserId(),
+                            new PushSecureClient.RequestCallback<TLV>() {
+                                @Override
+                                public void onSuccess(@NonNull TLV response) {
+                                    synchronized (pendingTlvs) {
+                                        Log.d(TAG, "Queueing Whitelist Token Exchange TLV response");
+                                        pendingTlvs.add(response);
+                                        processing = false;
+                                        pendingTlvs.notify();
+                                    }
+                                }
 
-                            @Override
-                            public void onFailure(@NonNull Throwable t) {
-                                Log.e(TAG, "Failed to create Whitelist Token Exchange TLV", t);
-                            }
-                        }, null);
+                                @Override
+                                public void onFailure(@NonNull Throwable t) {
+                                    Log.e(TAG, "Failed to create Whitelist Token Exchange TLV", t);
+                                    synchronized (pendingTlvs) {
+                                        processing = false;
+                                        pendingTlvs.notify();
+                                    }
+                                }
+                            }, null);
 
-            } catch (UnsupportedEncodingException e) {
-                Log.e(TAG, "Failed to parse Whitelist token payload", e);
+                    while (processing) pendingTlvs.wait();
+                }
+
+            } catch (UnsupportedEncodingException | InterruptedException e) {
+                Log.e(TAG, "Failed to save Whitelist token payload", e);
             }
         }
     }
@@ -71,11 +97,19 @@ public class WhitelistTokenTlvHandler implements OtrTlvHandler {
     @NonNull
     public List<TLV> getPendingTlvs() {
 
-        // Copy and clear pendingTlvs : These should only be sent once
-        ArrayList<TLV> outgoingTlvs = new ArrayList<>();
-        Collections.copy(outgoingTlvs, pendingTlvs);
-        pendingTlvs.clear();
+        synchronized (pendingTlvs) {
+            while (processing) {
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                    return new ArrayList<>();
+                }
+            }
 
-        return outgoingTlvs;
+            // Shallow copy and clear pendingTlvs : TLVs should be returned (and sent) only once
+            ArrayList<TLV> outgoingTlvs = new ArrayList<>(pendingTlvs);
+            pendingTlvs.clear();
+            return outgoingTlvs;
+        }
     }
 }

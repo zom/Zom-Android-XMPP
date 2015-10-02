@@ -312,7 +312,15 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
             }
 
             if (tokenTlvHandler != null) {
-                outboundTlvs.addAll(tokenTlvHandler.getPendingTlvs());
+                List<TLV> whitelistTokenTlvs = tokenTlvHandler.getPendingTlvs();
+                if (whitelistTokenTlvs.size() > 0) {
+                    // We only need to perform the Whitelist Token TLV Exchange once per-session
+                    // After we've responded to this session's TLV exchange, remove TLV handler
+                    Session session = mOtrEngine.getSession(sessionId);
+                    session.removeTlvHandler(tokenTlvHandler);
+                    mWhitelistTokenHandlers.remove(sessionId.toString());
+                }
+                outboundTlvs.addAll(whitelistTokenTlvs);
             }
 
             // TODO : Is it kosher to send multiple TLVs spanning separate types in a single message?
