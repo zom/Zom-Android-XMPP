@@ -11,6 +11,7 @@ import android.util.Log;
 
 import net.java.otr4j.session.SessionID;
 import net.java.otr4j.session.TLV;
+import net.sqlcipher.database.SQLiteConstraintException;
 
 import org.awesomeapp.messenger.model.Message;
 import org.awesomeapp.messenger.push.gcm.GcmRegistration;
@@ -80,6 +81,7 @@ public class PushManager {
 
         if (!assertAuthenticated()) return;
 
+        // Note that an outgoing Whitelist token must have the host identifier as it's "recipient"
         Cursor persistedTokens = getPersistedTokenCursorForRecipientIdentifier(hostIdentifier, false);
 
         if (persistedTokens != null && persistedTokens.getCount() > 0) {
@@ -90,7 +92,9 @@ public class PushManager {
             callback.onSuccess(tokenTlv);
             persistedTokens.close();
             return;
-        }
+        } else if (persistedTokens != null) persistedTokens.close();
+
+        Timber.d("Got no token for identifier %s. Creating new", hostIdentifier);
 
         createReceivingWhitelistTokenForPeer(recipientIdentifier, new PushSecureClient.RequestCallback<PushToken>() {
             @Override
@@ -236,6 +240,8 @@ public class PushManager {
                     } else if (!persistedDevice.registrationId.equals(gcmToken[0])) {
 
                         updateDeviceWithGcmRegistrationId(persistedDevice, gcmToken[0], deviceCreatedOrUpdatedCallback);
+                    } else {
+                        deviceRegistrationLatch.countDown();
                     }
 
                     deviceRegistrationLatch.await();
@@ -319,7 +325,13 @@ public class PushManager {
             tokenValues.put(PushDatabase.Tokens.RECIPIENT, sessionID.getLocalUserId());
             tokenValues.put(PushDatabase.Tokens.NAME, createWhitelistTokenName(sessionID.getLocalUserId(), sessionID.getRemoteUserId()));
             tokenValues.put(PushDatabase.Tokens.TOKEN, tlv.tokens[idx]);
-            context.getContentResolver().insert(PushDatabase.Tokens.CONTENT_URI, tokenValues);
+            try {
+                context.getContentResolver().insert(PushDatabase.Tokens.CONTENT_URI, tokenValues);
+                Timber.d("Inserted token %s", tlv.tokens[idx]);
+            } catch (SQLiteConstraintException e) {
+                // This token is already stored, ignore.
+                Timber.e(e, "Failed to insert token %s.", tlv.tokens[idx], e);
+            }
         }
     }
 
