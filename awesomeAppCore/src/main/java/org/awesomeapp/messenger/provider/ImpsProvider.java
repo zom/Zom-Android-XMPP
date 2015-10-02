@@ -18,6 +18,7 @@ package org.awesomeapp.messenger.provider;
 
 import info.guardianproject.cacheword.CacheWordHandler;
 import info.guardianproject.cacheword.ICacheWordSubscriber;
+
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.provider.Imps.Contacts;
 
@@ -234,6 +235,7 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
     private static final String PRESENCE_CONTACT_ID = TABLE_PRESENCE + '.'
                                                       + Imps.Presence.CONTACT_ID;
 
+    private static final Object mDbHelperLock = new Object();
     protected static DatabaseHelper mDbHelper;
     private String mDatabaseName;
     private final int mDatabaseVersion;
@@ -282,11 +284,13 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
 
     @Override
     public void onCacheWordLocked() {
-        if (mDbHelper != null) {
-            mDbHelper.close();
-            mDbHelper = null;
+        synchronized (mDbHelperLock) {
+            if (mDbHelper != null) {
+                mDbHelper.close();
+                mDbHelper = null;
+                mDbHelperLock.notify();
+            }
         }
-
     }
 
     @Override
@@ -297,10 +301,28 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
             initDBHelper(mCacheword.getEncryptionKey(), false);
         } catch (Exception e) {
             LogCleaner.error(ImApp.LOG_TAG, e.getMessage(), e);
-
         }
 
 
+    }
+
+    /**
+     * This method blocks until the underlying data store is ready. Be sure to call this
+     * on a background thread.
+     *
+     * This is helpful because queries to this ContentProvider will return null if
+     * this component hasn't yet performed initialization after CacheWord becomes ready.
+     */
+    public static void awaitDataReady() {
+        synchronized (mDbHelperLock) {
+            if (mDbHelper == null) {
+                try {
+                    mDbHelperLock.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
 
@@ -1206,29 +1228,32 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
     }
 
     private synchronized DatabaseHelper initDBHelper(byte[] pkey, boolean noCreate) throws Exception {
-        if (mDbHelper == null) {
-            if (pkey != null) {
-                setDatabaseName(pkey != null);
-                Context ctx = getContext();
-                String path = ctx.getDatabasePath(mDatabaseName).getPath();
-                if (noCreate && !new File(path).exists()) {
-                    LogCleaner.debug(ImApp.LOG_TAG, "no DB exists at " + path);
-                    return null;
+        synchronized (mDbHelperLock) {
+            if (mDbHelper == null) {
+                if (pkey != null) {
+                    setDatabaseName(pkey != null);
+                    Context ctx = getContext();
+                    String path = ctx.getDatabasePath(mDatabaseName).getPath();
+                    if (noCreate && !new File(path).exists()) {
+                        LogCleaner.debug(ImApp.LOG_TAG, "no DB exists at " + path);
+                        return null;
+                    }
+
+                    boolean inMemoryDb = false;
+
+                    mDbHelper = new DatabaseHelper(ctx, pkey, inMemoryDb);
+                    LogCleaner.debug(LOG_TAG, "Opened DB with key");
+                    mDbHelperLock.notify();
+
+                    Debug.recordTrail(getContext(), EMPTY_KEY_TRAIL_TAG, "");
+                    String prevOpen = Debug.getTrail(getContext(), DATABASE_OPEN_TRAIL_TAG);
+                    if (prevOpen != null) {
+                        Debug.recordTrail(getContext(), PREV_DATABASE_OPEN_TRAIL_TAG, prevOpen);
+                    }
+                    Debug.recordTrail(getContext(), DATABASE_OPEN_TRAIL_TAG, new Date());
+                } else {
+                    LogCleaner.warn(ImApp.LOG_TAG, "DB not open and no password provided");
                 }
-
-                boolean inMemoryDb = false;
-
-                mDbHelper = new DatabaseHelper(ctx, pkey, inMemoryDb);
-                LogCleaner.debug(LOG_TAG, "Opened DB with key");
-
-                Debug.recordTrail(getContext(), EMPTY_KEY_TRAIL_TAG, "");
-                String prevOpen = Debug.getTrail(getContext(), DATABASE_OPEN_TRAIL_TAG);
-                if (prevOpen != null) {
-                    Debug.recordTrail(getContext(), PREV_DATABASE_OPEN_TRAIL_TAG, prevOpen);
-                }
-                Debug.recordTrail(getContext(), DATABASE_OPEN_TRAIL_TAG, new Date());
-            } else {
-                LogCleaner.warn(ImApp.LOG_TAG, "DB not open and no password provided");
             }
         }
 
@@ -1734,7 +1759,10 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
             db = getDBHelper().getReadableDatabase();
         } catch (net.sqlcipher.database.SQLiteException e) {
             // Failed to actually open - the passphrase must have been wrong - reset the helper
-            mDbHelper = null;
+            synchronized (mDbHelperLock) {
+                mDbHelper = null;
+                mDbHelperLock.notify();
+            }
             throw e;
         }
         net.sqlcipher.Cursor c = null;

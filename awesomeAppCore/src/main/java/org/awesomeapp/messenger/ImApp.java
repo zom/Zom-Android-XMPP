@@ -17,10 +17,13 @@
 
 package org.awesomeapp.messenger;
 
+import info.guardianproject.cacheword.CacheWordHandler;
+import info.guardianproject.cacheword.ICacheWordSubscriber;
 import info.guardianproject.cacheword.PRNGFixes;
 import info.guardianproject.iocipher.VirtualFileSystem;
 
 import org.awesomeapp.messenger.crypto.OtrAndroidKeyManagerImpl;
+import org.awesomeapp.messenger.provider.ImpsProvider;
 import org.awesomeapp.messenger.push.PushManager;
 import org.awesomeapp.messenger.push.model.PersistedAccount;
 import org.awesomeapp.messenger.service.Broadcaster;
@@ -30,6 +33,7 @@ import org.awesomeapp.messenger.service.IConnectionCreationListener;
 import org.awesomeapp.messenger.service.IImConnection;
 import org.awesomeapp.messenger.service.IRemoteImService;
 
+import info.guardianproject.otr.app.im.BuildConfig;
 import info.guardianproject.otr.app.im.R;
 
 import org.awesomeapp.messenger.ui.legacy.BrandingResources;
@@ -56,6 +60,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import net.hockeyapp.android.CrashManager;
 import net.hockeyapp.android.CrashManagerListener;
@@ -98,8 +104,9 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
 import de.duenndns.ssl.MemorizingTrustManager;
+import timber.log.Timber;
 
-public class ImApp extends MultiDexApplication {
+public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
     public static final String LOG_TAG = "Zom";
 
@@ -150,6 +157,8 @@ public class ImApp extends MultiDexApplication {
     public MemorizingTrustManager mTrustManager;
 
     private PushManager mPushManager;
+
+    private CacheWordHandler mCacheWord;
 
     public static boolean mUsingCacheword = true;
 
@@ -288,11 +297,13 @@ public class ImApp extends MultiDexApplication {
 
         mBroadcaster = new Broadcaster();
 
-        setAppTheme(null,null);
+        setAppTheme(null, null);
 
         checkLocale();
 
-        setupChatSecurePush();
+        // ChatSecure-Push needs to do initial setup as soon as Cacheword is ready
+        mCacheWord = new CacheWordHandler(this, this);
+        mCacheWord.connectToService();
     }
 
     private boolean mThemeDark = false;
@@ -944,6 +955,31 @@ public class ImApp extends MultiDexApplication {
         }
     };
 
+    @Override
+    public void onCacheWordUninitialized() {
+        // unused
+    }
+
+    @Override
+    public void onCacheWordLocked() {
+        // unused
+    }
+
+    @Override
+    public void onCacheWordOpened() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(LOG_TAG, "Awaiting ImpsProvider ready");
+                // Wait for ImpsProvider to initialize : it listens to onCacheWordOpened as well...
+                ImpsProvider.awaitDataReady();
+                Log.d(LOG_TAG, "ImpsProvider ready");
+                // setupChatSecurePush will disconnect the CacheWordHandler when it's done
+                setupChatSecurePush();
+            }
+        }).start();
+    }
+
     private final class MyConnListener extends ConnectionListenerAdapter {
         public MyConnListener(Handler handler) {
             super(handler);
@@ -1153,6 +1189,11 @@ public class ImApp extends MultiDexApplication {
         mPushManager = new PushManager(this);
 
         PersistedAccount chatSecurePushAccount = mPushManager.getPersistedAccount();
+        if (chatSecurePushAccount == null) {
+            Log.d(LOG_TAG, "No ChatSecure-Push Account is persisted. Creating new");
+        } else {
+            Log.d(LOG_TAG, "ChatSecure-Push Account is persisted with username: " + chatSecurePushAccount.username);
+        }
 
         // Use the existing account credentials if available, else a new random username & password
         final String username = isCspAccountValid(chatSecurePushAccount, mPushManager.getProviderUrl()) ?
@@ -1167,6 +1208,10 @@ public class ImApp extends MultiDexApplication {
             @Override
             public void onSuccess(@NonNull Account response) {
                 Log.d(LOG_TAG, "Registered ChatSecure-Push account!");
+                if (mCacheWord != null) {
+                    mCacheWord.disconnectFromService();
+                    mCacheWord = null;
+                }
             }
 
             @Override
