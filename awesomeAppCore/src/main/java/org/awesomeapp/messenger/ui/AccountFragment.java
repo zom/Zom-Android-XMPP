@@ -2,6 +2,8 @@ package org.awesomeapp.messenger.ui;
 
 import android.app.Activity;
 import android.content.ComponentName;
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -11,7 +13,9 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Parcelable;
+import android.os.RemoteException;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -20,16 +24,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 import org.awesomeapp.messenger.ImApp;
+import org.awesomeapp.messenger.model.ImConnection;
 import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
 import org.awesomeapp.messenger.provider.Imps;
+import org.awesomeapp.messenger.service.IImConnection;
 import org.awesomeapp.messenger.ui.legacy.DatabaseUtils;
+import org.awesomeapp.messenger.ui.legacy.SignInHelper;
 import org.awesomeapp.messenger.ui.onboarding.OnboardingManager;
+import org.awesomeapp.messenger.ui.qr.QrGenAsyncTask;
 import org.awesomeapp.messenger.ui.widgets.ImageViewActivity;
 import org.awesomeapp.messenger.ui.widgets.RoundedAvatarDrawable;
 import org.awesomeapp.messenger.util.SecureMediaStore;
@@ -56,6 +66,8 @@ public class AccountFragment extends Fragment {
     ImageView mIvAvatar;
     CropImageView mCropImageView;
     TextView mTvPassword;
+    ImApp mApp;
+    Handler mHandler = new Handler();
 
     /**
      * Use this factory method to create a new instance of
@@ -93,30 +105,30 @@ public class AccountFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
-        final ImApp app = ((ImApp)getActivity().getApplication());
+        mApp = ((ImApp) getActivity().getApplication());
 
         View view = inflater.inflate(R.layout.awesome_fragment_account, container, false);
 
-        String fullUserName = app.getDefaultUsername();
+        String fullUserName = mApp.getDefaultUsername();
 
         XmppAddress xAddress = new XmppAddress(fullUserName);
 
-        TextView tvNickname = (TextView)view.findViewById(R.id.tvNickname);
+        TextView tvNickname = (TextView) view.findViewById(R.id.tvNickname);
 
-        TextView tvUsername = (TextView)view.findViewById(R.id.edtName);
-        mTvPassword = (TextView)view.findViewById(R.id.edtPass);
+        TextView tvUsername = (TextView) view.findViewById(R.id.edtName);
+        mTvPassword = (TextView) view.findViewById(R.id.edtPass);
         View btnShowPassword = view.findViewById(R.id.btnShowPass);
         btnShowPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                mTvPassword.setText(getAccountPassword(app.getDefaultProviderId()));
+                mTvPassword.setText(getAccountPassword(mApp.getDefaultProviderId()));
             }
         });
 
-        TextView tvFingerprint = (TextView)view.findViewById(R.id.tvFingerprint);
+        TextView tvFingerprint = (TextView) view.findViewById(R.id.tvFingerprint);
 
-        ImageView ivScan = (ImageView)view.findViewById(R.id.buttonScan);
+        ImageView ivScan = (ImageView) view.findViewById(R.id.qrcode);
 
         ivScan.setOnClickListener(new View.OnClickListener() {
 
@@ -125,7 +137,7 @@ public class AccountFragment extends Fragment {
 
                 String inviteString;
                 try {
-                    inviteString = OnboardingManager.generateInviteLink(getActivity(), app.getDefaultUsername(), app.getDefaultOtrKey());
+                    inviteString = OnboardingManager.generateInviteLink(getActivity(), mApp.getDefaultUsername(), mApp.getDefaultOtrKey());
                     OnboardingManager.inviteScan(getActivity(), inviteString);
                 } catch (IOException e) {
                     // TODO Auto-generated catch block
@@ -136,7 +148,7 @@ public class AccountFragment extends Fragment {
 
         });
 
-        mIvAvatar = (ImageView)view.findViewById(R.id.imageAvatar);
+        mIvAvatar = (ImageView) view.findViewById(R.id.imageAvatar);
         mIvAvatar.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -147,37 +159,71 @@ public class AccountFragment extends Fragment {
             }
         });
 
+        Switch switchOnline = (Switch) view.findViewById(R.id.switchOnline);
+        switchOnline.setChecked(checkConnection());
+
+        switchOnline.setTextOn(getString(R.string.contact_online));
+        switchOnline.setTextOff(getString(R.string.contact_offline));
+        switchOnline.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    signIn();
+                } else {
+                    // The toggle is disabled
+                    signOut();
+                }
+            }
+        });
 
         try {
 
-            RoundedAvatarDrawable avatar = DatabaseUtils.getAvatarFromAddress(app.getContentResolver(), fullUserName, 128, 128);
+            RoundedAvatarDrawable avatar = DatabaseUtils.getAvatarFromAddress(mApp.getContentResolver(), fullUserName, 128, 128);
 
             if (avatar != null)
                 mIvAvatar.setImageDrawable(avatar);
-        }
-        catch (Exception e)
-        {
-            Log.w(ImApp.LOG_TAG, "error getting avagtar", e);
+        } catch (Exception e) {
+            Log.w(ImApp.LOG_TAG, "error getting avatar", e);
         }
 
         tvUsername.setText(fullUserName);
         tvNickname.setText(xAddress.getUser());
 
-        if (app.getDefaultOtrKey() != null)
-            tvFingerprint.setText(prettyPrintFingerprint(app.getDefaultOtrKey()));
+        if (mApp.getDefaultOtrKey() != null) {
+            tvFingerprint.setText(prettyPrintFingerprint(mApp.getDefaultOtrKey()));
+
+            try {
+                String inviteLink = OnboardingManager.generateInviteLink(getActivity(), fullUserName, mApp.getDefaultOtrKey());
+                new QrGenAsyncTask(getActivity(), ivScan).execute(inviteLink);
+            } catch (IOException ioe) {
+                Log.e(ImApp.LOG_TAG, "couldn't generate QR code", ioe);
+            }
+        }
 
 
         return view;
     }
 
-    private String getAccountPassword (long providerId)
-    {
+    private boolean checkConnection() {
+        try {
+            IImConnection conn = mApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
+
+            if (conn.getState() == ImConnection.DISCONNECTED)
+                return false;
+
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+
+    }
+
+    private String getAccountPassword(long providerId) {
 
         String result = "";
 
         Cursor c = getActivity().getContentResolver().query(Imps.Provider.CONTENT_URI_WITH_ACCOUNT,
                 new String[]{Imps.Provider.ACTIVE_ACCOUNT_PW}, Imps.Provider.CATEGORY + "=? AND providers." + Imps.Provider._ID + "=?" /* selection */,
-                new String[]{ImApp.IMPS_CATEGORY,providerId+""} /* selection args */,
+                new String[]{ImApp.IMPS_CATEGORY, providerId + ""} /* selection args */,
                 Imps.Provider.DEFAULT_SORT_ORDER);
 
         if (c != null) {
@@ -225,10 +271,8 @@ public class AccountFragment extends Fragment {
                 AlertDialog dialog = builder.create();
                 dialog.show();
                 ;
-            }
-            catch (IOException ioe)
-            {
-                Log.e(ImApp.LOG_TAG,"couldn't load avatar",ioe);
+            } catch (IOException ioe) {
+                Log.e(ImApp.LOG_TAG, "couldn't load avatar", ioe);
             }
 
         }
@@ -236,31 +280,28 @@ public class AccountFragment extends Fragment {
 
     }
 
-    private void setAvatar (Bitmap bmp)
-    {
+    private void setAvatar(Bitmap bmp) {
 
-         RoundedAvatarDrawable avatar = new RoundedAvatarDrawable(bmp);
-         mIvAvatar.setImageDrawable(avatar);
+        RoundedAvatarDrawable avatar = new RoundedAvatarDrawable(bmp);
+        mIvAvatar.setImageDrawable(avatar);
 
-         final ImApp app = ((ImApp)getActivity().getApplication());
+        final ImApp app = ((ImApp) getActivity().getApplication());
 
-         try {
+        try {
 
-             ByteArrayOutputStream stream = new ByteArrayOutputStream();
-             bmp.compress(Bitmap.CompressFormat.JPEG, 90, stream);
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            bmp.compress(Bitmap.CompressFormat.JPEG, 90, stream);
 
-             long providerId = app.getDefaultProviderId();
-             long accountId = app.getDefaultAccountId();
-             byte[] avatarBytesCompressed = stream.toByteArray();
-             String avatarHash = "nohash";
-             String userAddress = app.getDefaultUsername();
+            long providerId = app.getDefaultProviderId();
+            long accountId = app.getDefaultAccountId();
+            byte[] avatarBytesCompressed = stream.toByteArray();
+            String avatarHash = "nohash";
+            String userAddress = app.getDefaultUsername();
 
-             DatabaseUtils.insertAvatarBlob(getActivity().getContentResolver(), Imps.Avatars.CONTENT_URI, providerId, accountId, avatarBytesCompressed, avatarHash, userAddress);
-         }
-         catch (Exception e)
-         {
-         Log.w(ImApp.LOG_TAG,"error loading image bytes",e);
-         }
+            DatabaseUtils.insertAvatarBlob(getActivity().getContentResolver(), Imps.Avatars.CONTENT_URI, providerId, accountId, avatarBytesCompressed, avatarHash, userAddress);
+        } catch (Exception e) {
+            Log.w(ImApp.LOG_TAG, "error loading image bytes", e);
+        }
     }
 
     public byte[] getBytes(InputStream inputStream) throws IOException {
@@ -361,7 +402,6 @@ public class AccountFragment extends Fragment {
     }
 
 
-
     @Override
     public void onResume() {
         super.onResume();
@@ -379,16 +419,69 @@ public class AccountFragment extends Fragment {
         super.onDetach();
     }
 
-    private String prettyPrintFingerprint (String fingerprint)
-    {
+    private String prettyPrintFingerprint(String fingerprint) {
         StringBuffer spacedFingerprint = new StringBuffer();
 
-        for (int i = 0; i + 8 <= fingerprint.length(); i+=8)
-        {
-            spacedFingerprint.append(fingerprint.subSequence(i,i+8));
+        for (int i = 0; i + 8 <= fingerprint.length(); i += 8) {
+            spacedFingerprint.append(fingerprint.subSequence(i, i + 8));
             spacedFingerprint.append(' ');
         }
 
         return spacedFingerprint.toString();
     }
+
+    void signIn () {
+        // The toggle is enabled
+        SignInHelper helper = new SignInHelper(getActivity(), mHandler, new SignInHelper.SignInListener() {
+            @Override
+            public void connectedToService() {
+
+            }
+
+            @Override
+            public void stateChanged(int state, long accountId) {
+
+            }
+        });
+
+        helper.signIn(getAccountPassword(mApp.getDefaultProviderId()), mApp.getDefaultProviderId(), mApp.getDefaultAccountId(),true);
+
+    }
+
+    void signOut() {
+        //if you are signing out, then we will deactive "auto" sign in
+        ContentValues values = new ContentValues();
+        values.put(Imps.AccountColumns.KEEP_SIGNED_IN, 0);
+        getActivity().getContentResolver().update(ContentUris.withAppendedId(Imps.Account.CONTENT_URI, mApp.getDefaultAccountId()), values, null, null);
+        signOut(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
+        ;
+    }
+
+    void signOut(long providerId, long accountId) {
+
+        try {
+
+            IImConnection conn = mApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
+            if (conn != null) {
+                conn.logout();
+            } else {
+                // Normally, we can always get the connection when user chose to
+                // sign out. However, if the application crash unexpectedly, the
+                // status will never be updated. Clear the status in this case
+                // to make it recoverable from the crash.
+                ContentValues values = new ContentValues(2);
+                values.put(Imps.AccountStatusColumns.PRESENCE_STATUS, Imps.CommonPresenceColumns.OFFLINE);
+                values.put(Imps.AccountStatusColumns.CONNECTION_STATUS, Imps.ConnectionStatus.OFFLINE);
+                String where = Imps.AccountStatusColumns.ACCOUNT + "=?";
+                getActivity().getContentResolver().update(Imps.AccountStatus.CONTENT_URI, values, where,
+                        new String[]{Long.toString(accountId)});
+            }
+        } catch (RemoteException ex) {
+            Log.e(ImApp.LOG_TAG, "signout: caught ", ex);
+        } finally {
+
+        }
+
+    }
+
 }
