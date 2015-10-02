@@ -109,6 +109,7 @@ public class ContactsListFragment extends Fragment {
 
     private void setupActions (View view)
     {
+        /**
         Button btnInviteSms = (Button)view.findViewById(R.id.btnInviteSMS);
         btnInviteSms.setOnClickListener(new View.OnClickListener() {
 
@@ -173,7 +174,7 @@ public class ContactsListFragment extends Fragment {
             }
 
         });
-
+        */
     }
 
 
