@@ -96,7 +96,7 @@
         android:inputType="textEmailAddress"
         android:imeOptions="actionSend"
         />
-    
+
 
 
     

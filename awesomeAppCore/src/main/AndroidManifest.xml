@@ -3,8 +3,8 @@
     package="info.guardianproject.otr.app.im"
     android:installLocation="auto"
     android:sharedUserLabel="@string/perm_label"
-    android:versionCode="1500018"
-    android:versionName="15.0.0-alpha-18" >
+    android:versionCode="1500019"
+    android:versionName="15.0.0-alpha-19" >
 
     <supports-screens
         android:anyDensity="true"
