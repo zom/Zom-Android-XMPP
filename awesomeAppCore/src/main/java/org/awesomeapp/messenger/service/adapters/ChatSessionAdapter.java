@@ -48,6 +48,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import net.java.otr4j.session.SessionID;
 import net.java.otr4j.session.SessionStatus;
 
 import org.awesomeapp.messenger.service.RemoteImService;
@@ -327,6 +328,15 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             long now = System.currentTimeMillis();
             insertMessageInDb(null, text, now, Imps.MessageType.POSTPONED);
             return;
+        }
+
+        if (((Contact) mChatSession.getParticipant()).getPresence().getStatus() == Presence.OFFLINE) {
+            // ChatSecure-Push: If the remote peer is offline, send them a push
+            OtrChatManager cm = OtrChatManager.getInstance();
+
+            SessionID sId = cm.getSessionId(mConnection.getLoginUser().getAddress().getAddress(),
+                    mChatSession.getParticipant().getAddress().getAddress());
+            OtrChatManager.getInstance().sendKnockPushMessage(sId);
         }
 
         org.awesomeapp.messenger.model.Message msg = new org.awesomeapp.messenger.model.Message(text);
