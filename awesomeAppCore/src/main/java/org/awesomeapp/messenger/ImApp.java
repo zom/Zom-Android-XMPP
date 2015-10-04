@@ -253,7 +253,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
     @Override
     public ContentResolver getContentResolver() {
-        if (mApplicationContext == this) {
+        if (mApplicationContext == null || mApplicationContext == this) {
             return super.getContentResolver();
         }
 
