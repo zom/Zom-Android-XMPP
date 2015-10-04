@@ -213,8 +213,14 @@ public class PushDatabase {
         String PROVIDER = "provider";
 
         /**
+         * An identifier describing the issuer of this token. If this is a token created
+         * by this application, this value will correspond to a local account identifier <p>Type: TEXT</p>
+         */
+        String ISSUER = "issuer";
+
+        /**
          * An identifier describing the intended recipient of this token. If this is a "sending"
-         * token received from a remote peer, this value will correspond to a local account <p>Type: TEXT</p>
+         * token received from a remote peer, this value will correspond to a local account identifier <p>Type: TEXT</p>
          */
         String RECIPIENT = "recipient";
 
@@ -248,6 +254,7 @@ public class PushDatabase {
                 + TokenColumns.NAME + " TEXT,"
                 + TokenColumns.PROVIDER + " TEXT,"
                 + TokenColumns.RECIPIENT + " TEXT,"
+                + TokenColumns.ISSUER + " TEXT,"
                 + TokenColumns.CREATED_DATE + " TEXT,"
                 + TokenColumns.TOKEN + " TEXT NOT NULL,"
                 + TokenColumns.DEVICE + " INTEGER,"
