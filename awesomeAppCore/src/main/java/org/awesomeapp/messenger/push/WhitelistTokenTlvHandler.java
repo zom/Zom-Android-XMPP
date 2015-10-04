@@ -54,31 +54,33 @@ public class WhitelistTokenTlvHandler implements OtrTlvHandler {
                     processing = true;
                     WhitelistTokenTlv tokenTlv = WhitelistTokenTlv.parseTlv(tlv);
                     Timber.d("Got TLV: %s", tokenTlv);
-                    pushManager.insertReceivedWhitelistTokensTlv(tokenTlv, sessionID);
+                    pushManager.insertReceivedWhitelistTokensTlv(tokenTlv,
+                            PushManager.stripJabberIdResource(sessionID.getLocalUserId()),
+                            PushManager.stripJabberIdResource(sessionID.getRemoteUserId()));
 
                     pushManager.createWhitelistTokenExchangeTlv(
-                            sessionID.getLocalUserId(),
-                            sessionID.getRemoteUserId(),
-                            new PushSecureClient.RequestCallback<TLV>() {
-                                @Override
-                                public void onSuccess(@NonNull TLV response) {
-                                    synchronized (pendingTlvs) {
-                                        Log.d(TAG, "Queueing Whitelist Token Exchange TLV response");
-                                        pendingTlvs.add(response);
-                                        processing = false;
-                                        pendingTlvs.notify();
-                                    }
-                                }
+                            PushManager.stripJabberIdResource(sessionID.getLocalUserId()),
+                            PushManager.stripJabberIdResource(sessionID.getRemoteUserId()),
+                                    new PushSecureClient.RequestCallback<TLV>() {
+                                        @Override
+                                        public void onSuccess(@NonNull TLV response) {
+                                            synchronized (pendingTlvs) {
+                                                Log.d(TAG, "Queueing Whitelist Token Exchange TLV response");
+                                                pendingTlvs.add(response);
+                                                processing = false;
+                                                pendingTlvs.notify();
+                                            }
+                                        }
 
-                                @Override
-                                public void onFailure(@NonNull Throwable t) {
-                                    Log.e(TAG, "Failed to create Whitelist Token Exchange TLV", t);
-                                    synchronized (pendingTlvs) {
-                                        processing = false;
-                                        pendingTlvs.notify();
-                                    }
-                                }
-                            }, null);
+                                        @Override
+                                        public void onFailure(@NonNull Throwable t) {
+                                            Log.e(TAG, "Failed to create Whitelist Token Exchange TLV", t);
+                                            synchronized (pendingTlvs) {
+                                                processing = false;
+                                                pendingTlvs.notify();
+                                            }
+                                        }
+                                    }, null);
 
                     while (processing) pendingTlvs.wait();
                 }
