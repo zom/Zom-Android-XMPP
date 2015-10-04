@@ -7,6 +7,7 @@ default.properties
 local.properties
 proguard.cfg
 proguard-project.txt
+captures/
 #
 assets/chatsecure.properties
 releases
