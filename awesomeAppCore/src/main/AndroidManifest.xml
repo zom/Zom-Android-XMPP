@@ -38,8 +38,8 @@
 
     <!-- GCM Permissions -->
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
-    <permission android:name="com.example.gcm.permission.C2D_MESSAGE" android:protectionLevel="signature" />
-    <uses-permission android:name="com.example.gcm.permission.C2D_MESSAGE" />
+    <permission android:name="org.awesomeapp.messenger.debug.permission.C2D_MESSAGE" android:protectionLevel="signature" />
+    <uses-permission android:name="org.awesomeapp.messenger.debug.permission.C2D_MESSAGE" />
 
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature
@@ -530,8 +530,9 @@
             android:exported="true"
             android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-                <category android:name="com.example.gcm" />
+                <category android:name="org.awesomeapp.messenger.debug" />
             </intent-filter>
         </receiver>
         <service
@@ -547,10 +548,6 @@
             <intent-filter>
                 <action android:name="com.google.android.gms.iid.InstanceID"/>
             </intent-filter>
-        </service>
-        <service
-            android:name="org.awesomeapp.messenger.push.gcm.GcmRegistration"
-            android:exported="false">
         </service>
     </application>
 
