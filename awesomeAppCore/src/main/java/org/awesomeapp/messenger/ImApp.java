@@ -1186,6 +1186,12 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
     }
 
     public void setupChatSecurePush() {
+        // Setup logging for ChatSecure-Push SDK
+        if (BuildConfig.DEBUG) {
+            Timber.plant(new Timber.DebugTree());
+        }
+        Timber.d("SetupChatSecurePush");
+
         mPushManager = new PushManager(this);
 
         PersistedAccount chatSecurePushAccount = mPushManager.getPersistedAccount();
