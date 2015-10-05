@@ -398,10 +398,11 @@ public class PushManager {
                                                  @NonNull String issuerIdentifier) {
 
         for (int idx = 0; idx < tlv.tokens.length; idx++) {
-            ContentValues tokenValues = new ContentValues(6);
+            ContentValues tokenValues = new ContentValues(7);
             tokenValues.put(PushDatabase.Tokens.RECIPIENT, recipientIdentifier);
             tokenValues.put(PushDatabase.Tokens.ISSUER, issuerIdentifier);
             tokenValues.put(PushDatabase.Tokens.ISSUED, 1);
+            tokenValues.put(PushDatabase.Tokens.PROVIDER, tlv.endpoint);
             tokenValues.put(PushDatabase.Tokens.NAME, createWhitelistTokenName(recipientIdentifier, issuerIdentifier));
             tokenValues.put(PushDatabase.Tokens.TOKEN, tlv.tokens[idx]);
             tokenValues.put(PushDatabase.Tokens.CREATED_DATE, PushDatabase.DATE_FORMATTER.format(new Date()));
