@@ -9,7 +9,10 @@ import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 /**
- * A representation of ChatSecure-Push's database in the existing codebase's style.
+ * A representation of ChatSecure-Push's database in the existing codebase's style. I've tried to
+ * isolate the table definitions from {@link org.awesomeapp.messenger.provider.ImpsProvider} so
+ * that it's easy to see the additional data requirements of ChatSecure-Push.
+ * <p>
  * For new apps, it's preferable to use something like Schematic to generate this SQL boilerplate.
  * <p>
  * Created by dbro on 9/23/15.
@@ -32,6 +35,10 @@ public class PushDatabase {
 
     // <editor-fold desc="Accounts">
 
+    /**
+     * A ChatSecure-Push account. This generally represents one application-install, though it
+     * can be migrated across installations with username/password credentials.
+     */
     public static final class Accounts implements AccountColumns, BaseColumns, ChatSecurePushBaseColumns {
 
         /**
@@ -97,6 +104,10 @@ public class PushDatabase {
 
     // <editor-fold desc="Devices">
 
+    /**
+     * A ChatSecure-Push Device. This represents a entity that can receive push messages. On Android,
+     * this is a GCM device.
+     */
     public static final class Devices implements DeviceColumns, BaseColumns, ChatSecurePushBaseColumns {
 
         /**
@@ -131,7 +142,7 @@ public class PushDatabase {
 
         /**
          * The ChatSecure-Push device registraion id. On Android, this is the host device's
-         * GCM token <p>Type: TEXT</p>
+         * GCM token. <p>Type: TEXT</p>
          */
         String REGISTRATION_ID = "reg_id";
 
@@ -173,6 +184,11 @@ public class PushDatabase {
 
     // <editor-fold desc="Tokens">
 
+    /**
+     * A ChatSecure-Push Whitelist Token. A Token grants its recipient push access to a
+     * {@link org.awesomeapp.messenger.push.model.PushDatabase.Devices} entity that may be revoked
+     * by its issuer.
+     */
     public static final class Tokens implements TokenColumns, BaseColumns, ChatSecurePushBaseColumns {
 
         /**

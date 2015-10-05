@@ -33,7 +33,37 @@ import java.util.concurrent.Executors;
 import timber.log.Timber;
 
 /**
- * A top-level class for management of ChatSecure-Push
+ * A top-level class for management of ChatSecure-Push.
+ * <p>
+ * Usage:
+ * <pre>
+ * {@code
+ *      PushManager manager = new PushManager(context);
+ *      manager.authenticateAccount("username", "password", new PushSecureClient.RequestCallback<Account>() {
+ *          @Override
+ *          public void onSuccess(@NonNull Account account) {
+ *              // account has been persisted to the application database
+ *              // you may now perform authenticated ChatSecure-Push actions:
+ *
+ *              // Create a Whitelist Token Exchange TLV to transmit a token to a peer
+ *              // manager.createWhitelistTokenExchangeTlv(...);
+ *
+ *              // Send a Push Message to a peer whose token you've received via
+ *              // the Whitelist Token Exchange TLV mechanism, or otherwise.
+ *              // manager.sendPushMessageToPeer("bob@dukgo.com", new PushSecureClient.RequestCallback<Message>(){...});
+ *          }
+ *
+ *          @Override
+ *          public void onFailure(@NonNull Throwable throwable) {
+ *              // Unable to authenticate ChatSecure-Push account.
+ *
+ *              // Check throwable for an error message describing the issue:
+ *              // throwable.getMessage();
+ *          }
+ *      });
+ *
+ * }
+ * </pre>
  * <p>
  * Created by dbro on 9/18/15.
  */
@@ -66,6 +96,9 @@ public class PushManager {
 
     }
 
+    /**
+     * @return the URL describing the ChatSecure-Push provider
+     */
     @NonNull
     public String getProviderUrl() {
         return providerUrl;
@@ -131,7 +164,13 @@ public class PushManager {
 
     /**
      * Create a Whitelist Token Exchange {@link TLV} for transmission to a remote peer over OTR.
-     * This method uses the provided Whitelist token.
+     * This method uses the provided Whitelist tokens. See {@link WhitelistTokenTlv} for details
+     * on the TLV data format.
+     *
+     * @param tokens    an array of ChatSecure-Push Whitelist Tokens to be packaged in the {@link TLV}.
+     *                  These tokens are typically issued by a local user for transmission
+     *                  to a remote user.
+     * @param extraData additional data to be packaged in the {@link TLV}
      */
     public TLV createWhitelistTokenExchangeTlvWithToken(@NonNull String[] tokens,
                                                         @Nullable String extraData) throws UnsupportedEncodingException {
@@ -348,7 +387,7 @@ public class PushManager {
     /**
      * Persist ChatSecure-Push Whitelist tokens received from a remote peer via the
      * OTR TLV Token Exchange scheme. These tokens can be later retrieved via
-     * {@link #getSendingWhitelistTokenForPeer(String, String, PushSecureClient.RequestCallback)}
+     * {@link #getPersistedWhitelistToken(String, String, PushSecureClient.RequestCallback)}
      *
      * @param tlv                 The Whitelist Token TLV received from the remote peer
      * @param recipientIdentifier a String uniquely identifying the local account that received {@param tlv}
@@ -378,7 +417,8 @@ public class PushManager {
     }
 
     /**
-     * Retrieve a Whitelist token for sending a push to {@param recipientIdentifier}
+     * Retrieve a persisted Whitelist token for sending a push to {@param pushRecipientIdentifier} on behalf of
+     * {@param pushSenderIdentifier}.
      * <p>
      * TODO: Make fully asynchronous or remove
      *
@@ -386,11 +426,12 @@ public class PushManager {
      *                                the push message. This identifier will be used to query
      * @param pushSenderIdentifier    a String uniquely identifying the local user which the push message
      *                                should be sent on behalf of.
-     * @param callback
+     * @param callback                a callback which will receive the {@link PersistedPushToken}
+     *                                or a {@link NoSuchElementException}
      */
-    public void getSendingWhitelistTokenForPeer(@NonNull final String pushRecipientIdentifier,
-                                                @NonNull final String pushSenderIdentifier,
-                                                @NonNull final PushSecureClient.RequestCallback<PushToken> callback) {
+    public void getPersistedWhitelistToken(@NonNull final String pushRecipientIdentifier,
+                                           @NonNull final String pushSenderIdentifier,
+                                           @NonNull final PushSecureClient.RequestCallback<PushToken> callback) {
 
         Timber.d("Lookup push token issued by %s received by %s", pushRecipientIdentifier, pushSenderIdentifier);
         Cursor persistedTokens = getPersistedTokenCursor(pushRecipientIdentifier, pushSenderIdentifier, true);
@@ -405,8 +446,7 @@ public class PushManager {
 
     /**
      * Mark a Whitelist token as issued. This means we should consider it successfully transmitted
-     * to its {@link PushDatabase.Tokens#RECIPIENT}, and it should not
-     * be transmitted to any other peers.
+     * to its {@link PushDatabase.Tokens#RECIPIENT}, and it should not be transmitted to any other peers.
      *
      * @param tokenLocalId the local database id of the Whitelist token
      */
@@ -426,15 +466,18 @@ public class PushManager {
     }
 
     /**
-     * Revoke Whitelist tokens created by this application install for the given recipient.
+     * Revoke Whitelist tokens created by this application install for the given recipient. This method
+     * will only succeed if the matching Whitelist Token(s) was/were created by the ChatSecure-Push account
+     * currently active as a result of {@link #authenticateAccount(String, String, PushSecureClient.RequestCallback)}.
      * NOTE: This does not currently delete tokens that may have been issued by another application install.
      * Currently, the only way to do that is to adopt a common naming convention for tokens that incorporates
-     * the recipient.
-     * (e.g: Created via {@link #createReceivingWhitelistTokenForPeer(String, PushSecureClient.RequestCallback)}
+     * the recipient OR to delete all tokens the server reports.
+     * (e.g: Created via {@link #createReceivingWhitelistTokenForPeer(String, String, PushSecureClient.RequestCallback)}
      * Must be called after {@link #authenticateAccount(String, String, PushSecureClient.RequestCallback)}.
      *
-     * @param recipientIdentifier
-     * @param callback
+     * @param issuerIdentifier    a String uniquely identifying the local user who issued the tokens to be revoked.
+     * @param recipientIdentifier a String uniquely identifying the remote user who was issued the tokens to be revoked.
+     * @param callback            a callback indicating success or failure.
      */
     public void revokeWhitelistTokensForPeer(@NonNull final String issuerIdentifier,
                                              @NonNull final String recipientIdentifier,
@@ -491,6 +534,14 @@ public class PushManager {
         }
     }
 
+    /**
+     * Send a ChatSecure-Push push message from {@param issuerIdentifier} to {@param recipientIdentifier}
+     * if a Whitelist Token matching the pair is available.
+     *
+     * @param issuerIdentifier    a String uniquely identifying the local user who is issuing the push message.
+     * @param recipientIdentifier a String uniquely identifying the remote user who will receive the push message.
+     * @param callback            a callback indicating success or failure
+     */
     public void sendPushMessageToPeer(@NonNull final String issuerIdentifier,
                                       @NonNull final String recipientIdentifier,
                                       @NonNull final PushSecureClient.RequestCallback<org.chatsecure.pushsecure.response.Message> callback) {
@@ -498,7 +549,7 @@ public class PushManager {
         if (!assertAuthenticated()) return;
 
         Timber.d("Send push to %s from %s", recipientIdentifier, issuerIdentifier);
-        getSendingWhitelistTokenForPeer(recipientIdentifier, issuerIdentifier, new PushSecureClient.RequestCallback<PushToken>() {
+        getPersistedWhitelistToken(recipientIdentifier, issuerIdentifier, new PushSecureClient.RequestCallback<PushToken>() {
             @Override
             public void onSuccess(@NonNull PushToken response) {
                 sendPushMessageToToken(response.token, callback);
@@ -511,16 +562,6 @@ public class PushManager {
         });
     }
 
-    /**
-     * Send a push message to a Whitelist token.
-     */
-    public void sendPushMessageToToken(@NonNull String recipientWhitelistToken,
-                                       @NonNull PushSecureClient.RequestCallback<org.chatsecure.pushsecure.response.Message> callback) {
-
-        if (!assertAuthenticated()) return;
-
-        client.sendMessage(recipientWhitelistToken, "" /* push payload */, callback);
-    }
 
     // </editor-fold desc="Public API">
 
@@ -697,6 +738,20 @@ public class PushManager {
         return authenticated;
     }
 
+    /**
+     * Send a push message to a Whitelist token.
+     *
+     * @param recipientWhitelistToken a raw ChatSecure-Push Whitelist Token string.
+     * @param callback                a callback indicating success or failure
+     */
+    private void sendPushMessageToToken(@NonNull String recipientWhitelistToken,
+                                        @NonNull PushSecureClient.RequestCallback<org.chatsecure.pushsecure.response.Message> callback) {
+
+        if (!assertAuthenticated()) return;
+
+        client.sendMessage(recipientWhitelistToken, "" /* push payload */, callback);
+    }
+
     // </editor-fold desc="Private API">
 
     // <editor-fold desc="Utility">
@@ -757,7 +812,7 @@ public class PushManager {
 
     /**
      * Strip the resource off a JabberID. e.g: a@b.com/foo -> a@b.com
-     * When using JIDs as the identifiers in methods like {@link #getPersistedTokenCursorForRecipientIdentifier(String, boolean)},
+     * When using JIDs as the identifiers in methods like {@link #getPersistedTokenCursor(String, String, boolean)},
      * you should strip the resource off the JID, because if the contact is offline we'll just have the bare JID available.
      */
     public static String stripJabberIdResource(@NonNull String fullJabberId) {
