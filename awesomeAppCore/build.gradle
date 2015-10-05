@@ -23,7 +23,7 @@ allprojects {
 }
 
 android {
-    compileSdkVersion 22
+    compileSdkVersion 21
     buildToolsVersion '22.0.1'
 
     dexOptions {
@@ -120,7 +120,7 @@ dependencies {
     compile 'org.ocpsoft.prettytime:prettytime:4.0.0.Final'
     compile 'com.theartofdev.edmodo:android-image-cropper:1.0.+'
     compile project(':external:ChatSecure-Push:sdk')
-    compile 'com.google.android.gms:play-services-gcm:7.8.0'
+    compile 'com.google.android.gms:play-services-gcm:8.1.0'
     compile 'com.android.support:multidex:1.0.1'
 
 
