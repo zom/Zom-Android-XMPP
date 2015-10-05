@@ -117,6 +117,11 @@ public class ChatSession {
         SessionStatus otrStatus = cm.getSessionStatus(sId);
 
         message.setTo(new XmppAddress(sId.getRemoteUserId()));
+
+        if (((Contact) mParticipant).getPresence().getStatus() == Presence.OFFLINE) {
+            // ChatSecure-Push: If the remote peer is offline, send them a push
+            OtrChatManager.getInstance().sendKnockPushMessage(sId);
+        }
         
         if (otrStatus == SessionStatus.ENCRYPTED)
         {
