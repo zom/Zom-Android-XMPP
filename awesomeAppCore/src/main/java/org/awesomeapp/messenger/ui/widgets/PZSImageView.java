@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.PointF;
-import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.FloatMath;
@@ -197,12 +196,13 @@ public class PZSImageView extends ImageView {
 		mInitScaleSpan = 0.f;
 	}
 
+	private long mLastTocuhDownTime = 0;
+
 	/**
 	 * check user double tapped this view.. or not.
-	 * @param current motion event.
-	 * @return true if user double tapped this view.
+	 * @param ev current motion event in a @{link MotionEvent}
+	 * @return {@code true} if user double tapped this view.
 	 */
-	private long mLastTocuhDownTime = 0;
 	protected boolean isDoubleTap(MotionEvent ev){
 		//if old pointer is tapped?
 		if( ev.getPointerCount() > 1){

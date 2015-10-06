@@ -17,8 +17,9 @@
 
 package org.awesomeapp.messenger.model;
 
-import org.awesomeapp.messenger.crypto.OtrDataHandler.Transfer;
 import net.java.otr4j.session.SessionStatus;
+
+import org.awesomeapp.messenger.crypto.OtrDataHandler.Transfer;
 
 /**
  * Interface that allows for implementing classes to listen for new message.
@@ -39,7 +40,7 @@ public interface MessageListener {
     /**
      * Calls when an error occurs to send a message.
      *
-     * @param ses the ChatSession.
+     * @param ses the {@link ChatSession}.
      * @param msg the message which was sent.
      * @param error the error information.
      */
@@ -48,15 +49,15 @@ public interface MessageListener {
     /**
      * Called when a message was not transmitted.
      *
-     * @param ses the ChatSession.
-     * @param msg the message which should be sent later.
+     * @param ses the {@link ChatSession}
+     * @param id the message ID
      */
     public void onMessagePostponed(ChatSession ses, String id);
 
     /**
      * Called when a message receipt was received.
      *
-     * @param ses the ChatSession.
+     * @param ses the {@link ChatSession}.
      * @param id the message ID.
      */
     public void onIncomingReceipt(ChatSession ses, String id);
@@ -67,7 +68,7 @@ public interface MessageListener {
      *
      * <br>XEP-0184
      *
-     * @param ses the ChatSession.
+     * @param ses the {@link ChatSession}.
      */
     public void onReceiptsExpected(ChatSession ses, boolean isExpected);
 

@@ -449,7 +449,7 @@
   <string name="error_no_app_to_handle_url">リンクを処理するアプリがインストールされていません!</string>
   <string name="account_settings_title">アカウント設定</string>
 
-  <string name="warning_alpha">警告: これはChatSecureの早期リリースです。まだセキュリティホールやバグを含んでいる可能性があります。</string>
+
   <!--added 2011/09/01-->
   <string name="menu_view_groups">グループ</string>
   <string name="_open_conversations">会話を開く</string>
@@ -563,7 +563,7 @@
   <string name="start_orbot_">Orbotを開始しますか?</string>
   <string name="orbot_doesn_t_appear_to_be_running_would_you_like_to_start_it_up_and_connect_to_tor_">Orbotが実行されていないようです。起動して、Torに接続しますか?</string>
   <string name="muc_dialog_nickname">ルームで使用するニックネーム</string>
-  <string name="muc_dialog_room">作成または参加するルームの名前\"</string>
+
   <string name="muc_dialog_server">グループ チャット サーバー (conference.foo.com)</string>
   <string name="your_keystore_is_corrupted_please_re_install_chatsecure_or_clear_data_for_the_app">キーストアが破損しています。ChatSecureを再インストールするか、アプリの \'データをクリア\' してください</string>
   <string name="you_received_an_unreadable_encrypted_message">受け取った暗号化されたメッセージは読めません</string>

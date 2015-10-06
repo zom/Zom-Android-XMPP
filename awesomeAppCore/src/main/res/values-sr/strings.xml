@@ -446,7 +446,7 @@
   <string name="error_no_app_to_handle_url">Нема апликације за руковање том везом!</string>
   <string name="account_settings_title">Поставке налога</string>
 
-  <string name="warning_alpha">УПОЗОРЕЊЕ: Ово је рано издање Сигурних порука које може да има сигурносне пропусте или грешке.</string>
+
   <!--added 2011/09/01-->
   <string name="menu_view_groups">Групе</string>
   <string name="_open_conversations"> отворених преписки</string>
@@ -560,7 +560,7 @@
   <string name="start_orbot_">Да покренем Орбот?</string>
   <string name="orbot_doesn_t_appear_to_be_running_would_you_like_to_start_it_up_and_connect_to_tor_">Изгледа да Орбот није покренут. Желите ли да га покренете и повежете на Тор?</string>
   <string name="muc_dialog_nickname">надимак за коришћење у соби</string>
-  <string name="muc_dialog_room">име собе за прављење или придруживање</string>
+
   <string name="muc_dialog_server">сервер групног ћаскања (conference.foo.com)</string>
   <string name="your_keystore_is_corrupted_please_re_install_chatsecure_or_clear_data_for_the_app">Ваше складиште кључева је оштећено. Поново инсталирајте Сигурно ћаскање или „обришите податке“ за апликацију</string>
   <string name="you_received_an_unreadable_encrypted_message">Примили сте нечитљиву шифровану поруку</string>

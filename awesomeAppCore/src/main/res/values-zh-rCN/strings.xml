@@ -393,7 +393,7 @@ OTR协议跟桌面客户端（比如：Adium或Pidgin）兼容</string>
   <string name="contact_not_in_list_warning"><xliff:g id="USER">%1$s</xliff:g>不在您的联系人列表中。</string>
   <string name="account_settings_title">帐号设置</string>
 
-  <string name="warning_alpha">警告！这是一个早期的ChatSecure发行版，可能包含安全问题导致聊天被窥探！！！</string>
+
   <!--added 2011/09/01-->
   <string name="menu_view_groups">群组</string>
   <string name="_open_conversations">打开对话</string>

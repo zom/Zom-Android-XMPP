@@ -50,7 +50,7 @@ La app apoya qualquier servicio de chat que utilizca Jabber o el protocolo XMPP,
   <string name="sign_in">Inicia sesión</string>
   <string name="check_save_password">Para tu seguridad, si se te pierda o si se te roba el teléfono, ir al sitio Web en tu computadora para cambiar tu contraseña. </string>
   <string name="check_auto_sign_in">Esta opción inicia la sesión automáticamente cada vez que abres la aplicación. Para desactivarla, sal de la sesión y quita la marca de verificación de la casilla \\"Iniciar sesión automáticamente\\".</string>
-  <string name="use_tor">Connecta via Tor (Requiere Orbot (app))</string>
+  <string name="use_tor">Connecta vía Tor (Requiere Orbot (app))</string>
   <string name="account_select_type">Tipo de Cuenta</string>
   <string name="account_wizard_host_body">Por favor inicia or edita tu nombre de servidor de chat jabber/xmpp y número de puerto (5222 es el estándar).</string>
   <string name="menu_cancel_signin">Cancelar inicio de sesión</string>
@@ -178,7 +178,7 @@ La app apoya qualquier servicio de chat que utilizca Jabber o el protocolo XMPP,
   <string name="contact_blocked">El contacto \"<xliff:g id="USER">%1$s</xliff:g>\" ha sido bloqueado.</string>
   <string name="contact_not_loaded">Espera mientras se carga tu lista de contactos</string>
   <string name="network_error">Se ha producido un error en la red.</string>
-  <string name="wifi_not_connected_error">Se requiere WiFi para esta conección.</string>
+  <string name="wifi_not_connected_error">Se requiere WiFi para esta conexión.</string>
   <string name="service_not_support">El servidor no admite esta funcionalidad.</string>
   <string name="invalid_password">La contraseña ingresada no es válida.</string>
   <string name="internal_server_error">EL servidor encontró un error.</string>

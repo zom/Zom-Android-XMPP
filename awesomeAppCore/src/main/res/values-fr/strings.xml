@@ -400,7 +400,7 @@ Appuyez pour inviter.</string>
   <string name="contact_not_in_list_warning"><xliff:g id="USER">%1$s</xliff:g> n\'est pas dans votre liste de contacts.</string>
   <string name="account_settings_title">Paramètres du compte</string>
 
-  <string name="warning_alpha">ATTENTION: ceci est une édition anticipée de ChatSecure qui contient peut-être des failles de sécurité ou des bogues.</string>
+
   <!--added 2011/09/01-->
   <string name="menu_view_groups">Groupes</string>
   <string name="_open_conversations">conversation(s) en cours</string>

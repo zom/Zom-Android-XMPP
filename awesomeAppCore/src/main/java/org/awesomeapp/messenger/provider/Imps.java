@@ -37,7 +37,6 @@ import android.util.Log;
  * The IM provider stores all information about roster contacts, chat messages,
  * presence, etc.
  *
- * @hide
  */
 public class Imps {
     /** no public constructor since this is a utility class */
@@ -1892,9 +1891,8 @@ public class Imps {
         /**
          * A convenience method to user configure presence state and status
          *
-         * @param contentResolver The ContentResolver to use to access the
+         * @param contentResolver The {@link ContentResolver} to use to access the
          *            setting table.
-         * @param interval The heartbeat interval last received from the server.
          */
         public static void setPresence(ContentResolver contentResolver, long providerId,
                 int state, String statusMessage) {

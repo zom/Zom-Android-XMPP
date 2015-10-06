@@ -461,7 +461,7 @@ Für die Anmeldung wird eine Datenverbindung (inklusive Hintergrunddaten) benöt
   <string name="error_no_app_to_handle_url">Keine App installiert, die diese Verknüpfung öffnen kann!</string>
   <string name="account_settings_title">Kontoeinstellungen</string>
 
-  <string name="warning_alpha">ACHTUNG: Dieses ist eine vorläufige ChatSecure-Version, die möglicherweise noch Sicherheitslücken und Fehler enthält.</string>
+
   <!--added 2011/09/01-->
   <string name="menu_view_groups">Gruppen</string>
   <string name="_open_conversations">Gespräch(e) öffnen</string>
@@ -575,7 +575,7 @@ Für die Anmeldung wird eine Datenverbindung (inklusive Hintergrunddaten) benöt
   <string name="start_orbot_">Orbot starten?</string>
   <string name="orbot_doesn_t_appear_to_be_running_would_you_like_to_start_it_up_and_connect_to_tor_">Orbot wurde offensichtlich nicht gestartet. Möchten Sie es jetzt starten und mit Tor verbinden?</string>
   <string name="muc_dialog_nickname">Im Raum zu benutzender Spitzname</string>
-  <string name="muc_dialog_room">Name des zu betretenden oder erstellenden Raumes</string>
+
   <string name="muc_dialog_server">Gruppenunterhaltungsserver (konferenz.blabla.de)</string>
   <string name="your_keystore_is_corrupted_please_re_install_chatsecure_or_clear_data_for_the_app">Der Schlüsselspeicher ist fehlerhaft. Bitte installieren Sie ChatSecure erneut oder wählen Sie »Daten löschen« in Androids App-Einstellungen</string>
   <string name="you_received_an_unreadable_encrypted_message">Nicht lesbare verschlüsselte Nachricht erhalten</string>

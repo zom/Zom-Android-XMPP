@@ -456,7 +456,7 @@ ChatSecure zal waarschijnlijk crashen. Gebruik in de plaats a.u.b. het \"Log all
   <string name="error_welcome_database">Grote Fout: Kan de app database niet laden of ontgrendelen. Gelive de app opnieuw te installeren of de data te wissen.</string>
   <string name="account_settings_title">Account Instellingen</string>
 
-  <string name="warning_alpha">LET OP: Dit is een prille versie van ChatSecure die beveiligingslekken of fouten kan bevatten.</string>
+
   <!--added 2011/09/01-->
   <string name="menu_view_groups">Groepen</string>
   <string name="_open_conversations">open conversatie(s)</string>
@@ -568,7 +568,7 @@ ChatSecure zal waarschijnlijk crashen. Gebruik in de plaats a.u.b. het \"Log all
   <string name="start_orbot_">Start Orbot?</string>
   <string name="orbot_doesn_t_appear_to_be_running_would_you_like_to_start_it_up_and_connect_to_tor_">Orbot lijkt niet te worden uitgevoerd. Wilt u het opstarten en verbinding maken met Tor?</string>
   <string name="muc_dialog_nickname">Alias in het groepsgesprek</string>
-  <string name="muc_dialog_room">naam van het te starten of toe te treden groepsgesprek </string>
+
   <string name="muc_dialog_server">groepschat server (conference.foo.com)</string>
   <string name="your_keystore_is_corrupted_please_re_install_chatsecure_or_clear_data_for_the_app">Je sleutelopslag is corrupt. Gelieve ChatSecure opnieuw te installeren of \'wis de data\' van de app.</string>
   <string name="you_received_an_unreadable_encrypted_message">Je hebt een onleesbaar geëncrypteerd bericht ontvangen</string>

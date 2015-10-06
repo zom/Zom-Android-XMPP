@@ -22,7 +22,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Vector;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ChatGroup extends ImEntity {
@@ -114,7 +113,7 @@ public class ChatGroup extends ImEntity {
     /**
      * Notifies that a contact has joined into this group.
      *
-     * @param contact the contact who has joined into the group.
+     * @param newContact the {@link Contact} who has joined into the group.
      */
     void notifyMemberJoined(Contact newContact) {
 

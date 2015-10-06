@@ -1,13 +1,10 @@
 # auto-generated files from Android builds
-bin/
-gen/
 build.xml
 ant.properties
-default.properties
 local.properties
+default.properties
 proguard.cfg
 proguard-project.txt
-captures/
 #
 assets/chatsecure.properties
 releases
@@ -25,7 +22,7 @@ doc
 # Java class files
 *.class
 
-# generated files
+# subdirs for generated files
 bin/
 gen/
 
@@ -38,20 +35,12 @@ Thumbs.db
 # OSX files
 .DS_Store
 
-# Eclipse project files
-.classpath
-.project
-
 # Android Studio
 *.iml
-.idea
-#.idea/workspace.xml - remove # and delete .idea if it better suit your needs.
-.gradle
-build
+.idea/
+.gradle/
 build/
-*/build/
-.idea/*
-.idea/workspace.xml
+captures/
 
 # Google Cloud Messaging
 google-services.json

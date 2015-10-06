@@ -356,7 +356,7 @@ La aplicació dóna suport a qualsevol servei de xat que empri els protocols Jab
   <string name="msg_sent_failed">No s\'ha pogut enviar el missatge</string>
   <string name="account_settings_title">Paràmetres del compte</string>
 
-  <string name="warning_alpha">ADVERTÈNCIA: aquesta és una versió primerenca del ChatSecure i pot ser que contingui errors o forats de seguretat.</string>
+
   <!--added 2011/09/01-->
   <string name="menu_view_groups">Grups</string>
   <string name="_open_conversations">conversa(es) oberta(es)</string>

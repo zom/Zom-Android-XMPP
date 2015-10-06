@@ -3,12 +3,8 @@
     package="info.guardianproject.otr.app.im"
     android:installLocation="auto"
     android:sharedUserLabel="@string/perm_label"
-    android:versionCode="1500016"
-    android:versionName="15.0.0-alpha-16" >
-
-    <uses-sdk
-        android:minSdkVersion="11"
-        android:targetSdkVersion="21" />
+    android:versionCode="1500017"
+    android:versionName="15.0.0-alpha-17" >
 
     <supports-screens
         android:anyDensity="true"
@@ -35,6 +31,7 @@
     <uses-permission android:name="com.google.android.googleapps.permission.GOOGLE_AUTH" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <!-- GCM Permissions -->
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
@@ -44,6 +41,9 @@
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature
         android:name="android.hardware.camera.autofocus"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.wifi"
         android:required="false" />
 
     <permission
@@ -64,8 +64,6 @@
         android:label="@string/wo_perm_label"
         android:permissionGroup="android.permission-group.MESSAGES"
         android:protectionLevel="dangerous" />
-
-    <android:uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <application
         android:name="org.awesomeapp.messenger.ImApp"
@@ -89,16 +87,16 @@
                 <data android:scheme="file" />
                 <data android:scheme="content" />
                 <!-- this crack smoking pattern is required to match file extensions in folders -->
-                <data android:pathPattern=".*\\.ofcaes" />
-                <data android:pathPattern=".*\\..*\\.ofcaes" />
-                <data android:pathPattern=".*\\..*\\..*\\.ofcaes" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\.ofcaes" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.ofcaes" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.ofcaes" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.ofcaes" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.ofcaes" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.ofcaes" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.ofcaes" />
+                <data android:pathPattern="/.*\\.ofcaes" />
+                <data android:pathPattern="/.*\\..*\\.ofcaes" />
+                <data android:pathPattern="/.*\\..*\\..*\\.ofcaes" />
+                <data android:pathPattern="/.*\\..*\\..*\\..*\\.ofcaes" />
+                <data android:pathPattern="/.*\\..*\\..*\\..*\\..*\\.ofcaes" />
+                <data android:pathPattern="/.*\\..*\\..*\\..*\\..*\\..*\\.ofcaes" />
+                <data android:pathPattern="/.*\\..*\\..*\\..*\\..*\\..*\\..*\\.ofcaes" />
+                <data android:pathPattern="/.*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.ofcaes" />
+                <data android:pathPattern="/.*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.ofcaes" />
+                <data android:pathPattern="/.*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.ofcaes" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -116,16 +114,16 @@
                 -->
                 <data android:mimeType="*/*" />
                 <!-- this crack smoking pattern is required to match file extensions in folders -->
-                <data android:pathPattern=".*\\.ofcaes" />
-                <data android:pathPattern=".*\\..*\\.ofcaes" />
-                <data android:pathPattern=".*\\..*\\..*\\.ofcaes" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\.ofcaes" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.ofcaes" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.ofcaes" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.ofcaes" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.ofcaes" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.ofcaes" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.ofcaes" />
+                <data android:pathPattern="/.*\\.ofcaes" />
+                <data android:pathPattern="/.*\\..*\\.ofcaes" />
+                <data android:pathPattern="/.*\\..*\\..*\\.ofcaes" />
+                <data android:pathPattern="/.*\\..*\\..*\\..*\\.ofcaes" />
+                <data android:pathPattern="/.*\\..*\\..*\\..*\\..*\\.ofcaes" />
+                <data android:pathPattern="/.*\\..*\\..*\\..*\\..*\\..*\\.ofcaes" />
+                <data android:pathPattern="/.*\\..*\\..*\\..*\\..*\\..*\\..*\\.ofcaes" />
+                <data android:pathPattern="/.*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.ofcaes" />
+                <data android:pathPattern="/.*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.ofcaes" />
+                <data android:pathPattern="/.*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.ofcaes" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.SENDTO" />
@@ -203,9 +201,6 @@
                     />
             </intent-filter>
         </activity>
-        <activity
-            android:name="org.awesomeapp.messenger.ui.widgets.AboutActivity"
-            android:exported="false" />
 
         <service
             android:name="org.awesomeapp.messenger.plugin.xmpp.XmppImPlugin"
@@ -265,24 +260,6 @@
         <activity android:name="org.awesomeapp.messenger.ImUrlActivity" >
         </activity>
         <activity
-            android:name="org.awesomeapp.messenger.ui.legacy.AccountWizardActivity"
-            android:exported="false" >
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <data android:mimeType="vnd.android.cursor.dir/imps-providers" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="info.guardianproject.otr.app.im.QUIT" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <data android:mimeType="vnd.android.cursor.dir/imps-providers" />
-            </intent-filter>
-        </activity>
-        <activity
             android:name="org.awesomeapp.messenger.ui.AccountViewFragment"
             android:exported="false"
             android:windowSoftInputMode="stateUnchanged" >
@@ -316,38 +293,7 @@
             android:name="org.awesomeapp.messenger.ui.AddContactActivity"
             android:exported="false"
             android:label="@string/add_contact_title" />
-        <!--
-        <activity
-            android:name=".app.NewChatActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:exported="false"
-            android:launchMode="singleTop"
-            android:windowSoftInputMode="stateUnchanged" >
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="info.guardianproject.otr.app.im.IMPS_CATEGORY" />
-
-                <data android:mimeType="vnd.android.cursor.item/imps-chats" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <data android:mimeType="vnd.android.cursor.item/imps-invitations" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.IM_MANAGE_SUBSCRIPTION" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <data android:mimeType="vnd.android.cursor.item/imps-contacts" />
-            </intent-filter>
-        </activity>
-        -->
-        <activity
+      <activity
             android:name="org.awesomeapp.messenger.ui.ContactsPickerActivity"
             android:exported="false"
             android:label="@string/choose_friend" >
@@ -364,30 +310,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <data android:mimeType="vnd.android.cursor.dir/imps-chats" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name="org.awesomeapp.messenger.ui.legacy.BlockedContactsActivity"
-            android:exported="false"
-            android:label="@string/blocked_list_title" >
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <data android:mimeType="vnd.android.cursor.dir/imps-blockedList" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name="org.awesomeapp.messenger.ui.legacy.ContactPresenceActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:exported="false" >
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <data android:mimeType="vnd.android.cursor.item/imps-contacts" />
             </intent-filter>
         </activity>
         <activity

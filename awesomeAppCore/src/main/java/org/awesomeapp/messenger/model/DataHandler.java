@@ -1,23 +1,23 @@
 package org.awesomeapp.messenger.model;
 
+import net.java.otr4j.session.SessionStatus;
+
 import org.awesomeapp.messenger.service.IDataListener;
 
 import java.io.IOException;
 import java.util.Map;
 
-import net.java.otr4j.session.SessionStatus;
-
 public interface DataHandler {
     /**
-     * @param from this is OUR address
-     * @param session the chat session
+     * @param from this is OUR {@link Address}
+     * @param to the receiving {@link Address}
      * @param value the serialized request
      */
     void onIncomingRequest(Address from, Address to, byte[] value);
 
     /**
-     * @param from this is OUR address
-     * @param session the chat session
+     * @param from this is OUR {@link Address}
+     * @param to the receiving {@link Address}
      * @param value the serialized response
      */
     void onIncomingResponse(Address from, Address to, byte[] value);
@@ -26,7 +26,7 @@ public interface DataHandler {
      * Offer data to peer
      *
      * @param offerId offer ID
-     * @param us our Address
+     * @param us our {@link Address}
      * @param localUri URI of data
      * @param headers extra headrs or null
      */

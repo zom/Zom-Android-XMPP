@@ -601,7 +601,7 @@ public class MainActivity extends AppCompatActivity {
         LayoutInflater factory = LayoutInflater.from(this);
 
         final View dialogGroup = factory.inflate(R.layout.alert_dialog_group_chat, null);
-        TextView tvServer = (TextView) dialogGroup.findViewById(R.id.chat_server);
+        //TextView tvServer = (TextView) dialogGroup.findViewById(R.id.chat_server);
         // tvServer.setText(ImApp.DEFAULT_GROUPCHAT_SERVER);// need to make this a list
 
        // final Spinner listAccounts = (Spinner) dialogGroup.findViewById(R.id.choose_list);
@@ -617,23 +617,24 @@ public class MainActivity extends AppCompatActivity {
                     /* User clicked OK so do some stuff */
 
                         String chatRoom = null;
-                        String chatServer = null;
-                        String nickname = null;
+                        String chatServer = "";
+                        String nickname = "";
 
-                        TextView tv = (TextView)dialogGroup.findViewById(R.id.chat_room);
+                        TextView tv = (TextView) dialogGroup.findViewById(R.id.chat_room);
                         chatRoom = tv.getText().toString();
 
-                        tv = (TextView) dialogGroup.findViewById(R.id.chat_server);
-                        chatServer = tv.getText().toString();
+                        /**
+                         tv = (TextView) dialogGroup.findViewById(R.id.chat_server);
+                         chatServer = tv.getText().toString();
 
-                        tv = (TextView) dialogGroup.findViewById(R.id.nickname);
-                        nickname = tv.getText().toString();
+                         tv = (TextView) dialogGroup.findViewById(R.id.nickname);
+                         nickname = tv.getText().toString();
+                         **/
 
-                        try
-                        {
-                            IImConnection conn = mApp.getConnection(mApp.getDefaultProviderId(),mApp.getDefaultAccountId());
+                        try {
+                            IImConnection conn = mApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
                             if (conn.getState() == ImConnection.LOGGED_IN)
-                                startGroupChat (chatRoom, chatServer, nickname, null, conn);
+                                startGroupChat(chatRoom, chatServer, nickname, null, conn);
 
                         } catch (RemoteException re) {
 
@@ -682,7 +683,7 @@ public class MainActivity extends AppCompatActivity {
             protected String doInBackground(String... params) {
 
                 String subject = params[0];
-                String chatRoom = "groupchat" + UUID.randomUUID().toString().substring(0,8);
+                String chatRoom = "group" + UUID.randomUUID().toString().substring(0,8);
                 String server = params[1];
 
                 if (TextUtils.isEmpty(server))
@@ -717,12 +718,9 @@ public class MainActivity extends AppCompatActivity {
 
                         //wait a second for the server to sort itself out
                         try {
-                            Thread.sleep(500);
+                            Thread.sleep(100);
                         } catch (Exception e) {
                         }
-
-                        //make sure we have a clean active session
-                       // session = manager.getChatSession(roomAddress);
 
                         for (String invitee : invitees)
                             session.inviteContact(invitee);
@@ -738,7 +736,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             protected void onProgressUpdate(Long... showChatId) {
-                //showChat(showChatId[0]);
+                showChat(showChatId[0]);
             }
 
             @Override
@@ -763,6 +761,12 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void showChat (long chatId)
+    {
+        Intent intent = new Intent(this, ConversationDetailActivity.class);
+        intent.putExtra("id",chatId);
+        startActivity(intent);
+    }
 
     @Override
     protected void onPause() {

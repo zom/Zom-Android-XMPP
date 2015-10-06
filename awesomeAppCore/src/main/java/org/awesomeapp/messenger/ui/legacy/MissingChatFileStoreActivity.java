@@ -19,7 +19,7 @@ import info.guardianproject.otr.app.im.R;
 import java.io.File;
 
 public class MissingChatFileStoreActivity extends ThemeableActivity {
-    private static final String TAG = "MissingChatFileStoreActivity";
+    private static final String TAG = "MissingChatFileStoreAct";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

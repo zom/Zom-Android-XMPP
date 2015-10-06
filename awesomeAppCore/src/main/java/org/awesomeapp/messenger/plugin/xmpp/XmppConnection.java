@@ -140,7 +140,7 @@ import info.guardianproject.otr.app.im.R;
 public class XmppConnection extends ImConnection {
 
     private static final String DISCO_FEATURE = "http://jabber.org/protocol/disco#info";
-    final static String TAG = "GB.XmppConnection";
+    final static String TAG = "ZomXMPP";
     private final static boolean PING_ENABLED = true;
 
     private XmppContactListManager mContactListManager;
@@ -2810,7 +2810,7 @@ public class XmppConnection extends ImConnection {
         }
     }
 
-    /**
+    /*
     @Override
     public void handle(Callback[] arg0) throws IOException {
 
@@ -2929,14 +2929,15 @@ public class XmppConnection extends ImConnection {
     {
 
         //  Private Data Storage
-        ProviderManager.addIQProvider("query","jabber:iq:private", new PrivateDataManager.PrivateDataIQProvider());
+       // ProviderManager.addIQProvider("query","jabber:iq:private", new PrivateDataManager.PrivateDataIQProvider());
 
         //  Time
+        /**
         try {
             ProviderManager.addIQProvider("query","jabber:iq:time", Class.forName("org.jivesoftware.smackx.packet.Time"));
         } catch (ClassNotFoundException e) {
             Log.w("TestClient", "Can't load class for org.jivesoftware.smackx.packet.Time");
-        }
+        }*/
 
         //  Roster Exchange
 //        ProviderManager.addExtensionProvider("x","jabber:x:roster", new RosterExchangeProvider());

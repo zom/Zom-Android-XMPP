@@ -588,7 +588,7 @@ public class AccountViewFragment extends Fragment {
         return cursor;
     }
 
-    /**
+    /*
     @Override
     protected void onDestroy() {
 
