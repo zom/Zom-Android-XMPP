@@ -94,7 +94,6 @@ public class GcmReceiverService extends GcmListenerService {
 
     private void postNotification(String msg, String fromToken) {
 
-        final String notificationMessage = "Bob wants to chat!";
         final boolean lightWeightNotify = false;
 
         // First, fetch the local user's Account
@@ -128,7 +127,8 @@ public class GcmReceiverService extends GcmListenerService {
         }
 
         final long expectedContactId = contactCursor.getInt(contactCursor.getColumnIndex(Imps.Contacts._ID));
-        final String expctedContactNickName = contactCursor.getString(contactCursor.getColumnIndex(Imps.Contacts.NICKNAME));
+        final String expectedContactNickName = contactCursor.getString(contactCursor.getColumnIndex(Imps.Contacts.NICKNAME));
+        final String notificationMessage = String.format("%s wants to chat!", expectedContactNickName);
 
         contactCursor.close();
 
@@ -153,7 +153,7 @@ public class GcmReceiverService extends GcmListenerService {
             @Override
             public void run() {
                 StatusBarNotifier notifier = new StatusBarNotifier(GcmReceiverService.this);
-                notifier.notifyChat(providerId, accountId, expectedContactId, expectedSenderJid, expctedContactNickName, notificationMessage, lightWeightNotify);
+                notifier.notifyChat(providerId, accountId, expectedContactId, expectedSenderJid, expectedContactNickName, notificationMessage, lightWeightNotify);
             }
         });
     }
