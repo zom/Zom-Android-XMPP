@@ -102,7 +102,7 @@ public class WhitelistTokenTlvHandler implements OtrTlvHandler {
         synchronized (pendingTlvs) {
             while (processing) {
                 try {
-                    wait();
+                    pendingTlvs.wait();
                 } catch (InterruptedException e) {
                     return new ArrayList<>();
                 }
