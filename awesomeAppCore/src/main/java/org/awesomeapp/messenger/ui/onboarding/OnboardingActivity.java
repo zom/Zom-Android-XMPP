@@ -450,6 +450,7 @@ public class OnboardingActivity extends ThemeableActivity {
 
     private void showInviteScreen ()
     {
+        hideKeyboard();
         mViewFlipper.setDisplayedChild(2);
         getSupportActionBar().setTitle(R.string.invite_action);
 
@@ -588,6 +589,17 @@ public class OnboardingActivity extends ThemeableActivity {
             }
 
         }
+    }
+
+    public void hideKeyboard() {
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+        //Find the currently focused view, so we can grab the correct window token from it.
+        View view = getCurrentFocus();
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if(view == null) {
+            view = new View(this);
+        }
+        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
 }
