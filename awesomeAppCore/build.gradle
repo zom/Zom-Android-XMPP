@@ -11,6 +11,8 @@ buildscript {
 
 apply plugin: 'com.android.application'
 apply plugin: 'witness'
+// Required by GCM
+apply plugin: 'com.google.gms.google-services'
 
 allprojects {
     repositories {
@@ -19,7 +21,7 @@ allprojects {
 }
 
 android {
-    compileSdkVersion 22
+    compileSdkVersion 21
     buildToolsVersion '22.0.1'
 
     dexOptions {
@@ -35,7 +37,7 @@ android {
         targetSdkVersion 22
         testApplicationId "org.awesomeapp.messenger.test"
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
-
+        multiDexEnabled true
     }
 
     buildTypes {
@@ -133,4 +135,7 @@ dependencies {
     compile 'org.jsoup:jsoup:1.5.2'
     compile 'org.ocpsoft.prettytime:prettytime:4.0.0.Final'
     compile 'org.thoughtcrime.ssl.pinning:AndroidPinning:1.0.0'
+    compile project(':external:ChatSecure-Push:sdk')
+    compile 'com.google.android.gms:play-services-gcm:8.1.0'
+    compile 'com.android.support:multidex:1.0.1'
 }

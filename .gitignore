@@ -1,6 +1,7 @@
 # auto-generated files from Android builds
 build.xml
 ant.properties
+local.properties
 default.properties
 proguard.cfg
 proguard-project.txt
@@ -39,3 +40,7 @@ Thumbs.db
 .idea/
 .gradle/
 build/
+captures/
+
+# Google Cloud Messaging
+google-services.json

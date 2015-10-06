@@ -48,6 +48,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import net.java.otr4j.session.SessionID;
 import net.java.otr4j.session.SessionStatus;
 
 import org.awesomeapp.messenger.service.RemoteImService;
@@ -63,6 +64,7 @@ import android.net.Uri;
 import android.os.RemoteCallbackList;
 import android.os.RemoteException;
 import android.provider.BaseColumns;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSession.Stub {
@@ -340,6 +342,25 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         insertMessageInDb(null, text, now, newType, 0, msg.getID());
         insertOrUpdateChat(text);
 
+    }
+
+    public boolean sendPushWhitelistToken(@NonNull String token) {
+        if (mConnection.getState() == ImConnection.SUSPENDED) {
+            // TODO Is it possible to postpone a TLV message? e.g: insertMessageInDb with type POSTPONED
+            return false;
+        }
+
+        // Whitelist tokens are intended for one recipient, for now
+        if (isGroupChatSession())
+            return false;
+
+        org.awesomeapp.messenger.model.Message msg = new org.awesomeapp.messenger.model.Message("");
+
+        msg.setFrom(mConnection.getLoginUser().getAddress());
+        msg.setType(Imps.MessageType.OUTGOING);
+
+        mChatSession.sendPushWhitelistTokenAsync(msg, new String[]{token});
+        return true;
     }
 
     public boolean offerData(String offerId, String url, String type) {

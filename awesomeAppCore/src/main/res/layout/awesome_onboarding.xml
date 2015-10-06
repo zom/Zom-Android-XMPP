@@ -52,30 +52,32 @@
                         android:src="@drawable/whitelogo"
                         />
 
-                    <Button
-                        android:id="@+id/btnShowRegister"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/create_an_account"
-                        android:layout_margin="0dp"
-                        android:layout_gravity="bottom"
-                        android:background="?android:attr/selectableItemBackground"
-                        android:textColor="@android:color/white"
-                        android:textStyle="bold"
-                        android:gravity="center"
-                        android:textAppearance="?android:attr/textAppearanceLarge"
-
-                        />
-
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_margin="0dp"
                         android:layout_gravity="bottom"
                         android:gravity="center_horizontal|bottom"
-                        android:orientation="horizontal"
+                        android:orientation="vertical"
 
                         >
+
+                        <Button
+                            android:id="@+id/btnShowRegister"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/create_an_account"
+                            android:layout_margin="0dp"
+                            android:layout_gravity="bottom"
+                            android:background="?android:attr/selectableItemBackground"
+                            android:textColor="@android:color/white"
+                            android:textStyle="bold"
+                            android:gravity="center"
+                            android:padding="16dp"
+                            android:textAppearance="?android:attr/textAppearanceLarge"
+
+                            />
+
                         <Button
                             android:id="@+id/btnShowLogin"
                             android:layout_width="match_parent"

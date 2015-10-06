@@ -91,7 +91,6 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
     private static final String[] ACCOUNT_PROJECTION = { Imps.Account._ID, Imps.Account.PROVIDER,
                                                         Imps.Account.USERNAME,
                                                         Imps.Account.PASSWORD, Imps.Account.ACTIVE, Imps.Account.KEEP_SIGNED_IN};
-    // TODO why aren't these Imps.Account.* values?
     private static final int ACCOUNT_ID_COLUMN = 0;
     private static final int ACCOUNT_PROVIDER_COLUMN = 1;
     private static final int ACCOUNT_USERNAME_COLUMN = 2;

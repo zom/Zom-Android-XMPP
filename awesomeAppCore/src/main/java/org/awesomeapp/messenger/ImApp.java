@@ -17,16 +17,25 @@
 
 package org.awesomeapp.messenger;
 
+import info.guardianproject.cacheword.CacheWordHandler;
+import info.guardianproject.cacheword.ICacheWordSubscriber;
 import info.guardianproject.cacheword.PRNGFixes;
 import info.guardianproject.iocipher.VirtualFileSystem;
+
 import org.awesomeapp.messenger.crypto.OtrAndroidKeyManagerImpl;
+import org.awesomeapp.messenger.provider.ImpsProvider;
+import org.awesomeapp.messenger.push.PushManager;
+import org.awesomeapp.messenger.push.model.PersistedAccount;
 import org.awesomeapp.messenger.service.Broadcaster;
 import org.awesomeapp.messenger.service.IChatSession;
 import org.awesomeapp.messenger.service.IChatSessionManager;
 import org.awesomeapp.messenger.service.IConnectionCreationListener;
 import org.awesomeapp.messenger.service.IImConnection;
 import org.awesomeapp.messenger.service.IRemoteImService;
+
+import info.guardianproject.otr.app.im.BuildConfig;
 import info.guardianproject.otr.app.im.R;
+
 import org.awesomeapp.messenger.ui.legacy.BrandingResources;
 import org.awesomeapp.messenger.ui.legacy.ImPluginHelper;
 import org.awesomeapp.messenger.ui.legacy.ProviderDef;
@@ -50,14 +59,18 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import java.util.UUID;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import net.hockeyapp.android.CrashManager;
 import net.hockeyapp.android.CrashManagerListener;
 import net.sqlcipher.database.SQLiteDatabase;
 
 import org.awesomeapp.messenger.service.RemoteImService;
-import org.thoughtcrime.ssl.pinning.PinningTrustManager;
-import org.thoughtcrime.ssl.pinning.SystemKeyStore;
+import org.chatsecure.pushsecure.PushSecureClient;
+import org.chatsecure.pushsecure.response.Account;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -85,16 +98,16 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.multidex.MultiDex;
+import android.support.multidex.MultiDexApplication;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.TrustManager;
-
 import de.duenndns.ssl.MemorizingTrustManager;
+import timber.log.Timber;
 
-public class ImApp extends Application {
+public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
     public static final String LOG_TAG = "Zom";
 
@@ -143,6 +156,10 @@ public class ImApp extends Application {
     Broadcaster mBroadcaster;
 
     public MemorizingTrustManager mTrustManager;
+
+    private PushManager mPushManager;
+
+    private CacheWordHandler mCacheWord;
 
     public static boolean mUsingCacheword = true;
 
@@ -221,6 +238,12 @@ public class ImApp extends Application {
 */
 
     @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
+    }
+
+    @Override
     public Resources getResources() {
         if (mApplicationContext == this) {
             return super.getResources();
@@ -231,7 +254,7 @@ public class ImApp extends Application {
 
     @Override
     public ContentResolver getContentResolver() {
-        if (mApplicationContext == this) {
+        if (mApplicationContext == null || mApplicationContext == this) {
             return super.getContentResolver();
         }
 
@@ -275,9 +298,13 @@ public class ImApp extends Application {
 
         mBroadcaster = new Broadcaster();
 
-        setAppTheme(null,null);
+        setAppTheme(null, null);
 
         checkLocale();
+
+        // ChatSecure-Push needs to do initial setup as soon as Cacheword is ready
+        mCacheWord = new CacheWordHandler(this, this);
+        mCacheWord.connectToService();
     }
 
     private boolean mThemeDark = false;
@@ -929,6 +956,31 @@ public class ImApp extends Application {
         }
     };
 
+    @Override
+    public void onCacheWordUninitialized() {
+        // unused
+    }
+
+    @Override
+    public void onCacheWordLocked() {
+        // unused
+    }
+
+    @Override
+    public void onCacheWordOpened() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(LOG_TAG, "Awaiting ImpsProvider ready");
+                // Wait for ImpsProvider to initialize : it listens to onCacheWordOpened as well...
+                ImpsProvider.awaitDataReady();
+                Log.d(LOG_TAG, "ImpsProvider ready");
+                // setupChatSecurePush will disconnect the CacheWordHandler when it's done
+                setupChatSecurePush();
+            }
+        }).start();
+    }
+
     private final class MyConnListener extends ConnectionListenerAdapter {
         public MyConnListener(Handler handler) {
             super(handler);
@@ -1132,6 +1184,93 @@ public class ImApp extends Application {
     public long getDefaultAccountId ()
     {
         return mDefaultAccountId;
+    }
+
+    public void setupChatSecurePush() {
+        // Setup logging for ChatSecure-Push SDK
+        if (BuildConfig.DEBUG) {
+            Timber.plant(new Timber.DebugTree());
+        }
+        Timber.d("SetupChatSecurePush");
+
+        mPushManager = new PushManager(this);
+
+        PersistedAccount chatSecurePushAccount = mPushManager.getPersistedAccount();
+        if (chatSecurePushAccount == null) {
+            Log.d(LOG_TAG, "No ChatSecure-Push Account is persisted. Creating new");
+        } else {
+            Log.d(LOG_TAG, "ChatSecure-Push Account is persisted with username: " + chatSecurePushAccount.username);
+        }
+
+        // Use the existing account credentials if available, else a new random username & password
+        final String username = isCspAccountValid(chatSecurePushAccount, mPushManager.getProviderUrl()) ?
+                chatSecurePushAccount.username :
+                UUID.randomUUID().toString().substring(0, 30); // ChatSecure-Push usernames are 30 characters max
+
+        final String password = isCspAccountValid(chatSecurePushAccount, mPushManager.getProviderUrl()) ?
+                chatSecurePushAccount.pasword :
+                UUID.randomUUID().toString();
+
+
+        final Object authLock = new Object();
+        final AtomicBoolean authenticated = new AtomicBoolean();
+
+        // Continue trying to authenticate until we have success
+        // Our free Heroku plan sometimes gives ya a SocketTimeout
+        while (!authenticated.get()) {
+
+            PushSecureClient.RequestCallback<Account> authCallback = new PushSecureClient.RequestCallback<Account>() {
+                @Override
+                public void onSuccess(@NonNull Account response) {
+                    Log.d(LOG_TAG, "Registered ChatSecure-Push account!");
+                    if (mCacheWord != null) {
+                        mCacheWord.disconnectFromService();
+                        mCacheWord = null;
+                    }
+                    authenticated.set(true);
+                    synchronized (authLock) {
+                        authLock.notify();
+                    }
+                }
+
+                @Override
+                public void onFailure(@NonNull Throwable t) {
+                    Log.e(LOG_TAG, "Failed to register ChatSecure-Push account!", t);
+                    synchronized (authLock) {
+                        authLock.notify();
+                    }
+                }
+            };
+
+            // authenticateAccount will persist the account to our secure database if auth is successful
+            mPushManager.authenticateAccount(username, password, authCallback);
+
+            synchronized (authLock) {
+                try {
+                    authLock.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public PushManager getPushManager() {
+        return mPushManager;
+    }
+
+    /**
+     * Reports whether the persisted ChatSecure-Push account is valid.
+     *
+     * @param account              the persisted ChatSecure-Push account
+     * @param requestedProviderUrl the URL describing the desired ChatSecure-Push server instance
+     *                             where the user's account should be registered
+     * @return true if the given account is valid, false if a new account should be registered.
+     */
+    private static boolean isCspAccountValid(PersistedAccount account,
+                                             @NonNull String requestedProviderUrl) {
+
+        return account != null && account.providerUrl.equals(requestedProviderUrl);
     }
 
 }
