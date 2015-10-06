@@ -304,30 +304,13 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
             mOtrEngineHost.putSessionResource(sessionId, processResource(remoteUserId));
             plain = mOtrEngine.transformReceiving(sessionId, msg, tlvs);
             OtrSm otrSm = mOtrSms.get(sessionId.toString());
-            WhitelistTokenTlvHandler tokenTlvHandler = mWhitelistTokenHandlers.get(sessionId.toString());
 
-            List<TLV> outboundTlvs = new ArrayList<>();
-
-            if (otrSm != null && otrSm.getPendingTlvs() != null) {
-                outboundTlvs.addAll(otrSm.getPendingTlvs());
-            }
-
-            if (tokenTlvHandler != null) {
-                List<TLV> whitelistTokenTlvs = tokenTlvHandler.getPendingTlvs();
-                if (whitelistTokenTlvs.size() > 0) {
-                    // We only need to perform the Whitelist Token TLV Exchange once per-session
-                    // After we've responded to this session's TLV exchange, remove TLV handler
-                    Session session = mOtrEngine.getSession(sessionId);
-                    session.removeTlvHandler(tokenTlvHandler);
-                    mWhitelistTokenHandlers.remove(sessionId.toString());
-                    outboundTlvs.addAll(whitelistTokenTlvs);
+            if (otrSm != null) {
+                List<TLV> smTlvs = otrSm.getPendingTlvs();
+                if (smTlvs != null) {
+                    String encrypted = mOtrEngine.transformSending(sessionId, "", smTlvs);
+                    mOtrEngineHost.injectMessage(sessionId, encrypted);
                 }
-            }
-
-            // TODO : Is it kosher to send multiple TLVs spanning separate types in a single message?
-            if (outboundTlvs.size() > 0) {
-                String encrypted = mOtrEngine.transformSending(sessionId, "", outboundTlvs);
-                mOtrEngineHost.injectMessage(sessionId, encrypted);
             }
 
             if (plain != null && plain.length() == 0)
@@ -464,7 +447,29 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
 
             if (tokenTlvHandler == null) {
                 // ChatSecure-Push Whitelist Token Handler - One per session
-                tokenTlvHandler = new WhitelistTokenTlvHandler(mPushManager, sessionID);
+                tokenTlvHandler = new WhitelistTokenTlvHandler(mPushManager, sessionID,
+                        new WhitelistTokenTlvHandler.TlvSender() {
+
+                            @Override
+                            public void onSendRequested(@NonNull TLV tlv, @NonNull SessionID sessionId) {
+                                ArrayList<TLV> tlvList = new ArrayList<>(1);
+                                tlvList.add(tlv);
+                                String encrypted;
+                                try {
+                                    encrypted = mOtrEngine.transformSending(sessionId, "", tlvList);
+                                    mOtrEngineHost.injectMessage(sessionId, encrypted);
+
+                                    // We only need to perform the Whitelist Token TLV Exchange once per-session
+                                    // After we've responded to this session's TLV exchange, remove TLV handler
+                                    WhitelistTokenTlvHandler tokenTlvHandler = mWhitelistTokenHandlers.remove(sessionId.toString());
+                                    Session session = mOtrEngine.getSession(sessionId);
+                                    session.removeTlvHandler(tokenTlvHandler);
+
+                                } catch (OtrException e) {
+                                    Log.d(TAG, "Failed to encrypt outbound Whitelist Token TLV");
+                                }
+                            }
+                        });
                 session.addTlvHandler(tokenTlvHandler);
                 mWhitelistTokenHandlers.put(sessionID.toString(), tokenTlvHandler);
 
