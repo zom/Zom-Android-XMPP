@@ -62,6 +62,7 @@ import java.util.Properties;
 import java.util.UUID;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import net.hockeyapp.android.CrashManager;
 import net.hockeyapp.android.CrashManagerListener;
@@ -1210,24 +1211,48 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
                 chatSecurePushAccount.pasword :
                 UUID.randomUUID().toString();
 
-        PushSecureClient.RequestCallback<Account> authCallback = new PushSecureClient.RequestCallback<Account>() {
-            @Override
-            public void onSuccess(@NonNull Account response) {
-                Log.d(LOG_TAG, "Registered ChatSecure-Push account!");
-                if (mCacheWord != null) {
-                    mCacheWord.disconnectFromService();
-                    mCacheWord = null;
+
+        final Object authLock = new Object();
+        final AtomicBoolean authenticated = new AtomicBoolean();
+
+        // Continue trying to authenticate until we have success
+        // Our free Heroku plan sometimes gives ya a SocketTimeout
+        while (!authenticated.get()) {
+
+            PushSecureClient.RequestCallback<Account> authCallback = new PushSecureClient.RequestCallback<Account>() {
+                @Override
+                public void onSuccess(@NonNull Account response) {
+                    Log.d(LOG_TAG, "Registered ChatSecure-Push account!");
+                    if (mCacheWord != null) {
+                        mCacheWord.disconnectFromService();
+                        mCacheWord = null;
+                    }
+                    authenticated.set(true);
+                    synchronized (authLock) {
+                        authLock.notify();
+                    }
+                }
+
+                @Override
+                public void onFailure(@NonNull Throwable t) {
+                    Log.e(LOG_TAG, "Failed to register ChatSecure-Push account!", t);
+                    synchronized (authLock) {
+                        authLock.notify();
+                    }
+                }
+            };
+
+            // authenticateAccount will persist the account to our secure database if auth is successful
+            mPushManager.authenticateAccount(username, password, authCallback);
+
+            synchronized (authLock) {
+                try {
+                    authLock.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
-
-            @Override
-            public void onFailure(@NonNull Throwable t) {
-                Log.e(LOG_TAG, "Failed to register ChatSecure-Push account!", t);
-            }
-        };
-
-        // authenticateAccount will persist the account to our secure database if auth is successful
-        mPushManager.authenticateAccount(username, password, authCallback);
+        }
     }
 
     public PushManager getPushManager() {
