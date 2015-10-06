@@ -218,7 +218,13 @@ public class StatusBarNotifier {
 
 
     private boolean isNotificationEnabled(long providerId) {
-        return getGlobalSettings().getEnableNotification();
+        Imps.ProviderSettings.QueryMap map = getGlobalSettings();
+        boolean result = false;
+        if (map != null) {
+            result = map.getEnableNotification();
+            map.close();
+        }
+        return result;
     }
 
     private void notify(String sender, String title, String tickerText, String message,
