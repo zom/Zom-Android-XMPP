@@ -760,6 +760,8 @@ public class ContactListManagerAdapter extends
                     listener.onSubscriptionApproved(contact, mProviderId, mAccountId);
                 }
             });
+
+            mContext.getStatusBarNotifier().notifySubscriptionApproved(contact, providerId, accountId);
         }
 
         public void onSubscriptionDeclined(final Contact contact, long providerId, long accountId) {
