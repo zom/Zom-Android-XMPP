@@ -20,5 +20,12 @@
         app:showAsAction="never"
 
         />
+<!--
+    <item android:id="@+id/menu_lock"
+        android:title="@string/menu_exit"
+        android:icon="@drawable/ic_lock_outline_black_18dp"
+        app:showAsAction="never"
+
+        />-->
 
 </menu>
