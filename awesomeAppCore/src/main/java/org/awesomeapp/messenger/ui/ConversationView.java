@@ -2741,7 +2741,39 @@ public class ConversationView {
                     sStickerManager.addEmojiToCategory(category, sticker);
                 }
 
+                basePath = "stickers/topgyal";
+                filelist = aMan.list(basePath);
 
+                category = "Topgyal";
+
+                for (int i = 0; i < filelist.length; i++) {
+                    Sticker sticker = new Sticker();
+                    sticker.name = filelist[i];
+                    sticker.category = category;
+                    sticker.assetUri = Uri.parse(basePath + '/' +  filelist[i]);
+                    sticker.res = mActivity.getResources();
+                    sticker.emoticon =  filelist[i];
+
+                    sStickerManager.addPattern(sticker.emoticon, sticker);
+                    sStickerManager.addEmojiToCategory(category, sticker);
+                }
+
+                basePath = "stickers/sindu";
+                filelist = aMan.list(basePath);
+
+                category = "Sindu";
+
+                for (int i = 0; i < filelist.length; i++) {
+                    Sticker sticker = new Sticker();
+                    sticker.name = filelist[i];
+                    sticker.category = category;
+                    sticker.assetUri = Uri.parse(basePath + '/' +  filelist[i]);
+                    sticker.res = mActivity.getResources();
+                    sticker.emoticon =  filelist[i];
+
+                    sStickerManager.addPattern(sticker.emoticon, sticker);
+                    sStickerManager.addEmojiToCategory(category, sticker);
+                }
 
             }
             catch (Exception fe)
