@@ -309,8 +309,7 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
         int count = 0;
         do {
             if (!mProviderCursor.isNull(ACTIVE_ACCOUNT_PW_COLUMN) &&
-                    !mProviderCursor.isNull(ACTIVE_ACCOUNT_ID_COLUMN) &&
-                    mProviderCursor.getInt(ACTIVE_ACCOUNT_KEEP_SIGNED_IN) != 0) {
+                    !mProviderCursor.isNull(ACTIVE_ACCOUNT_ID_COLUMN)) {
                 count++;
             }
         } while (mProviderCursor.moveToNext());
