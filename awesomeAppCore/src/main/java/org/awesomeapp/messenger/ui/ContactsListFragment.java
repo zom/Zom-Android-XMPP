@@ -125,7 +125,7 @@ public class ContactsListFragment extends Fragment {
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
 
                 final long itemId = mAdapter.getItemId( viewHolder.getAdapterPosition());
-                final String address= ((ContactListRecyclerViewAdapter.ViewHolder)viewHolder).mAddress;
+                 final String address= ((ContactListRecyclerViewAdapter.ViewHolder)viewHolder).mAddress;
 
                 Snackbar.make(mRecView, "Remove " + address + "?", Snackbar.LENGTH_LONG)
                         .setAction("Yes", new View.OnClickListener() {
@@ -135,11 +135,11 @@ public class ContactsListFragment extends Fragment {
                                 deleteContact(itemId, address);
 
                             }
-                        });
+                        }).show();
             }
         });
 
-        swipeToDismissTouchHelper.attachToRecyclerView(mRecView);
+        swipeToDismissTouchHelper.attachToRecyclerView(recyclerView);
 
     }
 
