@@ -35,6 +35,8 @@ import android.util.Log;
 public class OnboardingManager {
 
     public final static int REQUEST_SCAN = 1111;
+    public final static int REQUEST_CHOOSE_AVATAR = REQUEST_SCAN+1;
+
     public final static String BASE_INVITE_URL = "https://zom.im/i/#";
 
     public static void inviteSMSContact (Activity context, String phoneNumber, String message)

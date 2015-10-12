@@ -123,7 +123,7 @@
 
     <string name="features">Features</string>
     <string name="help">Help</string>
-    <string name="save_account_info">You can find your username and automatic password in the "Me" tab anytime you need it.</string>
+    <string name="save_account_info">You can find your username and automatic password in the "Me" tab anytime you need it.\n\nTap the circle below to set your avatar.</string>
     <string name="zom_id">"Zom ID: "</string>
     <string name="account_password_label">"Password: "</string>
     <string name="account_server_label">"Server: "</string>

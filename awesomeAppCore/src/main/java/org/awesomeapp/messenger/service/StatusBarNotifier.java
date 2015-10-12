@@ -21,6 +21,7 @@ import info.guardianproject.otr.app.im.R;
 
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.RouterActivity;
+import org.awesomeapp.messenger.model.Contact;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.util.SystemServices;
 
@@ -110,6 +111,23 @@ public class StatusBarNotifier {
         intent.putExtra(ImServiceConstants.EXTRA_INTENT_FROM_ADDRESS, username);
         notify(username, title, message, message, providerId, accountId, intent, false, R.drawable.ic_discuss);
     }
+
+    public void notifySubscriptionApproved(Contact contact, long providerId, long accountId) {
+        if (!isNotificationEnabled(providerId)) {
+            if (DBG)
+                log("notification for subscription approved is not enabled");
+            return;
+        }
+        String title = contact.getName();
+        String message = mContext.getString(R.string.invite_accepted);
+       Intent intent = new Intent(ImServiceConstants.ACTION_MANAGE_SUBSCRIPTION,
+                ContentUris.withAppendedId(Imps.Contacts.CONTENT_URI, -1));
+        intent.putExtra(ImServiceConstants.EXTRA_INTENT_PROVIDER_ID, providerId);
+        intent.putExtra(ImServiceConstants.EXTRA_INTENT_FROM_ADDRESS, contact.getAddress().getBareAddress());
+
+        notify(contact.getAddress().getBareAddress(), title, message, message, providerId, accountId, intent, false, R.drawable.ic_discuss);
+    }
+
 
     public void notifyGroupInvitation(long providerId, long accountId, long invitationId,
             String username) {

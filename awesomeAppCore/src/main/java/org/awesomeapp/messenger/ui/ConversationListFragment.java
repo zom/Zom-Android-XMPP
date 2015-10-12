@@ -139,8 +139,6 @@ public class ConversationListFragment extends Fragment {
         Uri chatUri = ContentUris.withAppendedId(Imps.Chats.CONTENT_URI, itemId);
         getActivity().getContentResolver().delete(chatUri,null,null);
 
-
-
     }
 
     public static class MessageListRecyclerViewAdapter

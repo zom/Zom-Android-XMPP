@@ -74,6 +74,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.theartofdev.edmodo.cropper.CropImageView;
+
 import net.java.otr4j.session.SessionStatus;
 
 import org.awesomeapp.messenger.ImApp;
@@ -115,6 +117,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import info.guardianproject.otr.app.im.R;
 
 public class ConversationView {
@@ -719,7 +722,7 @@ public class ConversationView {
 
         });
 
-        ((ImageButton) mActivity.findViewById(R.id.btnAttachPicture)).setOnClickListener(new View.OnClickListener() {
+        ((CircleImageView) mActivity.findViewById(R.id.btnAttachPicture)).setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -728,7 +731,7 @@ public class ConversationView {
 
         });
 
-        ((ImageButton) mActivity.findViewById(R.id.btnTakePicture)).setOnClickListener(new View.OnClickListener() {
+        ((CircleImageView) mActivity.findViewById(R.id.btnTakePicture)).setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -737,7 +740,7 @@ public class ConversationView {
 
         });
 
-        ((ImageButton) mActivity.findViewById(R.id.btnAttachFile)).setOnClickListener(new View.OnClickListener() {
+        ((CircleImageView) mActivity.findViewById(R.id.btnAttachFile)).setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -746,7 +749,7 @@ public class ConversationView {
 
         });
 
-        ((ImageButton) mActivity.findViewById(R.id.btnAttachSticker)).setOnClickListener(new View.OnClickListener() {
+        ((CircleImageView) mActivity.findViewById(R.id.btnAttachSticker)).setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -2738,7 +2741,39 @@ public class ConversationView {
                     sStickerManager.addEmojiToCategory(category, sticker);
                 }
 
+                basePath = "stickers/topgyal";
+                filelist = aMan.list(basePath);
 
+                category = "Topgyal";
+
+                for (int i = 0; i < filelist.length; i++) {
+                    Sticker sticker = new Sticker();
+                    sticker.name = filelist[i];
+                    sticker.category = category;
+                    sticker.assetUri = Uri.parse(basePath + '/' +  filelist[i]);
+                    sticker.res = mActivity.getResources();
+                    sticker.emoticon =  filelist[i];
+
+                    sStickerManager.addPattern(sticker.emoticon, sticker);
+                    sStickerManager.addEmojiToCategory(category, sticker);
+                }
+
+                basePath = "stickers/sindu";
+                filelist = aMan.list(basePath);
+
+                category = "Sindu";
+
+                for (int i = 0; i < filelist.length; i++) {
+                    Sticker sticker = new Sticker();
+                    sticker.name = filelist[i];
+                    sticker.category = category;
+                    sticker.assetUri = Uri.parse(basePath + '/' +  filelist[i]);
+                    sticker.res = mActivity.getResources();
+                    sticker.emoticon =  filelist[i];
+
+                    sStickerManager.addPattern(sticker.emoticon, sticker);
+                    sStickerManager.addEmojiToCategory(category, sticker);
+                }
 
             }
             catch (Exception fe)

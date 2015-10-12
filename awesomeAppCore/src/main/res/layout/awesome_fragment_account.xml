@@ -21,6 +21,8 @@
 	android:id="@+id/acct_act_scrollview"
 	android:layout_height="match_parent"
 	android:layout_width="match_parent"
+
+    android:background="#ffffff"
 	android:fillViewport="true">
 
 	<LinearLayout
@@ -28,7 +30,6 @@
 		android:layout_height="wrap_content"
 		android:orientation="vertical"
 		android:padding="3dp"
-		android:background="?listBackground"
 		android:layout_marginTop="12dp"
 		>
 
@@ -46,14 +47,16 @@
 	    android:orientation="horizontal"
 		android:gravity="center"
 		android:padding="3dp"
-		android:background="#ffffff"
 		>
 
-		<ImageView
+		<de.hdodenhof.circleimageview.CircleImageView
+
 			android:layout_width="96dp"
 			android:layout_height="96dp"
 			android:src="@drawable/avatar_unknown"
-			android:id="@+id/imageAvatar" />
+			android:id="@+id/imageAvatar"
+			android:padding="6dp"
+			/>
 
 		<LinearLayout
 			android:layout_width="match_parent"
@@ -61,110 +64,104 @@
 			android:orientation="vertical"
 			android:padding="10dp">
 
-		<TextView android:id="@+id/tvNickname"
-				android:selectAllOnFocus="true"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:hint="@string/account_setup_example_email_address"
-				android:autoLink="none"
-				android:cursorVisible="true"
-				android:inputType="textEmailAddress"
-				android:text="user person"
-				android:textAppearance="?android:attr/textAppearanceLarge"
 
-				/>
+			               <TextView android:id="@+id/tvNickname"
+			                               android:selectAllOnFocus="true"
+			                               android:layout_width="match_parent"
+			                               android:layout_height="wrap_content"
+			                               android:hint="@string/account_setup_example_email_address"
+			                               android:autoLink="none"
+			                               android:cursorVisible="true"
+			                               android:inputType="textEmailAddress"
+			                               android:text="user person"
+			                               android:textAppearance="?android:attr/textAppearanceLarge"
+			
+			                               />
+			
+			                       <TextView android:id="@+id/edtName"
+			                               android:selectAllOnFocus="true"
+			                               android:layout_width="match_parent"
+			                               android:layout_height="wrap_content"
+			                               android:hint="@string/account_setup_example_email_address"
+			                               android:autoLink="none"
+			                               android:cursorVisible="true"
+			                               android:inputType="textEmailAddress"
+			                               android:text="user@domain.com"
+			                               android:textAppearance="?android:attr/textAppearanceSmall"
+			                               android:textColor="?contactTextSecondary"
+			
+			                               />
+			
+			                       <LinearLayout
+			                               android:layout_width="match_parent"
+			                               android:layout_height="wrap_content"
+			                               android:orientation="horizontal"
+			                               android:padding="0dp">
+			                       <TextView android:id="@+id/edtPass"
+			                               android:layout_width="100dp"
+			                               android:layout_height="wrap_content"
+			                               android:selectAllOnFocus="true"
+			                               android:text="*************"
+			                               android:textAppearance="?android:attr/textAppearanceSmall"
+			
+			                               />
+			                               <ImageView
+			                                       android:layout_width="wrap_content"
+			                                       android:layout_height="20dp"
+			                                       android:id="@+id/btnShowPass"
+			                                       android:src="@drawable/ic_visibility_black_24dp"
+			                                       android:background="@android:color/transparent"
+			
+			                                       />
+			                               </LinearLayout>
 
-			<TextView android:id="@+id/edtName"
-				android:selectAllOnFocus="true"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:hint="@string/account_setup_example_email_address"
-				android:autoLink="none"
-				android:cursorVisible="true"
-				android:inputType="textEmailAddress"
-				android:text="user@domain.com"
-				android:textAppearance="?android:attr/textAppearanceSmall"
-				android:textColor="?contactTextSecondary"
+            <Switch
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Online"
+                android:id="@+id/switchOnline"
+                android:layout_gravity="left"
+                />
 
-				/>
 
-			<LinearLayout
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:orientation="horizontal"
-				android:padding="0dp">
-			<TextView android:id="@+id/edtPass"
-				android:layout_width="100dp"
-				android:layout_height="wrap_content"
-				android:selectAllOnFocus="true"
-				android:text="*************"
-				android:textAppearance="?android:attr/textAppearanceSmall"
-
-				/>
-				<ImageView
-					android:layout_width="wrap_content"
-					android:layout_height="20dp"
-					android:id="@+id/btnShowPass"
-					android:src="@drawable/ic_visibility_black_24dp"
-					android:background="@android:color/transparent"
-
-					/>
-				</LinearLayout>
-
-		</LinearLayout>
+        </LinearLayout>
 
 
 		</LinearLayout>
 
 	<LinearLayout
-		android:layout_width="match_parent"
+		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:orientation="vertical"
-		android:gravity="center"
-		android:padding="3dp"
-		android:background="#ffffff"
+		android:gravity="center_horizontal"
+		android:layout_gravity="center_horizontal"
+
+		android:layout_marginTop="24dp"
 		>
 
-		<TextView
-			android:selectAllOnFocus="true"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:autoLink="none"
-			android:text="Zom Secret"
-			android:textAppearance="?android:attr/textAppearanceSmall"
-			android:textStyle="bold"
-			android:textColor="?contactTextSecondary"
 
-			/>
 
-		<LinearLayout
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:orientation="horizontal"
-			android:gravity="left|center"
-			android:padding="3dp"
-			android:background="#ffffff"
-			>
 			<ImageView
-				android:layout_width="48dp"
-				android:layout_height="48dp"
-				android:src="@drawable/qr"
-				android:id="@+id/buttonScan"
+				android:layout_width="256dp"
+				android:layout_height="256dp"
+				android:id="@+id/qrcode"
 				/>
+
 		<TextView android:id="@+id/tvFingerprint"
-			android:selectAllOnFocus="true"
-			android:layout_width="260dp"
-			android:layout_height="wrap_content"
-			android:autoLink="none"
-			android:text="AAAAAA AAAAAA AAAAAA AAAAAA AAAAAA"
-			android:textAppearance="?android:attr/textAppearanceMedium"
-			android:textColor="?contactTextSecondary"
-			android:layout_margin="12dp"
-			/>
-			</LinearLayout>
-		</LinearLayout>
+		                       android:selectAllOnFocus="true"
+		                       android:layout_width="wrap_content"
+		                       android:layout_height="wrap_content"
+		                       android:autoLink="none"
+		                       android:text="AAAAAA AAAAAA AAAAAA AAAAAA AAAAAA"
+		                       android:textAppearance="?android:attr/textAppearanceSmall"
+		                       android:textColor="?contactTextSecondary"
+		                       android:layout_margin="12dp"
+		                       />
 
 
+	</LinearLayout>
+
+<!--
 		<LinearLayout
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
@@ -211,26 +208,8 @@
 
 			/>
 
-
 		</LinearLayout>
-		<!--
-<Button android:id="@+id/btnQR"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="3dip"
-        android:text="@string/menu_sidebar_qr" android:layout_width="match_parent"
-                    android:visibility="gone"
+		-->
 
-        />
-
-
-
-<TextView android:id="@+id/signUp"
-android:layout_width="wrap_content"
-android:layout_height="wrap_content"
-android:paddingLeft="4dip"
-android:focusable="true"
-android:focusableInTouchMode="true"
-android:textAppearance="?android:attr/textAppearanceSmall" />
- -->
 	</LinearLayout>
 </ScrollView>

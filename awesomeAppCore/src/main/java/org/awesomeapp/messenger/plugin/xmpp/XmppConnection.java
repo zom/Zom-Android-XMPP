@@ -2274,7 +2274,7 @@ public class XmppConnection extends ImConnection {
                     for (String address : addresses) {
                         requestPresenceRefresh(address);
 
-                        Contact contact = mContactListManager.getContact(XmppAddress.stripResource(address));
+                        Contact contact = new Contact(new XmppAddress(address),address);
                         mContactListManager.notifyContactListUpdated(cl, ContactListListener.LIST_CONTACT_REMOVED, contact);
                     }
                     

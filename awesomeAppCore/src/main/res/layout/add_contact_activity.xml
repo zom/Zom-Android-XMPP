@@ -24,6 +24,57 @@
     android:padding="12dp"
     >
 
+    <LinearLayout
+        android:id="@+id/inviteOptions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="0dp"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+
+
+        >
+        <Button
+            android:id="@+id/btnInviteSMS"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="10dp"
+            android:layout_margin="1dp"
+
+            android:text="@string/invite_sms"
+            android:drawableLeft="@android:drawable/ic_menu_send"
+            android:background="@android:color/transparent"
+            android:textColor="@android:color/white"
+            />   <Button
+        android:id="@+id/btnInviteShare"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="10dp"
+        android:layout_margin="1dp"
+
+        android:text="@string/invite_share"
+        android:drawableLeft="@android:drawable/ic_menu_share"
+        android:background="@android:color/transparent"
+        android:textColor="@android:color/white"
+
+        />
+        <Button
+            android:id="@+id/btnInviteScan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="1dp"
+
+            android:textSize="10dp"
+            android:text="@string/invite_scan_qr"
+            android:drawableLeft="@android:drawable/ic_menu_camera"
+            android:background="@android:color/transparent"
+            android:textColor="@android:color/white"
+
+            />
+
+    </LinearLayout>
+    <!--
     <Spinner android:id="@+id/choose_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -31,9 +82,9 @@
         android:padding="3dip"
         android:prompt="@string/choose_list_label" />
 
-
+-->
     <TextView android:id="@+id/input_contact_label"
-        android:layout_marginTop="10dip"
+        android:layout_marginTop="20dip"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="@string/input_contact_label" />
@@ -42,15 +93,10 @@
         android:id="@+id/email"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:inputType="textEmailAddress" />
-    
+        android:inputType="textEmailAddress"
+        android:imeOptions="actionSend"
+        />
 
-         <Button android:id="@+id/invite"
-              android:layout_marginTop="20dip"
-              android:textSize="24sp"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:text="@string/invite_label" />
 
 
     

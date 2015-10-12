@@ -3,8 +3,8 @@
     package="info.guardianproject.otr.app.im"
     android:installLocation="auto"
     android:sharedUserLabel="@string/perm_label"
-    android:versionCode="1500017"
-    android:versionName="15.0.0-alpha-17" >
+    android:versionCode="1500020"
+    android:versionName="15.0.0-alpha-20" >
 
     <supports-screens
         android:anyDensity="true"
@@ -287,7 +287,9 @@
         <activity
             android:name="org.awesomeapp.messenger.ui.AddContactActivity"
             android:exported="false"
-            android:label="@string/add_contact_title" />
+            android:label="@string/add_contact_title"
+            android:theme="@style/InviteDialog"
+            />
       <activity
             android:name="org.awesomeapp.messenger.ui.ContactsPickerActivity"
             android:exported="false"

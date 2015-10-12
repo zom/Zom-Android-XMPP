@@ -735,6 +735,11 @@ public class ImApp extends Application {
         return conn;
     }
 
+    public IImConnection getDefaultConnection ()
+    {
+        return getConnection(getDefaultProviderId(),getDefaultAccountId());
+    }
+
     public IImConnection getConnection(long providerId,long accountId) {
         synchronized (mConnections) {
 

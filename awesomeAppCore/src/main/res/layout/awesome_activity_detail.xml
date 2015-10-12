@@ -59,6 +59,21 @@
 
     </android.support.design.widget.AppBarLayout>
 
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/history"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:stackFromBottom="true"
+        android:divider="#00000000"
+        android:dividerHeight="6dp"
+        android:transcriptMode="normal"
+        android:paddingBottom="48dp"
+        android:gravity="top"
+        />
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -84,19 +99,6 @@
             />
 
     </LinearLayout>
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/history"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:stackFromBottom="true"
-        android:divider="#00000000"
-        android:dividerHeight="6dp"
-        android:transcriptMode="normal"
-        android:paddingBottom="48dp"
-        android:gravity="top"
-        />
 
 
     <ProgressBar
@@ -189,13 +191,13 @@
     <HorizontalScrollView
         android:id="@+id/attachPanel"
         android:layout_width="match_parent"
-        android:layout_height="64dip"
+        android:layout_height="96dip"
         android:fillViewport="true"
         android:measureAllChildren="false"
         android:scrollbars="none"
         android:visibility="gone"
-        android:background="?colorAccent"
-        android:layout_gravity="bottom"
+        android:background="@color/background_med"
+        android:layout_gravity="center_vertical"
         android:gravity="center_vertical"
 
         >
@@ -203,23 +205,22 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center"
-            android:gravity="center"
+            android:layout_gravity="center"
+            android:gravity="center_vertical|center_horizontal"
             android:orientation="horizontal"
             >
 
 
-            <ImageButton
+            <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/btnAttachPicture"
                 android:src="@drawable/ic_insert_photo_white_36dp"
                 android:layout_margin="3dp"
                 android:background="@android:color/transparent"
-
                 android:layout_width="64dp"
                 android:layout_height="64dp"
                 />
 
-            <ImageButton
+            <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/btnTakePicture"
                 android:src="@drawable/ic_photo_camera_white_36dp"
                 android:layout_margin="3dp"
@@ -230,7 +231,7 @@
 
                 />
 
-            <ImageButton
+            <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/btnAttachSticker"
                 android:src="@drawable/ic_insert_emoticon_white_36dp"
                 android:layout_margin="3dp"
@@ -240,15 +241,13 @@
                 />
 
 
-            <ImageButton
+            <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/btnAttachFile"
                 android:src="@drawable/ic_insert_drive_file_white_36dp"
                 android:layout_margin="3dp"
                 android:background="@android:color/transparent"
-
                 android:layout_width="64dp"
                 android:layout_height="64dp"
-
                 />
         </LinearLayout>
     </HorizontalScrollView>

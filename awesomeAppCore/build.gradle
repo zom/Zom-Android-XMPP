@@ -109,8 +109,7 @@ android {
 }
 
 dependencies {
-    compile files('libs/gp-bcc-lib.jar')
-    compile files('libs/sqlcipher.jar')
+    compile 'net.zetetic:android-database-sqlcipher:3.3.1-1@aar'
     compile project(':MemorizingTrustManager')
     compile project(':otr4jandroid')
     compile project(':tibetanTextLibrary')
