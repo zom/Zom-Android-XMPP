@@ -3,25 +3,39 @@ package org.awesomeapp.messenger.ui.onboarding;
 import org.awesomeapp.messenger.crypto.OtrAndroidKeyManagerImpl;
 import info.guardianproject.otr.app.im.R;
 import org.awesomeapp.messenger.ImApp;
+import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.tasks.AddContactAsyncTask;
+import org.awesomeapp.messenger.ui.legacy.DatabaseUtils;
 import org.awesomeapp.messenger.ui.legacy.SignInHelper;
 import org.awesomeapp.messenger.ui.legacy.SimpleAlertHandler;
 import org.awesomeapp.messenger.ui.legacy.ThemeableActivity;
 import org.awesomeapp.messenger.ui.widgets.InstantAutoCompleteTextView;
+import org.awesomeapp.messenger.ui.widgets.RoundedAvatarDrawable;
 import org.awesomeapp.messenger.util.Languages;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.os.ResultReceiver;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -35,11 +49,15 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.ViewFlipper;
 
+import com.theartofdev.edmodo.cropper.CropImageView;
+
 import org.awesomeapp.messenger.MainActivity;
+import org.awesomeapp.messenger.util.SecureMediaStore;
 
 public class OnboardingActivity extends ThemeableActivity {
 
@@ -48,6 +66,7 @@ public class OnboardingActivity extends ThemeableActivity {
     private View mSetupProgress;
     private TextView mSetupStatus;
     private Button mSetupButton;
+    private ImageView mImageAvatar;
 
     private InstantAutoCompleteTextView mSpinnerDomains;
 
@@ -72,6 +91,17 @@ public class OnboardingActivity extends ThemeableActivity {
         mViewFlipper = (ViewFlipper) findViewById(R.id.viewFlipper1);
         mEditUsername = (EditText)findViewById(R.id.edtNewName);
         mSpinnerDomains = (InstantAutoCompleteTextView)findViewById(R.id.spinnerDomains);
+
+        mImageAvatar = (ImageView) findViewById(R.id.imageAvatar);
+        mImageAvatar.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+
+                startActivityForResult(getPickImageChooserIntent(), OnboardingManager.REQUEST_CHOOSE_AVATAR);
+
+            }
+        });
 
         setAnimLeft();
         
@@ -217,7 +247,7 @@ public class OnboardingActivity extends ThemeableActivity {
             @Override
             public void onClick(View v) {
 
-                doAccountRegister();
+                showInviteScreen();
 
             }
 
@@ -314,7 +344,7 @@ public class OnboardingActivity extends ThemeableActivity {
     {
         
         mViewFlipper.showNext();
-        
+
         getSupportActionBar().show();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
@@ -347,7 +377,7 @@ public class OnboardingActivity extends ThemeableActivity {
         setAnimLeft();
         mSetupProgress = findViewById(R.id.progressNewUser);
         mSetupProgress.setVisibility(View.VISIBLE);
-        
+
         mSetupStatus = (TextView)findViewById(R.id.statusNewUser);
         mSetupStatus.setVisibility(View.VISIBLE);
 
@@ -426,6 +456,8 @@ public class OnboardingActivity extends ThemeableActivity {
                 mEditUsername.setVisibility(View.GONE);
                 mSetupProgress.setVisibility(View.GONE);
 
+                mImageAvatar.setVisibility(View.VISIBLE);
+
                 mSetupButton.setVisibility(View.VISIBLE);
 
                 SignInHelper signInHelper = new SignInHelper(OnboardingActivity.this, mHandler);
@@ -442,11 +474,6 @@ public class OnboardingActivity extends ThemeableActivity {
             }
         }
       }
-
-    private void doAccountRegister()
-    {
-        showInviteScreen ();
-    }
 
     private void showInviteScreen ()
     {
@@ -555,13 +582,14 @@ public class OnboardingActivity extends ThemeableActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        showInviteScreen();
 
         ImApp mApp = (ImApp)getApplication();
         mApp.initAccountInfo();
 
         if (resultCode == RESULT_OK) {
             if (requestCode == OnboardingManager.REQUEST_SCAN) {
+
+                showInviteScreen();
 
                 ArrayList<String> resultScans = data.getStringArrayListExtra("result");
                 for (String resultScan : resultScans)
@@ -586,8 +614,170 @@ public class OnboardingActivity extends ThemeableActivity {
                     showMainScreen ();
                 }
             }
+            else if (requestCode == OnboardingManager.REQUEST_CHOOSE_AVATAR)
+            {
+                Uri imageUri = getPickImageResultUri(data);
+
+                if (imageUri == null)
+                    return;
+
+                mCropImageView = new CropImageView(OnboardingActivity.this);// (CropImageView)view.findViewById(R.id.CropImageView);
+                mCropImageView.setAspectRatio(1, 1);
+                mCropImageView.setFixedAspectRatio(true);
+                mCropImageView.setGuidelines(1);
+
+                try {
+                    Bitmap bmpThumbnail = SecureMediaStore.getThumbnailFile(OnboardingActivity.this, imageUri, 512);
+                    mCropImageView.setImageBitmap(bmpThumbnail);
+
+                    // Use the Builder class for convenient dialog construction
+                    android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(OnboardingActivity.this);
+                    builder.setView(mCropImageView)
+                            .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    setAvatar(mCropImageView.getCroppedImage());
+                                    showInviteScreen();
+                                }
+                            })
+                            .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    // User cancelled the dialog
+                                }
+                            });
+                    // Create the AlertDialog object and return it
+                    android.support.v7.app.AlertDialog dialog = builder.create();
+                    dialog.show();
+                    ;
+                } catch (IOException ioe) {
+                    Log.e(ImApp.LOG_TAG, "couldn't load avatar", ioe);
+                }
+            }
 
         }
     }
+
+
+    private void setAvatar(Bitmap bmp) {
+
+        RoundedAvatarDrawable avatar = new RoundedAvatarDrawable(bmp);
+        mImageAvatar.setImageDrawable(avatar);
+
+        final ImApp app = ((ImApp)getApplication());
+
+        try {
+
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            bmp.compress(Bitmap.CompressFormat.JPEG, 90, stream);
+
+            long providerId = app.getDefaultProviderId();
+            long accountId = app.getDefaultAccountId();
+            byte[] avatarBytesCompressed = stream.toByteArray();
+            String avatarHash = "nohash";
+            String userAddress = app.getDefaultUsername();
+
+            DatabaseUtils.insertAvatarBlob(getContentResolver(), Imps.Avatars.CONTENT_URI, providerId, accountId, avatarBytesCompressed, avatarHash, userAddress);
+        } catch (Exception e) {
+            Log.w(ImApp.LOG_TAG, "error loading image bytes", e);
+        }
+    }
+
+    public byte[] getBytes(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
+        int bufferSize = 1024;
+        byte[] buffer = new byte[bufferSize];
+
+        int len = 0;
+        while ((len = inputStream.read(buffer)) != -1) {
+            byteBuffer.write(buffer, 0, len);
+        }
+        return byteBuffer.toByteArray();
+    }
+
+    CropImageView mCropImageView;
+
+    /**
+     * Create a chooser intent to select the source to get image from.<br/>
+     * The source can be camera's (ACTION_IMAGE_CAPTURE) or gallery's (ACTION_GET_CONTENT).<br/>
+     * All possible sources are added to the intent chooser.
+     */
+    public Intent getPickImageChooserIntent() {
+
+        // Determine Uri of camera image to save.
+        Uri outputFileUri = getCaptureImageOutputUri();
+
+        List<Intent> allIntents = new ArrayList<>();
+        PackageManager packageManager = getPackageManager();
+
+        // collect all camera intents
+        Intent captureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+        List<ResolveInfo> listCam = packageManager.queryIntentActivities(captureIntent, 0);
+        for (ResolveInfo res : listCam) {
+            Intent intent = new Intent(captureIntent);
+            intent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
+            intent.setPackage(res.activityInfo.packageName);
+            if (outputFileUri != null) {
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+            }
+            allIntents.add(intent);
+        }
+
+        // collect all gallery intents
+        Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
+        galleryIntent.setType("image/*");
+        List<ResolveInfo> listGallery = packageManager.queryIntentActivities(galleryIntent, 0);
+        for (ResolveInfo res : listGallery) {
+            Intent intent = new Intent(galleryIntent);
+            intent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
+            intent.setPackage(res.activityInfo.packageName);
+            allIntents.add(intent);
+        }
+
+        // the main intent is the last in the list (fucking android) so pickup the useless one
+        Intent mainIntent = allIntents.get(allIntents.size() - 1);
+        for (Intent intent : allIntents) {
+            if (intent.getComponent().getClassName().equals("com.android.documentsui.DocumentsActivity")) {
+                mainIntent = intent;
+                break;
+            }
+        }
+        allIntents.remove(mainIntent);
+
+        // Create a chooser from the main intent
+        Intent chooserIntent = Intent.createChooser(mainIntent, getString(R.string.choose_photos));
+
+        // Add all other intents
+        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, allIntents.toArray(new Parcelable[allIntents.size()]));
+
+        return chooserIntent;
+    }
+
+    /**
+     * Get URI to image received from capture by camera.
+     */
+    private Uri getCaptureImageOutputUri() {
+        Uri outputFileUri = null;
+        File getImage = getExternalCacheDir();
+        if (getImage != null) {
+            outputFileUri = Uri.fromFile(new File(getImage.getPath(), "pickImageResult.jpg"));
+        }
+        return outputFileUri;
+    }
+
+
+    /**
+     * Get the URI of the selected image from {@link #getPickImageChooserIntent()}.<br/>
+     * Will return the correct URI for camera and gallery image.
+     *
+     * @param data the returned data of the activity result
+     */
+    public Uri getPickImageResultUri(Intent data) {
+        boolean isCamera = true;
+        if (data != null) {
+            String action = data.getAction();
+            isCamera = action != null && action.equals(MediaStore.ACTION_IMAGE_CAPTURE);
+        }
+        return isCamera ? getCaptureImageOutputUri() : data.getData();
+    }
+
 
 }

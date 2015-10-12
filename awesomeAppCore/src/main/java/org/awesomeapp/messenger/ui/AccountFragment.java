@@ -177,7 +177,7 @@ public class AccountFragment extends Fragment {
 
         try {
 
-            RoundedAvatarDrawable avatar = DatabaseUtils.getAvatarFromAddress(mApp.getContentResolver(), fullUserName, 128, 128);
+            RoundedAvatarDrawable avatar = DatabaseUtils.getAvatarFromAddress(mApp.getContentResolver(), fullUserName, 96, 96);
 
             if (avatar != null)
                 mIvAvatar.setImageDrawable(avatar);
