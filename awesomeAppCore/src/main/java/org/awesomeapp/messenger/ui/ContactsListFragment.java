@@ -124,17 +124,11 @@ public class ContactsListFragment extends Fragment {
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
 
-
-                // callback for swipe to dismiss, removing item from data and adapter
-                int position = viewHolder.getAdapterPosition();
-
-                //delete / endchat
-                //items.remove(viewHolder.getAdapterPosition());
-                final long itemId = mAdapter.getItemId(position);
+                final long itemId = mAdapter.getItemId( viewHolder.getAdapterPosition());
                 final String address= ((ContactListRecyclerViewAdapter.ViewHolder)viewHolder).mAddress;
 
                 Snackbar.make(mRecView, "Remove " + address + "?", Snackbar.LENGTH_LONG)
-                        .setAction("YES", new View.OnClickListener() {
+                        .setAction("Yes", new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 //if they click, then cancel timer that will be used to end the chat
@@ -144,7 +138,8 @@ public class ContactsListFragment extends Fragment {
                         });
             }
         });
-        swipeToDismissTouchHelper.attachToRecyclerView(recyclerView);
+
+        swipeToDismissTouchHelper.attachToRecyclerView(mRecView);
 
     }
 
