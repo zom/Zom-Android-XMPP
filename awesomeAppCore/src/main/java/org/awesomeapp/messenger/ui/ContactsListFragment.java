@@ -22,13 +22,16 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.RemoteException;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,7 +39,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import org.awesomeapp.messenger.MainActivity;
+import org.awesomeapp.messenger.model.ImConnection;
+import org.awesomeapp.messenger.model.ImErrorInfo;
 import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
+import org.awesomeapp.messenger.service.IContactListManager;
+import org.awesomeapp.messenger.service.IImConnection;
+import org.awesomeapp.messenger.ui.legacy.ErrorResUtils;
 import org.awesomeapp.messenger.ui.onboarding.OnboardingManager;
 import org.awesomeapp.messenger.provider.Imps;
 
@@ -104,9 +112,64 @@ public class ContactsListFragment extends Fragment {
 
         }
 
+        // init swipe to dismiss logic
+        ItemTouchHelper swipeToDismissTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(
+                ItemTouchHelper.RIGHT, ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                // callback for drag-n-drop, false to skip this feature
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+
+
+                // callback for swipe to dismiss, removing item from data and adapter
+                int position = viewHolder.getAdapterPosition();
+
+                //delete / endchat
+                //items.remove(viewHolder.getAdapterPosition());
+                final long itemId = mAdapter.getItemId(position);
+                final String address= ((ContactListRecyclerViewAdapter.ViewHolder)viewHolder).mAddress;
+
+                Snackbar.make(mRecView, "Remove " + address + "?", Snackbar.LENGTH_LONG)
+                        .setAction("YES", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                //if they click, then cancel timer that will be used to end the chat
+                                deleteContact(itemId, address);
+
+                            }
+                        });
+            }
+        });
+        swipeToDismissTouchHelper.attachToRecyclerView(recyclerView);
+
     }
 
+    private void deleteContact (long itemId, String address)
+    {
+        ImApp app = ((ImApp)getActivity().getApplication());
 
+        IImConnection conn = app.getDefaultConnection();
+
+        try {
+            IContactListManager manager = conn.getContactListManager();
+            int res = manager.removeContact(address);
+            if (res != ImErrorInfo.NO_ERROR) {
+                //mHandler.showAlert(R.string.error,
+                  //      ErrorResUtils.getErrorRes(getResources(), res, address));
+            }
+
+        }
+        catch (RemoteException re)
+        {
+
+        }
+
+
+    }
 
     public static class ContactListRecyclerViewAdapter
             extends CursorRecyclerViewAdapter<ContactListRecyclerViewAdapter.ViewHolder> {
@@ -120,6 +183,7 @@ public class ContactsListFragment extends Fragment {
             public final ContactListItem mView;
             public long mProviderId = -1;
             public long mAccountId = -1;
+            public String mAddress = null;
 
             public ViewHolder(ContactListItem view) {
                 super(view);
@@ -146,7 +210,7 @@ public class ContactsListFragment extends Fragment {
         @Override
         public void onBindViewHolder(final ViewHolder viewHolder, Cursor cursor) {
 
-            final String chatUsername =  cursor.getString(ContactListItem.COLUMN_CONTACT_USERNAME);
+           viewHolder.mAddress =  cursor.getString(ContactListItem.COLUMN_CONTACT_USERNAME);
 
             viewHolder.mView.bind(cursor,"", false, false);
             viewHolder.mProviderId = cursor.getLong(ContactListItem.COLUMN_CONTACT_PROVIDER);
@@ -157,9 +221,9 @@ public class ContactsListFragment extends Fragment {
                 public void onClick(View v) {
 
                     if (mContext instanceof ContactListActivity)
-                        ((ContactListActivity)mContext).startChat(viewHolder.mProviderId, viewHolder.mAccountId, chatUsername);
+                        ((ContactListActivity)mContext).startChat(viewHolder.mProviderId, viewHolder.mAccountId, viewHolder.mAddress);
                     else if (mContext instanceof MainActivity)
-                        ((MainActivity)mContext).startChat(viewHolder.mProviderId,viewHolder.mAccountId, chatUsername);
+                        ((MainActivity)mContext).startChat(viewHolder.mProviderId,viewHolder.mAccountId, viewHolder.mAddress);
 
                 }
             });
