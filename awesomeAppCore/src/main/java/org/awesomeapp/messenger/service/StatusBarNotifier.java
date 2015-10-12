@@ -119,7 +119,7 @@ public class StatusBarNotifier {
             return;
         }
         String title = contact.getName();
-        String message = mContext.getString(R.string.subscription_notify_text, contact.getName());
+        String message = mContext.getString(R.string.invite_accepted);
        Intent intent = new Intent(ImServiceConstants.ACTION_MANAGE_SUBSCRIPTION,
                 ContentUris.withAppendedId(Imps.Contacts.CONTENT_URI, -1));
         intent.putExtra(ImServiceConstants.EXTRA_INTENT_PROVIDER_ID, providerId);
