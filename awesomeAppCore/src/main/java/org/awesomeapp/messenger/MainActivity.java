@@ -141,12 +141,11 @@ public class MainActivity extends AppCompatActivity {
 
         tab = tabLayout.newTab();
        // tab.setIcon(R.drawable.ic_photo_library_white_24dp);
-        tab.setIcon(R.drawable.ic_people_white_36dp);
+        tab.setIcon(R.drawable.ic_people_white_24dp);
         tabLayout.addTab(tab);
 
         tab = tabLayout.newTab();
-//        tab.setIcon(R.drawable.ic_toys_white_24dp);
-        tab.setIcon(R.drawable.ic_photo_library_white_24dp);
+        tab.setIcon(R.drawable.ic_explore_white_24dp);
         tabLayout.addTab(tab);
 
         tab = tabLayout.newTab();
