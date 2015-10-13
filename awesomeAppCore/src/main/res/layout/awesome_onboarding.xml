@@ -147,13 +147,22 @@
                             android:visibility="gone"
                             />
 
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:layout_width="128dp"
+                            android:layout_height="128dp"
+                            android:src="@drawable/avatar_unknown"
+                            android:id="@+id/imageAvatar"
+                            android:layout_margin="12dp"
+                            android:visibility="gone"
+                            />
+
                         <TextView
                             android:id="@+id/statusNewUser"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_margin="10dp"
                             android:text=""
-                            android:textSize="18dp"
+                            android:textSize="16dp"
                             android:visibility="gone"
                             />
 
@@ -172,15 +181,7 @@
                             />-->
 
 
-                        <de.hdodenhof.circleimageview.CircleImageView
-                            android:layout_width="128dp"
-                            android:layout_height="128dp"
-                            android:src="@drawable/avatar_unknown"
-                            android:id="@+id/imageAvatar"
-                            android:layout_margin="12dp"
-                            android:visibility="gone"
 
-                            />
 
                         <Button android:id="@+id/btnRegister"
                             android:text="@string/lock_screen_skip"
