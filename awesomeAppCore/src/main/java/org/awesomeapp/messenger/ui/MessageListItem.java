@@ -169,13 +169,6 @@ public class MessageListItem extends FrameLayout {
                     }
                 });
 
-                mMediaThumbnail.setOnClickListener(new OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        onClickMediaIcon(mimeType, mediaUri);
-                    }
-                });
-
                 mActionSend.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -398,12 +391,29 @@ public class MessageListItem extends FrameLayout {
         if( mimeType.startsWith("image/") ) {
             setImageThumbnail( getContext().getContentResolver(), id, holder, mediaUri );
             holder.mMediaThumbnail.setBackgroundColor(Color.TRANSPARENT);
-           // holder.mMediaThumbnail.setBackgroundColor(Color.WHITE);
+
+            if (mimeType.startsWith("image/png"))
+            {
+                holder.mActionFav.setVisibility(View.GONE);
+                holder.mActionSend.setVisibility(View.GONE);
+                holder.mActionShare.setVisibility(View.GONE);
+
+            }
+            else
+            {
+                holder.mActionFav.setVisibility(View.VISIBLE);
+                holder.mActionSend.setVisibility(View.VISIBLE);
+                holder.mActionShare.setVisibility(View.VISIBLE);
+            }
 
         }
         else
         {
             holder.mMediaThumbnail.setImageResource(R.drawable.ic_file); // generic file icon
+
+            holder.mActionFav.setVisibility(View.GONE);
+            holder.mActionSend.setVisibility(View.GONE);
+            holder.mActionShare.setVisibility(View.GONE);
 
         }
 
@@ -498,7 +508,7 @@ public class MessageListItem extends FrameLayout {
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
             //set a general mime type not specific
-            intent.setDataAndType(Uri.parse( body ), mimeType);
+            intent.setData(Uri.parse(body));
 
             Context context = getContext().getApplicationContext();
 
@@ -508,7 +518,16 @@ public class MessageListItem extends FrameLayout {
             }
             else
             {
-                Toast.makeText(getContext(), R.string.there_is_no_viewer_available_for_this_file_format, Toast.LENGTH_LONG).show();
+
+                intent = new Intent(Intent.ACTION_SEND);
+                intent.setData(Uri.parse( body ));
+                if (isIntentAvailable(context, intent))
+                {
+                    context.startActivity(intent);
+                }
+                else {
+                    Toast.makeText(getContext(), R.string.there_is_no_viewer_available_for_this_file_format, Toast.LENGTH_LONG).show();
+                }
             }
         }
     }
@@ -715,8 +734,6 @@ public class MessageListItem extends FrameLayout {
 
                 String mimeTypeSticker = "image/png";
                 Uri mediaUri = Uri.parse("asset://"+cmds[1]);
-
-                //getResources().getAssets().open(cmds[1]);
 
                 mHolder.mTextViewForMessages.setVisibility(View.GONE);
                 mHolder.mMediaContainer.setVisibility(View.VISIBLE);
