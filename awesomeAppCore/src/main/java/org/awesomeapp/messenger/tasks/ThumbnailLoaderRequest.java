@@ -1,6 +1,7 @@
 package org.awesomeapp.messenger.tasks;
 
 import android.content.ContentResolver;
+import android.content.Context;
 import android.net.Uri;
 
 import org.awesomeapp.messenger.ui.GalleryListItem;
@@ -15,4 +16,5 @@ public class ThumbnailLoaderRequest {
     public MediaViewHolder mHolder;
     public Uri mUri;
     public ContentResolver mResolver;
+    public Context mContext;
 }

@@ -21,6 +21,7 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -56,6 +57,8 @@ import org.awesomeapp.messenger.util.SystemServices;
 import org.awesomeapp.messenger.util.SystemServices.FileInfo;
 import org.ocpsoft.prettytime.PrettyTime;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Date;
 
 import info.guardianproject.otr.app.im.R;
@@ -311,6 +314,23 @@ public class ConversationListItem extends FrameLayout {
                     }
 
                 }
+                else if (lastMsg.charAt(0) == '/' && lastMsg.length()>1)
+                {
+                    String cmd = lastMsg.toString().substring(1);
+
+                    if (cmd.startsWith("sticker"))
+                    {
+                        String[] cmds = cmd.split(":");
+
+                        String mimeTypeSticker = "image/png";
+                        Uri mediaUri = Uri.parse("asset://"+cmds[1]);
+
+                        setThumbnail(getContext().getContentResolver(), holder, mediaUri);
+                        holder.mLine2.setVisibility(View.GONE);
+
+                    }
+
+                }
                 else
                 {
                     if (holder.mMediaThumb != null)
@@ -479,10 +499,25 @@ public class ConversationListItem extends FrameLayout {
 
                 Bitmap result = mBitmapCache.get(uri.toString());
 
-                if (result == null)
-                    return MessageListItem.getThumbnail(contentResolver, uri );
-                else
-                    return result;
+                if (result == null) {
+                    if (uri.getScheme().equals("asset")) {
+                        AssetManager assetManager = getContext().getAssets();
+
+                        try {
+                            InputStream is = assetManager.open("stickers" + uri.getPath());
+                            Bitmap bitmap = BitmapFactory.decodeStream(is);
+                            is.close();
+                            return bitmap;
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                    } else
+
+                        return MessageListItem.getThumbnail(getContext(), contentResolver, uri);
+                }
+
+                return result;
             }
 
             @Override

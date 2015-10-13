@@ -206,9 +206,9 @@ public class ConversationView {
 
             try
             {
-                boolean isConnected = (mConn == null) ? false : mConn.getState() != ImConnection.SUSPENDED;
+               // boolean isConnected = (mConn == null) ? false : mConn.getState() != ImConnection.SUSPENDED;
 
-                if ((mLastSessionStatus == null || mLastSessionStatus == SessionStatus.PLAINTEXT) && isConnected) {
+                if ((mLastSessionStatus == null || mLastSessionStatus == SessionStatus.PLAINTEXT)) {
 
 
 //                    boolean otrPolicyAuto = mNewChatActivity.getOtrPolicy() == OtrPolicy.OTRL_POLICY_ALWAYS
@@ -292,38 +292,32 @@ public class ConversationView {
 
         try {
 
-            boolean isConnected = (mConn == null) ? false : mConn.getState() != ImConnection.SUSPENDED;
+            if (mCurrentChatSession == null)
+                mCurrentChatSession = getChatSession();
 
-            if (isConnected)
+            if (mCurrentChatSession != null)
             {
-                if (mCurrentChatSession == null)
-                    mCurrentChatSession = getChatSession();
+                IOtrChatSession otrChatSession = mCurrentChatSession.getOtrChatSession();
 
-                if (mCurrentChatSession != null)
+                if (otrChatSession != null)
                 {
-                    IOtrChatSession otrChatSession = mCurrentChatSession.getOtrChatSession();
 
-                    if (otrChatSession != null)
+                    if (otrEnabled) {
+
+                        otrChatSession.startChatEncryption();
+                        mIsStartingOtr = true;
+
+                     //   Toast.makeText(getContext(),getResources().getString(R.string.starting_otr_chat), Toast.LENGTH_LONG).show();
+                    }
+                    else
                     {
-
-                        if (otrEnabled) {
-
-                            otrChatSession.startChatEncryption();                  
-                            mIsStartingOtr = true;
-                            
-                         //   Toast.makeText(getContext(),getResources().getString(R.string.starting_otr_chat), Toast.LENGTH_LONG).show();
-                        }
-                        else
-                        {
-                            otrChatSession.stopChatEncryption();
-                           // Toast.makeText(getContext(),getResources().getString(R.string.stopping_otr_chat), Toast.LENGTH_LONG).show();
-
-                        }
-
+                        otrChatSession.stopChatEncryption();
+                       // Toast.makeText(getContext(),getResources().getString(R.string.stopping_otr_chat), Toast.LENGTH_LONG).show();
 
                     }
-                }
 
+
+                }
             }
 
 
@@ -1757,6 +1751,11 @@ public class ConversationView {
 
         String msg = mComposeMessage.getText().toString();
 
+        sendMessage(msg);
+    }
+
+    void sendMessage(String msg) {
+
         if (TextUtils.isEmpty(msg.trim())) {
             return;
         }
@@ -1853,7 +1852,7 @@ public class ConversationView {
             mStatusWarningView.setBackgroundColor(Color.LTGRAY);
             */
 
-            mButtonAttach.setVisibility(View.GONE);
+           // mButtonAttach.setVisibility(View.GONE);
 
             mSendButton.setImageResource(R.drawable.ic_send_holo_light);
 
@@ -1887,9 +1886,6 @@ public class ConversationView {
             else if ((mSubscriptionType == Imps.Contacts.SUBSCRIPTION_TYPE_FROM)) {
                 bindSubscription(mProviderId, mRemoteAddress);
                 visibility = View.VISIBLE;
-                //message = mContext.getString(R.string.contact_not_in_list_warning, mRemoteNickname);
-                //mWarningText.setTextColor(Color.WHITE);
-                //mStatusWarningView.setBackgroundColor(Color.DKGRAY);
 
             } else {
 
@@ -1946,7 +1942,7 @@ public class ConversationView {
            // mWarningText.setTextColor(Color.WHITE);
            // mStatusWarningView.setBackgroundColor(Color.DKGRAY);
            // message = mContext.getString(R.string.disconnected_warning);
-              mComposeMessage.setHint(R.string.error_suspended_connection);
+         //     mComposeMessage.setHint(R.string.error_suspended_connection);
 
         }
 
@@ -2016,8 +2012,7 @@ public class ConversationView {
         if (getChatSession() != null && mIsListening) {
             try {
                 getChatSession().markAsRead();
-
-              //  updateWarningView();
+                updateWarningView();
 
             } catch (RemoteException e) {
 
@@ -2795,7 +2790,14 @@ public class ConversationView {
                         @Override
                         public void onStickerSelected(Sticker s) {
 
-                            mActivity.handleSendDelete(s.assetUri,"image/png", false, false, true);
+                            if (isGroupChat())
+                            {
+                                sendMessage("/sticker:" + s.assetUri);
+                            }
+                            else
+                            {
+                                mActivity.handleSendDelete(s.assetUri,"image/png", false, false, true);
+                            }
                          //   mActivity.handleSendData(Uri.parse(s.assetPath),"image/png");
 
                             mViewAttach.setVisibility(View.GONE);

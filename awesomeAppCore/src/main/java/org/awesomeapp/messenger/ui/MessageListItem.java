@@ -312,10 +312,26 @@ public class MessageListItem extends FrameLayout {
                 showMediaThumbnail(mimeType, mediaUri, id, mHolder);
             }
 
-        } else {
+        }
+        else if (lastMessage.charAt(0) == '/' && lastMessage.length()>1)
+        {
+            String cmd = lastMessage.toString().substring(1);
+
+            if (cmd.startsWith("sticker"))
+            {
+                String[] cmds = cmd.split(":");
+
+                String mimeTypeSticker = "image/png";
+                Uri mediaUri = Uri.parse("asset://"+cmds[1]);
+                mHolder.mTextViewForMessages.setVisibility(View.GONE);
+                mHolder.mMediaContainer.setVisibility(View.VISIBLE);
+
+                showMediaThumbnail(mimeTypeSticker, mediaUri, id, mHolder);
+            }
+        }
+        else {
 
             mHolder.mContainer.setBackgroundResource(R.drawable.message_view_rounded_light);
-            lastMessage = formatMessage(body);
 
         }
 
@@ -580,6 +596,7 @@ public class MessageListItem extends FrameLayout {
         request.mHolder = aHolder;
         request.mUri = mediaUri;
         request.mResolver = contentResolver;
+        request.mContext = context;
 
         //aHolder.mMediaThumbnail.setImageResource(R.drawable.ic_photo_library_white_36dp);
 
@@ -596,15 +613,15 @@ public class MessageListItem extends FrameLayout {
 
     public final static int THUMBNAIL_SIZE_DEFAULT = 400;
 
-    public static Bitmap getThumbnail(ContentResolver cr, Uri uri) {
+    public static Bitmap getThumbnail(Context context, ContentResolver cr, Uri uri) {
      //   Log.e( MessageView.class.getSimpleName(), "getThumbnail uri:" + uri);
         if (SecureMediaStore.isVfsUri(uri)) {
             return SecureMediaStore.getThumbnailVfs(uri, THUMBNAIL_SIZE_DEFAULT);
         }
-        return getThumbnailFile(cr, uri, THUMBNAIL_SIZE_DEFAULT);
+        return getThumbnailFile(context, cr, uri, THUMBNAIL_SIZE_DEFAULT);
     }
 
-    public static Bitmap getThumbnailFile(ContentResolver cr, Uri uri, int thumbnailSize) {
+    public static Bitmap getThumbnailFile(Context context, ContentResolver cr, Uri uri, int thumbnailSize) {
 
 
         try
@@ -659,6 +676,8 @@ public class MessageListItem extends FrameLayout {
 
         mHolder.resetOnClickListenerMediaThumbnail();
 
+        lastMessage = body;
+
         if( mimeType != null ) {
 
             lastMessage = "";
@@ -685,8 +704,31 @@ public class MessageListItem extends FrameLayout {
 
             }
 
-        } else {
-            lastMessage = body;//formatMessage(body);
+        }
+        else if (lastMessage.charAt(0) == '/' && lastMessage.length()>1)
+        {
+            String cmd = lastMessage.toString().substring(1);
+
+            if (cmd.startsWith("sticker"))
+            {
+                String[] cmds = cmd.split(":");
+
+                String mimeTypeSticker = "image/png";
+                Uri mediaUri = Uri.parse("asset://"+cmds[1]);
+
+                //getResources().getAssets().open(cmds[1]);
+
+                mHolder.mTextViewForMessages.setVisibility(View.GONE);
+                mHolder.mMediaContainer.setVisibility(View.VISIBLE);
+
+                showMediaThumbnail(mimeTypeSticker, mediaUri, id, mHolder);
+
+
+            }
+
+            lastMessage = "";
+        }
+        else {
 
              SpannableString spannablecontent=new SpannableString(lastMessage);
             mHolder.mTextViewForMessages.setText(spannablecontent);

@@ -277,7 +277,7 @@
 		
 		<string name="send">Send</string>
 		<string name="compose_hint">Send a message</string>
-		<string name="compose_hint_secure">Send secure message</string>
+		<string name="compose_hint_secure">Send private message</string>
 		<string name="menu_resend">Resend</string>
 		<string name="menu_end_conversation">End chat</string>
 		<string name="menu_clear_chat">Clear chat</string>
