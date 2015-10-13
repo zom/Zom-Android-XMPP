@@ -314,7 +314,7 @@ public class ConversationListItem extends FrameLayout {
                     }
 
                 }
-                else if (lastMsg.charAt(0) == '/' && lastMsg.length()>1)
+                else if (lastMsg.length()>1 && lastMsg.charAt(0) == '/')
                 {
                     String cmd = lastMsg.toString().substring(1);
 
