@@ -25,12 +25,14 @@
     android:background="#ffffff"
 	android:fillViewport="true">
 
+
 	<LinearLayout
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:orientation="vertical"
 		android:padding="3dp"
 		android:layout_marginTop="12dp"
+		android:gravity="center_horizontal"
 		>
 
 		<com.theartofdev.edmodo.cropper.CropImageView
@@ -40,23 +42,28 @@
 			android:layout_weight="1"
 			android:visibility="gone"
 			/>
-
-		<LinearLayout
-	    android:layout_width="match_parent"
-	    android:layout_height="128dp"
-	    android:orientation="horizontal"
-		android:gravity="center"
-		android:padding="3dp"
-		>
-
 		<de.hdodenhof.circleimageview.CircleImageView
 
 			android:layout_width="96dp"
 			android:layout_height="96dp"
 			android:src="@drawable/avatar_unknown"
 			android:id="@+id/imageAvatar"
-			android:padding="6dp"
 			/>
+
+		<TextView android:id="@+id/tvNickname"
+			android:selectAllOnFocus="true"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:hint="@string/account_setup_example_email_address"
+			android:autoLink="none"
+			android:cursorVisible="true"
+			android:inputType="textEmailAddress"
+			android:text="user person"
+			android:textAppearance="?android:attr/textAppearanceLarge"
+
+			/>
+
+
 
 		<LinearLayout
 			android:layout_width="match_parent"
@@ -65,18 +72,7 @@
 			android:padding="10dp">
 
 
-			               <TextView android:id="@+id/tvNickname"
-			                               android:selectAllOnFocus="true"
-			                               android:layout_width="match_parent"
-			                               android:layout_height="wrap_content"
-			                               android:hint="@string/account_setup_example_email_address"
-			                               android:autoLink="none"
-			                               android:cursorVisible="true"
-			                               android:inputType="textEmailAddress"
-			                               android:text="user person"
-			                               android:textAppearance="?android:attr/textAppearanceLarge"
-			
-			                               />
+
 			
 			                       <TextView android:id="@+id/edtName"
 			                               android:selectAllOnFocus="true"
@@ -87,7 +83,7 @@
 			                               android:cursorVisible="true"
 			                               android:inputType="textEmailAddress"
 			                               android:text="user@domain.com"
-			                               android:textAppearance="?android:attr/textAppearanceSmall"
+			                               android:textAppearance="?android:attr/textAppearanceMedium"
 			                               android:textColor="?contactTextSecondary"
 			
 			                               />
@@ -98,11 +94,11 @@
 			                               android:orientation="horizontal"
 			                               android:padding="0dp">
 			                       <TextView android:id="@+id/edtPass"
-			                               android:layout_width="100dp"
+			                               android:layout_width="wrap_content"
 			                               android:layout_height="wrap_content"
 			                               android:selectAllOnFocus="true"
 			                               android:text="*************"
-			                               android:textAppearance="?android:attr/textAppearanceSmall"
+			                               android:textAppearance="?android:attr/textAppearanceMedium"
 			
 			                               />
 			                               <ImageView
@@ -127,23 +123,20 @@
         </LinearLayout>
 
 
-		</LinearLayout>
 
 	<LinearLayout
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:orientation="vertical"
-		android:gravity="center_horizontal"
-		android:layout_gravity="center_horizontal"
-
+		android:orientation="horizontal"
+		android:gravity="center_horizontal">
 		android:layout_marginTop="24dp"
 		>
 
 
 
 			<ImageView
-				android:layout_width="256dp"
-				android:layout_height="256dp"
+				android:layout_width="128dp"
+				android:layout_height="128dp"
 				android:id="@+id/qrcode"
 				/>
 
