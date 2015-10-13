@@ -1536,6 +1536,7 @@ public class ConversationView {
 
             message.append(mContext.getString(R.string.are_you_sure_you_want_to_confirm_this_key_));
 
+
             new AlertDialog.Builder(mContext)
                     .setTitle(R.string.verify_key_)
                     .setMessage(message.toString())
@@ -1553,13 +1554,7 @@ public class ConversationView {
                                     initSmpUI();
                                 }
                             })
-                    .setNeutralButton(R.string.menu_scan, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                          //  new IntentIntegrator(mNewChatActivity).initiateScan();
-
-                        }
-                    }).show();
+                  .show();
         } catch (RemoteException e) {
             LogCleaner.error(ImApp.LOG_TAG, "unable to perform manual key verification", e);
         }
