@@ -84,12 +84,12 @@ public class ChatSessionManagerAdapter extends
                 .getContactListManager();
 
         Contact contact = listManager.getContactByAddress(Address.stripResource(contactAddress));
-        /*
+
         if (contact == null) {
             try {
                 
                 contact = new Contact (new XmppAddress(contactAddress),contactAddress);
-                long contactId = listManager.queryOrInsertContact(contact);
+               // long contactId = listManager.queryOrInsertContact(contact);
                 
                // String[] address = {Address.stripResource(contactAddress)};
                 //contact = listManager.createTemporaryContacts(address)[0];
@@ -100,7 +100,7 @@ public class ChatSessionManagerAdapter extends
                                 "Invalid contact address:" + contactAddress));
                 return null;
             }
-        }*/
+        }
 
         if (contact != null) {
             ChatSession session = getChatSessionManager().createChatSession(contact, isNewSession);

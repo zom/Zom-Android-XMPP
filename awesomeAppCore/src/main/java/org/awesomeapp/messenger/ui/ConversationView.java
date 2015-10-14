@@ -38,6 +38,7 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
@@ -1745,14 +1746,31 @@ public class ConversationView {
     void sendMessage() {
 
         String msg = mComposeMessage.getText().toString();
-
-        sendMessage(msg);
+        new SendMessageAsyncTask().execute(msg);
     }
 
-    void sendMessage(String msg) {
+    class SendMessageAsyncTask extends AsyncTask<String, Void, Boolean>
+    {
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+
+            if (aBoolean.booleanValue()) {
+                mComposeMessage.setText("");
+                mComposeMessage.requestFocus();
+            }
+        }
+
+        @Override
+        protected Boolean doInBackground(String... strings) {
+            return sendMessage(strings[0]);
+        }
+    };
+
+    boolean sendMessage(String msg) {
 
         if (TextUtils.isEmpty(msg.trim())) {
-            return;
+            return false;
         }
 
         IChatSession session = getChatSession();
@@ -1763,8 +1781,7 @@ public class ConversationView {
         if (session != null) {
             try {
                 session.sendMessage(msg);
-                mComposeMessage.setText("");
-                mComposeMessage.requestFocus();
+                return true;
                 //requeryCursor();
             } catch (RemoteException e) {
 
@@ -1776,6 +1793,8 @@ public class ConversationView {
                 LogCleaner.error(ImApp.LOG_TAG, "send message error",e);
             }
         }
+
+        return false;
     }
 
     void registerChatListener() {
