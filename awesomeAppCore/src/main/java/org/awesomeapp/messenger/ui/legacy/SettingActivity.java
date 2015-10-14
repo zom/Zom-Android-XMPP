@@ -50,6 +50,10 @@ public class SettingActivity extends PreferenceActivity implements
         OnSharedPreferenceChangeListener {
     private static final String TAG = "SettingActivity";
     private static final int DEFAULT_HEARTBEAT_INTERVAL = 1;
+
+    private static final int CHOOSE_BACKGROUND = 888;
+    private static final int CHOOSE_RINGTONE = 5;
+
     private String currentLanguage;
     ListPreference mOtrMode;
     ListPreference mLanguage;
@@ -220,8 +224,7 @@ public class SettingActivity extends PreferenceActivity implements
         mLanguage.setEntries(languages.getAllNames());
         mLanguage.setEntryValues(languages.getSupportedLocales());
 
-        mNotificationRingtone.setOnPreferenceClickListener(new OnPreferenceClickListener()
-        {
+        mNotificationRingtone.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 
             @Override
             public boolean onPreferenceClick(Preference arg0) {
@@ -230,7 +233,7 @@ public class SettingActivity extends PreferenceActivity implements
                 intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_NOTIFICATION);
                 intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, getString(R.string.notification_ringtone_title));
                 intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, (Uri) null);
-                startActivityForResult(intent, 5);
+                startActivityForResult(intent, CHOOSE_RINGTONE);
                 return true;
             }
 
@@ -257,7 +260,7 @@ public class SettingActivity extends PreferenceActivity implements
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == 888 && data != null && data.getData() != null){
+        if(requestCode == CHOOSE_BACKGROUND && data != null && data.getData() != null){
             Uri _uri = data.getData();
 
             if (_uri != null) {
@@ -273,7 +276,7 @@ public class SettingActivity extends PreferenceActivity implements
             }
 
         }
-        else if (resultCode == Activity.RESULT_OK && requestCode == 5)
+        else if (resultCode == Activity.RESULT_OK && requestCode == CHOOSE_RINGTONE)
         {
             Uri uri = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
             ContentResolver cr = getContentResolver();
@@ -329,7 +332,8 @@ public class SettingActivity extends PreferenceActivity implements
                 Intent intent = new Intent();
                 intent.setType("image/*");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(intent, getString(R.string.dialog_settings_choose_background_picker)), 888);
+                startActivityForResult(Intent.createChooser(intent, getString(R.string.dialog_settings_choose_background_picker)),
+                        CHOOSE_BACKGROUND);
 
                 dialog.dismiss();
             }
