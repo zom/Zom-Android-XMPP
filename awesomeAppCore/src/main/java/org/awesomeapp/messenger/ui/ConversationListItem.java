@@ -509,7 +509,7 @@ public class ConversationListItem extends FrameLayout {
                             is.close();
                             return bitmap;
                         } catch (IOException e) {
-                            e.printStackTrace();
+                        //    e.printStackTrace();
                         }
 
                     } else

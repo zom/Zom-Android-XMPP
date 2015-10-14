@@ -321,7 +321,8 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
     }
 
     public void sendMessage(String text) {
-        if (mConnection.getState() == ImConnection.SUSPENDED) {
+
+        if (mConnection.getState() != ImConnection.LOGGED_IN) {
             // connection has been suspended, save the message without send it
             long now = System.currentTimeMillis();
             insertMessageInDb(null, text, now, Imps.MessageType.POSTPONED);
