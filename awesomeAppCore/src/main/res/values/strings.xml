@@ -522,6 +522,11 @@
 
 	<string name="account_settings_title">Account Settings</string>
 
+	<string name="panic_trigger_app">Panic Trigger App</string>
+	<string name="panic_trigger_app_summary">A panic app can trigger Zom to lock, send a message, delete data, etc.</string>
+	<string name="panic_app_none">None</string>
+	<string name="panic_app_none_summary">No Panic Trigger App, ignore all incoming panic triggers.</string>
+	<string name="panic_app_default">Default</string>
 	<!--  added 2011/09/01 -->
 	<string name="menu_view_groups">Groups</string>
 	 

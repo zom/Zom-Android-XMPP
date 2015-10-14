@@ -34,6 +34,11 @@
           android:summary="@string/pref_linkify_on_tor_summary"
           android:defaultValue="false" />
 
+       <ListPreference
+           android:key="pref_panic_trigger_app"
+           android:summary="@string/panic_trigger_app_summary"
+           android:title="@string/panic_trigger_app" />
+
   </PreferenceCategory>
   
    

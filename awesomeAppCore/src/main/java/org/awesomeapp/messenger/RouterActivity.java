@@ -58,6 +58,7 @@ import info.guardianproject.cacheword.CacheWordHandler;
 import info.guardianproject.cacheword.ICacheWordSubscriber;
 import info.guardianproject.otr.app.im.R;
 import info.guardianproject.panic.Panic;
+import info.guardianproject.panic.PanicReceiver;
 
 public class RouterActivity extends ThemeableActivity implements ICacheWordSubscriber  {
 
@@ -248,7 +249,8 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
         Intent intent = getIntent();
         if (intent != null && intent.getAction() != null && !intent.getAction().equals(Intent.ACTION_MAIN)) {
             String action = intent.getAction();
-            if (Panic.ACTION_TRIGGER.equals(action)) {
+            if (Panic.ACTION_TRIGGER.equals(action)
+                    && !PanicReceiver.getTriggerPackageName(this).equals(Panic.PACKAGE_NAME_NONE)) {
                 RouterActivity.shutdownAndLock(this);
             } else {
                 Intent imUrlIntent = new Intent(this, ImUrlActivity.class);

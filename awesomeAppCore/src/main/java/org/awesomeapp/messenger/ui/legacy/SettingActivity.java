@@ -19,6 +19,8 @@ package org.awesomeapp.messenger.ui.legacy;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -30,12 +32,15 @@ import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.text.TextUtils;
 
-import info.guardianproject.otr.app.im.R;
-
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.Preferences;
 import org.awesomeapp.messenger.util.Languages;
 
+import java.util.ArrayList;
+
+import info.guardianproject.otr.app.im.R;
+import info.guardianproject.panic.Panic;
+import info.guardianproject.panic.PanicReceiver;
 
 public class SettingActivity extends PreferenceActivity {
     private static final String TAG = "SettingActivity";
@@ -43,8 +48,10 @@ public class SettingActivity extends PreferenceActivity {
     private static final int CHOOSE_RINGTONE = 5;
     private static final int CHOOSE_LANGUAGE = 7862;
 
+    private PackageManager pm;
     private String currentLanguage;
     ListPreference mOtrMode;
+    ListPreference mPanicTriggerApp;
     ListPreference mLanguage;
     CheckBoxPreference mLinkifyOnTor;
     CheckBoxPreference mHideOfflineContacts;
@@ -70,18 +77,62 @@ public class SettingActivity extends PreferenceActivity {
 
         mHeartbeatInterval.setText(String.valueOf(Preferences.getHeartbeatInterval()));
 
+        ArrayList<CharSequence> entries = new ArrayList<CharSequence>();
+        ArrayList<CharSequence> entryValues = new ArrayList<CharSequence>();
+        entries.add(0, getString(R.string.panic_app_none));
+        entries.add(1, getString(R.string.panic_app_default));
+        entryValues.add(0, Panic.PACKAGE_NAME_NONE);
+        entryValues.add(1, Panic.PACKAGE_NAME_DEFAULT);
+
+        for (ResolveInfo resolveInfo : PanicReceiver.resolveTriggerApps(pm)) {
+            if (resolveInfo.activityInfo == null)
+                continue;
+            entries.add(resolveInfo.activityInfo.loadLabel(pm));
+            entryValues.add(resolveInfo.activityInfo.packageName);
+        }
+        mPanicTriggerApp.setEntries(entries.toArray(new CharSequence[entries.size()]));
+        mPanicTriggerApp.setEntryValues(entryValues.toArray(new CharSequence[entryValues.size()]));
+        setPanicTriggerAppDisplay(PanicReceiver.getTriggerPackageName(this));
+    }
+
+    private void setPanicTriggerAppDisplay(String triggerPackageName) {
+        if (TextUtils.isEmpty(triggerPackageName)
+                || triggerPackageName.equals(Panic.PACKAGE_NAME_DEFAULT)) {
+            mPanicTriggerApp.setValue(Panic.PACKAGE_NAME_DEFAULT);
+            mPanicTriggerApp.setDefaultValue(Panic.PACKAGE_NAME_DEFAULT);
+            mPanicTriggerApp.setSummary(R.string.panic_trigger_app_summary);
+            mPanicTriggerApp.setIcon(null);
+        } else {
+            mPanicTriggerApp.setValue(triggerPackageName);
+            mPanicTriggerApp.setDefaultValue(triggerPackageName);
+            if (triggerPackageName.equals(Panic.PACKAGE_NAME_NONE)) {
+                mPanicTriggerApp.setSummary(R.string.panic_app_none_summary);
+                mPanicTriggerApp.setIcon(android.R.drawable.ic_menu_close_clear_cancel);
+            } else {
+                try {
+                    mPanicTriggerApp.setSummary(pm.getApplicationLabel(
+                            pm.getApplicationInfo(triggerPackageName, 0)));
+                    mPanicTriggerApp.setIcon(pm.getApplicationIcon(triggerPackageName));
+                } catch (PackageManager.NameNotFoundException e) {
+                    mPanicTriggerApp.setSummary(R.string.panic_trigger_app_summary);
+                    mPanicTriggerApp.setIcon(null);
+                }
+            }
+        }
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
+        pm = getPackageManager();
 
         mOtrMode = (ListPreference) findPreference("pref_security_otr_mode");
         mOtrMode.setEntries(Preferences.getOtrModeNames());
         mOtrMode.setEntryValues(Preferences.getOtrModeValues());
         mOtrMode.setDefaultValue(Preferences.DEFAULT_OTR_MODE);
 
+        mPanicTriggerApp = (ListPreference) findPreference("pref_panic_trigger_app");
         mLanguage = (ListPreference) findPreference("pref_language");
         mLinkifyOnTor = (CheckBoxPreference) findPreference("pref_linkify_on_tor");
         mHideOfflineContacts = (CheckBoxPreference) findPreference("pref_hide_offline_contacts");
@@ -97,6 +148,16 @@ public class SettingActivity extends PreferenceActivity {
         mLanguage.setDefaultValue(currentLanguage);
         mLanguage.setEntries(languages.getAllNames());
         mLanguage.setEntryValues(languages.getSupportedLocales());
+
+        mPanicTriggerApp.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                String packageName = (String) newValue;
+                PanicReceiver.setTriggerPackageName(SettingActivity.this, packageName);
+                setPanicTriggerAppDisplay(packageName);
+                return true;
+            }
+        });
 
         mNotificationRingtone.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 
