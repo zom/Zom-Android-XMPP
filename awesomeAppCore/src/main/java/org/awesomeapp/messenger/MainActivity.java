@@ -96,7 +96,6 @@ public class MainActivity extends AppCompatActivity {
 
     public final static int REQUEST_ADD_CONTACT = 9999;
     public final static int REQUEST_CHOOSE_CONTACT = REQUEST_ADD_CONTACT+1;
-    public final static int REQUEST_SETTINGS = REQUEST_ADD_CONTACT+2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -473,7 +472,7 @@ public class MainActivity extends AppCompatActivity {
 
             case R.id.menu_settings:
                 Intent sintent = new Intent(this, SettingActivity.class);
-                startActivityForResult(sintent,REQUEST_SETTINGS);
+                startActivity(sintent);
                 return true;
 
             case R.id.menu_group_chat:

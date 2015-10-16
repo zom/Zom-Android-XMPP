@@ -17,15 +17,7 @@
 
 package org.awesomeapp.messenger.ui;
 
-import info.guardianproject.otr.app.im.R;
-
-import org.awesomeapp.messenger.ui.legacy.ContactListFilterView.ContactListListener;
-
-import org.awesomeapp.messenger.ImApp;
-import org.awesomeapp.messenger.provider.Imps;
-
 import android.app.SearchManager;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -52,9 +44,16 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
+import org.awesomeapp.messenger.ImApp;
+import org.awesomeapp.messenger.Preferences;
+import org.awesomeapp.messenger.provider.Imps;
+import org.awesomeapp.messenger.ui.legacy.ContactListFilterView.ContactListListener;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
+
+import info.guardianproject.otr.app.im.R;
 
 /** Activity used to pick a contact. */
 public class ContactsPickerActivity extends AppCompatActivity {
@@ -241,20 +240,12 @@ public class ContactsPickerActivity extends AppCompatActivity {
 
         });
 
+        mHideOffline = Preferences.getHideOfflineContacts();
 
-        ContentResolver cr = getContentResolver();
-        Cursor pCursor = cr.query(Imps.ProviderSettings.CONTENT_URI,new String[] {Imps.ProviderSettings.NAME, Imps.ProviderSettings.VALUE},Imps.ProviderSettings.PROVIDER + "=?",new String[] { Long.toString(Imps.ProviderSettings.PROVIDER_ID_FOR_GLOBAL_SETTINGS)},null);
-        Imps.ProviderSettings.QueryMap globalSettings = new Imps.ProviderSettings.QueryMap(pCursor, cr, Imps.ProviderSettings.PROVIDER_ID_FOR_GLOBAL_SETTINGS, true, null);
-        mHideOffline = globalSettings.getHideOfflineContacts();
-
-        globalSettings.close();
-        
         if (getIntent() != null && getIntent().hasExtra("invitations"))
         {
             mShowInvitations = getIntent().getBooleanExtra("invitations", false);
         }
-        
-        
 
         doFilterAsync("");
     }

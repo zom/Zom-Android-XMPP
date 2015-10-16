@@ -1,18 +1,17 @@
 package org.awesomeapp.messenger.service;
 
-import org.awesomeapp.messenger.ui.legacy.NetworkConnectivityListener;
-import org.awesomeapp.messenger.provider.Imps;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.SystemClock;
+
+import org.awesomeapp.messenger.Preferences;
+import org.awesomeapp.messenger.ui.legacy.NetworkConnectivityListener;
 
 /**
  * This service exists because a foreground service receiving a wakeup alarm from the OS will cause
@@ -47,14 +46,7 @@ public class HeartbeatService extends Service {
         this.mPendingIntent = PendingIntent.getService(this, 0, new Intent(HEARTBEAT_ACTION, null,
                 this, HeartbeatService.class), 0);
         this.mRelayIntent = new Intent(HEARTBEAT_ACTION, null, this, RemoteImService.class);
-
-        Imps.ProviderSettings.QueryMap settings = getGlobalSettings();
-
-        if (settings != null)
-        {
-            mHeartbeatInterval = settings.getHeartbeatInterval() * HEARTBEAT_INTERVAL;
-            settings.close();
-        }
+        mHeartbeatInterval = Preferences.getHeartbeatInterval() * HEARTBEAT_INTERVAL;
 
         startHeartbeat(mHeartbeatInterval);
 
@@ -63,8 +55,6 @@ public class HeartbeatService extends Service {
         mNetworkConnectivityListener = new NetworkConnectivityListener();
         NetworkConnectivityListener.registerHandler(mServiceHandler, EVENT_NETWORK_STATE_CHANGED);
         mNetworkConnectivityListener.startListening(this);
-
-
     }
 
     void startHeartbeat(long interval) {
@@ -134,18 +124,5 @@ public class HeartbeatService extends Service {
             default:
             }
         }
-    }
-
-    private Imps.ProviderSettings.QueryMap getGlobalSettings() {
-
-            ContentResolver contentResolver = getContentResolver();
-
-            Cursor cursor = contentResolver.query(Imps.ProviderSettings.CONTENT_URI,new String[] {Imps.ProviderSettings.NAME, Imps.ProviderSettings.VALUE},Imps.ProviderSettings.PROVIDER + "=?",new String[] { Long.toString(Imps.ProviderSettings.PROVIDER_ID_FOR_GLOBAL_SETTINGS)},null);
-
-            if (cursor == null)
-                return null;
-
-           return new Imps.ProviderSettings.QueryMap(cursor, contentResolver, Imps.ProviderSettings.PROVIDER_ID_FOR_GLOBAL_SETTINGS, true, null);
-
     }
 }

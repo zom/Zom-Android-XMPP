@@ -258,6 +258,8 @@ public class ImApp extends Application {
     public void onCreate() {
         super.onCreate();
 
+        Preferences.setup(this);
+
         sImApp = this;
 
         Debug.onAppStart();

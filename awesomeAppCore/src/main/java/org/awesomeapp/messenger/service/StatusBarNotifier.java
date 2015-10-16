@@ -20,6 +20,7 @@ package org.awesomeapp.messenger.service;
 import info.guardianproject.otr.app.im.R;
 
 import org.awesomeapp.messenger.ImApp;
+import org.awesomeapp.messenger.Preferences;
 import org.awesomeapp.messenger.RouterActivity;
 import org.awesomeapp.messenger.model.Contact;
 import org.awesomeapp.messenger.provider.Imps;
@@ -33,16 +34,13 @@ import org.jsoup.Jsoup;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
-import android.text.TextUtils;
 
 public class StatusBarNotifier {
     private static final boolean DBG = false;
@@ -54,7 +52,6 @@ public class StatusBarNotifier {
     private Context mContext;
     private NotificationManager mNotificationManager;
 
-    private Imps.ProviderSettings.QueryMap mGlobalSettings;
     private Handler mHandler;
     private HashMap<String, NotificationInfo> mNotificationInfos;
     private long mLastSoundPlayedMs;
@@ -67,14 +64,9 @@ public class StatusBarNotifier {
         mNotificationInfos = new HashMap<String, NotificationInfo>();
     }
 
-    public void onServiceStop() {
-        if (mGlobalSettings != null)
-            mGlobalSettings.close();
-    }
-
     public void notifyChat(long providerId, long accountId, long chatId, String username,
             String nickname, String msg, boolean lightWeightNotify) {
-        if (!isNotificationEnabled(providerId)) {
+        if (!Preferences.isNotificationEnabled()) {
             if (DBG)
                 log("notification for chat " + username + " is not enabled");
             return;
@@ -98,7 +90,7 @@ public class StatusBarNotifier {
 
     public void notifySubscriptionRequest(long providerId, long accountId, long contactId,
             String username, String nickname) {
-        if (!isNotificationEnabled(providerId)) {
+        if (!Preferences.isNotificationEnabled()) {
             if (DBG)
                 log("notification for subscription request " + username + " is not enabled");
             return;
@@ -113,7 +105,7 @@ public class StatusBarNotifier {
     }
 
     public void notifySubscriptionApproved(Contact contact, long providerId, long accountId) {
-        if (!isNotificationEnabled(providerId)) {
+        if (!Preferences.isNotificationEnabled()) {
             if (DBG)
                 log("notification for subscription approved is not enabled");
             return;
@@ -217,28 +209,6 @@ public class StatusBarNotifier {
         }
     }
 
-
-    private Imps.ProviderSettings.QueryMap getGlobalSettings() {
-        if (mGlobalSettings == null) {
-
-            ContentResolver contentResolver = mContext.getContentResolver();
-
-            Cursor cursor = contentResolver.query(Imps.ProviderSettings.CONTENT_URI,new String[] {Imps.ProviderSettings.NAME, Imps.ProviderSettings.VALUE},Imps.ProviderSettings.PROVIDER + "=?",new String[] { Long.toString(Imps.ProviderSettings.PROVIDER_ID_FOR_GLOBAL_SETTINGS)},null);
-
-            if (cursor == null)
-                return null;
-
-            mGlobalSettings = new Imps.ProviderSettings.QueryMap(cursor, contentResolver, Imps.ProviderSettings.PROVIDER_ID_FOR_GLOBAL_SETTINGS, true, mHandler);
-        }
-
-        return mGlobalSettings;
-    }
-
-
-    private boolean isNotificationEnabled(long providerId) {
-        return getGlobalSettings().getEnableNotification();
-    }
-
     private void notify(String sender, String title, String tickerText, String message,
             long providerId, long accountId, Intent intent, boolean lightWeightNotify, int icon) {
 
@@ -262,19 +232,14 @@ public class StatusBarNotifier {
     }
 
     private void setRinger(long providerId, NotificationCompat.Builder builder) {
-        String ringtoneUri = getGlobalSettings().getRingtoneURI();
-        boolean vibrate = getGlobalSettings().getVibrate();
-
-        Uri sound = TextUtils.isEmpty(ringtoneUri) ? null : Uri.parse(ringtoneUri);
-        builder.setSound(sound);
-        if (sound != null) {
-            mLastSoundPlayedMs = SystemClock.elapsedRealtime();
-        }
+        Uri ringtoneUri = Preferences.getNotificationRingtoneUri();
+        builder.setSound(ringtoneUri);
+        mLastSoundPlayedMs = SystemClock.elapsedRealtime();
 
         if (DBG)
-            log("setRinger: notification.sound = " + sound);
+            log("setRinger: notification.sound = " + ringtoneUri);
 
-        if (vibrate) {
+        if (Preferences.getNotificationVibrate()) {
             builder.setDefaults(Notification.DEFAULT_VIBRATE);
             if (DBG)
                 log("setRinger: defaults |= vibrate");

@@ -74,11 +74,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.theartofdev.edmodo.cropper.CropImageView;
-
 import net.java.otr4j.session.SessionStatus;
 
 import org.awesomeapp.messenger.ImApp;
+import org.awesomeapp.messenger.Preferences;
 import org.awesomeapp.messenger.crypto.IOtrChatSession;
 import org.awesomeapp.messenger.model.Address;
 import org.awesomeapp.messenger.model.Contact;
@@ -2472,31 +2471,13 @@ public class ConversationView {
 
         void setLinkifyForMessageView(MessageListItem messageView) {
             try {
-                
+
                 if (messageView == null)
                     return;
-                
-                ContentResolver cr = mActivity.getContentResolver();
-                Cursor pCursor = cr.query(Imps.ProviderSettings.CONTENT_URI,
-                        new String[] { Imps.ProviderSettings.NAME, Imps.ProviderSettings.VALUE },
-                        Imps.ProviderSettings.PROVIDER + "=?", new String[] { Long
-                                .toString(Imps.ProviderSettings.PROVIDER_ID_FOR_GLOBAL_SETTINGS) },
-                        null);
-                Imps.ProviderSettings.QueryMap settings = new Imps.ProviderSettings.QueryMap(
-                        pCursor, cr, Imps.ProviderSettings.PROVIDER_ID_FOR_GLOBAL_SETTINGS,
-                        false /* keep updated */, null /* no handler */);
-                
-                if (settings != null)
-                {
-                    if (mConn !=null)
-                        messageView.setLinkify(!mConn.isUsingTor() || settings.getLinkifyOnTor());
-                    
-                    settings.close();
-                }
-                
-                if (pCursor != null)
-                    pCursor.close();
-                
+
+                if (mConn != null)
+                    messageView.setLinkify(!mConn.isUsingTor() || Preferences.getLinkifyOnTor());
+
             } catch (RemoteException e) {
                 e.printStackTrace();
                 messageView.setLinkify(false);
