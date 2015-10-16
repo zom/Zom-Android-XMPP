@@ -326,14 +326,14 @@ Klik hier om uit te nodigen.</string>
   <string name="menu_locale">Taal</string>
   <string name="KEY_PREF_LANGUAGE_TITLE">Talen</string>
   <string name="use_system_default">Gebruik systeem standaard</string>
-  <string name="pref_theme_dark">Gebruik Donker Thema</string>
-  <string name="pref_theme_dark_summary">Verander de app vormgeving naar donker</string>
+
+
   <string name="pref_in_memory_db_title">Uitsluitend Berichten Opslag in het Geheugen</string>
   <string name="pref_in_memory_db_summary">Berichten alleen opslaan in het geheugen, niet in de flashopslag, om zo extractie van berichten te kunnen voorkomen. (Leidt mogelijk tot verlies van berichten)</string>
-  <string name="pref_background_title">Achtergrondafbeelding</string>
-  <string name="pref_background_summary">Stel het pad (\"/sdcard/foo.jpg\") in voor een achtergrondafbeelding voor de app</string>
-  <string name="pref_show_grid">Toon Contact Raster</string>
-  <string name="pref_show_grid_summary">Toon contactlijst als avatar raster</string>
+
+
+
+
   <string name="button_yes_accept_all">Ja, aanvaard alle</string>
   <string name="pref_delete_unsecured_media_title">Verwijder onveilige media</string>
   <string name="pref_delete_unsecured_media_summary">Verwijder automatisch een foto of bestand van de originele onveilige opslag na het importeren voor het delen.</string>
@@ -374,9 +374,9 @@ Klik hier om uit te nodigen.</string>
   <string name="dialog_cert_expires">Verstrijkt:</string>
   <string name="dialog_connect_chatroom_title">Deelnemen aan groepsgesprek?</string>
   <string name="dialog_connect_chatroom_message">Een externe app probeert je te connecteren met een groepsgesprek. Toelaten?</string>
-  <string name="dialog_settings_choose_background_title">Achtergrond kiezen</string>
-  <string name="dialog_settings_choose_background_body">Wil je een achtergrond afbeelding selecteren uit de galerij?</string>
-  <string name="dialog_settings_choose_background_picker">Selecteer foto</string>
+
+
+
   <!--Alerts: Notifications-->
   <string name="newMessages_label">Nieuwe berichten van <xliff:g id="PROVIDER">%1$s</xliff:g></string>
   <string name="num_unread_chats"><xliff:g id="NUMBER">%1$d</xliff:g> ongelezen chats</string>

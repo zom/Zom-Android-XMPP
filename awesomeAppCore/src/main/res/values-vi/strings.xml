@@ -297,14 +297,14 @@ Chạm vào để mời kết nối.</string>
   <string name="pref_group_looknfeel_title">Giao Diện Sử Dụng</string>
   <string name="menu_locale">Ngôn Ngữ</string>
   <string name="KEY_PREF_LANGUAGE_TITLE">Các ngôn ngữ</string>
-  <string name="pref_theme_dark">Dùng định dạng nền tối</string>
-  <string name="pref_theme_dark_summary">Thay đổi giao diện sang màu tối</string>
+
+
   <string name="pref_in_memory_db_title">Lưu Trữ Tin Nhắn Trong Bộ Nhớ Mà Thôi</string>
   <string name="pref_in_memory_db_summary">Chỉ giữ tin nhắn trong bộ nhớ, không giữ trên bộ nhớ flash để tránh tin bị chép ra. (Tin có thể bị mất)</string>
-  <string name="pref_background_title">Hình nền</string>
-  <string name="pref_background_summary">Chọn tên tập tin của hình ảnh nền cho app</string>
-  <string name="pref_show_grid">Hiển thị danh sách theo ô</string>
-  <string name="pref_show_grid_summary">Hiển thị danh sách lliên lạc dưới dạng các hình đại diện theo từng ô</string>
+
+
+
+
   <string name="button_yes_accept_all">Đồng ý, chấp nhận tất cả</string>
   <!--Actions: Settings: General: Other Tuning-->
   <string name="pref_group_tuning_title">Các Chỉnh Sửa Khác</string>

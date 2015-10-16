@@ -323,14 +323,14 @@ OTR-protocol ཡིས་དྲ་ཐོག་གླེང་མོལ་ Adium 
   <string name="menu_locale">སྐད་ཡིག</string>
   <string name="KEY_PREF_LANGUAGE_TITLE">སྐད་ཡིག་ཁག </string>
   <string name="use_system_default">མ་ལག་འཆར་ཅན་དེ་བེད་སྤྱོད་ཐོངས། </string>
-  <string name="pref_theme_dark">པར་གཞི་མུན་ནག་དེ་བེད་སྤྱོད་ཐོངས། </string>
-  <string name="pref_theme_dark_summary">ཉེར་སྤྱོད་མ་ལག་གི་པར་གཞི་ནག་པོར་བསྒྱུར། </string>
+
+
   <string name="pref_in_memory_db_title">འཕྲིན་ཐུང་གི་གསོག་ཉར་བང་མཛོད་གཙོ་བོ་དེ།  </string>
   <string name="pref_in_memory_db_summary">འཕྲིན་ཐུང་ཕྱིར་གྱར་མ་འབྱུང་བའི་ཆེད་དུ། འཕྲིན་ཐུང་དག་གསོག་ཉར་ཡོ་ཆས་ཀྱི་ཁོངས་སུ་ཉོར། flashཧྤི་ལ་ཞེས་ཉར་གསོག་ཁོངས་སུ་མ་ཉར། (དེ་ཡིས་འཕྲིན་ཐུང་བརླག་པར་རྐྱེན་བྱེད་སྲིད)</string>
-  <string name="pref_background_title">རྒྱབ་ལྗོངས་ཀྱི་སྣང་བརྙན། </string>
-  <string name="pref_background_summary">བཀོལ་སྤྱོད་མ་ལག་འདིའི་ཆེད་དུ། རྒྱབ་ལྗོངས་སྣང་བརྙན་དེ་ལ་ (\"/sdcard/foo.jpg\")ཁ་ཕྱོགས་སྟོན། </string>
-  <string name="pref_show_grid">འབྲེལ་མིང་གི་སྒྲོམ་དེ་སྟོན། </string>
-  <string name="pref_show_grid_summary">འབྲེལ་མིང་གི་ཐོ་དེ་སྟོན། </string>
+
+
+
+
   <string name="button_yes_accept_all">རེད་། ཚང་མ་ཁས་ལེན་བྱོས།</string>
   <string name="pref_delete_unsecured_media_title">ཉེན་སྲུང་མིན་པའི་བརྒྱུད་ལམ་དེ་གསུབ། </string>
   <string name="pref_delete_unsecured_media_summary">ཡིག་ཆའམ་ཡང་ན་འདྲ་པར་ཞིག་བགོ་བའི་རྗེས་སུ། དེ་ཁོངས་ཨ་མ་ནས་རང་བཞིན་གྱིས་གསུབ་འགྲོ་གི་རེད་། </string>
@@ -375,9 +375,9 @@ OTR-protocol ཡིས་དྲ་ཐོག་གླེང་མོལ་ Adium 
   <string name="dialog_cert_expires">དུས་རྫོགས། </string>
   <string name="dialog_connect_chatroom_title">གླེང་མོལ་ལ་ཞུགས་སམ། </string>
   <string name="dialog_connect_chatroom_message">ཕྱི་རོལ་གྱི་མཉེན་ཆས་ཤིག་གིས་ཁྱོད་རང་གླེང་མོལ་ནང་མཐུད་ཐབས་བྱེད་ཀྱི་འདུག མཐུད་འཇུག་གམ།</string>
-  <string name="dialog_settings_choose_background_title">རྒྱབ་ལྗོངས་འདེམས།</string>
-  <string name="dialog_settings_choose_background_body">ཁྱེད་ཀྱིས་པར་མཛོད་ནས་རྒྱབ་ལྗོངས་ཀྱི་ཆེད་པར་ཞིག་འདེམས་ཀྱི་ཡིན་ནམ།</string>
-  <string name="dialog_settings_choose_background_picker">འདྲ་པར་འདེམས།</string>
+
+
+
   <!--Alerts: Notifications-->
   <string name="newMessages_label">འཕྲིན་ཐུང་གསར་པ <xliff:g id="provider">%1$s</xliff:g> </string>
   <string name="num_unread_chats">གླེང་མོལ་མ་ཀློག་པ་ <xliff:g id="number">%1$d</xliff:g></string>

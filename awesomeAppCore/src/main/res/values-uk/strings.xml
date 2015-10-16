@@ -168,9 +168,9 @@
   <string name="menu_locale">Мова</string>
   <string name="KEY_PREF_LANGUAGE_TITLE">Мови</string>
   <string name="use_system_default">Системна</string>
-  <string name="pref_theme_dark">Використовувати темну тему</string>
-  <string name="pref_theme_dark_summary">Змінити тему додатку на темну</string>
-  <string name="pref_background_title">Зображення тла</string>
+
+
+
   <string name="button_yes_accept_all">Так, приймати все</string>
   <!--Actions: Settings: General: Other Tuning-->
   <!--Actions: Settings: General: Notifications-->
@@ -183,7 +183,7 @@
   <string name="bg_data_prompt_cancel">Вийти</string>
   <string name="prompt_create_new_account_">Створити новий екаунт?</string>
   <string name="dialog_cert_expires">Минає: </string>
-  <string name="dialog_settings_choose_background_picker">Оберіть зображення</string>
+
   <!--Alerts: Notifications-->
   <!--Alerts: Exceptions-->
   <string name="error">Увага</string>

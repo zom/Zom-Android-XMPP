@@ -296,14 +296,14 @@
   <string name="pref_group_looknfeel_title">Интерфейс Пользователя</string>
   <string name="menu_locale">Язык</string>
   <string name="KEY_PREF_LANGUAGE_TITLE">Языки</string>
-  <string name="pref_theme_dark">Используйте темные темы</string>
-  <string name="pref_theme_dark_summary">Изменить тему приложения на темную</string>
+
+
   <string name="pref_in_memory_db_title">Хранение Сообщений Только В Памяти</string>
   <string name="pref_in_memory_db_summary">Храните сообщения только в памяти, а не на флэш-памяти, чтобы защититься от того чтобы ваши сообщения не были извлечены. (Может привести к потере сообщений)</string>
-  <string name="pref_background_title">Фоновое изображение</string>
-  <string name="pref_background_summary">Установитe путь (\"/sdcard/foo.jpg\"), к фоновому изображению для приложения</string>
-  <string name="pref_show_grid">Показать Сетку Контактов</string>
-  <string name="pref_show_grid_summary">Показать контакт-лист в виде сетки аватаров</string>
+
+
+
+
   <string name="button_yes_accept_all">Да, Подтвердить Все</string>
   <!--Actions: Settings: General: Other Tuning-->
   <string name="pref_group_tuning_title">Другие Hастройки</string>

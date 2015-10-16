@@ -281,13 +281,13 @@
   <string name="pref_group_looknfeel_title">Διεπαφή Χρήστη</string>
   <string name="menu_locale">Γλώσσα</string>
   <string name="KEY_PREF_LANGUAGE_TITLE">Γλώσσες</string>
-  <string name="pref_theme_dark">Χρήση Σκοτεινού Θέματος</string>
-  <string name="pref_theme_dark_summary">Αλλαγή θέματος εφαρμογής σε σκοτεινό</string>
+
+
   <string name="pref_in_memory_db_title">Αποθήκευση μηνυμάτων μόνο στην μνήμη</string>
   <string name="pref_in_memory_db_summary">Αποθήκευση μηνυμάτων μόνο στην μνήμη, όχι στην κάρτα μνήμης, για άμυνα ενάντια απόσπαση μηνυμάτων. (μπορεί να προκαλέσει απώλεια μηνυμάτων)</string>
-  <string name="pref_background_title">Εικόνα φόντου</string>
-  <string name="pref_show_grid">Εμφάνιση πλέγματος επαφών</string>
-  <string name="pref_show_grid_summary">Εμφάνιση λίστας επαφών σαν εικονίδια</string>
+
+
+
   <string name="button_yes_accept_all">Ναι, αποδοχή όλων</string>
   <!--Actions: Settings: General: Other Tuning-->
   <string name="pref_group_tuning_title">Άλλη Ρύθμιση</string>

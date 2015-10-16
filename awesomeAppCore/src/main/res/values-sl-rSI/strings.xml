@@ -230,9 +230,9 @@ Dotaknite se tu in ga dodajte!</string>
   <string name="pref_group_looknfeel_title">Uporabniški vmesnik</string>
   <string name="menu_locale">Jezik</string>
   <string name="KEY_PREF_LANGUAGE_TITLE">Jeziki</string>
-  <string name="pref_theme_dark_summary">Spremeni temo aplikacije v temno</string>
-  <string name="pref_background_title">Slika ozadja</string>
-  <string name="pref_background_summary">Nastavi pot (\"/sdcard/krneki.jpg\") do slike, ki naj se prikazuje v ozadju aplikacije</string>
+
+
+
   <!--Actions: Settings: General: Other Tuning-->
   <string name="hide_offline_contacts">Skrij nedosegljive stike</string>
   <string name="heartbeat_interval_title">Hearthbit interval</string>

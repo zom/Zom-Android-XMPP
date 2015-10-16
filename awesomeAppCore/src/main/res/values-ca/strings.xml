@@ -283,11 +283,11 @@ La aplicació dóna suport a qualsevol servei de xat que empri els protocols Jab
   <string name="pref_group_looknfeel_title">Interfície d\'usuari</string>
   <string name="menu_locale">Idioma</string>
   <string name="KEY_PREF_LANGUAGE_TITLE">Idiomes</string>
-  <string name="pref_theme_dark">Empra el tema fosc</string>
+
   <string name="pref_in_memory_db_title">Desa els missatges només a la memòria</string>
   <string name="pref_in_memory_db_summary">Només desa els missatges a la memòria, no a l\'emmagatzematge flash, per evitar que puguin accedir-hi. (Pot causar pèrdua de missatges)</string>
-  <string name="pref_background_title">Imatge de fons</string>
-  <string name="pref_background_summary">Defineix el camí (\"/sdcard/foo.jpg\") a una imatge de fons per l\'aplicació</string>
+
+
   <!--Actions: Settings: General: Other Tuning-->
   <string name="pref_group_tuning_title">Altres afinaments</string>
   <string name="start_on_boot">Comença ChatSecure automàticament</string>

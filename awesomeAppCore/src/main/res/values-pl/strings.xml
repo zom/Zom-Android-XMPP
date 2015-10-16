@@ -329,14 +329,14 @@ Kliknij aby zaprosić.</string>
   <string name="menu_locale">Język</string>
   <string name="KEY_PREF_LANGUAGE_TITLE">Języki</string>
   <string name="use_system_default">Użyj domyślnej systemu</string>
-  <string name="pref_theme_dark">Użyj ciemnej skórki</string>
-  <string name="pref_theme_dark_summary">Zmień motyw aplikacji na ciemny</string>
+
+
   <string name="pref_in_memory_db_title">Przetrzymywanie wiadomości jedynie w pamięci</string>
   <string name="pref_in_memory_db_summary">Zapisuj wiadomości w pamięci, nie na pamięci flash, aby chronić przed wykradnięciem. (Może spowodować utratę wiadomości)</string>
-  <string name="pref_background_title">Obrazek tła</string>
-  <string name="pref_background_summary">Wskaż scieżkę (\"/sdcard/foo.jpg\") dla obrazu tła w aplikacji</string>
-  <string name="pref_show_grid">Pokaż Kartę Kontaktów</string>
-  <string name="pref_show_grid_summary">Pokaż listę kontaktów jako kartę avatarów</string>
+
+
+
+
   <string name="button_yes_accept_all">Tak, akceptuj wszystkie</string>
   <string name="pref_delete_unsecured_media_title">Usuń nieszyfrowane media</string>
   <string name="pref_delete_unsecured_media_summary">Po udostępnieniu zdjęcia lub pliku, automatycznie usuń je z oryginalnej, niezabezpieczonej pamięci po imporcie</string>
@@ -377,9 +377,9 @@ Kliknij aby zaprosić.</string>
   <string name="dialog_cert_expires">Wygaśnie:</string>
   <string name="dialog_connect_chatroom_title">Dołączyć do czata?</string>
   <string name="dialog_connect_chatroom_message">Zewnętrzna aplikacja próbuje połączyć Cię do czatu. Pozwolić?</string>
-  <string name="dialog_settings_choose_background_title">Wybierz tło</string>
-  <string name="dialog_settings_choose_background_body">Czy chcesz wybrać obraz tła z galerii?</string>
-  <string name="dialog_settings_choose_background_picker">Wybierz zdjęcie</string>
+
+
+
   <!--Alerts: Notifications-->
   <string name="newMessages_label">Nowe wiadomości <xliff:g id="PROVIDER">%1$s</xliff:g></string>
   <string name="num_unread_chats"><xliff:g id="number">%1$d</xliff:g> nieprzeczytanych czatów</string>

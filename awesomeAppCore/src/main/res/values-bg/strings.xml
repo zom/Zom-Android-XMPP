@@ -328,14 +328,14 @@ OTR протоколът е съвместим с други приложени�
   <string name="menu_locale">Език</string>
   <string name="KEY_PREF_LANGUAGE_TITLE">Езици</string>
   <string name="use_system_default">Използвай системата по подразбиране</string>
-  <string name="pref_theme_dark">Използвай Тъмна Тема</string>
-  <string name="pref_theme_dark_summary">Използвай тъмната тема на програмата</string>
+
+
   <string name="pref_in_memory_db_title">Запаметяване Само във Времената Памет</string>
   <string name="pref_in_memory_db_summary">Запаметявай съобщения само във временната памет, а не на диска. Това те предпазва от възможността някой да се сдобие със съобщенията ти. (Може да доведе до загуба на съобщенията)</string>
-  <string name="pref_background_title">Тапет</string>
-  <string name="pref_background_summary">Задай пътя (\"/sdcard/foo.jpg\") до снимката за тапет</string>
-  <string name="pref_show_grid">Покажи Таблица с Абонати</string>
-  <string name="pref_show_grid_summary">Покажи списъка с контакти като таблица с аватари</string>
+
+
+
+
   <string name="button_yes_accept_all">Да, Приеми Всички</string>
   <string name="pref_delete_unsecured_media_title">Изтрий неподсигурения файл</string>
   <string name="pref_delete_unsecured_media_summary">След споделяне на снимка или файл, автоматично го изтрий от оригиналното, неподсигурено място на диска</string>
@@ -377,9 +377,9 @@ OTR протоколът е съвместим с други приложени�
   <string name="dialog_cert_expires">Изтича:</string>
   <string name="dialog_connect_chatroom_title">Присъедини се в чат стаята:</string>
   <string name="dialog_connect_chatroom_message">Външна програма се опитва да те свърже с чат стая. Разреши?</string>
-  <string name="dialog_settings_choose_background_title">Избери тапет</string>
-  <string name="dialog_settings_choose_background_body">Желаете ли да изберете тапет от Галерия?</string>
-  <string name="dialog_settings_choose_background_picker">Изберете картинка</string>
+
+
+
   <!--Alerts: Notifications-->
   <string name="newMessages_label">Нови <xliff:g id="provider">%1$s</xliff:g> съобщения</string>
   <string name="num_unread_chats"><xliff:g id="number">%1$d</xliff:g> непрочетени съобщения</string>

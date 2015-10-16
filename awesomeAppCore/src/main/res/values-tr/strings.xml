@@ -308,14 +308,14 @@ Davet etmek için buraya basın.</string>
   <string name="menu_locale">Dil</string>
   <string name="KEY_PREF_LANGUAGE_TITLE">Diller</string>
   <string name="use_system_default">Sistem öntanımını kullan</string>
-  <string name="pref_theme_dark">Koyu Temayı Kullan</string>
-  <string name="pref_theme_dark_summary">Koyu renkli uygulama teması olarak değiştir</string>
+
+
   <string name="pref_in_memory_db_title">İletileri sadece hafızaya al</string>
   <string name="pref_in_memory_db_summary">İletilerin alınmasını engellemek için onları çıkarılabilir diskte değil sadece hafızada tut. (İletilerin kaybolmasına yol açabilir.)</string>
-  <string name="pref_background_title">Arkaplan görüntüsü</string>
-  <string name="pref_background_summary">Bu dosya yolunu uygulamanın arkaplan görüntüsü olarak seç (\"/sdcard/foo.jpg\")</string>
-  <string name="pref_show_grid">Bağlantı Izgarasını Göster</string>
-  <string name="pref_show_grid_summary">Bağlantı listesini avatar ızgarası olarak göster</string>
+
+
+
+
   <string name="button_yes_accept_all">Evet, Hepsi Kabul Et</string>
   <string name="pref_delete_unsecured_media_title">Güvensiz Medyaları Sil</string>
   <!--Actions: Settings: General: Other Tuning-->
@@ -351,8 +351,8 @@ Davet etmek için buraya basın.</string>
   <string name="dialog_cert_subject">Serfitika:</string>
   <string name="dialog_cert_fingerprint">SHA1 Parmak İzi:</string>
   <string name="dialog_connect_chatroom_title">Sohbet Odasına Katıl?</string>
-  <string name="dialog_settings_choose_background_title">Arkaplan Seç</string>
-  <string name="dialog_settings_choose_background_picker">Resiö Seç</string>
+
+
   <!--Alerts: Notifications-->
   <string name="newMessages_label">Yeni <xliff:g id="PROVIDER">%1$s</xliff:g> iletileri</string>
   <string name="num_unread_chats"><xliff:g id="number">%1$d</xliff:g> okunmamış sohbet</string>

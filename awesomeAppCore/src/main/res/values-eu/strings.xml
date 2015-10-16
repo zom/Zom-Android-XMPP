@@ -297,14 +297,14 @@ Ikutu gonbidatzeko.</string>
   <string name="pref_group_looknfeel_title">Erabiltzaile interfazea</string>
   <string name="menu_locale">Hizkuntza</string>
   <string name="KEY_PREF_LANGUAGE_TITLE">Hizkuntzak</string>
-  <string name="pref_theme_dark">Itxura iluna erabili</string>
-  <string name="pref_theme_dark_summary">Aplikazioaren itxura ilunera aldatu</string>
+
+
   <string name="pref_in_memory_db_title">Memoriako mezu biltegia bakarrik</string>
   <string name="pref_in_memory_db_summary">Mezuak memoriak gordeko dira bakarrik, ez flash biltegian, mezuen eskuratzea saihesteko. (Mezuen galera ekar dezake)</string>
-  <string name="pref_background_title">Atzeko irudia</string>
-  <string name="pref_background_summary">Aplikazioaren atzeko planorako irudiarentzako helbidea (\"/sdcard/foo.jpg\") zehaztu</string>
-  <string name="pref_show_grid">Kontaktu sareta erakutzi</string>
-  <string name="pref_show_grid_summary">Kontaktuen zerrenda avatar-en sareta moduan erakutsi</string>
+
+
+
+
   <string name="button_yes_accept_all">Bai, guztia onartu</string>
   <!--Actions: Settings: General: Other Tuning-->
   <string name="pref_group_tuning_title">Bestelako ezarpenak</string>

@@ -309,14 +309,14 @@ Tocca per invitare qualcuno.</string>
   <string name="pref_group_looknfeel_title">Interfaccia Utente</string>
   <string name="menu_locale">Lingua</string>
   <string name="KEY_PREF_LANGUAGE_TITLE">Lingue</string>
-  <string name="pref_theme_dark">Usa il Dark Theme</string>
-  <string name="pref_theme_dark_summary">Passa al tema scuro dell\'app</string>
+
+
   <string name="pref_in_memory_db_title">Memorizzazione messaggi solo In-Memory</string>
   <string name="pref_in_memory_db_summary">Memorizza i messaggi solo in memoria, non sulla flash, per difendersi contro la loro estrapolazione. (Potrebbe causarne la perdita)</string>
-  <string name="pref_background_title">Immagine di sfondo</string>
-  <string name="pref_background_summary">Imposta il percorso (\"/sdcard/foo.jpg\") ad un\'immagine di sfondo per l\'app</string>
-  <string name="pref_show_grid">Mostra Griglia Contatti</string>
-  <string name="pref_show_grid_summary">Mostra la lista contatti come griglia di avatar</string>
+
+
+
+
   <string name="button_yes_accept_all">Sì, Accetta Tutti</string>
   <string name="pref_delete_unsecured_media_title">Elimina Media Non Protetti</string>
   <string name="pref_delete_unsecured_media_summary">Quando condividi una foto o un file, questi verranno eliminati automaticamente dalla posizione originale non protetta dopo l\'importazione.</string>
@@ -349,9 +349,9 @@ Tocca per invitare qualcuno.</string>
   <string name="prompt_create_new_account_">Creare un nuovo account?</string>
   <string name="dialog_cert_title">Info Certificato</string>
   <string name="dialog_cert_subject">Certificato:</string>
-  <string name="dialog_settings_choose_background_title">Seleziona Sfondo</string>
-  <string name="dialog_settings_choose_background_body">Vuoi selezionare un\'immagine di sfondo dalla Galleria?</string>
-  <string name="dialog_settings_choose_background_picker">Seleziona Immagine</string>
+
+
+
   <!--Alerts: Notifications-->
   <string name="newMessages_label">Nuovi messaggi <xliff:g id="PROVIDER">%1$s</xliff:g></string>
   <string name="file_notify_text">Nuovo file <xliff:g id="filename">%1$s</xliff:g> da <xliff:g id="user">%2$s</xliff:g></string>
