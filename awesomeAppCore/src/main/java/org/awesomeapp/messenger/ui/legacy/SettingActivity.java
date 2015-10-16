@@ -19,7 +19,6 @@ package org.awesomeapp.messenger.ui.legacy;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -50,7 +49,6 @@ public class SettingActivity extends PreferenceActivity {
     CheckBoxPreference mLinkifyOnTor;
     CheckBoxPreference mHideOfflineContacts;
     CheckBoxPreference mDeleteUnsecuredMedia;
-    CheckBoxPreference mStoreMediaOnExternalStorage;
     CheckBoxPreference mEnableNotification;
     CheckBoxPreference mNotificationVibrate;
     CheckBoxPreference mNotificationSound;
@@ -72,11 +70,6 @@ public class SettingActivity extends PreferenceActivity {
 
         mHeartbeatInterval.setText(String.valueOf(Preferences.getHeartbeatInterval()));
 
-        /* This uses SharedPreferences since it is used before Imps is setup */
-        SharedPreferences sharedPrefs = PreferenceManager
-                .getDefaultSharedPreferences(getApplicationContext());
-        mStoreMediaOnExternalStorage.setChecked(sharedPrefs.getBoolean(
-                getString(R.string.key_store_media_on_external_storage_pref), false));
     }
 
     @Override
@@ -93,7 +86,6 @@ public class SettingActivity extends PreferenceActivity {
         mLinkifyOnTor = (CheckBoxPreference) findPreference("pref_linkify_on_tor");
         mHideOfflineContacts = (CheckBoxPreference) findPreference("pref_hide_offline_contacts");
         mDeleteUnsecuredMedia = (CheckBoxPreference) findPreference("pref_delete_unsecured_media");
-        mStoreMediaOnExternalStorage = (CheckBoxPreference) findPreference("pref_store_media_on_external_storage");
         mEnableNotification = (CheckBoxPreference) findPreference("pref_enable_notification");
         mNotificationVibrate = (CheckBoxPreference) findPreference("pref_notification_vibrate");
         mNotificationSound = (CheckBoxPreference) findPreference("pref_notification_sound");
