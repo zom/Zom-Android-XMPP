@@ -36,7 +36,6 @@ public class Preferences {
     public static final String DEFAULT_OTR_MODE = OTR_MODE_REQUESTED;
     public static final String DEFAULT_NOTIFICATION_RINGTONE_URI = "content://settings/system/notification_sound";
     public static final int DEFAULT_HEARTBEAT_INTERVAL = 1;
-    public static final boolean DEFAULT_USE_DARK_THEME = false;
     public static final boolean DEFAULT_DEBUG_LOGGING = false;
     public static final boolean DEFAULT_DELETE_INSECURE_MEDIA = false;
     public static final boolean DEFAULT_FOREGROUND_PRIORITY = true;
@@ -47,7 +46,6 @@ public class Preferences {
     public static final boolean DEFAULT_NOTIFICATION_VIBRATE = true;
     public static final boolean DEFAULT_START_ON_BOOT = false;
 
-    private static final String USE_DARK_THEME = "themeDark";
     private static final String DEBUG_LOGGING = "prefDebug";
     private static final String DELETE_INSECURE_MEDIA = "pref_delete_unsecured_media";
     private static final String FOREGROUND_PRIORITY = "pref_foreground_enable";
@@ -112,14 +110,6 @@ public class Preferences {
 
     public static void setDeleteInsecureMedia(boolean delete) {
         preferences.edit().putBoolean(DELETE_INSECURE_MEDIA, delete).apply();
-    }
-
-    public static boolean getUseDarkTheme() {
-        return preferences.getBoolean(USE_DARK_THEME, DEFAULT_USE_DARK_THEME);
-    }
-
-    public static void setUseDarkTheme(boolean enable) {
-        preferences.edit().putBoolean(USE_DARK_THEME, enable).apply();
     }
 
     public static boolean getHideOfflineContacts() {

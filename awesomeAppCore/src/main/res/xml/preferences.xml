@@ -44,13 +44,6 @@
             android:title="@string/KEY_PREF_LANGUAGE_TITLE" >
         </ListPreference>
 
- 
-  <CheckBoxPreference
-          android:key="themeDark"
-          android:title="@string/pref_theme_dark"
-          android:summary="@string/pref_theme_dark_summary"
-          android:defaultValue="false" />
- 
   <CheckBoxPreference
           android:key="pref_delete_unsecured_media"
           android:title="@string/pref_delete_unsecured_media_title"

@@ -393,8 +393,6 @@
 		<string name="KEY_PREF_LANGUAGE_TITLE">Languages</string>
 		<string name="use_system_default">Use system default</string>
 
-		<string name="pref_theme_dark">Use Dark Theme</string>
-		<string name="pref_theme_dark_summary">Change the app theme to dark</string>
 		<string name="pref_in_memory_db_title">In-Memory Message Storage Only</string>
 		<string name="pref_in_memory_db_summary">Only store messages in memory, not on flash storage, to defend against messages being extracted. (May cause lost messages)</string>
 		<string name="button_yes_accept_all">Yes, Accept All</string>
