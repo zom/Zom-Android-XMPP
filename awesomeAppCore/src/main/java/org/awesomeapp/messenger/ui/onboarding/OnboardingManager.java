@@ -119,7 +119,14 @@ public class OnboardingManager {
 
                 String[] parts = out.split("\\?otr=");
 
+                if (parts == null)
+                {
+                    parts = new String[1];
+                    parts[0] = out;
+                }
+
                 return parts;
+
             }
             catch (IllegalArgumentException iae)
             {
