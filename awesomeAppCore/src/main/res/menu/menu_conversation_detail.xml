@@ -24,7 +24,7 @@
 
              <item android:id="@+id/menu_verify_or_view"
         android:title="@string/menu_verify"
-        android:icon="@drawable/ic_info_white_36dp"
+        android:icon="@drawable/ic_info_outline_white_24dp"
          app:showAsAction="always"
          />
 
