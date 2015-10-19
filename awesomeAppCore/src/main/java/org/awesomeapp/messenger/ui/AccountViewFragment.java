@@ -223,7 +223,7 @@ public class AccountViewFragment extends Fragment {
 
             } else {
                 mProviderId = helper.createAdditionalProvider(helper.getProviderNames().get(0)); //xmpp FIXME
-                accountId = ImApp.insertOrUpdateAccount(cr, mProviderId, -1, mUserName, pass);
+                accountId = ImApp.insertOrUpdateAccount(cr, mProviderId, -1, mUserName, mUserName, pass);
                 mAccountUri = ContentUris.withAppendedId(Imps.Account.CONTENT_URI, accountId);
                 mSignInHelper.activateAccount(mProviderId, accountId);
                 createNewAccount(mUserName, pass, accountId, regWithTor);
@@ -459,7 +459,7 @@ public class AccountViewFragment extends Fragment {
                 }
 
 
-                mAccountId = ImApp.insertOrUpdateAccount(cr, mProviderId, -1, mUserName,
+                mAccountId = ImApp.insertOrUpdateAccount(cr, mProviderId, -1, mUserName, mUserName,
                         rememberPass ? pass : null);
 
                 mAccountUri = ContentUris.withAppendedId(Imps.Account.CONTENT_URI, mAccountId);
