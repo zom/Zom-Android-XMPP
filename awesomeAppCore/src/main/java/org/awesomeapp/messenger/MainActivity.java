@@ -381,7 +381,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         String chatRoom = "groupchat" + UUID.randomUUID().toString().substring(0,8);
-        String chatServer = "conference.rows.io";
+        String chatServer = ""; //use the default
         String nickname = mApp.getDefaultUsername().split("@")[0];
         try
         {
