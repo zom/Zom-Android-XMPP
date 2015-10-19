@@ -155,7 +155,6 @@ public class ImApp extends Application {
     /** A flag indicates that we have called tomServiceStarted start the service. */
 //    private boolean mServiceStarted;
     private Context mApplicationContext;
-    private Resources mPrivateResources;
 
     private HashMap<String, BrandingResources> mBrandingResources;
     private BrandingResources mDefaultBrandingResources;
@@ -180,53 +179,6 @@ public class ImApp extends Application {
 
     static final void log(String log) {
         Log.d(LOG_TAG, log);
-    }
-
-    /*
-    public static ImApp getApplication(Activity activity) {
-        // TODO should this be synchronized?
-        if (sImApp == null) {
-            initialize(activity);
-        }
-
-        return sImApp;
-    }
-
-    public static ImApp getApplication() {
-        // TODO should this be synchronized?
-        if (sImApp == null) {
-            new ImApp();
-        }
-
-        return sImApp;
-    }*/
-
-    /**
-     * Initialize performs the manual ImApp instantiation and initialization.
-     * When the ImApp is started first in the process, the ImApp public
-     * constructor should be called, and sImApp initialized. So calling
-     * initialize() later should have no effect. However, if another application
-     * runs in the same process and is started first, the ImApp application
-     * object won't be instantiated, and we need to call initialize() manually
-     * to instantiate and initialize it.
-     */
-    /*
-    public void initialize(Activity activity) {
-        // construct the TalkApp manually and call onCreate().
-        sImApp = new ImApp();
-        sImApp.mApplicationContext = activity.getApplication();
-        sImApp.mPrivateResources = activity.getResources();
-        sImApp.onCreate();
-    }
-*/
-
-    @Override
-    public Resources getResources() {
-        if (mApplicationContext == this) {
-            return super.getResources();
-        }
-
-        return mPrivateResources;
     }
 
     @Override
