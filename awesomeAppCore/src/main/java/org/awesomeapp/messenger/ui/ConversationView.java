@@ -1749,6 +1749,11 @@ public class ConversationView {
         new SendMessageAsyncTask().execute(msg);
     }
 
+    void sendMessageAsync(String msg) {
+
+        new SendMessageAsyncTask().execute(msg);
+    }
+
     class SendMessageAsyncTask extends AsyncTask<String, Void, Boolean>
     {
         @Override
@@ -2806,7 +2811,7 @@ public class ConversationView {
 
                             if (isGroupChat())
                             {
-                                sendMessage("/sticker:" + s.assetUri);
+                                sendMessageAsync("/sticker:" + s.assetUri);
                             }
                             else
                             {
