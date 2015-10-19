@@ -373,7 +373,7 @@
         <activity
             android:name="org.awesomeapp.messenger.ui.qr.QrScanActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:theme="@android:style/Theme.Black.NoTitleBar" />
+            />
         <activity
             android:name="org.awesomeapp.messenger.ui.legacy.MissingChatFileStoreActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
