@@ -311,19 +311,49 @@ public class MessageListItem extends FrameLayout {
         }
         else if (lastMessage.charAt(0) == '/' && lastMessage.length()>1)
         {
-            String cmd = lastMessage.toString().substring(1);
+            boolean cmdSuccess = false;
 
+            String cmd = lastMessage.toString().substring(1);
             if (cmd.startsWith("sticker"))
             {
                 String[] cmds = cmd.split(":");
 
                 String mimeTypeSticker = "image/png";
-                Uri mediaUri = Uri.parse("asset://"+cmds[1]);
-                mHolder.mTextViewForMessages.setVisibility(View.GONE);
-                mHolder.mMediaContainer.setVisibility(View.VISIBLE);
+                try {
 
-                showMediaThumbnail(mimeTypeSticker, mediaUri, id, mHolder);
+                    String assetPath = cmds[1].split(" ")[0];//just get up to any whitespace;
+
+                    //make sure sticker exists
+                    AssetFileDescriptor afd = getContext().getAssets().openFd(assetPath);
+                    afd.getLength();
+                    afd.close();
+
+                    //now setup the new URI for loading local sticker asset
+                    Uri mediaUri = Uri.parse("asset://localhost/" + assetPath);
+
+                    //now load the thumbnail
+                    cmdSuccess = showMediaThumbnail(mimeTypeSticker, mediaUri, id, mHolder);
+                }
+                catch (Exception e)
+                {
+                    Log.e(ImApp.LOG_TAG, "error loading sticker bitmap: " + cmds[1],e);
+                    cmdSuccess = false;
+                }
+
             }
+
+            if (!cmdSuccess)
+            {
+                SpannableString spannablecontent=new SpannableString(lastMessage);
+                mHolder.mTextViewForMessages.setText(spannablecontent);
+                mHolder.mContainer.setBackgroundResource(R.drawable.message_view_rounded_light);
+            }
+            else
+            {
+
+                lastMessage = "";
+            }
+
         }
         else {
 

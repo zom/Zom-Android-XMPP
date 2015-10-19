@@ -54,21 +54,21 @@ public class ThumbnailLoaderTask extends AsyncTask<ThumbnailLoaderRequest, Void,
 
         if(result.mBitmap!=null)
         {
-        sBitmapCache.put(result.mUri.toString(),result.mBitmap);
+            sBitmapCache.put(result.mUri.toString(),result.mBitmap);
 
-        // confirm the holder is still paired to this uri
-        if(!result.mUri.equals(result.mHolder.mMediaUri)){
-        return;
-        }
-        // set the thumbnail
-         result.mHolder.mMediaThumbnail.setImageBitmap(result.mBitmap);
+            // confirm the holder is still paired to this uri
+            if(!result.mUri.equals(result.mHolder.mMediaUri))
+                return;
+
+          // set the thumbnail
+            result.mHolder.mMediaThumbnail.setImageBitmap(result.mBitmap);
         }
         else
         {
             if(result.mHolder!=null&&result.mHolder.mContainer!=null)
-            result.mHolder.mContainer.setVisibility(View.GONE);
-            }
+                result.mHolder.mContainer.setVisibility(View.GONE);
         }
+    }
 
 public static Bitmap getThumbnail(Context context, ContentResolver cr,Uri uri, int thumbnailSize){
         //   Log.e( MessageView.class.getSimpleName(), "getThumbnail uri:" + uri);
@@ -80,7 +80,7 @@ public static Bitmap getThumbnail(Context context, ContentResolver cr,Uri uri, i
             AssetManager assetManager = context.getAssets();
 
             try {
-                InputStream is = assetManager.open(uri.getPath());
+                InputStream is = assetManager.open(uri.getPath().substring(1));
                 Bitmap bitmap = BitmapFactory.decodeStream(is);
                 is.close();
                 return bitmap;
