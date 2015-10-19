@@ -528,17 +528,20 @@ public class ImApp extends Application {
             return false; //no network info is a bad idea
     }
 
-    public static long insertOrUpdateAccount(ContentResolver cr, long providerId, long accountId, String userName,
+    public static long insertOrUpdateAccount(ContentResolver cr, long providerId, long accountId, String nickname, String username,
             String pw) {
         String selection = Imps.Account.PROVIDER + "=? AND (" + Imps.Account._ID + "=?" + " OR " + Imps.Account.USERNAME + "=?)";
-        String[] selectionArgs = { Long.toString(providerId), Long.toString(accountId), userName };
+        String[] selectionArgs = { Long.toString(providerId), Long.toString(accountId), username };
 
         Cursor c = cr.query(Imps.Account.CONTENT_URI, ACCOUNT_PROJECTION, selection, selectionArgs,
                 null);
         if (c != null && c.moveToFirst()) {
             long id = c.getLong(c.getColumnIndexOrThrow(Imps.Account._ID));
 
-            ContentValues values = new ContentValues(1);
+            ContentValues values = new ContentValues(4);
+            values.put(Imps.Account.PROVIDER, providerId);
+            values.put(Imps.Account.NAME, nickname);
+            values.put(Imps.Account.USERNAME, username);
             values.put(Imps.Account.PASSWORD, pw);
             Uri accountUri = ContentUris.withAppendedId(Imps.Account.CONTENT_URI, id);
             cr.update(accountUri, values, null, null);
@@ -548,8 +551,8 @@ public class ImApp extends Application {
         } else {
             ContentValues values = new ContentValues(4);
             values.put(Imps.Account.PROVIDER, providerId);
-            values.put(Imps.Account.NAME, userName);
-            values.put(Imps.Account.USERNAME, userName);
+            values.put(Imps.Account.NAME, nickname);
+            values.put(Imps.Account.USERNAME, username);
             values.put(Imps.Account.PASSWORD, pw);
 
             if (pw != null && pw.length() > 0) {
