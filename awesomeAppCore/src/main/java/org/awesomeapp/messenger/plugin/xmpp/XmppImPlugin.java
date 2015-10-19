@@ -16,19 +16,16 @@
  */
 package org.awesomeapp.messenger.plugin.xmpp;
 
-import org.awesomeapp.messenger.plugin.BrandingResourceIDs;
+import android.app.Service;
+import android.content.Intent;
+import android.os.IBinder;
+
 import org.awesomeapp.messenger.plugin.ImConfigNames;
 import org.awesomeapp.messenger.plugin.ImPlugin;
 import org.awesomeapp.messenger.plugin.ImpsConfigNames;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import info.guardianproject.otr.app.im.R;
-
-import android.app.Service;
-import android.content.Intent;
-import android.os.IBinder;
 
 /** Simple example of writing a plug-in for the IM application. */
 public class XmppImPlugin extends Service implements ImPlugin {
@@ -50,79 +47,4 @@ public class XmppImPlugin extends Service implements ImPlugin {
                 "org.awesomeapp.messenger.plugin.xmpp.XmppPresenceMapping");
         return config;
     }
-
-    public Map getResourceMap() {
-        HashMap<Integer, Integer> resMapping = new HashMap<Integer, Integer>();
-
-        resMapping.put(BrandingResourceIDs.STRING_MENU_VIEW_PROFILE,
-                R.string.menu_view_encrypt_chat);
-
-        /*
-        resMapping.put(BrandingResourceIDs.DRAWABLE_LOGO, R.drawable.im_logo);
-        resMapping.put(BrandingResourceIDs.DRAWABLE_PRESENCE_ONLINE,
-        		android.R.drawable.presence_online);
-        resMapping.put(BrandingResourceIDs.DRAWABLE_PRESENCE_AWAY,
-        		android.R.drawable.presence_away);
-        resMapping.put(BrandingResourceIDs.DRAWABLE_PRESENCE_BUSY,
-        		android.R.drawable.presence_busy);
-        resMapping.put(BrandingResourceIDs.DRAWABLE_PRESENCE_INVISIBLE,
-        		android.R.drawable.presence_invisible);
-        resMapping.put(BrandingResourceIDs.DRAWABLE_PRESENCE_OFFLINE,
-        		android.R.drawable.presence_offline);
-        resMapping.put(BrandingResourceIDs.DRAWABLE_SPLASH_SCREEN,
-        		R.drawable.im_logo_splashscr);
-        resMapping.put(BrandingResourceIDs.DRAWABLE_READ_CHAT,
-        		R.drawable.chat);
-        resMapping.put(BrandingResourceIDs.DRAWABLE_UNREAD_CHAT,
-        		R.drawable.chat_new);
-
-        resMapping.put(BrandingResourceIDs.STRING_BUDDY_LIST_TITLE,
-        		R.string.buddy_list_title);
-        resMapping.put(BrandingResourceIDs.STRING_ARRAY_SMILEY_NAMES,
-        		R.array.smiley_names);
-        resMapping.put(BrandingResourceIDs.STRING_ARRAY_SMILEY_TEXTS,
-        		R.array.smiley_texts);
-        resMapping.put(BrandingResourceIDs.STRING_PRESENCE_AVAILABLE,
-        		R.string.presence_available);
-
-        resMapping.put(BrandingResourceIDs.STRING_LABEL_USERNAME,
-        		R.string.label_username);
-        resMapping.put(BrandingResourceIDs.STRING_ONGOING_CONVERSATION,
-        		R.string.ongoing_conversation);
-        resMapping.put(BrandingResourceIDs.STRING_ADD_CONTACT_TITLE,
-        		R.string.add_contact_title);
-        resMapping.put(BrandingResourceIDs.STRING_LABEL_INPUT_CONTACT,
-        		R.string.input_contact_label);
-        resMapping.put(BrandingResourceIDs.STRING_BUTTON_ADD_CONTACT,
-        		R.string.invite_label);
-        resMapping.put(BrandingResourceIDs.STRING_CONTACT_INFO_TITLE,
-        		R.string.contact_profile_title);
-
-        resMapping.put(BrandingResourceIDs.STRING_MENU_ADD_CONTACT,
-        		R.string.menu_add_contact);
-        resMapping.put(BrandingResourceIDs.STRING_MENU_BLOCK_CONTACT,
-        		R.string.menu_block_contact);
-        resMapping.put(BrandingResourceIDs.STRING_MENU_CONTACT_LIST,
-        		R.string.menu_contact_list);
-        resMapping.put(BrandingResourceIDs.STRING_MENU_DELETE_CONTACT,
-        		R.string.menu_remove_contact);
-        resMapping.put(BrandingResourceIDs.STRING_MENU_END_CHAT,
-        		R.string.menu_end_conversation);
-        resMapping.put(BrandingResourceIDs.STRING_MENU_INSERT_SMILEY,
-        		R.string.menu_insert_smiley);
-        resMapping.put(BrandingResourceIDs.STRING_MENU_START_CHAT,
-        		R.string.menu_start_chat);
-        resMapping.put(BrandingResourceIDs.STRING_MENU_VIEW_PROFILE,
-        		R.string.menu_view_profile);
-        resMapping.put(BrandingResourceIDs.STRING_MENU_SWITCH_CHATS,
-        		R.string.menu_switch_chats);
-
-        resMapping.put(BrandingResourceIDs.STRING_TOAST_CHECK_SAVE_PASSWORD,
-        		R.string.check_save_password);
-        resMapping.put(BrandingResourceIDs.STRING_LABEL_SIGN_UP,
-        		R.string.sign_up);
-        		*/
-        return resMapping;
-    }
-
 }

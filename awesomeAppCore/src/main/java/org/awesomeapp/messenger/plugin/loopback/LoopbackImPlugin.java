@@ -44,11 +44,4 @@ public class LoopbackImPlugin {
         */
         return null;
     }
-
-    public Map getResourceMap() {
-        HashMap<Integer, Integer> resMapping = new HashMap<Integer, Integer>();
-        return resMapping;
-    }
-
-
 }

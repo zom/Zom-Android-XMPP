@@ -190,16 +190,6 @@ public class ConversationListItem extends FrameLayout {
         else
             holder.mLine1.setText(nickname);
 
-        /*
-        if (holder.mStatusIcon != null)
-        {
-            Drawable statusIcon = brandingRes.getDrawable(PresenceUtils.getStatusIconId(presence));
-            //statusIcon.setBounds(0, 0, statusIcon.getIntrinsicWidth(),
-              //      statusIcon.getIntrinsicHeight());
-            holder.mStatusIcon.setImageDrawable(statusIcon);address
-        }*/
-
-
         holder.mStatusIcon.setVisibility(View.GONE);
 
         if (holder.mAvatar != null)
@@ -355,34 +345,8 @@ public class ConversationListItem extends FrameLayout {
         }
         else if (holder.mLine2 != null)
         {
-
-            /*
-            if (statusText == null || statusText.length() == 0)
-            {
-                if (Imps.Contacts.TYPE_GROUP == type)
-                {
-                    statusText = getContext().getString(R.string.menu_new_group_chat);
-                }
-                else
-                {
-                    statusText = address;//brandingRes.getString(PresenceUtils.getStatusStringRes(presence));
-                }
-            }
-
-            holder.mLine2.setText(statusText);
-            */
-
             statusText = address;
             holder.mLine2.setText(statusText);
-        }
-
-
-
-
-        if (subType == Imps.ContactsColumns.SUBSCRIPTION_TYPE_INVITATIONS)
-        {
-        //    if (holder.mLine2 != null)
-          //      holder.mLine2.setText("Contact List Request");
         }
 
         holder.mLine1.setVisibility(View.VISIBLE);

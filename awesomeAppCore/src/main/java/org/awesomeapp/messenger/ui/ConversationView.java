@@ -97,10 +97,8 @@ import org.awesomeapp.messenger.service.IImConnection;
 import org.awesomeapp.messenger.service.ImServiceConstants;
 import org.awesomeapp.messenger.ui.MessageListItem.DeliveryState;
 import org.awesomeapp.messenger.ui.MessageListItem.EncryptionState;
-import org.awesomeapp.messenger.ui.legacy.BrandingResources;
 import org.awesomeapp.messenger.ui.legacy.DatabaseUtils;
 import org.awesomeapp.messenger.ui.legacy.Markup;
-import org.awesomeapp.messenger.ui.legacy.PresenceUtils;
 import org.awesomeapp.messenger.ui.legacy.SimpleAlertHandler;
 import org.awesomeapp.messenger.ui.legacy.adapter.ChatListenerAdapter;
 import org.awesomeapp.messenger.ui.stickers.Sticker;
@@ -1049,25 +1047,6 @@ public class ConversationView {
     void updateChat() {
         setViewType(VIEW_TYPE_CHAT);
 
-//        updateSessionInfo();
-
-        setStatusIcon();
-
-        //n8fr8 + devrandom: commented out on 15 Oct 2013: we really do want the chat to update w/o a connection
-        //so we can show message history in offline mode
-        /*
-        *
-        if (!isServiceUp)
-            return;
-
-        IImConnection conn = mApp.getConnection(mProviderId);
-        if (conn == null) {
-            if (Log.isLoggable(ImApp.LOG_TAG, Log.DEBUG))
-                log("Connection has been signed out");
-
-            return;
-        }*/
-
         //mHistory.invalidate();
         checkConnection();
 
@@ -1188,20 +1167,6 @@ public class ConversationView {
                 mRemoteNickname = buf.toString();
 
             c.close();
-        }
-    }
-
-
-    private void setStatusIcon() {
-        if (mContactType == Imps.Contacts.TYPE_GROUP) {
-            // hide the status icon for group chat.
-         //   mStatusIcon.setVisibility(GONE);
-        } else {
-          //  mStatusIcon.setVisibility(VISIBLE);
-            BrandingResources brandingRes = mApp.getBrandingResource(mProviderId);
-            int presenceResId = PresenceUtils.getStatusIconId(mPresenceStatus);
-            //mStatusIcon.setImageDrawable(brandingRes.getDrawable(presenceResId));
-
         }
     }
 

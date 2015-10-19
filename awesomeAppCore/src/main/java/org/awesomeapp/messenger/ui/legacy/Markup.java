@@ -21,14 +21,6 @@ import android.text.SpannableString;
 import android.text.util.Linkify;
 
 public class Markup {
-    private BrandingResources mRes;
- //  private IntTrie mSmileys;
-
-    public Markup(BrandingResources res) {
-        mRes = res;
-//        mSmileys = new IntTrie(res.getStringArray(BrandingResourceIDs.STRING_ARRAY_SMILEY_TEXTS),
-  //              res.getSmileyIcons());
-    }
 
     public final CharSequence markup(CharSequence text) {
         SpannableString result;

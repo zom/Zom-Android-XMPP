@@ -17,31 +17,6 @@
 
 package org.awesomeapp.messenger.ui;
 
-import org.awesomeapp.messenger.MainActivity;
-import org.awesomeapp.messenger.crypto.OtrAndroidKeyManagerImpl;
-import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
-import org.awesomeapp.messenger.service.IContactList;
-import org.awesomeapp.messenger.service.IContactListManager;
-import org.awesomeapp.messenger.service.IImConnection;
-import info.guardianproject.otr.app.im.R;
-import org.awesomeapp.messenger.model.ImErrorInfo;
-import org.awesomeapp.messenger.plugin.BrandingResourceIDs;
-
-import org.awesomeapp.messenger.ImApp;
-import org.awesomeapp.messenger.provider.Imps;
-import org.awesomeapp.messenger.tasks.AddContactAsyncTask;
-import org.awesomeapp.messenger.ui.legacy.BrandingResources;
-import org.awesomeapp.messenger.ui.legacy.ErrorResUtils;
-import org.awesomeapp.messenger.ui.legacy.ProviderListItem;
-import org.awesomeapp.messenger.ui.legacy.SimpleAlertHandler;
-import org.awesomeapp.messenger.ui.onboarding.OnboardingManager;
-import org.awesomeapp.messenger.util.XmppUriHelper;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -64,13 +39,32 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
 import android.widget.MultiAutoCompleteTextView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.awesomeapp.messenger.ImApp;
+import org.awesomeapp.messenger.crypto.OtrAndroidKeyManagerImpl;
+import org.awesomeapp.messenger.model.ImErrorInfo;
+import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
+import org.awesomeapp.messenger.provider.Imps;
+import org.awesomeapp.messenger.service.IContactList;
+import org.awesomeapp.messenger.service.IContactListManager;
+import org.awesomeapp.messenger.service.IImConnection;
+import org.awesomeapp.messenger.tasks.AddContactAsyncTask;
+import org.awesomeapp.messenger.ui.legacy.ErrorResUtils;
+import org.awesomeapp.messenger.ui.legacy.ProviderListItem;
+import org.awesomeapp.messenger.ui.legacy.SimpleAlertHandler;
+import org.awesomeapp.messenger.ui.onboarding.OnboardingManager;
+import org.awesomeapp.messenger.util.XmppUriHelper;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import info.guardianproject.otr.app.im.R;
 
 public class AddContactActivity extends ActionBarActivity {
     private static final String TAG = "AddContactActivity";
@@ -97,12 +91,10 @@ public class AddContactActivity extends ActionBarActivity {
         mHandler = new SimpleAlertHandler(this);
 
         setContentView(R.layout.add_contact_activity);
-
-        BrandingResources brandingRes = mApp.getBrandingResource(0);
-        setTitle(brandingRes.getString(BrandingResourceIDs.STRING_ADD_CONTACT_TITLE));
+        setTitle(R.string.add_contact_title);
 
         TextView label = (TextView) findViewById(R.id.input_contact_label);
-        label.setText(brandingRes.getString(BrandingResourceIDs.STRING_LABEL_INPUT_CONTACT));
+        label.setText(R.string.input_contact_label);
 
         mAddressList = (MultiAutoCompleteTextView) findViewById(R.id.email);
         mAddressList.setTokenizer(new Rfc822Tokenizer());

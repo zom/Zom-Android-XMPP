@@ -27,13 +27,11 @@ import org.awesomeapp.messenger.service.IConnectionCreationListener;
 import org.awesomeapp.messenger.service.IImConnection;
 import org.awesomeapp.messenger.service.IRemoteImService;
 import info.guardianproject.otr.app.im.R;
-import org.awesomeapp.messenger.ui.legacy.BrandingResources;
 import org.awesomeapp.messenger.ui.legacy.ImPluginHelper;
 import org.awesomeapp.messenger.ui.legacy.ProviderDef;
 import org.awesomeapp.messenger.ui.legacy.adapter.ConnectionListenerAdapter;
 import org.awesomeapp.messenger.model.ImConnection;
 import org.awesomeapp.messenger.model.ImErrorInfo;
-import org.awesomeapp.messenger.plugin.BrandingResourceIDs;
 import org.awesomeapp.messenger.plugin.ImPlugin;
 import org.awesomeapp.messenger.plugin.ImPluginInfo;
 import org.awesomeapp.messenger.plugin.xmpp.XMPPCertPins;
@@ -155,9 +153,6 @@ public class ImApp extends Application {
     /** A flag indicates that we have called tomServiceStarted start the service. */
 //    private boolean mServiceStarted;
     private Context mApplicationContext;
-
-    private HashMap<String, BrandingResources> mBrandingResources;
-    private BrandingResources mDefaultBrandingResources;
 
     public static final int EVENT_SERVICE_CONNECTED = 100;
     public static final int EVENT_CONNECTION_CREATED = 150;
@@ -320,7 +315,6 @@ public class ImApp extends Application {
             getResources().updateConfiguration(config, getResources().getDisplayMetrics());
         }
 
-        loadDefaultBrandingRes();
     }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
@@ -559,92 +553,6 @@ public class ImApp extends Application {
         }
     }
 
-    private void loadDefaultBrandingRes() {
-        HashMap<Integer, Integer> resMapping = new HashMap<Integer, Integer>();
-
-        resMapping.put(BrandingResourceIDs.DRAWABLE_LOGO, R.drawable.ic_launcher);
-        resMapping.put(BrandingResourceIDs.DRAWABLE_PRESENCE_ONLINE,
-                android.R.drawable.presence_online);
-        resMapping
-                .put(BrandingResourceIDs.DRAWABLE_PRESENCE_AWAY, android.R.drawable.presence_away);
-        resMapping
-                .put(BrandingResourceIDs.DRAWABLE_PRESENCE_BUSY, android.R.drawable.presence_busy);
-        resMapping.put(BrandingResourceIDs.DRAWABLE_PRESENCE_INVISIBLE,
-                android.R.drawable.presence_invisible);
-        resMapping.put(BrandingResourceIDs.DRAWABLE_PRESENCE_OFFLINE,
-                android.R.drawable.presence_offline);
-        resMapping.put(BrandingResourceIDs.DRAWABLE_READ_CHAT, R.drawable.status_chat);
-        resMapping.put(BrandingResourceIDs.DRAWABLE_UNREAD_CHAT, R.drawable.status_chat_new);
-        resMapping.put(BrandingResourceIDs.DRAWABLE_BLOCK, R.drawable.ic_im_block);
-
-        resMapping.put(BrandingResourceIDs.STRING_ARRAY_SMILEY_NAMES, R.array.default_smiley_names);
-        resMapping.put(BrandingResourceIDs.STRING_ARRAY_SMILEY_TEXTS, R.array.default_smiley_texts);
-
-        resMapping.put(BrandingResourceIDs.STRING_PRESENCE_AVAILABLE, R.string.presence_available);
-        resMapping.put(BrandingResourceIDs.STRING_PRESENCE_BUSY, R.string.presence_busy);
-        resMapping.put(BrandingResourceIDs.STRING_PRESENCE_AWAY, R.string.presence_away);
-        resMapping.put(BrandingResourceIDs.STRING_PRESENCE_IDLE, R.string.presence_idle);
-        resMapping.put(BrandingResourceIDs.STRING_PRESENCE_OFFLINE, R.string.presence_offline);
-        resMapping.put(BrandingResourceIDs.STRING_PRESENCE_INVISIBLE, R.string.presence_invisible);
-        resMapping.put(BrandingResourceIDs.STRING_LABEL_USERNAME, R.string.label_username);
-        resMapping.put(BrandingResourceIDs.STRING_ONGOING_CONVERSATION,
-                R.string.ongoing_conversation);
-        resMapping.put(BrandingResourceIDs.STRING_ADD_CONTACT_TITLE, R.string.add_contact_title);
-        resMapping
-                .put(BrandingResourceIDs.STRING_LABEL_INPUT_CONTACT, R.string.input_contact_label);
-        resMapping.put(BrandingResourceIDs.STRING_BUTTON_ADD_CONTACT, R.string.invite_label);
-        resMapping.put(BrandingResourceIDs.STRING_CONTACT_INFO_TITLE,
-                R.string.contact_profile_title);
-
-        resMapping.put(BrandingResourceIDs.STRING_MENU_ADD_CONTACT, R.string.menu_add_contact);
-        resMapping.put(BrandingResourceIDs.STRING_MENU_BLOCK_CONTACT, R.string.menu_block_contact);
-        resMapping.put(BrandingResourceIDs.STRING_MENU_CONTACT_LIST,
-                R.string.menu_view_contact_list);
-        resMapping
-                .put(BrandingResourceIDs.STRING_MENU_DELETE_CONTACT, R.string.menu_remove_contact);
-        resMapping.put(BrandingResourceIDs.STRING_MENU_END_CHAT, R.string.menu_end_conversation);
-        resMapping.put(BrandingResourceIDs.STRING_MENU_INSERT_SMILEY, R.string.menu_insert_smiley);
-        resMapping.put(BrandingResourceIDs.STRING_MENU_START_CHAT, R.string.menu_start_chat);
-        resMapping.put(BrandingResourceIDs.STRING_MENU_VIEW_PROFILE, R.string.menu_view_profile);
-        resMapping.put(BrandingResourceIDs.STRING_MENU_SWITCH_CHATS, R.string.menu_switch_chats);
-
-        resMapping.put(BrandingResourceIDs.STRING_TOAST_CHECK_SAVE_PASSWORD,
-                R.string.check_save_password);
-        resMapping.put(BrandingResourceIDs.STRING_TOAST_CHECK_AUTO_SIGN_IN,
-                R.string.check_auto_sign_in);
-
-        resMapping.put(BrandingResourceIDs.STRING_LABEL_SIGN_UP, R.string.sign_up);
-
-        mDefaultBrandingResources = new BrandingResources(this, resMapping, null /* default res */);
-    }
-
-    private void loadThirdPartyResources() {
-        ImPluginHelper helper = ImPluginHelper.getInstance(this);
-        helper.loadAvailablePlugins();
-        ArrayList<ImPlugin> pluginList = helper.getPluginObjects();
-        ArrayList<ImPluginInfo> infoList = helper.getPluginsInfo();
-        int N = pluginList.size();
-        PackageManager pm = getPackageManager();
-        for (int i = 0; i < N; i++) {
-            ImPlugin plugin = pluginList.get(i);
-            ImPluginInfo pluginInfo = infoList.get(i);
-
-            try {
-                Resources packageRes = pm.getResourcesForApplication(pluginInfo.mPackageName);
-
-                Map<Integer, Integer> resMap = plugin.getResourceMap();
-                //int[] smileyIcons = plugin.getSmileyIconIds();
-
-
-                BrandingResources res = new BrandingResources(packageRes, resMap,
-                        mDefaultBrandingResources);
-                mBrandingResources.put(pluginInfo.mProviderName, res);
-            } catch (NameNotFoundException e) {
-                Log.e(LOG_TAG, "Failed to load third party resources.", e);
-            }
-        }
-    }
-
     public long getProviderId(String name) {
         loadImProviderSettings();
         for (ProviderDef provider : mProviders.values()) {
@@ -665,19 +573,6 @@ public class ImApp extends Application {
         ArrayList<ProviderDef> result = new ArrayList<ProviderDef>();
         result.addAll(mProviders.values());
         return result;
-    }
-
-    public BrandingResources getBrandingResource(long providerId) {
-        ProviderDef provider = getProvider(providerId);
-        if (provider == null) {
-            return mDefaultBrandingResources;
-        }
-        if (mBrandingResources == null) {
-            mBrandingResources = new HashMap<String, BrandingResources>();
-            loadThirdPartyResources();
-        }
-        BrandingResources res = mBrandingResources.get(provider.mName);
-        return res == null ? mDefaultBrandingResources : res;
     }
 
     public IImConnection createConnection(long providerId, long accountId) throws RemoteException {
