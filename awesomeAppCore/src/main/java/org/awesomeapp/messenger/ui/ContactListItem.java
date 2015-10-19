@@ -356,7 +356,7 @@ public class ContactListItem extends FrameLayout {
                 Bitmap result = mBitmapCache.get(uri.toString());
 
                 if (result == null)
-                    return MessageListItem.getThumbnail(contentResolver, uri );
+                    return MessageListItem.getThumbnail(getContext(),contentResolver, uri );
                 else
                     return result;
             }

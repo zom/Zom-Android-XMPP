@@ -37,6 +37,7 @@ import org.awesomeapp.messenger.util.LinkifyHelper;
 import org.ocpsoft.prettytime.PrettyTime;
 
 import java.io.File;
+import java.io.FileDescriptor;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLConnection;
@@ -53,6 +54,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.content.res.AssetFileDescriptor;
+import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -162,13 +165,6 @@ public class MessageListItem extends FrameLayout {
                 });
             }
             else {
-                mMediaThumbnail.setOnClickListener(new OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        onClickMediaIcon(mimeType, mediaUri);
-                    }
-                });
-
                 mMediaThumbnail.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -312,10 +308,56 @@ public class MessageListItem extends FrameLayout {
                 showMediaThumbnail(mimeType, mediaUri, id, mHolder);
             }
 
-        } else {
+        }
+        else if (lastMessage.charAt(0) == '/' && lastMessage.length()>1)
+        {
+            boolean cmdSuccess = false;
+
+            String cmd = lastMessage.toString().substring(1);
+            if (cmd.startsWith("sticker"))
+            {
+                String[] cmds = cmd.split(":");
+
+                String mimeTypeSticker = "image/png";
+                try {
+
+                    String assetPath = cmds[1].split(" ")[0];//just get up to any whitespace;
+
+                    //make sure sticker exists
+                    AssetFileDescriptor afd = getContext().getAssets().openFd(assetPath);
+                    afd.getLength();
+                    afd.close();
+
+                    //now setup the new URI for loading local sticker asset
+                    Uri mediaUri = Uri.parse("asset://localhost/" + assetPath);
+
+                    //now load the thumbnail
+                    cmdSuccess = showMediaThumbnail(mimeTypeSticker, mediaUri, id, mHolder);
+                }
+                catch (Exception e)
+                {
+                    Log.e(ImApp.LOG_TAG, "error loading sticker bitmap: " + cmds[1],e);
+                    cmdSuccess = false;
+                }
+
+            }
+
+            if (!cmdSuccess)
+            {
+                SpannableString spannablecontent=new SpannableString(lastMessage);
+                mHolder.mTextViewForMessages.setText(spannablecontent);
+                mHolder.mContainer.setBackgroundResource(R.drawable.message_view_rounded_light);
+            }
+            else
+            {
+
+                lastMessage = "";
+            }
+
+        }
+        else {
 
             mHolder.mContainer.setBackgroundResource(R.drawable.message_view_rounded_light);
-            lastMessage = formatMessage(body);
 
         }
 
@@ -361,7 +403,7 @@ public class MessageListItem extends FrameLayout {
         LinkifyHelper.addTorSafeLinks(mHolder.mTextViewForMessages);
     }
 
-    private void showMediaThumbnail (String mimeType, Uri mediaUri, int id, MessageViewHolder holder)
+    private boolean showMediaThumbnail (String mimeType, Uri mediaUri, int id, MessageViewHolder holder)
     {
         /* Guess the MIME type in case we received a file that we can display or play*/
         if (TextUtils.isEmpty(mimeType) || mimeType.startsWith("application")) {
@@ -382,18 +424,35 @@ public class MessageListItem extends FrameLayout {
         if( mimeType.startsWith("image/") ) {
             setImageThumbnail( getContext().getContentResolver(), id, holder, mediaUri );
             holder.mMediaThumbnail.setBackgroundColor(Color.TRANSPARENT);
-           // holder.mMediaThumbnail.setBackgroundColor(Color.WHITE);
+
+            if (mimeType.startsWith("image/png"))
+            {
+                holder.mActionFav.setVisibility(View.GONE);
+                holder.mActionSend.setVisibility(View.GONE);
+                holder.mActionShare.setVisibility(View.GONE);
+
+            }
+            else
+            {
+                holder.mActionFav.setVisibility(View.VISIBLE);
+                holder.mActionSend.setVisibility(View.VISIBLE);
+                holder.mActionShare.setVisibility(View.VISIBLE);
+            }
 
         }
         else
         {
             holder.mMediaThumbnail.setImageResource(R.drawable.ic_file); // generic file icon
 
+            holder.mActionFav.setVisibility(View.GONE);
+            holder.mActionSend.setVisibility(View.GONE);
+            holder.mActionShare.setVisibility(View.GONE);
+
         }
 
         holder.mContainer.setBackgroundColor(getResources().getColor(android.R.color.transparent));
 
-
+        return true;
 
     }
 
@@ -482,7 +541,7 @@ public class MessageListItem extends FrameLayout {
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
             //set a general mime type not specific
-            intent.setDataAndType(Uri.parse( body ), mimeType);
+            intent.setData(Uri.parse(body));
 
             Context context = getContext().getApplicationContext();
 
@@ -492,7 +551,16 @@ public class MessageListItem extends FrameLayout {
             }
             else
             {
-                Toast.makeText(getContext(), R.string.there_is_no_viewer_available_for_this_file_format, Toast.LENGTH_LONG).show();
+
+                intent = new Intent(Intent.ACTION_SEND);
+                intent.setData(Uri.parse( body ));
+                if (isIntentAvailable(context, intent))
+                {
+                    context.startActivity(intent);
+                }
+                else {
+                    Toast.makeText(getContext(), R.string.there_is_no_viewer_available_for_this_file_format, Toast.LENGTH_LONG).show();
+                }
             }
         }
     }
@@ -575,11 +643,11 @@ public class MessageListItem extends FrameLayout {
         aHolder.mMediaUri = mediaUri;
         // if a content uri - already scanned
 
-
         ThumbnailLoaderRequest request = new ThumbnailLoaderRequest();
         request.mHolder = aHolder;
         request.mUri = mediaUri;
         request.mResolver = contentResolver;
+        request.mContext = context;
 
         //aHolder.mMediaThumbnail.setImageResource(R.drawable.ic_photo_library_white_36dp);
 
@@ -596,16 +664,15 @@ public class MessageListItem extends FrameLayout {
 
     public final static int THUMBNAIL_SIZE_DEFAULT = 400;
 
-    public static Bitmap getThumbnail(ContentResolver cr, Uri uri) {
+    public static Bitmap getThumbnail(Context context, ContentResolver cr, Uri uri) {
      //   Log.e( MessageView.class.getSimpleName(), "getThumbnail uri:" + uri);
         if (SecureMediaStore.isVfsUri(uri)) {
             return SecureMediaStore.getThumbnailVfs(uri, THUMBNAIL_SIZE_DEFAULT);
         }
-        return getThumbnailFile(cr, uri, THUMBNAIL_SIZE_DEFAULT);
+        return getThumbnailFile(context, cr, uri, THUMBNAIL_SIZE_DEFAULT);
     }
 
-    public static Bitmap getThumbnailFile(ContentResolver cr, Uri uri, int thumbnailSize) {
-
+    public static Bitmap getThumbnailFile(Context context, ContentResolver cr, Uri uri, int thumbnailSize) {
 
         try
         {
@@ -659,6 +726,8 @@ public class MessageListItem extends FrameLayout {
 
         mHolder.resetOnClickListenerMediaThumbnail();
 
+        lastMessage = body;
+
         if( mimeType != null ) {
 
             lastMessage = "";
@@ -685,8 +754,50 @@ public class MessageListItem extends FrameLayout {
 
             }
 
-        } else {
-            lastMessage = body;//formatMessage(body);
+        }
+        else if (lastMessage.charAt(0) == '/' && lastMessage.length()>1)
+        {
+            String cmd = lastMessage.toString().substring(1);
+            boolean cmdSuccess = false;
+
+            if (cmd.startsWith("sticker"))
+            {
+                String[] cmds = cmd.split(":");
+
+                String mimeTypeSticker = "image/png";
+                try {
+                    //make sure sticker exists
+                    AssetFileDescriptor afd = getContext().getAssets().openFd(cmds[1]);
+                    afd.getLength();
+                    afd.close();
+
+                    //now setup the new URI for loading local sticker asset
+                    Uri mediaUri = Uri.parse("asset://localhost/" + cmds[1]);
+
+                     //now load the thumbnail
+                    cmdSuccess = showMediaThumbnail(mimeTypeSticker, mediaUri, id, mHolder);
+                }
+                catch (Exception e)
+                {
+                    cmdSuccess = false;
+                }
+
+            }
+
+            if (!cmdSuccess)
+            {
+                SpannableString spannablecontent=new SpannableString(lastMessage);
+                mHolder.mTextViewForMessages.setText(spannablecontent);
+                mHolder.mContainer.setBackgroundResource(R.drawable.message_view_rounded_light);
+            }
+            else
+            {
+
+                lastMessage = "";
+            }
+
+        }
+        else {
 
              SpannableString spannablecontent=new SpannableString(lastMessage);
             mHolder.mTextViewForMessages.setText(spannablecontent);

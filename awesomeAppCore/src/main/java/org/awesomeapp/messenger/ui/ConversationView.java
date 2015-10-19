@@ -38,6 +38,7 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
@@ -205,9 +206,9 @@ public class ConversationView {
 
             try
             {
-                boolean isConnected = (mConn == null) ? false : mConn.getState() != ImConnection.SUSPENDED;
+               // boolean isConnected = (mConn == null) ? false : mConn.getState() != ImConnection.SUSPENDED;
 
-                if ((mLastSessionStatus == null || mLastSessionStatus == SessionStatus.PLAINTEXT) && isConnected) {
+                if ((mLastSessionStatus == null || mLastSessionStatus == SessionStatus.PLAINTEXT)) {
 
 
 //                    boolean otrPolicyAuto = mNewChatActivity.getOtrPolicy() == OtrPolicy.OTRL_POLICY_ALWAYS
@@ -291,38 +292,32 @@ public class ConversationView {
 
         try {
 
-            boolean isConnected = (mConn == null) ? false : mConn.getState() != ImConnection.SUSPENDED;
+            if (mCurrentChatSession == null)
+                mCurrentChatSession = getChatSession();
 
-            if (isConnected)
+            if (mCurrentChatSession != null)
             {
-                if (mCurrentChatSession == null)
-                    mCurrentChatSession = getChatSession();
+                IOtrChatSession otrChatSession = mCurrentChatSession.getOtrChatSession();
 
-                if (mCurrentChatSession != null)
+                if (otrChatSession != null)
                 {
-                    IOtrChatSession otrChatSession = mCurrentChatSession.getOtrChatSession();
 
-                    if (otrChatSession != null)
+                    if (otrEnabled) {
+
+                        otrChatSession.startChatEncryption();
+                        mIsStartingOtr = true;
+
+                     //   Toast.makeText(getContext(),getResources().getString(R.string.starting_otr_chat), Toast.LENGTH_LONG).show();
+                    }
+                    else
                     {
-
-                        if (otrEnabled) {
-
-                            otrChatSession.startChatEncryption();                  
-                            mIsStartingOtr = true;
-                            
-                         //   Toast.makeText(getContext(),getResources().getString(R.string.starting_otr_chat), Toast.LENGTH_LONG).show();
-                        }
-                        else
-                        {
-                            otrChatSession.stopChatEncryption();
-                           // Toast.makeText(getContext(),getResources().getString(R.string.stopping_otr_chat), Toast.LENGTH_LONG).show();
-
-                        }
-
+                        otrChatSession.stopChatEncryption();
+                       // Toast.makeText(getContext(),getResources().getString(R.string.stopping_otr_chat), Toast.LENGTH_LONG).show();
 
                     }
-                }
 
+
+                }
             }
 
 
@@ -1541,6 +1536,7 @@ public class ConversationView {
 
             message.append(mContext.getString(R.string.are_you_sure_you_want_to_confirm_this_key_));
 
+
             new AlertDialog.Builder(mContext)
                     .setTitle(R.string.verify_key_)
                     .setMessage(message.toString())
@@ -1558,13 +1554,7 @@ public class ConversationView {
                                     initSmpUI();
                                 }
                             })
-                    .setNeutralButton(R.string.menu_scan, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                          //  new IntentIntegrator(mNewChatActivity).initiateScan();
-
-                        }
-                    }).show();
+                  .show();
         } catch (RemoteException e) {
             LogCleaner.error(ImApp.LOG_TAG, "unable to perform manual key verification", e);
         }
@@ -1755,9 +1745,36 @@ public class ConversationView {
     void sendMessage() {
 
         String msg = mComposeMessage.getText().toString();
+        new SendMessageAsyncTask().execute(msg);
+    }
+
+    void sendMessageAsync(String msg) {
+
+        new SendMessageAsyncTask().execute(msg);
+    }
+
+    class SendMessageAsyncTask extends AsyncTask<String, Void, Boolean>
+    {
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+
+            if (aBoolean.booleanValue()) {
+                mComposeMessage.setText("");
+                mComposeMessage.requestFocus();
+            }
+        }
+
+        @Override
+        protected Boolean doInBackground(String... strings) {
+            return sendMessage(strings[0]);
+        }
+    };
+
+    boolean sendMessage(String msg) {
 
         if (TextUtils.isEmpty(msg.trim())) {
-            return;
+            return false;
         }
 
         IChatSession session = getChatSession();
@@ -1768,8 +1785,7 @@ public class ConversationView {
         if (session != null) {
             try {
                 session.sendMessage(msg);
-                mComposeMessage.setText("");
-                mComposeMessage.requestFocus();
+                return true;
                 //requeryCursor();
             } catch (RemoteException e) {
 
@@ -1781,6 +1797,8 @@ public class ConversationView {
                 LogCleaner.error(ImApp.LOG_TAG, "send message error",e);
             }
         }
+
+        return false;
     }
 
     void registerChatListener() {
@@ -1852,7 +1870,7 @@ public class ConversationView {
             mStatusWarningView.setBackgroundColor(Color.LTGRAY);
             */
 
-            mButtonAttach.setVisibility(View.GONE);
+           // mButtonAttach.setVisibility(View.GONE);
 
             mSendButton.setImageResource(R.drawable.ic_send_holo_light);
 
@@ -1886,9 +1904,6 @@ public class ConversationView {
             else if ((mSubscriptionType == Imps.Contacts.SUBSCRIPTION_TYPE_FROM)) {
                 bindSubscription(mProviderId, mRemoteAddress);
                 visibility = View.VISIBLE;
-                //message = mContext.getString(R.string.contact_not_in_list_warning, mRemoteNickname);
-                //mWarningText.setTextColor(Color.WHITE);
-                //mStatusWarningView.setBackgroundColor(Color.DKGRAY);
 
             } else {
 
@@ -1945,7 +1960,7 @@ public class ConversationView {
            // mWarningText.setTextColor(Color.WHITE);
            // mStatusWarningView.setBackgroundColor(Color.DKGRAY);
            // message = mContext.getString(R.string.disconnected_warning);
-              mComposeMessage.setHint(R.string.error_suspended_connection);
+         //     mComposeMessage.setHint(R.string.error_suspended_connection);
 
         }
 
@@ -2015,8 +2030,7 @@ public class ConversationView {
         if (getChatSession() != null && mIsListening) {
             try {
                 getChatSession().markAsRead();
-
-              //  updateWarningView();
+                updateWarningView();
 
             } catch (RemoteException e) {
 
@@ -2776,7 +2790,14 @@ public class ConversationView {
                         @Override
                         public void onStickerSelected(Sticker s) {
 
-                            mActivity.handleSendDelete(s.assetUri,"image/png", false, false, true);
+                            if (isGroupChat())
+                            {
+                                sendMessageAsync("/sticker:" + s.assetUri);
+                            }
+                            else
+                            {
+                                mActivity.handleSendDelete(s.assetUri,"image/png", false, false, true);
+                            }
                          //   mActivity.handleSendData(Uri.parse(s.assetPath),"image/png");
 
                             mViewAttach.setVisibility(View.GONE);

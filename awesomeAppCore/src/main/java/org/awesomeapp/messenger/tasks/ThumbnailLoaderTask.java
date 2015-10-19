@@ -1,6 +1,8 @@
 package org.awesomeapp.messenger.tasks;
 
 import android.content.ContentResolver;
+import android.content.Context;
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -15,6 +17,7 @@ import org.awesomeapp.messenger.ui.GalleryListItem;
 import org.awesomeapp.messenger.ui.MediaViewHolder;
 import org.awesomeapp.messenger.util.SecureMediaStore;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -35,7 +38,7 @@ public class ThumbnailLoaderTask extends AsyncTask<ThumbnailLoaderRequest, Void,
     public ThumbnailLoaderTask.ThumbnailLoaderResult doInBackground(ThumbnailLoaderRequest...request)
     {
 
-        Bitmap result=getThumbnail(request[0].mResolver,request[0].mUri,THUMBNAIL_SIZE_DEFAULT);
+        Bitmap result=getThumbnail(request[0].mContext,request[0].mResolver,request[0].mUri,THUMBNAIL_SIZE_DEFAULT);
 
         ThumbnailLoaderTask.ThumbnailLoaderResult tlr=new ThumbnailLoaderTask.ThumbnailLoaderResult();
         tlr.mBitmap=result;
@@ -51,27 +54,42 @@ public class ThumbnailLoaderTask extends AsyncTask<ThumbnailLoaderRequest, Void,
 
         if(result.mBitmap!=null)
         {
-        sBitmapCache.put(result.mUri.toString(),result.mBitmap);
+            sBitmapCache.put(result.mUri.toString(),result.mBitmap);
 
-        // confirm the holder is still paired to this uri
-        if(!result.mUri.equals(result.mHolder.mMediaUri)){
-        return;
-        }
-        // set the thumbnail
-         result.mHolder.mMediaThumbnail.setImageBitmap(result.mBitmap);
+            // confirm the holder is still paired to this uri
+            if(!result.mUri.equals(result.mHolder.mMediaUri))
+                return;
+
+          // set the thumbnail
+            result.mHolder.mMediaThumbnail.setImageBitmap(result.mBitmap);
         }
         else
         {
             if(result.mHolder!=null&&result.mHolder.mContainer!=null)
-            result.mHolder.mContainer.setVisibility(View.GONE);
-            }
+                result.mHolder.mContainer.setVisibility(View.GONE);
         }
+    }
 
-public static Bitmap getThumbnail(ContentResolver cr,Uri uri, int thumbnailSize){
+public static Bitmap getThumbnail(Context context, ContentResolver cr,Uri uri, int thumbnailSize){
         //   Log.e( MessageView.class.getSimpleName(), "getThumbnail uri:" + uri);
         if(SecureMediaStore.isVfsUri(uri)){
             return SecureMediaStore.getThumbnailVfs(uri,thumbnailSize);
         }
+        else if (uri.getScheme().equals("asset"))
+        {
+            AssetManager assetManager = context.getAssets();
+
+            try {
+                InputStream is = assetManager.open(uri.getPath().substring(1));
+                Bitmap bitmap = BitmapFactory.decodeStream(is);
+                is.close();
+                return bitmap;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+
         return getThumbnailFile(cr,uri,thumbnailSize);
         }
 

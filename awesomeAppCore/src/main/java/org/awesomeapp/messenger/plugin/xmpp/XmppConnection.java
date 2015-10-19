@@ -176,7 +176,7 @@ public class XmppConnection extends ImConnection {
 
     private static SSLContext sslContext;
 
-    private final static int SOTIMEOUT = 60000;
+    private final static int SOTIMEOUT = 1000 * 120;
 
     private PingManager mPingManager;
 
@@ -1523,14 +1523,17 @@ public class XmppConnection extends ImConnection {
                  */
                 debug(TAG, "reconnect on error: " + e.getMessage());
                 if (e.getMessage().contains("conflict")) {
+
+                    /**
                     execute(new Runnable() {
                         @Override
                         public void run() {
-                            disconnect();
-                            disconnected(new ImErrorInfo(ImpsErrorInfo.ALREADY_LOGGED,
-                                    "logged in from another location"));
+                           // disconnect();
+                            //disconnected(new ImErrorInfo(ImpsErrorInfo.ALREADY_LOGGED,
+                              //      "logged in from another location"));
                         }
-                    });
+                    });*/
+
                 } else if (!mNeedReconnect) {
 
                     execute(new Runnable() {
@@ -3218,8 +3221,8 @@ public class XmppConnection extends ImConnection {
         else 
         {
             //this is typical presence, let's get the latest/highest priority
-            debug(TAG,"got presence:: " + presence.getFrom() + "=" + p.getStatusText());
-            
+            debug(TAG,"got presence: " + presence.getFrom() + "=" + p.getStatus());
+
             if (contact != null && contact.getPresence() != null)
             {                
                 Presence pOld = contact.getPresence();

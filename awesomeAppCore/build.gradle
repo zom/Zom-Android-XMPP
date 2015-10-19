@@ -131,6 +131,7 @@ dependencies {
     compile 'info.guardianproject.iocipher:IOCipher:0.3'
     compile 'info.guardianproject.panic:panic:0.0'
     compile 'net.hockeyapp.android:HockeySDK:3.5.0'
+    compile 'org.igniterealtime.smack:smack-android:4.1.4'
     compile 'org.igniterealtime.smack:smack-android-extensions:4.1.4'
     compile 'org.igniterealtime.smack:smack-tcp:4.1.4'
     compile 'org.jsoup:jsoup:1.5.2'
