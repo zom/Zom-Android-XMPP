@@ -317,14 +317,14 @@ Trykk for å invitere.</string>
   <string name="pref_group_looknfeel_title">Brukergrensesnitt</string>
   <string name="menu_locale">Språk</string>
   <string name="KEY_PREF_LANGUAGE_TITLE">Språk</string>
-  <string name="pref_theme_dark">Bruk mørkt tema</string>
-  <string name="pref_theme_dark_summary">Bytt til mørkt fargetema</string>
+
+
   <string name="pref_in_memory_db_title">Kun lagre meldinger i minnet</string>
   <string name="pref_in_memory_db_summary">Kun lagre meldinger i minnet, ikke flashlagring, for å beskytte mot at noen får tilgang til eller kan hente ut meldingene. (Kan forårsake tapte meldinger)</string>
-  <string name="pref_background_title">Bakgrunnsbilde</string>
-  <string name="pref_background_summary">Angi plasseringen (\"/sdcard/foo.jpg\") til et bakgrunnsbilde til appen</string>
-  <string name="pref_show_grid">Vis kontakt-rutenett</string>
-  <string name="pref_show_grid_summary">Vis kontaktliste som kollasj av kontaktbilder </string>
+
+
+
+
   <string name="button_yes_accept_all">Ja, godta alle</string>
   <string name="pref_delete_unsecured_media_summary">Etter deling av filer, det være seg photo eller annet, automatisk slett den fra original usikret lagringsplass etter import.</string>
   <!--Actions: Settings: General: Other Tuning-->
@@ -363,9 +363,9 @@ Trykk for å invitere.</string>
   <string name="dialog_cert_issue_date">Utstedt:</string>
   <string name="dialog_cert_expires">Utløper:</string>
   <string name="dialog_connect_chatroom_title">Ta del i samtalerom</string>
-  <string name="dialog_settings_choose_background_title">Velg bakgrunnsbilde</string>
-  <string name="dialog_settings_choose_background_body">Vil du velge et bakgrunnsbilde fra galleriet?</string>
-  <string name="dialog_settings_choose_background_picker">Velg bilde</string>
+
+
+
   <!--Alerts: Notifications-->
   <string name="newMessages_label">Nye <xliff:g id="PROVIDER">%1$s</xliff:g>-meldinger</string>
   <string name="notify_groupchat_label">Invitasjon til gruppesamtale</string>

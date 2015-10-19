@@ -318,14 +318,14 @@
   <string name="menu_locale">言語</string>
   <string name="KEY_PREF_LANGUAGE_TITLE">言語</string>
   <string name="use_system_default">システムデフォルトを使用</string>
-  <string name="pref_theme_dark">ダーク テーマを使用</string>
-  <string name="pref_theme_dark_summary">アプリのテーマをダークに変更します</string>
+
+
   <string name="pref_in_memory_db_title">インメモリ メッセージ ストレージのみ</string>
   <string name="pref_in_memory_db_summary">メッセージの抽出から保護するために、フラッシュストレージではなく、メモリ内にメッセージを格納します。 (メッセージを損失することがあります)</string>
-  <string name="pref_background_title">背景画像</string>
-  <string name="pref_background_summary">アプリの背景画像壁紙のパスを設定してください (\"/sdcard/foo.jpg\")</string>
-  <string name="pref_show_grid">連絡先グリッドを表示</string>
-  <string name="pref_show_grid_summary">アバターグリッドとして連絡先リストを表示します</string>
+
+
+
+
   <string name="button_yes_accept_all">はい、すべて承認</string>
   <string name="pref_delete_unsecured_media_title">安全でないメディアを削除</string>
   <string name="pref_delete_unsecured_media_summary">写真やファイルを共有した後、インポート後、元の、安全でないストレージから自動的に削除します</string>
@@ -366,9 +366,9 @@
   <string name="dialog_cert_expires">期限: </string>
   <string name="dialog_connect_chatroom_title">チャットルームに参加しますか?</string>
   <string name="dialog_connect_chatroom_message">外部アプリが、チャットルームに接続しようとしています。許可しますか?</string>
-  <string name="dialog_settings_choose_background_title">背景を選択</string>
-  <string name="dialog_settings_choose_background_body">ギャラリーから背景画像を選択しますか?</string>
-  <string name="dialog_settings_choose_background_picker">画像を選択</string>
+
+
+
   <!--Alerts: Notifications-->
   <string name="newMessages_label">新しい<xliff:g id="PROVIDER">%1$s</xliff:g>メッセージが届きました</string>
   <string name="num_unread_chats"><xliff:g id="NUMBER">%1$d</xliff:g> 未読のチャット</string>

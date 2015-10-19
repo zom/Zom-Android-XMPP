@@ -298,14 +298,14 @@ Appuyez pour inviter.</string>
   <string name="pref_group_looknfeel_title">Interface Utilisateur</string>
   <string name="menu_locale">Langue</string>
   <string name="KEY_PREF_LANGUAGE_TITLE">Langues</string>
-  <string name="pref_theme_dark">Utiliser le thème Sombre</string>
-  <string name="pref_theme_dark_summary">Changer le thème de l\'application en sombre</string>
+
+
   <string name="pref_in_memory_db_title">Enregistrement des messages en mémoire vive uniquement</string>
   <string name="pref_in_memory_db_summary">N\'enregistre les messages qu\'en mémoire vive et non sur la mémoire flash afin de prévenir leur récupération. (Peut causer la perte de messages)</string>
-  <string name="pref_background_title">Image d\'arrière-plan</string>
-  <string name="pref_background_summary">Entrez le chemin (\"/sdcard/foo.jpg\") d\'un arrière plan pour l\'application</string>
-  <string name="pref_show_grid">Montrer la grille des contacts</string>
-  <string name="pref_show_grid_summary">Afficher la liste de contact en grille</string>
+
+
+
+
   <string name="button_yes_accept_all">Oui, accepter tout</string>
   <!--Actions: Settings: General: Other Tuning-->
   <string name="pref_group_tuning_title">Autres réglages</string>

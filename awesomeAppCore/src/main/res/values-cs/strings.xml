@@ -312,14 +312,14 @@ Klikněte pro pozvání.</string>
   <string name="menu_locale">Jazyk</string>
   <string name="KEY_PREF_LANGUAGE_TITLE">Jazyky</string>
   <string name="use_system_default">Použít systémově výchozí</string>
-  <string name="pref_theme_dark">Použít tmavý vzhled</string>
-  <string name="pref_theme_dark_summary">Změní téma aplikace na tmavé</string>
+
+
   <string name="pref_in_memory_db_title">Zprávy pouze v paměti</string>
   <string name="pref_in_memory_db_summary">Ukládat zprávy pouze v paměti RAM, nikoliv na flash paměti, na obranu proti zpětnému získání zpráv. (Můžete přijít o zprávy)</string>
-  <string name="pref_background_title">Obrázek pozadí</string>
-  <string name="pref_background_summary">Nastavte cestu (\"/sdcard/foo.jpg\") obrázku, který bude použit na tapetu pozadí této aplikace</string>
-  <string name="pref_show_grid">Zobrazit mřížku kontaktů</string>
-  <string name="pref_show_grid_summary">Zobrazí list kontaktů jako avatar mřížku</string>
+
+
+
+
   <string name="button_yes_accept_all">Ano, příjmout vše</string>
   <string name="pref_delete_unsecured_media_title">Smazat nezabezpečené média</string>
   <string name="pref_delete_unsecured_media_summary">Po nasdílení fotek a souboru, automaticky smazat originál z nezabezpečeného úložiště.</string>
@@ -360,9 +360,9 @@ Klikněte pro pozvání.</string>
   <string name="dialog_cert_expires">Expirace:</string>
   <string name="dialog_connect_chatroom_title">Připojit k chat místnosti?</string>
   <string name="dialog_connect_chatroom_message">Externí aplikace se Vas pokouší připojit k místnosti. Povolit?</string>
-  <string name="dialog_settings_choose_background_title">Zvolte pozadí</string>
-  <string name="dialog_settings_choose_background_body">Chcete vybrat obrázek na pozadí z Galerie?</string>
-  <string name="dialog_settings_choose_background_picker">Vyberte obrázek</string>
+
+
+
   <!--Alerts: Notifications-->
   <string name="newMessages_label">Nové zprávy od poskytovatele <xliff:g id="PROVIDER">%1$s</xliff:g></string>
   <string name="num_unread_chats"><xliff:g id="number">%1$d</xliff:g> nepřečtené chaty</string>

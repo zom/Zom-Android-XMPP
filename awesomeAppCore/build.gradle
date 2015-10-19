@@ -84,12 +84,15 @@ android {
                 'com.android.support:support-annotations:104f353b53d5dd8d64b2f77eece4b37f6b961de9732eb6b706395e91033ec70a',
                 'com.android.support:support-v4:c62f0d025dafa86f423f48df9185b0d89496adbc5f6a9be5a7c394d84cf91423',
                 'com.google.guava:guava:d664fbfc03d2e5ce9cab2a44fb01f1d0bf9dfebeccc1a473b1f9ea31f79f6f99',
+                'com.google.zxing:core:e317820031ffe4beddbef9c8a67019c28a6bedfa5dc5f69a4ae0c53f0e403160',
                 'com.theartofdev.edmodo:android-image-cropper:6d14aadb0271a8347aa97a88cfaa34f95d8bc152834ff77d96a85aeb0dac1d19',
                 'de.hdodenhof:circleimageview:9bd0f21c8493d14c549b1c7f8e5f1ee05fec8acef740e0bbdb5c51f2ef265fa1',
                 'de.measite.minidns:minidns:5df876bdcdf42a2109d52f7408af8b145fd6d45ba4da776a5a0e73210286186c',
                 'info.guardianproject.cacheword:cachewordlib:933d8119f14af5024b90c17c3c64c13efccf48c8f37080c7c09a9fb0318cd1fe',
                 'info.guardianproject.iocipher:IOCipher:898b3b8d113b2e83b76998101655944f6c5a14475deeb81159fdf6375d70258d',
+                'info.guardianproject.panic:panic:bb9b4af558fa6405f5debe687e1cfb4cee5d69f01a25abb9b054eeac4e1578e4',
                 'net.hockeyapp.android:HockeySDK:6e73ad1188af47e7c0e054ed21da66b1b9ae227db7e9401d4de4e6b2b437d194',
+                'net.zetetic:android-database-sqlcipher:e7594bd98cf77e93579c084cbf08d99b742b71a8d2063169ffc1858f8de21aa8',
                 'org.igniterealtime.smack:smack-android-extensions:4c1732d09e460107f1d3e0c25a3ac6c2f8a1b8cba2e9dfa726a866aa55c13bc8',
                 'org.igniterealtime.smack:smack-android:2b6ea0e762ecdbf03ce20bc35c564f0727d7f10ca7cb7d9c309b72b2fa3229cc',
                 'org.igniterealtime.smack:smack-core:31b058b51fa59ffe623622f2348783a876b6c5db9e93e7d8e51525e09eda7389',
@@ -126,6 +129,7 @@ dependencies {
     compile 'de.hdodenhof:circleimageview:1.3.0'
     compile 'info.guardianproject.cacheword:cachewordlib:0.1'
     compile 'info.guardianproject.iocipher:IOCipher:0.3'
+    compile 'info.guardianproject.panic:panic:0.0'
     compile 'net.hockeyapp.android:HockeySDK:3.5.0'
     compile 'org.igniterealtime.smack:smack-android-extensions:4.1.4'
     compile 'org.igniterealtime.smack:smack-tcp:4.1.4'

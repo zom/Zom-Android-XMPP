@@ -315,14 +315,14 @@
   <string name="menu_locale">Језик</string>
   <string name="KEY_PREF_LANGUAGE_TITLE">Језици</string>
   <string name="use_system_default">Системски подразумевано</string>
-  <string name="pref_theme_dark">Тамна тема</string>
-  <string name="pref_theme_dark_summary">Користи тамну тему апликације</string>
+
+
   <string name="pref_in_memory_db_title">Складиштење порука само у меморији</string>
   <string name="pref_in_memory_db_summary">Складишти поруке само у меморији, не на флеш диску, да би се спречило извлачење порука. (Може да узрокује губитак порука)</string>
-  <string name="pref_background_title">Слика позадине</string>
-  <string name="pref_background_summary">Поставите путању („/sdcard/foo.jpg“) до слике за позадину апликације</string>
-  <string name="pref_show_grid">Прикажи мрежу контаката</string>
-  <string name="pref_show_grid_summary">Прикажи списак контаката као мрежу аватара</string>
+
+
+
+
   <string name="button_yes_accept_all">Да, прихвати све</string>
   <string name="pref_delete_unsecured_media_title">Обриши небезбедни медиј</string>
   <string name="pref_delete_unsecured_media_summary">Након дељења слике или фајла, аутоматски их обриши са изворног, небезбедног складишта након увоза</string>
@@ -363,9 +363,9 @@
   <string name="dialog_cert_expires">Истиче: </string>
   <string name="dialog_connect_chatroom_title">Придружити се соби за ћаскање?</string>
   <string name="dialog_connect_chatroom_message">Спољашња апликација покушава да вас повеже на собу за ћаскање. Да дозволим?</string>
-  <string name="dialog_settings_choose_background_title">Избор позадине</string>
-  <string name="dialog_settings_choose_background_body">Желите ли да изаберете слику за позадину из галерије?</string>
-  <string name="dialog_settings_choose_background_picker">Изаберите слику</string>
+
+
+
   <!--Alerts: Notifications-->
   <string name="newMessages_label">Нових <xliff:g id="provider">%1$s</xliff:g> порука</string>
   <string name="num_unread_chats"><xliff:g id="number">%1$d</xliff:g> непрочитаних ћаскања</string>

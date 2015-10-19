@@ -49,6 +49,7 @@ import net.java.otr4j.session.SessionID;
 
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.MainActivity;
+import org.awesomeapp.messenger.Preferences;
 import org.awesomeapp.messenger.crypto.IOtrKeyManager;
 import org.awesomeapp.messenger.crypto.OtrAndroidKeyManagerImpl;
 import org.awesomeapp.messenger.crypto.OtrChatManager;
@@ -58,7 +59,6 @@ import org.awesomeapp.messenger.model.ImConnection;
 import org.awesomeapp.messenger.model.ImException;
 import org.awesomeapp.messenger.plugin.ImPluginInfo;
 import org.awesomeapp.messenger.provider.Imps;
-import org.awesomeapp.messenger.provider.Imps.ProviderSettings.QueryMap;
 import org.awesomeapp.messenger.service.adapters.ImConnectionAdapter;
 import org.awesomeapp.messenger.ui.legacy.DummyActivity;
 import org.awesomeapp.messenger.ui.legacy.ImPluginHelper;
@@ -113,7 +113,6 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
     private ImPluginHelper mPluginHelper;
     private Hashtable<String, ImConnectionAdapter> mConnections;
 
-    private Imps.ProviderSettings.QueryMap mGlobalSettings;
     private Handler mHandler;
 
     final RemoteCallbackList<IConnectionCreationListener> mRemoteListeners = new RemoteCallbackList<IConnectionCreationListener>();
@@ -200,10 +199,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
     private int convertPolicy() {
         int otrPolicy = OtrPolicy.OPPORTUNISTIC;
-        QueryMap gSettings = getGlobalSettings();
-        if (gSettings != null)
-        {
-            String otrModeSelect = gSettings.getOtrMode();
+            String otrModeSelect = Preferences.getOtrMode();
 
             if (otrModeSelect.equals("auto")) {
                 otrPolicy = OtrPolicy.OPPORTUNISTIC;
@@ -216,25 +212,8 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
             } else if (otrModeSelect.equals("requested")) {
                 otrPolicy = OtrPolicy.OTRL_POLICY_MANUAL;
             }
-        }
 
         return otrPolicy;
-    }
-
-    private synchronized Imps.ProviderSettings.QueryMap getGlobalSettings() {
-        if (mGlobalSettings == null) {
-
-            ContentResolver contentResolver = getContentResolver();
-
-            Cursor cursor = contentResolver.query(Imps.ProviderSettings.CONTENT_URI, new String[]{Imps.ProviderSettings.NAME, Imps.ProviderSettings.VALUE}, Imps.ProviderSettings.PROVIDER + "=?", new String[]{Long.toString(Imps.ProviderSettings.PROVIDER_ID_FOR_GLOBAL_SETTINGS)}, null);
-
-            if (cursor == null)
-                return null;
-
-            mGlobalSettings = new Imps.ProviderSettings.QueryMap(cursor, contentResolver, Imps.ProviderSettings.PROVIDER_ID_FOR_GLOBAL_SETTINGS, true, mHandler);
-        }
-
-        return mGlobalSettings;
     }
 
     @Override
@@ -328,7 +307,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
                 autoLogin();
             }
 
-            mHeartbeatInterval = getGlobalSettings().getHeartbeatInterval();
+            mHeartbeatInterval = Preferences.getHeartbeatInterval();
             debug("heartbeat interval: " + mHeartbeatInterval);
 
             for (ImConnectionAdapter conn : mConnections.values())
@@ -569,10 +548,6 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
         if (mUseForeground)
             stopForeground(true);
-
-        if (mGlobalSettings != null)
-            mGlobalSettings.close();
-
     }
 
     @Override
@@ -612,11 +587,6 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
         //make sure OTR is init'd before you create your first connection
         initOtrChatManager();
-
-        QueryMap gSettings = getGlobalSettings();
-
-        if (gSettings == null)
-            return null;
 
         Map<String, String> settings = loadProviderSettings(providerId);
         ConnectionFactory factory = ConnectionFactory.getInstance();
@@ -676,7 +646,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
         mConnections.remove(connection);
 
         if (mConnections.size() == 0)
-            if (getGlobalSettings().getUseForegroundPriority())
+            if (Preferences.getUseForegroundPriority())
                 stopForeground(true);
     }
 

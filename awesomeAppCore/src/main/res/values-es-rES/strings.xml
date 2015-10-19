@@ -316,14 +316,14 @@ cuentas configuradas.\n\n¡Pulse aquí para añadir una!</string>
   <string name="menu_locale">Idioma</string>
   <string name="KEY_PREF_LANGUAGE_TITLE">Idiomas</string>
   <string name="use_system_default">Usar la configuración por defecto del sistema</string>
-  <string name="pref_theme_dark">Utilizar tema oscuro</string>
-  <string name="pref_theme_dark_summary">Cambiar el tema de la aplicación a oscuro</string>
+
+
   <string name="pref_in_memory_db_title">Guardar conversaciones</string>
   <string name="pref_in_memory_db_summary">No almacenar los mensajes en flash para evitar que puedan ser recuperados. (Advertencia: esto puede provocar la pérdida de mensajes)</string>
-  <string name="pref_background_title">Imagen de fondo</string>
-  <string name="pref_background_summary">Establecer una ruta para la imagen de fondo de la aplicación</string>
-  <string name="pref_show_grid">Mostrar malla de contacto</string>
-  <string name="pref_show_grid_summary">Muestra la lista de contactos como una malla de avatares</string>
+
+
+
+
   <string name="button_yes_accept_all">Sí, aceptar todo</string>
   <string name="pref_delete_unsecured_media_title">Borrar audiovisuales no asegurados</string>
   <string name="pref_delete_unsecured_media_summary">Después de compartir una foto o fichero, borrarlo automáticamente del almacenamiento no asegurado original depués de importarlo</string>
@@ -364,9 +364,9 @@ cuentas configuradas.\n\n¡Pulse aquí para añadir una!</string>
   <string name="dialog_cert_expires">Expira:</string>
   <string name="dialog_connect_chatroom_title">¿Unirse a la sala de chat?</string>
   <string name="dialog_connect_chatroom_message">Una aplicación externa está intentando conectar a su sala de chat. ¿Permitir?</string>
-  <string name="dialog_settings_choose_background_title">Elegir fondo</string>
-  <string name="dialog_settings_choose_background_body">¿Quiere seleccionar una imagen de fondo de la Galería?</string>
-  <string name="dialog_settings_choose_background_picker">Seleccionar imagen</string>
+
+
+
   <!--Alerts: Notifications-->
   <string name="newMessages_label">Mensajes nuevos de <xliff:g id="PROVIDER">%1$s</xliff:g></string>
   <string name="num_unread_chats"><xliff:g id="number">%1$d</xliff:g> conversaciones no leídas</string>

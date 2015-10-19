@@ -315,14 +315,14 @@
   <string name="menu_locale">Langue</string>
   <string name="KEY_PREF_LANGUAGE_TITLE">Langues</string>
   <string name="use_system_default">Utiliser les valeurs par défaut du système</string>
-  <string name="pref_theme_dark">Utiliser le thème Sombre</string>
-  <string name="pref_theme_dark_summary">Changer le thème de l\'appli en sombre</string>
+
+
   <string name="pref_in_memory_db_title">Stockage des messages en mémoire seulement</string>
   <string name="pref_in_memory_db_summary">Ne stocker les messages qu\'en mémoire, et non sur les stockages flash, afin de se défendre contre l\'extraction des messages (peut entraîner la perte de messages).</string>
-  <string name="pref_background_title">Image d\'arrière-plan</string>
-  <string name="pref_background_summary">Définir le chemin (« /sdcard/foo.jpg ») vers un arrière-plan pour l\'appli</string>
-  <string name="pref_show_grid">Montrer la grille des contacts</string>
-  <string name="pref_show_grid_summary">Afficher la liste des contacts en grille d\'avatars</string>
+
+
+
+
   <string name="button_yes_accept_all">Oui, tout accepter</string>
   <string name="pref_delete_unsecured_media_title">Supprimer le fichier multimédia non sécurisé</string>
   <string name="pref_delete_unsecured_media_summary">Lors du partage d\'une photo ou d\'un fichier, le supprimer automatiquement du stockage non sécurisé original après l\'importation</string>
@@ -363,9 +363,9 @@
   <string name="dialog_cert_expires">Expire le :</string>
   <string name="dialog_connect_chatroom_title">Rejoindre ce clavardoir ?</string>
   <string name="dialog_connect_chatroom_message">Un appli externe tente de vous connecter à un clavardoir. Le permettre ?</string>
-  <string name="dialog_settings_choose_background_title">Choisir un arrière-plan</string>
-  <string name="dialog_settings_choose_background_body">Voulez-vous choisir une image d\'arrière-plan de la galerie ?</string>
-  <string name="dialog_settings_choose_background_picker">Choisir une image</string>
+
+
+
   <!--Alerts: Notifications-->
   <string name="newMessages_label">Nouveaux messages <xliff:g id="provider">%1$s</xliff:g></string>
   <string name="num_unread_chats"><xliff:g id="number">%1$d</xliff:g> clavardage non lus</string>

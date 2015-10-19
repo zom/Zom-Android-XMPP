@@ -324,14 +324,14 @@
   <string name="menu_locale">اللغة</string>
   <string name="KEY_PREF_LANGUAGE_TITLE">اللغات</string>
   <string name="use_system_default">استخدم إفتراضي النظام</string>
-  <string name="pref_theme_dark">استخدم قالب ألوان داكنة</string>
-  <string name="pref_theme_dark_summary">غير ألوان الواجهة إلى الألوان الداكنة</string>
+
+
   <string name="pref_in_memory_db_title">مخزن الرسائل في الذاكرة فقط</string>
   <string name="pref_in_memory_db_summary">إحفض الرسائل في الذاكرة فقط، وليس على ذاكرة الفلاش، للحماية ضد إستخراج الرسائل (قد يسبب خسارة بعض الرسائل)</string>
-  <string name="pref_background_title">صورة خلفية</string>
-  <string name="pref_background_summary">حدد المسار (\"/sdcard/foo.jpg\") كصورة خلفية للبرنامج</string>
-  <string name="pref_show_grid">أظهر شبكة جهات الاتصال</string>
-  <string name="pref_show_grid_summary">أظهر جهات الاتصال كشبكة من الصور الشخصية</string>
+
+
+
+
   <string name="button_yes_accept_all">نعم، اقبل الكل</string>
   <string name="pref_delete_unsecured_media_title">حذف الملفات الغير آمنة</string>
   <string name="pref_delete_unsecured_media_summary">حذف الملف الأساسي تلقائياً من المخزن غير الآمن بعد استراده وتصديره</string>
@@ -372,9 +372,9 @@
   <string name="dialog_cert_expires">ينقضي في:</string>
   <string name="dialog_connect_chatroom_title">الانضمام إلى غرفة الدردشة؟</string>
   <string name="dialog_connect_chatroom_message">تطبيق خارجي يحاول وصلك بغرفة دردشة. السماح؟</string>
-  <string name="dialog_settings_choose_background_title">اختر الصورة الخلفية</string>
-  <string name="dialog_settings_choose_background_body">هل تريد انتقاء صورة خلفية من المعرض؟</string>
-  <string name="dialog_settings_choose_background_picker">اختر الصورة</string>
+
+
+
   <!--Alerts: Notifications-->
   <string name="newMessages_label">رسائل جديدة من <xliff:g id="provider">%1$s</xliff:g></string>
   <string name="num_unread_chats"><xliff:g id="number">%1$d</xliff:g> الأحاديث الغير مقروءة</string>

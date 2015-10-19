@@ -252,12 +252,12 @@ Klikkaa kutsuaksesi.</string>
   <string name="pref_group_looknfeel_title">Käyttöliittymä</string>
   <string name="menu_locale">Kieli</string>
   <string name="KEY_PREF_LANGUAGE_TITLE">Kielet</string>
-  <string name="pref_theme_dark">Käytä tummaa teemaa</string>
-  <string name="pref_theme_dark_summary">Vaihda ohjelman teema tummaksi</string>
-  <string name="pref_background_title">Taustakuva</string>
-  <string name="pref_background_summary">Aseta polku (\"/sdcard/foo.jpg\") sovelluksen taustakuvaan</string>
-  <string name="pref_show_grid">Näytä kontaktiruudukko</string>
-  <string name="pref_show_grid_summary">Näytä kontaktilista kuvaruudukkona</string>
+
+
+
+
+
+
   <string name="button_yes_accept_all">Kyllä, hyväksy kaikki</string>
   <!--Actions: Settings: General: Other Tuning-->
   <string name="pref_group_tuning_title">Muita hienosäätöjä</string>
@@ -294,9 +294,9 @@ Klikkaa kutsuaksesi.</string>
   <string name="dialog_cert_expires">Vanhenee:</string>
   <string name="dialog_connect_chatroom_title">Liitytäänkö chat-huoneeseen?</string>
   <string name="dialog_connect_chatroom_message">Ulkoinen sovellus yrittää yhdistää sinua chat-huoneeseen. Sallitko?</string>
-  <string name="dialog_settings_choose_background_title">Valitse taustakuva</string>
-  <string name="dialog_settings_choose_background_body">Haluatko valita taustakuvan Galleriasta?</string>
-  <string name="dialog_settings_choose_background_picker">Valitse kuva</string>
+
+
+
   <!--Alerts: Notifications-->
   <string name="newMessages_label">Uusia <xliff:g id="provider">%1$s</xliff:g>-viestejä</string>
   <string name="num_unread_chats"><xliff:g id="number">%1$d</xliff:g> lukematonta keskustelua</string>

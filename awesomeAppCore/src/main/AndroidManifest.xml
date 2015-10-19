@@ -73,6 +73,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
+                <action android:name="info.guardianproject.panic.action.TRIGGER" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
@@ -374,9 +379,6 @@
             android:name="org.awesomeapp.messenger.ui.qr.QrScanActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@android:style/Theme.Black.NoTitleBar" />
-        <activity
-            android:name="org.awesomeapp.messenger.ui.legacy.MissingChatFileStoreActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize" />
 
         <service
             android:name="info.guardianproject.cacheword.CacheWordService"

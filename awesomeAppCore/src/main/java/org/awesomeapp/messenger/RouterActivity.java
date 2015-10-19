@@ -16,51 +16,49 @@
 
 package org.awesomeapp.messenger;
 
-import org.awesomeapp.messenger.util.SecureMediaStore;
-import org.awesomeapp.messenger.ui.onboarding.OnboardingActivity;
-import info.guardianproject.cacheword.CacheWordHandler;
-import info.guardianproject.cacheword.ICacheWordSubscriber;
-import org.awesomeapp.messenger.service.IImConnection;
-import info.guardianproject.otr.app.im.R;
-import org.awesomeapp.messenger.ui.AddContactActivity;
-import org.awesomeapp.messenger.ui.legacy.ImPluginHelper;
-import org.awesomeapp.messenger.ui.legacy.LockScreenActivity;
-import org.awesomeapp.messenger.ui.legacy.MissingChatFileStoreActivity;
-import org.awesomeapp.messenger.ui.legacy.SignInHelper;
-import org.awesomeapp.messenger.ui.legacy.SimpleAlertHandler;
-import org.awesomeapp.messenger.ui.legacy.ThemeableActivity;
-import org.awesomeapp.messenger.model.ImConnection;
-import org.awesomeapp.messenger.provider.Imps;
-import org.ironrabbit.type.CustomTypefaceManager;
-
-import java.io.File;
-import java.security.GeneralSecurityException;
-import java.util.List;
-import java.util.UUID;
-
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.app.Service;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.net.Uri;
 import android.net.Uri.Builder;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
 import android.os.RemoteException;
-import android.os.StatFs;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
+
+import org.awesomeapp.messenger.model.ImConnection;
+import org.awesomeapp.messenger.provider.Imps;
+import org.awesomeapp.messenger.service.IImConnection;
+import org.awesomeapp.messenger.ui.AddContactActivity;
+import org.awesomeapp.messenger.ui.legacy.ImPluginHelper;
+import org.awesomeapp.messenger.ui.legacy.LockScreenActivity;
+import org.awesomeapp.messenger.ui.legacy.SignInHelper;
+import org.awesomeapp.messenger.ui.legacy.SimpleAlertHandler;
+import org.awesomeapp.messenger.ui.legacy.ThemeableActivity;
+import org.awesomeapp.messenger.ui.onboarding.OnboardingActivity;
+import org.awesomeapp.messenger.util.SecureMediaStore;
+import org.ironrabbit.type.CustomTypefaceManager;
+
+import java.security.GeneralSecurityException;
+import java.util.List;
+import java.util.UUID;
+
+import info.guardianproject.cacheword.CacheWordHandler;
+import info.guardianproject.cacheword.ICacheWordSubscriber;
+import info.guardianproject.otr.app.im.R;
+import info.guardianproject.panic.Panic;
+import info.guardianproject.panic.PanicReceiver;
 
 public class RouterActivity extends ThemeableActivity implements ICacheWordSubscriber  {
 
@@ -71,6 +69,10 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
     private SignInHelper mSignInHelper;
 
     private boolean mDoSignIn = true;
+
+    private static String EXTRA_DO_LOCK = "doLock";
+    private static String EXTRA_DO_SIGNIN = "doSignIn";
+    public static String EXTRA_ORIGINAL_INTENT = "originalIntent";
 
     static final String[] PROVIDER_PROJECTION = { Imps.Provider._ID, Imps.Provider.NAME,
                                                  Imps.Provider.FULLNAME, Imps.Provider.CATEGORY,
@@ -111,8 +113,8 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
         mSignInHelper = new SignInHelper(this, mHandler);
 
         Intent intent = getIntent();
-        mDoSignIn = intent.getBooleanExtra("doSignIn", true);
-        mDoLock = intent.getBooleanExtra("doLock", false);
+        mDoSignIn = intent.getBooleanExtra(EXTRA_DO_SIGNIN, true);
+        mDoLock = intent.getBooleanExtra(EXTRA_DO_LOCK, false);
 
         if (ImApp.mUsingCacheword)
             connectToCacheWord();
@@ -245,10 +247,25 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
         }
 
         Intent intent = getIntent();
+        if (intent != null && intent.getAction() != null && !intent.getAction().equals(Intent.ACTION_MAIN)) {
+            String action = intent.getAction();
+            if (Panic.ACTION_TRIGGER.equals(action)
+                    && !PanicReceiver.getTriggerPackageName(this).equals(Panic.PACKAGE_NAME_NONE)) {
+                RouterActivity.shutdownAndLock(this);
+            } else {
+                Intent imUrlIntent = new Intent(this, ImUrlActivity.class);
+                imUrlIntent.setAction(action);
 
-        if (intent != null && intent.getAction() != null && (!intent.getAction().equals(Intent.ACTION_MAIN)))
-        {
-            handleIntentAPILaunch(intent);
+                if (intent.getData() != null)
+                    imUrlIntent.setData(intent.getData());
+
+                imUrlIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                if (intent.getExtras() != null)
+                    imUrlIntent.putExtras(intent.getExtras());
+                startActivity(imUrlIntent);
+            }
+            setIntent(null);
+            finish();
         }
         else if (countAvailable > 0)
         {
@@ -315,23 +332,6 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
         } while (mProviderCursor.moveToNext());
 
         return count;
-    }
-
-    void handleIntentAPILaunch (Intent srcIntent)
-    {
-        Intent intent = new Intent(this, ImUrlActivity.class);
-        intent.setAction(srcIntent.getAction());
-
-        if (srcIntent.getData() != null)
-            intent.setData(srcIntent.getData());
-
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        if (srcIntent.getExtras()!= null)
-            intent.putExtras(srcIntent.getExtras());
-        startActivity(intent);
-
-        setIntent(null);
-        finish();
     }
 
     Intent getEditAccountIntent() {
@@ -408,8 +408,8 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
         //now show onboarding UI
         Intent intent = new Intent(this, OnboardingActivity.class);
         Intent returnIntent = getIntent();
-        returnIntent.putExtra("doSignIn", mDoSignIn);
-        intent.putExtra("originalIntent", returnIntent);
+        returnIntent.putExtra(EXTRA_DO_SIGNIN, mDoSignIn);
+        intent.putExtra(EXTRA_ORIGINAL_INTENT, returnIntent);
         startActivity(intent);
 
     }
@@ -417,8 +417,8 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
     void showLockScreen() {
         Intent intent = new Intent(this, LockScreenActivity.class);
         Intent returnIntent = getIntent();
-        returnIntent.putExtra("doSignIn", mDoSignIn);
-        intent.putExtra("originalIntent", returnIntent);
+        returnIntent.putExtra(EXTRA_DO_SIGNIN, mDoSignIn);
+        intent.putExtra(EXTRA_ORIGINAL_INTENT, returnIntent);
         startActivity(intent);
 
     }
@@ -461,9 +461,16 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
 
     }
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public static void shutdownAndLock(Activity activity) {
-        ImApp app = (ImApp) activity.getApplication();
+    public static void shutdownAndLock(Context context) {
+        Activity activity = null;
+        ImApp app = null;
+        if (context instanceof Activity) {
+            activity = (Activity) context;
+            app = (ImApp) activity.getApplication();
+        } else if (context instanceof Service) {
+            Service service = (Service) context;
+            app = (ImApp) service.getApplication();
+        }
         if (app != null) {
             for (IImConnection conn : app.getActiveConnections()) {
                 try {
@@ -474,15 +481,17 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
             }
         }
 
-        Intent intent = new Intent(activity, RouterActivity.class);
+        Intent intent = new Intent(context, RouterActivity.class);
         // Request lock
-        intent.putExtra("doLock", true);
+        intent.putExtra(EXTRA_DO_LOCK, true);
         // Clear the backstack
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        if (Build.VERSION.SDK_INT >= 11)
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        activity.startActivity(intent);
-        activity.finish();
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        context.startActivity(intent);
+
+        if (activity != null) {
+            activity.finish();
+        }
     }
 
     private void completeShutdown ()
@@ -533,7 +542,7 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
 
 
                            Thread.sleep(500);
-                       }catch(Exception e){}
+                       } catch(Exception e){}
 
 
                 }
@@ -562,58 +571,8 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
         }.execute();
     }
 
-    private boolean checkMediaStoreFile() {
-        /* First set location based on pref, then override based on where the file is.
-         * This crazy logic is necessary to support old installs that used logic that
-         * is not really predictable, since it was based on whether the SD card was
-         * present or not. */
-        File internalDbFile = new File(SecureMediaStore.getInternalDbFilePath(this));
-        boolean internalDbFileUsabe = internalDbFile.isFile() && internalDbFile.canWrite();
-
-        boolean externalDbFileUsable = false;
-        File externalDbFile = new File(SecureMediaStore.getExternalDbFilePath(this));
-        java.io.File externalFilesDir = getExternalFilesDir(null);
-        if (externalFilesDir != null) {
-            externalDbFileUsable = externalDbFile.isFile() && externalDbFile.canWrite();
-        }
-        final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean isPrefSet = settings.contains(
-                getString(R.string.key_store_media_on_external_storage_pref));
-        boolean storeMediaOnExternalStorage;
-        if (isPrefSet) {
-            storeMediaOnExternalStorage = settings.getBoolean(
-                    getString(R.string.key_store_media_on_external_storage_pref), false);
-            if (storeMediaOnExternalStorage && !externalDbFileUsable) {
-                Intent i = new Intent(this, MissingChatFileStoreActivity.class);
-                startActivity(i);
-                finish();
-                return true;
-            }
-        } else {
-            /* only use external if file already exists only there or internal is almost full */
-            boolean forceExternalStorage = !enoughSpaceInInternalStorage(internalDbFile);
-            if (!internalDbFileUsabe && (externalDbFileUsable || forceExternalStorage)) {
-                storeMediaOnExternalStorage = true;
-            } else {
-                storeMediaOnExternalStorage = false;
-            }
-            Editor editor = settings.edit();
-            editor.putBoolean(getString(R.string.key_store_media_on_external_storage_pref),
-                    storeMediaOnExternalStorage);
-            editor.apply();
-        }
-        return false;
-    }
-
-    private static boolean enoughSpaceInInternalStorage(File f) {
-        StatFs stat = new StatFs(f.getParent());
-        long freeSizeInBytes = stat.getAvailableBlocks() * (long) stat.getBlockSize();
-        return freeSizeInBytes > 536870912; // 512 MB
-    }
-
     private boolean openEncryptedStores(byte[] key) {
 
-        checkMediaStoreFile();
         SecureMediaStore.init(this, key);
 
         if (cursorUnlocked()) {

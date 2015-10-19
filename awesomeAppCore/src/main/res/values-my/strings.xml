@@ -183,11 +183,11 @@ The OTR-protocol is compatible with desktop chat clients such as Adium or Pidgin
   <string name="pref_group_looknfeel_title">User Interface</string>
   <string name="menu_locale">ဘာသာစကား</string>
   <string name="KEY_PREF_LANGUAGE_TITLE">ဘာသာစကားများ</string>
-  <string name="pref_theme_dark">အရောင်ရင့်ရင့် အဆင်အယင်သုံးပါ</string>
+
   <string name="pref_in_memory_db_title">စာများကို မမ်မိုရီအတွင်းသာ သိမ်းရန်</string>
   <string name="pref_in_memory_db_summary">Only store messages in memory, not on flash storage, to defend against messages being extracted. (May cause lost messages)</string>
-  <string name="pref_background_title">နောက်ခံပုံ</string>
-  <string name="pref_background_summary">အက်ပလီကေးရှင်း၏ နောက်ခံပုံလမ်းကြောင်းကို  (\"/sdcard/foo.jpg\") သတ်မှတ်ရန်</string>
+
+
   <!--Actions: Settings: General: Other Tuning-->
   <string name="pref_group_tuning_title">အခြား</string>
   <string name="start_on_boot_summary">နဂိုဝင်သုံးဖူးသည့် အကောင့်များသို့ အလိုအလျှောက် ဝင်ရန်</string>

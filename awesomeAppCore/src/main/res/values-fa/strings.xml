@@ -290,8 +290,8 @@
   <string name="bg_data_prompt_ok">فعال</string>
   <string name="bg_data_prompt_cancel">خارج شو</string>
   <string name="prompt_create_new_account_">ایجاد حساب کاربری جدید؟</string>
-  <string name="dialog_settings_choose_background_title">تصویر زمینه</string>
-  <string name="dialog_settings_choose_background_picker">انتخاب تصویر</string>
+
+
   <!--Alerts: Notifications-->
   <string name="newMessages_label">پیام <xliff:g id="provider">%1$s</xliff:g> جدید</string>
   <string name="notify_groupchat_label">دعوتنامه گفتگوی گروهی</string>

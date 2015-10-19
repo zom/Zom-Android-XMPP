@@ -322,14 +322,14 @@ Klicka för att bjuda in.</string>
   <string name="menu_locale">Språk</string>
   <string name="KEY_PREF_LANGUAGE_TITLE">Språk</string>
   <string name="use_system_default">Använd systemets standardinställning</string>
-  <string name="pref_theme_dark">Använd mörkt tema</string>
-  <string name="pref_theme_dark_summary">Byt till mörkt apptema</string>
+
+
   <string name="pref_in_memory_db_title">Endast lagring av meddelanden i minnet</string>
   <string name="pref_in_memory_db_summary">Lagra endast meddelanden i minnet, inte på flash lagringen, för att skydda mot att någon kommer åt meddelandena. (Kan orsaka förlorade meddelanden)</string>
-  <string name="pref_background_title">Bakgrundsbild</string>
-  <string name="pref_background_summary">Ställ in sökväg (\"/sdcard/foo.jpg\") till en bakgrundsbild för appen</string>
-  <string name="pref_show_grid">Visa kontakter i rutnät</string>
-  <string name="pref_show_grid_summary">Visa kontaktlista som avatar rutnät</string>
+
+
+
+
   <string name="button_yes_accept_all">Ja, acceptera alla</string>
   <string name="pref_delete_unsecured_media_title">Radera osäker media</string>
   <string name="pref_delete_unsecured_media_summary">När du delat en bild eller en fil - radera automatiskt originalfilen från den ursprungliga lagringsplatsen</string>
@@ -371,9 +371,9 @@ Nätverkstrafik (även i bakgrunden) krävs för att kunna logga in med appen.</
   <string name="dialog_cert_expires">Förfaller:</string>
   <string name="dialog_connect_chatroom_title">Anslut till chattrum?</string>
   <string name="dialog_connect_chatroom_message">En extern app försöker ansluta dig till ett chattrum. Tillåt?</string>
-  <string name="dialog_settings_choose_background_title">Välj bakgrund</string>
-  <string name="dialog_settings_choose_background_body">Vill du välja en bakgrundsbild från bildgalleriet?</string>
-  <string name="dialog_settings_choose_background_picker">Välj bild</string>
+
+
+
   <!--Alerts: Notifications-->
   <string name="newMessages_label">Nya meddelanden från <xliff:g id="PROVIDER">%1$s</xliff:g></string>
   <string name="num_unread_chats"><xliff:g id="number">%1$d</xliff:g> olästa chattmeddelanden</string>

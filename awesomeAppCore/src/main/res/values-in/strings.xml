@@ -298,14 +298,14 @@ Sentuh untuk mengundang.</string>
   <string name="pref_group_looknfeel_title">Antarmuka Pengguna</string>
   <string name="menu_locale">Bahasa</string>
   <string name="KEY_PREF_LANGUAGE_TITLE">Bahasa - bahasa</string>
-  <string name="pref_theme_dark">Gunakan Tema Gelap</string>
-  <string name="pref_theme_dark_summary">Ubah Tema Aplikasi ke Gelap</string>
+
+
   <string name="pref_in_memory_db_title">Hanya Gunakan Penyimpanan Pesan In-Memory</string>
   <string name="pref_in_memory_db_summary">Simpan pesan hanya di memory, bukan di penyimpanan flash, untuk mencegah pesan diekstrak. (Dapat menyebabkan hilangnya pesan)</string>
-  <string name="pref_background_title">Gambar Latar Belakang</string>
-  <string name="pref_background_summary">Atur path (\"/sdcard/foo.jpg\") ke wallpaper gambar latar belakang di aplikasi</string>
-  <string name="pref_show_grid">Tampilkan Grid Kontak</string>
-  <string name="pref_show_grid_summary">Tampilkan daftar kontak sebagai grid avatar</string>
+
+
+
+
   <string name="button_yes_accept_all">Ya, Setujui Semua</string>
   <!--Actions: Settings: General: Other Tuning-->
   <string name="pref_group_tuning_title">Penyesuaian Lain</string>

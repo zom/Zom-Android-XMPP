@@ -16,11 +16,6 @@
 
 package org.awesomeapp.messenger.provider;
 
-import org.awesomeapp.messenger.ImApp;
-
-import java.util.HashMap;
-import java.util.UUID;
-
 import android.content.ContentQueryMap;
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -32,6 +27,11 @@ import android.net.Uri.Builder;
 import android.os.Handler;
 import android.provider.BaseColumns;
 import android.util.Log;
+
+import org.awesomeapp.messenger.ImApp;
+
+import java.util.HashMap;
+import java.util.UUID;
 
 /**
  * The IM provider stores all information about roster contacts, chat messages,
@@ -1315,9 +1315,6 @@ public class Imps {
     }
 
     public static class ProviderSettings implements ProviderSettingsColumns {
-        // Global settings are saved with this provider ID, for backward compatibility
-
-        public static final long PROVIDER_ID_FOR_GLOBAL_SETTINGS = 1;
 
         private ProviderSettings() {
         }
@@ -1359,12 +1356,6 @@ public class Imps {
         /** boolean for whether the TLS certificate should be verified */
         public static final String TLS_CERT_VERIFY = "pref_security_tls_cert_verify";
 
-        /**
-         * Global setting controlling how OTR engine initiates: auto, force,
-         * requested, disabled
-         */
-        public static final String OTR_MODE = "pref_security_otr_mode";
-
         /** boolean to specify whether to use Tor proxying or not */
         public static final String USE_TOR = "pref_security_use_tor";
 
@@ -1388,35 +1379,11 @@ public class Imps {
          */
         public static final String AUTOMATICALLY_START_SERVICE = "auto_start_service";
 
-        public static final String LINKIFY_ON_TOR = "linkify_on_tor";
-        /**
-         * Global setting which controls whether the offline contacts will be
-         * hid.
-         */
-        public static final String HIDE_OFFLINE_CONTACTS = "hide_offline_contacts";
-
-        public static final String DELETE_UNSECURED_MEDIA = "delete_unsecured_media";
-
-        /** Global setting which controls whether enable the IM notification */
-        public static final String ENABLE_NOTIFICATION = "enable_notification";
-
-        /** Global setting which specifies whether to vibrate */
-        public static final String NOTIFICATION_VIBRATE = "vibrate";
-
-        /** Global setting which specifies the Uri string of the ringtone */
-        public static final String NOTIFICATION_RINGTONE = "ringtone";
-
-        /** Global setting which specifies the Uri of the default ringtone */
-        public static final String RINGTONE_DEFAULT = "content://settings/system/notification_sound";
-
         /** specifies whether to show mobile indicator to friends */
         public static final String SHOW_MOBILE_INDICATOR = "mobile_indicator";
 
         /** specifies whether to show as away when device is idle */
         public static final String SHOW_AWAY_ON_IDLE = "show_away_on_idle";
-
-        /** controls whether the service gets foreground priority */
-        public static final String USE_FOREGROUND_PRIORITY = "use_foreground_priority";
 
         /** specifies whether to upload heartbeat stat upon login */
         public static final String UPLOAD_HEARTBEAT_STAT = "upload_heartbeat_stat";
@@ -1722,18 +1689,6 @@ public class Imps {
         }
 
         /**
-         * A convenience method to set the mode of operation for the OTR Engine
-         *
-         * @param cr The ContentResolver to use to access the settings table
-         * @param providerId used to identify the set of settings for a given
-         *            provider
-         * @param otrMode OTR Engine mode (force, auto, requested, disabled)
-         */
-        public static void setOtrMode(ContentResolver cr, long providerId, String otrMode) {
-            putStringValue(cr, providerId, OTR_MODE, otrMode);
-        }
-
-        /**
          * A convenience method to set whether to use Tor
          *
          * @param cr The ContentResolver to use to access the settings table
@@ -1770,72 +1725,6 @@ public class Imps {
         public static void setAutomaticallyConnectGTalk(ContentResolver contentResolver,
                 long providerId, boolean autoConnect) {
             putBooleanValue(contentResolver, providerId, AUTOMATICALLY_CONNECT_GTALK, autoConnect);
-        }
-
-        public static void setLinkifyOnTor(ContentResolver contentResolver, long providerId,
-                boolean linkifyOnTor) {
-            putBooleanValue(contentResolver, providerId, LINKIFY_ON_TOR, linkifyOnTor);
-        }
-
-        /**
-         * A convenience method to set whether or not the offline contacts
-         * should be hided
-         *
-         * @param contentResolver The ContentResolver to use to access the
-         *            setting table
-         * @param hideOfflineContacts Whether the offline contacts should be
-         *            hided
-         */
-        public static void setHideOfflineContacts(ContentResolver contentResolver, long providerId,
-                boolean hideOfflineContacts) {
-            putBooleanValue(contentResolver, providerId, HIDE_OFFLINE_CONTACTS, hideOfflineContacts);
-        }
-
-        public static void setDeleteUnsecuredMedia(ContentResolver contentResolver, long providerId,
-                boolean deleteUnsecuredMedia) {
-            putBooleanValue(contentResolver, providerId, DELETE_UNSECURED_MEDIA, deleteUnsecuredMedia);
-        }
-
-        public static void setUseForegroundPriority(ContentResolver contentResolver,
-                long providerId, boolean flag) {
-            putBooleanValue(contentResolver, providerId, USE_FOREGROUND_PRIORITY, flag);
-        }
-
-        /**
-         * A convenience method to set whether or not enable the IM
-         * notification.
-         *
-         * @param contentResolver The ContentResolver to use to access the
-         *            setting table.
-         * @param enable Whether enable the IM notification
-         */
-        public static void setEnableNotification(ContentResolver contentResolver, long providerId,
-                boolean enable) {
-            putBooleanValue(contentResolver, providerId, ENABLE_NOTIFICATION, enable);
-        }
-
-        /**
-         * A convenience method to set whether or not to vibrate.
-         *
-         * @param contentResolver The ContentResolver to use to access the
-         *            setting table.
-         * @param vibrate Whether or not to vibrate
-         */
-        public static void setVibrate(ContentResolver contentResolver, long providerId,
-                boolean vibrate) {
-            putBooleanValue(contentResolver, providerId, NOTIFICATION_VIBRATE, vibrate);
-        }
-
-        /**
-         * A convenience method to set the Uri String of the ringtone.
-         *
-         * @param contentResolver The ContentResolver to use to access the
-         *            setting table.
-         * @param ringtoneUri The Uri String of the ringtone to be set.
-         */
-        public static void setRingtoneURI(ContentResolver contentResolver, long providerId,
-                String ringtoneUri) {
-            putStringValue(contentResolver, providerId, NOTIFICATION_RINGTONE, ringtoneUri);
         }
 
         /**
@@ -1917,15 +1806,6 @@ public class Imps {
             private ContentResolver mContentResolver;
             private long mProviderId;
             private Exception mStacktrace;
-
-            /*
-            public QueryMap(ContentResolver contentResolver, boolean keepUpdated,
-                    Handler handlerForUpdateNotifications) {
-                this(contentResolver, ProviderSettings.PROVIDER_ID_FOR_GLOBAL_SETTINGS,
-                        keepUpdated, handlerForUpdateNotifications);
-            }*/
-
-            //contentResolver.query(CONTENT_URI,new String[] {NAME, VALUE},PROVIDER + "=?",new String[] { Long.toString(providerId)},null)
 
             public QueryMap(Cursor cursor, ContentResolver contentResolver, long providerId, boolean keepUpdated,
                     Handler handlerForUpdateNotifications) {
@@ -2045,22 +1925,6 @@ public class Imps {
                 return getBoolean(TLS_CERT_VERIFY, true /* by default try to verify the TLS Cert */);
             }
 
-            public void setOtrMode(String otrMode) {
-                ProviderSettings.setOtrMode(mContentResolver, mProviderId, otrMode);
-            }
-
-            public String getOtrMode() {
-                return getString(OTR_MODE, ImApp.DEFAULT_XMPP_OTR_MODE /* by default, try to use OTR */);
-            }
-
-            public void setLinkifyOnTor(boolean value) {
-                ProviderSettings.setLinkifyOnTor(mContentResolver, mProviderId, value);
-            }
-
-            public boolean getLinkifyOnTor() {
-                return getBoolean(LINKIFY_ON_TOR, false /* default do not linkify */);
-            }
-
             public void setUseTor(boolean value) {
                 ProviderSettings.setUseTor(mContentResolver, mProviderId, value);
             }
@@ -2075,96 +1939,6 @@ public class Imps {
 
             public boolean getDoDnsSrv() {
                 return getBoolean(DO_DNS_SRV, true /* by default use DNS SRV to find the server */);
-            }
-
-            /**
-             * Set whether or not the offline contacts should be hided.
-             *
-             * @param hideOfflineContacts Whether or not the offline contacts
-             *            should be hided.
-             */
-            public void setHideOfflineContacts(boolean hideOfflineContacts) {
-                ProviderSettings.setHideOfflineContacts(mContentResolver, mProviderId,
-                        hideOfflineContacts);
-            }
-
-            /**
-             * Check if the offline contacts should be hided.
-             *
-             * @return Whether or not the offline contacts should be hided.
-             */
-            public boolean getHideOfflineContacts() {
-                return getBoolean(HIDE_OFFLINE_CONTACTS, false /* default*/);
-            }
-
-            public void setDeleteUnsecuredMedia(boolean deleteUnsecuredMedia) {
-                ProviderSettings.setDeleteUnsecuredMedia(mContentResolver, mProviderId, deleteUnsecuredMedia);
-            }
-
-            public boolean getDeleteUnsecuredMedia() {
-                return getBoolean(DELETE_UNSECURED_MEDIA, false /* default */);
-            }
-
-            public void setUseForegroundPriority(boolean flag) {
-                ProviderSettings.setUseForegroundPriority(mContentResolver, mProviderId, flag);
-            }
-
-            public boolean getUseForegroundPriority() {
-                return getBoolean(USE_FOREGROUND_PRIORITY, true /* default */);
-            }
-
-            /**
-             * Set whether or not enable the IM notification.
-             *
-             * @param enable Whether or not enable the IM notification.
-             */
-            public void setEnableNotification(boolean enable) {
-                ProviderSettings.setEnableNotification(mContentResolver, mProviderId, enable);
-            }
-
-            /**
-             * Check if the IM notification is enabled.
-             *
-             * @return Whether or not enable the IM notification.
-             */
-            public boolean getEnableNotification() {
-                return getBoolean(ENABLE_NOTIFICATION, true/* by default enable the notification */);
-            }
-
-            /**
-             * Set whether or not to vibrate on IM notification.
-             *
-             * @param vibrate Whether or not to vibrate.
-             */
-            public void setVibrate(boolean vibrate) {
-                ProviderSettings.setVibrate(mContentResolver, mProviderId, vibrate);
-            }
-
-            /**
-             * Gets whether or not to vibrate on IM notification.
-             *
-             * @return Whether or not to vibrate.
-             */
-            public boolean getVibrate() {
-                return getBoolean(NOTIFICATION_VIBRATE, true /* by default enable vibrate */);
-            }
-
-            /**
-             * Set the Uri for the ringtone.
-             *
-             * @param ringtoneUri The Uri of the ringtone to be set.
-             */
-            public void setRingtoneURI(String ringtoneUri) {
-                ProviderSettings.setRingtoneURI(mContentResolver, mProviderId, ringtoneUri);
-            }
-
-            /**
-             * Get the Uri String of the current ringtone.
-             *
-             * @return The Uri String of the current ringtone.
-             */
-            public String getRingtoneURI() {
-                return getString(NOTIFICATION_RINGTONE, RINGTONE_DEFAULT);
             }
 
             /**

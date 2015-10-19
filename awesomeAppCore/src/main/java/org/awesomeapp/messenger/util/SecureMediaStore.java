@@ -3,28 +3,25 @@
  */
 package org.awesomeapp.messenger.util;
 
-import info.guardianproject.iocipher.File;
-import info.guardianproject.iocipher.FileInputStream;
-import info.guardianproject.iocipher.FileOutputStream;
-import info.guardianproject.iocipher.VirtualFileSystem;
-import info.guardianproject.otr.app.im.R;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.Environment;
+import android.text.TextUtils;
+import android.util.Log;
+
+import org.apache.commons.io.IOUtils;
 import org.awesomeapp.messenger.ImApp;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.commons.io.IOUtils;
-
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.os.Environment;
-import android.preference.PreferenceManager;
-import android.text.TextUtils;
-import android.util.Log;
+import info.guardianproject.iocipher.File;
+import info.guardianproject.iocipher.FileInputStream;
+import info.guardianproject.iocipher.FileOutputStream;
+import info.guardianproject.iocipher.VirtualFileSystem;
 
 /**
  * Copyright (C) 2014 Guardian Project.  All rights reserved.
@@ -169,28 +166,12 @@ public class SecureMediaStore {
 
         Log.w(TAG,"Mounting VFS: " + vfs.getContainerPath());
 
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
-        if (settings.getBoolean(
-                context.getString(R.string.key_store_media_on_external_storage_pref), false))
-            dbFilePath = getExternalDbFilePath(context);
-        else
-            dbFilePath = getInternalDbFilePath(context);
+        dbFilePath = getInternalDbFilePath(context);
 
         if (!new java.io.File(dbFilePath).exists()) {
             vfs.createNewContainer(dbFilePath, key);
         }
         vfs.mount(dbFilePath, key);
-    }
-
-    /**
-     * get the external storage path for the chat media file storage file.
-     */
-    public static String getExternalDbFilePath(Context c) {
-        java.io.File externalFilesDir = c.getExternalFilesDir(null);
-        if (externalFilesDir == null)
-            return null;
-        else
-            return externalFilesDir.getAbsolutePath() + "/" + BLOB_NAME;
     }
 
     /**

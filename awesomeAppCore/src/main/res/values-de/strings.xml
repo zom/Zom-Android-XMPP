@@ -327,14 +327,14 @@ Zum Einladen antippen.</string>
   <string name="menu_locale">Sprache</string>
   <string name="KEY_PREF_LANGUAGE_TITLE">Sprachen</string>
   <string name="use_system_default">Systemvorgabe benutzen</string>
-  <string name="pref_theme_dark">Dunkles Design benutzen</string>
-  <string name="pref_theme_dark_summary">Zu dunklem Design wechseln</string>
+
+
   <string name="pref_in_memory_db_title">Nachrichtenspeicherung nur im Arbeitsspeicher</string>
   <string name="pref_in_memory_db_summary">Nachrichten nur im Arbeitsspeicher - nicht auf dem Flash-Speicher - speichern, um sich gegen eine Extrahierung von Nachrichten abzusichern. (Kann zum Verlust von Nachrichten führen).</string>
-  <string name="pref_background_title">Hintergrundbild</string>
-  <string name="pref_background_summary">Den Pfad (»/sdcard/beispiel.jpg«) für ein Hintergrundbild der App einstellen</string>
-  <string name="pref_show_grid">Kontaktraster anzeigen</string>
-  <string name="pref_show_grid_summary">Kontaktliste als Kontaktbildraster anzeigen</string>
+
+
+
+
   <string name="button_yes_accept_all">Ja, alle akzeptieren</string>
   <string name="pref_delete_unsecured_media_title">Unsichere Medien löschen</string>
   <string name="pref_delete_unsecured_media_summary">Nach dem Import eines geteilten Fotos oder einer Datei wird das unverschlüsselte Original gelöscht.</string>
@@ -377,9 +377,9 @@ Für die Anmeldung wird eine Datenverbindung (inklusive Hintergrunddaten) benöt
   <string name="dialog_cert_expires">Läuft ab:</string>
   <string name="dialog_connect_chatroom_title">Chatraum beitreten?</string>
   <string name="dialog_connect_chatroom_message">Eine externe Anwendung möchte dich zu einem Chatraum hinzufügen. Erlauben?</string>
-  <string name="dialog_settings_choose_background_title">Hintergrund auswählen</string>
-  <string name="dialog_settings_choose_background_body">Möchten Sie ein Hintergrundbild aus der Galerie auswählen?</string>
-  <string name="dialog_settings_choose_background_picker">Bild auswählen</string>
+
+
+
   <!--Alerts: Notifications-->
   <string name="newMessages_label">Neue <xliff:g id="provider">%1$s</xliff:g> Nachrichten</string>
   <string name="num_unread_chats"><xliff:g id="number">%1$d</xliff:g> ungelesene Unterhaltungen</string>

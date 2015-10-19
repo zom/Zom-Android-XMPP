@@ -335,7 +335,11 @@
 		<string name="otr_session_status_finished">Your contact has stopped the encrypted chat.</string>
 		<string name="otr_session_status_verified">Encrypted and verified!</string>
 		<string name="otr_gen_key">Generating new OTR keypair…</string>
-		
+		<string name="otr_mode_force">Force / Require</string>
+		<string name="otr_mode_auto">Automatically Attempt</string>
+		<string name="otr_mode_requested">As Requested</string>
+		<string name="otr_mode_disabled">Disabled / Never</string>
+
 		<!-- Security: OTR: Keyring -->
 		<string name="detected_Otr_keystore_import">We have detected an OTR keystore to import. Would you like to scan the QR password now?</string>
 		<string name="menu_import_keys">Activate KeySync</string>
@@ -389,26 +393,11 @@
 		<string name="KEY_PREF_LANGUAGE_TITLE">Languages</string>
 		<string name="use_system_default">Use system default</string>
 
-		<string name="pref_theme_dark">Use Dark Theme</string>
-		<string name="pref_theme_dark_summary">Change the app theme to dark</string>
 		<string name="pref_in_memory_db_title">In-Memory Message Storage Only</string>
 		<string name="pref_in_memory_db_summary">Only store messages in memory, not on flash storage, to defend against messages being extracted. (May cause lost messages)</string>
-		<string name="pref_background_title">Background Image</string>
-		<string name="pref_background_summary">Set path ("/sdcard/foo.jpg") to a background image wallpaper for the app</string>
-		<string name="pref_show_grid">Show Contact Grid</string>
-		<string name="pref_show_grid_summary">Display contact list as avatar grid</string>
 		<string name="button_yes_accept_all">Yes, Accept All</string>
         <string name="pref_delete_unsecured_media_title">Delete Insecure Media</string>
         <string name="pref_delete_unsecured_media_summary">After sharing a photo or file, automatically delete it from the original, insecure storage after import</string>
-        <string name="pref_store_media_on_external_storage_title">Store Media On External Storage</string>
-        <string name="pref_store_media_on_external_storage_summary">Media files from chat sessions are stored in an encrypted container that can be stored on internal or external storage.</string>
-
-        <!-- Prompt user to resolve missing External Storage media store -->
-        <string name="external_storage_missing_title">External Storage Missing</string>
-        <string name="external_storage_missing_message">Your chat logs are stored on an SD Card, but no SD Card is present.  Please insert the correct SD Card, or delete the existing chat log and launch ChatSecure again.</string>
-        <string name="media_store_file_missing_title">Chat Media Store Missing</string>
-        <string name="media_store_file_missing_message">Your chat logs are stored on the SD Card, but the file is missing from the current SD Card.  Please insert the correct SD Card, or delete the existing chat log and launch ChatSecure again.</string>
-        <string name="delete_chat_log">Delete Chat Log</string>
 
 		<!-- Actions: Settings: General: Other Tuning -->
 		<string name="pref_group_tuning_title">Other Tuning</string>
@@ -450,9 +439,6 @@
 		<string name="dialog_cert_expires">Expires: </string>
 		<string name="dialog_connect_chatroom_title">Join Chat Room?</string>
 		<string name="dialog_connect_chatroom_message">An external app is attempting to connect you to a chatroom. Allow?</string>
-		<string name="dialog_settings_choose_background_title">Choose Background</string>
-		<string name="dialog_settings_choose_background_body">Do you want to select a background image from the Gallery?</string>
-		<string name="dialog_settings_choose_background_picker">Select Picture</string>
 
 		<!-- Alerts: Notifications -->
 		<string name="newMessages_label">New <xliff:g id="provider">%1$s</xliff:g> messages</string>
@@ -536,6 +522,11 @@
 
 	<string name="account_settings_title">Account Settings</string>
 
+	<string name="panic_trigger_app">Panic Trigger App</string>
+	<string name="panic_trigger_app_summary">A panic app can trigger Zom to lock, send a message, delete data, etc.</string>
+	<string name="panic_app_none">None</string>
+	<string name="panic_app_none_summary">No Panic Trigger App, ignore all incoming panic triggers.</string>
+	<string name="panic_app_default">Default</string>
 	<!--  added 2011/09/01 -->
 	<string name="menu_view_groups">Groups</string>
 	 
