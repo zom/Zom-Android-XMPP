@@ -384,7 +384,13 @@ public class ImUrlActivity extends Activity {
                 String[] parts = OnboardingManager.decodeInviteLink(data.toString());
                 ImApp app = (ImApp)getApplication();
                 app.initAccountInfo();
-                new AddContactAsyncTask(app.getDefaultProviderId(), app.getDefaultAccountId(), (ImApp)getApplication()).execute(parts[0],parts[1]);
+
+                String username = parts[0];
+                String fingerprint = null;
+                if (parts.length > 1)
+                    fingerprint = parts[1];
+
+                new AddContactAsyncTask(app.getDefaultProviderId(), app.getDefaultAccountId(), (ImApp)getApplication()).execute(username, fingerprint);
 
                 //if they are for a group chat, then add the group
                 return false; //the work is done so we will finish!
