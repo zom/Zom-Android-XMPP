@@ -341,22 +341,6 @@ public class ImApp extends Application {
         prefEdit.apply();
     }
 
-    /**
-    @Override
-    public void onTerminate() {
-        stopImServiceIfInactive();
-        if (mImService != null) {
-            try {
-                mImService.removeConnectionCreatedListener(mConnCreationListener);
-            } catch (RemoteException e) {
-                Log.w(LOG_TAG, "failed to remove ConnectionCreatedListener");
-            }
-        }
-
-        Imps.clearPassphrase(this);
-        super.onTerminate();
-    }*/
-
     public synchronized void startImServiceIfNeed() {
         startImServiceIfNeed(false);
     }
@@ -458,22 +442,6 @@ public class ImApp extends Application {
         return mImService != null;
     }
 
- //   public boolean isBackgroundDataEnabled() { //"background data" is a deprectaed concept
-    public static boolean isNetworkAvailableAndConnected (Context context) {
-        ConnectivityManager manager = (ConnectivityManager) context
-                .getSystemService(CONNECTIVITY_SERVICE);
-
-        NetworkInfo nInfo = manager.getActiveNetworkInfo();
-
-        if (nInfo != null)
-        {
-            Log.d(LOG_TAG, "isNetworkAvailableAndConnected? available=" + nInfo.isAvailable() + " connected=" + nInfo.isConnected());
-            return nInfo.isAvailable() && nInfo.isConnected();
-        }
-        else
-            return false; //no network info is a bad idea
-    }
-
     public static long insertOrUpdateAccount(ContentResolver cr, long providerId, long accountId, String nickname, String username,
             String pw) {
         String selection = Imps.Account.PROVIDER + "=? AND (" + Imps.Account._ID + "=?" + " OR " + Imps.Account.USERNAME + "=?)";
@@ -510,16 +478,6 @@ public class ImApp extends Application {
                 c.close();
             return ContentUris.parseId(result);
         }
-    }
-
-    /** Used to reset the provider settings if a reload is required. */
-    public void resetProviderSettings() {
-        mProviders = null;
-    }
-
-    // For testing
-    public void setImProviderSettings(HashMap<Long, ProviderDef> providers) {
-        mProviders = providers;
     }
 
     private void loadImProviderSettings() {
@@ -566,13 +524,6 @@ public class ImApp extends Application {
     public ProviderDef getProvider(long id) {
         loadImProviderSettings();
         return mProviders.get(id);
-    }
-
-    public List<ProviderDef> getProviders() {
-        loadImProviderSettings();
-        ArrayList<ProviderDef> result = new ArrayList<ProviderDef>();
-        result.addAll(mProviders.values());
-        return result;
     }
 
     public IImConnection createConnection(long providerId, long accountId) throws RemoteException {
@@ -626,21 +577,6 @@ public class ImApp extends Application {
         }
     }
 
-    public IImConnection getConnectionByAccount(long accountId) {
-        synchronized (mConnections) {
-            for (IImConnection conn : mConnections.values()) {
-                try {
-                    if (conn.getAccountId() == accountId) {
-                        return conn;
-                    }
-                } catch (RemoteException e) {
-                    // No server!
-                }
-            }
-            return null;
-        }
-    }
-
     public Collection<IImConnection> getActiveConnections() {
 
         return mConnections.values();
@@ -673,18 +609,6 @@ public class ImApp extends Application {
 
 
 
-    }
-
-    public void removePendingCall(Handler target) {
-        synchronized (mQueue) {
-            Iterator<Message> iter = mQueue.iterator();
-            while (iter.hasNext()) {
-                Message msg = iter.next();
-                if (msg.getTarget() == target) {
-                    iter.remove();
-                }
-            }
-        }
     }
 
     public void registerForBroadcastEvent(int what, Handler target) {
@@ -730,15 +654,6 @@ public class ImApp extends Application {
         android.os.Message msg = android.os.Message.obtain(null, what, (int) (providerId >> 32),
                 (int) providerId, error);
         mBroadcaster.broadcast(msg);
-    }
-
-    public void dismissNotifications(long providerId) {
-        if (mImService != null) {
-            try {
-                mImService.dismissNotifications(providerId);
-            } catch (RemoteException e) {
-            }
-        }
     }
 
     public void dismissChatNotification(long providerId, String username) {
@@ -865,11 +780,6 @@ public class ImApp extends Application {
             }
         }
     }
-
-    public IRemoteImService getRemoteImService() {
-        return mImService;
-    }
-
 
     public IChatSession getChatSession(long providerId, long accountId, String remoteAddress) {
 
