@@ -440,8 +440,13 @@ public class AddContactActivity extends ActionBarActivity {
                         else {
                             //parse each string and if they are for a new user then add the user
                             String[] parts = OnboardingManager.decodeInviteLink(resultScan);
+                            String address = parts[0];
+                            String fingerprint = null;
+                            if (parts.length > 1)
+                                fingerprint = parts[1];
 
-                            new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).execute(parts[0], parts[1]);
+                            new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).execute(address, fingerprint);
+
                         }
 
                         //if they are for a group chat, then add the group
@@ -453,6 +458,8 @@ public class AddContactActivity extends ActionBarActivity {
                 }
             }
         }
+
+        finish();
 
     }
 

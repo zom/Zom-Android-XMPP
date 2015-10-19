@@ -20,6 +20,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Display;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
@@ -33,7 +34,7 @@ import org.awesomeapp.messenger.ui.onboarding.OnboardingManager;
 import java.util.ArrayList;
 
 @SuppressWarnings("deprecation")
-public class QrScanActivity extends Activity
+public class QrScanActivity extends AppCompatActivity
 implements QrCodeDecoder.ResultCallback {
 
 	private static String TAG = QrScanActivity.class.getPackage().getName();
@@ -53,6 +54,8 @@ implements QrCodeDecoder.ResultCallback {
 		super.onCreate(state);
 
 		setRequestedOrientation(SCREEN_ORIENTATION_NOSENSOR);
+
+		getSupportActionBar().hide();
 
 		String qrData = getIntent().getStringExtra(Intent.EXTRA_TEXT);
 
@@ -136,11 +139,22 @@ implements QrCodeDecoder.ResultCallback {
 
                     String[] parts = OnboardingManager.decodeInviteLink(resultString);
 
+					String message = null;
+
                     if (parts != null) {
-                        Toast.makeText(QrScanActivity.this, "Added " + parts[0] + "! Scan another!", Toast.LENGTH_SHORT).show();
+
+						message = getString(R.string.add_contact_success,parts[0]);
+
+
                     } else {
-                        Toast.makeText(QrScanActivity.this, "Added " + resultString + "! Scan another!", Toast.LENGTH_SHORT).show();
-                    }
+						message = getString(R.string.add_contact_success,resultString);
+
+					}
+
+					if (message != null)
+					{
+						Snackbar.make(layoutMain, message, Snackbar.LENGTH_LONG).show();
+					}
 
                     setResult(RESULT_OK, dataResult);
                 }
