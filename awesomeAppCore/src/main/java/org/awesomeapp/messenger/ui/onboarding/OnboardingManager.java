@@ -201,8 +201,6 @@ public class OnboardingManager {
 
         settings.setDoDnsSrv(doDnsSrvLookup);
 
-        int maxAttempts = 2; //two tries per server
-
         if (domain == null) {
             int nameIdx = 0;
 
@@ -210,69 +208,61 @@ public class OnboardingManager {
 
                 JSONObject server = servers.getJSONObject(i);
 
-                for (int n = 0; n < maxAttempts; n++) {
+                try {
 
-                    try {
+                    domain = server.getString("domain");
+                    String host = server.getString("server");
 
-                        domain = server.getString("domain");
-                        String host = server.getString("server");
-
-                        if (host != null) {
-                            settings.setServer(host); //set the google connect server
-                            settings.setDoDnsSrv(false);
-                        }
-                        else
-                        {
-                            settings.setServer(null);
-                            settings.setDoDnsSrv(true);
-                        }
-
-                        settings.setDomain(domain);
-                        settings.setPort(server.getInt("port"));
-                        settings.requery();
-
-                        HashMap<String, String> aParams = new HashMap<String, String>();
-
-                        XmppConnection xmppConn = new XmppConnection(context);
-                        xmppConn.initUser(providerId, accountId);
-
-                        boolean success = xmppConn.registerAccount(settings, username, password, aParams);
-
-                        if (success) {
-                            OnboardingAccount result = null;
-
-                            result = new OnboardingAccount();
-                            result.username = username;
-                            result.domain = domain;
-                            result.password = password;
-                            result.providerId = providerId;
-                            result.accountId = accountId;
-
-                            //now keep this account signed-in
-                            ContentValues values = new ContentValues();
-                            values.put(Imps.AccountColumns.KEEP_SIGNED_IN, 1);
-                            cr.update(accountUri, values, null, null);
-                            settings.close();
-                            return result;
-                        }
-
-
-                    } catch (Exception e) {
-                        LogCleaner.error(ImApp.LOG_TAG, "error registering new account", e);
-
-
+                    if (host != null) {
+                        settings.setServer(host); //set the google connect server
+                        settings.setDoDnsSrv(false);
+                    }
+                    else
+                    {
+                        settings.setServer(null);
+                        settings.setDoDnsSrv(true);
                     }
 
-                    username = username + (i+1); //add a number to the end of the username
-                    ImApp.insertOrUpdateAccount(cr, providerId, accountId, nickname, username, password);
+                    settings.setDomain(domain);
+                    settings.setPort(server.getInt("port"));
                     settings.requery();
 
-                    Toast.makeText(context,"Attempting account setup again...",Toast.LENGTH_SHORT).show();
+                    HashMap<String, String> aParams = new HashMap<String, String>();
 
-                    try { Thread.sleep(1000); }
-                    catch (Exception e){}
+                    XmppConnection xmppConn = new XmppConnection(context);
+                    xmppConn.initUser(providerId, accountId);
+
+                    boolean success = xmppConn.registerAccount(settings, username, password, aParams);
+
+                    if (success) {
+                        OnboardingAccount result = null;
+
+                        result = new OnboardingAccount();
+                        result.username = username;
+                        result.domain = domain;
+                        result.password = password;
+                        result.providerId = providerId;
+                        result.accountId = accountId;
+
+                        //now keep this account signed-in
+                        ContentValues values = new ContentValues();
+                        values.put(Imps.AccountColumns.KEEP_SIGNED_IN, 1);
+                        cr.update(accountUri, values, null, null);
+                        settings.close();
+                        return result;
+                    }
+
+
+                } catch (Exception e) {
+                    LogCleaner.error(ImApp.LOG_TAG, "error registering new account", e);
 
                 }
+
+                Toast.makeText(context,"Trying again...",Toast.LENGTH_SHORT).show();
+
+                try { Thread.sleep(1000); }
+                catch (Exception e){}
+
 
 
             }

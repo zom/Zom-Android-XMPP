@@ -384,7 +384,7 @@ public class OnboardingActivity extends ThemeableActivity {
 
         findViewById(R.id.progressImage).setVisibility(View.VISIBLE);
 
-        String jabberUserId = mRequestedUserName.replaceAll(USERNAME_ONLY_ALPHANUM, "").toLowerCase(Locale.ENGLISH);
+        String jabberUserId = mRequestedUserName.replaceAll(USERNAME_ONLY_ALPHANUM, "").toLowerCase();
 
         new FindServerTask ().execute(mRequestedUserName,jabberUserId);
     }
@@ -415,7 +415,7 @@ public class OnboardingActivity extends ThemeableActivity {
                 mFingerprint = keyMan.getFingerprint(keyPair.getPublic());
 
                 String nickname = accountNames[0];
-                String username = accountNames[1] + mFingerprint.substring(mFingerprint.length()-8,mFingerprint.length());
+                String username = accountNames[1] + '.' + mFingerprint.substring(mFingerprint.length()-8,mFingerprint.length()).toLowerCase();
 
                 OnboardingAccount result = OnboardingManager.registerAccount(OnboardingActivity.this, mHandler, nickname, username, domain, 5222);
 
