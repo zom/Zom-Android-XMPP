@@ -49,6 +49,7 @@ import android.widget.TextView;
 import net.hockeyapp.android.UpdateManager;
 
 import org.awesomeapp.messenger.model.ImConnection;
+import org.awesomeapp.messenger.plugin.xmpp.XmppConnection;
 import org.awesomeapp.messenger.tasks.AddContactAsyncTask;
 import org.awesomeapp.messenger.ui.AccountFragment;
 import org.awesomeapp.messenger.ui.ContactsListFragment;
@@ -377,6 +378,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void startGroupChat (ArrayList<String> invitees)
     {
+
+
         String chatRoom = "groupchat" + UUID.randomUUID().toString().substring(0,8);
         String chatServer = "conference.rows.io";
         String nickname = mApp.getDefaultUsername().split("@")[0];
@@ -687,8 +690,8 @@ public class MainActivity extends AppCompatActivity {
                 String chatRoom = "group" + UUID.randomUUID().toString().substring(0,8);
                 String server = params[1];
 
-                if (TextUtils.isEmpty(server))
-                    server = "conference.rows.io";
+               // if (TextUtils.isEmpty(server))
+                //    server = "conference.rows.io";
 
                 String roomAddress = (chatRoom + '@' + server).toLowerCase(Locale.US);
                 String nickname = params[2];
