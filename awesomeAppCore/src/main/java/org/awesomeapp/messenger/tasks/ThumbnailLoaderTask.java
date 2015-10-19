@@ -80,7 +80,7 @@ public static Bitmap getThumbnail(Context context, ContentResolver cr,Uri uri, i
             AssetManager assetManager = context.getAssets();
 
             try {
-                InputStream is = assetManager.open("stickers" + uri.getPath());
+                InputStream is = assetManager.open(uri.getPath());
                 Bitmap bitmap = BitmapFactory.decodeStream(is);
                 is.close();
                 return bitmap;

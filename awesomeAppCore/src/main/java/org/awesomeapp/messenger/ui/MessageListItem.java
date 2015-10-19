@@ -37,6 +37,7 @@ import org.awesomeapp.messenger.util.LinkifyHelper;
 import org.ocpsoft.prettytime.PrettyTime;
 
 import java.io.File;
+import java.io.FileDescriptor;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLConnection;
@@ -53,6 +54,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.content.res.AssetFileDescriptor;
+import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -370,7 +373,7 @@ public class MessageListItem extends FrameLayout {
         LinkifyHelper.addTorSafeLinks(mHolder.mTextViewForMessages);
     }
 
-    private void showMediaThumbnail (String mimeType, Uri mediaUri, int id, MessageViewHolder holder)
+    private boolean showMediaThumbnail (String mimeType, Uri mediaUri, int id, MessageViewHolder holder)
     {
         /* Guess the MIME type in case we received a file that we can display or play*/
         if (TextUtils.isEmpty(mimeType) || mimeType.startsWith("application")) {
@@ -419,7 +422,7 @@ public class MessageListItem extends FrameLayout {
 
         holder.mContainer.setBackgroundColor(getResources().getColor(android.R.color.transparent));
 
-
+        return true;
 
     }
 
@@ -610,7 +613,6 @@ public class MessageListItem extends FrameLayout {
         aHolder.mMediaUri = mediaUri;
         // if a content uri - already scanned
 
-
         ThumbnailLoaderRequest request = new ThumbnailLoaderRequest();
         request.mHolder = aHolder;
         request.mUri = mediaUri;
@@ -641,7 +643,6 @@ public class MessageListItem extends FrameLayout {
     }
 
     public static Bitmap getThumbnailFile(Context context, ContentResolver cr, Uri uri, int thumbnailSize) {
-
 
         try
         {
@@ -727,23 +728,44 @@ public class MessageListItem extends FrameLayout {
         else if (lastMessage.charAt(0) == '/' && lastMessage.length()>1)
         {
             String cmd = lastMessage.toString().substring(1);
+            boolean cmdSuccess = false;
 
             if (cmd.startsWith("sticker"))
             {
                 String[] cmds = cmd.split(":");
 
                 String mimeTypeSticker = "image/png";
-                Uri mediaUri = Uri.parse("asset://"+cmds[1]);
+                try {
+                    //make sure sticker exists
+                    AssetFileDescriptor afd = getContext().getAssets().openFd(cmds[1]);
+                    afd.getLength();
+                    afd.close();
 
-                mHolder.mTextViewForMessages.setVisibility(View.GONE);
-                mHolder.mMediaContainer.setVisibility(View.VISIBLE);
+                    //now setup the new URI for loading local sticker asset
+                    Uri mediaUri = Uri.parse("asset://localhost/" + cmds[1]);
 
-                showMediaThumbnail(mimeTypeSticker, mediaUri, id, mHolder);
-
+                     //now load the thumbnail
+                    cmdSuccess = showMediaThumbnail(mimeTypeSticker, mediaUri, id, mHolder);
+                }
+                catch (Exception e)
+                {
+                    cmdSuccess = false;
+                }
 
             }
 
-            lastMessage = "";
+            if (!cmdSuccess)
+            {
+                SpannableString spannablecontent=new SpannableString(lastMessage);
+                mHolder.mTextViewForMessages.setText(spannablecontent);
+                mHolder.mContainer.setBackgroundResource(R.drawable.message_view_rounded_light);
+            }
+            else
+            {
+
+                lastMessage = "";
+            }
+
         }
         else {
 
