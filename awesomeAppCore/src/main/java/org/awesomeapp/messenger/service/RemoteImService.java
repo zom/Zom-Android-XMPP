@@ -380,13 +380,13 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
         // Check and login accounts if network is ready, otherwise it's checked
         // when the network becomes available.
-
+        /**
         if (!mCacheWord.isLocked()) {
             if (mNeedCheckAutoLogin) {
                 mNeedCheckAutoLogin = false;
                 autoLogin();
             }
-        }
+        }*/
 
         return START_STICKY;
     }
