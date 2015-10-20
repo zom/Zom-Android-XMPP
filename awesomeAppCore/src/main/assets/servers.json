@@ -4,6 +4,7 @@
     {
       "domain": "dukgo.com",
       "server": "xmpp.dukgo.com",
+      "address": "23.21.227.59",
       "port": 5222,
       "certificate": "",
       "logoUrl": "https://s3....",
@@ -13,6 +14,7 @@
     {
       "domain": "blah.im",
       "server": "jabber.blah.im",
+      "address": "5.9.141.48",
       "port": 5222,
       "certificate": "B1:C5:77:70:29:4D:74:1A:22:8A:C6:5B:1A:8D:D8:57:51:7D:4D:E9",
       "logoUrl": "",
@@ -23,6 +25,7 @@
     {
       "domain": "im.koderoot.net",
       "server": "im.koderoot.net",
+      "address": "66.175.221.41",
       "port": 5222,
       "certificate": "",
       "logoUrl": "",
