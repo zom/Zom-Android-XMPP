@@ -2264,8 +2264,13 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
     }
 
     private int updateBulkPresence(ContentValues values, SQLiteDatabase db, String userWhere, String[] whereArgs) {
+
         ArrayList<String> usernames = getStringArrayList(values, Imps.Contacts.USERNAME);
+
         int count = usernames.size();
+        if (count == 0)
+            return 0;
+
         Long account = values.getAsLong(Imps.Contacts.ACCOUNT);
 
         ArrayList<String> priorityArray = getStringArrayList(values, Imps.Presence.PRIORITY);
@@ -2290,8 +2295,8 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
         buf.append(" from ");
         buf.append(TABLE_CONTACTS);
         buf.append(" where ");
-        buf.append(Imps.Contacts.ACCOUNT);
-        buf.append("=? AND ");
+      //  buf.append(Imps.Contacts.ACCOUNT);
+      //  buf.append("=? AND ");
 
         // use username LIKE ? for case insensitive comparison
         buf.append(Imps.Contacts.USERNAME);
@@ -2313,7 +2318,7 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
         
             log("updateBulkPresence: selection => " + selection);
 
-        int numArgs = (whereArgs != null ? whereArgs.length + 2 : 2);
+        int numArgs = (whereArgs != null ? whereArgs.length + 1 : 1);
         String[] selectionArgs = new String[numArgs];
         int selArgsIndex = 0;
 
@@ -2352,18 +2357,23 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
                 }
  
                 log("updateBulkPresence[" + i + "] account=" + account + " username=" + username + ", priority="
-                    + priority + ", mode=" + mode + ", status=" + status + ", resource="
-                    + jidResource + ", clientType=" + clientType);
+                        + priority + ", mode=" + mode + ", status=" + status + ", resource="
+                        + jidResource + ", clientType=" + clientType);
 
                 presenceValues.put(Imps.Presence.PRESENCE_STATUS, mode);
-                presenceValues.put(Imps.Presence.PRIORITY, priority);                                
-                presenceValues.put(Imps.Presence.PRESENCE_CUSTOM_STATUS, status);
+                presenceValues.put(Imps.Presence.PRIORITY, priority);
+
+                if (!TextUtils.isEmpty(status))
+                    presenceValues.put(Imps.Presence.PRESENCE_CUSTOM_STATUS, status);
+
                 presenceValues.put(Imps.Presence.CLIENT_TYPE, clientType);
-                presenceValues.put(Imps.Presence.JID_RESOURCE, jidResource);
+
+                if (!TextUtils.isEmpty(jidResource))
+                    presenceValues.put(Imps.Presence.JID_RESOURCE, jidResource);
 
                 // fill in the selection args
                 int idx = selArgsIndex;
-                selectionArgs[idx++] = String.valueOf(account);
+               // selectionArgs[idx++] = String.valueOf(account);
                 selectionArgs[idx++] = username;
                 
                 //selectionArgs[idx++] = String.valueOf(priority);
@@ -3623,18 +3633,18 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
         case MATCH_PRESENCE_BULK:
             
             tableToChange = null;
-            
+
             count = updateBulkPresence(values, db, userWhere, whereArgs);
             // notify change using the "content://im/contacts" url,
             // so the change will be observed by listeners interested
             // in contacts changes.
-            
+
             if (count > 0)
             {
                 getContext().getContentResolver().notifyChange(Imps.Contacts.CONTENT_URI_CHAT_CONTACTS_BY, null);
-                getContext().getContentResolver().notifyChange(Imps.Contacts.CONTENT_URI, null);
                 notifyContactListContentUri = true;
             }
+
             break;
 
         case MATCH_INVITATION:
