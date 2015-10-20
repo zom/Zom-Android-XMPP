@@ -118,6 +118,13 @@ public class ChatSessionManagerAdapter extends
 
         try
         {
+            if (roomAddress.endsWith("@"))
+            {
+                String confServer = groupMan.getDefaultGroupChatService();
+                if (confServer != null)
+                    roomAddress += confServer;
+            }
+
             groupMan.createChatGroupAsync(roomAddress, subject, nickname);
 
             Address address = new XmppAddress(roomAddress); //TODO hard coding XMPP for now

@@ -517,6 +517,27 @@ public class XmppConnection extends ImConnection {
         }
 
         @Override
+        public String getDefaultGroupChatService ()
+        {
+            try {
+                // Create a MultiUserChat using a Connection for a room
+                MultiUserChatManager mucMgr = MultiUserChatManager.getInstanceFor(mConnection);
+                Collection<String> servers = mucMgr.getServiceNames();
+
+                //just grab the first one
+                for (String server : servers)
+                    return server;
+            }
+            catch (Exception xe)
+            {
+                //unable to find conference server
+                return null;
+            }
+
+            return null;
+        }
+
+        @Override
         public boolean createChatGroupAsync(String chatRoomJid, String subject, String nickname) throws Exception {
 
             if (mConnection == null || getState() != ImConnection.LOGGED_IN)
