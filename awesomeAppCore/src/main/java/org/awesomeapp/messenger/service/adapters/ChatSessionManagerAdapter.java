@@ -122,10 +122,10 @@ public class ChatSessionManagerAdapter extends
 
             Address address = new XmppAddress(roomAddress); //TODO hard coding XMPP for now
 
-           // ContactListManagerAdapter listManager = (ContactListManagerAdapter) mConnection
-             //       .getContactListManager();
+        //    ContactListManagerAdapter listManager = (ContactListManagerAdapter) mConnection
+          //          .getContactListManager();
 
-          //  long contactId = listManager.queryOrInsertContact(new Contact (new XmppAddress(roomAddress),roomAddress));
+           //  long contactId = listManager.queryOrInsertContact(new Contact (new XmppAddress(roomAddress),roomAddress));
             
             ChatGroup chatGroup = groupMan.getChatGroup(address);
 
