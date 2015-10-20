@@ -583,37 +583,38 @@ public class XmppConnection extends ImConnection {
                         }
                     }
 
-               //     submitForm.setAnswer("muc#roomconfig_roomname", subject);
-               //     submitForm.setAnswer("muc#roomconfig_roomdesc", subject);
-               //     submitForm.setAnswer("muc#roomconfig_roomdesc", subject);
-                //    submitForm.setAnswer("muc#roomconfig_changesubject", false);
-                    //submitForm.setAnswer("muc#roomconfig_anonymity","anonymous");
+                    if (submitForm.getField("muc#roomconfig_roomname")!=null)
+                        submitForm.setAnswer("muc#roomconfig_roomname", subject);
 
-                    submitForm.setAnswer("muc#roomconfig_publicroom", false);
-                    submitForm.setAnswer("muc#roomconfig_persistentroom", true);
-                    submitForm.setAnswer("muc#roomconfig_whois", Arrays.asList("anyone"));
+                    if (submitForm.getField("muc#roomconfig_roomdesc")!=null)
+                        submitForm.setAnswer("muc#roomconfig_roomdesc", subject);
 
+                    if (submitForm.getField("muc#roomconfig_changesubject")!=null)
+                        submitForm.setAnswer("muc#roomconfig_changesubject", true);
 
-                    /*
+                    if (submitForm.getField("muc#roomconfig_anonymity")!=null)
+                        submitForm.setAnswer("muc#roomconfig_anonymity","anonymous");
+
+                    if (submitForm.getField("muc#roomconfig_publicroom")!=null)
+                        submitForm.setAnswer("muc#roomconfig_publicroom", false);
+
+                    if (submitForm.getField("muc#roomconfig_persistentroom")!=null)
+                        submitForm.setAnswer("muc#roomconfig_persistentroom", true);
+
+                    if (submitForm.getField("muc#roomconfig_whois")!=null)
+                        submitForm.setAnswer("muc#roomconfig_whois", Arrays.asList("anyone"));
+
                     if (submitForm.getField("muc#roomconfig_historylength")!=null)
                         submitForm.setAnswer("muc#roomconfig_historylength", 0);
 
                     if (submitForm.getField("muc#maxhistoryfetch")!=null)
                         submitForm.setAnswer("muc#maxhistoryfetch", 0);
-                       */
-                    /**
-                    if (submitForm.getField("muc#roomconfig_whois")!=null)
-                    {
-                        // what to do??
-                    }*/
 
-                    /**
                     if (submitForm.getField("muc#roomconfig_enablelogging")!=null)
                         submitForm.setAnswer("muc#roomconfig_enablelogging", false);
 
                     if (submitForm.getField("muc#maxhistoryfetch")!=null)
                        submitForm.setAnswer("muc#maxhistoryfetch", 0);
-                    */
 
                     muc.sendConfigurationForm(submitForm);
 
@@ -1109,28 +1110,6 @@ public class XmppConnection extends ImConnection {
             mStreamHandler.notifyInitialLogin();
             initServiceDiscovery();
 
-            try {
-
-                VCard vCard = new VCard();
-                vCard.setJabberId(mUser.getAddress().getBareAddress());
-                vCard.setNickName(mUser.getName());
-
-                byte[] avatar = DatabaseUtils.getAvatarBytesFromAddress(mContext.getContentResolver(), mUser.getAddress().getBareAddress(), 256, 256);
-                if (avatar != null) {
-                    vCard.setAvatar(avatar, "image/jpeg");
-
-                    debug(TAG, "Saving VCard for: " + mUser.getAddress().getAddress() + "; avatar length=" + avatar.length);
-
-                    VCardManager vCardManager = VCardManager.getInstanceFor(mConnection);
-                    vCardManager.saveVCard(vCard);
-                }
-
-            }
-            catch (Exception e)
-            {
-                debug(TAG,"error saving vcard",e);
-            }
-
             sendPresencePacket();
 
             mRoster = Roster.getInstanceFor(mConnection);
@@ -1155,12 +1134,58 @@ public class XmppConnection extends ImConnection {
 
             });
 
+            executeIfIdle(new Runnable ()
+            {
+                public void run ()
+                {
+                    sendVCard();
+                }
+            });
 
         }
         
 
     }
 
+    private void sendVCard ()
+    {
+
+        try {
+            String jid = mUser.getAddress().getBareAddress();
+
+            VCardManager vCardManager = VCardManager.getInstanceFor(mConnection);
+            VCard vCard = vCardManager.loadVCard(jid);
+
+            boolean setAvatar = false;
+
+            if (vCard == null) {
+                vCard = new VCard();
+                vCard.setJabberId(jid);
+                vCard.setNickName(mUser.getName());
+                setAvatar = true;
+            }
+            else if (vCard.getAvatarHash() != null)
+            {
+                setAvatar = !DatabaseUtils.doesAvatarHashExist(mContext.getContentResolver(),  Imps.Avatars.CONTENT_URI, mUser.getAddress().getBareAddress(), vCard.getAvatarHash());
+
+            }
+
+            if (setAvatar) {
+                byte[] avatar = DatabaseUtils.getAvatarBytesFromAddress(mContext.getContentResolver(), mUser.getAddress().getBareAddress(), 256, 256);
+                if (avatar != null) {
+                    vCard.setAvatar(avatar, "image/jpeg");
+                }
+            }
+
+            debug(TAG, "Saving VCard for: " + mUser.getAddress().getAddress());
+            vCardManager.saveVCard(vCard);
+
+        }
+        catch (Exception e)
+        {
+            debug(TAG,"error saving vcard",e);
+        }
+    }
 
     // Runs in executor thread
     private boolean initConnection(Imps.ProviderSettings.QueryMap providerSettings, String userName) throws NoSuchAlgorithmException, KeyManagementException, XMPPException  {
