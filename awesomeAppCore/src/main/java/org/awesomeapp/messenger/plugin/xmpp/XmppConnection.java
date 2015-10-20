@@ -1272,8 +1272,6 @@ public class XmppConnection extends ImConnection {
         else
             mConfig.setHost(server);
 
-
-
         mConfig.setDebuggerEnabled(Debug.DEBUG_ENABLED);
 
         //mConfig.setSASLAuthenticationEnabled(useSASL);
@@ -1695,7 +1693,7 @@ public class XmppConnection extends ImConnection {
             }
         }*/
                 
-        if (rmode == org.jivesoftware.smack.packet.Presence.Mode.chat)
+        if (rmode == org.jivesoftware.smack.packet.Presence.Mode.available || rmode == org.jivesoftware.smack.packet.Presence.Mode.chat)
             type = Imps.Presence.AVAILABLE;
         else if (rmode == org.jivesoftware.smack.packet.Presence.Mode.away || rmode == org.jivesoftware.smack.packet.Presence.Mode.xa)
             type = Imps.Presence.AWAY;
@@ -3246,7 +3244,7 @@ public class XmppConnection extends ImConnection {
         else 
         {
             //this is typical presence, let's get the latest/highest priority
-            debug(TAG,"got presence: " + presence.getFrom() + "=" + p.getStatus());
+            debug(TAG,"got presence: " + presence.getFrom() + "=" + presence.getStatus());
 
             if (contact != null && contact.getPresence() != null)
             {                
