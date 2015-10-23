@@ -577,7 +577,7 @@ public class MainActivity extends AppCompatActivity {
                     {
                         mRequestedChatId = session.getId();
                         if (message != null)
-                            session.sendMessage(message);
+                            session.sendMessage(message,false);
                     }
 
                 }

@@ -1767,11 +1767,11 @@ public class ConversationView {
 
         @Override
         protected Boolean doInBackground(String... strings) {
-            return sendMessage(strings[0]);
+            return sendMessage(strings[0],false);
         }
     };
 
-    boolean sendMessage(String msg) {
+    boolean sendMessage(String msg, boolean isResend) {
 
         if (TextUtils.isEmpty(msg.trim())) {
             return false;
@@ -1784,7 +1784,7 @@ public class ConversationView {
 
         if (session != null) {
             try {
-                session.sendMessage(msg);
+                session.sendMessage(msg, isResend);
                 return true;
                 //requeryCursor();
             } catch (RemoteException e) {

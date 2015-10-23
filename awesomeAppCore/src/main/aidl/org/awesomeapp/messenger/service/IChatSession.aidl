@@ -82,7 +82,7 @@ interface IChatSession {
     /**
      * Sends a message to all participants in this ChatSession.
      */
-    void sendMessage(String text);
+    void sendMessage(String text, boolean isResend);
 
     /**
      * Sends data to all participants in this ChatSession.
