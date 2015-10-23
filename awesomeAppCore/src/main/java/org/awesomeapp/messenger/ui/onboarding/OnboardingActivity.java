@@ -17,6 +17,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.KeyPair;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -383,9 +384,9 @@ public class OnboardingActivity extends ThemeableActivity {
 
         findViewById(R.id.progressImage).setVisibility(View.VISIBLE);
 
-        mRequestedUserName = mRequestedUserName.replaceAll(USERNAME_ONLY_ALPHANUM, "").toLowerCase(Locale.ENGLISH);
+        String jabberUserId = mRequestedUserName.replaceAll(USERNAME_ONLY_ALPHANUM, "").toLowerCase();
 
-        new FindServerTask ().execute(mRequestedUserName);
+        new FindServerTask ().execute(mRequestedUserName,jabberUserId);
     }
 
     private void resetLanguage(String language) {
@@ -401,23 +402,27 @@ public class OnboardingActivity extends ThemeableActivity {
     
     private class FindServerTask extends AsyncTask<String, Void, OnboardingAccount> {
         @Override
-        protected OnboardingAccount doInBackground(String... username) {
+        protected OnboardingAccount doInBackground(String... accountNames) {
             try {
 
-                String newuser = username[0];
                 String domain = null;
 
-                if (username.length > 1)
-                    domain = username[1];
+                if (accountNames.length > 2)
+                    domain = accountNames[2]; //user can specify the domain they want to be on for a new account
 
-                OnboardingAccount result = OnboardingManager.registerAccount(OnboardingActivity.this, mHandler, newuser, domain, 5222);
+                OtrAndroidKeyManagerImpl keyMan = OtrAndroidKeyManagerImpl.getInstance(OnboardingActivity.this);
+                KeyPair keyPair = keyMan.generateLocalKeyPair();
+                mFingerprint = keyMan.getFingerprint(keyPair.getPublic());
+
+                String nickname = accountNames[0];
+                String username = accountNames[1] + '.' + mFingerprint.substring(mFingerprint.length()-8,mFingerprint.length()).toLowerCase();
+
+                OnboardingAccount result = OnboardingManager.registerAccount(OnboardingActivity.this, mHandler, nickname, username, domain, 5222);
 
                 if (result != null) {
                     String jabberId = result.username + '@' + result.domain;
+                    keyMan.storeKeyPair(jabberId,keyPair);
 
-                    OtrAndroidKeyManagerImpl keyMan = OtrAndroidKeyManagerImpl.getInstance(OnboardingActivity.this);
-                    keyMan.generateLocalKeyPair(jabberId);
-                    mFingerprint = keyMan.getLocalFingerprint(jabberId);
                 }
 
                 return result;
@@ -512,9 +517,10 @@ public class OnboardingActivity extends ThemeableActivity {
 
     private void showMainScreen ()
     {
+        finish();
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
-        finish();
+
     }
 
     private void doExistingAccountRegister ()
@@ -550,7 +556,7 @@ public class OnboardingActivity extends ThemeableActivity {
         @Override
         protected OnboardingAccount doInBackground(String... account) {
             try {
-                OnboardingAccount result = OnboardingManager.addExistingAccount(OnboardingActivity.this, mHandler, account[0], account[1]);
+                OnboardingAccount result = OnboardingManager.addExistingAccount(OnboardingActivity.this, mHandler, account[0], account[0], account[1]);
 
                 OtrAndroidKeyManagerImpl keyMan = OtrAndroidKeyManagerImpl.getInstance(OnboardingActivity.this);
                 keyMan.generateLocalKeyPair(account[0]);

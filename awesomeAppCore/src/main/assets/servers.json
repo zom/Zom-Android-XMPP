@@ -4,11 +4,89 @@
     {
       "domain": "dukgo.com",
       "server": "xmpp.dukgo.com",
+      "address": "23.21.227.59",
       "port": 5222,
       "certificate": "",
       "logoUrl": "https://s3....",
-      "country": "US"
+      "country": "US",
+      "muc": "conference.dukgo.com"
     },
+    {
+      "domain": "blah.im",
+      "server": "jabber.blah.im",
+      "address": "5.9.141.48",
+      "port": 5222,
+      "certificate": "B1:C5:77:70:29:4D:74:1A:22:8A:C6:5B:1A:8D:D8:57:51:7D:4D:E9",
+      "logoUrl": "",
+      "country": "de",
+      "muc": "rooms.blah.im",
+      "onion": "​"
+    },
+    {
+      "domain": "im.koderoot.net",
+      "server": "im.koderoot.net",
+      "address": "66.175.221.41",
+      "port": 5222,
+      "certificate": "",
+      "logoUrl": "",
+      "country": "de",
+      "muc": "muc.im.koderoot.net",
+      "onion": "ihkw7qy3tok45dun.onion​"
+    },
+    {
+      "domain": "cypherpunks.it",
+      "server": "",
+      "port": 5222,
+      "certificate": "",
+      "logoUrl": "",
+      "country": "it",
+      "muc": "",
+      "onion": "​"
+    },
+    {
+      "domain": "freifunk.im",
+      "server": "",
+      "port": 5222,
+      "certificate": "",
+      "logoUrl": "",
+      "country": "",
+      "muc": "conference.freifunk.im",
+      "onion": "​"
+    },
+    {
+      "domain": "fnord.im",
+      "server": "",
+      "port": 5222,
+      "certificate": "",
+      "logoUrl": "",
+      "country": "",
+      "muc": "chat.fnord.im",
+      "onion": "​"
+    },
+    {
+      "domain": "system.im",
+      "server": "",
+      "port": 5222,
+      "certificate": "",
+      "logoUrl": "",
+      "country": "",
+      "muc": "conference.system.im",
+      "onion": "​"
+    },
+    {
+      "domain": "jabberafrica.org",
+      "server": "",
+      "port": 5222,
+      "certificate": "",
+      "logoUrl": "",
+      "country": "",
+      "muc": "conference.jabberafrica.org",
+      "onion": "​"
+    }
+
+
+
+    /**
     {
       "domain": "rows.io",
       "server": "xmpp.rows.io",
@@ -24,6 +102,6 @@
       "certificate": "C9:DD:09:15:DD:25:FE:69:65:1C:2D:81:47:46:A1:99:94:73:FA:1D:31:31:09:31:FE:69:2C:87:1F:94:E2:30",
       "logoUrl": "https://s3....",
       "country": "NL"
-    }
+    }*/
 ]
 }

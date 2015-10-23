@@ -297,4 +297,6 @@ public abstract class ChatGroupManager {
     protected void notifyGroupMemberError(ChatGroup group, ImErrorInfo error) {
         group.notifyGroupMemberError(error);
     }
+
+    public abstract String getDefaultGroupChatService ();
 }

@@ -31,6 +31,7 @@ import android.os.Handler;
 import android.provider.Telephony;
 import android.util.Base64;
 import android.util.Log;
+import android.widget.Toast;
 
 public class OnboardingManager {
 
@@ -119,7 +120,14 @@ public class OnboardingManager {
 
                 String[] parts = out.split("\\?otr=");
 
+                if (parts == null)
+                {
+                    parts = new String[1];
+                    parts[0] = out;
+                }
+
                 return parts;
+
             }
             catch (IllegalArgumentException iae)
             {
@@ -145,7 +153,7 @@ public class OnboardingManager {
     }
 
     private final static String PASSWORD_LETTERS = "abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789+@!#";
-    private final static int PASSWORD_LENGTH = 10;
+    private final static int PASSWORD_LENGTH = 12;
 
     public static String generatePassword()
     {
@@ -162,14 +170,14 @@ public class OnboardingManager {
         return pw.toString();
     }
 
-    public static OnboardingAccount registerAccount (Activity context, Handler handler, String username, String domain, int port) throws JSONException {
+    public static OnboardingAccount registerAccount (Activity context, Handler handler, String nickname, String username, String domain, int port) throws JSONException {
         String password = generatePassword();
 
         ContentResolver cr = context.getContentResolver();
         ImPluginHelper helper = ImPluginHelper.getInstance(context);
         long providerId = helper.createAdditionalProvider(helper.getProviderNames().get(0)); //xmpp FIXME
 
-        long accountId = ImApp.insertOrUpdateAccount(cr, providerId, -1, username, password);
+        long accountId = ImApp.insertOrUpdateAccount(cr, providerId, -1, nickname, username, password);
 
         Uri accountUri = ContentUris.withAppendedId(Imps.Account.CONTENT_URI, accountId);
 
@@ -193,8 +201,6 @@ public class OnboardingManager {
 
         settings.setDoDnsSrv(doDnsSrvLookup);
 
-        int maxAttempts = 5;
-
         if (domain == null) {
             int nameIdx = 0;
 
@@ -202,64 +208,61 @@ public class OnboardingManager {
 
                 JSONObject server = servers.getJSONObject(i);
 
-                for (int n = 0; n < maxAttempts; n++) {
+                try {
 
-                    try {
+                    domain = server.getString("domain");
+                    String host = server.getString("server");
 
-                        domain = server.getString("domain");
-                        String host = server.getString("server");
-
-                        if (host != null) {
-                            settings.setServer(host); //set the google connect server
-                            settings.setDoDnsSrv(false);
-                        }
-                        else
-                        {
-                            settings.setServer(null);
-                            settings.setDoDnsSrv(true);
-                        }
-
-                        settings.setDomain(domain);
-                        settings.setPort(server.getInt("port"));
-                        settings.requery();
-
-                        HashMap<String, String> aParams = new HashMap<String, String>();
-
-                        XmppConnection xmppConn = new XmppConnection(context);
-                        xmppConn.initUser(providerId, accountId);
-
-                        boolean success = xmppConn.registerAccount(settings, username, password, aParams);
-
-                        if (success) {
-                            OnboardingAccount result = null;
-
-                            result = new OnboardingAccount();
-                            result.username = username;
-                            result.domain = domain;
-                            result.password = password;
-                            result.providerId = providerId;
-                            result.accountId = accountId;
-
-                            //now keep this account signed-in
-                            ContentValues values = new ContentValues();
-                            values.put(Imps.AccountColumns.KEEP_SIGNED_IN, 1);
-                            cr.update(accountUri, values, null, null);
-                            settings.close();
-                            return result;
-                        }
-
-
-                    } catch (Exception e) {
-                        LogCleaner.error(ImApp.LOG_TAG, "error registering new account", e);
-
-
+                    if (host != null) {
+                        settings.setServer(host); //set the google connect server
+                        settings.setDoDnsSrv(false);
+                    }
+                    else
+                    {
+                        settings.setServer(null);
+                        settings.setDoDnsSrv(true);
                     }
 
-                    username = username + (i+1); //add a number to the end of the username
-                    ImApp.insertOrUpdateAccount(cr, providerId, accountId, username, password);
+                    settings.setDomain(domain);
+                    settings.setPort(server.getInt("port"));
                     settings.requery();
 
+                    HashMap<String, String> aParams = new HashMap<String, String>();
+
+                    XmppConnection xmppConn = new XmppConnection(context);
+                    xmppConn.initUser(providerId, accountId);
+
+                    boolean success = xmppConn.registerAccount(settings, username, password, aParams);
+
+                    if (success) {
+                        OnboardingAccount result = null;
+
+                        result = new OnboardingAccount();
+                        result.username = username;
+                        result.domain = domain;
+                        result.password = password;
+                        result.providerId = providerId;
+                        result.accountId = accountId;
+
+                        //now keep this account signed-in
+                        ContentValues values = new ContentValues();
+                        values.put(Imps.AccountColumns.KEEP_SIGNED_IN, 1);
+                        cr.update(accountUri, values, null, null);
+                        settings.close();
+                        return result;
+                    }
+
+
+                } catch (Exception e) {
+                    LogCleaner.error(ImApp.LOG_TAG, "error registering new account", e);
+
                 }
+
+                Toast.makeText(context,"Trying again...",Toast.LENGTH_SHORT).show();
+
+                try { Thread.sleep(1000); }
+                catch (Exception e){}
+
 
 
             }
@@ -312,7 +315,7 @@ public class OnboardingManager {
 
     }
 
-    public static OnboardingAccount addExistingAccount (Activity context, Handler handler, String jabberId, String password) {
+    public static OnboardingAccount addExistingAccount (Activity context, Handler handler, String nickname, String jabberId, String password) {
 
         OnboardingAccount result = null;
 
@@ -325,7 +328,7 @@ public class OnboardingManager {
         ImPluginHelper helper = ImPluginHelper.getInstance(context);
         long providerId = helper.createAdditionalProvider(helper.getProviderNames().get(0)); //xmpp FIXME
 
-        long accountId = ImApp.insertOrUpdateAccount(cr, providerId, -1, username, password);
+        long accountId = ImApp.insertOrUpdateAccount(cr, providerId, -1, nickname, username, password);
 
         Uri accountUri = ContentUris.withAppendedId(Imps.Account.CONTENT_URI, accountId);
 

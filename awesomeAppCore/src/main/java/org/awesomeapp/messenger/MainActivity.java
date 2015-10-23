@@ -380,7 +380,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         String chatRoom = "groupchat" + UUID.randomUUID().toString().substring(0,8);
-        String chatServer = "conference.rows.io";
+        String chatServer = ""; //use the default
         String nickname = mApp.getDefaultUsername().split("@")[0];
         try
         {
@@ -689,15 +689,14 @@ public class MainActivity extends AppCompatActivity {
                 String chatRoom = "group" + UUID.randomUUID().toString().substring(0,8);
                 String server = params[1];
 
-               // if (TextUtils.isEmpty(server))
-                //    server = "conference.rows.io";
-
-                String roomAddress = (chatRoom + '@' + server).toLowerCase(Locale.US);
-                String nickname = params[2];
 
                 try {
 
                     IChatSessionManager manager = mLastConnGroup.getChatSessionManager();
+
+                    String roomAddress = (chatRoom + '@' + server).toLowerCase(Locale.US);
+                    String nickname = params[2];
+
                     IChatSession session = manager.getChatSession(roomAddress);
 
                     if (session == null) {

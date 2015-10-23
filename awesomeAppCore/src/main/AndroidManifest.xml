@@ -3,8 +3,8 @@
     package="info.guardianproject.otr.app.im"
     android:installLocation="auto"
     android:sharedUserLabel="@string/perm_label"
-    android:versionCode="1500022"
-    android:versionName="15.0.0-alpha-22" >
+    android:versionCode="1500023"
+    android:versionName="15.0.0-alpha-23" >
 
     <supports-screens
         android:anyDensity="true"
@@ -378,7 +378,10 @@
         <activity
             android:name="org.awesomeapp.messenger.ui.qr.QrScanActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:theme="@android:style/Theme.Black.NoTitleBar" />
+            />
+        <activity
+            android:name="org.awesomeapp.messenger.ui.legacy.MissingChatFileStoreActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize" />
 
         <service
             android:name="info.guardianproject.cacheword.CacheWordService"

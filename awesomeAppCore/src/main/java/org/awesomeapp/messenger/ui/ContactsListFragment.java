@@ -16,6 +16,7 @@
 
 package org.awesomeapp.messenger.ui;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -62,7 +63,7 @@ public class ContactsListFragment extends Fragment {
     private MyLoaderCallbacks mLoaderCallbacks;
     private LoaderManager mLoaderManager;
     private int mLoaderId = 1001;
-    private RecyclerView mRecView;
+    private static RecyclerView mRecView;
     private View mEmptyViewImage;
     String mSearchString = null;
 
@@ -112,6 +113,7 @@ public class ContactsListFragment extends Fragment {
 
         }
 
+        /**
         // init swipe to dismiss logic
         ItemTouchHelper swipeToDismissTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(
                 ItemTouchHelper.RIGHT, ItemTouchHelper.RIGHT) {
@@ -140,12 +142,13 @@ public class ContactsListFragment extends Fragment {
         });
 
         swipeToDismissTouchHelper.attachToRecyclerView(recyclerView);
+         */
 
     }
 
-    private void deleteContact (long itemId, String address)
+    private static void deleteContact (Activity activity, long itemId, String address)
     {
-        ImApp app = ((ImApp)getActivity().getApplication());
+        ImApp app = ((ImApp)activity.getApplication());
 
         IImConnection conn = app.getDefaultConnection();
 
@@ -220,6 +223,35 @@ public class ContactsListFragment extends Fragment {
                     else if (mContext instanceof MainActivity)
                         ((MainActivity)mContext).startChat(viewHolder.mProviderId,viewHolder.mAccountId, viewHolder.mAddress);
 
+                }
+            });
+
+            viewHolder.mView.setOnLongClickListener(new View.OnLongClickListener()
+            {
+
+                @Override
+                public boolean onLongClick(View view) {
+
+                    if (mContext instanceof MainActivity) {
+                        String message = mContext.getString(R.string.confirm_delete_contact,viewHolder.mAddress);
+
+                        Snackbar.make(mRecView, message, Snackbar.LENGTH_LONG)
+                                .setAction(mContext.getString(R.string.yes), new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        //if they click, then cancel timer that will be used to end the chat
+
+                                        deleteContact(((MainActivity) mContext), viewHolder.mView.getId(), viewHolder.mAddress);
+                                    }
+                                }).show();
+
+                        return true;
+                    }
+
+
+
+
+                    return false;
                 }
             });
 

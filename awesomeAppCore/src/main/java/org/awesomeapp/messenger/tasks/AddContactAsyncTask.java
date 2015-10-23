@@ -19,7 +19,7 @@ import org.awesomeapp.messenger.model.ImErrorInfo;
 /**
  * Created by n8fr8 on 6/9/15.
  */
-public class AddContactAsyncTask extends AsyncTask<String, Void, Void> {
+public class AddContactAsyncTask extends AsyncTask<String, Void, Integer> {
 
     long mProviderId;
     long mAccountId;
@@ -34,15 +34,14 @@ public class AddContactAsyncTask extends AsyncTask<String, Void, Void> {
     }
 
     @Override
-    protected Void doInBackground(String... strings) {
+    public Integer doInBackground(String... strings) {
 
-        addToContactList(strings[0], strings[1]);
-        return null;
+        return addToContactList(strings[0], strings[1]);
     }
 
     @Override
-    protected void onPostExecute(Void aVoid) {
-        super.onPostExecute(aVoid);
+    protected void onPostExecute(Integer response) {
+        super.onPostExecute(response);
     }
 
     private int addToContactList (String address, String otrFingperint)

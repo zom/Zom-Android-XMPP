@@ -414,6 +414,47 @@ public class OtrAndroidKeyManagerImpl extends IOtrKeyManager.Stub implements Otr
 
     }
 
+    public KeyPair generateLocalKeyPair() {
+
+        OtrDebugLogger.log("generating local key pair");
+
+        KeyPair keyPair;
+        try {
+
+            KeyPairGenerator kpg = KeyPairGenerator.getInstance(KEY_ALG);
+            kpg.initialize(KEY_SIZE);
+            keyPair = kpg.genKeyPair();
+            OtrDebugLogger.log("SUCCESS! generating local key pair");
+            return keyPair;
+        } catch (NoSuchAlgorithmException e) {
+            OtrDebugLogger.log("no such algorithm", e);
+            return null;
+        }
+
+    }
+
+    public void storeKeyPair (String userId, KeyPair keyPair)
+    {
+
+        // Store Private Key.
+        PrivateKey privKey = keyPair.getPrivate();
+        PKCS8EncodedKeySpec pkcs8EncodedKeySpec = new PKCS8EncodedKeySpec(privKey.getEncoded());
+
+        this.store.setProperty(userId + ".privateKey", pkcs8EncodedKeySpec.getEncoded());
+
+        try
+        {
+            // Store Public Key.
+            PublicKey pubKey = keyPair.getPublic();
+            storeLocalPublicKey(userId, pubKey); //this will do saving
+
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException ("Error init local keypair");
+        }
+    }
+
     public void generateLocalKeyPair(String fullUserId) {
 
         String userId = Address.stripResource(fullUserId);
@@ -453,7 +494,7 @@ public class OtrAndroidKeyManagerImpl extends IOtrKeyManager.Stub implements Otr
         }
     }
 
-    private void storeLocalPublicKey(String fullUserId, PublicKey pubKey) throws OtrCryptoException {
+    public void storeLocalPublicKey(String fullUserId, PublicKey pubKey) throws OtrCryptoException {
 
         String userId = Address.stripResource(fullUserId);
 
@@ -526,11 +567,15 @@ public class OtrAndroidKeyManagerImpl extends IOtrKeyManager.Stub implements Otr
         if (keyPair == null)
             return null;
 
-        PublicKey pubKey = keyPair.getPublic();
+        return getFingerprint(keyPair.getPublic());
 
+    }
+
+    public String getFingerprint (PublicKey pubKey)
+    {
         try {
             String fingerprint = cryptoEngine.getFingerprint(pubKey);
-          //  OtrDebugLogger.log("got fingerprint for: " + userId + "=" + fingerprint);
+            //  OtrDebugLogger.log("got fingerprint for: " + userId + "=" + fingerprint);
             return fingerprint;
 
         } catch (OtrCryptoException e) {
