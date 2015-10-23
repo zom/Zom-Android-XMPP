@@ -63,7 +63,7 @@ public class ThumbnailLoaderTask extends AsyncTask<ThumbnailLoaderRequest, Void,
           // set the thumbnail
             result.mHolder.mMediaThumbnail.setImageBitmap(result.mBitmap);
         }
-        
+
     }
 
     public static Bitmap getThumbnail(Context context, ContentResolver cr,Uri uri, int thumbnailSize){

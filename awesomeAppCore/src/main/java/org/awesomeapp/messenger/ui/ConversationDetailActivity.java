@@ -472,23 +472,27 @@ public class ConversationDetailActivity extends AppCompatActivity {
 
     public void stopAudioRecording (boolean send)
     {
-        if (mMediaRecorder != null && mAudioFilePath != null) {
-            
-            mMediaRecorder.stop();
+        if (mMediaRecorder != null && mAudioFilePath != null && mIsAudioRecording) {
 
-            mMediaRecorder.reset();
-            mMediaRecorder.release();
+            try {
+                mMediaRecorder.stop();
 
-            if (send) {
-                Uri uriAudio = Uri.fromFile(mAudioFilePath);
-                boolean deleteFile = true;
-                boolean resizeImage = false;
-                boolean importContent = true;
-                handleSendDelete(uriAudio,"audio/mp4", deleteFile, resizeImage, importContent);
+                mMediaRecorder.reset();
+                mMediaRecorder.release();
+
+                if (send) {
+                    Uri uriAudio = Uri.fromFile(mAudioFilePath);
+                    boolean deleteFile = true;
+                    boolean resizeImage = false;
+                    boolean importContent = true;
+                    handleSendDelete(uriAudio, "audio/mp4", deleteFile, resizeImage, importContent);
+                } else {
+                    mAudioFilePath.delete();
+                }
             }
-            else
+            catch (IllegalStateException ise)
             {
-                mAudioFilePath.delete();
+                Log.e(ImApp.LOG_TAG,"error stopping audio recording",ise);
             }
 
             mIsAudioRecording = false;
