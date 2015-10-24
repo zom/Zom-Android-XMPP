@@ -121,9 +121,10 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="48dip"
+        android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
+        android:padding="3dp"
         >
 
         <ImageButton
@@ -143,7 +144,6 @@
             android:layout_weight="1"
             android:inputType="textShortMessage|textAutoCorrect|textCapSentences|textMultiLine|textImeMultiLine"
             android:imeOptions="actionSend|flagNoEnterAction"
-            android:maxLines="4"
             android:hint="@string/compose_hint"
             android:fontFamily="sans-serif-light"
             android:background="@android:color/transparent"

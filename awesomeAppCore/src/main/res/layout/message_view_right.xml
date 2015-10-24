@@ -65,13 +65,11 @@
                     android:fontFamily="sans-serif-light"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:padding="6dp"
-                    android:layout_gravity="top|right"
-                    android:gravity="right"                          
+                    android:layout_gravity="top|left"
+                    android:gravity="left"
                     android:textAlignment="gravity"
             	   android:color="?messageTextPrimary"
-
                      />
-
 
 
         <FrameLayout
