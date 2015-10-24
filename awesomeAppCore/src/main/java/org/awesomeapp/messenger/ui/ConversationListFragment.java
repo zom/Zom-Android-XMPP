@@ -16,6 +16,7 @@
 
 package org.awesomeapp.messenger.ui;
 
+import android.app.Activity;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
@@ -40,7 +41,9 @@ import android.widget.Toast;
 
 //import com.bumptech.glide.Glide;
 
+import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.provider.Imps;
+import org.awesomeapp.messenger.tasks.ChatSessionInitTask;
 
 import info.guardianproject.otr.app.im.R;
 
@@ -186,17 +189,19 @@ public class ConversationListFragment extends Fragment {
                 public void onClick(View v) {
                     Context context = v.getContext();
                     Intent intent = new Intent(context, ConversationDetailActivity.class);
-                    intent.putExtra("id",chatId);
+                    intent.putExtra("id", chatId);
                     context.startActivity(intent);
                 }
             });
 
+            int providerId = cursor.getInt(ConversationListItem.COLUMN_CONTACT_PROVIDER);
+            int accountId = cursor.getInt(ConversationListItem.COLUMN_CONTACT_ACCOUNT);
+            int contactType = cursor.getInt(ConversationListItem.COLUMN_CONTACT_TYPE);
+            String remoteAddress = cursor.getString(ConversationListItem.COLUMN_CONTACT_USERNAME);
 
-            /**
-            Glide.with(holder.mAvatar.getContext())
-                    .load(R.drawable.awesome_title)
-                    .fitCenter()
-                    .into(holder.mAvatar);*/
+            new ChatSessionInitTask((ImApp)((Activity)mContext).getApplication(),providerId,accountId,contactType).execute(remoteAddress);
+
+
         }
 
     }
