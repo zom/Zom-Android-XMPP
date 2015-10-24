@@ -266,7 +266,7 @@ public class MessageListItem extends FrameLayout {
     public void bindIncomingMessage(int id, int messageType, String address, String nickname, final String mimeType, final String body, Date date, Markup smileyRes,
             boolean scrolling, EncryptionState encryption, boolean showContact, int presenceStatus) {
 
-        Log.d(ImApp.LOG_TAG,"message: " + body);
+//        Log.d(ImApp.LOG_TAG,"message: " + body);
 
         mHolder = (MessageViewHolder)getTag();
 
