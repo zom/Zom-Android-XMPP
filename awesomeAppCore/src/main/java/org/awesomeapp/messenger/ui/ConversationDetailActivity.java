@@ -37,6 +37,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -77,6 +78,8 @@ public class ConversationDetailActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+       // getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+
         setContentView(R.layout.awesome_activity_detail);
 
         Intent intent = getIntent();
@@ -94,27 +97,29 @@ public class ConversationDetailActivity extends AppCompatActivity {
         CollapsingToolbarLayout collapsingToolbar =
                 (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         collapsingToolbar.setTitle(mConvoView.getTitle());
-        collapsingToolbar.setOnClickListener(new View.OnClickListener() {
+
+        appBarLayout = (AppBarLayout)findViewById(R.id.appbar);
+        mRootLayout = (CoordinatorLayout)findViewById(R.id.main_content);
+
+        appBarLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 expandToolbar();
             }
         });
 
-        appBarLayout = (AppBarLayout)findViewById(R.id.appbar);
-        mRootLayout = (CoordinatorLayout)findViewById(R.id.main_content);
-       // appBarLayout.setExpanded(false);
-
         loadBackdrop();
         collapseToolbar();
     }
 
     public void collapseToolbar(){
-        
+
+        appBarLayout.setExpanded(false);
     }
 
     public void expandToolbar(){
 
+        appBarLayout.setExpanded(true);
     }
 
     @Override

@@ -321,6 +321,7 @@ public class MessageListItem extends FrameLayout {
                 String[] cmds = cmd.split(":");
 
                 String mimeTypeSticker = "image/png";
+
                 try {
 
                     String assetPath = cmds[1].split(" ")[0];//just get up to any whitespace;
@@ -426,31 +427,15 @@ public class MessageListItem extends FrameLayout {
         if( mimeType.startsWith("image/") ) {
             setImageThumbnail( getContext().getContentResolver(), id, holder, mediaUri );
             holder.mMediaThumbnail.setBackgroundColor(Color.TRANSPARENT);
-
-            if (mimeType.startsWith("image/png"))
-            {
-                holder.mActionFav.setVisibility(View.GONE);
-                holder.mActionSend.setVisibility(View.GONE);
-                holder.mActionShare.setVisibility(View.GONE);
-
-            }
-            else
-            {
-                holder.mActionFav.setVisibility(View.VISIBLE);
-                holder.mActionSend.setVisibility(View.VISIBLE);
-                holder.mActionShare.setVisibility(View.VISIBLE);
-            }
-
         }
         else
         {
             holder.mMediaThumbnail.setImageResource(R.drawable.ic_file); // generic file icon
-
-            holder.mActionFav.setVisibility(View.GONE);
-            holder.mActionSend.setVisibility(View.GONE);
-            holder.mActionShare.setVisibility(View.GONE);
-
         }
+
+        holder.mActionFav.setVisibility(View.VISIBLE);
+        holder.mActionSend.setVisibility(View.VISIBLE);
+        holder.mActionShare.setVisibility(View.VISIBLE);
 
         holder.mContainer.setBackgroundColor(getResources().getColor(android.R.color.transparent));
 
