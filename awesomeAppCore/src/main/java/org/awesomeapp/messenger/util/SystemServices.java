@@ -54,7 +54,8 @@ public class SystemServices {
             Intent notificationIntent = new Intent(aContext, aTargetActivityClass);
             notificationIntent.setData(aUri); // when the target activity is invoked, extract this uri and call viewImage()
             PendingIntent contentIntent = PendingIntent.getActivity(aContext, 0, notificationIntent, 0);
-            notification.setLatestEventInfo(aContext, contentTitle, contentText, contentIntent);
+            //notification.setLatestEventInfo(aContext, contentTitle, contentText, contentIntent);
+
             mNotificationManager.notify(1, notification);
         }
     }
