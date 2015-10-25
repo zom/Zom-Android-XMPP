@@ -1,13 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string-array name="account_domains">
-        <item>dukgo.com</item>
-        <item>jabber.calyxinstitute.org</item>
-        <item>xmpp.jp</item>
-        <item>jabberpl.org</item>
-        <item>neko.im</item>
-        <item>bam.yt</item>
-    </string-array>
 
 </resources>

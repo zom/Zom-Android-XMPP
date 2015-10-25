@@ -170,8 +170,32 @@ public class OnboardingManager {
         return pw.toString();
     }
 
-    public static OnboardingAccount registerAccount (Activity context, Handler handler, String nickname, String username, String domain, int port) throws JSONException {
-        String password = generatePassword();
+    public static String[] getServers (Context context)
+    {
+        try {
+            JSONObject obj = new JSONObject(loadServersJSON(context));
+            JSONArray servers = obj.getJSONArray("servers");
+            String[] results = new String[servers.length()];
+
+            for (int i = 0; i < servers.length(); i++) {
+
+                JSONObject server = servers.getJSONObject(i);
+                results[i] = server.getString("domain");
+
+
+            }
+
+            return results;
+        }
+        catch (Exception e)
+        {
+            return null;
+        }
+    }
+    public static OnboardingAccount registerAccount (Activity context, Handler handler, String nickname, String username, String password, String domain, int port) throws JSONException {
+
+        if (password == null)
+            password = generatePassword();
 
         ContentResolver cr = context.getContentResolver();
         ImPluginHelper helper = ImPluginHelper.getInstance(context);

@@ -512,7 +512,7 @@ public class OtrAndroidKeyManagerImpl extends IOtrKeyManager.Stub implements Otr
 
         }
         
-        Log.i(ImApp.LOG_TAG, "New public key generated: " + fingerprintString);
+      //  Log.i(ImApp.LOG_TAG, "New public key generated: " + fingerprintString);
 
     }
 
