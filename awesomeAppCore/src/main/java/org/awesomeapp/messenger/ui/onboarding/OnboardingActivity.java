@@ -323,7 +323,7 @@ public class OnboardingActivity extends ThemeableActivity {
         }
         else if (mViewFlipper.getCurrentView().getId()==R.id.flip_view_login)
         {
-            setAnimRight();
+
             showSplashScreen();
         }
         else if (mViewFlipper.getCurrentView().getId()==R.id.flip_view_advanced)
@@ -335,10 +335,10 @@ public class OnboardingActivity extends ThemeableActivity {
 
     private void showSplashScreen ()
     {
-        setAnimRight ();
+        setAnimRight();
         getSupportActionBar().hide();
         getSupportActionBar().setTitle("");
-        mViewFlipper.showPrevious();
+        mViewFlipper.setDisplayedChild(0);
     }
     
     private void showSetupScreen ()
