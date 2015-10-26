@@ -207,24 +207,6 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
 
         int countAvailable = accountsAvailable();
 
-        if (countAvailable == 1) {
-            // If just one account is available for auto-signin, go there immediately after service starts trying
-            // to connect.
-            mSignInHelper.setSignInListener(new SignInHelper.SignInListener() {
-                @Override
-                public void connectedToService() {
-                }
-                @Override
-                public void stateChanged(int state, long accountId) {
-                    if (state == ImConnection.LOGGING_IN) {
-                    //    mSignInHelper.goToAccount(accountId);
-                    }
-                }
-            });
-        } else {
-            mSignInHelper.setSignInListener(null);
-        }
-
         Intent intent = getIntent();
         if (intent != null && intent.getAction() != null && !intent.getAction().equals(Intent.ACTION_MAIN)) {
             String action = intent.getAction();
