@@ -316,7 +316,6 @@ public class LockScreenActivity extends ThemeableActivity implements ICacheWordS
                                 char[] passphrase = mEnterPassphrase.getText().toString().toCharArray();
 
                                 mCacheWord.setPassphrase(passphrase);
-                                ImApp.mUsingCacheword = true;
                             } catch (Exception e) {
                                 mEnterPassphrase.setText("");
                                 // TODO implement try again and wipe if fail

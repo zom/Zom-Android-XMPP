@@ -119,8 +119,6 @@ public class ImApp extends Application {
 
     Broadcaster mBroadcaster;
 
-    public static boolean mUsingCacheword = true;
-
     /**
      * A queue of messages that are waiting to be sent when service is
      * connected.

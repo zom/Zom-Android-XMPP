@@ -62,7 +62,7 @@ import info.guardianproject.panic.PanicReceiver;
 
 public class RouterActivity extends ThemeableActivity implements ICacheWordSubscriber  {
 
-    private static final String TAG = "WelcomeActivity";
+    private static final String TAG = "RouterActivity";
     private Cursor mProviderCursor;
     private ImApp mApp;
     private SimpleAlertHandler mHandler;
@@ -102,12 +102,15 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mApp = (ImApp)getApplication();
+
+        mCacheWord = new CacheWordHandler(this, (ICacheWordSubscriber)this);
+        mCacheWord.connectToService();
 
         checkCustomFont ();
 
         getSupportActionBar().hide();
         
-        mApp = (ImApp)getApplication();
         mHandler = new MyHandler(this);
 
         mSignInHelper = new SignInHelper(this, mHandler);
@@ -115,9 +118,6 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
         Intent intent = getIntent();
         mDoSignIn = intent.getBooleanExtra(EXTRA_DO_SIGNIN, true);
         mDoLock = intent.getBooleanExtra(EXTRA_DO_LOCK, false);
-
-        if (ImApp.mUsingCacheword)
-            connectToCacheWord();
 
         // if we have an incoming contact, send it to the right place
         String scheme = intent.getScheme();
@@ -129,18 +129,6 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
             return;
         }
     }
-
-    private void connectToCacheWord ()
-    {
-
-        mCacheWord = new CacheWordHandler(this, (ICacheWordSubscriber)this);
-
-        mCacheWord.connectToService();
-
-
-    }
-
-
 
     @SuppressWarnings("deprecation")
     private boolean cursorUnlocked() {
@@ -188,14 +176,6 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
         }
     }
 
-//    private void initCursor(String dbKey) {
-//
-//        mProviderCursor = managedQuery(Imps.Provider.CONTENT_URI_WITH_ACCOUNT, PROVIDER_PROJECTION,
-//                Imps.Provider.CATEGORY + "=?" /* selection */,
-//                new String[] { ImApp.IMPS_CATEGORY } /* selection args */, null);
-//        doOnResume();
-//    }
-
     @Override
     protected void onPause() {
         if (mHandler != null)
@@ -210,7 +190,6 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
         if (mCacheWord != null)
             mCacheWord.disconnectFromService();
     }
@@ -560,11 +539,7 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
                 mApp.forceStopImService();
 
                 Imps.clearPassphrase(mApp);
-
-                if (mCacheWord != null)
-                {
-                    mCacheWord.lock();
-                }
+                mCacheWord.lock();
 
                 finish();
             }
