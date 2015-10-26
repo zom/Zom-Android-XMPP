@@ -45,6 +45,9 @@ public class Preferences {
     public static final boolean DEFAULT_NOTIFICATION_SOUND = true;
     public static final boolean DEFAULT_NOTIFICATION_VIBRATE = true;
     public static final boolean DEFAULT_START_ON_BOOT = false;
+    public static final boolean DEFAULT_LOCK_APP = true;
+    public static final boolean DEFAULT_CLEAR_APP_DATA = false;
+    public static final boolean DEFAULT_UNINSTALL_APP = false;
 
     private static final String DEBUG_LOGGING = "prefDebug";
     private static final String DELETE_INSECURE_MEDIA = "pref_delete_unsecured_media";
@@ -59,6 +62,9 @@ public class Preferences {
     private static final String NOTIFICATION_RINGTONE_URI = "pref_notification_ringtone";
     private static final String OTR_MODE = "pref_security_otr_mode";
     private static final String START_ON_BOOT = "pref_start_on_boot";
+    private static final String LOCK_APP = "lock_app";
+    private static final String CLEAR_APP_DATA = "clear_app_data";
+    private static final String UNINSTALL_APP = "uninstall_app";
 
     private static Context context;
     private static SharedPreferences preferences;
@@ -166,6 +172,30 @@ public class Preferences {
 
     public static void setStartOnBoot(boolean enable) {
         preferences.edit().putBoolean(START_ON_BOOT, enable).apply();
+    }
+
+    public static boolean lockApp() {
+        return preferences.getBoolean(LOCK_APP, DEFAULT_LOCK_APP);
+    }
+
+    public static void setLockApp(boolean enable) {
+        preferences.edit().putBoolean(LOCK_APP, enable).apply();
+    }
+
+    public static boolean clearAppData() {
+        return preferences.getBoolean(CLEAR_APP_DATA, DEFAULT_CLEAR_APP_DATA);
+    }
+
+    public static void setClearAppData(boolean enable) {
+        preferences.edit().putBoolean(CLEAR_APP_DATA, enable).apply();
+    }
+
+    public static boolean uninstallApp() {
+        return preferences.getBoolean(UNINSTALL_APP, DEFAULT_UNINSTALL_APP);
+    }
+
+    public static void setUninstallApp(boolean uninstallApp) {
+        preferences.edit().putBoolean(UNINSTALL_APP, uninstallApp).apply();
     }
 
     public static String getLanguage() {

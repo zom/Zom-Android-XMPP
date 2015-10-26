@@ -2,9 +2,7 @@ package org.awesomeapp.messenger.ui;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -15,6 +13,8 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 
+import org.awesomeapp.messenger.Preferences;
+
 import java.util.ArrayList;
 
 import info.guardianproject.otr.app.im.R;
@@ -22,13 +22,8 @@ import info.guardianproject.panic.PanicReceiver;
 
 public class PanicSetupActivity extends AppCompatActivity {
 
-    public static final String PREF_KEY_LOCK_APP = "lock_app";
-    public static final String PREF_KEY_CLEAR_APP_DATA = "clear_app_data";
-    public static final String PREF_KEY_UNINSTALL_APP = "uninstall_app";
-
     private final static int REQUEST_CHOOSE_CONTACT = 9782;
 
-    private SharedPreferences prefs;
     private Intent intent;
 
     @Override
@@ -49,32 +44,56 @@ public class PanicSetupActivity extends AppCompatActivity {
         toolbar.setTitle(R.string.panic_setup);
         setSupportActionBar(toolbar);
 
-        prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        /* These preferences are setup to represent what will happen to the user,
+         * they do not represent what the app must do.  For example, uninstalling
+         * the app will by definition delete all the app's data, so when the
+         * "Uninstall" checkbox is on, the "Clear Data" checkbox must also be on.
+         * But the app does not need to clear the data if it is going to be
+         * uninstalled anyway. */
+        final CheckBox lockApp = (CheckBox) findViewById(R.id.lock_app);
+        final CheckBox clearAppData = (CheckBox) findViewById(R.id.clear_app_data);
+        final CheckBox uninstallApp = (CheckBox) findViewById(R.id.uninstall_app);
 
-        CheckBox lockApp = (CheckBox) findViewById(R.id.lock_app);
-        lockApp.setChecked(prefs.getBoolean(PREF_KEY_LOCK_APP, true));
+        lockApp.setChecked(Preferences.lockApp());
         lockApp.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                prefs.edit().putBoolean(PREF_KEY_LOCK_APP, isChecked).apply();
+                Preferences.setLockApp(isChecked);
+                if (isChecked) {
+                    clearAppData.setChecked(false);
+                    uninstallApp.setChecked(false);
+                    Preferences.setClearAppData(false);
+                    Preferences.setUninstallApp(false);
+                }
             }
         });
 
-        CheckBox clearAppData = (CheckBox) findViewById(R.id.clear_app_data);
-        clearAppData.setChecked(prefs.getBoolean(PREF_KEY_CLEAR_APP_DATA, false));
+        clearAppData.setChecked(Preferences.clearAppData());
         clearAppData.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                prefs.edit().putBoolean(PREF_KEY_CLEAR_APP_DATA, isChecked).apply();
+                Preferences.setClearAppData(isChecked);
+                if (isChecked) {
+                    lockApp.setChecked(false);
+                    Preferences.setLockApp(false);
+                } else {
+                    uninstallApp.setChecked(false);
+                    Preferences.setUninstallApp(false);
+                }
             }
         });
 
-        CheckBox uninstallApp = (CheckBox) findViewById(R.id.uninstall_app);
-        uninstallApp.setChecked(prefs.getBoolean(PREF_KEY_UNINSTALL_APP, false));
+        uninstallApp.setChecked(Preferences.uninstallApp());
         uninstallApp.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                prefs.edit().putBoolean(PREF_KEY_UNINSTALL_APP, isChecked).apply();
+                Preferences.setUninstallApp(isChecked);
+                if (isChecked) {
+                    lockApp.setChecked(false);
+                    clearAppData.setChecked(true);
+                    Preferences.setLockApp(false);
+                    Preferences.setClearAppData(true);
+                }
             }
         });
 
