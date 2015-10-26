@@ -20,7 +20,11 @@
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-  
+    <ListPreference
+        android:key="pref_language"
+        android:title="@string/KEY_PREF_LANGUAGE_TITLE" >
+    </ListPreference>
+
    <PreferenceCategory android:title="@string/pref_group_security_title">
   
   <ListPreference android:title="@string/chat_encryption_title"
@@ -49,17 +53,13 @@
             android:summary="@string/panic_trigger_app_summary"
             android:title="@string/panic_trigger_app" />
 
+        <Preference
+            android:key="pref_panic_config"
+            android:summary="@string/panic_setup_summary"
+            android:title="@string/panic_setup" />
+
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/pref_group_looknfeel_title">
-       <ListPreference
-            android:key="pref_language"
-            android:title="@string/KEY_PREF_LANGUAGE_TITLE" >
-        </ListPreference>
-
-   </PreferenceCategory>
-  
-   
       <PreferenceCategory android:title="@string/pref_group_tuning_title">
    
   <CheckBoxPreference
