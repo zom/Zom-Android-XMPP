@@ -51,6 +51,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.ViewFlipper;
@@ -92,6 +93,10 @@ public class OnboardingActivity extends ThemeableActivity {
         mViewFlipper = (ViewFlipper) findViewById(R.id.viewFlipper1);
         mEditUsername = (EditText)findViewById(R.id.edtNewName);
         mSpinnerDomains = (InstantAutoCompleteTextView)findViewById(R.id.spinnerDomains);
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_dropdown_item_1line, OnboardingManager.getServers(this));
+        mSpinnerDomains.setAdapter(adapter);
 
         mImageAvatar = (ImageView) findViewById(R.id.imageAvatar);
         mImageAvatar.setOnClickListener(new View.OnClickListener() {
@@ -189,6 +194,15 @@ public class OnboardingActivity extends ThemeableActivity {
                 }
 
                 return false;
+            }
+        });
+
+        Button btnCreateAdvanced = (Button)findViewById(R.id.btnNewRegister);
+        btnCreateAdvanced.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                startAdvancedSetup();
             }
         });
         
@@ -323,7 +337,7 @@ public class OnboardingActivity extends ThemeableActivity {
         }
         else if (mViewFlipper.getCurrentView().getId()==R.id.flip_view_login)
         {
-            setAnimRight();
+
             showSplashScreen();
         }
         else if (mViewFlipper.getCurrentView().getId()==R.id.flip_view_advanced)
@@ -335,10 +349,10 @@ public class OnboardingActivity extends ThemeableActivity {
 
     private void showSplashScreen ()
     {
-        setAnimRight ();
+        setAnimRight();
         getSupportActionBar().hide();
         getSupportActionBar().setTitle("");
-        mViewFlipper.showPrevious();
+        mViewFlipper.setDisplayedChild(0);
     }
     
     private void showSetupScreen ()
@@ -372,6 +386,28 @@ public class OnboardingActivity extends ThemeableActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
     }
 
+    private void startAdvancedSetup ()
+    {
+        mSetupProgress = findViewById(R.id.progressNewUser);
+        mSetupProgress.setVisibility(View.VISIBLE);
+
+        mRequestedUserName = ((EditText)findViewById(R.id.edtNameAdvanced)).getText().toString();
+        String jabberUserId = mRequestedUserName.replaceAll(USERNAME_ONLY_ALPHANUM, "").toLowerCase();
+
+        mEditUsername.setText(jabberUserId);
+
+        mSetupStatus = (TextView)findViewById(R.id.statusNewUser);
+        mSetupStatus.setVisibility(View.VISIBLE);
+
+        String domain = ((InstantAutoCompleteTextView)findViewById(R.id.spinnerDomains)).getText().toString();
+
+        String password = ((EditText)findViewById(R.id.edtNewPass)).getText().toString();
+
+        mViewFlipper.setDisplayedChild(1);
+
+        new FindServerTask ().execute(mRequestedUserName,jabberUserId, domain, password);
+
+    }
     
     private void startAccountSetup()
     {
@@ -402,22 +438,26 @@ public class OnboardingActivity extends ThemeableActivity {
     
     private class FindServerTask extends AsyncTask<String, Void, OnboardingAccount> {
         @Override
-        protected OnboardingAccount doInBackground(String... accountNames) {
+        protected OnboardingAccount doInBackground(String... setupValues) {
             try {
 
                 String domain = null;
+                String password = null;
 
-                if (accountNames.length > 2)
-                    domain = accountNames[2]; //user can specify the domain they want to be on for a new account
+                if (setupValues.length > 2)
+                    domain = setupValues[2]; //user can specify the domain they want to be on for a new account
+
+                if (setupValues.length > 3)
+                    password = setupValues[3];
 
                 OtrAndroidKeyManagerImpl keyMan = OtrAndroidKeyManagerImpl.getInstance(OnboardingActivity.this);
                 KeyPair keyPair = keyMan.generateLocalKeyPair();
                 mFingerprint = keyMan.getFingerprint(keyPair.getPublic());
 
-                String nickname = accountNames[0];
-                String username = accountNames[1] + '.' + mFingerprint.substring(mFingerprint.length()-8,mFingerprint.length()).toLowerCase();
+                String nickname = setupValues[0];
+                String username = setupValues[1] + '.' + mFingerprint.substring(mFingerprint.length()-8,mFingerprint.length()).toLowerCase();
 
-                OnboardingAccount result = OnboardingManager.registerAccount(OnboardingActivity.this, mHandler, nickname, username, domain, 5222);
+                OnboardingAccount result = OnboardingManager.registerAccount(OnboardingActivity.this, mHandler, nickname, username, null, domain, 5222);
 
                 if (result != null) {
                     String jabberId = result.username + '@' + result.domain;

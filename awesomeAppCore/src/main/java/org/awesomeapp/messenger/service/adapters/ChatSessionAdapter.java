@@ -320,7 +320,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         }
     }
 
-    public void sendMessage(String text) {
+    public void sendMessage(String text, boolean isResend) {
 
         if (mConnection.getState() != ImConnection.LOGGED_IN) {
             // connection has been suspended, save the message without send it
@@ -336,10 +336,13 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
         int newType = mChatSession.sendMessageAsync(msg);
 
-        long now = System.currentTimeMillis();
-        
-        insertMessageInDb(null, text, now, newType, 0, msg.getID());
-        insertOrUpdateChat(text);
+        if (!isResend) {
+            long now = System.currentTimeMillis();
+
+            insertMessageInDb(null, text, now, newType, 0, msg.getID());
+            insertOrUpdateChat(text);
+        }
+
 
     }
 
@@ -407,7 +410,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         removeMessageInDb(Imps.MessageType.POSTPONED);
 
         for (String body : messages)
-            sendMessage(body);
+            sendMessage(body,false);
     }
 
     public void registerChatListener(IChatListener listener) {

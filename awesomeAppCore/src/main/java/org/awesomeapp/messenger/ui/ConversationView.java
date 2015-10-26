@@ -179,7 +179,6 @@ public class ConversationView {
 
     private View mStatusWarningView;
     private TextView mWarningText;
-    private ProgressBar mProgressTransfer;
 
 
     private ImageView mDeliveryIcon;
@@ -690,9 +689,6 @@ public class ConversationView {
         mStatusWarningView = mActivity.findViewById(R.id.warning);
         mWarningText = (TextView) mActivity.findViewById(R.id.warningText);
 
-        mProgressTransfer = (ProgressBar)mActivity.findViewById(R.id.progressTransfer);
-       // mOtrSwitch = (CompoundButton)mActivity.findViewById(R.id.otrSwitch);
-
         mButtonAttach.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -1094,7 +1090,7 @@ public class ConversationView {
             mPresenceStatus = c.getInt(PRESENCE_STATUS_COLUMN);
             mContactType = c.getInt(TYPE_COLUMN);
 
-            mRemoteNickname = c.getString(NICKNAME_COLUMN);
+            mRemoteNickname = c.getString(NICKNAME_COLUMN).split("@")[0];
             mRemoteAddress = c.getString(USERNAME_COLUMN);
 
             mSubscriptionType = c.getInt(SUBSCRIPTION_TYPE_COLUMN);
@@ -1538,7 +1534,7 @@ public class ConversationView {
 
 
             new AlertDialog.Builder(mContext)
-                    .setTitle(R.string.verify_key_)
+                    .setTitle(mRemoteNickname)
                     .setMessage(message.toString())
                     .setPositiveButton(R.string.menu_verify_fingerprint,
                             new DialogInterface.OnClickListener() {
@@ -1767,11 +1763,11 @@ public class ConversationView {
 
         @Override
         protected Boolean doInBackground(String... strings) {
-            return sendMessage(strings[0]);
+            return sendMessage(strings[0],false);
         }
     };
 
-    boolean sendMessage(String msg) {
+    boolean sendMessage(String msg, boolean isResend) {
 
         if (TextUtils.isEmpty(msg.trim())) {
             return false;
@@ -1784,7 +1780,7 @@ public class ConversationView {
 
         if (session != null) {
             try {
-                session.sendMessage(msg);
+                session.sendMessage(msg, isResend);
                 return true;
                 //requeryCursor();
             } catch (RemoteException e) {
@@ -2088,23 +2084,11 @@ public class ConversationView {
                 String error = msg.getData().getString("err");
 
                 Toast.makeText(mContext, "Error transferring file: " + error, Toast.LENGTH_LONG).show();
-                mProgressTransfer.setVisibility(View.GONE);
                 break;
             case SHOW_DATA_PROGRESS:
 
                 int percent = msg.getData().getInt("progress");
-                /**
-                mProgressTransfer.setVisibility(View.VISIBLE);
-                mProgressTransfer.setProgress(percent);
-                mProgressTransfer.setMax(100);
 
-                if (percent > 95)
-                {
-                    mProgressTransfer.setVisibility(View.GONE);
-                    //requeryCursor();
-                    mMessageAdapter.notifyDataSetChanged();
-                    
-                }*/
 
                 break;
              default:
@@ -2260,6 +2244,11 @@ public class ConversationView {
 
         public boolean getWantsAllOnMoveCalls() {
             return mInnerCursor.getWantsAllOnMoveCalls();
+        }
+
+        @Override
+        public void setExtras(Bundle bundle) {
+
         }
 
         public Bundle getExtras() {

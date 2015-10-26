@@ -63,16 +63,17 @@ public class ThumbnailLoaderTask extends AsyncTask<ThumbnailLoaderRequest, Void,
           // set the thumbnail
             result.mHolder.mMediaThumbnail.setImageBitmap(result.mBitmap);
         }
-        else
-        {
-            if(result.mHolder!=null&&result.mHolder.mContainer!=null)
-                result.mHolder.mContainer.setVisibility(View.GONE);
-        }
+
     }
 
-public static Bitmap getThumbnail(Context context, ContentResolver cr,Uri uri, int thumbnailSize){
-        //   Log.e( MessageView.class.getSimpleName(), "getThumbnail uri:" + uri);
-        if(SecureMediaStore.isVfsUri(uri)){
+    public static Bitmap getThumbnail(Context context, ContentResolver cr,Uri uri, int thumbnailSize){
+
+        Bitmap result = sBitmapCache.get(uri.toString());
+
+        if (result != null) {
+            return result;
+        }
+        else if(SecureMediaStore.isVfsUri(uri)){
             return SecureMediaStore.getThumbnailVfs(uri,thumbnailSize);
         }
         else if (uri.getScheme().equals("asset"))
@@ -85,15 +86,17 @@ public static Bitmap getThumbnail(Context context, ContentResolver cr,Uri uri, i
                 is.close();
                 return bitmap;
             } catch (IOException e) {
-                e.printStackTrace();
+                Log.d(ImApp.LOG_TAG,"could not load thumbnail: " + uri.getPath());
+                return null;
             }
 
         }
 
         return getThumbnailFile(cr,uri,thumbnailSize);
+
         }
 
-public static Bitmap getThumbnailFile(ContentResolver cr,Uri uri,int thumbnailSize){
+    public static Bitmap getThumbnailFile(ContentResolver cr,Uri uri,int thumbnailSize){
 
         try
         {
@@ -121,8 +124,8 @@ public static Bitmap getThumbnailFile(ContentResolver cr,Uri uri,int thumbnailSi
         }
         catch(Exception e)
         {
-        Log.d(ImApp.LOG_TAG,"could not getThumbnailFile",e);
-        return null;
+            Log.d(ImApp.LOG_TAG,"could not getThumbnailFile",e);
+            return null;
         }
      }
 

@@ -266,6 +266,8 @@ public class MessageListItem extends FrameLayout {
     public void bindIncomingMessage(int id, int messageType, String address, String nickname, final String mimeType, final String body, Date date, Markup smileyRes,
             boolean scrolling, EncryptionState encryption, boolean showContact, int presenceStatus) {
 
+//        Log.d(ImApp.LOG_TAG,"message: " + body);
+
         mHolder = (MessageViewHolder)getTag();
 
         mHolder.mTextViewForMessages.setVisibility(View.VISIBLE);
@@ -319,6 +321,7 @@ public class MessageListItem extends FrameLayout {
                 String[] cmds = cmd.split(":");
 
                 String mimeTypeSticker = "image/png";
+
                 try {
 
                     String assetPath = cmds[1].split(" ")[0];//just get up to any whitespace;
@@ -424,31 +427,15 @@ public class MessageListItem extends FrameLayout {
         if( mimeType.startsWith("image/") ) {
             setImageThumbnail( getContext().getContentResolver(), id, holder, mediaUri );
             holder.mMediaThumbnail.setBackgroundColor(Color.TRANSPARENT);
-
-            if (mimeType.startsWith("image/png"))
-            {
-                holder.mActionFav.setVisibility(View.GONE);
-                holder.mActionSend.setVisibility(View.GONE);
-                holder.mActionShare.setVisibility(View.GONE);
-
-            }
-            else
-            {
-                holder.mActionFav.setVisibility(View.VISIBLE);
-                holder.mActionSend.setVisibility(View.VISIBLE);
-                holder.mActionShare.setVisibility(View.VISIBLE);
-            }
-
         }
         else
         {
             holder.mMediaThumbnail.setImageResource(R.drawable.ic_file); // generic file icon
-
-            holder.mActionFav.setVisibility(View.GONE);
-            holder.mActionSend.setVisibility(View.GONE);
-            holder.mActionShare.setVisibility(View.GONE);
-
         }
+
+        holder.mActionFav.setVisibility(View.VISIBLE);
+        holder.mActionSend.setVisibility(View.VISIBLE);
+        holder.mActionShare.setVisibility(View.VISIBLE);
 
         holder.mContainer.setBackgroundColor(getResources().getColor(android.R.color.transparent));
 
@@ -648,8 +635,6 @@ public class MessageListItem extends FrameLayout {
         request.mUri = mediaUri;
         request.mResolver = contentResolver;
         request.mContext = context;
-
-        //aHolder.mMediaThumbnail.setImageResource(R.drawable.ic_photo_library_white_36dp);
 
         if (mTask != null)
             mTask.cancel(true);

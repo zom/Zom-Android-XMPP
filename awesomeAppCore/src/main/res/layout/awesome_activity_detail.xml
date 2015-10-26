@@ -20,7 +20,9 @@
     android:id="@+id/main_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true">
+    android:fitsSystemWindows="true"
+    android:clipToPadding="false"
+    >
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
@@ -59,18 +61,18 @@
 
     </android.support.design.widget.AppBarLayout>
 
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/history"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:layout_height="wrap_content"
         android:stackFromBottom="true"
         android:divider="#00000000"
         android:dividerHeight="6dp"
         android:transcriptMode="normal"
-        android:paddingBottom="48dp"
-        android:gravity="top"
+        android:scrollbars="vertical"
+        android:layout_weight="8"
+        app:layout_behavior="org.awesomeapp.messenger.ui.widgets.PatchedScrollingViewBehavior"
+        android:paddingBottom="128dp"
         />
 
 
@@ -100,94 +102,88 @@
 
     </LinearLayout>
 
-
-    <ProgressBar
-        android:id="@+id/progressTransfer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:padding="0dp"
-        android:visibility="gone"
-        />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_gravity="bottom"
-        android:gravity="center_vertical"
-        android:padding="0sp"
         android:background="@android:color/white"
         >
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="48dip"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        >
-
-        <ImageButton
-            android:id="@+id/btnAttach"
-            android:layout_width="28dip"
-            android:layout_height="28dip"
-            android:scaleType="centerInside"
-            android:background="@android:color/transparent"
-            android:src="@drawable/ic_attach_file_black_36dp"
-            android:layout_margin="6dp"
-            />
-
-        <org.ironrabbit.type.CustomTypefaceEditText
-            android:id="@+id/composeMessage"
-            android:layout_width="0dip"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:inputType="textShortMessage|textAutoCorrect|textCapSentences|textMultiLine|textImeMultiLine"
-            android:imeOptions="actionSend|flagNoEnterAction"
-            android:maxLines="4"
-            android:hint="@string/compose_hint"
-            android:fontFamily="sans-serif-light"
-            android:background="@android:color/transparent"
-            android:padding="2dp"
-            />
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="3dp"
+            android:layout_alignParentBottom="true"
+            android:background="@android:color/white"
+            android:id="@+id/inputLayout"
+            android:layout_below="@+id/history"
+            android:layout_weight="2"
 
-        <Button
-            android:layout_width="0dip"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/push_to_talk"
-            android:padding="2dp"
-            android:id="@+id/buttonHoldToTalk"
-            android:visibility="gone"
-            />
+            >
+
+            <ImageButton
+                android:id="@+id/btnAttach"
+                android:layout_width="28dip"
+                android:layout_height="28dip"
+                android:scaleType="centerInside"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_attach_file_black_36dp"
+                android:layout_margin="6dp"
+                />
+
+            <org.ironrabbit.type.CustomTypefaceEditText
+                android:id="@+id/composeMessage"
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:inputType="textShortMessage|textAutoCorrect|textCapSentences|textMultiLine|textImeMultiLine"
+                android:imeOptions="actionSend|flagNoEnterAction"
+                android:hint="@string/compose_hint"
+                android:fontFamily="sans-serif-light"
+                android:background="@android:color/transparent"
+                android:padding="2dp"
+                />
+
+            <Button
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/push_to_talk"
+                android:padding="2dp"
+                android:id="@+id/buttonHoldToTalk"
+                android:visibility="gone"
+                />
 
 
-        <ImageButton
-            android:id="@+id/btnMic"
+            <ImageButton
+                android:id="@+id/btnMic"
 
-            android:layout_width="28dip"
-            android:layout_height="28dip"
-            android:scaleType="centerInside"
-            android:background="@android:color/transparent"
-            android:src="@drawable/ic_mic_black_36dp"
-            android:layout_margin="6dp"
-            />
+                android:layout_width="28dip"
+                android:layout_height="28dip"
+                android:scaleType="centerInside"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_mic_black_36dp"
+                android:layout_margin="6dp"
+                />
 
-        <ImageButton
-            android:id="@+id/btnSend"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/ad_selectable_background"
-            android:fontFamily="sans-serif-light"
-            android:paddingBottom="1sp"
-            android:paddingLeft="3sp"
-            android:paddingRight="3sp"
-            android:paddingTop="1sp"
-            android:src="@drawable/ic_send_holo_light"
-            android:visibility="gone"
-            />
+            <ImageButton
+                android:id="@+id/btnSend"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ad_selectable_background"
+                android:fontFamily="sans-serif-light"
+                android:paddingBottom="1sp"
+                android:paddingLeft="3sp"
+                android:paddingRight="3sp"
+                android:paddingTop="1sp"
+                android:src="@drawable/ic_send_holo_light"
+                android:visibility="gone"
+                />
 
-    </LinearLayout>
-
+        </LinearLayout>
     <HorizontalScrollView
         android:id="@+id/attachPanel"
         android:layout_width="match_parent"
@@ -359,60 +355,5 @@
 
     </LinearLayout>
     </LinearLayout>
-    <!--
-
-<android.support.v4.widget.NestedScrollView
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:paddingTop="24dp">
-
-
-        <android.support.v7.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/card_margin">
-
-            <LinearLayout
-                style="@style/Widget.CardContent"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Info"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Title" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="" />
-
-            </LinearLayout>
-
-        </android.support.v7.widget.CardView>
-
-    </LinearLayout>
-
-</android.support.v4.widget.NestedScrollView>
-
--->
-
-<!--
-    <android.support.design.widget.FloatingActionButton
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        app:layout_anchor="@id/appbar"
-        app:layout_anchorGravity="bottom|right|end"
-        android:src="@drawable/ic_discuss"
-        android:layout_margin="@dimen/fab_margin"
-        android:clickable="true"/>-->
 
 </android.support.design.widget.CoordinatorLayout>

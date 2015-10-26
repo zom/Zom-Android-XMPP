@@ -647,7 +647,7 @@ public class ImUrlActivity extends Activity {
             IChatSession session = getChatSession(username);
 
             if (mSendText != null)
-                session.sendMessage(mSendText);
+                session.sendMessage(mSendText,false);
             else if (mSendUri != null && session.getOtrChatSession() != null)
             {
 

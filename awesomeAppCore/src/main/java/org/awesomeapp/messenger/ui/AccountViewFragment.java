@@ -55,6 +55,7 @@ import org.awesomeapp.messenger.ui.legacy.ProviderDef;
 import org.awesomeapp.messenger.ui.legacy.SignInHelper;
 import org.awesomeapp.messenger.ui.legacy.SignoutActivity;
 import org.awesomeapp.messenger.ui.legacy.SimpleAlertHandler;
+import org.awesomeapp.messenger.ui.onboarding.OnboardingManager;
 import org.awesomeapp.messenger.util.OrbotHelper;
 import org.awesomeapp.messenger.crypto.IOtrChatSession;
 import org.awesomeapp.messenger.crypto.OtrAndroidKeyManagerImpl;
@@ -336,7 +337,7 @@ public class AccountViewFragment extends Fragment {
             mEditUserAccount.setHint(R.string.account_setup_new_username);
 
             ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
-                    android.R.layout.simple_dropdown_item_1line, getResources().getStringArray(R.array.account_domains));
+                    android.R.layout.simple_dropdown_item_1line, OnboardingManager.getServers(getActivity()));
             mSpinnerDomains.setAdapter(adapter);
 
         }

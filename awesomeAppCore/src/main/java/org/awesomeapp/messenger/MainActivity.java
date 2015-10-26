@@ -126,8 +126,7 @@ public class MainActivity extends AppCompatActivity {
 
         Adapter adapter = new Adapter(getSupportFragmentManager());
         adapter.addFragment(new ConversationListFragment(), getString(R.string.title_chats), R.drawable.ic_message_white_36dp);
-        adapter.addFragment(new ContactsListFragment(), getString(R.string.contacts), R.drawable.ic_face_white_36dp);
-      //  adapter.addFragment(new GalleryListFragment(), getString(R.string.title_gallery), R.drawable.ic_photo_library_white_36dp);
+        adapter.addFragment(new ContactsListFragment(), getString(R.string.contacts), R.drawable.ic_people_white_36dp);
         adapter.addFragment(new MoreFragment(), getString(R.string.title_more), R.drawable.ic_more_horiz_white_36dp);
         adapter.addFragment(new AccountFragment(), getString(R.string.title_me), R.drawable.ic_face_white_24dp);
 
@@ -577,7 +576,7 @@ public class MainActivity extends AppCompatActivity {
                     {
                         mRequestedChatId = session.getId();
                         if (message != null)
-                            session.sendMessage(message);
+                            session.sendMessage(message,false);
                     }
 
                 }

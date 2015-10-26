@@ -3,8 +3,8 @@
     package="info.guardianproject.otr.app.im"
     android:installLocation="auto"
     android:sharedUserLabel="@string/perm_label"
-    android:versionCode="1500023"
-    android:versionName="15.0.0-alpha-23" >
+    android:versionCode="1500025"
+    android:versionName="15.0.0-alpha-25" >
 
     <supports-screens
         android:anyDensity="true"
@@ -435,6 +435,7 @@
             android:name="org.awesomeapp.messenger.ui.ConversationDetailActivity"
             android:theme="@style/AppThemeNoAction"
             android:exported="false"
+            android:windowSoftInputMode="adjustPan|stateHidden"
             />
         <activity
             android:name="org.awesomeapp.messenger.ui.ContactListActivity"
