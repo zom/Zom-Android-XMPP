@@ -17,47 +17,6 @@
 
 package org.awesomeapp.messenger;
 
-import info.guardianproject.cacheword.PRNGFixes;
-import info.guardianproject.iocipher.VirtualFileSystem;
-import org.awesomeapp.messenger.crypto.OtrAndroidKeyManagerImpl;
-import org.awesomeapp.messenger.service.Broadcaster;
-import org.awesomeapp.messenger.service.IChatSession;
-import org.awesomeapp.messenger.service.IChatSessionManager;
-import org.awesomeapp.messenger.service.IConnectionCreationListener;
-import org.awesomeapp.messenger.service.IImConnection;
-import org.awesomeapp.messenger.service.IRemoteImService;
-import info.guardianproject.otr.app.im.R;
-import org.awesomeapp.messenger.ui.legacy.ImPluginHelper;
-import org.awesomeapp.messenger.ui.legacy.ProviderDef;
-import org.awesomeapp.messenger.ui.legacy.adapter.ConnectionListenerAdapter;
-import org.awesomeapp.messenger.model.ImConnection;
-import org.awesomeapp.messenger.model.ImErrorInfo;
-import org.awesomeapp.messenger.plugin.ImPlugin;
-import org.awesomeapp.messenger.plugin.ImPluginInfo;
-import org.awesomeapp.messenger.plugin.xmpp.XMPPCertPins;
-import org.awesomeapp.messenger.provider.Imps;
-import org.awesomeapp.messenger.service.ImServiceConstants;
-import org.awesomeapp.messenger.util.AssetUtil;
-import org.awesomeapp.messenger.util.Debug;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-
-import net.hockeyapp.android.CrashManager;
-import net.hockeyapp.android.CrashManagerListener;
-import net.sqlcipher.database.SQLiteDatabase;
-
-import org.awesomeapp.messenger.service.RemoteImService;
-import org.thoughtcrime.ssl.pinning.PinningTrustManager;
-import org.thoughtcrime.ssl.pinning.SystemKeyStore;
-
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Application;
 import android.content.ComponentName;
@@ -68,29 +27,50 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
-import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.database.Cursor;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.TrustManager;
+import net.hockeyapp.android.CrashManager;
+import net.hockeyapp.android.CrashManagerListener;
+import net.sqlcipher.database.SQLiteDatabase;
+
+import org.awesomeapp.messenger.crypto.OtrAndroidKeyManagerImpl;
+import org.awesomeapp.messenger.model.ImConnection;
+import org.awesomeapp.messenger.model.ImErrorInfo;
+import org.awesomeapp.messenger.provider.Imps;
+import org.awesomeapp.messenger.service.Broadcaster;
+import org.awesomeapp.messenger.service.IChatSession;
+import org.awesomeapp.messenger.service.IChatSessionManager;
+import org.awesomeapp.messenger.service.IConnectionCreationListener;
+import org.awesomeapp.messenger.service.IImConnection;
+import org.awesomeapp.messenger.service.IRemoteImService;
+import org.awesomeapp.messenger.service.ImServiceConstants;
+import org.awesomeapp.messenger.service.RemoteImService;
+import org.awesomeapp.messenger.ui.legacy.ImPluginHelper;
+import org.awesomeapp.messenger.ui.legacy.ProviderDef;
+import org.awesomeapp.messenger.ui.legacy.adapter.ConnectionListenerAdapter;
+import org.awesomeapp.messenger.util.Debug;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 
 import de.duenndns.ssl.MemorizingTrustManager;
+import info.guardianproject.cacheword.PRNGFixes;
+import info.guardianproject.iocipher.VirtualFileSystem;
+import info.guardianproject.otr.app.im.R;
+import info.guardianproject.util.Languages;
 
 public class ImApp extends Application {
 
@@ -185,27 +165,13 @@ public class ImApp extends Application {
         return mApplicationContext.getContentResolver();
     }
 
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-
-        if (locale != null) {
-            // We have to create a new configuration, because changing the passed-in Configuration
-            // object causes an infinite relaunch loop in Android 4.2 (JB MR1)
-            Configuration myConfig = new Configuration(newConfig);
-            myConfig.locale = locale;
-
-            Locale.setDefault(locale);
-            getResources().updateConfiguration(myConfig, getResources().getDisplayMetrics());
-        }
-    }
-
     @Override
     public void onCreate() {
         super.onCreate();
 
         Preferences.setup(this);
+        Languages.setup(MainActivity.class, R.string.use_system_default);
+        Languages.setLanguage(this, Preferences.getLanguage());
 
         sImApp = this;
 
@@ -225,8 +191,6 @@ public class ImApp extends Application {
         mBroadcaster = new Broadcaster();
 
         setAppTheme(null,null);
-
-        checkLocale();
     }
 
     private boolean mThemeDark = false;
@@ -287,58 +251,15 @@ public class ImApp extends Application {
         }
     }
 
-    public void checkLocale ()
-    {
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-
-        Configuration config = getResources().getConfiguration();
-
-        String lang = settings.getString(getString(R.string.key_default_locale_pref), "");
-
-
-        if ("".equals(lang)) {
-            Properties props = AssetUtil.getProperties("chatsecure.properties", this);
-            if (props != null) {
-                String configuredLocale = props.getProperty("locale");
-                if (configuredLocale != null && !"CHOOSE".equals(configuredLocale)) {
-                    lang = configuredLocale;
-                    Editor editor = settings.edit();
-                    editor.putString(getString(R.string.key_default_locale_pref), lang);
-                    editor.apply();
-                }
-            }
+    public static void resetLanguage(Activity activity, String language) {
+        if (!TextUtils.equals(language, Preferences.getLanguage())) {
+            /* Set the preference after setting the locale in case something goes
+             * wrong. If setting the locale causes an Exception, it should not be set in
+             * the preferences, otherwise this will be stuck in a crash loop. */
+            Languages.setLanguage(activity, language);
+            Preferences.setLanguage(language);
+            Languages.forceChangeLanguage(activity);
         }
-
-        if (!"".equals(lang) && !config.locale.getLanguage().equals(lang)) {
-            locale = new Locale(lang);
-            config.locale = locale;
-            getResources().updateConfiguration(config, getResources().getDisplayMetrics());
-        }
-
-    }
-
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
-    public void setNewLocale(Context context, String language) {
-        /* handle locales with the country in it, i.e. zh_CN, zh_TW, etc */
-        String localeSplit[] = language.split("_");
-        if (localeSplit.length > 1)
-            locale = new Locale(localeSplit[0], localeSplit[1]);
-        else
-            locale = new Locale(language);
-        Configuration config = getResources().getConfiguration();
-        if (Build.VERSION.SDK_INT >= 17)
-            config.setLocale(locale);
-        else
-            config.locale = locale;
-        getResources().updateConfiguration(config, getResources().getDisplayMetrics());
-
-        /* Set the preference after setting the locale in case something goes
-        wrong.  If setting the locale causes an Exception, it should be set in the
-        preferences, otherwise ChatSecure will be stuck in a crash loop. */
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        Editor prefEdit = prefs.edit();
-        prefEdit.putString(context.getString(R.string.key_default_locale_pref), language);
-        prefEdit.apply();
     }
 
     public synchronized void startImServiceIfNeed() {

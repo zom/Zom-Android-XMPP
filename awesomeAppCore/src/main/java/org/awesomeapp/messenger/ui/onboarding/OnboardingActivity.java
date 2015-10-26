@@ -1,27 +1,5 @@
 package org.awesomeapp.messenger.ui.onboarding;
 
-import org.awesomeapp.messenger.crypto.OtrAndroidKeyManagerImpl;
-import info.guardianproject.otr.app.im.R;
-import org.awesomeapp.messenger.ImApp;
-import org.awesomeapp.messenger.provider.Imps;
-import org.awesomeapp.messenger.tasks.AddContactAsyncTask;
-import org.awesomeapp.messenger.ui.legacy.DatabaseUtils;
-import org.awesomeapp.messenger.ui.legacy.SignInHelper;
-import org.awesomeapp.messenger.ui.legacy.SimpleAlertHandler;
-import org.awesomeapp.messenger.ui.legacy.ThemeableActivity;
-import org.awesomeapp.messenger.ui.widgets.InstantAutoCompleteTextView;
-import org.awesomeapp.messenger.ui.widgets.RoundedAvatarDrawable;
-import org.awesomeapp.messenger.util.Languages;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.security.KeyPair;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ComponentName;
@@ -58,8 +36,30 @@ import android.widget.ViewFlipper;
 
 import com.theartofdev.edmodo.cropper.CropImageView;
 
+import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.MainActivity;
+import org.awesomeapp.messenger.crypto.OtrAndroidKeyManagerImpl;
+import org.awesomeapp.messenger.provider.Imps;
+import org.awesomeapp.messenger.tasks.AddContactAsyncTask;
+import org.awesomeapp.messenger.ui.legacy.DatabaseUtils;
+import org.awesomeapp.messenger.ui.legacy.SignInHelper;
+import org.awesomeapp.messenger.ui.legacy.SimpleAlertHandler;
+import org.awesomeapp.messenger.ui.legacy.ThemeableActivity;
+import org.awesomeapp.messenger.ui.widgets.InstantAutoCompleteTextView;
+import org.awesomeapp.messenger.ui.widgets.RoundedAvatarDrawable;
 import org.awesomeapp.messenger.util.SecureMediaStore;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.KeyPair;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
+import info.guardianproject.otr.app.im.R;
+import info.guardianproject.util.Languages;
 
 public class OnboardingActivity extends ThemeableActivity {
 
@@ -143,13 +143,13 @@ public class OnboardingActivity extends ThemeableActivity {
             }
 
         });
-        
+
         // set up language chooser button
         ImageButton languageButton = (ImageButton) findViewById(R.id.languageButton);
         languageButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Activity activity = OnboardingActivity.this;
+                final Activity activity = OnboardingActivity.this;
                 final Languages languages = Languages.get(activity);
                 final ArrayAdapter<String> languagesAdapter = new ArrayAdapter<String>(activity,
                         android.R.layout.simple_list_item_single_choice, languages.getAllNames());
@@ -160,14 +160,14 @@ public class OnboardingActivity extends ThemeableActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int position) {
                         String[] languageCodes = languages.getSupportedLocales();
-                        resetLanguage(languageCodes[position]);
+                        ImApp.resetLanguage(activity, languageCodes[position]);
                         dialog.dismiss();
                     }
                 });
                 builder.show();
             }
         });
-        
+
         mEditUsername.setOnEditorActionListener(new OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -425,17 +425,6 @@ public class OnboardingActivity extends ThemeableActivity {
         new FindServerTask ().execute(mRequestedUserName,jabberUserId);
     }
 
-    private void resetLanguage(String language) {
-        ((ImApp) getApplication()).setNewLocale(this, language);
-        Intent intent = getIntent();
-        intent.setClass(this, OnboardingActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-        finish();
-        overridePendingTransition(0, 0);
-        startActivity(intent);
-        overridePendingTransition(0, 0);
-    }
-    
     private class FindServerTask extends AsyncTask<String, Void, OnboardingAccount> {
         @Override
         protected OnboardingAccount doInBackground(String... setupValues) {
