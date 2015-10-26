@@ -67,8 +67,13 @@ public class ThumbnailLoaderTask extends AsyncTask<ThumbnailLoaderRequest, Void,
     }
 
     public static Bitmap getThumbnail(Context context, ContentResolver cr,Uri uri, int thumbnailSize){
-        //   Log.e( MessageView.class.getSimpleName(), "getThumbnail uri:" + uri);
-        if(SecureMediaStore.isVfsUri(uri)){
+
+        Bitmap result = sBitmapCache.get(uri.toString());
+
+        if (result != null) {
+            return result;
+        }
+        else if(SecureMediaStore.isVfsUri(uri)){
             return SecureMediaStore.getThumbnailVfs(uri,thumbnailSize);
         }
         else if (uri.getScheme().equals("asset"))
