@@ -66,7 +66,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
-import de.duenndns.ssl.MemorizingTrustManager;
 import info.guardianproject.cacheword.PRNGFixes;
 import info.guardianproject.iocipher.VirtualFileSystem;
 import info.guardianproject.otr.app.im.R;
@@ -119,8 +118,6 @@ public class ImApp extends Application {
     HashMap<Long, ProviderDef> mProviders;
 
     Broadcaster mBroadcaster;
-
-    public MemorizingTrustManager mTrustManager;
 
     public static boolean mUsingCacheword = true;
 
@@ -741,20 +738,6 @@ public class ImApp extends Application {
         });
     }
 
-/**
-    private void initTrustManager ()
-    {
-      //  PinningTrustManager trustPinning = new PinningTrustManager(SystemKeyStore.getInstance(this),XMPPCertPins.getPinList(), 0);
-        MemorizingTrustManager trustManager = new MemorizingTrustManager(this);
-
-        mTrustManager = trustManager;
-    }
-
-    public MemorizingTrustManager getTrustManager ()
-    {
-        return mTrustManager;
-    }
-*/
     public boolean initAccountInfo ()
     {
         if (mDefaultProviderId == -1) {
