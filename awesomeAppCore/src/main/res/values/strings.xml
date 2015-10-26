@@ -525,9 +525,20 @@
 	<string name="pref_group_protect_data_title">Protect My Data</string>
 	<string name="panic_trigger_app">Panic Trigger App</string>
 	<string name="panic_trigger_app_summary">A panic app can trigger Zom to lock, send a message, delete data, etc.</string>
+	<string name="panic_setup">Panic Setup</string>
+	<string name="panic_setup_summary">Set up how Zom reacts to a panic notification.</string>
 	<string name="panic_app_none">None</string>
 	<string name="panic_app_none_summary">No Panic Trigger App, ignore all incoming panic triggers.</string>
 	<string name="panic_app_default">Default</string>
+	<string name="protect_data">Protect My Data</string>
+	<string name="action_done">Done</string>
+	<string name="lock_app">Lock the app</string>
+	<string name="clear_app_data">Clear all data within the app</string>
+	<string name="uninstall_app">Uninstall the app</string>
+	<string name="send_panic_message">Send a custom panic message, optionally including location, to Zom contacts.</string>
+	<string name="include_location">Include my location</string>
+	<string name="if_i_activitate">If I activate the trigger, then…</string>
+
 	<!--  added 2011/09/01 -->
 	<string name="menu_view_groups">Groups</string>
 	 

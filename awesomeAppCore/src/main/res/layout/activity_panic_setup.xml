@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="org.awesomeapp.messenger.ui.PanicSetupActivity">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize" />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:padding="20dp"
+        android:text="@string/protect_data"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="?attr/colorPrimary" />
+
+    <CheckBox
+        android:id="@+id/lock_app"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="fill"
+        android:buttonTint="@color/background_dark"
+        android:padding="15dp"
+        android:text="@string/lock_app"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/background_dark" />
+
+    <CheckBox
+        android:id="@+id/clear_app_data"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:buttonTint="@color/background_dark"
+        android:padding="15dp"
+        android:text="@string/clear_app_data"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/background_dark" />
+
+
+    <CheckBox
+        android:id="@+id/uninstall_app"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:buttonTint="@color/background_dark"
+        android:padding="15dp"
+        android:text="@string/uninstall_app"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/background_dark" />
+
+
+    <android.support.v7.widget.SwitchCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:enabled="false"
+        android:padding="20dp"
+        android:text="@string/send_message"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="?attr/colorPrimary" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/window_background"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/choose_friend"
+            style="@style/Widget.AppCompat.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:enabled="false"
+            android:gravity="left"
+            android:padding="20dp"
+            android:text="@string/choose_friend"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textStyle="bold" />
+
+
+        <CheckBox
+            android:id="@+id/include_location"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:buttonTint="@color/background_dark"
+            android:enabled="false"
+            android:padding="15dp"
+            android:text="@string/include_location"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/holo_grey_dark" />
+
+    </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>

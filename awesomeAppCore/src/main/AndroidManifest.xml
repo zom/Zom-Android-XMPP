@@ -424,6 +424,18 @@
             android:exported="false"
             android:title="@string/photo_gallery"
             />
+
+        <activity
+            android:name="org.awesomeapp.messenger.ui.PanicSetupActivity"
+            android:label="@string/panic_trigger_app"
+            android:theme="@style/AppThemeNoAction">
+            <intent-filter>
+                <action android:name="info.guardianproject.panic.action.CONNECT" />
+                <action android:name="info.guardianproject.panic.action.DISCONNECT" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

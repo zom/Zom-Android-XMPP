@@ -34,6 +34,7 @@ import android.text.TextUtils;
 
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.Preferences;
+import org.awesomeapp.messenger.ui.PanicSetupActivity;
 
 import java.util.ArrayList;
 
@@ -45,12 +46,14 @@ import info.guardianproject.util.Languages;
 public class SettingActivity extends PreferenceActivity {
     private static final String TAG = "SettingActivity";
 
+    private static final int PANIC_CONFIG = 1234;
     private static final int CHOOSE_RINGTONE = 5;
 
     private PackageManager pm;
     private String currentLanguage;
     ListPreference mOtrMode;
     ListPreference mPanicTriggerApp;
+    Preference mPanicConfig;
     ListPreference mLanguage;
     CheckBoxPreference mLinkifyOnTor;
     CheckBoxPreference mHideOfflineContacts;
@@ -132,6 +135,7 @@ public class SettingActivity extends PreferenceActivity {
         mOtrMode.setDefaultValue(Preferences.DEFAULT_OTR_MODE);
 
         mPanicTriggerApp = (ListPreference) findPreference("pref_panic_trigger_app");
+        mPanicConfig = (Preference) findPreference("pref_panic_config");
         mLanguage = (ListPreference) findPreference("pref_language");
         mLinkifyOnTor = (CheckBoxPreference) findPreference("pref_linkify_on_tor");
         mHideOfflineContacts = (CheckBoxPreference) findPreference("pref_hide_offline_contacts");
@@ -162,6 +166,15 @@ public class SettingActivity extends PreferenceActivity {
                 String packageName = (String) newValue;
                 PanicReceiver.setTriggerPackageName(SettingActivity.this, packageName);
                 setPanicTriggerAppDisplay(packageName);
+                return true;
+            }
+        });
+
+        mPanicConfig.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                Intent intent = new Intent(SettingActivity.this, PanicSetupActivity.class);
+                startActivityForResult(intent, PANIC_CONFIG);
                 return true;
             }
         });
