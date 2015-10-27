@@ -519,8 +519,6 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
                     dialog.dismiss();
 
                 mApp.forceStopImService();
-
-                Imps.clearPassphrase(mApp);
                 mCacheWord.lock();
 
                 finish();
