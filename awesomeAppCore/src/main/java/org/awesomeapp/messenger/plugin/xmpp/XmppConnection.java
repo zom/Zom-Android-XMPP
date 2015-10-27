@@ -1314,9 +1314,6 @@ public class XmppConnection extends ImConnection {
         SASLAuthentication.unBlacklistSASLMechanism("PLAIN");
         SASLAuthentication.unBlacklistSASLMechanism("DIGEST-MD5");
 
-
-      //  MemorizingTrustManager trustManager = ImApp.sImApp.getTrustManager();
-
         if (sslContext == null)
         {
 
@@ -1368,17 +1365,6 @@ public class XmppConnection extends ImConnection {
         }
 
         mConfig.setHostnameVerifier(HttpsURLConnection.getDefaultHostnameVerifier());
-
-        /**
-        if (trustManager instanceof MemorizingTrustManager) {
-            HostnameVerifier hv = ((MemorizingTrustManager)trustManager).wrapHostnameVerifier(HttpsURLConnection.getDefaultHostnameVerifier());
-
-            mConfig.setHostnameVerifier(hv);compression
-        }
-        else
-        {
-            mConfig.setHostnameVerifier(HttpsURLConnection.getDefaultHostnameVerifier());
-        }*/
 
         mConfig.setCustomSSLContext(sslContext);
 

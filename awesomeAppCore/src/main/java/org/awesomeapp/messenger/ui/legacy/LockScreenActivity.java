@@ -34,7 +34,7 @@ import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.RouterActivity;
 import org.awesomeapp.messenger.util.SecureMediaStore;
 
-import org.awesomeapp.messenger.util.Languages;
+import info.guardianproject.util.Languages;
 
 public class LockScreenActivity extends ThemeableActivity implements ICacheWordSubscriber {
     private static final String TAG = "LockScreenActivity";
@@ -90,7 +90,7 @@ public class LockScreenActivity extends ThemeableActivity implements ICacheWordS
         mLanguageButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Activity activity = LockScreenActivity.this;
+                final Activity activity = LockScreenActivity.this;
                 final Languages languages = Languages.get(activity);
                 final ArrayAdapter<String> languagesAdapter = new ArrayAdapter<String>(activity,
                         android.R.layout.simple_list_item_single_choice, languages.getAllNames());
@@ -100,9 +100,8 @@ public class LockScreenActivity extends ThemeableActivity implements ICacheWordS
                 builder.setAdapter(languagesAdapter, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int position) {
-                        Log.i(TAG, "onItemClick: " + dialog + " " + position);
                         String[] languageCodes = languages.getSupportedLocales();
-                        resetLanguage(languageCodes[position]);
+                        ImApp.resetLanguage(activity, languageCodes[position]);
                         dialog.dismiss();
                     }
                 });
@@ -457,16 +456,5 @@ public class LockScreenActivity extends ThemeableActivity implements ICacheWordS
             startActivity(intent);
            // LockScreenActivity.this.overridePendingTransition(0, 0);
         }
-    }
-
-    private void resetLanguage(String language) {
-        ((ImApp) getApplication()).setNewLocale(this, language);
-        Intent intent = getIntent();
-        intent.setClass(LockScreenActivity.this, LockScreenActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-        finish();
-        overridePendingTransition(0, 0);
-        startActivity(intent);
-        overridePendingTransition(0, 0);
     }
 }

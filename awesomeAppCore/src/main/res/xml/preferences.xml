@@ -34,26 +34,28 @@
           android:summary="@string/pref_linkify_on_tor_summary"
           android:defaultValue="false" />
 
-       <ListPreference
-           android:key="pref_panic_trigger_app"
-           android:summary="@string/panic_trigger_app_summary"
-           android:title="@string/panic_trigger_app" />
+    </PreferenceCategory>
 
-  </PreferenceCategory>
-  
-   
-    
-   <PreferenceCategory android:title="@string/pref_group_looknfeel_title">
+    <PreferenceCategory android:title="@string/pref_group_protect_data_title">
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="pref_delete_unsecured_media"
+            android:summary="@string/pref_delete_unsecured_media_summary"
+            android:title="@string/pref_delete_unsecured_media_title" />
+
+        <ListPreference
+            android:key="pref_panic_trigger_app"
+            android:summary="@string/panic_trigger_app_summary"
+            android:title="@string/panic_trigger_app" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/pref_group_looknfeel_title">
        <ListPreference
             android:key="pref_language"
             android:title="@string/KEY_PREF_LANGUAGE_TITLE" >
         </ListPreference>
-
-  <CheckBoxPreference
-          android:key="pref_delete_unsecured_media"
-          android:title="@string/pref_delete_unsecured_media_title"
-          android:summary="@string/pref_delete_unsecured_media_summary"
-          android:defaultValue="false" />
 
    </PreferenceCategory>
   

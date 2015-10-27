@@ -11,9 +11,9 @@ apply plugin: 'com.android.library'
 
 android {
 	compileSdkVersion 21
-	buildToolsVersion "22.0.1"
+	buildToolsVersion project.ext.buildToolsVersion
 	defaultConfig {
-		minSdkVersion 7
+		minSdkVersion project.ext.minSdkVersion
 		targetSdkVersion 21
 	}
 

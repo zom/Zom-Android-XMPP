@@ -49,7 +49,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.awesomeapp.messenger.ui.legacy.AccountSettingsActivity;
-import org.awesomeapp.messenger.ui.legacy.BrandingResources;
 import org.awesomeapp.messenger.ui.legacy.ImPluginHelper;
 import org.awesomeapp.messenger.ui.legacy.ProviderDef;
 import org.awesomeapp.messenger.ui.legacy.SignInHelper;
@@ -62,7 +61,6 @@ import org.awesomeapp.messenger.crypto.OtrAndroidKeyManagerImpl;
 import org.awesomeapp.messenger.service.IImConnection;
 import info.guardianproject.otr.app.im.R;
 import org.awesomeapp.messenger.model.ImConnection;
-import org.awesomeapp.messenger.plugin.BrandingResourceIDs;
 import org.awesomeapp.messenger.plugin.xmpp.XmppConnection;
 
 import org.awesomeapp.messenger.ImApp;
@@ -376,8 +374,6 @@ public class AccountViewFragment extends Fragment {
             mBtnSignIn.setBackgroundResource(R.drawable.btn_red);
         }
 
-        final BrandingResources brandingRes = mApp.getBrandingResource(mProviderId);
-
         mEditUserAccount.addTextChangedListener(mTextWatcher);
         mEditPass.addTextChangedListener(mTextWatcher);
 
@@ -487,27 +483,10 @@ public class AccountViewFragment extends Fragment {
                         isSignedIn = false;
                     } else {
                         setAccountKeepSignedIn(rememberPass);
-
-                        if (!mOriginalUserAccount.equals(mUserName + '@' + mDomain)
-                            && shouldShowTermOfUse(brandingRes)) {
-                            confirmTermsOfUse(brandingRes, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    mSignInHelper.signIn(pass, mProviderId, mAccountId, isActive);
-                                }
-                            });
-                        } else {
-
-                            boolean hasKey = checkForKey (mUserName + '@' + mDomain);
-
-                            mSignInHelper.signIn(pass, mProviderId, mAccountId, isActive);
-                        }
-
+                        mSignInHelper.signIn(pass, mProviderId, mAccountId, isActive);
                         isSignedIn = true;
                     }
                     updateWidgetState();
-
-
                 }
 
             }
@@ -835,31 +814,6 @@ public class AccountViewFragment extends Fragment {
         }
 
         settings.requery();
-    }
-
-    void confirmTermsOfUse(BrandingResources res, DialogInterface.OnClickListener accept) {
-        SpannableString message = new SpannableString(
-                res.getString(BrandingResourceIDs.STRING_TOU_MESSAGE));
-        Linkify.addLinks(message, Linkify.ALL);
-
-        new AlertDialog.Builder(getActivity()).setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle(res.getString(BrandingResourceIDs.STRING_TOU_TITLE)).setMessage(message)
-                .setPositiveButton(res.getString(BrandingResourceIDs.STRING_TOU_DECLINE), null)
-                .setNegativeButton(res.getString(BrandingResourceIDs.STRING_TOU_ACCEPT), accept)
-                .show();
-    }
-
-    boolean shouldShowTermOfUse(BrandingResources res) {
-        return !TextUtils.isEmpty(res.getString(BrandingResourceIDs.STRING_TOU_MESSAGE));
-    }
-
-
-    void signOutUsingActivity() {
-
-        Intent intent = new Intent(getActivity(), SignoutActivity.class);
-        intent.setData(mAccountUri);
-
-        startActivity(intent);
     }
 
     private Handler mHandler = new Handler();

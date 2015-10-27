@@ -184,16 +184,6 @@ public class ContactListItem extends FrameLayout {
         else
             holder.mLine1.setText(nickname);
 
-        /*
-        if (holder.mStatusIcon != null)
-        {
-            Drawable statusIcon = brandingRes.getDrawable(PresenceUtils.getStatusIconId(presence));
-            //statusIcon.setBounds(0, 0, statusIcon.getIntrinsicWidth(),
-              //      statusIcon.getIntrinsicHeight());
-            holder.mStatusIcon.setImageDrawable(statusIcon);address
-        }*/
-
-
         holder.mStatusIcon.setVisibility(View.GONE);
 
         if (holder.mAvatar != null)

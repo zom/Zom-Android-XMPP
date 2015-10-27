@@ -260,27 +260,6 @@
         <activity android:name="org.awesomeapp.messenger.ImUrlActivity" >
         </activity>
         <activity
-            android:name="org.awesomeapp.messenger.ui.AccountViewFragment"
-            android:exported="false"
-            android:windowSoftInputMode="stateUnchanged" >
-            <intent-filter>
-                <action android:name="android.intent.action.EDIT" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="info.guardianproject.otr.app.im.IMPS_CATEGORY" />
-
-                <data android:mimeType="vnd.android.cursor.item/imps-accounts" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.INSERT" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="info.guardianproject.otr.app.im.IMPS_CATEGORY" />
-
-                <data android:mimeType="vnd.android.cursor.item/imps-providers" />
-            </intent-filter>
-        </activity>
-        <activity
             android:name="org.awesomeapp.messenger.ui.legacy.SignoutActivity"
             android:exported="false" >
             <intent-filter>
@@ -379,9 +358,6 @@
             android:name="org.awesomeapp.messenger.ui.qr.QrScanActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             />
-        <activity
-            android:name="org.awesomeapp.messenger.ui.legacy.MissingChatFileStoreActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize" />
 
         <service
             android:name="info.guardianproject.cacheword.CacheWordService"

@@ -34,19 +34,18 @@ import android.text.TextUtils;
 
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.Preferences;
-import org.awesomeapp.messenger.util.Languages;
 
 import java.util.ArrayList;
 
 import info.guardianproject.otr.app.im.R;
 import info.guardianproject.panic.Panic;
 import info.guardianproject.panic.PanicReceiver;
+import info.guardianproject.util.Languages;
 
 public class SettingActivity extends PreferenceActivity {
     private static final String TAG = "SettingActivity";
 
     private static final int CHOOSE_RINGTONE = 5;
-    private static final int CHOOSE_LANGUAGE = 7862;
 
     private PackageManager pm;
     private String currentLanguage;
@@ -148,6 +147,14 @@ public class SettingActivity extends PreferenceActivity {
         mLanguage.setDefaultValue(currentLanguage);
         mLanguage.setEntries(languages.getAllNames());
         mLanguage.setEntryValues(languages.getSupportedLocales());
+        mLanguage.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                String language = (String) newValue;
+                ImApp.resetLanguage(SettingActivity.this, language);
+                return true;
+            }
+        });
 
         mPanicTriggerApp.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
@@ -183,12 +190,6 @@ public class SettingActivity extends PreferenceActivity {
         if (resultCode == Activity.RESULT_OK && requestCode == CHOOSE_RINGTONE) {
             Uri uri = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
             Preferences.setNotificationRingtone(uri);
-        } else if (resultCode == Activity.RESULT_OK && requestCode == CHOOSE_LANGUAGE) {
-            String newLanguage = Preferences.getLanguage();
-            if (!TextUtils.equals(currentLanguage, newLanguage)) {
-                ((ImApp) getApplication()).setNewLocale(this, newLanguage);
-                forceChangeLanguage(this);
-            }
         }
 
         super.onActivityResult(requestCode, resultCode, data);
@@ -198,16 +199,5 @@ public class SettingActivity extends PreferenceActivity {
     protected void onResume() {
         super.onResume();
         setInitialValues();
-    }
-
-    public static void forceChangeLanguage(Activity activity) {
-        Intent intent = activity.getIntent();
-        if (intent == null) // when launched as LAUNCHER
-            intent = new Intent(activity, SettingActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-        activity.finish();
-        activity.overridePendingTransition(0, 0);
-        activity.startActivity(intent);
-        activity.overridePendingTransition(0, 0);
     }
 }

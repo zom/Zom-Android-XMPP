@@ -17,49 +17,6 @@
 
 package org.awesomeapp.messenger;
 
-import info.guardianproject.cacheword.PRNGFixes;
-import info.guardianproject.iocipher.VirtualFileSystem;
-import org.awesomeapp.messenger.crypto.OtrAndroidKeyManagerImpl;
-import org.awesomeapp.messenger.service.Broadcaster;
-import org.awesomeapp.messenger.service.IChatSession;
-import org.awesomeapp.messenger.service.IChatSessionManager;
-import org.awesomeapp.messenger.service.IConnectionCreationListener;
-import org.awesomeapp.messenger.service.IImConnection;
-import org.awesomeapp.messenger.service.IRemoteImService;
-import info.guardianproject.otr.app.im.R;
-import org.awesomeapp.messenger.ui.legacy.BrandingResources;
-import org.awesomeapp.messenger.ui.legacy.ImPluginHelper;
-import org.awesomeapp.messenger.ui.legacy.ProviderDef;
-import org.awesomeapp.messenger.ui.legacy.adapter.ConnectionListenerAdapter;
-import org.awesomeapp.messenger.model.ImConnection;
-import org.awesomeapp.messenger.model.ImErrorInfo;
-import org.awesomeapp.messenger.plugin.BrandingResourceIDs;
-import org.awesomeapp.messenger.plugin.ImPlugin;
-import org.awesomeapp.messenger.plugin.ImPluginInfo;
-import org.awesomeapp.messenger.plugin.xmpp.XMPPCertPins;
-import org.awesomeapp.messenger.provider.Imps;
-import org.awesomeapp.messenger.service.ImServiceConstants;
-import org.awesomeapp.messenger.util.AssetUtil;
-import org.awesomeapp.messenger.util.Debug;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-
-import net.hockeyapp.android.CrashManager;
-import net.hockeyapp.android.CrashManagerListener;
-import net.sqlcipher.database.SQLiteDatabase;
-
-import org.awesomeapp.messenger.service.RemoteImService;
-import org.thoughtcrime.ssl.pinning.PinningTrustManager;
-import org.thoughtcrime.ssl.pinning.SystemKeyStore;
-
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Application;
 import android.content.ComponentName;
@@ -70,29 +27,49 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
-import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.database.Cursor;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.TrustManager;
+import net.hockeyapp.android.CrashManager;
+import net.hockeyapp.android.CrashManagerListener;
+import net.sqlcipher.database.SQLiteDatabase;
 
-import de.duenndns.ssl.MemorizingTrustManager;
+import org.awesomeapp.messenger.crypto.OtrAndroidKeyManagerImpl;
+import org.awesomeapp.messenger.model.ImConnection;
+import org.awesomeapp.messenger.model.ImErrorInfo;
+import org.awesomeapp.messenger.provider.Imps;
+import org.awesomeapp.messenger.service.Broadcaster;
+import org.awesomeapp.messenger.service.IChatSession;
+import org.awesomeapp.messenger.service.IChatSessionManager;
+import org.awesomeapp.messenger.service.IConnectionCreationListener;
+import org.awesomeapp.messenger.service.IImConnection;
+import org.awesomeapp.messenger.service.IRemoteImService;
+import org.awesomeapp.messenger.service.ImServiceConstants;
+import org.awesomeapp.messenger.service.RemoteImService;
+import org.awesomeapp.messenger.ui.legacy.ImPluginHelper;
+import org.awesomeapp.messenger.ui.legacy.ProviderDef;
+import org.awesomeapp.messenger.ui.legacy.adapter.ConnectionListenerAdapter;
+import org.awesomeapp.messenger.util.Debug;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+
+import info.guardianproject.cacheword.PRNGFixes;
+import info.guardianproject.iocipher.VirtualFileSystem;
+import info.guardianproject.otr.app.im.R;
+import info.guardianproject.util.Languages;
 
 public class ImApp extends Application {
 
@@ -142,8 +119,6 @@ public class ImApp extends Application {
 
     Broadcaster mBroadcaster;
 
-    public MemorizingTrustManager mTrustManager;
-
     public static boolean mUsingCacheword = true;
 
     /**
@@ -155,10 +130,6 @@ public class ImApp extends Application {
     /** A flag indicates that we have called tomServiceStarted start the service. */
 //    private boolean mServiceStarted;
     private Context mApplicationContext;
-    private Resources mPrivateResources;
-
-    private HashMap<String, BrandingResources> mBrandingResources;
-    private BrandingResources mDefaultBrandingResources;
 
     public static final int EVENT_SERVICE_CONNECTED = 100;
     public static final int EVENT_CONNECTION_CREATED = 150;
@@ -182,53 +153,6 @@ public class ImApp extends Application {
         Log.d(LOG_TAG, log);
     }
 
-    /*
-    public static ImApp getApplication(Activity activity) {
-        // TODO should this be synchronized?
-        if (sImApp == null) {
-            initialize(activity);
-        }
-
-        return sImApp;
-    }
-
-    public static ImApp getApplication() {
-        // TODO should this be synchronized?
-        if (sImApp == null) {
-            new ImApp();
-        }
-
-        return sImApp;
-    }*/
-
-    /**
-     * Initialize performs the manual ImApp instantiation and initialization.
-     * When the ImApp is started first in the process, the ImApp public
-     * constructor should be called, and sImApp initialized. So calling
-     * initialize() later should have no effect. However, if another application
-     * runs in the same process and is started first, the ImApp application
-     * object won't be instantiated, and we need to call initialize() manually
-     * to instantiate and initialize it.
-     */
-    /*
-    public void initialize(Activity activity) {
-        // construct the TalkApp manually and call onCreate().
-        sImApp = new ImApp();
-        sImApp.mApplicationContext = activity.getApplication();
-        sImApp.mPrivateResources = activity.getResources();
-        sImApp.onCreate();
-    }
-*/
-
-    @Override
-    public Resources getResources() {
-        if (mApplicationContext == this) {
-            return super.getResources();
-        }
-
-        return mPrivateResources;
-    }
-
     @Override
     public ContentResolver getContentResolver() {
         if (mApplicationContext == this) {
@@ -238,27 +162,13 @@ public class ImApp extends Application {
         return mApplicationContext.getContentResolver();
     }
 
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-
-        if (locale != null) {
-            // We have to create a new configuration, because changing the passed-in Configuration
-            // object causes an infinite relaunch loop in Android 4.2 (JB MR1)
-            Configuration myConfig = new Configuration(newConfig);
-            myConfig.locale = locale;
-
-            Locale.setDefault(locale);
-            getResources().updateConfiguration(myConfig, getResources().getDisplayMetrics());
-        }
-    }
-
     @Override
     public void onCreate() {
         super.onCreate();
 
         Preferences.setup(this);
+        Languages.setup(MainActivity.class, R.string.use_system_default);
+        Languages.setLanguage(this, Preferences.getLanguage());
 
         sImApp = this;
 
@@ -278,8 +188,6 @@ public class ImApp extends Application {
         mBroadcaster = new Broadcaster();
 
         setAppTheme(null,null);
-
-        checkLocale();
     }
 
     private boolean mThemeDark = false;
@@ -340,76 +248,16 @@ public class ImApp extends Application {
         }
     }
 
-    public void checkLocale ()
-    {
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-
-        Configuration config = getResources().getConfiguration();
-
-        String lang = settings.getString(getString(R.string.key_default_locale_pref), "");
-
-
-        if ("".equals(lang)) {
-            Properties props = AssetUtil.getProperties("chatsecure.properties", this);
-            if (props != null) {
-                String configuredLocale = props.getProperty("locale");
-                if (configuredLocale != null && !"CHOOSE".equals(configuredLocale)) {
-                    lang = configuredLocale;
-                    Editor editor = settings.edit();
-                    editor.putString(getString(R.string.key_default_locale_pref), lang);
-                    editor.apply();
-                }
-            }
+    public static void resetLanguage(Activity activity, String language) {
+        if (!TextUtils.equals(language, Preferences.getLanguage())) {
+            /* Set the preference after setting the locale in case something goes
+             * wrong. If setting the locale causes an Exception, it should not be set in
+             * the preferences, otherwise this will be stuck in a crash loop. */
+            Languages.setLanguage(activity, language);
+            Preferences.setLanguage(language);
+            Languages.forceChangeLanguage(activity);
         }
-
-        if (!"".equals(lang) && !config.locale.getLanguage().equals(lang)) {
-            locale = new Locale(lang);
-            config.locale = locale;
-            getResources().updateConfiguration(config, getResources().getDisplayMetrics());
-        }
-
-        loadDefaultBrandingRes();
     }
-
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
-    public void setNewLocale(Context context, String language) {
-        /* handle locales with the country in it, i.e. zh_CN, zh_TW, etc */
-        String localeSplit[] = language.split("_");
-        if (localeSplit.length > 1)
-            locale = new Locale(localeSplit[0], localeSplit[1]);
-        else
-            locale = new Locale(language);
-        Configuration config = getResources().getConfiguration();
-        if (Build.VERSION.SDK_INT >= 17)
-            config.setLocale(locale);
-        else
-            config.locale = locale;
-        getResources().updateConfiguration(config, getResources().getDisplayMetrics());
-
-        /* Set the preference after setting the locale in case something goes
-        wrong.  If setting the locale causes an Exception, it should be set in the
-        preferences, otherwise ChatSecure will be stuck in a crash loop. */
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        Editor prefEdit = prefs.edit();
-        prefEdit.putString(context.getString(R.string.key_default_locale_pref), language);
-        prefEdit.apply();
-    }
-
-    /**
-    @Override
-    public void onTerminate() {
-        stopImServiceIfInactive();
-        if (mImService != null) {
-            try {
-                mImService.removeConnectionCreatedListener(mConnCreationListener);
-            } catch (RemoteException e) {
-                Log.w(LOG_TAG, "failed to remove ConnectionCreatedListener");
-            }
-        }
-
-        Imps.clearPassphrase(this);
-        super.onTerminate();
-    }*/
 
     public synchronized void startImServiceIfNeed() {
         startImServiceIfNeed(false);
@@ -512,22 +360,6 @@ public class ImApp extends Application {
         return mImService != null;
     }
 
- //   public boolean isBackgroundDataEnabled() { //"background data" is a deprectaed concept
-    public static boolean isNetworkAvailableAndConnected (Context context) {
-        ConnectivityManager manager = (ConnectivityManager) context
-                .getSystemService(CONNECTIVITY_SERVICE);
-
-        NetworkInfo nInfo = manager.getActiveNetworkInfo();
-
-        if (nInfo != null)
-        {
-            Log.d(LOG_TAG, "isNetworkAvailableAndConnected? available=" + nInfo.isAvailable() + " connected=" + nInfo.isConnected());
-            return nInfo.isAvailable() && nInfo.isConnected();
-        }
-        else
-            return false; //no network info is a bad idea
-    }
-
     public static long insertOrUpdateAccount(ContentResolver cr, long providerId, long accountId, String nickname, String username,
             String pw) {
         String selection = Imps.Account.PROVIDER + "=? AND (" + Imps.Account._ID + "=?" + " OR " + Imps.Account.USERNAME + "=?)";
@@ -566,16 +398,6 @@ public class ImApp extends Application {
         }
     }
 
-    /** Used to reset the provider settings if a reload is required. */
-    public void resetProviderSettings() {
-        mProviders = null;
-    }
-
-    // For testing
-    public void setImProviderSettings(HashMap<Long, ProviderDef> providers) {
-        mProviders = providers;
-    }
-
     private void loadImProviderSettings() {
 
         mProviders = new HashMap<Long, ProviderDef>();
@@ -607,92 +429,6 @@ public class ImApp extends Application {
         }
     }
 
-    private void loadDefaultBrandingRes() {
-        HashMap<Integer, Integer> resMapping = new HashMap<Integer, Integer>();
-
-        resMapping.put(BrandingResourceIDs.DRAWABLE_LOGO, R.drawable.ic_launcher);
-        resMapping.put(BrandingResourceIDs.DRAWABLE_PRESENCE_ONLINE,
-                android.R.drawable.presence_online);
-        resMapping
-                .put(BrandingResourceIDs.DRAWABLE_PRESENCE_AWAY, android.R.drawable.presence_away);
-        resMapping
-                .put(BrandingResourceIDs.DRAWABLE_PRESENCE_BUSY, android.R.drawable.presence_busy);
-        resMapping.put(BrandingResourceIDs.DRAWABLE_PRESENCE_INVISIBLE,
-                android.R.drawable.presence_invisible);
-        resMapping.put(BrandingResourceIDs.DRAWABLE_PRESENCE_OFFLINE,
-                android.R.drawable.presence_offline);
-        resMapping.put(BrandingResourceIDs.DRAWABLE_READ_CHAT, R.drawable.status_chat);
-        resMapping.put(BrandingResourceIDs.DRAWABLE_UNREAD_CHAT, R.drawable.status_chat_new);
-        resMapping.put(BrandingResourceIDs.DRAWABLE_BLOCK, R.drawable.ic_im_block);
-
-        resMapping.put(BrandingResourceIDs.STRING_ARRAY_SMILEY_NAMES, R.array.default_smiley_names);
-        resMapping.put(BrandingResourceIDs.STRING_ARRAY_SMILEY_TEXTS, R.array.default_smiley_texts);
-
-        resMapping.put(BrandingResourceIDs.STRING_PRESENCE_AVAILABLE, R.string.presence_available);
-        resMapping.put(BrandingResourceIDs.STRING_PRESENCE_BUSY, R.string.presence_busy);
-        resMapping.put(BrandingResourceIDs.STRING_PRESENCE_AWAY, R.string.presence_away);
-        resMapping.put(BrandingResourceIDs.STRING_PRESENCE_IDLE, R.string.presence_idle);
-        resMapping.put(BrandingResourceIDs.STRING_PRESENCE_OFFLINE, R.string.presence_offline);
-        resMapping.put(BrandingResourceIDs.STRING_PRESENCE_INVISIBLE, R.string.presence_invisible);
-        resMapping.put(BrandingResourceIDs.STRING_LABEL_USERNAME, R.string.label_username);
-        resMapping.put(BrandingResourceIDs.STRING_ONGOING_CONVERSATION,
-                R.string.ongoing_conversation);
-        resMapping.put(BrandingResourceIDs.STRING_ADD_CONTACT_TITLE, R.string.add_contact_title);
-        resMapping
-                .put(BrandingResourceIDs.STRING_LABEL_INPUT_CONTACT, R.string.input_contact_label);
-        resMapping.put(BrandingResourceIDs.STRING_BUTTON_ADD_CONTACT, R.string.invite_label);
-        resMapping.put(BrandingResourceIDs.STRING_CONTACT_INFO_TITLE,
-                R.string.contact_profile_title);
-
-        resMapping.put(BrandingResourceIDs.STRING_MENU_ADD_CONTACT, R.string.menu_add_contact);
-        resMapping.put(BrandingResourceIDs.STRING_MENU_BLOCK_CONTACT, R.string.menu_block_contact);
-        resMapping.put(BrandingResourceIDs.STRING_MENU_CONTACT_LIST,
-                R.string.menu_view_contact_list);
-        resMapping
-                .put(BrandingResourceIDs.STRING_MENU_DELETE_CONTACT, R.string.menu_remove_contact);
-        resMapping.put(BrandingResourceIDs.STRING_MENU_END_CHAT, R.string.menu_end_conversation);
-        resMapping.put(BrandingResourceIDs.STRING_MENU_INSERT_SMILEY, R.string.menu_insert_smiley);
-        resMapping.put(BrandingResourceIDs.STRING_MENU_START_CHAT, R.string.menu_start_chat);
-        resMapping.put(BrandingResourceIDs.STRING_MENU_VIEW_PROFILE, R.string.menu_view_profile);
-        resMapping.put(BrandingResourceIDs.STRING_MENU_SWITCH_CHATS, R.string.menu_switch_chats);
-
-        resMapping.put(BrandingResourceIDs.STRING_TOAST_CHECK_SAVE_PASSWORD,
-                R.string.check_save_password);
-        resMapping.put(BrandingResourceIDs.STRING_TOAST_CHECK_AUTO_SIGN_IN,
-                R.string.check_auto_sign_in);
-
-        resMapping.put(BrandingResourceIDs.STRING_LABEL_SIGN_UP, R.string.sign_up);
-
-        mDefaultBrandingResources = new BrandingResources(this, resMapping, null /* default res */);
-    }
-
-    private void loadThirdPartyResources() {
-        ImPluginHelper helper = ImPluginHelper.getInstance(this);
-        helper.loadAvailablePlugins();
-        ArrayList<ImPlugin> pluginList = helper.getPluginObjects();
-        ArrayList<ImPluginInfo> infoList = helper.getPluginsInfo();
-        int N = pluginList.size();
-        PackageManager pm = getPackageManager();
-        for (int i = 0; i < N; i++) {
-            ImPlugin plugin = pluginList.get(i);
-            ImPluginInfo pluginInfo = infoList.get(i);
-
-            try {
-                Resources packageRes = pm.getResourcesForApplication(pluginInfo.mPackageName);
-
-                Map<Integer, Integer> resMap = plugin.getResourceMap();
-                //int[] smileyIcons = plugin.getSmileyIconIds();
-
-
-                BrandingResources res = new BrandingResources(packageRes, resMap,
-                        mDefaultBrandingResources);
-                mBrandingResources.put(pluginInfo.mProviderName, res);
-            } catch (NameNotFoundException e) {
-                Log.e(LOG_TAG, "Failed to load third party resources.", e);
-            }
-        }
-    }
-
     public long getProviderId(String name) {
         loadImProviderSettings();
         for (ProviderDef provider : mProviders.values()) {
@@ -706,26 +442,6 @@ public class ImApp extends Application {
     public ProviderDef getProvider(long id) {
         loadImProviderSettings();
         return mProviders.get(id);
-    }
-
-    public List<ProviderDef> getProviders() {
-        loadImProviderSettings();
-        ArrayList<ProviderDef> result = new ArrayList<ProviderDef>();
-        result.addAll(mProviders.values());
-        return result;
-    }
-
-    public BrandingResources getBrandingResource(long providerId) {
-        ProviderDef provider = getProvider(providerId);
-        if (provider == null) {
-            return mDefaultBrandingResources;
-        }
-        if (mBrandingResources == null) {
-            mBrandingResources = new HashMap<String, BrandingResources>();
-            loadThirdPartyResources();
-        }
-        BrandingResources res = mBrandingResources.get(provider.mName);
-        return res == null ? mDefaultBrandingResources : res;
     }
 
     public IImConnection createConnection(long providerId, long accountId) throws RemoteException {
@@ -779,21 +495,6 @@ public class ImApp extends Application {
         }
     }
 
-    public IImConnection getConnectionByAccount(long accountId) {
-        synchronized (mConnections) {
-            for (IImConnection conn : mConnections.values()) {
-                try {
-                    if (conn.getAccountId() == accountId) {
-                        return conn;
-                    }
-                } catch (RemoteException e) {
-                    // No server!
-                }
-            }
-            return null;
-        }
-    }
-
     public Collection<IImConnection> getActiveConnections() {
 
         return mConnections.values();
@@ -826,18 +527,6 @@ public class ImApp extends Application {
 
 
 
-    }
-
-    public void removePendingCall(Handler target) {
-        synchronized (mQueue) {
-            Iterator<Message> iter = mQueue.iterator();
-            while (iter.hasNext()) {
-                Message msg = iter.next();
-                if (msg.getTarget() == target) {
-                    iter.remove();
-                }
-            }
-        }
     }
 
     public void registerForBroadcastEvent(int what, Handler target) {
@@ -883,15 +572,6 @@ public class ImApp extends Application {
         android.os.Message msg = android.os.Message.obtain(null, what, (int) (providerId >> 32),
                 (int) providerId, error);
         mBroadcaster.broadcast(msg);
-    }
-
-    public void dismissNotifications(long providerId) {
-        if (mImService != null) {
-            try {
-                mImService.dismissNotifications(providerId);
-            } catch (RemoteException e) {
-            }
-        }
     }
 
     public void dismissChatNotification(long providerId, String username) {
@@ -1019,11 +699,6 @@ public class ImApp extends Application {
         }
     }
 
-    public IRemoteImService getRemoteImService() {
-        return mImService;
-    }
-
-
     public IChatSession getChatSession(long providerId, long accountId, String remoteAddress) {
 
         IImConnection conn = getConnection(providerId,accountId);
@@ -1063,20 +738,6 @@ public class ImApp extends Application {
         });
     }
 
-/**
-    private void initTrustManager ()
-    {
-      //  PinningTrustManager trustPinning = new PinningTrustManager(SystemKeyStore.getInstance(this),XMPPCertPins.getPinList(), 0);
-        MemorizingTrustManager trustManager = new MemorizingTrustManager(this);
-
-        mTrustManager = trustManager;
-    }
-
-    public MemorizingTrustManager getTrustManager ()
-    {
-        return mTrustManager;
-    }
-*/
     public boolean initAccountInfo ()
     {
         if (mDefaultProviderId == -1) {

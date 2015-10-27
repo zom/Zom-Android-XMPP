@@ -12,27 +12,21 @@ buildscript {
 apply plugin: 'com.android.application'
 apply plugin: 'witness'
 
-allprojects {
-    repositories {
-        jcenter()
-    }
-}
-
 android {
-    compileSdkVersion 23
-    buildToolsVersion '23.0.1'
+    compileSdkVersion project.ext.compileSdkVersion
+    buildToolsVersion project.ext.buildToolsVersion
 
     dexOptions {
         jumboMode true
         incremental true
-        javaMaxHeapSize "4g"
+        javaMaxHeapSize "2g"
         preDexLibraries false
     }
 
     defaultConfig {
         applicationId "org.awesomeapp.messenger"
-        minSdkVersion 14
-        targetSdkVersion 22
+        minSdkVersion project.ext.minSdkVersion
+        targetSdkVersion project.ext.targetSdkVersion
         testApplicationId "org.awesomeapp.messenger.test"
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
 
@@ -79,12 +73,12 @@ android {
         verify = [
                 'commons-codec:commons-codec:ad19d2601c3abf0b946b5c3a4113e226a8c1e3305e395b90013b78dd94a723ce',
                 'commons-io:commons-io:cc6a41dc3eaacc9e440a6bd0d2890b20d36b4ee408fe2d67122f328bb6e01581',
-        //        'com.android.support:appcompat-v7:4b5ccba8c4557ef04f99aa0a80f8aa7d50f05f926a709010a54afd5c878d3618',
-        //        'com.android.support:cardview-v7:2c2354761a4e20ba451ae903ab808f15c9acc8343b1e74001869c2d0a672c1fc',
-        //        'com.android.support:design:58be3ca6a73789615f7ece0937d2f683b98b594bb90aa10565fa760fb10b07ee',
-        //        'com.android.support:recyclerview-v7:b0f530a5b14334d56ce0de85527ffe93ac419bc928e2884287ce1dddfedfb505',
-        //        'com.android.support:support-annotations:104f353b53d5dd8d64b2f77eece4b37f6b961de9732eb6b706395e91033ec70a',
-        //        'com.android.support:support-v4:c62f0d025dafa86f423f48df9185b0d89496adbc5f6a9be5a7c394d84cf91423',
+                'com.android.support:appcompat-v7:b5783b390d1440769c9b8a7b42290523a4ff058ef2d3fb90c983973934ca115b',
+                'com.android.support:cardview-v7:7b44941673bb60566421781be0ed16b536ecf4b630b380fe9b8f48b376df33b7',
+                'com.android.support:design:ff53a30489cf77c5ed83805e59709f712b8dae1727524422c0d4fafd9b6bafe5',
+                'com.android.support:recyclerview-v7:464ec6e5004400a4fe0310f35343da9e5a2912386a3606db3585f7cf987c444a',
+                'com.android.support:support-annotations:d50996a4cbca17178989fef38635f2cc570c5d3a77870aaa57f4f7e4fc6de9dc',
+                'com.android.support:support-v4:a0309e9c188afd25ad5dd38e484ad13610bc5f2ebfeafa40d2a07eea414896d5',
                 'com.google.guava:guava:d664fbfc03d2e5ce9cab2a44fb01f1d0bf9dfebeccc1a473b1f9ea31f79f6f99',
                 'com.google.zxing:core:e317820031ffe4beddbef9c8a67019c28a6bedfa5dc5f69a4ae0c53f0e403160',
                 'com.theartofdev.edmodo:android-image-cropper:6d14aadb0271a8347aa97a88cfaa34f95d8bc152834ff77d96a85aeb0dac1d19',
@@ -121,7 +115,7 @@ dependencies {
     compile 'com.google.zxing:core:3.0.0'
     compile 'commons-codec:commons-codec:1.9'
     compile 'commons-io:commons-io:2.4'
-    compile 'com.android.support:appcompat-v7:23.0.1'
+    compile project.ext.appcompat
     compile 'com.android.support:cardview-v7:23.1.0'
     compile 'com.android.support:design:23.1.0'
     compile 'com.android.support:recyclerview-v7:23.1.0'
