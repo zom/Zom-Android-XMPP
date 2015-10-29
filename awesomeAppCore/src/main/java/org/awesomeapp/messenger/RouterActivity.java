@@ -74,6 +74,8 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
     private static String EXTRA_DO_SIGNIN = "doSignIn";
     public static String EXTRA_ORIGINAL_INTENT = "originalIntent";
 
+    private ProgressDialog dialog;
+
     static final String[] PROVIDER_PROJECTION = { Imps.Provider._ID, Imps.Provider.NAME,
                                                  Imps.Provider.FULLNAME, Imps.Provider.CATEGORY,
                                                  Imps.Provider.ACTIVE_ACCOUNT_ID,
@@ -192,6 +194,9 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
         super.onDestroy();
         if (mCacheWord != null)
             mCacheWord.disconnectFromService();
+
+        if (dialog != null)
+            dialog.dismiss();
     }
 
     @Override
@@ -465,10 +470,6 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
             e.printStackTrace();
         }
            new AsyncTask<String, Void, String>() {
-
-            private ProgressDialog dialog;
-
-
             @Override
             protected void onPreExecute() {
                 if (mApp.getActiveConnections().size() > 0)
