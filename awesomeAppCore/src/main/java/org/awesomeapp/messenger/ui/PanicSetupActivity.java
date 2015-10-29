@@ -59,12 +59,6 @@ public class PanicSetupActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 Preferences.setLockApp(isChecked);
-                if (isChecked) {
-                    clearAppData.setChecked(false);
-                    uninstallApp.setChecked(false);
-                    Preferences.setClearAppData(false);
-                    Preferences.setUninstallApp(false);
-                }
             }
         });
 
@@ -73,10 +67,7 @@ public class PanicSetupActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 Preferences.setClearAppData(isChecked);
-                if (isChecked) {
-                    lockApp.setChecked(false);
-                    Preferences.setLockApp(false);
-                } else {
+                if (!isChecked) {
                     uninstallApp.setChecked(false);
                     Preferences.setUninstallApp(false);
                 }
@@ -89,9 +80,7 @@ public class PanicSetupActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 Preferences.setUninstallApp(isChecked);
                 if (isChecked) {
-                    lockApp.setChecked(false);
                     clearAppData.setChecked(true);
-                    Preferences.setLockApp(false);
                     Preferences.setClearAppData(true);
                 }
             }
