@@ -113,6 +113,20 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
             shutdownAndLock(this);
             finish();
             return;
+        } else if (Panic.isTriggerIntent(intent)) {
+            if (PanicReceiver.receivedTrustedTrigger(this)) {
+                if (Preferences.lockApp()) {
+                    shutdownAndLock(this);
+                }
+                // TODO add other responses here
+            } else if (PanicReceiver.shouldUseDefaultResponseToTrigger(this)) {
+                if (Preferences.lockApp()) {
+                    shutdownAndLock(this);
+                }
+            }
+            // this Intent should not trigger any more processing
+            finish();
+            return;
         }
 
         mCacheWord = new CacheWordHandler(this, (ICacheWordSubscriber)this);
@@ -223,10 +237,6 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
         Intent intent = getIntent();
         if (intent != null && intent.getAction() != null && !intent.getAction().equals(Intent.ACTION_MAIN)) {
             String action = intent.getAction();
-            if (Panic.ACTION_TRIGGER.equals(action)
-                    && !PanicReceiver.getTriggerPackageName(this).equals(Panic.PACKAGE_NAME_NONE)) {
-                RouterActivity.shutdownAndLock(this);
-            } else {
                 Intent imUrlIntent = new Intent(this, ImUrlActivity.class);
                 imUrlIntent.setAction(action);
 
@@ -237,7 +247,6 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
                 if (intent.getExtras() != null)
                     imUrlIntent.putExtras(intent.getExtras());
                 startActivity(imUrlIntent);
-            }
             setIntent(null);
             finish();
         }
