@@ -37,7 +37,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -45,22 +44,28 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-
 import net.hockeyapp.android.UpdateManager;
 
 import org.awesomeapp.messenger.model.ImConnection;
-import org.awesomeapp.messenger.plugin.xmpp.XmppConnection;
+import org.awesomeapp.messenger.provider.Imps;
+import org.awesomeapp.messenger.service.IChatSession;
+import org.awesomeapp.messenger.service.IChatSessionManager;
+import org.awesomeapp.messenger.service.IImConnection;
 import org.awesomeapp.messenger.tasks.AddContactAsyncTask;
 import org.awesomeapp.messenger.ui.AccountFragment;
+import org.awesomeapp.messenger.ui.AddContactActivity;
 import org.awesomeapp.messenger.ui.ContactsListFragment;
+import org.awesomeapp.messenger.ui.ContactsPickerActivity;
 import org.awesomeapp.messenger.ui.ConversationDetailActivity;
 import org.awesomeapp.messenger.ui.ConversationListFragment;
-import org.awesomeapp.messenger.ui.GalleryListFragment;
 import org.awesomeapp.messenger.ui.MoreFragment;
 import org.awesomeapp.messenger.ui.legacy.SettingActivity;
 import org.awesomeapp.messenger.ui.onboarding.OnboardingActivity;
-import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.ui.onboarding.OnboardingManager;
+import org.awesomeapp.messenger.util.LogCleaner;
+import org.awesomeapp.messenger.util.SecureMediaStore;
+import org.awesomeapp.messenger.util.SystemServices;
+import org.awesomeapp.messenger.util.XmppUriHelper;
 
 import java.io.File;
 import java.io.IOException;
@@ -71,16 +76,7 @@ import java.util.Locale;
 import java.util.UUID;
 
 import info.guardianproject.iocipher.VirtualFileSystem;
-import org.awesomeapp.messenger.service.IChatSession;
-import org.awesomeapp.messenger.service.IChatSessionManager;
-import org.awesomeapp.messenger.service.IImConnection;
 import info.guardianproject.otr.app.im.R;
-import org.awesomeapp.messenger.ui.AddContactActivity;
-import org.awesomeapp.messenger.ui.ContactsPickerActivity;
-import org.awesomeapp.messenger.util.LogCleaner;
-import org.awesomeapp.messenger.util.SecureMediaStore;
-import org.awesomeapp.messenger.util.SystemServices;
-import org.awesomeapp.messenger.util.XmppUriHelper;
 
 
 /**
@@ -477,6 +473,13 @@ public class MainActivity extends AppCompatActivity {
 
             case R.id.menu_group_chat:
                 showGroupChatDialog();
+                return true;
+
+            case R.id.menu_lock:
+                Intent intent = new Intent(this, RouterActivity.class);
+                intent.setAction(RouterActivity.ACTION_LOCK_APP);
+                startActivity(intent);
+                finish();
                 return true;
         }
         return super.onOptionsItemSelected(item);

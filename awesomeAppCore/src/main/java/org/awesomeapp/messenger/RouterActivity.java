@@ -70,6 +70,8 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
 
     private boolean mDoSignIn = true;
 
+    public static final String ACTION_LOCK_APP = "actionLockApp";
+
     private static String EXTRA_DO_LOCK = "doLock";
     private static String EXTRA_DO_SIGNIN = "doSignIn";
     public static String EXTRA_ORIGINAL_INTENT = "originalIntent";
@@ -106,6 +108,13 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
         super.onCreate(savedInstanceState);
         mApp = (ImApp)getApplication();
 
+        Intent intent = getIntent();
+        if (ACTION_LOCK_APP.equals(intent.getAction())) {
+            shutdownAndLock(this);
+            finish();
+            return;
+        }
+
         mCacheWord = new CacheWordHandler(this, (ICacheWordSubscriber)this);
         mCacheWord.connectToService();
 
@@ -117,7 +126,6 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
 
         mSignInHelper = new SignInHelper(this, mHandler);
 
-        Intent intent = getIntent();
         mDoSignIn = intent.getBooleanExtra(EXTRA_DO_SIGNIN, true);
         mDoLock = intent.getBooleanExtra(EXTRA_DO_LOCK, false);
 
