@@ -183,7 +183,7 @@ public class LockScreenActivity extends ThemeableActivity implements ICacheWordS
                 //now remove the temp passphrase if it exists
                 SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
                 if (settings.contains(ImApp.PREFERENCE_KEY_TEMP_PASS))
-                    settings.edit().remove(ImApp.PREFERENCE_KEY_TEMP_PASS);
+                    settings.edit().remove(ImApp.PREFERENCE_KEY_TEMP_PASS).commit();
 
                 finish();
 
