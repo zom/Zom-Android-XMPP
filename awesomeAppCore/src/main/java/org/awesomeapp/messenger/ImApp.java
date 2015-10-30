@@ -287,38 +287,45 @@ public class ImApp extends Application {
 
     }
 
-    public synchronized void stopImServiceIfInactive() {
+    public void stopImServiceIfInactive() {
 
+        //todo we don't wnat to do this right now
+        /**
         if (!hasActiveConnections()) {
             if (Log.isLoggable(LOG_TAG, Log.DEBUG))
                 log("stop ImService because there's no active connections");
 
-            if (mImService != null) {
-                mApplicationContext.unbindService(mImServiceConn);
-                mImService = null;
-            }
-            Intent intent = new Intent();
-            intent.setComponent(ImServiceConstants.IM_SERVICE_COMPONENT);
-            mApplicationContext.stopService(intent);
+            forceStopImService();
 
-        }
+        }*/
     }
 
 
-    public synchronized void forceStopImService()
-    {
-        if (mImService != null) {
-            if (Log.isLoggable(LOG_TAG, Log.DEBUG))
-                log("stop ImService");
+    public void forceStopImService() {
+        if (Log.isLoggable(LOG_TAG, Log.DEBUG))
+            log("stop ImService");
 
+
+        if (mImServiceConn != null) {
+            try {
+                if (mImService != null)
+                 mImService.shutdownAndLock();
+            }
+            catch (RemoteException re)
+            {
+
+            }
             mApplicationContext.unbindService(mImServiceConn);
+
             mImService = null;
-
-            Intent intent = new Intent();
-            intent.setComponent(ImServiceConstants.IM_SERVICE_COMPONENT);
-            mApplicationContext.stopService(intent);
-
         }
+
+
+        Intent serviceIntent = new Intent(this, RemoteImService.class);
+        serviceIntent.putExtra(ImServiceConstants.EXTRA_CHECK_AUTO_LOGIN, true);
+        mApplicationContext.stopService(serviceIntent);
+
+
     }
 
     private ServiceConnection mImServiceConn = new ServiceConnection() {

@@ -108,8 +108,13 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
         super.onCreate(savedInstanceState);
         mApp = (ImApp)getApplication();
 
+        mHandler = new MyHandler(this);
+
         Intent intent = getIntent();
-        if (ACTION_LOCK_APP.equals(intent.getAction())) {
+
+        mDoLock = ACTION_LOCK_APP.equals(intent.getAction());
+
+        if (mDoLock) {
             shutdownAndLock(this);
             finish();
             return;
@@ -133,6 +138,9 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
             return;
         }
 
+        mSignInHelper = new SignInHelper(this, mHandler);
+        mDoSignIn = intent.getBooleanExtra(EXTRA_DO_SIGNIN, true);
+
         mCacheWord = new CacheWordHandler(this, (ICacheWordSubscriber)this);
         mCacheWord.connectToService();
 
@@ -140,12 +148,7 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
 
         getSupportActionBar().hide();
         
-        mHandler = new MyHandler(this);
 
-        mSignInHelper = new SignInHelper(this, mHandler);
-
-        mDoSignIn = intent.getBooleanExtra(EXTRA_DO_SIGNIN, true);
-        mDoLock = intent.getBooleanExtra(EXTRA_DO_LOCK, false);
 
         // if we have an incoming contact, send it to the right place
         String scheme = intent.getScheme();
@@ -307,7 +310,7 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
     }
 
     private int accountsAvailable() {
-        if (!mProviderCursor.moveToFirst()) {
+        if (mProviderCursor == null || !mProviderCursor.moveToFirst()) {
             return 0;
         }
         int count = 0;
@@ -353,16 +356,9 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
     public void onCacheWordUninitialized() {
         Log.d(ImApp.LOG_TAG,"cache word uninit");
 
-        if (mDoLock) {
-            completeShutdown();
-            
-        } else {
-            
-            initTempPassphrase ();
-            showOnboarding ();
-            
-        }
-        
+        initTempPassphrase();
+        showOnboarding();
+
         finish();
 
     }
@@ -407,7 +403,7 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
         returnIntent.putExtra(EXTRA_DO_SIGNIN, mDoSignIn);
         intent.putExtra(EXTRA_ORIGINAL_INTENT, returnIntent);
         startActivity(intent);
-
+        
     }
 
     @Override
@@ -443,53 +439,21 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
        byte[] encryptionKey = mCacheWord.getEncryptionKey();
        openEncryptedStores(encryptionKey);
 
-            mApp.maybeInit(this);
+        mApp.maybeInit(this);
+
+        if (!mDoLock)
+            doOnResume();
 
 
     }
 
-    public static void shutdownAndLock(Context context) {
-        Activity activity = null;
-        ImApp app = null;
-        if (context instanceof Activity) {
-            activity = (Activity) context;
-            app = (ImApp) activity.getApplication();
-        } else if (context instanceof Service) {
-            Service service = (Service) context;
-            app = (ImApp) service.getApplication();
-        }
-        if (app != null) {
-            for (IImConnection conn : app.getActiveConnections()) {
-                try {
-                    conn.logout();
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+    public void shutdownAndLock(Context context) {
 
-        Intent intent = new Intent(context, RouterActivity.class);
-        // Request lock
-        intent.putExtra(EXTRA_DO_LOCK, true);
-        // Clear the backstack
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        context.startActivity(intent);
+        mApp.forceStopImService();
 
-        if (activity != null) {
-            activity.finish();
-        }
-    }
+        finish();
 
-    private void completeShutdown ()
-    {
-        /* ignore unmount errors and quit ASAP. Threads actively using the VFS will
-         * cause IOCipher's VirtualFileSystem.unmount() to throw an IllegalStateException */
-        try {
-            SecureMediaStore.unmount();
-        } catch (IllegalStateException e) {
-            e.printStackTrace();
-        }
+        /**
            new AsyncTask<String, Void, String>() {
             @Override
             protected void onPreExecute() {
@@ -505,30 +469,17 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
             @Override
             protected String doInBackground(String... params) {
 
-                boolean stillConnected = true;
+                for (IImConnection conn : mApp.getActiveConnections()) {
+                    try {
 
-                while (stillConnected)
-                {
+                        if (conn.getState() == ImConnection.LOGGED_IN) {
+                            conn.logout();
+                        }
 
-                       try{
-                           IImConnection conn = mApp.getActiveConnections().iterator().next();
-
-                           if (conn.getState() == ImConnection.DISCONNECTED || conn.getState() == ImConnection.LOGGING_OUT)
-                           {
-                               stillConnected = false;
-                           }
-                           else
-                           {
-                               conn.logout();
-                               stillConnected = true;
-                           }
-
-
-                           Thread.sleep(500);
-                       } catch(Exception e){}
-
-
+                    } catch (Exception e) {
+                    }
                 }
+
 
                 return "";
               }
@@ -540,12 +491,9 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
                 if (dialog != null)
                     dialog.dismiss();
 
-                mApp.forceStopImService();
-                mCacheWord.lock();
 
-                finish();
             }
-        }.execute();
+        }.execute();*/
     }
 
     private boolean openEncryptedStores(byte[] key) {
@@ -554,10 +502,7 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
 
         if (cursorUnlocked()) {
 
-            if (mDoLock)
-                completeShutdown();
-            else
-                doOnResume();
+            doOnResume();
 
             return true;
         } else {

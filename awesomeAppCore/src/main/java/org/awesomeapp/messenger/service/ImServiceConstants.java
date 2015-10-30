@@ -58,4 +58,7 @@ public class ImServiceConstants {
      * chat notifications
      */
     public static final String EXTRA_INTENT_SHOW_MULTIPLE = "show_multiple";
+
+    public static final String EXTRA_CHECK_SHUTDOWN = "shutdown";
+
 }

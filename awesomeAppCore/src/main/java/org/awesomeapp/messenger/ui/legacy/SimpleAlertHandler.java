@@ -40,6 +40,8 @@ public class SimpleAlertHandler extends Handler {
     }
 
     protected void promptDisconnectedEvent(Message msg) {
+
+        /**
         long providerId = ((long) msg.arg1 << 32) | msg.arg2;
         ImApp app = (ImApp)mActivity.getApplication();
         ProviderDef provider = app.getProvider(providerId);
@@ -56,6 +58,7 @@ public class SimpleAlertHandler extends Handler {
 
         if (promptMsg != null)
             showAlert(R.string.error, promptMsg);
+         */
     }
 
     public void registerForBroadcastEvents() {

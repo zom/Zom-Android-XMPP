@@ -286,7 +286,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
       //  note.setOnlyAlertOnce(true);
         mNotifyBuilder.setOngoing(true);
-        mNotifyBuilder.setWhen( System.currentTimeMillis() );
+        mNotifyBuilder.setWhen(System.currentTimeMillis());
         
         Intent notificationIntent = new Intent(this, MainActivity.class);
         PendingIntent launchIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent, 0);
@@ -370,7 +370,11 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
                 return START_REDELIVER_INTENT;
             }
 
-
+            if (ImServiceConstants.EXTRA_CHECK_SHUTDOWN.equals((intent.getAction())))
+            {
+                shutdown();
+                stopSelf();
+            }
 
 
         }
@@ -534,19 +538,41 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
     @Override
     public void onDestroy() {
+        shutdown();
+    }
+
+    private void shutdown ()
+    {
         Debug.recordTrail(this, SERVICE_DESTROY_TRAIL_TAG, new Date());
 
-        if (mCacheWord != null)
-            mCacheWord.detach();
-        
         HeartbeatService.stopBeating(getApplicationContext());
 
         Log.w(TAG, "ImService stopped.");
         for (ImConnectionAdapter conn : mConnections.values()) {
-            conn.logout();
+
+            if (conn.getState() == ImConnection.LOGGED_IN)
+                conn.logout();
+
         }
 
         stopForeground(true);
+
+
+         /* ignore unmount errors and quit ASAP. Threads actively using the VFS will
+             * cause IOCipher's VirtualFileSystem.unmount() to throw an IllegalStateException */
+        try {
+            SecureMediaStore.unmount();
+        } catch (IllegalStateException e) {
+            Log.e(ImApp.LOG_TAG,"there was a problem unmoiunt secure media store");
+        }
+
+
+        if (mCacheWord != null && (!mCacheWord.isLocked())) {
+            mCacheWord.lock();
+            mCacheWord.disconnectFromService();
+        }
+
+
     }
 
     @Override
@@ -829,6 +855,12 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
             updateOtrPolicy ();
 
+        }
+
+        @Override
+        public void shutdownAndLock ()
+        {
+            shutdown();
         }
     };
 

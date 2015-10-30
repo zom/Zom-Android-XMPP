@@ -347,7 +347,6 @@
 
         <activity
             android:name="org.awesomeapp.messenger.ui.LockScreenActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_lock_screen" >
         </activity>
         <activity
