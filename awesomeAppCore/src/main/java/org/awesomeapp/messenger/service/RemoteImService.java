@@ -546,8 +546,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
             conn.logout();
         }
 
-        if (mUseForeground)
-            stopForeground(true);
+        stopForeground(true);
     }
 
     @Override
@@ -581,7 +580,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
         }, delay);
     }
 
-    private boolean mUseForeground = false;
+//    private boolean mUseForeground = false;
 
     private IImConnection do_createConnection(long providerId, long accountId) {
 
