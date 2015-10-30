@@ -115,10 +115,14 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
             return;
         } else if (Panic.isTriggerIntent(intent)) {
             if (PanicReceiver.receivedTrustedTrigger(this)) {
-                if (Preferences.lockApp()) {
+                if (Preferences.uninstallApp()) {
+                    Intent uninstall = new Intent(Intent.ACTION_DELETE);
+                    uninstall.setData(Uri.parse("package:" + getPackageName()));
+                    startActivity(uninstall);
+                } else if (Preferences.lockApp()) {
                     shutdownAndLock(this);
                 }
-                // TODO add other responses here
+                // TODO add other responses here, paying attention to if/else order
             } else if (PanicReceiver.shouldUseDefaultResponseToTrigger(this)) {
                 if (Preferences.lockApp()) {
                     shutdownAndLock(this);
