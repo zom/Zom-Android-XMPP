@@ -1,31 +1,29 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".MainActivity">
 
+    <item
+        android:id="@+id/menu_search"
+        android:icon="@drawable/ic_search_white_24dp"
+        android:title="@string/search_button_text"
+        app:showAsAction="always" />
 
-    <item android:id="@+id/menu_search" android:title="@string/search_button_text"
-        android:icon="@drawable/ic_search_white_24dp" app:showAsAction="always"
-        android:orderInCategory="1"
-        />
-
-    <item android:id="@+id/menu_settings"
+    <item
+        android:id="@+id/menu_group_chat"
+        android:icon="@drawable/social_add_person"
+        android:title="@string/create_group"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/menu_settings"
         android:icon="@drawable/ic_settings_white_24dp"
         android:title="@string/menu_settings"
-        android:orderInCategory="2"
         app:showAsAction="never" />
 
-    <item android:id="@+id/menu_group_chat"
-        android:title="@string/create_group"
-        android:icon="@drawable/social_add_person"
-        app:showAsAction="never"
-
-        />
-<!--
-    <item android:id="@+id/menu_lock"
-        android:title="@string/menu_exit"
+    <item
+        android:id="@+id/menu_lock"
         android:icon="@drawable/ic_lock_outline_black_18dp"
-        app:showAsAction="never"
-
-        />-->
+        android:title="@string/lock_app"
+        app:showAsAction="never" />
 
 </menu>

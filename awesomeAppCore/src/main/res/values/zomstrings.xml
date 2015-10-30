@@ -94,9 +94,6 @@
 
     <string name="blocked">Blocked</string>
 
-    <string name="clear_app_data">Clear App Data</string>
-    <string name="delete_app">Uninstall the App</string>
-
     <string name="server_information">Server information</string>
 
     <string name="general">General</string>

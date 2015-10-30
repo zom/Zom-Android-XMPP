@@ -62,7 +62,7 @@ import info.guardianproject.panic.PanicReceiver;
 
 public class RouterActivity extends ThemeableActivity implements ICacheWordSubscriber  {
 
-    private static final String TAG = "WelcomeActivity";
+    private static final String TAG = "RouterActivity";
     private Cursor mProviderCursor;
     private ImApp mApp;
     private SimpleAlertHandler mHandler;
@@ -70,9 +70,13 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
 
     private boolean mDoSignIn = true;
 
+    public static final String ACTION_LOCK_APP = "actionLockApp";
+
     private static String EXTRA_DO_LOCK = "doLock";
     private static String EXTRA_DO_SIGNIN = "doSignIn";
     public static String EXTRA_ORIGINAL_INTENT = "originalIntent";
+
+    private ProgressDialog dialog;
 
     static final String[] PROVIDER_PROJECTION = { Imps.Provider._ID, Imps.Provider.NAME,
                                                  Imps.Provider.FULLNAME, Imps.Provider.CATEGORY,
@@ -102,22 +106,46 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mApp = (ImApp)getApplication();
+
+        Intent intent = getIntent();
+        if (ACTION_LOCK_APP.equals(intent.getAction())) {
+            shutdownAndLock(this);
+            finish();
+            return;
+        } else if (Panic.isTriggerIntent(intent)) {
+            if (PanicReceiver.receivedTrustedTrigger(this)) {
+                if (Preferences.uninstallApp()) {
+                    Intent uninstall = new Intent(Intent.ACTION_DELETE);
+                    uninstall.setData(Uri.parse("package:" + getPackageName()));
+                    startActivity(uninstall);
+                } else if (Preferences.lockApp()) {
+                    shutdownAndLock(this);
+                }
+                // TODO add other responses here, paying attention to if/else order
+            } else if (PanicReceiver.shouldUseDefaultResponseToTrigger(this)) {
+                if (Preferences.lockApp()) {
+                    shutdownAndLock(this);
+                }
+            }
+            // this Intent should not trigger any more processing
+            finish();
+            return;
+        }
+
+        mCacheWord = new CacheWordHandler(this, (ICacheWordSubscriber)this);
+        mCacheWord.connectToService();
 
         checkCustomFont ();
 
         getSupportActionBar().hide();
         
-        mApp = (ImApp)getApplication();
         mHandler = new MyHandler(this);
 
         mSignInHelper = new SignInHelper(this, mHandler);
 
-        Intent intent = getIntent();
         mDoSignIn = intent.getBooleanExtra(EXTRA_DO_SIGNIN, true);
         mDoLock = intent.getBooleanExtra(EXTRA_DO_LOCK, false);
-
-        if (ImApp.mUsingCacheword)
-            connectToCacheWord();
 
         // if we have an incoming contact, send it to the right place
         String scheme = intent.getScheme();
@@ -129,18 +157,6 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
             return;
         }
     }
-
-    private void connectToCacheWord ()
-    {
-
-        mCacheWord = new CacheWordHandler(this, (ICacheWordSubscriber)this);
-
-        mCacheWord.connectToService();
-
-
-    }
-
-
 
     @SuppressWarnings("deprecation")
     private boolean cursorUnlocked() {
@@ -188,14 +204,6 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
         }
     }
 
-//    private void initCursor(String dbKey) {
-//
-//        mProviderCursor = managedQuery(Imps.Provider.CONTENT_URI_WITH_ACCOUNT, PROVIDER_PROJECTION,
-//                Imps.Provider.CATEGORY + "=?" /* selection */,
-//                new String[] { ImApp.IMPS_CATEGORY } /* selection args */, null);
-//        doOnResume();
-//    }
-
     @Override
     protected void onPause() {
         if (mHandler != null)
@@ -210,9 +218,11 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
         if (mCacheWord != null)
             mCacheWord.disconnectFromService();
+
+        if (dialog != null)
+            dialog.dismiss();
     }
 
     @Override
@@ -228,31 +238,9 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
 
         int countAvailable = accountsAvailable();
 
-        if (countAvailable == 1) {
-            // If just one account is available for auto-signin, go there immediately after service starts trying
-            // to connect.
-            mSignInHelper.setSignInListener(new SignInHelper.SignInListener() {
-                @Override
-                public void connectedToService() {
-                }
-                @Override
-                public void stateChanged(int state, long accountId) {
-                    if (state == ImConnection.LOGGING_IN) {
-                    //    mSignInHelper.goToAccount(accountId);
-                    }
-                }
-            });
-        } else {
-            mSignInHelper.setSignInListener(null);
-        }
-
         Intent intent = getIntent();
         if (intent != null && intent.getAction() != null && !intent.getAction().equals(Intent.ACTION_MAIN)) {
             String action = intent.getAction();
-            if (Panic.ACTION_TRIGGER.equals(action)
-                    && !PanicReceiver.getTriggerPackageName(this).equals(Panic.PACKAGE_NAME_NONE)) {
-                RouterActivity.shutdownAndLock(this);
-            } else {
                 Intent imUrlIntent = new Intent(this, ImUrlActivity.class);
                 imUrlIntent.setAction(action);
 
@@ -263,7 +251,6 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
                 if (intent.getExtras() != null)
                     imUrlIntent.putExtras(intent.getExtras());
                 startActivity(imUrlIntent);
-            }
             setIntent(null);
             finish();
         }
@@ -504,10 +491,6 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
             e.printStackTrace();
         }
            new AsyncTask<String, Void, String>() {
-
-            private ProgressDialog dialog;
-
-
             @Override
             protected void onPreExecute() {
                 if (mApp.getActiveConnections().size() > 0)
@@ -558,13 +541,7 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
                     dialog.dismiss();
 
                 mApp.forceStopImService();
-
-                Imps.clearPassphrase(mApp);
-
-                if (mCacheWord != null)
-                {
-                    mCacheWord.lock();
-                }
+                mCacheWord.lock();
 
                 finish();
             }
