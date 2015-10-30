@@ -46,7 +46,6 @@ import info.guardianproject.util.Languages;
 public class SettingActivity extends PreferenceActivity {
     private static final String TAG = "SettingActivity";
 
-    private static final int PANIC_CONFIG = 1234;
     private static final int CHOOSE_RINGTONE = 5;
 
     private PackageManager pm;
@@ -174,7 +173,7 @@ public class SettingActivity extends PreferenceActivity {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 Intent intent = new Intent(SettingActivity.this, PanicSetupActivity.class);
-                startActivityForResult(intent, PANIC_CONFIG);
+                startActivity(intent);
                 return true;
             }
         });
