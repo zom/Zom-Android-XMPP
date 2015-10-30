@@ -42,7 +42,7 @@ import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.service.IImConnection;
 import org.awesomeapp.messenger.ui.AddContactActivity;
 import org.awesomeapp.messenger.ui.legacy.ImPluginHelper;
-import org.awesomeapp.messenger.ui.legacy.LockScreenActivity;
+import org.awesomeapp.messenger.ui.LockScreenActivity;
 import org.awesomeapp.messenger.ui.legacy.SignInHelper;
 import org.awesomeapp.messenger.ui.legacy.SimpleAlertHandler;
 import org.awesomeapp.messenger.ui.legacy.ThemeableActivity;

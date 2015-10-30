@@ -21,11 +21,13 @@ import android.app.ProgressDialog;
 import android.content.ContentUris;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.RemoteException;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -58,6 +60,7 @@ import org.awesomeapp.messenger.ui.ContactsListFragment;
 import org.awesomeapp.messenger.ui.ContactsPickerActivity;
 import org.awesomeapp.messenger.ui.ConversationDetailActivity;
 import org.awesomeapp.messenger.ui.ConversationListFragment;
+import org.awesomeapp.messenger.ui.LockScreenActivity;
 import org.awesomeapp.messenger.ui.MoreFragment;
 import org.awesomeapp.messenger.ui.legacy.SettingActivity;
 import org.awesomeapp.messenger.ui.onboarding.OnboardingActivity;
@@ -476,13 +479,31 @@ public class MainActivity extends AppCompatActivity {
                 return true;
 
             case R.id.menu_lock:
-                Intent intent = new Intent(this, RouterActivity.class);
-                intent.setAction(RouterActivity.ACTION_LOCK_APP);
-                startActivity(intent);
-                finish();
+                handleLock();
+
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void handleLock ()
+    {
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+        if (settings.contains(ImApp.PREFERENCE_KEY_TEMP_PASS))
+        {
+            //need to setup new user passphrase
+            Intent intent = new Intent(this, LockScreenActivity.class);
+            intent.setAction(LockScreenActivity.ACTION_CHANGE_PASSPHRASE);
+            startActivity(intent);
+        }
+        else {
+
+            //time to do the lock
+            Intent intent = new Intent(this, RouterActivity.class);
+            intent.setAction(RouterActivity.ACTION_LOCK_APP);
+            startActivity(intent);
+            finish();
+        }
     }
 
     private void setupDrawerContent(NavigationView navigationView) {
