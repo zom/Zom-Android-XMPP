@@ -98,10 +98,13 @@ public class DatabaseUtils {
 
         byte[] data = null;
 
-        if (cursor.moveToFirst())
-            data = cursor.getBlob(0);
+        if (cursor != null) {
+            if (cursor.moveToFirst())
+                data = cursor.getBlob(0);
 
-        cursor.close();
+            cursor.close();
+        }
+
         return data;
 
     }
