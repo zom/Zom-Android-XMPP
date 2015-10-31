@@ -439,13 +439,22 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
        byte[] encryptionKey = mCacheWord.getEncryptionKey();
        openEncryptedStores(encryptionKey);
 
-
         mApp.initAccountInfo();
 
         mApp.maybeInit(this);
 
-        if (!mDoLock)
-            doOnResume();
+        /*
+        if (!mDoLock) {
+
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+
+                    doOnResume();
+                }
+            },1000);
+
+        }*/
 
 
     }

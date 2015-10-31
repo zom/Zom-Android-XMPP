@@ -1554,15 +1554,15 @@ public class XmppConnection extends ImConnection {
                 debug(TAG, "reconnect on error: " + e.getMessage());
                 if (e.getMessage().contains("conflict")) {
 
-                    /**
+
                     execute(new Runnable() {
                         @Override
                         public void run() {
                            // disconnect();
-                            //disconnected(new ImErrorInfo(ImpsErrorInfo.ALREADY_LOGGED,
-                              //      "logged in from another location"));
+                            disconnected(new ImErrorInfo(ImpsErrorInfo.ALREADY_LOGGED,
+                                  "logged in from another location"));
                         }
-                    });*/
+                    });
 
                 } else if (!mNeedReconnect) {
 
