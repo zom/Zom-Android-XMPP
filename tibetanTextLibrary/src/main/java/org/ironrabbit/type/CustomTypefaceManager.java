@@ -47,7 +47,22 @@ public class CustomTypefaceManager {
 		}
 	
 	}
-	
+
+	public static void loadFromAssets (Context context)
+	{
+		PackageManager packageManager = context.getPackageManager();
+
+		String fontName = "NotoSansTibetan-Regular.ttf";
+
+		try {
+			mTypeface = Typeface.createFromAsset(context.getAssets(),fontName);
+
+		} catch (Exception e) {
+			Log.e("CustomTypeface","can't find assets",e);
+		}
+
+	}
+
 	public static void setTypeface (Typeface typeface)
 	{
 		mTypeface = typeface;
