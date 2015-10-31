@@ -517,7 +517,7 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
     {
         if (CustomTypefaceManager.getCurrentTypeface(this)==null)
         {
-            /*
+
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             List<InputMethodInfo> mInputMethodProperties = imm.getEnabledInputMethodList();
 
@@ -530,13 +530,15 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
                 //imi contains the information about the keyboard you are using
                 if (imi.getPackageName().equals("org.ironrabbit.bhoboard"))
                 {
-                    CustomTypefaceManager.loadFromKeyboard(this);
+//                    CustomTypefaceManager.loadFromKeyboard(this);
+                    CustomTypefaceManager.loadFromAssets(this);
+
                     break;
                 }
 
             }
-            */
-            CustomTypefaceManager.loadFromAssets(this);
+
+
 
         }
     }
