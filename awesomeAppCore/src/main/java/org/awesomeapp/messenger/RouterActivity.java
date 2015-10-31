@@ -403,7 +403,7 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
         returnIntent.putExtra(EXTRA_DO_SIGNIN, mDoSignIn);
         intent.putExtra(EXTRA_ORIGINAL_INTENT, returnIntent);
         startActivity(intent);
-        
+
     }
 
     @Override
@@ -438,6 +438,9 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
         mCacheWord.setTimeout(0);
        byte[] encryptionKey = mCacheWord.getEncryptionKey();
        openEncryptedStores(encryptionKey);
+
+
+        mApp.initAccountInfo();
 
         mApp.maybeInit(this);
 
@@ -514,6 +517,7 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
     {
         if (CustomTypefaceManager.getCurrentTypeface(this)==null)
         {
+            /*
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             List<InputMethodInfo> mInputMethodProperties = imm.getEnabledInputMethodList();
 
@@ -531,7 +535,8 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
                 }
 
             }
-
+            */
+            CustomTypefaceManager.loadFromAssets(this);
 
         }
     }

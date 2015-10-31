@@ -266,12 +266,11 @@ public class ImApp extends Application {
             log("start ImService");
 
         Intent serviceIntent = new Intent(this, RemoteImService.class);
-        //serviceIntent.setComponent(ImServiceConstants.IM_SERVICE_COMPONENT);
-        serviceIntent.putExtra(ImServiceConstants.EXTRA_CHECK_AUTO_LOGIN, true);
+//        serviceIntent.putExtra(ImServiceConstants.EXTRA_CHECK_AUTO_LOGIN, isBoot);
 
         if (mImService == null) {
-
             mApplicationContext.startService(serviceIntent);
+
             mConnectionListener = new MyConnListener(new Handler());
 
             mApplicationContext
@@ -745,7 +744,7 @@ public class ImApp extends Application {
 
     public boolean initAccountInfo ()
     {
-        if (mDefaultProviderId == -1) {
+        if (mDefaultProviderId == -1 || mDefaultAccountId == -1) {
             final Uri uri = Imps.Provider.CONTENT_URI_WITH_ACCOUNT;
             String[] PROVIDER_PROJECTION = {
                     Imps.Provider._ID,

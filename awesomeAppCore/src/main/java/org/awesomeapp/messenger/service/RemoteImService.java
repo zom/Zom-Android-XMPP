@@ -262,7 +262,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
         // Have the heartbeat start autoLogin, unless onStart turns this off
         mNeedCheckAutoLogin = true;
 
-        ((ImApp)getApplication()).startImServiceIfNeed();
+       // ((ImApp)getApplication()).startImServiceIfNeed();
 
         HeartbeatService.startBeating(getApplicationContext());
     }
@@ -303,8 +303,8 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
         try {
             if (mNeedCheckAutoLogin && mNetworkState != NetworkConnectivityListener.State.NOT_CONNECTED) {
                 debug("autoLogin from heartbeat");
-                mNeedCheckAutoLogin = false;
-                autoLogin();
+                mNeedCheckAutoLogin = !autoLogin();;
+
             }
 
             mHeartbeatInterval = Preferences.getHeartbeatInterval();
@@ -376,21 +376,15 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
                 stopSelf();
             }
 
-
         }
 
         debug("ImService.onStart, checkAutoLogin=" + mNeedCheckAutoLogin + " intent =" + intent
                 + " startId =" + startId);
 
-        // Check and login accounts if network is ready, otherwise it's checked
-        // when the network becomes available.
-        /**
-        if (!mCacheWord.isLocked()) {
-            if (mNeedCheckAutoLogin) {
-                mNeedCheckAutoLogin = false;
-                autoLogin();
-            }
-        }*/
+        if (mNeedCheckAutoLogin && mNetworkState != NetworkConnectivityListener.State.NOT_CONNECTED) {
+            debug("autoLogin from heartbeat");
+            mNeedCheckAutoLogin = !autoLogin();;
+        }
 
         return START_STICKY;
     }
@@ -493,6 +487,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
             }
             catch (Exception e){
                 Log.d(ImApp.LOG_TAG,"error auto logging into ImConnection",e);
+                return false;
             }
         }
         cursor.close();
@@ -729,8 +724,8 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
                 if (!reConnd)
                 {
                     if (mNeedCheckAutoLogin) {
-                        mNeedCheckAutoLogin = false;
-                        autoLogin();
+                        mNeedCheckAutoLogin = !autoLogin();;
+
                     }
                 }
 
@@ -950,8 +945,8 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
         // Check and login accounts if network is ready, otherwise it's checked
         // when the network becomes available.
         if (mNeedCheckAutoLogin && mNetworkState != NetworkConnectivityListener.State.NOT_CONNECTED) {
-            mNeedCheckAutoLogin = false;
-            autoLogin();
+            mNeedCheckAutoLogin = !autoLogin();;
+
         }
 
 
