@@ -386,7 +386,8 @@ public class LockScreenActivity extends ThemeableActivity implements ICacheWordS
 
     @Override
     public void onCacheWordOpened() {
-
+        mCacheWord.setTimeout(0);
+        setResult(RESULT_OK);
         finish();
 
     }

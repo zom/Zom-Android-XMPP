@@ -103,7 +103,7 @@ public class ImApp extends Application {
     public static final String PREFERENCE_KEY_TEMP_PASS = "temppass";
     
     //ACCOUNT SETTINGS Imps defaults
-    public static final String DEFAULT_XMPP_RESOURCE = "ChatSecure";
+    public static final String DEFAULT_XMPP_RESOURCE = "ChatSecureZom";
     public static final int DEFAULT_XMPP_PRIORITY = 20;
     public static final String DEFAULT_XMPP_OTR_MODE = "auto";
 

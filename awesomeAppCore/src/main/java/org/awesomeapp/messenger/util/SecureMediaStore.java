@@ -172,6 +172,12 @@ public class SecureMediaStore {
             vfs.createNewContainer(dbFilePath, key);
         }
         vfs.mount(dbFilePath, key);
+
+    }
+
+    public static boolean isMounted ()
+    {
+        return VirtualFileSystem.get().isMounted();
     }
 
     /**

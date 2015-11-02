@@ -203,10 +203,8 @@ public class ConversationView {
 
             try
             {
-               // boolean isConnected = (mConn == null) ? false : mConn.getState() != ImConnection.SUSPENDED;
 
                 if ((mLastSessionStatus == null || mLastSessionStatus == SessionStatus.PLAINTEXT)) {
-
 
 //                    boolean otrPolicyAuto = mNewChatActivity.getOtrPolicy() == OtrPolicy.OTRL_POLICY_ALWAYS
   //                          || this.mNewChatActivity.getOtrPolicy() == OtrPolicy.OPPORTUNISTIC;
@@ -219,12 +217,12 @@ public class ConversationView {
                         return;
 
                     IOtrChatSession otrChatSession = mCurrentChatSession.getOtrChatSession();
-                    
+
                     if (otrChatSession != null)
                     {
                         String remoteJID = otrChatSession.getRemoteUserId();
                         
-                        boolean isChatSecure = (remoteJID != null && remoteJID.contains("ChatSecure"));
+                        boolean isChatSecure = (remoteJID != null && (remoteJID.toLowerCase().contains("chatsecure")||remoteJID.toLowerCase().contains("zom")));
                             
                         if (otrPolicyAuto && isChatSecure) //if set to auto, and is chatsecure, then start encryption
                         {

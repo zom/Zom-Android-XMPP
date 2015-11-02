@@ -144,7 +144,7 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
         mCacheWord = new CacheWordHandler(this, (ICacheWordSubscriber)this);
         mCacheWord.connectToService();
 
-        checkCustomFont ();
+        checkCustomFont();
 
         getSupportActionBar().hide();
         
@@ -396,14 +396,25 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
         startActivity(intent);
 
     }
+
+    private final static int REQUEST_LOCK_SCREEN = 9999;
     
     void showLockScreen() {
         Intent intent = new Intent(this, LockScreenActivity.class);
         Intent returnIntent = getIntent();
         returnIntent.putExtra(EXTRA_DO_SIGNIN, mDoSignIn);
         intent.putExtra(EXTRA_ORIGINAL_INTENT, returnIntent);
-        startActivity(intent);
+        startActivityForResult(intent, REQUEST_LOCK_SCREEN);
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == REQUEST_LOCK_SCREEN && resultCode == RESULT_OK)
+        {
+            showMain();
+        }
     }
 
     @Override
@@ -465,47 +476,6 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
 
         finish();
 
-        /**
-           new AsyncTask<String, Void, String>() {
-            @Override
-            protected void onPreExecute() {
-                if (mApp.getActiveConnections().size() > 0)
-                {
-                    dialog = new ProgressDialog(RouterActivity.this);
-                    dialog.setCancelable(true);
-                    dialog.setMessage(getString(R.string.signing_out_wait));
-                    dialog.show();
-                }
-            }
-
-            @Override
-            protected String doInBackground(String... params) {
-
-                for (IImConnection conn : mApp.getActiveConnections()) {
-                    try {
-
-                        if (conn.getState() == ImConnection.LOGGED_IN) {
-                            conn.logout();
-                        }
-
-                    } catch (Exception e) {
-                    }
-                }
-
-
-                return "";
-              }
-
-            @Override
-            protected void onPostExecute(String result) {
-                super.onPostExecute(result);
-
-                if (dialog != null)
-                    dialog.dismiss();
-
-
-            }
-        }.execute();*/
     }
 
     private boolean openEncryptedStores(byte[] key) {

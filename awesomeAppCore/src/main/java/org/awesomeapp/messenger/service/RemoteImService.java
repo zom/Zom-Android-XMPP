@@ -37,6 +37,7 @@ import android.os.PowerManager.WakeLock;
 import android.os.RemoteCallbackList;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
@@ -558,7 +559,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
         try {
             SecureMediaStore.unmount();
         } catch (IllegalStateException e) {
-            Log.e(ImApp.LOG_TAG,"there was a problem unmoiunt secure media store");
+            Log.e(ImApp.LOG_TAG,"there was a problem unmoiunt secure media store",e);
         }
 
 
@@ -920,7 +921,6 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
         {
             try {
                 mCacheWord.setPassphrase(settings.getString(ImApp.PREFERENCE_KEY_TEMP_PASS, null).toCharArray());
-
             } catch (GeneralSecurityException e) {
 
                 Log.d(ImApp.LOG_TAG, "couldn't open cacheword with temp password", e);
@@ -932,7 +932,9 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
     @Override
     public void onCacheWordOpened() {
-        
+
+        mCacheWord.setTimeout(0);
+
        byte[] encryptionKey = mCacheWord.getEncryptionKey();
        openEncryptedStores(encryptionKey, true);
 
@@ -940,7 +942,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
      //  int defaultTimeout = 60 * Integer.parseInt(mPrefs.getString("pref_cacheword_timeout",ImApp.DEFAULT_TIMEOUT_CACHEWORD));
      //  mCacheWord.setTimeoutSeconds(defaultTimeout);
        // mCacheWord.setTimeout(0);
-        SecureMediaStore.init(this, encryptionKey);
+        //SecureMediaStore.init(this, encryptionKey);
 
         // Check and login accounts if network is ready, otherwise it's checked
         // when the network becomes available.
@@ -960,7 +962,8 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
     private boolean openEncryptedStores(byte[] key, boolean allowCreate) {
 
-        SecureMediaStore.init(this, key);
+        if (SecureMediaStore.isMounted())
+            SecureMediaStore.init(this, key);
 
         if (Imps.isUnlocked(this)) {
 
