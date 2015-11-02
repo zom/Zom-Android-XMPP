@@ -654,7 +654,9 @@ public class ConversationView {
      //   mDeliveryIcon = (ImageView) mActivity.findViewById(R.id.deliveryIcon);
        // mTitle = (TextView) mActivity.findViewById(R.id.title);
         mHistory = (RecyclerView) mActivity.findViewById(R.id.history);
-        mHistory.setLayoutManager(new LinearLayoutManager(mHistory.getContext()));
+        LinearLayoutManager llm = new LinearLayoutManager(mHistory.getContext());
+        llm.setStackFromEnd(true);
+        mHistory.setLayoutManager(llm);
 
         mComposeMessage = (EditText) mActivity.findViewById(R.id.composeMessage);
         mSendButton = (ImageButton) mActivity.findViewById(R.id.btnSend);

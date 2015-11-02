@@ -35,7 +35,7 @@
             android:id="@+id/collapsing_toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:minHeight="64dp"
+            android:minHeight="?attr/actionBarSize"
             app:layout_scrollFlags="scroll|exitUntilCollapsed|enterAlwaysCollapsed"
             android:fitsSystemWindows="true"
             app:contentScrim="?attr/colorPrimary"
@@ -64,15 +64,17 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/history"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:stackFromBottom="true"
         android:divider="#00000000"
         android:dividerHeight="6dp"
         android:transcriptMode="normal"
         android:scrollbars="vertical"
-        android:layout_weight="8"
+        android:layout_weight="9"
         app:layout_behavior="org.awesomeapp.messenger.ui.widgets.PatchedScrollingViewBehavior"
-        android:paddingBottom="128dp"
+        android:paddingBottom="48dp"
+        android:layout_marginTop="0dp"
+        android:paddingTop="0dp"
         />
 
 
