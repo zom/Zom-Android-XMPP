@@ -40,13 +40,11 @@ public class SimpleAlertHandler extends Handler {
     }
 
     protected void promptDisconnectedEvent(Message msg) {
-        long providerId = ((long) msg.arg1 << 32) | msg.arg2;
-        ImApp app = (ImApp)mActivity.getApplication();
-        ProviderDef provider = app.getProvider(providerId);
+
         ImErrorInfo error = (ImErrorInfo) msg.obj;
         String promptMsg = null;
-        if (error != null && provider != null) {
-            promptMsg = mActivity.getString(R.string.signed_out_prompt_with_error, provider.mName,
+        if (error != null) {
+            promptMsg = mActivity.getString(R.string.signed_out_prompt_with_error,"",
                     ErrorResUtils.getErrorRes(mRes, error.getCode()));
         }
         else
@@ -56,6 +54,7 @@ public class SimpleAlertHandler extends Handler {
 
         if (promptMsg != null)
             showAlert(R.string.error, promptMsg);
+
     }
 
     public void registerForBroadcastEvents() {

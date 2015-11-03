@@ -203,10 +203,8 @@ public class ConversationView {
 
             try
             {
-               // boolean isConnected = (mConn == null) ? false : mConn.getState() != ImConnection.SUSPENDED;
 
                 if ((mLastSessionStatus == null || mLastSessionStatus == SessionStatus.PLAINTEXT)) {
-
 
 //                    boolean otrPolicyAuto = mNewChatActivity.getOtrPolicy() == OtrPolicy.OTRL_POLICY_ALWAYS
   //                          || this.mNewChatActivity.getOtrPolicy() == OtrPolicy.OPPORTUNISTIC;
@@ -219,12 +217,12 @@ public class ConversationView {
                         return;
 
                     IOtrChatSession otrChatSession = mCurrentChatSession.getOtrChatSession();
-                    
+
                     if (otrChatSession != null)
                     {
                         String remoteJID = otrChatSession.getRemoteUserId();
                         
-                        boolean isChatSecure = (remoteJID != null && remoteJID.contains("ChatSecure"));
+                        boolean isChatSecure = (remoteJID != null && (remoteJID.toLowerCase().contains("chatsecure")||remoteJID.toLowerCase().contains("zom")));
                             
                         if (otrPolicyAuto && isChatSecure) //if set to auto, and is chatsecure, then start encryption
                         {
@@ -656,7 +654,9 @@ public class ConversationView {
      //   mDeliveryIcon = (ImageView) mActivity.findViewById(R.id.deliveryIcon);
        // mTitle = (TextView) mActivity.findViewById(R.id.title);
         mHistory = (RecyclerView) mActivity.findViewById(R.id.history);
-        mHistory.setLayoutManager(new LinearLayoutManager(mHistory.getContext()));
+        LinearLayoutManager llm = new LinearLayoutManager(mHistory.getContext());
+        llm.setStackFromEnd(true);
+        mHistory.setLayoutManager(llm);
 
         mComposeMessage = (EditText) mActivity.findViewById(R.id.composeMessage);
         mSendButton = (ImageButton) mActivity.findViewById(R.id.btnSend);

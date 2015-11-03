@@ -199,7 +199,7 @@ public class ConversationListFragment extends Fragment {
             int contactType = cursor.getInt(ConversationListItem.COLUMN_CONTACT_TYPE);
             String remoteAddress = cursor.getString(ConversationListItem.COLUMN_CONTACT_USERNAME);
 
-            new ChatSessionInitTask((ImApp)((Activity)mContext).getApplication(),providerId,accountId,contactType).execute(remoteAddress);
+           // new ChatSessionInitTask((ImApp)((Activity)mContext).getApplication(),providerId,accountId,contactType).execute(remoteAddress);
 
 
         }

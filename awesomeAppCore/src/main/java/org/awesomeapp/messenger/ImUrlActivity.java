@@ -42,7 +42,7 @@ import org.awesomeapp.messenger.service.ImServiceConstants;
 import org.awesomeapp.messenger.tasks.AddContactAsyncTask;
 import org.awesomeapp.messenger.ui.AccountViewFragment;
 import org.awesomeapp.messenger.ui.ContactsPickerActivity;
-import org.awesomeapp.messenger.ui.legacy.LockScreenActivity;
+import org.awesomeapp.messenger.ui.LockScreenActivity;
 import org.awesomeapp.messenger.ui.legacy.SignInHelper;
 import org.awesomeapp.messenger.ui.legacy.SimpleAlertHandler;
 import org.awesomeapp.messenger.ui.onboarding.OnboardingManager;

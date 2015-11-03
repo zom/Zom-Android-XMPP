@@ -37,6 +37,7 @@ import android.os.PowerManager.WakeLock;
 import android.os.RemoteCallbackList;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
@@ -262,7 +263,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
         // Have the heartbeat start autoLogin, unless onStart turns this off
         mNeedCheckAutoLogin = true;
 
-        ((ImApp)getApplication()).startImServiceIfNeed();
+       // ((ImApp)getApplication()).startImServiceIfNeed();
 
         HeartbeatService.startBeating(getApplicationContext());
     }
@@ -286,7 +287,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
       //  note.setOnlyAlertOnce(true);
         mNotifyBuilder.setOngoing(true);
-        mNotifyBuilder.setWhen( System.currentTimeMillis() );
+        mNotifyBuilder.setWhen(System.currentTimeMillis());
         
         Intent notificationIntent = new Intent(this, MainActivity.class);
         PendingIntent launchIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent, 0);
@@ -303,8 +304,8 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
         try {
             if (mNeedCheckAutoLogin && mNetworkState != NetworkConnectivityListener.State.NOT_CONNECTED) {
                 debug("autoLogin from heartbeat");
-                mNeedCheckAutoLogin = false;
-                autoLogin();
+                mNeedCheckAutoLogin = !autoLogin();;
+
             }
 
             mHeartbeatInterval = Preferences.getHeartbeatInterval();
@@ -370,23 +371,21 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
                 return START_REDELIVER_INTENT;
             }
 
-
-
+            if (ImServiceConstants.EXTRA_CHECK_SHUTDOWN.equals((intent.getAction())))
+            {
+                shutdown();
+                stopSelf();
+            }
 
         }
 
         debug("ImService.onStart, checkAutoLogin=" + mNeedCheckAutoLogin + " intent =" + intent
                 + " startId =" + startId);
 
-        // Check and login accounts if network is ready, otherwise it's checked
-        // when the network becomes available.
-        /**
-        if (!mCacheWord.isLocked()) {
-            if (mNeedCheckAutoLogin) {
-                mNeedCheckAutoLogin = false;
-                autoLogin();
-            }
-        }*/
+        if (mNeedCheckAutoLogin && mNetworkState != NetworkConnectivityListener.State.NOT_CONNECTED) {
+            debug("autoLogin from heartbeat");
+            mNeedCheckAutoLogin = !autoLogin();;
+        }
 
         return START_STICKY;
     }
@@ -489,6 +488,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
             }
             catch (Exception e){
                 Log.d(ImApp.LOG_TAG,"error auto logging into ImConnection",e);
+                return false;
             }
         }
         cursor.close();
@@ -534,20 +534,41 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
     @Override
     public void onDestroy() {
+        shutdown();
+    }
+
+    private void shutdown ()
+    {
         Debug.recordTrail(this, SERVICE_DESTROY_TRAIL_TAG, new Date());
 
-        if (mCacheWord != null)
-            mCacheWord.detach();
-        
         HeartbeatService.stopBeating(getApplicationContext());
 
         Log.w(TAG, "ImService stopped.");
         for (ImConnectionAdapter conn : mConnections.values()) {
-            conn.logout();
+
+            if (conn.getState() == ImConnection.LOGGED_IN)
+                conn.logout();
+
         }
 
-        if (mUseForeground)
-            stopForeground(true);
+        stopForeground(true);
+
+
+         /* ignore unmount errors and quit ASAP. Threads actively using the VFS will
+             * cause IOCipher's VirtualFileSystem.unmount() to throw an IllegalStateException */
+        try {
+            SecureMediaStore.unmount();
+        } catch (IllegalStateException e) {
+            Log.e(ImApp.LOG_TAG,"there was a problem unmoiunt secure media store",e);
+        }
+
+
+        if (mCacheWord != null && (!mCacheWord.isLocked())) {
+            mCacheWord.lock();
+            mCacheWord.disconnectFromService();
+        }
+
+
     }
 
     @Override
@@ -581,7 +602,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
         }, delay);
     }
 
-    private boolean mUseForeground = false;
+//    private boolean mUseForeground = false;
 
     private IImConnection do_createConnection(long providerId, long accountId) {
 
@@ -704,8 +725,8 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
                 if (!reConnd)
                 {
                     if (mNeedCheckAutoLogin) {
-                        mNeedCheckAutoLogin = false;
-                        autoLogin();
+                        mNeedCheckAutoLogin = !autoLogin();;
+
                     }
                 }
 
@@ -831,6 +852,12 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
             updateOtrPolicy ();
 
         }
+
+        @Override
+        public void shutdownAndLock ()
+        {
+            shutdown();
+        }
     };
 
     private boolean mKillProcessOnStop = false;
@@ -894,7 +921,6 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
         {
             try {
                 mCacheWord.setPassphrase(settings.getString(ImApp.PREFERENCE_KEY_TEMP_PASS, null).toCharArray());
-
             } catch (GeneralSecurityException e) {
 
                 Log.d(ImApp.LOG_TAG, "couldn't open cacheword with temp password", e);
@@ -906,7 +932,9 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
     @Override
     public void onCacheWordOpened() {
-        
+
+        mCacheWord.setTimeout(0);
+
        byte[] encryptionKey = mCacheWord.getEncryptionKey();
        openEncryptedStores(encryptionKey, true);
 
@@ -914,13 +942,13 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
      //  int defaultTimeout = 60 * Integer.parseInt(mPrefs.getString("pref_cacheword_timeout",ImApp.DEFAULT_TIMEOUT_CACHEWORD));
      //  mCacheWord.setTimeoutSeconds(defaultTimeout);
        // mCacheWord.setTimeout(0);
-        SecureMediaStore.init(this, encryptionKey);
+        //SecureMediaStore.init(this, encryptionKey);
 
         // Check and login accounts if network is ready, otherwise it's checked
         // when the network becomes available.
         if (mNeedCheckAutoLogin && mNetworkState != NetworkConnectivityListener.State.NOT_CONNECTED) {
-            mNeedCheckAutoLogin = false;
-            autoLogin();
+            mNeedCheckAutoLogin = !autoLogin();;
+
         }
 
 
@@ -934,7 +962,8 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
     private boolean openEncryptedStores(byte[] key, boolean allowCreate) {
 
-        SecureMediaStore.init(this, key);
+        if (SecureMediaStore.isMounted())
+            SecureMediaStore.init(this, key);
 
         if (Imps.isUnlocked(this)) {
 

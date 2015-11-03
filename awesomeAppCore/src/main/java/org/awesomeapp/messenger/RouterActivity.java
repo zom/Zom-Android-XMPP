@@ -42,7 +42,7 @@ import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.service.IImConnection;
 import org.awesomeapp.messenger.ui.AddContactActivity;
 import org.awesomeapp.messenger.ui.legacy.ImPluginHelper;
-import org.awesomeapp.messenger.ui.legacy.LockScreenActivity;
+import org.awesomeapp.messenger.ui.LockScreenActivity;
 import org.awesomeapp.messenger.ui.legacy.SignInHelper;
 import org.awesomeapp.messenger.ui.legacy.SimpleAlertHandler;
 import org.awesomeapp.messenger.ui.legacy.ThemeableActivity;
@@ -108,8 +108,13 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
         super.onCreate(savedInstanceState);
         mApp = (ImApp)getApplication();
 
+        mHandler = new MyHandler(this);
+
         Intent intent = getIntent();
-        if (ACTION_LOCK_APP.equals(intent.getAction())) {
+
+        mDoLock = ACTION_LOCK_APP.equals(intent.getAction());
+
+        if (mDoLock) {
             shutdownAndLock(this);
             finish();
             return;
@@ -133,19 +138,17 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
             return;
         }
 
+        mSignInHelper = new SignInHelper(this, mHandler);
+        mDoSignIn = intent.getBooleanExtra(EXTRA_DO_SIGNIN, true);
+
         mCacheWord = new CacheWordHandler(this, (ICacheWordSubscriber)this);
         mCacheWord.connectToService();
 
-        checkCustomFont ();
+        checkCustomFont();
 
         getSupportActionBar().hide();
         
-        mHandler = new MyHandler(this);
 
-        mSignInHelper = new SignInHelper(this, mHandler);
-
-        mDoSignIn = intent.getBooleanExtra(EXTRA_DO_SIGNIN, true);
-        mDoLock = intent.getBooleanExtra(EXTRA_DO_LOCK, false);
 
         // if we have an incoming contact, send it to the right place
         String scheme = intent.getScheme();
@@ -307,7 +310,7 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
     }
 
     private int accountsAvailable() {
-        if (!mProviderCursor.moveToFirst()) {
+        if (mProviderCursor == null || !mProviderCursor.moveToFirst()) {
             return 0;
         }
         int count = 0;
@@ -353,16 +356,9 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
     public void onCacheWordUninitialized() {
         Log.d(ImApp.LOG_TAG,"cache word uninit");
 
-        if (mDoLock) {
-            completeShutdown();
-            
-        } else {
-            
-            initTempPassphrase ();
-            showOnboarding ();
-            
-        }
-        
+        initTempPassphrase();
+        showOnboarding();
+
         finish();
 
     }
@@ -400,14 +396,25 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
         startActivity(intent);
 
     }
+
+    private final static int REQUEST_LOCK_SCREEN = 9999;
     
     void showLockScreen() {
         Intent intent = new Intent(this, LockScreenActivity.class);
         Intent returnIntent = getIntent();
         returnIntent.putExtra(EXTRA_DO_SIGNIN, mDoSignIn);
         intent.putExtra(EXTRA_ORIGINAL_INTENT, returnIntent);
-        startActivity(intent);
+        startActivityForResult(intent, REQUEST_LOCK_SCREEN);
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == REQUEST_LOCK_SCREEN && resultCode == RESULT_OK)
+        {
+            showMain();
+        }
     }
 
     @Override
@@ -443,109 +450,32 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
        byte[] encryptionKey = mCacheWord.getEncryptionKey();
        openEncryptedStores(encryptionKey);
 
-            mApp.maybeInit(this);
+        mApp.initAccountInfo();
+
+        mApp.maybeInit(this);
+
+        /*
+        if (!mDoLock) {
+
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+
+                    doOnResume();
+                }
+            },1000);
+
+        }*/
 
 
     }
 
-    public static void shutdownAndLock(Context context) {
-        Activity activity = null;
-        ImApp app = null;
-        if (context instanceof Activity) {
-            activity = (Activity) context;
-            app = (ImApp) activity.getApplication();
-        } else if (context instanceof Service) {
-            Service service = (Service) context;
-            app = (ImApp) service.getApplication();
-        }
-        if (app != null) {
-            for (IImConnection conn : app.getActiveConnections()) {
-                try {
-                    conn.logout();
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+    public void shutdownAndLock(Context context) {
 
-        Intent intent = new Intent(context, RouterActivity.class);
-        // Request lock
-        intent.putExtra(EXTRA_DO_LOCK, true);
-        // Clear the backstack
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        context.startActivity(intent);
+        mApp.forceStopImService();
 
-        if (activity != null) {
-            activity.finish();
-        }
-    }
+        finish();
 
-    private void completeShutdown ()
-    {
-        /* ignore unmount errors and quit ASAP. Threads actively using the VFS will
-         * cause IOCipher's VirtualFileSystem.unmount() to throw an IllegalStateException */
-        try {
-            SecureMediaStore.unmount();
-        } catch (IllegalStateException e) {
-            e.printStackTrace();
-        }
-           new AsyncTask<String, Void, String>() {
-            @Override
-            protected void onPreExecute() {
-                if (mApp.getActiveConnections().size() > 0)
-                {
-                    dialog = new ProgressDialog(RouterActivity.this);
-                    dialog.setCancelable(true);
-                    dialog.setMessage(getString(R.string.signing_out_wait));
-                    dialog.show();
-                }
-            }
-
-            @Override
-            protected String doInBackground(String... params) {
-
-                boolean stillConnected = true;
-
-                while (stillConnected)
-                {
-
-                       try{
-                           IImConnection conn = mApp.getActiveConnections().iterator().next();
-
-                           if (conn.getState() == ImConnection.DISCONNECTED || conn.getState() == ImConnection.LOGGING_OUT)
-                           {
-                               stillConnected = false;
-                           }
-                           else
-                           {
-                               conn.logout();
-                               stillConnected = true;
-                           }
-
-
-                           Thread.sleep(500);
-                       } catch(Exception e){}
-
-
-                }
-
-                return "";
-              }
-
-            @Override
-            protected void onPostExecute(String result) {
-                super.onPostExecute(result);
-
-                if (dialog != null)
-                    dialog.dismiss();
-
-                mApp.forceStopImService();
-                mCacheWord.lock();
-
-                finish();
-            }
-        }.execute();
     }
 
     private boolean openEncryptedStores(byte[] key) {
@@ -554,10 +484,7 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
 
         if (cursorUnlocked()) {
 
-            if (mDoLock)
-                completeShutdown();
-            else
-                doOnResume();
+            doOnResume();
 
             return true;
         } else {
@@ -569,6 +496,7 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
     {
         if (CustomTypefaceManager.getCurrentTypeface(this)==null)
         {
+
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             List<InputMethodInfo> mInputMethodProperties = imm.getEnabledInputMethodList();
 
@@ -581,11 +509,14 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
                 //imi contains the information about the keyboard you are using
                 if (imi.getPackageName().equals("org.ironrabbit.bhoboard"))
                 {
-                    CustomTypefaceManager.loadFromKeyboard(this);
+//                    CustomTypefaceManager.loadFromKeyboard(this);
+                    CustomTypefaceManager.loadFromAssets(this);
+
                     break;
                 }
 
             }
+
 
 
         }

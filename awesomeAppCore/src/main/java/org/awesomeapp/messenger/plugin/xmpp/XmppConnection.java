@@ -1554,15 +1554,15 @@ public class XmppConnection extends ImConnection {
                 debug(TAG, "reconnect on error: " + e.getMessage());
                 if (e.getMessage().contains("conflict")) {
 
-                    /**
+
                     execute(new Runnable() {
                         @Override
                         public void run() {
                            // disconnect();
-                            //disconnected(new ImErrorInfo(ImpsErrorInfo.ALREADY_LOGGED,
-                              //      "logged in from another location"));
+                            disconnected(new ImErrorInfo(ImpsErrorInfo.ALREADY_LOGGED,
+                                  "logged in from another location"));
                         }
-                    });*/
+                    });
 
                 } else if (!mNeedReconnect) {
 
@@ -1681,28 +1681,7 @@ public class XmppConnection extends ImConnection {
         org.jivesoftware.smack.packet.Presence.Mode rmode = presence.getMode();
         org.jivesoftware.smack.packet.Presence.Type rtype = presence.getType();
 
-        //if a device sends something other than available, check if there is a higher priority one available on the server
-        /*
-        if (rmode != Mode.available)
-        {
-            if (mRoster != null)
-            {
-                org.jivesoftware.smack.packet.Presence npresence = mRoster.getPresence(XmppAddress.stripResource(presence.getFrom()));
-                rmode = npresence.getMode();
-                rtype = npresence.getType();
-
-                if (rmode == Mode.away || rmode == Mode.xa)
-                    type = Presence.AWAY;
-                else if (rmode == Mode.dnd)
-                    type = Presence.DO_NOT_DISTURB;
-                else if (rtype == Type.unavailable || rtype == Type.error)
-                    type = Presence.OFFLINE;
-            }
-        }*/
-                
-        if (rmode == org.jivesoftware.smack.packet.Presence.Mode.available || rmode == org.jivesoftware.smack.packet.Presence.Mode.chat)
-            type = Imps.Presence.AVAILABLE;
-        else if (rmode == org.jivesoftware.smack.packet.Presence.Mode.away || rmode == org.jivesoftware.smack.packet.Presence.Mode.xa)
+        if (rmode == org.jivesoftware.smack.packet.Presence.Mode.away || rmode == org.jivesoftware.smack.packet.Presence.Mode.xa)
             type = Imps.Presence.AWAY;
         else if (rmode == org.jivesoftware.smack.packet.Presence.Mode.dnd)
             type = Imps.Presence.DO_NOT_DISTURB;

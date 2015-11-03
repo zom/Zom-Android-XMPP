@@ -33,35 +33,32 @@ public class ChatSessionInitTask extends AsyncTask<String, Void, Boolean> {
     protected Boolean doInBackground(String... remoteAddresses) {
 
 
+        if (mProviderId != -1 && mAccountId != -1) {
+            try {
+                IImConnection conn = mApp.getConnection(mProviderId, mAccountId);
 
-        try {
-            IImConnection conn = mApp.getConnection(mProviderId, mAccountId);
+                for (String address : remoteAddresses) {
 
-            for (String address : remoteAddresses) {
+                    IChatSession session = conn.getChatSessionManager().getChatSession(address);
 
-                IChatSession session = conn.getChatSessionManager().getChatSession(address);
+                    if (session == null) {
 
-                if (session == null) {
+                        if (mContactType == Imps.Contacts.TYPE_GROUP) {
+                            session = conn.getChatSessionManager().createMultiUserChatSession(address, null, null, false);
 
-                    if (mContactType == Imps.Contacts.TYPE_GROUP)
-                    {
-                        session = conn.getChatSessionManager().createMultiUserChatSession(address, null, null, false);
+                        } else {
+                            session = conn.getChatSessionManager().createChatSession(address, false);
 
+                            IOtrChatSession otrChatSession = session.getOtrChatSession();
+                            otrChatSession.startChatEncryption();
+                        }
                     }
-                    else {
-                        session = conn.getChatSessionManager().createChatSession(address, false);
 
-                        IOtrChatSession otrChatSession = session.getOtrChatSession();
-                        otrChatSession.startChatEncryption();
-                    }
                 }
 
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
         }
 
         return false;

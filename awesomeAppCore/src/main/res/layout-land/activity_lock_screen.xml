@@ -10,7 +10,6 @@
         android:layout_width="480dip"
         android:layout_height="wrap_content"
         android:layout_margin="0dp"
-        android:background="#ddffffff"
         android:orientation="vertical" >
 
             <LinearLayout

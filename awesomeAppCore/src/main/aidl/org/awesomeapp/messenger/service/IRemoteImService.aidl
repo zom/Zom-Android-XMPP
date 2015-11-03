@@ -85,4 +85,9 @@ interface IRemoteImService {
     * update settings from OTR
     **/
     void updateStateFromSettings ();
+
+    /**
+    * do as the name says!
+    **/
+    void shutdownAndLock ();
 }

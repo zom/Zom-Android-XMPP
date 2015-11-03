@@ -268,10 +268,13 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
 
     @Override
     public void onCacheWordLocked() {
+
+        //remove this for now, since cacheword can be killed
+        /**
         if (mDbHelper != null) {
             mDbHelper.close();
             mDbHelper = null;
-        }
+        }**/
 
     }
 

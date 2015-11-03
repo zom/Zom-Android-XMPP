@@ -103,7 +103,7 @@ public class ImApp extends Application {
     public static final String PREFERENCE_KEY_TEMP_PASS = "temppass";
     
     //ACCOUNT SETTINGS Imps defaults
-    public static final String DEFAULT_XMPP_RESOURCE = "ChatSecure";
+    public static final String DEFAULT_XMPP_RESOURCE = "ChatSecureZom";
     public static final int DEFAULT_XMPP_PRIORITY = 20;
     public static final String DEFAULT_XMPP_OTR_MODE = "auto";
 
@@ -266,12 +266,11 @@ public class ImApp extends Application {
             log("start ImService");
 
         Intent serviceIntent = new Intent(this, RemoteImService.class);
-        //serviceIntent.setComponent(ImServiceConstants.IM_SERVICE_COMPONENT);
-        serviceIntent.putExtra(ImServiceConstants.EXTRA_CHECK_AUTO_LOGIN, true);
+//        serviceIntent.putExtra(ImServiceConstants.EXTRA_CHECK_AUTO_LOGIN, isBoot);
 
         if (mImService == null) {
-
             mApplicationContext.startService(serviceIntent);
+
             mConnectionListener = new MyConnListener(new Handler());
 
             mApplicationContext
@@ -287,38 +286,45 @@ public class ImApp extends Application {
 
     }
 
-    public synchronized void stopImServiceIfInactive() {
+    public void stopImServiceIfInactive() {
 
+        //todo we don't wnat to do this right now
+        /**
         if (!hasActiveConnections()) {
             if (Log.isLoggable(LOG_TAG, Log.DEBUG))
                 log("stop ImService because there's no active connections");
 
-            if (mImService != null) {
-                mApplicationContext.unbindService(mImServiceConn);
-                mImService = null;
-            }
-            Intent intent = new Intent();
-            intent.setComponent(ImServiceConstants.IM_SERVICE_COMPONENT);
-            mApplicationContext.stopService(intent);
+            forceStopImService();
 
-        }
+        }*/
     }
 
 
-    public synchronized void forceStopImService()
-    {
-        if (mImService != null) {
-            if (Log.isLoggable(LOG_TAG, Log.DEBUG))
-                log("stop ImService");
+    public void forceStopImService() {
+        if (Log.isLoggable(LOG_TAG, Log.DEBUG))
+            log("stop ImService");
 
+
+        if (mImServiceConn != null) {
+            try {
+                if (mImService != null)
+                 mImService.shutdownAndLock();
+            }
+            catch (RemoteException re)
+            {
+
+            }
             mApplicationContext.unbindService(mImServiceConn);
+
             mImService = null;
-
-            Intent intent = new Intent();
-            intent.setComponent(ImServiceConstants.IM_SERVICE_COMPONENT);
-            mApplicationContext.stopService(intent);
-
         }
+
+
+        Intent serviceIntent = new Intent(this, RemoteImService.class);
+        serviceIntent.putExtra(ImServiceConstants.EXTRA_CHECK_AUTO_LOGIN, true);
+        mApplicationContext.stopService(serviceIntent);
+
+
     }
 
     private ServiceConnection mImServiceConn = new ServiceConnection() {
@@ -738,7 +744,7 @@ public class ImApp extends Application {
 
     public boolean initAccountInfo ()
     {
-        if (mDefaultProviderId == -1) {
+        if (mDefaultProviderId == -1 || mDefaultAccountId == -1) {
             final Uri uri = Imps.Provider.CONTENT_URI_WITH_ACCOUNT;
             String[] PROVIDER_PROJECTION = {
                     Imps.Provider._ID,

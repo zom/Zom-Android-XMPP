@@ -3,8 +3,8 @@
     package="info.guardianproject.otr.app.im"
     android:installLocation="auto"
     android:sharedUserLabel="@string/perm_label"
-    android:versionCode="1500025"
-    android:versionName="15.0.0-alpha-25" >
+    android:versionCode="1500027"
+    android:versionName="15.0.0-alpha-27" >
 
     <supports-screens
         android:anyDensity="true"
@@ -346,8 +346,7 @@
         </receiver>
 
         <activity
-            android:name="org.awesomeapp.messenger.ui.legacy.LockScreenActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:name="org.awesomeapp.messenger.ui.LockScreenActivity"
             android:label="@string/title_activity_lock_screen" >
         </activity>
         <activity
