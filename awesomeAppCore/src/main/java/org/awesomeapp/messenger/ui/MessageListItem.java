@@ -433,7 +433,6 @@ public class MessageListItem extends FrameLayout {
             holder.mMediaThumbnail.setImageResource(R.drawable.ic_file); // generic file icon
         }
 
-        holder.mActionFav.setVisibility(View.VISIBLE);
         holder.mActionSend.setVisibility(View.VISIBLE);
         holder.mActionShare.setVisibility(View.VISIBLE);
 
@@ -553,6 +552,7 @@ public class MessageListItem extends FrameLayout {
     }
 
 
+    /**
     protected void onLongClickMediaIcon(final String mimeType, final Uri mediaUri) {
 
         final java.io.File exportPath = SecureMediaStore.exportPath(mimeType, mediaUri);
@@ -580,7 +580,7 @@ public class MessageListItem extends FrameLayout {
             }
         })
         .create().show();
-    }
+    }*/
 
     private void reshareMediaFile (String mimeType, Uri mediaUri)
     {

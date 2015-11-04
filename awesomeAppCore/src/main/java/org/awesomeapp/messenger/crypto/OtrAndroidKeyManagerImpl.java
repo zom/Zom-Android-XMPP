@@ -455,6 +455,7 @@ public class OtrAndroidKeyManagerImpl extends IOtrKeyManager.Stub implements Otr
         }
     }
 
+
     public void generateLocalKeyPair(String fullUserId) {
 
         String userId = Address.stripResource(fullUserId);
@@ -474,7 +475,9 @@ public class OtrAndroidKeyManagerImpl extends IOtrKeyManager.Stub implements Otr
         }
 
         OtrDebugLogger.log("SUCCESS! generating local key pair for: " + userId);
+        storeKeyPair(userId, keyPair);
 
+        /**
         // Store Private Key.
         PrivateKey privKey = keyPair.getPrivate();
         PKCS8EncodedKeySpec pkcs8EncodedKeySpec = new PKCS8EncodedKeySpec(privKey.getEncoded());
@@ -485,13 +488,12 @@ public class OtrAndroidKeyManagerImpl extends IOtrKeyManager.Stub implements Otr
         {
             // Store Public Key.
             PublicKey pubKey = keyPair.getPublic();
-            storeLocalPublicKey(userId, pubKey); //this will do saving
 
         }
         catch (Exception e)
         {
             throw new RuntimeException ("Error init local keypair");
-        }
+        }*/
     }
 
     public void storeLocalPublicKey(String fullUserId, PublicKey pubKey) throws OtrCryptoException {

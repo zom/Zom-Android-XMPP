@@ -561,35 +561,24 @@ public class OnboardingActivity extends ThemeableActivity {
         findViewById(R.id.progressExistingImage).setVisibility(View.VISIBLE);
 
         new ExistingAccountTask().execute(username, password);
-        /**
-        if (mSpinnerDomains.getVisibility() == View.VISIBLE) {
 
-            String passwordConf = ((TextView)findViewById(R.id.edtPassConfirm)).getText().toString();
-            String domain = mSpinnerDomains.getText().toString();
-
-            if (password.equals(passwordConf))
-            {
-
-            }
-            else
-            {
-                //show password conf error
-            }
-        }
-        else {
-
-        }*/
     }
 
     private class ExistingAccountTask extends AsyncTask<String, Void, OnboardingAccount> {
         @Override
         protected OnboardingAccount doInBackground(String... account) {
             try {
-                OnboardingAccount result = OnboardingManager.addExistingAccount(OnboardingActivity.this, mHandler, account[0], account[0], account[1]);
 
                 OtrAndroidKeyManagerImpl keyMan = OtrAndroidKeyManagerImpl.getInstance(OnboardingActivity.this);
-                keyMan.generateLocalKeyPair(account[0]);
-                mFingerprint = keyMan.getLocalFingerprint(account[0]);
+                KeyPair keyPair = keyMan.generateLocalKeyPair();
+                mFingerprint = keyMan.getFingerprint(keyPair.getPublic());
+
+                OnboardingAccount result = OnboardingManager.addExistingAccount(OnboardingActivity.this, mHandler, account[0], account[0], account[1]);
+
+                if (result != null) {
+                    String jabberId = result.username + '@' + result.domain;
+                    keyMan.storeKeyPair(jabberId,keyPair);
+                }
 
                 return result;
             }

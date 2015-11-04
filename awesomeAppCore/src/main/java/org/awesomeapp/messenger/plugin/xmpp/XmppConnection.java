@@ -34,6 +34,7 @@ import org.awesomeapp.messenger.service.adapters.ChatSessionAdapter;
 import org.awesomeapp.messenger.ui.legacy.DatabaseUtils;
 import org.awesomeapp.messenger.util.DNSUtil;
 import org.awesomeapp.messenger.util.Debug;
+import org.awesomeapp.messenger.util.OrbotHelper;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.PacketCollector;
@@ -1218,7 +1219,7 @@ public class XmppConnection extends ImConnection {
         boolean tlsCertVerify = providerSettings.getTlsCertVerify();
 
         boolean useSASL = true;//!allowPlainAuth;
-
+        boolean useTor = providerSettings.getUseTor();
         String domain = providerSettings.getDomain();
 
         mPriority = providerSettings.getXmppResourcePrio();
@@ -1228,10 +1229,16 @@ public class XmppConnection extends ImConnection {
         if ("".equals(server))
             server = null;
 
+        OrbotHelper oHelper = new OrbotHelper(mContext);
+        //if Orbot is on and running, we should use it
+        if (oHelper.isOrbotInstalled() && oHelper.isOrbotRunning()
+                && (server != null && (!doDnsSrv)))
+            useTor = true;
+
         debug(TAG, "TLS required? " + requireTls);
         debug(TAG, "cert verification? " + tlsCertVerify);
 
-        if (providerSettings.getUseTor()) {
+        if (useTor) {
             setProxy(TorProxyInfo.PROXY_TYPE, TorProxyInfo.PROXY_HOST,
                     TorProxyInfo.PROXY_PORT);
         }
