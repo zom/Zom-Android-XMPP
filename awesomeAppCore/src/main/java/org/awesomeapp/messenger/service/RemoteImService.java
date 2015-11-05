@@ -67,6 +67,7 @@ import org.awesomeapp.messenger.ui.legacy.NetworkConnectivityListener;
 import org.awesomeapp.messenger.ui.legacy.NetworkConnectivityListener.State;
 import org.awesomeapp.messenger.util.Debug;
 import org.awesomeapp.messenger.util.LogCleaner;
+import org.awesomeapp.messenger.util.OrbotHelper;
 import org.awesomeapp.messenger.util.SecureMediaStore;
 
 import java.security.GeneralSecurityException;
@@ -602,8 +603,6 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
         }, delay);
     }
 
-//    private boolean mUseForeground = false;
-
     private IImConnection do_createConnection(long providerId, long accountId) {
 
         //make sure OTR is init'd before you create your first connection
@@ -612,6 +611,8 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
         Map<String, String> settings = loadProviderSettings(providerId);
         ConnectionFactory factory = ConnectionFactory.getInstance();
         try {
+
+
             ImConnection conn = factory.createConnection(settings, this);
             conn.initUser(providerId, accountId);
             ImConnectionAdapter imConnectionAdapter =
@@ -629,6 +630,8 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
                     cursor, contentResolver, providerId, false, null);
             String userName = Imps.Account.getUserName(contentResolver, accountId);
             String domain = providerSettings.getDomain();
+
+
             providerSettings.close();
 
             mConnections.put(userName + '@' + domain,imConnectionAdapter);

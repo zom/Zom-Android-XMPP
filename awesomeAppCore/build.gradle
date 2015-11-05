@@ -135,5 +135,6 @@ dependencies {
     compile 'org.ocpsoft.prettytime:prettytime:4.0.0.Final'
     compile 'org.thoughtcrime.ssl.pinning:AndroidPinning:1.0.0'
     compile 'com.github.ge0rg:MemorizingTrustManager:9e30ffdf7d'
+    compile 'xyz.danoz:recyclerviewfastscroller:0.1.3'
 
 }

@@ -52,6 +52,9 @@ import org.awesomeapp.messenger.provider.Imps;
 import java.io.IOException;
 
 import info.guardianproject.otr.app.im.R;
+import xyz.danoz.recyclerviewfastscroller.sectionindicator.title.SectionTitleIndicator;
+import xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller;
+
 import org.awesomeapp.messenger.ImApp;
 
 //import com.bumptech.glide.Glide;
@@ -64,7 +67,7 @@ public class ContactsListFragment extends Fragment {
     private LoaderManager mLoaderManager;
     private int mLoaderId = 1001;
     private static RecyclerView mRecView;
-    private View mEmptyViewImage;
+    private View mEmptyView;
     String mSearchString = null;
 
     @Nullable
@@ -74,16 +77,36 @@ public class ContactsListFragment extends Fragment {
                 R.layout.awesome_fragment_contacts_list, container, false);
 
         mRecView = (RecyclerView)view.findViewById(R.id.recyclerview);
-    //    mEmptyView = view.findViewById(R.id.empty_view);
-        mEmptyViewImage = view.findViewById(R.id.empty_view_image);
+        mEmptyView = view.findViewById(R.id.empty_view);
+
+        /*
+        VerticalRecyclerViewFastScroller fastScroller =
+                (VerticalRecyclerViewFastScroller) view.findViewById(R.id.fast_scroller);
+        SectionTitleIndicator sectionTitleIndicator =
+                (SectionTitleIndicator) view.findViewById(R.id.fast_scroller_section_title_indicator);
+
+
+        // Connect the recycler to the scroller (to let the scroller scroll the list)
+        fastScroller.setRecyclerView(mRecView);
+
+        // Connect the scroller to the recycler (to let the recycler scroll the scroller's handle)
+        mRecView.setOnScrollListener(fastScroller.getOnScrollListener());
+
+        // Connect the section indicator to the scroller
+        fastScroller.setSectionIndicator(sectionTitleIndicator);
+        */
 
         setupRecyclerView(mRecView);
 
-
-// ...
-
-
         return view;
+    }
+
+    public int getContactCount ()
+    {
+        if (mAdapter != null)
+            return mAdapter.getItemCount();
+        else
+            return 1;
     }
 
     private void setupRecyclerView(RecyclerView recyclerView) {
@@ -102,14 +125,12 @@ public class ContactsListFragment extends Fragment {
 
         if (mAdapter.getItemCount() == 0) {
             mRecView.setVisibility(View.GONE);
-//            mEmptyView.setVisibility(View.VISIBLE);
-            mEmptyViewImage.setVisibility(View.VISIBLE);
+            mEmptyView.setVisibility(View.VISIBLE);
 
         }
         else {
             mRecView.setVisibility(View.VISIBLE);
-  //          mEmptyView.setVisibility(View.GONE);
-            mEmptyViewImage.setVisibility(View.GONE);
+            mEmptyView.setVisibility(View.GONE);
 
         }
 
@@ -299,13 +320,13 @@ public class ContactsListFragment extends Fragment {
             if (mAdapter.getItemCount() == 0) {
                 mRecView.setVisibility(View.GONE);
 //                mEmptyView.setVisibility(View.VISIBLE);
-                mEmptyViewImage.setVisibility(View.VISIBLE);
+                mEmptyView.setVisibility(View.VISIBLE);
 
             }
             else {
                 mRecView.setVisibility(View.VISIBLE);
   //              mEmptyView.setVisibility(View.GONE);
-                mEmptyViewImage.setVisibility(View.GONE);
+                mEmptyView.setVisibility(View.GONE);
 
             };
 

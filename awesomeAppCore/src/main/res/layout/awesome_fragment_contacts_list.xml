@@ -14,94 +14,73 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:recyclerviewfastscroller="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     >
 
-    <!--
-    <TextView
+    <RelativeLayout
+
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="@string/invite_friends"
-        android:paddingTop="6dp"
-        android:background="?toolbarBackground"
-        android:textColor="@android:color/white"
-        />
-
-  <LinearLayout
-      android:id="@+id/inviteOptions"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_margin="0dp"
-      android:layout_gravity="center_horizontal"
-      android:gravity="center_horizontal"
-      android:orientation="horizontal"
-      android:background="?toolbarBackground"
-
-      >
-    <Button
-        android:id="@+id/btnInviteSMS"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="10dp"
-        android:layout_margin="1dp"
-
-        android:text="@string/invite_sms"
-        android:drawableLeft="@android:drawable/ic_menu_send"
-        android:background="@android:color/transparent"
-        android:textColor="@android:color/white"
-        />   <Button
-      android:id="@+id/btnInviteShare"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:textSize="10dp"
-      android:layout_margin="1dp"
-
-      android:text="@string/invite_share"
-      android:drawableLeft="@android:drawable/ic_menu_share"
-      android:background="@android:color/transparent"
-      android:textColor="@android:color/white"
-
-      />
-      <Button
-          android:id="@+id/btnInviteScan"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_margin="1dp"
-
-          android:textSize="10dp"
-          android:text="@string/invite_scan_qr"
-          android:drawableLeft="@android:drawable/ic_menu_camera"
-          android:background="@android:color/transparent"
-          android:textColor="@android:color/white"
-
-          />
-      <Button
-          android:id="@+id/btnInviteAdd"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_margin="1dp"
-          android:textSize="10dp"
-          android:text="@string/invite_add"
-          android:drawableLeft="@android:drawable/ic_menu_add"
-          android:background="@android:color/transparent"
-          android:textColor="@android:color/white"
-
-          />
-  </LinearLayout>-->
+        android:layout_height="match_parent"
+        >
 <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+
+    />
+<!--
+    <xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller
+        android:id="@+id/fast_scroller"
+        android:layout_width="24dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:paddingRight="@dimen/margin_small"
+        android:paddingEnd="@dimen/margin_small"
+
+        recyclerviewfastscroller:rfs_barColor="@color/fastScrollBarColor"
+        recyclerviewfastscroller:rfs_handleBackground="@drawable/fast_scroller_handle_rounded"
+        />
+
+    <xyz.danoz.recyclerviewfastscroller.sample.ui.example.ColorGroupSectionTitleIndicator
+        android:id="@+id/fast_scroller_section_title_indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/list_item_height"
+        android:layout_toLeftOf="@id/fast_scroller"
+        android:layout_toStartOf="@id/fast_scroller"
+
+        recyclerviewfastscroller:rfs_backgroundColor="@android:color/white"
+        recyclerviewfastscroller:rfs_textColor="@android:color/black"
+        />
+        -->
+    </RelativeLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:visibility="gone"
+        android:id="@+id/empty_view"
+        android:layout_margin="20dp"
+
+        >
     <ImageView
-        android:id="@+id/empty_view_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/olo_invite"
-        android:visibility="gone"
 
         />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/invite_friends"
+            />
+    </LinearLayout>
   </LinearLayout>

@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -176,8 +177,8 @@ public class AccountFragment extends Fragment {
         });
 
         try {
-
-            RoundedAvatarDrawable avatar = DatabaseUtils.getAvatarFromAddress(mApp.getContentResolver(), fullUserName, 96, 96);
+            
+            Drawable avatar = DatabaseUtils.getAvatarFromAddress(mApp.getContentResolver(), fullUserName, 256, 256, false);
 
             if (avatar != null)
                 mIvAvatar.setImageDrawable(avatar);
@@ -282,7 +283,7 @@ public class AccountFragment extends Fragment {
 
     private void setAvatar(Bitmap bmp) {
 
-        RoundedAvatarDrawable avatar = new RoundedAvatarDrawable(bmp);
+        BitmapDrawable avatar = new BitmapDrawable(bmp);
         mIvAvatar.setImageDrawable(avatar);
 
         final ImApp app = ((ImApp) getActivity().getApplication());

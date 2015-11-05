@@ -95,6 +95,8 @@
         android:layout_height="wrap_content"
         android:inputType="textEmailAddress"
         android:imeOptions="actionSend"
+        android:textColor="@android:color/white"
+
         />
 
 

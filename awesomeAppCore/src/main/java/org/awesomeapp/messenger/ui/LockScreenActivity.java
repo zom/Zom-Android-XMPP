@@ -65,6 +65,8 @@ public class LockScreenActivity extends ThemeableActivity implements ICacheWordS
 
     private Handler mHandler = new Handler();
 
+    private String mAction = "unlock";
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -75,6 +77,10 @@ public class LockScreenActivity extends ThemeableActivity implements ICacheWordS
         getSupportActionBar().hide();
 
         setContentView(R.layout.activity_lock_screen);
+
+        if (getIntent() != null && getIntent().getAction() != null)
+            mAction = getIntent().getAction();
+
 
         mCacheWord = new CacheWordHandler(mApp, (ICacheWordSubscriber)this);
         mCacheWord.connectToService();
@@ -111,8 +117,7 @@ public class LockScreenActivity extends ThemeableActivity implements ICacheWordS
             }
         });
 
-        if (getIntent() != null && getIntent().getAction() != null)
-            if (getIntent().getAction().equals(ACTION_CHANGE_PASSPHRASE))
+        if (mAction.equals(ACTION_CHANGE_PASSPHRASE))
             {
                 changePassphrase();
             }
@@ -386,9 +391,12 @@ public class LockScreenActivity extends ThemeableActivity implements ICacheWordS
 
     @Override
     public void onCacheWordOpened() {
-        mCacheWord.setTimeout(0);
-        setResult(RESULT_OK);
-        finish();
+
+        if (mAction.equals("unlock")) {
+            mCacheWord.setTimeout(0);
+            setResult(RESULT_OK);
+            finish();
+        }
 
     }
 

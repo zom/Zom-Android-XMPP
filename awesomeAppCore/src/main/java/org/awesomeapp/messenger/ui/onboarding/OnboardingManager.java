@@ -3,6 +3,7 @@ package org.awesomeapp.messenger.ui.onboarding;
 import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.ui.qr.QrScanActivity;
+import org.awesomeapp.messenger.util.OrbotHelper;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -211,19 +212,15 @@ public class OnboardingManager {
                 pCursor, cr, providerId, false /* don't keep updated */, null /* no handler */);
 
         //should check to see if Orbot is installed and running
-        boolean useTor = false;
-        boolean doDnsSrvLookup = true;
+
+        OrbotHelper oHelper = new OrbotHelper(context);
 
         JSONObject obj = new JSONObject(loadServersJSON(context));
         JSONArray servers = obj.getJSONArray("servers");
 
-
-        settings.setUseTor(useTor);
         settings.setRequireTls(true);
         settings.setTlsCertVerify(true);
         settings.setAllowPlainAuth(false);
-
-        settings.setDoDnsSrv(doDnsSrvLookup);
 
         if (domain == null) {
             int nameIdx = 0;
@@ -238,13 +235,16 @@ public class OnboardingManager {
                     String host = server.getString("server");
 
                     if (host != null) {
-                        settings.setServer(host); //set the google connect server
+                        settings.setServer(host); //if we have a host, then we should use it
                         settings.setDoDnsSrv(false);
+
                     }
                     else
                     {
                         settings.setServer(null);
                         settings.setDoDnsSrv(true);
+                        settings.setUseTor(false);
+
                     }
 
                     settings.setDomain(domain);

@@ -97,6 +97,9 @@ public class MainActivity extends AppCompatActivity {
     public final static int REQUEST_ADD_CONTACT = 9999;
     public final static int REQUEST_CHOOSE_CONTACT = REQUEST_ADD_CONTACT+1;
 
+    private ConversationListFragment mConversationList;
+    private ContactsListFragment mContactList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -123,9 +126,12 @@ public class MainActivity extends AppCompatActivity {
         mViewPager = (ViewPager) findViewById(R.id.viewpager);
        final TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
 
+        mConversationList = new ConversationListFragment();
+        mContactList = new ContactsListFragment();
+
         Adapter adapter = new Adapter(getSupportFragmentManager());
-        adapter.addFragment(new ConversationListFragment(), getString(R.string.title_chats), R.drawable.ic_message_white_36dp);
-        adapter.addFragment(new ContactsListFragment(), getString(R.string.contacts), R.drawable.ic_people_white_36dp);
+        adapter.addFragment(mConversationList, getString(R.string.title_chats), R.drawable.ic_message_white_36dp);
+        adapter.addFragment(mContactList, getString(R.string.contacts), R.drawable.ic_people_white_36dp);
         adapter.addFragment(new MoreFragment(), getString(R.string.title_more), R.drawable.ic_more_horiz_white_36dp);
         adapter.addFragment(new AccountFragment(), getString(R.string.title_me), R.drawable.ic_face_white_24dp);
 
@@ -214,11 +220,18 @@ public class MainActivity extends AppCompatActivity {
                 int tabIdx = mViewPager.getCurrentItem();
 
                 if (tabIdx == 0) {
-                    Intent intent = new Intent(MainActivity.this, ContactsPickerActivity.class);
-                    startActivityForResult(intent, REQUEST_CHOOSE_CONTACT);
+
+                    if (mContactList.getContactCount() > 0) {
+                        Intent intent = new Intent(MainActivity.this, ContactsPickerActivity.class);
+                        startActivityForResult(intent, REQUEST_CHOOSE_CONTACT);
+                    }
+                    else
+                    {
+                        inviteContact();
+                    }
+
                 } else if (tabIdx == 1) {
-                    Intent i = new Intent(MainActivity.this, AddContactActivity.class);
-                    startActivityForResult(i,MainActivity.REQUEST_ADD_CONTACT);
+                    inviteContact();
                 } else if (tabIdx == 2) {
                     startPhotoTaker();
                 }
@@ -231,9 +244,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        //don't wnat this to happen to often
         checkForUpdates();
 
     }
+
+    public void inviteContact ()
+    {
+        Intent i = new Intent(MainActivity.this, AddContactActivity.class);
+        startActivityForResult(i,MainActivity.REQUEST_ADD_CONTACT);
+    }
+
 
     @Override
     protected void onResume() {

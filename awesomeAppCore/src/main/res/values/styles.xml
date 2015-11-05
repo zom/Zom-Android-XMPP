@@ -73,6 +73,9 @@
         <item name="windowActionBar">false</item>
         <item name="android:textColor">#ffffff</item>
 
+        <item name="android:textColorSecondary">#dddddd</item>
+
+
     </style>
 
     <style name="AppTheme" parent="@style/Theme.AppCompat.Light" >    
