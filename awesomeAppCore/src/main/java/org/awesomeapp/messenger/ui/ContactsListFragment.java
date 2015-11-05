@@ -52,6 +52,9 @@ import org.awesomeapp.messenger.provider.Imps;
 import java.io.IOException;
 
 import info.guardianproject.otr.app.im.R;
+import xyz.danoz.recyclerviewfastscroller.sectionindicator.title.SectionTitleIndicator;
+import xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller;
+
 import org.awesomeapp.messenger.ImApp;
 
 //import com.bumptech.glide.Glide;
@@ -76,6 +79,23 @@ public class ContactsListFragment extends Fragment {
         mRecView = (RecyclerView)view.findViewById(R.id.recyclerview);
         mEmptyView = view.findViewById(R.id.empty_view);
 
+        /*
+        VerticalRecyclerViewFastScroller fastScroller =
+                (VerticalRecyclerViewFastScroller) view.findViewById(R.id.fast_scroller);
+        SectionTitleIndicator sectionTitleIndicator =
+                (SectionTitleIndicator) view.findViewById(R.id.fast_scroller_section_title_indicator);
+
+
+        // Connect the recycler to the scroller (to let the scroller scroll the list)
+        fastScroller.setRecyclerView(mRecView);
+
+        // Connect the scroller to the recycler (to let the recycler scroll the scroller's handle)
+        mRecView.setOnScrollListener(fastScroller.getOnScrollListener());
+
+        // Connect the section indicator to the scroller
+        fastScroller.setSectionIndicator(sectionTitleIndicator);
+        */
+
         setupRecyclerView(mRecView);
 
         return view;
@@ -83,7 +103,10 @@ public class ContactsListFragment extends Fragment {
 
     public int getContactCount ()
     {
-        return mAdapter.getItemCount();
+        if (mAdapter != null)
+            return mAdapter.getItemCount();
+        else
+            return 1;
     }
 
     private void setupRecyclerView(RecyclerView recyclerView) {
