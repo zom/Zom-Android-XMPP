@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -282,7 +283,7 @@ public class AccountFragment extends Fragment {
 
     private void setAvatar(Bitmap bmp) {
 
-        RoundedAvatarDrawable avatar = new RoundedAvatarDrawable(bmp);
+        BitmapDrawable avatar = new BitmapDrawable(bmp);
         mIvAvatar.setImageDrawable(avatar);
 
         final ImApp app = ((ImApp) getActivity().getApplication());
