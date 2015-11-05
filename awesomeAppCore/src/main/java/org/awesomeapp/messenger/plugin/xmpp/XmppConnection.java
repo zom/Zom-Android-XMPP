@@ -189,6 +189,8 @@ public class XmppConnection extends ImConnection {
     private LinkedList<org.jivesoftware.smack.packet.Presence> qPresence = new LinkedList<org.jivesoftware.smack.packet.Presence>();
     private LinkedList<org.jivesoftware.smack.packet.Stanza> qPacket = new LinkedList<org.jivesoftware.smack.packet.Stanza>();
 
+    private final static String DEFAULT_CONFERENCE_SERVER = "conference.rows.io";
+
     public XmppConnection(Context context) throws IOException, KeyStoreException, NoSuchAlgorithmException, CertificateException {
         super(context);
 
@@ -522,10 +524,10 @@ public class XmppConnection extends ImConnection {
             catch (Exception xe)
             {
                 //unable to find conference server
-                return null;
+                return DEFAULT_CONFERENCE_SERVER;
             }
 
-            return null;
+            return DEFAULT_CONFERENCE_SERVER;
         }
 
         @Override
@@ -543,7 +545,13 @@ public class XmppConnection extends ImConnection {
             {
                  //let's add a host to that!
                 Collection<String> servers = mucMgr.getServiceNames();
-                chatRoomJid += servers.iterator().next();
+
+                if (servers.iterator().hasNext())
+                    chatRoomJid += servers.iterator().next();
+                else
+                {
+                    chatRoomJid += DEFAULT_CONFERENCE_SERVER;
+                }
              }
 
             Address address = new XmppAddress (chatRoomJid);
