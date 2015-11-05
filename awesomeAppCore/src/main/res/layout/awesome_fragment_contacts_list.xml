@@ -20,88 +20,33 @@
     android:orientation="vertical"
     >
 
-    <!--
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="@string/invite_friends"
-        android:paddingTop="6dp"
-        android:background="?toolbarBackground"
-        android:textColor="@android:color/white"
-        />
-
-  <LinearLayout
-      android:id="@+id/inviteOptions"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_margin="0dp"
-      android:layout_gravity="center_horizontal"
-      android:gravity="center_horizontal"
-      android:orientation="horizontal"
-      android:background="?toolbarBackground"
-
-      >
-    <Button
-        android:id="@+id/btnInviteSMS"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="10dp"
-        android:layout_margin="1dp"
-
-        android:text="@string/invite_sms"
-        android:drawableLeft="@android:drawable/ic_menu_send"
-        android:background="@android:color/transparent"
-        android:textColor="@android:color/white"
-        />   <Button
-      android:id="@+id/btnInviteShare"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:textSize="10dp"
-      android:layout_margin="1dp"
-
-      android:text="@string/invite_share"
-      android:drawableLeft="@android:drawable/ic_menu_share"
-      android:background="@android:color/transparent"
-      android:textColor="@android:color/white"
-
-      />
-      <Button
-          android:id="@+id/btnInviteScan"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_margin="1dp"
-
-          android:textSize="10dp"
-          android:text="@string/invite_scan_qr"
-          android:drawableLeft="@android:drawable/ic_menu_camera"
-          android:background="@android:color/transparent"
-          android:textColor="@android:color/white"
-
-          />
-      <Button
-          android:id="@+id/btnInviteAdd"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_margin="1dp"
-          android:textSize="10dp"
-          android:text="@string/invite_add"
-          android:drawableLeft="@android:drawable/ic_menu_add"
-          android:background="@android:color/transparent"
-          android:textColor="@android:color/white"
-
-          />
-  </LinearLayout>-->
 <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+
+    />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:visibility="gone"
+        android:id="@+id/empty_view"
+        android:layout_margin="20dp"
+
+        >
     <ImageView
-        android:id="@+id/empty_view_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/olo_invite"
-        android:visibility="gone"
 
         />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/invite_friends"
+            />
+    </LinearLayout>
   </LinearLayout>

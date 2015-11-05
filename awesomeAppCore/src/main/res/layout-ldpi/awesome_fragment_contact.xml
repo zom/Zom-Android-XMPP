@@ -35,13 +35,7 @@
 		>
 
 
-        <com.theartofdev.edmodo.cropper.CropImageView
-            android:id="@+id/CropImageView"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:visibility="gone"
-            />
+
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="198dp"
@@ -64,64 +58,20 @@
 
 			/>
 
-
-
-		<LinearLayout
-			android:layout_width="match_parent"
+		<TextView android:id="@+id/edtName"
+			android:selectAllOnFocus="true"
+			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:orientation="vertical"
-			android:padding="10dp">
+			android:hint="@string/account_setup_example_email_address"
+			android:autoLink="none"
+			android:cursorVisible="true"
+			android:inputType="textEmailAddress"
+			android:text="user@domain.com"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:textColor="?contactTextSecondary"
 
+			/>
 
-
-			
-			                       <TextView android:id="@+id/edtName"
-			                               android:selectAllOnFocus="true"
-			                               android:layout_width="match_parent"
-			                               android:layout_height="wrap_content"
-			                               android:hint="@string/account_setup_example_email_address"
-			                               android:autoLink="none"
-			                               android:cursorVisible="true"
-			                               android:inputType="textEmailAddress"
-			                               android:text="user@domain.com"
-			                               android:textAppearance="?android:attr/textAppearanceMedium"
-			                               android:textColor="?contactTextSecondary"
-			
-			                               />
-			
-			                       <LinearLayout
-			                               android:layout_width="match_parent"
-			                               android:layout_height="wrap_content"
-			                               android:orientation="horizontal"
-			                               android:padding="0dp">
-			                       <TextView android:id="@+id/edtPass"
-			                               android:layout_width="wrap_content"
-			                               android:layout_height="wrap_content"
-			                               android:selectAllOnFocus="true"
-			                               android:text="*************"
-			                               android:textAppearance="?android:attr/textAppearanceMedium"
-			
-			                               />
-			                               <ImageView
-			                                       android:layout_width="wrap_content"
-			                                       android:layout_height="20dp"
-			                                       android:id="@+id/btnShowPass"
-			                                       android:src="@drawable/ic_visibility_black_24dp"
-			                                       android:background="@android:color/transparent"
-			
-			                                       />
-			                               </LinearLayout>
-
-            <Switch
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Online"
-                android:id="@+id/switchOnline"
-                android:layout_gravity="left"
-                />
-
-
-        </LinearLayout>
 
 
 
@@ -164,7 +114,7 @@
 			<Button android:id="@+id/btnFriends"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:text="Do Something"
+				android:text="Send Message"
 				android:drawableLeft="@drawable/ic_people_white_24dp"
 				android:background="?toolbarBackground"
 				android:textAppearance="?android:attr/textAppearanceMediumInverse"
@@ -174,7 +124,7 @@
 		<Button android:id="@+id/btnAdvanced"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:text="@string/lock_app"
+			android:text="Delete &amp; Block Contact"
 			android:drawableLeft="@drawable/ic_settings_white_24dp"
 			android:textAppearance="?android:attr/textAppearanceMediumInverse"
 			android:background="?toolbarBackground"

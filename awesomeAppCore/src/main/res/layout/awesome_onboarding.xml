@@ -339,9 +339,6 @@
                         android:layout_margin="3dp"
                         />
 
-
-
-
                     <Button android:id="@+id/btnSignIn"
                         android:text="@string/sign_in"
                         android:layout_height="wrap_content"
@@ -358,6 +355,7 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="10dp"
                         android:visibility="gone"
+                        android:layout_gravity="center_horizontal"
                         />
                     <ImageView
                         android:id="@+id/progressExistingImage"
