@@ -64,7 +64,7 @@ public class ContactsListFragment extends Fragment {
     private LoaderManager mLoaderManager;
     private int mLoaderId = 1001;
     private static RecyclerView mRecView;
-    private View mEmptyViewImage;
+    private View mEmptyView;
     String mSearchString = null;
 
     @Nullable
@@ -74,16 +74,16 @@ public class ContactsListFragment extends Fragment {
                 R.layout.awesome_fragment_contacts_list, container, false);
 
         mRecView = (RecyclerView)view.findViewById(R.id.recyclerview);
-    //    mEmptyView = view.findViewById(R.id.empty_view);
-        mEmptyViewImage = view.findViewById(R.id.empty_view_image);
+        mEmptyView = view.findViewById(R.id.empty_view);
 
         setupRecyclerView(mRecView);
 
-
-// ...
-
-
         return view;
+    }
+
+    public int getContactCount ()
+    {
+        return mAdapter.getItemCount();
     }
 
     private void setupRecyclerView(RecyclerView recyclerView) {
@@ -102,14 +102,12 @@ public class ContactsListFragment extends Fragment {
 
         if (mAdapter.getItemCount() == 0) {
             mRecView.setVisibility(View.GONE);
-//            mEmptyView.setVisibility(View.VISIBLE);
-            mEmptyViewImage.setVisibility(View.VISIBLE);
+            mEmptyView.setVisibility(View.VISIBLE);
 
         }
         else {
             mRecView.setVisibility(View.VISIBLE);
-  //          mEmptyView.setVisibility(View.GONE);
-            mEmptyViewImage.setVisibility(View.GONE);
+            mEmptyView.setVisibility(View.GONE);
 
         }
 
@@ -299,13 +297,13 @@ public class ContactsListFragment extends Fragment {
             if (mAdapter.getItemCount() == 0) {
                 mRecView.setVisibility(View.GONE);
 //                mEmptyView.setVisibility(View.VISIBLE);
-                mEmptyViewImage.setVisibility(View.VISIBLE);
+                mEmptyView.setVisibility(View.VISIBLE);
 
             }
             else {
                 mRecView.setVisibility(View.VISIBLE);
   //              mEmptyView.setVisibility(View.GONE);
-                mEmptyViewImage.setVisibility(View.GONE);
+                mEmptyView.setVisibility(View.GONE);
 
             };
 
