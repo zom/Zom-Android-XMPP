@@ -35,6 +35,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.util.Log;
 
@@ -77,12 +78,19 @@ public class DatabaseUtils {
         return decodeSquareAvatar(data, width, height);
     }
 
-    public static RoundedAvatarDrawable getAvatarFromAddress(ContentResolver cr, String address, int width, int height) throws DecoderException {
+    public static Drawable getAvatarFromAddress(ContentResolver cr, String address, int width, int height) throws DecoderException {
+        return getAvatarFromAddress(cr,address,width,height,true);
+    }
+
+    public static Drawable getAvatarFromAddress(ContentResolver cr, String address, int width, int height, boolean getRound) throws DecoderException {
 
         byte[] data = getAvatarBytesFromAddress(cr, address, width, height);
 
         if (data != null)
-            return decodeRoundAvatar(data, width, height);
+            if (getRound)
+              return decodeRoundAvatar(data, width, height);
+            else
+                return decodeSquareAvatar(data, width, height);
         else
             return null;
 
@@ -210,6 +218,7 @@ public class DatabaseUtils {
         else
             return null;
     }
+
 
     public static int calculateInSampleSize(
             BitmapFactory.Options options, int reqWidth, int reqHeight) {
