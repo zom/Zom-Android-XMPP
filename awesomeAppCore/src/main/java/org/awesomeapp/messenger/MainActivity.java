@@ -224,9 +224,7 @@ public class MainActivity extends AppCompatActivity {
                     if (mContactList.getContactCount() > 0) {
                         Intent intent = new Intent(MainActivity.this, ContactsPickerActivity.class);
                         startActivityForResult(intent, REQUEST_CHOOSE_CONTACT);
-                    }
-                    else
-                    {
+                    } else {
                         inviteContact();
                     }
 
@@ -234,8 +232,7 @@ public class MainActivity extends AppCompatActivity {
                     inviteContact();
                 } else if (tabIdx == 2) {
                     startPhotoTaker();
-                }
-                else if (tabIdx == 3) {
+                } else if (tabIdx == 3) {
                     Intent i = new Intent(MainActivity.this, OnboardingActivity.class);
                     startActivity(i);
                 }
@@ -244,7 +241,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        checkForUpdates();
 
     }
 
@@ -278,6 +274,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         handleIntent();
+
+        checkForUpdates();
     }
 
     @Override
