@@ -32,13 +32,10 @@ import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.provider.ImpsErrorInfo;
 import org.awesomeapp.messenger.service.adapters.ChatSessionAdapter;
 import org.awesomeapp.messenger.ui.legacy.DatabaseUtils;
-import org.awesomeapp.messenger.util.DNSUtil;
 import org.awesomeapp.messenger.util.Debug;
 import org.awesomeapp.messenger.util.OrbotHelper;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.ConnectionListener;
-import org.jivesoftware.smack.PacketCollector;
-import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.PresenceListener;
 import org.jivesoftware.smack.SASLAuthentication;
 import org.jivesoftware.smack.SmackConfiguration;
@@ -46,14 +43,9 @@ import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.filter.AndFilter;
-import org.jivesoftware.smack.filter.PacketFilter;
-import org.jivesoftware.smack.filter.PacketIDFilter;
-import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.DefaultExtensionElement;
 import org.jivesoftware.smack.packet.ExtensionElement;
-import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smack.proxy.ProxyInfo;
@@ -63,16 +55,16 @@ import org.jivesoftware.smack.roster.RosterGroup;
 import org.jivesoftware.smack.roster.RosterListener;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
+import org.jivesoftware.smack.util.DNSUtil;
+import org.jivesoftware.smack.util.dns.HostAddress;
 import org.jivesoftware.smackx.address.provider.MultipleAddressesProvider;
 import org.jivesoftware.smackx.bytestreams.socks5.provider.BytestreamsProvider;
 import org.jivesoftware.smackx.chatstates.packet.ChatStateExtension;
 import org.jivesoftware.smackx.commands.provider.AdHocCommandDataProvider;
-import org.jivesoftware.smackx.delay.provider.DelayInformationProvider;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.disco.provider.DiscoverInfoProvider;
 import org.jivesoftware.smackx.disco.provider.DiscoverItemsProvider;
 import org.jivesoftware.smackx.iqlast.packet.LastActivity;
-import org.jivesoftware.smackx.iqprivate.PrivateDataManager;
 import org.jivesoftware.smackx.muc.DiscussionHistory;
 import org.jivesoftware.smackx.muc.InvitationListener;
 import org.jivesoftware.smackx.muc.MultiUserChat;
@@ -80,13 +72,11 @@ import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.smackx.muc.Occupant;
 import org.jivesoftware.smackx.muc.RoomInfo;
 import org.jivesoftware.smackx.muc.SubjectUpdatedListener;
-import org.jivesoftware.smackx.muc.packet.GroupChatInvitation;
 import org.jivesoftware.smackx.muc.provider.MUCAdminProvider;
 import org.jivesoftware.smackx.muc.provider.MUCOwnerProvider;
 import org.jivesoftware.smackx.muc.provider.MUCUserProvider;
 import org.jivesoftware.smackx.offline.packet.OfflineMessageInfo;
 import org.jivesoftware.smackx.offline.packet.OfflineMessageRequest;
-import org.jivesoftware.smackx.ping.PingFailedListener;
 import org.jivesoftware.smackx.ping.PingManager;
 import org.jivesoftware.smackx.privacy.provider.PrivacyProvider;
 import org.jivesoftware.smackx.receipts.DeliveryReceipt;
@@ -100,7 +90,6 @@ import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 import org.jivesoftware.smackx.vcardtemp.provider.VCardProvider;
 import org.jivesoftware.smackx.xdata.Form;
 import org.jivesoftware.smackx.xdata.FormField;
-import org.jivesoftware.smackx.xdata.packet.DataForm;
 import org.jivesoftware.smackx.xdata.provider.DataFormProvider;
 import org.jivesoftware.smackx.xhtmlim.provider.XHTMLExtensionProvider;
 
@@ -176,6 +165,7 @@ public class XmppConnection extends ImConnection {
     private final static String SSLCONTEXT_TYPE = "TLS";
 
     private static SSLContext sslContext;
+    private MemorizingTrustManager mMemTrust;
 
     private final static int SOTIMEOUT = 1000 * 120;
 
@@ -1257,12 +1247,10 @@ public class XmppConnection extends ImConnection {
             //java.lang.System.setProperty("java.net.preferIPv6Addresses", "false");
 
             debug(TAG, "(DNS SRV) resolving: " + domain);
-            DNSUtil.HostAddress srvHost = DNSUtil.resolveXMPPServerDomain(domain);
-            server = srvHost.getHost();
-            if (serverPort <= 0) {
-                // If user did not override port, use port from SRV record
-                serverPort = srvHost.getPort();
-            }
+            List<HostAddress> listHosts = DNSUtil.resolveXMPPDomain(domain, null);
+            server = listHosts.get(0).getFQDN();
+            serverPort = listHosts.get(0).getPort();
+
             debug(TAG, "(DNS SRV) resolved: " + domain + "=" + server + ":" + serverPort);
 
 
@@ -1321,14 +1309,16 @@ public class XmppConnection extends ImConnection {
         SASLAuthentication.unBlacklistSASLMechanism("PLAIN");
         SASLAuthentication.unBlacklistSASLMechanism("DIGEST-MD5");
 
+        if (mMemTrust == null)
+            mMemTrust = new MemorizingTrustManager(mContext);
+
         if (sslContext == null)
         {
 
             sslContext = SSLContext.getInstance(SSLCONTEXT_TYPE);
+
             SecureRandom secureRandom = new java.security.SecureRandom();
              sslContext.init(null, MemorizingTrustManager.getInstanceList(mContext), secureRandom);
-
-            sslContext.getDefaultSSLParameters().getCipherSuites();
 
             if (Build.VERSION.SDK_INT >= 20) {
 
@@ -1353,6 +1343,7 @@ public class XmppConnection extends ImConnection {
                 mConfig.setKeystorePath(path);
             }
 
+
         }
 
 
@@ -1371,25 +1362,12 @@ public class XmppConnection extends ImConnection {
 
         }
 
-        mConfig.setHostnameVerifier(HttpsURLConnection.getDefaultHostnameVerifier());
-
         mConfig.setCustomSSLContext(sslContext);
-
         mConfig.setSecurityMode(ConnectionConfiguration.SecurityMode.required);
 
-        //mConfig.setVerifyChainEnabled(true);
-        //mConfig.setVerifyRootCAEnabled(true);
-        //mConfig.setExpiredCertificatesCheckEnabled(true);
+        mConfig.setHostnameVerifier(
+                mMemTrust.wrapHostnameVerifier(new org.apache.http.conn.ssl.StrictHostnameVerifier()));
 
-        //mConfig.setNotMatchingDomainCheckEnabled(true);
-
-        //mConfig.setSelfSignedCertificateEnabled(false);
-
-        //mConfig.setCallbackHandler(this);
-
-
-        // Don't use smack reconnection - not reliable
-        //mConfig.setRe
         mConfig.setSendPresence(true);
 
       //  XMPPTCPConnection.setUseStreamManagementDefault(true);
