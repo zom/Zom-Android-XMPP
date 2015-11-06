@@ -1154,7 +1154,7 @@ public class XmppConnection extends ImConnection {
 
             });
 
-            executeIfIdle(new Runnable ()
+            execute(new Runnable ()
             {
                 public void run ()
                 {
@@ -1174,7 +1174,15 @@ public class XmppConnection extends ImConnection {
             String jid = mUser.getAddress().getBareAddress();
 
             VCardManager vCardManager = VCardManager.getInstanceFor(mConnection);
-            VCard vCard = vCardManager.loadVCard(jid);
+            VCard vCard = null;
+
+            try {
+                vCard = vCardManager.loadVCard(jid);
+            }
+            catch (Exception e){
+                debug(TAG,"error loading vcard",e);
+
+            }
 
             boolean setAvatar = false;
 
