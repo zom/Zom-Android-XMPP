@@ -267,14 +267,10 @@ public class MainActivity extends AppCompatActivity {
 
         } else {
             ImApp app = (ImApp) getApplication();
-          //  app.getTrustManager().bindDisplayActivity(this);
 
             app.checkForCrashes(this);
-
             mApp.initAccountInfo();
-
             mApp.maybeInit(this);
-
 
         }
 

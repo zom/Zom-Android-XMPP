@@ -85,11 +85,11 @@
     <item name="colorPrimary">@color/zom_primary</item>
 
     <!-- colorPrimaryDark is used for the status bar -->
-    <item name="colorPrimaryDark">#9b213e</item>
+    <item name="colorPrimaryDark">#BF204B</item>
 
     <!-- colorAccent is used as the default value for colorControlActivated,
          which is used to tint widgets -->
-    <item name="colorAccent">#ff961c41</item>
+    <item name="colorAccent">#FF2b63</item>
 
     <!-- You can also set colorControlNormal, colorControlActivated
          colorControlHighlight, and colorSwitchThumbNormal. -->
@@ -98,10 +98,10 @@
          <item name="messageTextPrimary">#111111</item>
          <item name="messageTextSecondary">#777777</item>
                   
-         <item name="listBackground">#eceff1</item>
+         <item name="listBackground">#e6e7e8</item>
          
          <item name="toolbarBackground">#263238</item>
-         <item name="inputBackground">#CCECEFF1</item>
+         <item name="inputBackground">#FFFFFF</item>
     <!-- customize the color palette -->
    
    		<item name="contactTextPrimary">#111111</item>
