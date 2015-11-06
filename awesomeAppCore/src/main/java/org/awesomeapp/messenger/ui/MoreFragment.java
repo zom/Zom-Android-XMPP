@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import org.awesomeapp.messenger.ImApp;
+import org.awesomeapp.messenger.MainActivity;
 
 import info.guardianproject.otr.app.im.R;
 
@@ -55,6 +56,16 @@ public class MoreFragment extends Fragment {
 
                 Intent intent = new Intent(getActivity(),GalleryActivity.class);
                 getActivity().startActivity(intent);
+            }
+        });
+
+        btn = (Button)view.findViewById(R.id.btnOpenGroups);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                ((MainActivity)getActivity()).showGroupChatDialog();
+
             }
         });
         return view;
