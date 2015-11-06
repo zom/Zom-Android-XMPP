@@ -44,6 +44,7 @@ import android.content.ContentProvider;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.UriMatcher;
 import android.content.res.Configuration;
 import android.database.Cursor;
@@ -51,6 +52,7 @@ import android.database.CursorWindow;
 import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
 /** A content provider for IM */
@@ -269,12 +271,14 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
     @Override
     public void onCacheWordLocked() {
 
-        //remove this for now, since cacheword can be killed
         /**
-        if (mDbHelper != null) {
-            mDbHelper.close();
-            mDbHelper = null;
-        }**/
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
+        if (!settings.contains(ImApp.PREFERENCE_KEY_TEMP_PASS)) {
+            if (mDbHelper != null) {
+                mDbHelper.close();
+                mDbHelper = null;
+            }
+        }*/
 
     }
 
