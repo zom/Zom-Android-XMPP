@@ -1473,8 +1473,18 @@ public class ConversationView {
     }
 
     public void showVerifyDialog() {
+
+        Intent intent = new Intent(mContext,ContactDisplayActivity.class);
+        intent.putExtra("contact", mRemoteAddress);
+        intent.putExtra("provider",mProviderId);
+        intent.putExtra("account", mAccountId);
+        mContext.startActivity(intent);
+
+        /**
         if (getChatId() == -1)
             return;
+
+
 
         try {
             IOtrChatSession otrChatSession = mCurrentChatSession.getOtrChatSession();
@@ -1519,6 +1529,7 @@ public class ConversationView {
         } catch (RemoteException e) {
             LogCleaner.error(ImApp.LOG_TAG, "unable to perform manual key verification", e);
         }
+         */
     }
 
     private void initSmpUI() {

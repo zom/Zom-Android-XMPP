@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/*
+ * Copyright (C) 2008 Esmertec AG.
+ * Copyright (C) 2008 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:padding="0dp"
+    android:background="@color/window_background">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="0dp"
+        android:gravity="center_horizontal"
+        >
+
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="198dp"
+            android:src="@drawable/avatar_unknown"
+            android:id="@+id/imageAvatar"
+            android:scaleType="centerCrop"
+            android:layout_margin="0dp"
+            />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="6dp">
+                <TextView android:id="@+id/tvNickname"
+                    android:selectAllOnFocus="true"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/account_setup_example_email_address"
+                    android:autoLink="none"
+                    android:cursorVisible="true"
+                    android:inputType="textEmailAddress"
+                    android:text="user person"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+
+                    />
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="6dp">
+                <TextView android:id="@+id/tvUsername"
+                    android:selectAllOnFocus="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/account_setup_example_email_address"
+                    android:autoLink="none"
+                    android:cursorVisible="true"
+                    android:inputType="textEmailAddress"
+                    android:text="user@domain.com"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="?contactTextSecondary"
+
+                    />
+
+            </RelativeLayout>
+
+
+
+
+
+
+        </LinearLayout>
+
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="left"
+            android:paddingLeft="12dp"
+            >
+
+
+
+            <ImageView
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:id="@+id/qrcode"
+                android:background="#dddddd"
+                android:layout_alignParentLeft="true"
+                />
+
+            <TextView android:id="@+id/tvFingerprint"
+                android:selectAllOnFocus="true"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="6dp"
+                android:autoLink="none"
+                android:text="AAAA AAAAA AAAA AAAA AAAA"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="?contactTextSecondary"
+
+                android:layout_toRightOf="@+id/qrcode"
+                android:layout_centerVertical="true"
+                />
+            <ImageView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:id="@+id/qrshare"
+                android:layout_centerVertical="true"
+
+                android:layout_alignParentRight="true"
+                android:src="@android:drawable/ic_menu_share"
+                />
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="5dp"
+            android:layout_margin="10dp"
+            >
+            <Button android:id="@+id/btnStartChat"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/send_message"
+                android:drawableLeft="@drawable/ic_menu_msg_compose"
+                android:textAppearance="?android:attr/textAppearanceMediumInverse"
+                android:background="?toolbarBackground"
+                android:padding="6dp"
+                android:layout_margin="1dp"
+
+                />
+
+            <Button android:id="@+id/btnDeleteContact"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/menu_block_contact"
+                android:drawableLeft="@drawable/ic_menu_trash"
+                android:textAppearance="?android:attr/textAppearanceMediumInverse"
+                android:background="?toolbarBackground"
+                android:padding="6dp"
+                android:layout_margin="1dp"
+
+                />
+
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+</LinearLayout>

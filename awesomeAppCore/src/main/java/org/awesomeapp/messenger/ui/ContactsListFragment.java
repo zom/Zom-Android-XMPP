@@ -239,10 +239,19 @@ public class ContactsListFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
 
+                    /*
                     if (mContext instanceof ContactListActivity)
                         ((ContactListActivity)mContext).startChat(viewHolder.mProviderId, viewHolder.mAccountId, viewHolder.mAddress);
                     else if (mContext instanceof MainActivity)
                         ((MainActivity)mContext).startChat(viewHolder.mProviderId,viewHolder.mAccountId, viewHolder.mAddress);
+                        */
+
+                    Intent intent = new Intent(mContext,ContactDisplayActivity.class);
+                    intent.putExtra("contact", viewHolder.mAddress);
+                    intent.putExtra("provider", viewHolder.mProviderId);
+                    intent.putExtra("account", viewHolder.mAccountId);
+
+                    mContext.startActivity(intent);
 
                 }
             });
