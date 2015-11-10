@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="0dp"
-    android:background="@android:color/white"
+    android:background="@color/window_background"
     >
 
 
@@ -17,6 +17,7 @@
             android:drawableLeft="@drawable/ic_photo_library_white_24dp"
             android:drawablePadding="12dp"
             android:padding="12dp"
+            android:background="@android:color/transparent"
             />
 
 
@@ -29,6 +30,8 @@
         android:drawableLeft="@drawable/ic_people_white_24dp"
         android:drawablePadding="12dp"
         android:padding="12dp"
+        android:background="@android:color/transparent"
+
         />
 
 

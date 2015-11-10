@@ -18,6 +18,7 @@
 package org.awesomeapp.messenger.service;
 
 import android.annotation.TargetApi;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -129,7 +130,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
     private int mNumNotify = 0;
     private final static int notifyId = 7777;
     
-    private static final String TAG = "GB.ImService";
+    private static final String TAG = "ZomService";
 
     public long getHeartbeatInterval() {
         return mHeartbeatInterval;
@@ -200,20 +201,22 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
     }
 
     private int convertPolicy() {
+
         int otrPolicy = OtrPolicy.OPPORTUNISTIC;
-            String otrModeSelect = Preferences.getOtrMode();
 
-            if (otrModeSelect.equals("auto")) {
-                otrPolicy = OtrPolicy.OPPORTUNISTIC;
-            } else if (otrModeSelect.equals("disabled")) {
-                otrPolicy = OtrPolicy.NEVER;
+        String otrModeSelect = Preferences.getOtrMode();
 
-            } else if (otrModeSelect.equals("force")) {
-                otrPolicy = OtrPolicy.OTRL_POLICY_ALWAYS;
+        if (otrModeSelect.equals("auto")) {
+            otrPolicy = OtrPolicy.OPPORTUNISTIC;
+        } else if (otrModeSelect.equals("disabled")) {
+            otrPolicy = OtrPolicy.NEVER;
 
-            } else if (otrModeSelect.equals("requested")) {
-                otrPolicy = OtrPolicy.OTRL_POLICY_MANUAL;
-            }
+        } else if (otrModeSelect.equals("force")) {
+            otrPolicy = OtrPolicy.OTRL_POLICY_ALWAYS;
+
+        } else if (otrModeSelect.equals("requested")) {
+            otrPolicy = OtrPolicy.OTRL_POLICY_MANUAL;
+        }
 
         return otrPolicy;
     }
@@ -236,7 +239,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
         Debug.onServiceStart();
 
-        startForegroundCompat();
+        //startForegroundCompat();
 
         PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
         mWakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "IM_WAKELOCK");
@@ -267,6 +270,8 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
        // ((ImApp)getApplication()).startImServiceIfNeed();
 
         HeartbeatService.startBeating(getApplicationContext());
+
+        startForeground(notifyId, getForegroundNotification());
     }
     
     private void connectToCacheWord ()
@@ -278,7 +283,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
     }
 
-    private void startForegroundCompat() {
+    private Notification getForegroundNotification() {
        
         mNotifyManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);;
         
@@ -294,10 +299,11 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
         PendingIntent launchIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent, 0);
 
         mNotifyBuilder.setContentIntent(launchIntent);
-        
+
         mNotifyBuilder.setContentText(getString(R.string.app_unlocked));
-        
-        startForeground(notifyId, mNotifyBuilder.build());
+
+        return mNotifyBuilder.build();
+
     }
 
     public void sendHeartbeat() {
@@ -554,15 +560,14 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
         stopForeground(true);
 
-
          /* ignore unmount errors and quit ASAP. Threads actively using the VFS will
              * cause IOCipher's VirtualFileSystem.unmount() to throw an IllegalStateException */
         try {
-            SecureMediaStore.unmount();
+            if (SecureMediaStore.isMounted())
+                SecureMediaStore.unmount();
         } catch (IllegalStateException e) {
             Log.e(ImApp.LOG_TAG,"there was a problem unmoiunt secure media store",e);
         }
-
 
         if (mCacheWord != null && (!mCacheWord.isLocked())) {
             mCacheWord.lock();
@@ -620,7 +625,6 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
 
             ContentResolver contentResolver = getContentResolver();
-
             Cursor cursor = contentResolver.query(Imps.ProviderSettings.CONTENT_URI,new String[] {Imps.ProviderSettings.NAME, Imps.ProviderSettings.VALUE},Imps.ProviderSettings.PROVIDER + "=?",new String[] { Long.toString(providerId)},null);
 
             if (cursor == null)
@@ -927,7 +931,6 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
             } catch (GeneralSecurityException e) {
 
                 Log.d(ImApp.LOG_TAG, "couldn't open cacheword with temp password", e);
-
             }
         }
 
@@ -940,12 +943,6 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
        byte[] encryptionKey = mCacheWord.getEncryptionKey();
        openEncryptedStores(encryptionKey, true);
-
-       // this is no longer configurable
-     //  int defaultTimeout = 60 * Integer.parseInt(mPrefs.getString("pref_cacheword_timeout",ImApp.DEFAULT_TIMEOUT_CACHEWORD));
-     //  mCacheWord.setTimeoutSeconds(defaultTimeout);
-       // mCacheWord.setTimeout(0);
-        //SecureMediaStore.init(this, encryptionKey);
 
         // Check and login accounts if network is ready, otherwise it's checked
         // when the network becomes available.

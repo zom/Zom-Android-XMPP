@@ -116,7 +116,7 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
 
         if (mDoLock) {
             shutdownAndLock(this);
-            finish();
+
             return;
         } else if (Panic.isTriggerIntent(intent)) {
             if (PanicReceiver.receivedTrustedTrigger(this)) {
@@ -277,7 +277,6 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
             showOnboarding();
         }
 
-        finish();
     }
 
     private void signIn(long accountId) {
@@ -359,8 +358,6 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
         initTempPassphrase();
         showOnboarding();
 
-        finish();
-
     }
 
     void initTempPassphrase () {
@@ -384,6 +381,7 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
     void showMain () {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
+        finish();
     }
 
     void showOnboarding () {
@@ -394,7 +392,7 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
         returnIntent.putExtra(EXTRA_DO_SIGNIN, mDoSignIn);
         intent.putExtra(EXTRA_ORIGINAL_INTENT, returnIntent);
         startActivity(intent);
-
+        finish();
     }
 
     private final static int REQUEST_LOCK_SCREEN = 9999;

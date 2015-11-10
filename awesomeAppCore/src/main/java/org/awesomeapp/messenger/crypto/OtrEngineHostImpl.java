@@ -140,16 +140,10 @@ public class OtrEngineHostImpl implements OtrEngineHost {
                 
                 try
                 {
+                    //always send OTR messages to a resource
                     SessionStatus chatStatus = SessionStatus.values()[chatSessionAdapter.getOtrChatSession().getChatStatus()];
-    
-                    if (chatStatus == SessionStatus.ENCRYPTED)
-                    {
-                        msg.setTo(appendSessionResource(sessionID, to));
-                    }
-                    else
-                    {
-                        msg.setTo(new XmppAddress(chatSessionAdapter.getAdaptee().getParticipant().getAddress().getBareAddress()));
-                    }
+                    msg.setTo(appendSessionResource(sessionID, to));
+
                 }
                 catch (RemoteException e)
                 {

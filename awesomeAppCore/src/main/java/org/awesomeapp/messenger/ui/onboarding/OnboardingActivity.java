@@ -546,10 +546,10 @@ public class OnboardingActivity extends ThemeableActivity {
 
     private void showMainScreen ()
     {
-        finish();
+
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
-
+        finish();
     }
 
     private void doExistingAccountRegister ()

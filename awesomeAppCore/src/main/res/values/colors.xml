@@ -24,7 +24,7 @@
     <color name="nonchat_contact">#fff</color>
     <color name="status_popup_text">#ff000000</color>
     <color name="error">#ffcc5555</color>
-    <color name="window_background">#FFF5F5F5</color>
+    <color name="window_background">#e6e7e8</color>
 
     <color name="android_green">#ccA4C639</color>
             <color name="android_green_light">#ccA4C639</color>

@@ -30,6 +30,10 @@ import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.encode.Contents;
+import com.google.zxing.encode.QRCodeEncoder;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 import org.awesomeapp.messenger.ImApp;
@@ -41,6 +45,7 @@ import org.awesomeapp.messenger.ui.legacy.DatabaseUtils;
 import org.awesomeapp.messenger.ui.legacy.SignInHelper;
 import org.awesomeapp.messenger.ui.onboarding.OnboardingManager;
 import org.awesomeapp.messenger.ui.qr.QrGenAsyncTask;
+import org.awesomeapp.messenger.ui.qr.QrShareAsyncTask;
 import org.awesomeapp.messenger.ui.widgets.ImageViewActivity;
 import org.awesomeapp.messenger.ui.widgets.RoundedAvatarDrawable;
 import org.awesomeapp.messenger.util.SecureMediaStore;
@@ -69,6 +74,7 @@ public class AccountFragment extends Fragment {
     TextView mTvPassword;
     ImApp mApp;
     Handler mHandler = new Handler();
+    ImageView ivScan;
 
     /**
      * Use this factory method to create a new instance of
@@ -129,7 +135,7 @@ public class AccountFragment extends Fragment {
 
         TextView tvFingerprint = (TextView) view.findViewById(R.id.tvFingerprint);
 
-        ImageView ivScan = (ImageView) view.findViewById(R.id.qrcode);
+        ivScan = (ImageView) view.findViewById(R.id.qrcode);
 
         ivScan.setOnClickListener(new View.OnClickListener() {
 
@@ -159,6 +165,21 @@ public class AccountFragment extends Fragment {
 
             }
         });
+
+        ImageView btnQrShare = (ImageView)view.findViewById(R.id.qrshare);
+        btnQrShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                try {
+                    String inviteLink = OnboardingManager.generateInviteLink(getActivity(), mApp.getDefaultUsername(), mApp.getDefaultOtrKey());
+                    new QrShareAsyncTask(getActivity()).execute(inviteLink);
+                } catch (IOException ioe) {
+                    Log.e(ImApp.LOG_TAG, "couldn't generate QR code", ioe);
+                }
+            }
+        });
+
 
         Switch switchOnline = (Switch) view.findViewById(R.id.switchOnline);
         switchOnline.setChecked(checkConnection());

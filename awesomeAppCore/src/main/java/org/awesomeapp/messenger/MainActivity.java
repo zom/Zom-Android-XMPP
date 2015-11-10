@@ -267,14 +267,10 @@ public class MainActivity extends AppCompatActivity {
 
         } else {
             ImApp app = (ImApp) getApplication();
-          //  app.getTrustManager().bindDisplayActivity(this);
 
             app.checkForCrashes(this);
-
             mApp.initAccountInfo();
-
             mApp.maybeInit(this);
-
 
         }
 
@@ -641,7 +637,7 @@ public class MainActivity extends AppCompatActivity {
         return mRequestedChatId;
     }
 
-    private void showGroupChatDialog ()
+    public void showGroupChatDialog ()
     {
 
         // This example shows how to add a custom layout to an AlertDialog

@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center_horizontal"
-    android:background="@color/background_material_light"
+    android:background="@color/cardview_light_background"
 
     >
 
@@ -29,6 +29,7 @@
                     android:gravity="center"
                     android:orientation="vertical"
                     android:background="?colorPrimary"
+
 
                     >
 

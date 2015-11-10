@@ -17,14 +17,11 @@
  * limitations under the License.
  */
 -->
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-	android:id="@+id/acct_act_scrollview"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_height="match_parent"
 	android:layout_width="match_parent"
 	android:padding="0dp"
-    android:background="#ffffff"
-	android:fillViewport="true">
-
+    android:background="@color/window_background">
 
 	<LinearLayout
 		android:layout_width="match_parent"
@@ -58,7 +55,11 @@
 			android:orientation="vertical"
 			android:padding="10dp">
 
-
+			<RelativeLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal"
+				android:padding="6dp">
 			<TextView android:id="@+id/tvNickname"
 				android:selectAllOnFocus="true"
 				android:layout_width="match_parent"
@@ -71,13 +72,17 @@
 				android:textAppearance="?android:attr/textAppearanceLarge"
 
 				/>
+</RelativeLayout>
 
 
-
-
+			<RelativeLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal"
+				android:padding="6dp">
 			<TextView android:id="@+id/edtName"
 			                               android:selectAllOnFocus="true"
-			                               android:layout_width="match_parent"
+			                               android:layout_width="wrap_content"
 			                               android:layout_height="wrap_content"
 			                               android:hint="@string/account_setup_example_email_address"
 			                               android:autoLink="none"
@@ -88,12 +93,20 @@
 			                               android:textColor="?contactTextSecondary"
 			
 			                               />
+			<Switch
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/presence_available"
+				android:id="@+id/switchOnline"
+				android:layout_alignParentRight="true"
+				/>
+				</RelativeLayout>
 			
-			                       <LinearLayout
+			                       <RelativeLayout
 			                               android:layout_width="match_parent"
 			                               android:layout_height="wrap_content"
 			                               android:orientation="horizontal"
-			                               android:padding="0dp">
+			                               android:padding="6dp">
 			                       <TextView android:id="@+id/edtPass"
 			                               android:layout_width="wrap_content"
 			                               android:layout_height="wrap_content"
@@ -108,74 +121,73 @@
 			                                       android:id="@+id/btnShowPass"
 			                                       android:src="@drawable/ic_visibility_black_24dp"
 			                                       android:background="@android:color/transparent"
-			
-			                                       />
-			                               </LinearLayout>
+											   android:layout_alignParentRight="true"
 
-            <Switch
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Online"
-                android:id="@+id/switchOnline"
-                android:layout_gravity="left"
-                />
+											   />
+			                               </RelativeLayout>
+
+
 
 
         </LinearLayout>
 
 
 
-	<LinearLayout
-		android:layout_width="wrap_content"
+	<RelativeLayout
+		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:orientation="horizontal"
-		android:gravity="center_horizontal">
+		android:gravity="left"
+		android:paddingLeft="12dp"
+		>
 
 
 
 			<ImageView
-				android:layout_width="128dp"
-				android:layout_height="128dp"
+				android:layout_width="64dp"
+				android:layout_height="64dp"
 				android:id="@+id/qrcode"
+				android:background="#dddddd"
+				android:layout_alignParentLeft="true"
 				/>
 
 		<TextView android:id="@+id/tvFingerprint"
 		                       android:selectAllOnFocus="true"
-		                       android:layout_width="wrap_content"
+		                       android:layout_width="200dp"
 		                       android:layout_height="wrap_content"
+								android:layout_marginLeft="6dp"
 		                       android:autoLink="none"
 		                       android:text="AAAAAA AAAAAA AAAAAA AAAAAA AAAAAA"
 		                       android:textAppearance="?android:attr/textAppearanceSmall"
 		                       android:textColor="?contactTextSecondary"
-		                       android:layout_margin="12dp"
-		                       />
 
+			android:layout_toRightOf="@+id/qrcode"
+			android:layout_centerVertical="true"
+			/>
+		<ImageView
+			android:layout_width="48dp"
+			android:layout_height="48dp"
+			android:id="@+id/qrshare"
+			android:layout_centerVertical="true"
 
-	</LinearLayout>
+			android:layout_alignParentRight="true"
+			android:src="@android:drawable/ic_menu_share"
+			/>
 
+	</RelativeLayout>
 
 		<LinearLayout
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:orientation="vertical"
-			android:layout_marginTop="20dp"
+			android:layout_marginTop="5dp"
             android:layout_margin="10dp"
 			>
-			<Button android:id="@+id/btnFriends"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:text="Do Something"
-				android:drawableLeft="@drawable/ic_people_white_24dp"
-				android:background="?toolbarBackground"
-				android:textAppearance="?android:attr/textAppearanceMediumInverse"
-				android:padding="6dp"
-                android:layout_margin="1dp"
-				/>
 		<Button android:id="@+id/btnAdvanced"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:text="@string/lock_app"
-			android:drawableLeft="@drawable/ic_settings_white_24dp"
+			android:drawableLeft="@drawable/ic_menu_encrypt"
 			android:textAppearance="?android:attr/textAppearanceMediumInverse"
 			android:background="?toolbarBackground"
 			android:padding="6dp"
@@ -187,4 +199,4 @@
 
 
 	</LinearLayout>
-</ScrollView>
+</LinearLayout>

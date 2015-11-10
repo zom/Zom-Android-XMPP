@@ -206,8 +206,8 @@ public class ConversationView {
 
                 if ((mLastSessionStatus == null || mLastSessionStatus == SessionStatus.PLAINTEXT)) {
 
-//                    boolean otrPolicyAuto = mNewChatActivity.getOtrPolicy() == OtrPolicy.OTRL_POLICY_ALWAYS
-  //                          || this.mNewChatActivity.getOtrPolicy() == OtrPolicy.OPPORTUNISTIC;
+                    //boolean otrPolicyAuto = mActivity.getOtrPolicy() == OtrPolicy.OTRL_POLICY_ALWAYS
+                    //|| this.mNewChatActivity.getOtrPolicy() == OtrPolicy.OPPORTUNISTIC;
 
                     boolean otrPolicyAuto = true;
 
