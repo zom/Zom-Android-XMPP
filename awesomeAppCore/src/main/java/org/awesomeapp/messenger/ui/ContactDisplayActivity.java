@@ -21,6 +21,7 @@ import org.awesomeapp.messenger.service.IImConnection;
 import org.awesomeapp.messenger.ui.legacy.DatabaseUtils;
 import org.awesomeapp.messenger.ui.onboarding.OnboardingManager;
 import org.awesomeapp.messenger.ui.qr.QrGenAsyncTask;
+import org.awesomeapp.messenger.ui.qr.QrShareAsyncTask;
 import org.awesomeapp.messenger.util.LogCleaner;
 
 import java.io.IOException;
@@ -33,6 +34,7 @@ public class ContactDisplayActivity extends Activity {
     private long mProviderId = -1;
     private long mAccountId = -1;
     private IImConnection mConn;
+    private String mRemoteFingerprint;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,19 +73,51 @@ public class ContactDisplayActivity extends Activity {
             IChatSessionManager manager = mConn.getChatSessionManager();
             IChatSession session = manager.getChatSession(mUsername);
 
-            String remoteFingerprint = session.getOtrChatSession().getRemoteFingerprint();
+            mRemoteFingerprint = session.getOtrChatSession().getRemoteFingerprint();
 
             //String remoteFingerprint = OtrAndroidKeyManagerImpl.getInstance(this).getRemoteFingerprint(mUsername);
 
-            if (remoteFingerprint != null) {
-                tv.setText(prettyPrintFingerprint(remoteFingerprint));
+            if (mRemoteFingerprint != null) {
+                tv.setText(prettyPrintFingerprint(mRemoteFingerprint));
 
                 try {
-                    String inviteLink = OnboardingManager.generateInviteLink(this, mUsername, remoteFingerprint);
+                    String inviteLink = OnboardingManager.generateInviteLink(this, mUsername, mRemoteFingerprint);
                     new QrGenAsyncTask(this, iv).execute(inviteLink);
                 } catch (IOException ioe) {
                     Log.e(ImApp.LOG_TAG, "couldn't generate QR code", ioe);
                 }
+
+                iv.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+
+                        String inviteString;
+                        try {
+                            inviteString = OnboardingManager.generateInviteLink(ContactDisplayActivity.this, mUsername, mRemoteFingerprint);
+                            OnboardingManager.inviteScan(ContactDisplayActivity.this, inviteString);
+                        } catch (IOException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+
+                    }
+
+                });
+
+                ImageView btnQrShare = (ImageView) findViewById(R.id.qrshare);
+                btnQrShare.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        try {
+                            String inviteLink = OnboardingManager.generateInviteLink(ContactDisplayActivity.this, mUsername, mRemoteFingerprint);
+                            new QrShareAsyncTask(ContactDisplayActivity.this).execute(inviteLink);
+                        } catch (IOException ioe) {
+                            Log.e(ImApp.LOG_TAG, "couldn't generate QR code", ioe);
+                        }
+                    }
+                });
             }
         }
         catch (Exception e)

@@ -37,6 +37,7 @@ import com.google.zxing.encode.QRCodeEncoder;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 import org.awesomeapp.messenger.ImApp;
+import org.awesomeapp.messenger.MainActivity;
 import org.awesomeapp.messenger.model.ImConnection;
 import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
 import org.awesomeapp.messenger.provider.Imps;
@@ -220,6 +221,14 @@ public class AccountFragment extends Fragment {
                 Log.e(ImApp.LOG_TAG, "couldn't generate QR code", ioe);
             }
         }
+
+        Button btnLock = (Button)view.findViewById(R.id.btnLock);
+        btnLock.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MainActivity)getActivity()).handleLock();
+            }
+        });
 
 
         return view;
