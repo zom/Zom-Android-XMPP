@@ -16,11 +16,11 @@ import org.awesomeapp.messenger.service.IImConnection;
 public class ChatSessionInitTask extends AsyncTask<String, Void, Boolean> {
 
     ImApp mApp;
-    int mProviderId;
-    int mAccountId;
+    long mProviderId;
+    long mAccountId;
     int mContactType;
 
-    public ChatSessionInitTask (ImApp app, int providerId, int accountId, int contactType)
+    public ChatSessionInitTask (ImApp app, long providerId, long accountId, int contactType)
     {
         mApp = app;
         mProviderId = providerId;
@@ -41,18 +41,26 @@ public class ChatSessionInitTask extends AsyncTask<String, Void, Boolean> {
 
                     IChatSession session = conn.getChatSessionManager().getChatSession(address);
 
-                    if (session == null) {
+                 //   if (session == null) {
 
                         if (mContactType == Imps.Contacts.TYPE_GROUP) {
                             session = conn.getChatSessionManager().createMultiUserChatSession(address, null, null, false);
 
                         } else {
-                            session = conn.getChatSessionManager().createChatSession(address, false);
+                            if (session != null && session.getOtrChatSession() != null && session.getOtrChatSession().isChatEncrypted())
+                            {
+                                //then do nothing
+                                continue;
+                            }
+                            else {
+                                if (session == null)
+                                    session = conn.getChatSessionManager().createChatSession(address, false);
 
-                            IOtrChatSession otrChatSession = session.getOtrChatSession();
-                            otrChatSession.startChatEncryption();
+                                IOtrChatSession otrChatSession = session.getOtrChatSession();
+                                otrChatSession.startChatEncryption();
+                            }
                         }
-                    }
+//                    }
 
                 }
 

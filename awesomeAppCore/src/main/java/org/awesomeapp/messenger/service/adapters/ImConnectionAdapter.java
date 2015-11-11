@@ -35,6 +35,8 @@ import org.awesomeapp.messenger.model.Presence;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.service.RemoteImService;
 
+import org.awesomeapp.messenger.tasks.ChatSessionInitTask;
+import org.awesomeapp.messenger.ui.ConversationListFragment;
 import org.awesomeapp.messenger.util.Debug;
 
 import java.util.HashMap;
@@ -431,6 +433,42 @@ public class ImConnectionAdapter extends org.awesomeapp.messenger.service.IImCon
                     // we have to ignore the LOGGED_IN event and wait for
                     // the upcoming DISCONNECTED.
                     return;
+                }
+
+                if (state == ImConnection.LOGGED_IN)
+                {
+                    //we need to reinit all group chat sessions here
+
+                    try {
+                        Uri baseUri = Imps.Contacts.CONTENT_URI_CHAT_CONTACTS_BY;
+                        String[] CHAT_PROJECTION = { Imps.Contacts._ID, Imps.Contacts.PROVIDER,
+                                Imps.Contacts.ACCOUNT, Imps.Contacts.USERNAME,
+                                Imps.Contacts.NICKNAME, Imps.Contacts.TYPE,
+                        };
+
+                        Uri.Builder builder = baseUri.buildUpon();
+                        builder.appendQueryParameter(Imps.Contacts.PROVIDER,mProviderId+"");
+                        Uri uriChats = builder.build();
+                        Cursor c = getContext().getContentResolver().query(uriChats, CHAT_PROJECTION, null, null, Imps.Contacts.TIME_ORDER);
+
+                        if (c != null) {
+                            if (c.getColumnCount() > 0) {
+
+                                while (c.moveToNext()) {
+                                    int chatType = c.getInt(5);
+                                    String remoteAddress = c.getString(3);
+                                    new ChatSessionInitTask((ImApp) getContext().getApplication(), mProviderId, mAccountId, chatType).execute(remoteAddress);
+                                }
+                            }
+
+                            c.close();
+                        }
+
+                    }
+                    catch (Exception e)
+                    {
+                        e.printStackTrace();
+                    }
                 }
 
                 if (state != ImConnection.DISCONNECTED) {

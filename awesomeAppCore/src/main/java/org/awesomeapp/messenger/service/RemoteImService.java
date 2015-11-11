@@ -57,7 +57,9 @@ import org.awesomeapp.messenger.crypto.OtrAndroidKeyManagerImpl;
 import org.awesomeapp.messenger.crypto.OtrChatManager;
 import org.awesomeapp.messenger.crypto.OtrDebugLogger;
 import org.awesomeapp.messenger.model.ConnectionFactory;
+import org.awesomeapp.messenger.model.ConnectionListener;
 import org.awesomeapp.messenger.model.ImConnection;
+import org.awesomeapp.messenger.model.ImErrorInfo;
 import org.awesomeapp.messenger.model.ImException;
 import org.awesomeapp.messenger.plugin.ImPluginInfo;
 import org.awesomeapp.messenger.provider.Imps;
@@ -624,6 +626,22 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
                     new ImConnectionAdapter(providerId, accountId, conn, this);
 
 
+            conn.addConnectionListener(new ConnectionListener() {
+                @Override
+                public void onStateChanged(int state, ImErrorInfo error) {
+
+                }
+
+                @Override
+                public void onUserPresenceUpdated() {
+
+                }
+
+                @Override
+                public void onUpdatePresenceError(ImErrorInfo error) {
+
+                }
+            });
             ContentResolver contentResolver = getContentResolver();
             Cursor cursor = contentResolver.query(Imps.ProviderSettings.CONTENT_URI,new String[] {Imps.ProviderSettings.NAME, Imps.ProviderSettings.VALUE},Imps.ProviderSettings.PROVIDER + "=?",new String[] { Long.toString(providerId)},null);
 

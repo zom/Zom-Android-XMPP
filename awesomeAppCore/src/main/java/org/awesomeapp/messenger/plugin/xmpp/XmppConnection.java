@@ -70,6 +70,7 @@ import org.jivesoftware.smackx.muc.InvitationListener;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.smackx.muc.Occupant;
+import org.jivesoftware.smackx.muc.ParticipantStatusListener;
 import org.jivesoftware.smackx.muc.RoomInfo;
 import org.jivesoftware.smackx.muc.SubjectUpdatedListener;
 import org.jivesoftware.smackx.muc.provider.MUCAdminProvider;
@@ -569,13 +570,14 @@ public class XmppConnection extends ImConnection {
             try {
 
                 MultiUserChat muc = mucMgr.getMultiUserChat(chatRoomJid);
+                boolean mucCreated = false;
 
                 try
                 {
 
                     // Create the room
-                    muc.createOrJoin(nickname);
 
+                    mucCreated = muc.createOrJoin(nickname);
 //                    if ((TextUtils.isEmpty(muc.getSubject())))
   //                      muc.changeSubject(subject);
                 }
@@ -591,58 +593,56 @@ public class XmppConnection extends ImConnection {
                     }
                 }
 
-                try
-                {
-                    Form form = muc.getConfigurationForm();
-                    Form submitForm = form.createAnswerForm();
+                if (mucCreated) {
+                    try {
+                        Form form = muc.getConfigurationForm();
+                        Form submitForm = form.createAnswerForm();
 
-                    for (FormField field : form.getFields())
-                    {
-                        if(!(field.getType() == FormField.Type.hidden) && field.getVariable()!= null){
-                            submitForm.setDefaultAnswer(field.getVariable());
+                        for (FormField field : form.getFields()) {
+                            if (!(field.getType() == FormField.Type.hidden) && field.getVariable() != null) {
+                                submitForm.setDefaultAnswer(field.getVariable());
+                            }
                         }
+
+                        if (submitForm.getField("muc#roomconfig_roomname") != null)
+                            submitForm.setAnswer("muc#roomconfig_roomname", subject);
+
+                        if (submitForm.getField("muc#roomconfig_roomdesc") != null)
+                            submitForm.setAnswer("muc#roomconfig_roomdesc", subject);
+
+                        if (submitForm.getField("muc#roomconfig_changesubject") != null)
+                            submitForm.setAnswer("muc#roomconfig_changesubject", true);
+
+                        if (submitForm.getField("muc#roomconfig_anonymity") != null)
+                            submitForm.setAnswer("muc#roomconfig_anonymity", "anonymous");
+
+                        if (submitForm.getField("muc#roomconfig_publicroom") != null)
+                            submitForm.setAnswer("muc#roomconfig_publicroom", false);
+
+                        if (submitForm.getField("muc#roomconfig_persistentroom") != null)
+                            submitForm.setAnswer("muc#roomconfig_persistentroom", true);
+
+                        if (submitForm.getField("muc#roomconfig_whois") != null)
+                            submitForm.setAnswer("muc#roomconfig_whois", Arrays.asList("anyone"));
+
+                        if (submitForm.getField("muc#roomconfig_historylength") != null)
+                            submitForm.setAnswer("muc#roomconfig_historylength", 0);
+
+                        if (submitForm.getField("muc#maxhistoryfetch") != null)
+                            submitForm.setAnswer("muc#maxhistoryfetch", 0);
+
+                        if (submitForm.getField("muc#roomconfig_enablelogging") != null)
+                            submitForm.setAnswer("muc#roomconfig_enablelogging", false);
+
+                        if (submitForm.getField("muc#maxhistoryfetch") != null)
+                            submitForm.setAnswer("muc#maxhistoryfetch", 0);
+
+                        muc.sendConfigurationForm(submitForm);
+
+                    } catch (XMPPException xe) {
+                        debug(TAG, "(ignoring) got an error configuring MUC room: " + xe.getLocalizedMessage());
+
                     }
-
-                    if (submitForm.getField("muc#roomconfig_roomname")!=null)
-                        submitForm.setAnswer("muc#roomconfig_roomname", subject);
-
-                    if (submitForm.getField("muc#roomconfig_roomdesc")!=null)
-                        submitForm.setAnswer("muc#roomconfig_roomdesc", subject);
-
-                    if (submitForm.getField("muc#roomconfig_changesubject")!=null)
-                        submitForm.setAnswer("muc#roomconfig_changesubject", true);
-
-                    if (submitForm.getField("muc#roomconfig_anonymity")!=null)
-                        submitForm.setAnswer("muc#roomconfig_anonymity","anonymous");
-
-                    if (submitForm.getField("muc#roomconfig_publicroom")!=null)
-                        submitForm.setAnswer("muc#roomconfig_publicroom", false);
-
-                    if (submitForm.getField("muc#roomconfig_persistentroom")!=null)
-                        submitForm.setAnswer("muc#roomconfig_persistentroom", true);
-
-                    if (submitForm.getField("muc#roomconfig_whois")!=null)
-                        submitForm.setAnswer("muc#roomconfig_whois", Arrays.asList("anyone"));
-
-                    if (submitForm.getField("muc#roomconfig_historylength")!=null)
-                        submitForm.setAnswer("muc#roomconfig_historylength", 0);
-
-                    if (submitForm.getField("muc#maxhistoryfetch")!=null)
-                        submitForm.setAnswer("muc#maxhistoryfetch", 0);
-
-                    if (submitForm.getField("muc#roomconfig_enablelogging")!=null)
-                        submitForm.setAnswer("muc#roomconfig_enablelogging", false);
-
-                    if (submitForm.getField("muc#maxhistoryfetch")!=null)
-                       submitForm.setAnswer("muc#maxhistoryfetch", 0);
-
-                    muc.sendConfigurationForm(submitForm);
-
-                }
-                catch (XMPPException xe)
-                {
-                    debug(TAG, "(ignoring) got an error configuring MUC room: " + xe.getLocalizedMessage());
-
                 }
 
                 ChatGroup chatGroup = new ChatGroup(address,subject,this);
@@ -764,22 +764,124 @@ public class XmppConnection extends ImConnection {
                     chatGroup.addMemberAsync(mucContact);
                 }
 
+                muc.addSubjectUpdatedListener(new SubjectUpdatedListener() {
+
+                    @Override
+                    public void subjectUpdated(String subject, String from) {
+
+                        XmppAddress xa = new XmppAddress(from);
+                        MultiUserChat muc = mChatGroupManager.getMultiUserChat(xa.getBareAddress());
+                        ChatGroup chatGroup = mChatGroupManager.getChatGroup(xa);
+                        chatGroup.setName(subject);
+
+                    }
+
+                });
+
+                muc.addParticipantStatusListener(new ParticipantStatusListener() {
+                    @Override
+                    public void joined(String participant) {
+
+                        XmppAddress xa = new XmppAddress(participant);
+                        MultiUserChat muc = mChatGroupManager.getMultiUserChat(xa.getBareAddress());
+                        ChatGroup chatGroup = mChatGroupManager.getChatGroup(xa);
+                        //Contact mucContact = new Contact(xa, xa.getResource());
+                        Contact mucContact = findOrCreateContact(participant);
+
+                        Presence p = new Presence(Imps.Presence.AVAILABLE, "", null, null, Presence.CLIENT_TYPE_DEFAULT);
+                        mucContact.setPresence(p);
+                        chatGroup.addMemberAsync(mucContact);
+                        Contact[] contacts = {mucContact};
+                        mContactListManager.notifyContactsPresenceUpdated(contacts);
+                    }
+
+                    @Override
+                    public void left(String participant) {
+
+                        XmppAddress xa = new XmppAddress(participant);
+                        MultiUserChat muc = mChatGroupManager.getMultiUserChat(xa.getBareAddress());
+                        ChatGroup chatGroup = mChatGroupManager.getChatGroup(xa);
+                        Contact mucContact = findOrCreateContact(participant);
+                        chatGroup.removeMemberAsync(mucContact);
+                        Contact[] contacts = {mucContact};
+                        mContactListManager.notifyContactsPresenceUpdated(contacts);
+                    }
+
+                    @Override
+                    public void kicked(String participant, String actor, String reason) {
+
+                    }
+
+                    @Override
+                    public void voiceGranted(String participant) {
+
+                    }
+
+                    @Override
+                    public void voiceRevoked(String participant) {
+
+                    }
+
+                    @Override
+                    public void banned(String participant, String actor, String reason) {
+
+                    }
+
+                    @Override
+                    public void membershipGranted(String participant) {
+
+                    }
+
+                    @Override
+                    public void membershipRevoked(String participant) {
+
+                    }
+
+                    @Override
+                    public void moderatorGranted(String participant) {
+
+                    }
+
+                    @Override
+                    public void moderatorRevoked(String participant) {
+
+                    }
+
+                    @Override
+                    public void ownershipGranted(String participant) {
+
+                    }
+
+                    @Override
+                    public void ownershipRevoked(String participant) {
+
+                    }
+
+                    @Override
+                    public void adminGranted(String participant) {
+
+                    }
+
+                    @Override
+                    public void adminRevoked(String participant) {
+
+                    }
+
+                    @Override
+                    public void nicknameChanged(String participant, String newNickname) {
+                        Contact mucContact = findOrCreateContact(participant);
+                       mucContact.setName(newNickname);
+                    }
+                });
 
                 muc.addParticipantListener(new PresenceListener() {
                     @Override
                     public void processPresence(org.jivesoftware.smack.packet.Presence presence) {
 
-                        if (presence.isAvailable()) {
-                            XmppAddress xa = new XmppAddress(presence.getFrom());
-                            MultiUserChat muc = mChatGroupManager.getMultiUserChat(xa.getBareAddress());
-                            ChatGroup chatGroup = mChatGroupManager.getChatGroup(xa);
-                            Contact mucContact = new Contact(xa, xa.getResource());
+                        Contact mucContact = findOrCreateContact(presence.getFrom());
+                        if (mucContact != null) {
                             Presence p = new Presence(parsePresence(presence), presence.getStatus(), null, null, Presence.CLIENT_TYPE_DEFAULT);
                             mucContact.setPresence(p);
-                            chatGroup.addMemberAsync(mucContact);
-                            Contact[] contacts = {mucContact};
-                            mContactListManager.notifyContactsPresenceUpdated(contacts);
-
                         }
 
                     }

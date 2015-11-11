@@ -185,8 +185,6 @@ public class AccountFragment extends Fragment {
         Switch switchOnline = (Switch) view.findViewById(R.id.switchOnline);
         switchOnline.setChecked(checkConnection());
 
-        switchOnline.setTextOn(getString(R.string.contact_online));
-        switchOnline.setTextOff(getString(R.string.contact_offline));
         switchOnline.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
