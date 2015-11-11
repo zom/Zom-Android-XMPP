@@ -166,9 +166,8 @@ public class ConversationListItem extends FrameLayout {
 
         if (Imps.Contacts.TYPE_GROUP == type) {
 
-            String groupMembers = queryGroupMembers(getContext().getContentResolver(), cursor.getLong(COLUMN_CONTACT_ID));
-            if (!TextUtils.isEmpty(groupMembers))
-                nickname = groupMembers;
+            String groupCountString = getGroupCount(getContext().getContentResolver(), cursor.getLong(COLUMN_CONTACT_ID));
+            nickname += groupCountString;
         }
 
         if (!TextUtils.isEmpty(underLineText)) {
@@ -502,20 +501,19 @@ public class ConversationListItem extends FrameLayout {
     private static int sCacheSize = 10; // 1MiB
     private static LruCache<String,Bitmap> mBitmapCache = new LruCache<String,Bitmap>(sCacheSize);
 
-    private String queryGroupMembers(ContentResolver resolver, long groupId) {
+    private String getGroupCount(ContentResolver resolver, long groupId) {
         String[] projection = { Imps.GroupMembers.NICKNAME };
         Uri uri = ContentUris.withAppendedId(Imps.GroupMembers.CONTENT_URI, groupId);
         Cursor c = resolver.query(uri, projection, null, null, null);
         StringBuilder buf = new StringBuilder();
         if (c != null) {
-            while (c.moveToNext()) {
-                buf.append(c.getString(0));
-                if (!c.isLast()) {
-                    buf.append(',');
-                }
-            }
+
+            buf.append(" (");
+            buf.append(c.getCount());
+            buf.append(")");
+
+            c.close();
         }
-        c.close();
 
         return buf.toString();
     }

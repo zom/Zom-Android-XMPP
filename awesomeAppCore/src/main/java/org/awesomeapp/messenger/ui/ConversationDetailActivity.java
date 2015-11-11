@@ -154,6 +154,9 @@ public class ConversationDetailActivity extends AppCompatActivity {
             case R.id.menu_verify_or_view:
                 mConvoView.showVerifyDialog();
                 return true;
+            case R.id.menu_group_info:
+                mConvoView.showGroupInfo();
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }

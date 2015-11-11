@@ -1069,7 +1069,7 @@ public class ConversationView {
             mPresenceStatus = c.getInt(PRESENCE_STATUS_COLUMN);
             mContactType = c.getInt(TYPE_COLUMN);
 
-            mRemoteNickname = c.getString(NICKNAME_COLUMN).split("@")[0];
+            mRemoteNickname = c.getString(NICKNAME_COLUMN);
             mRemoteAddress = c.getString(USERNAME_COLUMN);
 
             mSubscriptionType = c.getInt(SUBSCRIPTION_TYPE_COLUMN);
@@ -1142,31 +1142,42 @@ public class ConversationView {
 
         if (mContactType == Imps.Contacts.TYPE_GROUP) {
 
-            mPresenceStatus = Presence.AVAILABLE;
+            StringBuilder buf = new StringBuilder();
 
+            //buf.append(mActivity.getString(R.string.menu_new_group_chat));
+
+
+            int count = -1;
+
+            try
+            {
+                buf.append(mCurrentChatSession.getName());
+                count = mCurrentChatSession.getParticipants().length;
+            }
+            catch (Exception e){}
+
+            buf.append(" (");
+            buf.append(count);
+            buf.append(")");
+            /*
             final String[] projection = { Imps.GroupMembers.NICKNAME };
             Uri memberUri = ContentUris.withAppendedId(Imps.GroupMembers.CONTENT_URI, mLastChatId);
             ContentResolver cr = mActivity.getContentResolver();
             Cursor c = cr.query(memberUri, projection, null, null, null);
             StringBuilder buf = new StringBuilder();
+            buf.append(mActivity.getString(R.string.menu_new_group_chat));
 
             if (c != null) {
-                while (c.moveToNext()) {
+                buf.append(" (");
+                buf.append(c.getCount());
+                buf.append(")");
+                c.close();
 
-                    String nickname = c.getString(c.getColumnIndexOrThrow(Imps.Contacts.NICKNAME));
-//                    int status = c.getInt(c.getColumnIndexOrThrow(Imps.Contacts.PRESENCE_STATUS));
-                    buf.append(nickname);
-                    if (!c.isLast()) {
-                        buf.append(',');
-                    }
-                }
 
             }
+            */
 
-            if (buf.length() > 0)
-                mRemoteNickname = buf.toString();
-
-            c.close();
+            mRemoteNickname = buf.toString();
         }
     }
 
@@ -1530,6 +1541,18 @@ public class ConversationView {
             LogCleaner.error(ImApp.LOG_TAG, "unable to perform manual key verification", e);
         }
          */
+    }
+
+
+    public void showGroupInfo () {
+
+        Intent intent = new Intent(mContext, GroupDisplayActivity.class);
+        intent.putExtra("contact", mRemoteAddress);
+        intent.putExtra("provider", mProviderId);
+        intent.putExtra("account", mAccountId);
+        intent.putExtra("chat", mLastChatId);
+
+        mContext.startActivity(intent);
     }
 
     private void initSmpUI() {

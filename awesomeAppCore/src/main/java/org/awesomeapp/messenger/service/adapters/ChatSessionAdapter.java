@@ -279,7 +279,12 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
     }
 
     public String getName() {
-        return mChatSession.getParticipant().getAddress().getUser();
+
+        if (isGroupChatSession())
+            return ((ChatGroup)mChatSession.getParticipant()).getName();
+        else
+            return ((Contact)mChatSession.getParticipant()).getName();
+
     }
 
     public String getAddress() {

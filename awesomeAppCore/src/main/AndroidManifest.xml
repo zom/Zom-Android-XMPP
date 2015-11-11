@@ -432,6 +432,9 @@
         </activity>
         <activity android:name="org.awesomeapp.messenger.ui.ContactDisplayActivity" >
         </activity>
+
+        <activity android:name="org.awesomeapp.messenger.ui.GroupDisplayActivity" >
+        </activity>
     </application>
 
 </manifest>
