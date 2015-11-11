@@ -32,15 +32,6 @@
         >
 
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="198dp"
-            android:src="@drawable/avatar_unknown"
-            android:id="@+id/imageAvatar"
-            android:scaleType="centerCrop"
-            android:layout_margin="0dp"
-            />
-
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -53,7 +44,6 @@
                     android:selectAllOnFocus="true"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/account_setup_example_email_address"
                     android:autoLink="none"
                     android:cursorVisible="true"
                     android:inputType="textEmailAddress"
@@ -66,7 +56,6 @@
                     android:selectAllOnFocus="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:hint="@string/account_setup_example_email_address"
                     android:autoLink="none"
                     android:cursorVisible="true"
                     android:inputType="textEmailAddress"
@@ -76,6 +65,47 @@
 
                     />
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#cccccc"
+                android:orientation="vertical"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="12dp"
+                />
+            <TextView
+                android:selectAllOnFocus="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:autoLink="none"
+                android:cursorVisible="true"
+                android:inputType="textEmailAddress"
+                android:text="@string/members"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="?contactTextSecondary"
+
+                />
+            <TextView android:id="@+id/tvMembers"
+                android:selectAllOnFocus="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:autoLink="none"
+                android:cursorVisible="true"
+                android:inputType="textEmailAddress"
+                android:text=""
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="?contactTextSecondary"
+
+                />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#cccccc"
+                android:orientation="vertical"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="12dp"
+                />
 
 
 
@@ -102,19 +132,6 @@
                 android:layout_alignParentLeft="true"
                 />
 
-            <TextView android:id="@+id/tvFingerprint"
-                android:selectAllOnFocus="true"
-                android:layout_width="200dp"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="6dp"
-                android:autoLink="none"
-                android:text="AAAA AAAAA AAAA AAAA AAAA"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="?contactTextSecondary"
-
-                android:layout_toRightOf="@+id/qrcode"
-                android:layout_centerVertical="true"
-                />
             <ImageView
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -141,26 +158,20 @@
                 android:drawableLeft="@drawable/ic_menu_msg_compose"
                 android:textAppearance="?android:attr/textAppearanceMediumInverse"
                 android:background="?toolbarBackground"
+                android:textColor="?android:colorForegroundInverse"
                 android:padding="6dp"
                 android:layout_margin="1dp"
-                android:textColor="?android:colorForegroundInverse"
 
                 />
-
-            <Button android:id="@+id/btnDeleteContact"
-                android:layout_width="match_parent"
+<!--
+            <Switch
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/menu_block_contact"
-                android:drawableLeft="@drawable/ic_menu_trash"
-                android:textAppearance="?android:attr/textAppearanceMediumInverse"
-                android:background="?toolbarBackground"
-                android:padding="6dp"
-                android:layout_margin="1dp"
-                android:textColor="?android:colorForegroundInverse"
-
+                android:text="Mute Group"
+                android:id="@+id/switchMute"
+                android:layout_alignParentRight="true"
                 />
-
-
+-->
         </LinearLayout>
 
 

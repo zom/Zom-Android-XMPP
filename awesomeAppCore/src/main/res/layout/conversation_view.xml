@@ -97,7 +97,16 @@
 
     </LinearLayout>
 
-
+    <ImageView
+        android:id="@+id/media_thumbnail"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_marginTop="30dp"
+        android:scaleType="centerCrop"
+        android:focusableInTouchMode="false"
+        android:layout_gravity="left|bottom"
+        android:visibility="gone"
+        />
 
     <ImageView
         android:id="@+id/avatar"
@@ -109,15 +118,7 @@
         android:layout_gravity="left|top"
         />
 
-    <ImageView
-        android:id="@+id/media_thumbnail"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="3dp"
-        android:scaleType="centerCrop"
-        android:focusableInTouchMode="false"
-        android:layout_gravity="left|bottom"
-        />
+
 
 
 </view>
