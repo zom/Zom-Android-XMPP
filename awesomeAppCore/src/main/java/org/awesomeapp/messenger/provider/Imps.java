@@ -2400,6 +2400,25 @@ public class Imps {
         return resolver.update(builder.build(), values, null, null);
     }
 
+    public static boolean messageExists (ContentResolver resolver, String id)
+    {
+        boolean result = false;
+
+        Uri.Builder builder = Messages.OTR_MESSAGES_CONTENT_URI_BY_PACKET_ID.buildUpon();
+        builder.appendPath(id);
+
+        Cursor c = resolver.query(builder.build(),null, null, null, null);
+        if (c != null)
+        {
+            if (c.getCount() > 0)
+                result = true;
+
+            c.close();
+        }
+
+        return result;
+    }
+
 
 
 }

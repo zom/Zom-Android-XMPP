@@ -683,9 +683,19 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             String nickname = getNickName(username);
             long time = msg.getDateTime().getTime();
 
+            if (msg.getID() != null
+                &&
+                Imps.messageExists(mContentResolver, msg.getID()))
+            {
+                return false; //this message is a duplicate
+            }
+
             insertOrUpdateChat(body);
 
-            insertMessageInDb(nickname, body, time, msg.getType());
+            if (msg.getID() == null)
+                insertMessageInDb(nickname, body, time, msg.getType());
+            else
+                 insertMessageInDb(nickname, body, time, msg.getType(),0,msg.getID());
 
             boolean wasMessageSeen = false;
 

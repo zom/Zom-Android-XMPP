@@ -509,7 +509,7 @@ public class ConversationListItem extends FrameLayout {
         if (c != null) {
 
             buf.append(" (");
-            buf.append(c.getCount());
+            buf.append(c.getCount()+1);
             buf.append(")");
 
             c.close();

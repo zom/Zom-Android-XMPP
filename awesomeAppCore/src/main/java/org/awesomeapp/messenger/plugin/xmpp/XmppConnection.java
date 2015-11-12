@@ -650,16 +650,8 @@ public class XmppConnection extends ImConnection {
 
                     }
                 }
-                else
-                {
-                    if (!TextUtils.isEmpty(muc.getSubject()))
-                        subject = muc.getSubject();
 
-                    chatGroup.setName(subject);
-
-
-                }
-
+                chatGroup.setName(subject);
 
                 List<String> mucOccupant = muc.getOccupants();
 
@@ -1583,6 +1575,8 @@ public class XmppConnection extends ImConnection {
                         rec.setTo(aTo);
                         rec.setFrom(aFrom);
                         rec.setDateTime(new Date());
+
+                        rec.setID(smackMessage.getStanzaId());
 
                         rec.setType(Imps.MessageType.INCOMING);
 
