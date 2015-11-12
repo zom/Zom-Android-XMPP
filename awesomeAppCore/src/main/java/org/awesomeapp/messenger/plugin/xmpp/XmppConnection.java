@@ -308,7 +308,8 @@ public class XmppConnection extends ImConnection {
         if (packet instanceof org.jivesoftware.smack.packet.Message) {
             boolean groupChat = ((org.jivesoftware.smack.packet.Message) packet).getType().equals( org.jivesoftware.smack.packet.Message.Type.groupchat);
             ChatSession session = findOrCreateSession(packet.getTo(), groupChat);
-            session.onMessagePostponed(packet.getStanzaId());
+            if (session != null)
+                session.onMessagePostponed(packet.getStanzaId());
         }
     }
 
@@ -593,7 +594,14 @@ public class XmppConnection extends ImConnection {
                     }
                 }
 
-                ChatGroup chatGroup = new ChatGroup(address,subject,this);
+                ChatGroup chatGroup = mGroups.get(chatRoomJid);
+
+                if (chatGroup == null) {
+                    chatGroup = new ChatGroup(address, subject, this);
+                    mGroups.put(chatRoomJid, chatGroup);
+                }
+
+                mMUCs.put(chatRoomJid, muc);
 
                 if (mucCreated) {
 
@@ -661,8 +669,6 @@ public class XmppConnection extends ImConnection {
                     chatGroup.addMemberAsync(mucContact);
                 }
 
-                mGroups.put(address.getAddress(), chatGroup);
-                mMUCs.put(chatRoomJid, muc);
 
                 addMucListeners(muc);
 
@@ -755,8 +761,13 @@ public class XmppConnection extends ImConnection {
                 if (TextUtils.isEmpty(subject))
                     subject = room;
 
-                ChatGroup chatGroup = new ChatGroup(address,subject,this);
-                mGroups.put(chatRoomJid, chatGroup);
+                ChatGroup chatGroup = mGroups.get(chatRoomJid);
+
+                if (chatGroup == null) {
+                    chatGroup = new ChatGroup(address, subject, this);
+                    mGroups.put(chatRoomJid, chatGroup);
+                }
+
                 mMUCs.put(chatRoomJid, muc);
 
                 List<String> mucOccupant = muc.getOccupants();
@@ -1262,7 +1273,10 @@ public class XmppConnection extends ImConnection {
 
                     mChatGroupManager.joinChatGroupAsync(new XmppAddress(muc.getRoom()));
                     ChatSession session = findOrCreateSession(muc.getRoom(),true);
-                    ((ChatGroup)session.getParticipant()).setName(reason);
+
+                    if (session != null)
+                      ((ChatGroup)session.getParticipant()).setName(reason);
+
 
                 }
 
@@ -1899,7 +1913,8 @@ public class XmppConnection extends ImConnection {
         else
             session = mSessionManager.findSession(address);
 
-        if (session == null) {
+        //create a session if this it not groupchat
+        if (session == null && (!groupChat)) {
             ImEntity participant = findOrCreateParticipant(address, groupChat);
 
             if (participant != null)

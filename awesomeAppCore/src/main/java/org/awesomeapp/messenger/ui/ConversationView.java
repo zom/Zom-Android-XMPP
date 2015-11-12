@@ -1056,6 +1056,7 @@ public class ConversationView {
         //mComposeMessage.setText("");
 
         updateWarningView();
+        setGroupTitle();
     }
 
     int mContactType = -1;
