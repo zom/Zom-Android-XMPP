@@ -867,13 +867,16 @@ public class MessageListItem extends FrameLayout {
         return Color.TRANSPARENT;
     }
 
-    public void bindPresenceMessage(String contact, int type, boolean isGroupChat, boolean scrolling) {
+    public void bindPresenceMessage(String contact, int type, Date date, boolean isGroupChat, boolean scrolling) {
 
         mHolder = (MessageViewHolder)getTag();
+        mHolder.mContainer.setBackgroundResource(android.R.color.transparent);
+        mHolder.mTextViewForMessages.setVisibility(View.GONE);
+        mHolder.mTextViewForTimestamp.setVisibility(View.VISIBLE);
 
-        CharSequence message = formatPresenceUpdates(contact, type, isGroupChat, scrolling);
-        mHolder.mTextViewForMessages.setText(message);
-     //   mHolder.mTextViewForMessages.setTextColor(getResources().getColor(R.color.chat_msg_presence));
+        CharSequence message = formatPresenceUpdates(contact, type, date, isGroupChat, scrolling);
+        mHolder.mTextViewForTimestamp.setText(message);
+
 
     }
 
@@ -898,10 +901,11 @@ public class MessageListItem extends FrameLayout {
         }
 
         deliveryText.append(sPrettyTime.format(date));
-        deliveryText.append(' ');
+
 
         if (delivery != null)
         {
+            deliveryText.append(' ');
             //this is for delivery
             if (delivery == DeliveryState.DELIVERED) {
 
@@ -911,33 +915,29 @@ public class MessageListItem extends FrameLayout {
 
                 deliveryText.append(DELIVERED_FAIL);
             }
+
+            if (messageType != Imps.MessageType.POSTPONED)
+                deliveryText.append(DELIVERED_SUCCESS);//this is for sent, so we know show 2 checks like WhatsApp!
+
         }
-        
-        if (messageType != Imps.MessageType.POSTPONED)
-            deliveryText.append(DELIVERED_SUCCESS);//this is for sent, so we know show 2 checks like WhatsApp!
 
         SpannableString spanText = null;
 
-        if (encryptionState == EncryptionState.ENCRYPTED)
-        {
+        if (encryptionState == EncryptionState.ENCRYPTED) {
+                deliveryText.append('X');
+                spanText = new SpannableString(deliveryText.toString());
+                int len = spanText.length();
+
+                spanText.setSpan(new ImageSpan(getContext(), R.drawable.tj12), len - 1, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        } else if (encryptionState == EncryptionState.ENCRYPTED_AND_VERIFIED) {
             deliveryText.append('X');
             spanText = new SpannableString(deliveryText.toString());
             int len = spanText.length();
 
-            spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_lock_outline_black_18dp), len-1,len,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            spanText.setSpan(new ImageSpan(getContext(), R.drawable.tj12), len - 1, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-        }
-        else if (encryptionState == EncryptionState.ENCRYPTED_AND_VERIFIED)
-        {
-            deliveryText.append('X');
-            spanText = new SpannableString(deliveryText.toString());
-            int len = spanText.length();
-
-            spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_lock_outline_black_18dp), len-1,len,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-        }
-        else
-        {
+        } else {
             spanText = new SpannableString(deliveryText.toString());
             int len = spanText.length();
 
@@ -952,7 +952,7 @@ public class MessageListItem extends FrameLayout {
         return spanText;
     }
 
-    private CharSequence formatPresenceUpdates(String contact, int type, boolean isGroupChat,
+    private CharSequence formatPresenceUpdates(String contact, int type, Date date, boolean isGroupChat,
             boolean scrolling) {
         String body;
 
@@ -980,6 +980,9 @@ public class MessageListItem extends FrameLayout {
         default:
             return null;
         }
+
+        body += " - ";
+        body += formatTimeStamp(date,type, null, EncryptionState.NONE, null);
 
         if (scrolling) {
             return body;
