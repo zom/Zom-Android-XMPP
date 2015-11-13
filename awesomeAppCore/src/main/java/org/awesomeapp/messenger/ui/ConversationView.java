@@ -2586,7 +2586,7 @@ public class ConversationView {
                 break;
 
             default:
-                messageView.bindPresenceMessage(mRemoteAddress, messageType, isGroupChat(), false);
+                messageView.bindPresenceMessage(nickname, messageType, date, isGroupChat(), false);
             }
 
            // updateWarningView();
