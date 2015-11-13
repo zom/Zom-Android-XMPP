@@ -91,6 +91,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="?contactTextSecondary"
+            android:visibility="gone"
             />
 
 
