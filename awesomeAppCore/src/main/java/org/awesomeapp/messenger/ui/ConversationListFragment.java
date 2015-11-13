@@ -191,6 +191,8 @@ public class ConversationListFragment extends Fragment {
         public void onBindViewHolder(ViewHolder viewHolder, Cursor cursor) {
 
             final long chatId =  cursor.getLong(ConversationListItem.COLUMN_CONTACT_ID);
+            final String address = cursor.getString(ConversationListItem.COLUMN_CONTACT_USERNAME);
+            final String nickname = cursor.getString(ConversationListItem.COLUMN_CONTACT_NICKNAME);
 
             viewHolder.mView.bind(cursor, null, true, false);
 
@@ -200,16 +202,12 @@ public class ConversationListFragment extends Fragment {
                     Context context = v.getContext();
                     Intent intent = new Intent(context, ConversationDetailActivity.class);
                     intent.putExtra("id", chatId);
+                    intent.putExtra("address", address);
+                    intent.putExtra("nickname", nickname);
+
                     context.startActivity(intent);
                 }
             });
-
-            int providerId = cursor.getInt(ConversationListItem.COLUMN_CONTACT_PROVIDER);
-            int accountId = cursor.getInt(ConversationListItem.COLUMN_CONTACT_ACCOUNT);
-            int contactType = cursor.getInt(ConversationListItem.COLUMN_CONTACT_TYPE);
-            String remoteAddress = cursor.getString(ConversationListItem.COLUMN_CONTACT_USERNAME);
-
-           // new ChatSessionInitTask((ImApp)((Activity)mContext).getApplication(),providerId,accountId,contactType).execute(remoteAddress);
 
 
         }

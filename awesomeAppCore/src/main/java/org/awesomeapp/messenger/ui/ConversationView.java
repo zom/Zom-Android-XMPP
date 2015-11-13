@@ -619,7 +619,6 @@ public class ConversationView {
                 }
             }
 
-            setGroupTitle();
         }
     };
 
@@ -962,7 +961,7 @@ public class ConversationView {
 
                // mNewChatActivity.approveSubscription(mProviderId, mRemoteAddress);
 
-                mHandler.postDelayed(new Runnable () { public void run () {bindChat(mLastChatId); } }, 2000);
+                mHandler.postDelayed(new Runnable () { public void run () {bindChat(mLastChatId, null, null); } }, 2000);
 
 
             }
@@ -1056,7 +1055,6 @@ public class ConversationView {
         //mComposeMessage.setText("");
 
         updateWarningView();
-        setGroupTitle();
     }
 
     int mContactType = -1;
@@ -1081,7 +1079,6 @@ public class ConversationView {
                 bindSubscription(mProviderId, mRemoteAddress);
             }
 
-            setGroupTitle();
         }
 
     }
@@ -1188,7 +1185,7 @@ public class ConversationView {
 
     }
 
-    public void bindChat(long chatId) {
+    public void bindChat(long chatId, String address, String name) {
         //log("bind " + this + " " + chatId);
 
         mLastChatId = chatId;
@@ -1246,7 +1243,15 @@ public class ConversationView {
 
             }
 
+
             updateChat();
+
+            if (mRemoteNickname == null)
+                if (TextUtils.isEmpty(name))
+                    setGroupTitle();
+                else
+                    mRemoteNickname = name;
+
         }
 
     }
@@ -2660,7 +2665,7 @@ public class ConversationView {
 
     public void onServiceConnected() {
         if (!isServiceUp) {
-            bindChat(mLastChatId);
+            bindChat(mLastChatId, null, null);
             startListening();
         }
 

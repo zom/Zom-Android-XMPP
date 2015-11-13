@@ -65,6 +65,9 @@ import org.awesomeapp.messenger.util.SystemServices;
 public class ConversationDetailActivity extends AppCompatActivity {
 
     private long mChatId = -1;
+    private String mAddress = null;
+    private String mName = null;
+
     private ConversationView mConvoView = null;
 
     MediaRecorder mMediaRecorder = null;
@@ -86,9 +89,11 @@ public class ConversationDetailActivity extends AppCompatActivity {
         mApp = (ImApp)getApplication();
 
         mChatId = intent.getLongExtra("id",-1);
+        mAddress = intent.getStringExtra("address");
+        mName = intent.getStringExtra("nickname");
 
         mConvoView = new ConversationView(this);
-        mConvoView.bindChat(mChatId);
+        mConvoView.bindChat(mChatId, mAddress, mName);
 
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
