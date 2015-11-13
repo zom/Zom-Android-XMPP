@@ -560,17 +560,20 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
     }
 
     void insertGroupMemberInDb(Contact member) {
-        ContentValues values1 = new ContentValues(2);
-        values1.put(Imps.GroupMembers.USERNAME, member.getAddress().getAddress());
-        values1.put(Imps.GroupMembers.NICKNAME, member.getName());
-        ContentValues values = values1;
 
-        long groupId = ContentUris.parseId(mChatURI);
-        Uri uri = ContentUris.withAppendedId(Imps.GroupMembers.CONTENT_URI, groupId);
-        mContentResolver.insert(uri, values);
+        if (mChatURI != null) {
+            ContentValues values1 = new ContentValues(2);
+            values1.put(Imps.GroupMembers.USERNAME, member.getAddress().getAddress());
+            values1.put(Imps.GroupMembers.NICKNAME, member.getName());
+            ContentValues values = values1;
 
-        insertMessageInDb(member.getName(), null, System.currentTimeMillis(),
-                Imps.MessageType.PRESENCE_AVAILABLE);
+            long groupId = ContentUris.parseId(mChatURI);
+            Uri uri = ContentUris.withAppendedId(Imps.GroupMembers.CONTENT_URI, groupId);
+            mContentResolver.insert(uri, values);
+
+            insertMessageInDb(member.getName(), null, System.currentTimeMillis(),
+                    Imps.MessageType.PRESENCE_AVAILABLE);
+        }
     }
 
     void deleteGroupMemberInDb(Contact member) {
@@ -676,7 +679,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
     class ListenerAdapter implements MessageListener, GroupMemberListener {
 
-        public boolean  onIncomingMessage(ChatSession ses, final org.awesomeapp.messenger.model.Message msg) {
+        public synchronized boolean onIncomingMessage(ChatSession ses, final org.awesomeapp.messenger.model.Message msg) {
             String body = msg.getBody();
             String username = msg.getFrom().getAddress();
             String bareUsername = msg.getFrom().getBareAddress();
@@ -692,12 +695,12 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
             insertOrUpdateChat(body);
 
+            boolean wasMessageSeen = false;
+
             if (msg.getID() == null)
                 insertMessageInDb(nickname, body, time, msg.getType());
             else
                  insertMessageInDb(nickname, body, time, msg.getType(),0,msg.getID());
-
-            boolean wasMessageSeen = false;
 
             int N = mRemoteListeners.beginBroadcast();
             for (int i = 0; i < N; i++) {
