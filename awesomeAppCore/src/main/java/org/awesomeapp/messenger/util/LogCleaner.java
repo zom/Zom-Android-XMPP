@@ -7,10 +7,12 @@ import android.util.Log;
 public class LogCleaner {
     public static String clean (String msg)
     {
+
         if (Debug.DEBUG_ENABLED)
             return msg;
         else
             return URLEncoder.encode(msg);
+
     }
 
     public static void warn (String tag, String msg)

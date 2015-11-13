@@ -571,8 +571,8 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             Uri uri = ContentUris.withAppendedId(Imps.GroupMembers.CONTENT_URI, groupId);
             mContentResolver.insert(uri, values);
 
-            insertMessageInDb(member.getName(), null, System.currentTimeMillis(),
-                    Imps.MessageType.PRESENCE_AVAILABLE);
+          //  insertMessageInDb(member.getName(), null, System.currentTimeMillis(),
+              //      Imps.MessageType.PRESENCE_AVAILABLE);
         }
     }
 
@@ -583,8 +583,8 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         Uri uri = ContentUris.withAppendedId(Imps.GroupMembers.CONTENT_URI, groupId);
         mContentResolver.delete(uri, where, selectionArgs);
 
-        insertMessageInDb(member.getName(), null, System.currentTimeMillis(),
-                Imps.MessageType.PRESENCE_UNAVAILABLE);
+      //  insertMessageInDb(member.getName(), null, System.currentTimeMillis(),
+            //    Imps.MessageType.PRESENCE_UNAVAILABLE);
     }
 
     void insertPresenceUpdatesMsg(String contact, Presence presence) {
