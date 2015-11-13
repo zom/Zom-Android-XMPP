@@ -20,5 +20,5 @@
      <solid android:color="#FFFFFF"/>
     <corners android:radius="@dimen/frag_rounding_radius" />
 
-    <stroke android:width="2px"  color="#EDEFF1" />
+    <stroke android:width="2px" android:color="#EDEFF1" />
 </shape>
