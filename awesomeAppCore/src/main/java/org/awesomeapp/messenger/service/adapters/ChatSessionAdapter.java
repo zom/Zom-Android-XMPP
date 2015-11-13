@@ -181,7 +181,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         group.addMemberListener(mListenerAdapter);
 
         try {            
-            mChatSessionManager.getChatGroupManager().joinChatGroupAsync(group.getAddress());
+            mChatSessionManager.getChatGroupManager().joinChatGroupAsync(group.getAddress(),group.getName());
         
             mMessageURI = Imps.Messages.getContentUriByThreadId(mContactId);
     
@@ -749,6 +749,21 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             mRemoteListeners.finishBroadcast();
         }
 
+        public void onSubjectChanged(ChatGroup group, String subject)
+        {
+            if (mChatURI != null) {
+                ContentValues values1 = new ContentValues(1);
+                values1.put(Imps.Contacts.NICKNAME,subject);
+                ContentValues values = values1;
+
+                Uri uriContact = ContentUris.withAppendedId(Imps.Contacts.CONTENT_URI, mContactId);
+                mContentResolver.update(uriContact, values, null, null);
+
+                //  insertMessageInDb(member.getName(), null, System.currentTimeMillis(),
+                //      Imps.MessageType.PRESENCE_AVAILABLE);
+            }
+        }
+
         public void onMemberJoined(ChatGroup group, final Contact contact) {
             insertGroupMemberInDb(contact);
 
@@ -915,6 +930,8 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
             mContactStatusMap.put(contact.getName(), contact.getPresence().getStatus());
         }
+
+        public void onSubjectChanged(ChatGroup group, String subject){}
 
         public void onGroupDeleted(ChatGroup group) {
         }

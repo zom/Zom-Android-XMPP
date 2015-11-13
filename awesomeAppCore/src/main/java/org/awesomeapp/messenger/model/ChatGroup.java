@@ -69,6 +69,10 @@ public class ChatGroup extends ImEntity {
      */
     public void setName (String name) {
         mName = name;
+
+        for (GroupMemberListener listener : mMemberListeners) {
+            listener.onSubjectChanged(this,name);
+        }
     }
 
     public void addMemberListener(GroupMemberListener listener) {

@@ -120,7 +120,7 @@ public abstract class ChatGroupManager {
      *
      * @param address the address of the {@link ChatGroup}.
      */
-    public abstract void joinChatGroupAsync(Address address);
+    public abstract void joinChatGroupAsync(Address address, String subject);
 
     /**
      * Leaves a certain {@link ChatGroup}.This method returns immediately and the

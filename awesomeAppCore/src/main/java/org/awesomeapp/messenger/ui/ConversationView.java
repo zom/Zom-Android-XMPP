@@ -1145,9 +1145,6 @@ public class ConversationView {
 
             StringBuilder buf = new StringBuilder();
 
-            //buf.append(mActivity.getString(R.string.menu_new_group_chat));
-
-
             int count = -1;
 
             try
@@ -1157,9 +1154,11 @@ public class ConversationView {
             }
             catch (Exception e){}
 
-            buf.append(" (");
-            buf.append(count);
-            buf.append(")");
+            if (count > 0) {
+                buf.append(" (");
+                buf.append(count);
+                buf.append(")");
+            }
             /*
             final String[] projection = { Imps.GroupMembers.NICKNAME };
             Uri memberUri = ContentUris.withAppendedId(Imps.GroupMembers.CONTENT_URI, mLastChatId);

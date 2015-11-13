@@ -616,6 +616,11 @@ public class XmppConnection extends ImConnection {
                             }
                         }
 
+                        // Sets the new owner of the room
+                        List owners = new ArrayList();
+                        owners.add(mUser.getAddress().getBareAddress());
+                        submitForm.setAnswer("muc#roomconfig_roomowners", owners);
+
                         if (submitForm.getField("muc#roomconfig_roomname") != null)
                             submitForm.setAnswer("muc#roomconfig_roomname", subject);
 
@@ -737,7 +742,7 @@ public class XmppConnection extends ImConnection {
         }
 
         @Override
-        public void joinChatGroupAsync(Address address) {
+        public void joinChatGroupAsync(Address address, String subject) {
 
             String chatRoomJid = address.getBareAddress();
             String[] parts = chatRoomJid.split("@");
@@ -754,8 +759,6 @@ public class XmppConnection extends ImConnection {
                 MultiUserChat muc = mucMgr.getMultiUserChat(chatRoomJid);
 
                 muc.join(nickname);
-
-                String subject = muc.getSubject();
 
                 if (TextUtils.isEmpty(subject))
                     subject = room;
@@ -952,6 +955,7 @@ public class XmppConnection extends ImConnection {
                         String reason = group.getName(); //no reason for now
                         try {
                             muc.invite(invitee.getAddress().getAddress(), reason);
+                            muc.grantMembership(invitee.getAddress().getAddress());
                         } catch (Exception nce) {
                             Log.e(ImApp.LOG_TAG, "not connected error trying to add invite", nce);
 
@@ -968,7 +972,7 @@ public class XmppConnection extends ImConnection {
 
             Address addressGroup = invitation.getGroupAddress();
 
-            joinChatGroupAsync (addressGroup);
+            joinChatGroupAsync (addressGroup,invitation.getReason());
 
         }
 
@@ -1273,7 +1277,7 @@ public class XmppConnection extends ImConnection {
                     //getChatGroupManager().acceptInvitationAsync(muc.getRoom());
                     XmppAddress xa = new XmppAddress(muc.getRoom());
 
-                    mChatGroupManager.joinChatGroupAsync(xa);
+                    mChatGroupManager.joinChatGroupAsync(xa,reason);
 
                     ChatSession session = mSessionManager.findSession(xa.getBareAddress());
 
@@ -2587,6 +2591,9 @@ public class XmppConnection extends ImConnection {
                         mRoster.createEntry(contact.getAddress().getBareAddress(), contact.getName(), groups);
 
                     }
+
+//                    rEntry = mRoster.getEntry(contact.getAddress().getBareAddress());
+
 
                 } catch (XMPPException e) {
 
