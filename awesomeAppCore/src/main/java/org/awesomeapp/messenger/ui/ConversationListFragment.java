@@ -42,6 +42,7 @@ import android.widget.Toast;
 //import com.bumptech.glide.Glide;
 
 import org.awesomeapp.messenger.ImApp;
+import org.awesomeapp.messenger.MainActivity;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.tasks.ChatSessionInitTask;
 
@@ -67,7 +68,16 @@ public class ConversationListFragment extends Fragment {
 
         mRecView =  (RecyclerView)view.findViewById(R.id.recyclerview);
         mEmptyView = view.findViewById(R.id.empty_view);
+
+
         mEmptyViewImage = view.findViewById(R.id.empty_view_image);
+        mEmptyViewImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                ((MainActivity)getActivity()).inviteContact();
+            }
+        });
 
         setupRecyclerView(mRecView);
         return view;

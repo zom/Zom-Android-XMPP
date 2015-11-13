@@ -78,7 +78,13 @@ public class ContactsListFragment extends Fragment {
 
         mRecView = (RecyclerView)view.findViewById(R.id.recyclerview);
         mEmptyView = view.findViewById(R.id.empty_view);
+        mEmptyView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
+                ((MainActivity)getActivity()).inviteContact();
+            }
+        });
         /*
         VerticalRecyclerViewFastScroller fastScroller =
                 (VerticalRecyclerViewFastScroller) view.findViewById(R.id.fast_scroller);
