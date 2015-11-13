@@ -376,7 +376,8 @@ public class ConversationListItem extends FrameLayout {
                     if (chatStatus == SessionStatus.ENCRYPTED)
                     {
                         boolean isVerified = otrChatSession.isKeyVerified(address);
-                        holder.mStatusIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_lock_outline_black_18dp));
+                       // holder.mStatusIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_lock_outline_black_18dp));
+                        holder.mStatusIcon.setImageDrawable(getResources().getDrawable(R.drawable.tj12));
                         holder.mStatusIcon.setVisibility(View.VISIBLE);
                     }
                 }
@@ -509,7 +510,7 @@ public class ConversationListItem extends FrameLayout {
         if (c != null) {
 
             buf.append(" (");
-            buf.append(c.getCount()+1);
+            buf.append(c.getCount());
             buf.append(")");
 
             c.close();
