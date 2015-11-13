@@ -663,8 +663,9 @@ public class XmppConnection extends ImConnection {
 
                     }
                 }
-
-                chatGroup.setName(subject);
+                else {
+                    chatGroup.setName(muc.getSubject());
+                }
 
                 List<String> mucOccupant = muc.getOccupants();
 

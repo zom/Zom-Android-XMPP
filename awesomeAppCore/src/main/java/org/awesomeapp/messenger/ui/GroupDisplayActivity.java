@@ -32,7 +32,8 @@ import info.guardianproject.otr.app.im.R;
 
 public class GroupDisplayActivity extends Activity {
 
-    private String mUsername = null;
+    private String mName = null;
+    private String mAddress = null;
     private long mProviderId = -1;
     private long mAccountId = -1;
     private long mLastChatId = -1;
@@ -45,7 +46,8 @@ public class GroupDisplayActivity extends Activity {
 
         setContentView(R.layout.awesome_activity_group);
 
-        mUsername = getIntent().getStringExtra("contact");
+        mName = getIntent().getStringExtra("nickname");
+        mAddress = getIntent().getStringExtra("address");
         mProviderId = getIntent().getLongExtra("provider", -1);
         mAccountId = getIntent().getLongExtra("account", -1);
         mLastChatId  = getIntent().getLongExtra("chat", -1);
@@ -54,10 +56,10 @@ public class GroupDisplayActivity extends Activity {
 
         TextView tv = (TextView)findViewById(R.id.tvNickname);
         tv = (TextView)findViewById(R.id.tvNickname);
-        tv.setText(mUsername.split("@")[0]);
+        tv.setText(mName);
 
         tv = (TextView)findViewById(R.id.tvUsername);
-        tv.setText(mUsername);
+        tv.setText(mAddress);
 
         tv = (TextView)findViewById(R.id.tvMembers);
         String[] projection = { Imps.GroupMembers.NICKNAME };
@@ -86,10 +88,10 @@ public class GroupDisplayActivity extends Activity {
 
         try {
             IChatSessionManager manager = mConn.getChatSessionManager();
-            IChatSession session = manager.getChatSession(mUsername);
+            IChatSession session = manager.getChatSession(mAddress);
 
             try {
-                String inviteLink = OnboardingManager.generateInviteLink(this, mUsername, "");
+                String inviteLink = OnboardingManager.generateInviteLink(this, mAddress, "");
                 new QrGenAsyncTask(this, iv).execute(inviteLink);
             } catch (IOException ioe) {
                 Log.e(ImApp.LOG_TAG, "couldn't generate QR code", ioe);
@@ -102,7 +104,7 @@ public class GroupDisplayActivity extends Activity {
 
                     String inviteString;
                     try {
-                        inviteString = OnboardingManager.generateInviteLink(GroupDisplayActivity.this, mUsername, "");
+                        inviteString = OnboardingManager.generateInviteLink(GroupDisplayActivity.this, mAddress, "");
                         OnboardingManager.inviteScan(GroupDisplayActivity.this, inviteString);
                     } catch (IOException e) {
                         // TODO Auto-generated catch block
@@ -119,7 +121,7 @@ public class GroupDisplayActivity extends Activity {
                 public void onClick(View v) {
 
                     try {
-                        String inviteLink = OnboardingManager.generateInviteLink(GroupDisplayActivity.this, mUsername, "");
+                        String inviteLink = OnboardingManager.generateInviteLink(GroupDisplayActivity.this, mAddress, "");
                         new QrShareAsyncTask(GroupDisplayActivity.this).execute(inviteLink);
                     } catch (IOException ioe) {
                         Log.e(ImApp.LOG_TAG, "couldn't generate QR code", ioe);
@@ -148,7 +150,7 @@ public class GroupDisplayActivity extends Activity {
 
     public void startChat ()
     {
-        long chatId = startChat(mProviderId, mAccountId, mUsername, Imps.ContactsColumns.TYPE_NORMAL,true, null);
+        long chatId = startChat(mProviderId, mAccountId, mAddress, Imps.ContactsColumns.TYPE_NORMAL,true, null);
 
         if (chatId != -1) {
             Intent intent = new Intent(this, ConversationDetailActivity.class);

@@ -1547,7 +1547,8 @@ public class ConversationView {
     public void showGroupInfo () {
 
         Intent intent = new Intent(mContext, GroupDisplayActivity.class);
-        intent.putExtra("contact", mRemoteAddress);
+        intent.putExtra("nickname", mRemoteNickname);
+        intent.putExtra("address", mRemoteAddress);
         intent.putExtra("provider", mProviderId);
         intent.putExtra("account", mAccountId);
         intent.putExtra("chat", mLastChatId);
