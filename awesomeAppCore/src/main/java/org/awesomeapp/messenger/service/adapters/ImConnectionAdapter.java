@@ -231,7 +231,7 @@ public class ImConnectionAdapter extends org.awesomeapp.messenger.service.IImCon
 
     @Override
     public void logout() {
-        OtrChatManager.endSessionsForAccount(mConnection.getLoginUser());
+       // OtrChatManager.endSessionsForAccount(mConnection.getLoginUser());
         mConnectionState = ImConnection.LOGGING_OUT;
         mConnection.logout();
     }
