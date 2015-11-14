@@ -1329,7 +1329,7 @@ public class XmppConnection extends ImConnection {
 
             }
 
-            boolean setAvatar = false;
+            boolean setAvatar = true;
 
             if (vCard == null) {
                 vCard = new VCard();
@@ -1344,7 +1344,7 @@ public class XmppConnection extends ImConnection {
             }
 
             if (setAvatar) {
-                byte[] avatar = DatabaseUtils.getAvatarBytesFromAddress(mContext.getContentResolver(), mUser.getAddress().getBareAddress(), 256, 256);
+                byte[] avatar = DatabaseUtils.getAvatarBytesFromAddress(mContext.getContentResolver(), mUser.getAddress().getBareAddress(), ImApp.DEFAULT_AVATAR_WIDTH, ImApp.DEFAULT_AVATAR_HEIGHT);
                 if (avatar != null) {
                     vCard.setAvatar(avatar, "image/jpeg");
                 }
