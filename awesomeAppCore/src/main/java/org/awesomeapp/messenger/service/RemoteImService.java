@@ -162,7 +162,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
             try
             {
-                OtrKeyManager otrKeyManager = OtrAndroidKeyManagerImpl.getInstance(this);
+                OtrAndroidKeyManagerImpl otrKeyManager = OtrAndroidKeyManagerImpl.getInstance(this);
 
                 if (otrKeyManager != null)
                 {
@@ -497,6 +497,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
             }
             catch (Exception e){
                 Log.d(ImApp.LOG_TAG,"error auto logging into ImConnection",e);
+                cursor.close();
                 return false;
             }
         }
@@ -568,7 +569,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
             if (SecureMediaStore.isMounted())
                 SecureMediaStore.unmount();
         } catch (IllegalStateException e) {
-            Log.e(ImApp.LOG_TAG,"there was a problem unmoiunt secure media store",e);
+            Log.e(ImApp.LOG_TAG,"there was a problem unmoiunt secure media store: " + e.getMessage());
         }
 
         if (mCacheWord != null && (!mCacheWord.isLocked())) {
@@ -962,6 +963,9 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
        byte[] encryptionKey = mCacheWord.getEncryptionKey();
        openEncryptedStores(encryptionKey, true);
 
+        ((ImApp)getApplication()).initAccountInfo();
+
+
         // Check and login accounts if network is ready, otherwise it's checked
         // when the network becomes available.
         if (mNeedCheckAutoLogin && mNetworkState != NetworkConnectivityListener.State.NOT_CONNECTED) {
@@ -980,8 +984,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
     private boolean openEncryptedStores(byte[] key, boolean allowCreate) {
 
-        if (SecureMediaStore.isMounted())
-            SecureMediaStore.init(this, key);
+        SecureMediaStore.init(this, key);
 
         if (Imps.isUnlocked(this)) {
 
