@@ -29,7 +29,7 @@ public class OtrEngineHostImpl implements OtrEngineHost {
 
     private OtrPolicy mPolicy;
 
-    private OtrKeyManager mOtrKeyManager;
+    private OtrAndroidKeyManagerImpl mOtrKeyManager;
 
     private Context mContext;
 
@@ -37,7 +37,7 @@ public class OtrEngineHostImpl implements OtrEngineHost {
 
     private RemoteImService mImService;
 
-    public OtrEngineHostImpl(OtrPolicy policy, Context context, OtrKeyManager otrKeyManager, RemoteImService imService) throws IOException {
+    public OtrEngineHostImpl(OtrPolicy policy, Context context, OtrAndroidKeyManagerImpl otrKeyManager, RemoteImService imService) throws IOException {
         mPolicy = policy;
         mContext = context;
 
@@ -92,6 +92,11 @@ public class OtrEngineHostImpl implements OtrEngineHost {
 
     public String getRemoteKeyFingerprint(SessionID sessionID) {
         return mOtrKeyManager.getRemoteFingerprint(sessionID);
+    }
+
+    public boolean hasRemoteKeyFingerprintg (String userid)
+    {
+        return mOtrKeyManager.hasRemoteFingerprint(userid);
     }
 
     public KeyPair getKeyPair(SessionID sessionID) {
