@@ -89,12 +89,11 @@
             />
         <ImageView
             android:id="@+id/statusIcon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
             android:scaleType="centerCrop"
-            android:padding="3dp"
             android:gravity="right|bottom"
-
+            android:src="@drawable/tj12"
             />
 
     </FrameLayout>
