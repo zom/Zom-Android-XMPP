@@ -72,6 +72,12 @@
 				android:textAppearance="?android:attr/textAppearanceLarge"
 
 				/>
+				<Switch
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:id="@+id/switchOnline"
+					android:layout_alignParentRight="true"
+					/>
 </RelativeLayout>
 
 
@@ -93,13 +99,7 @@
 			                               android:textColor="?contactTextSecondary"
 			
 			                               />
-			<Switch
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:text="@string/presence_available"
-				android:id="@+id/switchOnline"
-				android:layout_alignParentRight="true"
-				/>
+
 				</RelativeLayout>
 			
 			                       <RelativeLayout
@@ -157,7 +157,7 @@
 		                       android:layout_height="wrap_content"
 								android:layout_marginLeft="6dp"
 		                       android:autoLink="none"
-		                       android:text="AAAAAA AAAAAA AAAAAA AAAAAA AAAAAA"
+		                       android:text=""
 		                       android:textAppearance="?android:attr/textAppearanceSmall"
 		                       android:textColor="?contactTextSecondary"
 
@@ -183,7 +183,7 @@
 			android:layout_marginTop="5dp"
             android:layout_margin="10dp"
 			>
-		<Button android:id="@+id/btnAdvanced"
+		<Button android:id="@+id/btnLock"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:text="@string/lock_app"

@@ -55,17 +55,17 @@ public class AddContactAsyncTask extends AsyncTask<String, Void, Integer> {
 
             IContactList list = getContactList(conn);
 
-
             if (list != null) {
 
                     res = list.addContact(address);
                     if (res != ImErrorInfo.NO_ERROR) {
 
-                    } else {
-                        if (!TextUtils.isEmpty(otrFingperint)) {
-                            OtrAndroidKeyManagerImpl.getInstance(mApp).verifyUser(address, otrFingperint);
-                        }
+                        //what to do here?
                     }
+
+                if (!TextUtils.isEmpty(otrFingperint)) {
+                    OtrAndroidKeyManagerImpl.getInstance(mApp).verifyUser(address, otrFingperint);
+                }
             }
 
         } catch (RemoteException re) {

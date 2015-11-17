@@ -37,6 +37,7 @@ import com.google.zxing.encode.QRCodeEncoder;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 import org.awesomeapp.messenger.ImApp;
+import org.awesomeapp.messenger.MainActivity;
 import org.awesomeapp.messenger.model.ImConnection;
 import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
 import org.awesomeapp.messenger.provider.Imps;
@@ -184,8 +185,6 @@ public class AccountFragment extends Fragment {
         Switch switchOnline = (Switch) view.findViewById(R.id.switchOnline);
         switchOnline.setChecked(checkConnection());
 
-        switchOnline.setTextOn(getString(R.string.contact_online));
-        switchOnline.setTextOff(getString(R.string.contact_offline));
         switchOnline.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
@@ -199,7 +198,7 @@ public class AccountFragment extends Fragment {
 
         try {
             
-            Drawable avatar = DatabaseUtils.getAvatarFromAddress(mApp.getContentResolver(), fullUserName, 256, 256, false);
+            Drawable avatar = DatabaseUtils.getAvatarFromAddress(mApp.getContentResolver(), fullUserName, ImApp.DEFAULT_AVATAR_WIDTH, ImApp.DEFAULT_AVATAR_HEIGHT, false);
 
             if (avatar != null)
                 mIvAvatar.setImageDrawable(avatar);
@@ -220,6 +219,14 @@ public class AccountFragment extends Fragment {
                 Log.e(ImApp.LOG_TAG, "couldn't generate QR code", ioe);
             }
         }
+
+        Button btnLock = (Button)view.findViewById(R.id.btnLock);
+        btnLock.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MainActivity)getActivity()).handleLock();
+            }
+        });
 
 
         return view;

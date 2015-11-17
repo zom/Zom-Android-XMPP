@@ -619,7 +619,6 @@ public class ConversationView {
                 }
             }
 
-            setGroupTitle();
         }
     };
 
@@ -962,7 +961,7 @@ public class ConversationView {
 
                // mNewChatActivity.approveSubscription(mProviderId, mRemoteAddress);
 
-                mHandler.postDelayed(new Runnable () { public void run () {bindChat(mLastChatId); } }, 2000);
+                mHandler.postDelayed(new Runnable () { public void run () {bindChat(mLastChatId, null, null); } }, 2000);
 
 
             }
@@ -1069,7 +1068,7 @@ public class ConversationView {
             mPresenceStatus = c.getInt(PRESENCE_STATUS_COLUMN);
             mContactType = c.getInt(TYPE_COLUMN);
 
-            mRemoteNickname = c.getString(NICKNAME_COLUMN).split("@")[0];
+            mRemoteNickname = c.getString(NICKNAME_COLUMN);
             mRemoteAddress = c.getString(USERNAME_COLUMN);
 
             mSubscriptionType = c.getInt(SUBSCRIPTION_TYPE_COLUMN);
@@ -1080,7 +1079,6 @@ public class ConversationView {
                 bindSubscription(mProviderId, mRemoteAddress);
             }
 
-            setGroupTitle();
         }
 
     }
@@ -1142,31 +1140,41 @@ public class ConversationView {
 
         if (mContactType == Imps.Contacts.TYPE_GROUP) {
 
-            mPresenceStatus = Presence.AVAILABLE;
+            StringBuilder buf = new StringBuilder();
 
+            int count = -1;
+
+            try
+            {
+                buf.append(mCurrentChatSession.getName());
+                count = mCurrentChatSession.getParticipants().length;
+            }
+            catch (Exception e){}
+
+            if (count > 0) {
+                buf.append(" (");
+                buf.append(count);
+                buf.append(")");
+            }
+            /*
             final String[] projection = { Imps.GroupMembers.NICKNAME };
             Uri memberUri = ContentUris.withAppendedId(Imps.GroupMembers.CONTENT_URI, mLastChatId);
             ContentResolver cr = mActivity.getContentResolver();
             Cursor c = cr.query(memberUri, projection, null, null, null);
             StringBuilder buf = new StringBuilder();
+            buf.append(mActivity.getString(R.string.menu_new_group_chat));
 
             if (c != null) {
-                while (c.moveToNext()) {
+                buf.append(" (");
+                buf.append(c.getCount());
+                buf.append(")");
+                c.close();
 
-                    String nickname = c.getString(c.getColumnIndexOrThrow(Imps.Contacts.NICKNAME));
-//                    int status = c.getInt(c.getColumnIndexOrThrow(Imps.Contacts.PRESENCE_STATUS));
-                    buf.append(nickname);
-                    if (!c.isLast()) {
-                        buf.append(',');
-                    }
-                }
 
             }
+            */
 
-            if (buf.length() > 0)
-                mRemoteNickname = buf.toString();
-
-            c.close();
+            mRemoteNickname = buf.toString();
         }
     }
 
@@ -1177,7 +1185,7 @@ public class ConversationView {
 
     }
 
-    public void bindChat(long chatId) {
+    public void bindChat(long chatId, String address, String name) {
         //log("bind " + this + " " + chatId);
 
         mLastChatId = chatId;
@@ -1235,7 +1243,15 @@ public class ConversationView {
 
             }
 
+
             updateChat();
+
+            if (mRemoteNickname == null)
+                if (TextUtils.isEmpty(name))
+                    setGroupTitle();
+                else
+                    mRemoteNickname = name;
+
         }
 
     }
@@ -1473,8 +1489,18 @@ public class ConversationView {
     }
 
     public void showVerifyDialog() {
+
+        Intent intent = new Intent(mContext,ContactDisplayActivity.class);
+        intent.putExtra("contact", mRemoteAddress);
+        intent.putExtra("provider",mProviderId);
+        intent.putExtra("account", mAccountId);
+        mContext.startActivity(intent);
+
+        /**
         if (getChatId() == -1)
             return;
+
+
 
         try {
             IOtrChatSession otrChatSession = mCurrentChatSession.getOtrChatSession();
@@ -1519,6 +1545,20 @@ public class ConversationView {
         } catch (RemoteException e) {
             LogCleaner.error(ImApp.LOG_TAG, "unable to perform manual key verification", e);
         }
+         */
+    }
+
+
+    public void showGroupInfo () {
+
+        Intent intent = new Intent(mContext, GroupDisplayActivity.class);
+        intent.putExtra("nickname", mRemoteNickname);
+        intent.putExtra("address", mRemoteAddress);
+        intent.putExtra("provider", mProviderId);
+        intent.putExtra("account", mAccountId);
+        intent.putExtra("chat", mLastChatId);
+
+        mContext.startActivity(intent);
     }
 
     private void initSmpUI() {
@@ -2551,7 +2591,7 @@ public class ConversationView {
                 break;
 
             default:
-                messageView.bindPresenceMessage(mRemoteAddress, messageType, isGroupChat(), false);
+                messageView.bindPresenceMessage(nickname, messageType, date, isGroupChat(), false);
             }
 
            // updateWarningView();
@@ -2625,7 +2665,7 @@ public class ConversationView {
 
     public void onServiceConnected() {
         if (!isServiceUp) {
-            bindChat(mLastChatId);
+            bindChat(mLastChatId, null, null);
             startListening();
         }
 

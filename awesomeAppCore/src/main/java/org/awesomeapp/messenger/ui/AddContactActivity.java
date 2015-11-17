@@ -273,7 +273,7 @@ public class AddContactActivity extends ActionBarActivity {
         //mDefaultDomain = Imps.ProviderSettings.getStringValue(getContentResolver(), mProviderId,
           //      ImpsConfigNames.DEFAULT_DOMAIN);
         ContentResolver cr = getContentResolver();
-        Cursor pCursor = cr.query(Imps.ProviderSettings.CONTENT_URI,new String[] {Imps.ProviderSettings.NAME, Imps.ProviderSettings.VALUE},Imps.ProviderSettings.PROVIDER + "=?",new String[] { Long.toString(providerId)},null);
+        Cursor pCursor = cr.query(Imps.ProviderSettings.CONTENT_URI, new String[]{Imps.ProviderSettings.NAME, Imps.ProviderSettings.VALUE}, Imps.ProviderSettings.PROVIDER + "=?", new String[]{Long.toString(providerId)}, null);
 
         Imps.ProviderSettings.QueryMap settings = new Imps.ProviderSettings.QueryMap(
                 pCursor, cr, providerId, false /* don't keep updated */, null /* no handler */);
@@ -288,52 +288,20 @@ public class AddContactActivity extends ActionBarActivity {
 
     void inviteBuddies() {
         Rfc822Token[] recipients = Rfc822Tokenizer.tokenize(mAddressList.getText());
-        try {
-            IImConnection conn = mApp.getConnection(mProviderId,mAccountId);
-            IContactList list = getContactList(conn);
-            if (list == null) {
-               // Log.e(ImApp.LOG_TAG, "<AddContactActivity> can't find given contact list:"
-                 //                    + getSelectedListName());
-                finish();
-            } else {
-                boolean fail = false;
-                String username = null;
 
-                for (Rfc822Token recipient : recipients) {
-                    username = recipient.getAddress();
-                    if (username.indexOf('@') == -1) {
-                        username = username + "@" + getDomain(mProviderId);
-                    }
-                    if (Log.isLoggable(ImApp.LOG_TAG, Log.DEBUG)) {
-                        log("addContact:" + username);
-                    }
-                    
-                    int res = list.addContact(username);
-                    if (res != ImErrorInfo.NO_ERROR) {
-                        fail = true;
-                        mHandler.showAlert(R.string.error,
-                                ErrorResUtils.getErrorRes(getResources(), res, username));
-                    }
-
-                }
-                // close the screen if there's no error.
-                if (!fail) {
-
-                    if (username != null)
-                    {
-                        Intent intent=new Intent();
-                        intent.putExtra(ContactsPickerActivity.EXTRA_RESULT_USERNAME, username);
-                        intent.putExtra(ContactsPickerActivity.EXTRA_RESULT_PROVIDER, mProviderId);
-                        setResult(RESULT_OK, intent);
-                        finish();
-                    }
-
-
-                }
-            }
-        } catch (RemoteException ex) {
-            Log.e(ImApp.LOG_TAG, "<AddContactActivity> inviteBuddies: caught " + ex);
+        for (Rfc822Token recipient : recipients) {
+            new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).execute(recipient.getAddress(), null);
         }
+
+        if (recipients.length > 0) {
+            Intent intent = new Intent();
+            intent.putExtra(ContactsPickerActivity.EXTRA_RESULT_USERNAME, recipients[0].getAddress());
+            intent.putExtra(ContactsPickerActivity.EXTRA_RESULT_PROVIDER, mApp.getDefaultProviderId());
+            setResult(RESULT_OK, intent);
+        }
+
+        finish();
+
     }
 
     private IContactList getContactList(IImConnection conn) {
@@ -428,6 +396,11 @@ public class AddContactActivity extends ActionBarActivity {
 
                             new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).execute(address, fingerprint);
 
+                            Intent intent=new Intent();
+                            intent.putExtra(ContactsPickerActivity.EXTRA_RESULT_USERNAME, address);
+                            intent.putExtra(ContactsPickerActivity.EXTRA_RESULT_PROVIDER, mApp.getDefaultProviderId());
+                            setResult(RESULT_OK, intent);
+
                         }
                         else {
                             //parse each string and if they are for a new user then add the user
@@ -439,6 +412,10 @@ public class AddContactActivity extends ActionBarActivity {
 
                             new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).execute(address, fingerprint);
 
+                            Intent intent=new Intent();
+                            intent.putExtra(ContactsPickerActivity.EXTRA_RESULT_USERNAME, address);
+                            intent.putExtra(ContactsPickerActivity.EXTRA_RESULT_PROVIDER, mApp.getDefaultProviderId());
+                            setResult(RESULT_OK, intent);
                         }
 
                         //if they are for a group chat, then add the group

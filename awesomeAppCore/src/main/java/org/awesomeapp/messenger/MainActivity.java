@@ -503,7 +503,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void handleLock ()
+    public void handleLock ()
     {
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         if (settings.contains(ImApp.PREFERENCE_KEY_TEMP_PASS))

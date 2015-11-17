@@ -39,4 +39,11 @@ public interface GroupMemberListener {
      * @param error the error information
      */
     public void onError(ChatGroup group, ImErrorInfo error);
+
+    /**
+     * Called when subject chcanges
+     *
+     * @param subject the new subject
+     */
+    public void onSubjectChanged(ChatGroup group, String subject);
 }

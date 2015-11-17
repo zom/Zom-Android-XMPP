@@ -22,11 +22,6 @@
     android:orientation="vertical"
     >
 
-    <RelativeLayout
-
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
 <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerview"
         android:layout_width="match_parent"
@@ -58,8 +53,6 @@
         recyclerviewfastscroller:rfs_textColor="@android:color/black"
         />
         -->
-    </RelativeLayout>
-
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -83,4 +76,4 @@
             android:text="@string/invite_friends"
             />
     </LinearLayout>
-  </LinearLayout>
+</LinearLayout>

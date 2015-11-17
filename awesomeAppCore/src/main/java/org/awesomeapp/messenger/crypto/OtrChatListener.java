@@ -47,7 +47,7 @@ public class OtrChatListener implements MessageListener {
 
         try {
             // No OTR for groups (yet)
-            if (!session.getParticipant().isGroup() && otrStatus != SessionStatus.FINISHED) {
+            if (!session.getParticipant().isGroup()) {
                 body = mOtrChatManager.decryptMessage(to, from, body, tlvs);
 
                 if (body != null)

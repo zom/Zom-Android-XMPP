@@ -70,6 +70,7 @@ import org.jivesoftware.smackx.muc.InvitationListener;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.smackx.muc.Occupant;
+import org.jivesoftware.smackx.muc.ParticipantStatusListener;
 import org.jivesoftware.smackx.muc.RoomInfo;
 import org.jivesoftware.smackx.muc.SubjectUpdatedListener;
 import org.jivesoftware.smackx.muc.provider.MUCAdminProvider;
@@ -307,7 +308,8 @@ public class XmppConnection extends ImConnection {
         if (packet instanceof org.jivesoftware.smack.packet.Message) {
             boolean groupChat = ((org.jivesoftware.smack.packet.Message) packet).getType().equals( org.jivesoftware.smack.packet.Message.Type.groupchat);
             ChatSession session = findOrCreateSession(packet.getTo(), groupChat);
-            session.onMessagePostponed(packet.getStanzaId());
+            if (session != null)
+                session.onMessagePostponed(packet.getStanzaId());
         }
     }
 
@@ -569,15 +571,16 @@ public class XmppConnection extends ImConnection {
             try {
 
                 MultiUserChat muc = mucMgr.getMultiUserChat(chatRoomJid);
+                boolean mucCreated = false;
 
                 try
                 {
 
                     // Create the room
-                    muc.createOrJoin(nickname);
+                    mucCreated = muc.createOrJoin(nickname);
 
-//                    if ((TextUtils.isEmpty(muc.getSubject())))
-  //                      muc.changeSubject(subject);
+
+
                 }
                 catch (XMPPException iae)
                 {
@@ -591,64 +594,89 @@ public class XmppConnection extends ImConnection {
                     }
                 }
 
-                try
-                {
-                    Form form = muc.getConfigurationForm();
-                    Form submitForm = form.createAnswerForm();
+                ChatGroup chatGroup = mGroups.get(chatRoomJid);
 
-                    for (FormField field : form.getFields())
-                    {
-                        if(!(field.getType() == FormField.Type.hidden) && field.getVariable()!= null){
-                            submitForm.setDefaultAnswer(field.getVariable());
-                        }
-                    }
-
-                    if (submitForm.getField("muc#roomconfig_roomname")!=null)
-                        submitForm.setAnswer("muc#roomconfig_roomname", subject);
-
-                    if (submitForm.getField("muc#roomconfig_roomdesc")!=null)
-                        submitForm.setAnswer("muc#roomconfig_roomdesc", subject);
-
-                    if (submitForm.getField("muc#roomconfig_changesubject")!=null)
-                        submitForm.setAnswer("muc#roomconfig_changesubject", true);
-
-                    if (submitForm.getField("muc#roomconfig_anonymity")!=null)
-                        submitForm.setAnswer("muc#roomconfig_anonymity","anonymous");
-
-                    if (submitForm.getField("muc#roomconfig_publicroom")!=null)
-                        submitForm.setAnswer("muc#roomconfig_publicroom", false);
-
-                    if (submitForm.getField("muc#roomconfig_persistentroom")!=null)
-                        submitForm.setAnswer("muc#roomconfig_persistentroom", true);
-
-                    if (submitForm.getField("muc#roomconfig_whois")!=null)
-                        submitForm.setAnswer("muc#roomconfig_whois", Arrays.asList("anyone"));
-
-                    if (submitForm.getField("muc#roomconfig_historylength")!=null)
-                        submitForm.setAnswer("muc#roomconfig_historylength", 0);
-
-                    if (submitForm.getField("muc#maxhistoryfetch")!=null)
-                        submitForm.setAnswer("muc#maxhistoryfetch", 0);
-
-                    if (submitForm.getField("muc#roomconfig_enablelogging")!=null)
-                        submitForm.setAnswer("muc#roomconfig_enablelogging", false);
-
-                    if (submitForm.getField("muc#maxhistoryfetch")!=null)
-                       submitForm.setAnswer("muc#maxhistoryfetch", 0);
-
-                    muc.sendConfigurationForm(submitForm);
-
-                }
-                catch (XMPPException xe)
-                {
-                    debug(TAG, "(ignoring) got an error configuring MUC room: " + xe.getLocalizedMessage());
-
+                if (chatGroup == null) {
+                    chatGroup = new ChatGroup(address, subject, this);
+                    mGroups.put(chatRoomJid, chatGroup);
                 }
 
-                ChatGroup chatGroup = new ChatGroup(address,subject,this);
-
-                mGroups.put(address.getAddress(), chatGroup);
                 mMUCs.put(chatRoomJid, muc);
+
+                if (mucCreated) {
+
+
+                    try {
+                        Form form = muc.getConfigurationForm();
+                        Form submitForm = form.createAnswerForm();
+
+                        for (FormField field : form.getFields()) {
+                            if (!(field.getType() == FormField.Type.hidden) && field.getVariable() != null) {
+                                submitForm.setDefaultAnswer(field.getVariable());
+                            }
+                        }
+
+                        // Sets the new owner of the room
+                        List owners = new ArrayList();
+                        owners.add(mUser.getAddress().getBareAddress());
+                        submitForm.setAnswer("muc#roomconfig_roomowners", owners);
+
+                        if (submitForm.getField("muc#roomconfig_roomname") != null)
+                            submitForm.setAnswer("muc#roomconfig_roomname", subject);
+
+                        if (submitForm.getField("muc#roomconfig_roomdesc") != null)
+                            submitForm.setAnswer("muc#roomconfig_roomdesc", subject);
+
+                        if (submitForm.getField("muc#roomconfig_changesubject") != null)
+                            submitForm.setAnswer("muc#roomconfig_changesubject", true);
+
+                        if (submitForm.getField("muc#roomconfig_anonymity") != null)
+                            submitForm.setAnswer("muc#roomconfig_anonymity", "nonanonymous");
+
+                        if (submitForm.getField("muc#roomconfig_publicroom") != null)
+                            submitForm.setAnswer("muc#roomconfig_publicroom", false);
+
+                        if (submitForm.getField("muc#roomconfig_persistentroom") != null)
+                            submitForm.setAnswer("muc#roomconfig_persistentroom", true);
+
+                        if (submitForm.getField("muc#roomconfig_whois") != null)
+                            submitForm.setAnswer("muc#roomconfig_whois", Arrays.asList("anyone"));
+
+  //                      if (submitForm.getField("muc#roomconfig_historylength") != null)
+  //                          submitForm.setAnswer("muc#roomconfig_historylength", 0);
+
+//                        if (submitForm.getField("muc#maxhistoryfetch") != null)
+  //                          submitForm.setAnswer("muc#maxhistoryfetch", 0);
+
+                        if (submitForm.getField("muc#roomconfig_enablelogging") != null)
+                            submitForm.setAnswer("muc#roomconfig_enablelogging", false);
+
+//                        if (submitForm.getField("muc#maxhistoryfetch") != null)
+//                            submitForm.setAnswer("muc#maxhistoryfetch", 0);
+
+                        muc.sendConfigurationForm(submitForm);
+
+                        muc.changeSubject(subject);
+
+                    } catch (XMPPException xe) {
+                        debug(TAG, "(ignoring) got an error configuring MUC room: " + xe.getLocalizedMessage());
+
+                    }
+                }
+
+                List<String> mucOccupant = muc.getOccupants();
+
+                for (String occupant : mucOccupant) {
+                    XmppAddress xa = new XmppAddress(occupant);
+                    Contact mucContact = new Contact(xa,xa.getResource());
+                    org.jivesoftware.smack.packet.Presence presence = muc.getOccupantPresence(occupant);
+                    Presence p = new Presence(parsePresence(presence), presence.getStatus(), null, null, Presence.CLIENT_TYPE_DEFAULT);
+                    mucContact.setPresence(p);
+                    chatGroup.addMemberAsync(mucContact);
+                }
+
+
+                addMucListeners(muc);
 
                 return true;
 
@@ -712,7 +740,7 @@ public class XmppConnection extends ImConnection {
         }
 
         @Override
-        public void joinChatGroupAsync(Address address) {
+        public void joinChatGroupAsync(Address address, String subject) {
 
             String chatRoomJid = address.getBareAddress();
             String[] parts = chatRoomJid.split("@");
@@ -728,29 +756,18 @@ public class XmppConnection extends ImConnection {
 
                 MultiUserChat muc = mucMgr.getMultiUserChat(chatRoomJid);
 
-                DiscussionHistory history = new DiscussionHistory();
-                history.setMaxStanzas(0);
-                // Create the room
-                //muc.join(nickname, null, history, mConnection.getPacketReplyTimeout());
                 muc.join(nickname);
-
-                String subject = muc.getSubject();
 
                 if (TextUtils.isEmpty(subject))
                     subject = room;
 
-                muc.addSubjectUpdatedListener(new SubjectUpdatedListener() {
-                    @Override
-                    public void subjectUpdated(String subject, String from) {
-                        ChatGroup group = mGroups.get(XmppAddress.stripResource(from));
-                        group.setName(subject);
-                    }
-                });
+                ChatGroup chatGroup = mGroups.get(chatRoomJid);
 
+                if (chatGroup == null) {
+                    chatGroup = new ChatGroup(address, subject, this);
+                    mGroups.put(chatRoomJid, chatGroup);
+                }
 
-
-                ChatGroup chatGroup = new ChatGroup(address,subject,this);
-                mGroups.put(chatRoomJid, chatGroup);
                 mMUCs.put(chatRoomJid, muc);
 
                 List<String> mucOccupant = muc.getOccupants();
@@ -758,36 +775,145 @@ public class XmppConnection extends ImConnection {
                 for (String occupant : mucOccupant) {
                     XmppAddress xa = new XmppAddress(occupant);
                     Contact mucContact = new Contact(xa,xa.getResource());
-                    //org.jivesoftware.smack.packet.Presence presence = muc.getOccupantPresence(occupant);
-                    //Presence p = new Presence(parsePresence(presence), presence.getStatus(), null, null, Presence.CLIENT_TYPE_DEFAULT);
-                    //mucContact.setPresence(p);
+                    org.jivesoftware.smack.packet.Presence presence = muc.getOccupantPresence(occupant);
+                    Presence p = new Presence(parsePresence(presence), presence.getStatus(), null, null, Presence.CLIENT_TYPE_DEFAULT);
+                    mucContact.setPresence(p);
                     chatGroup.addMemberAsync(mucContact);
                 }
 
+                addMucListeners(muc);
 
-                muc.addParticipantListener(new PresenceListener() {
-                    @Override
-                    public void processPresence(org.jivesoftware.smack.packet.Presence presence) {
 
-                        if (presence.isAvailable()) {
-                            XmppAddress xa = new XmppAddress(presence.getFrom());
-                            MultiUserChat muc = mChatGroupManager.getMultiUserChat(xa.getBareAddress());
-                            ChatGroup chatGroup = mChatGroupManager.getChatGroup(xa);
-                            Contact mucContact = new Contact(xa, xa.getResource());
-                            Presence p = new Presence(parsePresence(presence), presence.getStatus(), null, null, Presence.CLIENT_TYPE_DEFAULT);
-                            mucContact.setPresence(p);
-                            chatGroup.addMemberAsync(mucContact);
-                            Contact[] contacts = {mucContact};
-                            mContactListManager.notifyContactsPresenceUpdated(contacts);
-
-                        }
-
-                    }
-                });
 
             } catch (Exception e) {
                 debug(TAG,"error joining MUC",e);
             }
+
+        }
+
+        private void addMucListeners (MultiUserChat muc)
+        {
+
+            muc.addSubjectUpdatedListener(new SubjectUpdatedListener() {
+
+                @Override
+                public void subjectUpdated(String subject, String from) {
+
+                    XmppAddress xa = new XmppAddress(from);
+                    MultiUserChat muc = mChatGroupManager.getMultiUserChat(xa.getBareAddress());
+                    ChatGroup chatGroup = mChatGroupManager.getChatGroup(xa);
+                    chatGroup.setName(subject);
+
+                }
+
+            });
+
+            muc.addParticipantStatusListener(new ParticipantStatusListener() {
+                @Override
+                public void joined(String participant) {
+
+                    XmppAddress xa = new XmppAddress(participant);
+                    MultiUserChat muc = mChatGroupManager.getMultiUserChat(xa.getBareAddress());
+                    ChatGroup chatGroup = mChatGroupManager.getChatGroup(xa);
+                    Contact mucContact = new Contact(xa, xa.getResource());
+
+                    Presence p = new Presence(Imps.Presence.AVAILABLE, "", null, null, Presence.CLIENT_TYPE_DEFAULT);
+                    mucContact.setPresence(p);
+                    chatGroup.addMemberAsync(mucContact);
+
+
+                }
+
+                @Override
+                public void left(String participant) {
+
+                    XmppAddress xa = new XmppAddress(participant);
+                    MultiUserChat muc = mChatGroupManager.getMultiUserChat(xa.getBareAddress());
+                    ChatGroup chatGroup = mChatGroupManager.getChatGroup(xa);
+                    Contact mucContact = new Contact(xa, xa.getResource());
+                    chatGroup.removeMemberAsync(mucContact);
+
+                }
+
+                @Override
+                public void kicked(String participant, String actor, String reason) {
+
+                }
+
+                @Override
+                public void voiceGranted(String participant) {
+
+                }
+
+                @Override
+                public void voiceRevoked(String participant) {
+
+                }
+
+                @Override
+                public void banned(String participant, String actor, String reason) {
+
+                }
+
+                @Override
+                public void membershipGranted(String participant) {
+
+                }
+
+                @Override
+                public void membershipRevoked(String participant) {
+
+                }
+
+                @Override
+                public void moderatorGranted(String participant) {
+
+                }
+
+                @Override
+                public void moderatorRevoked(String participant) {
+
+                }
+
+                @Override
+                public void ownershipGranted(String participant) {
+
+                }
+
+                @Override
+                public void ownershipRevoked(String participant) {
+
+                }
+
+                @Override
+                public void adminGranted(String participant) {
+
+                }
+
+                @Override
+                public void adminRevoked(String participant) {
+
+                }
+
+                @Override
+                public void nicknameChanged(String participant, String newNickname) {
+                   // XmppAddress xa = new XmppAddress(participant);
+                   // Contact mucContact = new Contact(xa, xa.getResource());
+                   // mucContact.setName(newNickname);
+                }
+            });
+
+            muc.addParticipantListener(new PresenceListener() {
+                @Override
+                public void processPresence(org.jivesoftware.smack.packet.Presence presence) {
+
+                    XmppAddress xa = new XmppAddress(presence.getFrom());
+                    Contact mucContact = new Contact(xa, xa.getResource());
+                    Presence p = new Presence(parsePresence(presence), presence.getStatus(), null, null, Presence.CLIENT_TYPE_DEFAULT);
+                    mucContact.setPresence(p);
+
+                }
+            });
 
         }
 
@@ -814,25 +940,28 @@ public class XmppConnection extends ImConnection {
         }
 
         @Override
-        public void inviteUserAsync(ChatGroup group, Contact invitee) {
-            String chatRoomJid = group.getAddress().getAddress();
+        public void inviteUserAsync(final ChatGroup group, final Contact invitee) {
 
-            if (mMUCs.containsKey(chatRoomJid))
-            {
-                MultiUserChat muc = mMUCs.get(chatRoomJid);
+            execute(new Runnable () {
 
-                String reason = group.getName(); //no reason for now
-                try {
-                    muc.invite(invitee.getAddress().getAddress(), reason);
-                    muc.changeSubject(group.getName());
+                public void run() {
+                    String chatRoomJid = group.getAddress().getAddress();
+
+                    if (mMUCs.containsKey(chatRoomJid)) {
+                        MultiUserChat muc = mMUCs.get(chatRoomJid);
+
+                        String reason = group.getName(); //no reason for now
+                        try {
+                            muc.invite(invitee.getAddress().getAddress(), reason);
+                            muc.grantMembership(invitee.getAddress().getAddress());
+                        } catch (Exception nce) {
+                            Log.e(ImApp.LOG_TAG, "not connected error trying to add invite", nce);
+
+                        }
+
+                    }
                 }
-                catch (Exception nce)
-                {
-                    Log.e(ImApp.LOG_TAG,"not connected error trying to add invite",nce);
-
-                }
-
-            }
+            });
 
         }
 
@@ -841,7 +970,7 @@ public class XmppConnection extends ImConnection {
 
             Address addressGroup = invitation.getGroupAddress();
 
-            joinChatGroupAsync (addressGroup);
+            joinChatGroupAsync (addressGroup,invitation.getReason());
 
         }
 
@@ -1144,10 +1273,26 @@ public class XmppConnection extends ImConnection {
                 public void invitationReceived(XMPPConnection conn, MultiUserChat muc, String inviter, String reason, String password, org.jivesoftware.smack.packet.Message message) {
 
                     //getChatGroupManager().acceptInvitationAsync(muc.getRoom());
+                    XmppAddress xa = new XmppAddress(muc.getRoom());
 
-                    mChatGroupManager.joinChatGroupAsync(new XmppAddress(muc.getRoom()));
-                    ChatSession session = findOrCreateSession(muc.getRoom(),true);
-                    ((ChatGroup)session.getParticipant()).setName(reason);
+                    mChatGroupManager.joinChatGroupAsync(xa,reason);
+
+                    ChatSession session = mSessionManager.findSession(xa.getBareAddress());
+
+                    //create a session if this it not groupchat
+                    if (session == null) {
+                        ImEntity participant = findOrCreateParticipant(xa.getBareAddress(), true);
+
+                        if (participant != null)
+                            session = mSessionManager.createChatSession(participant,false);
+
+                        if (session != null)
+                            ((ChatGroup)session.getParticipant()).setName(reason);
+                    }
+
+
+
+
 
                 }
 
@@ -1184,7 +1329,7 @@ public class XmppConnection extends ImConnection {
 
             }
 
-            boolean setAvatar = false;
+            boolean setAvatar = true;
 
             if (vCard == null) {
                 vCard = new VCard();
@@ -1199,7 +1344,7 @@ public class XmppConnection extends ImConnection {
             }
 
             if (setAvatar) {
-                byte[] avatar = DatabaseUtils.getAvatarBytesFromAddress(mContext.getContentResolver(), mUser.getAddress().getBareAddress(), 256, 256);
+                byte[] avatar = DatabaseUtils.getAvatarBytesFromAddress(mContext.getContentResolver(), mUser.getAddress().getBareAddress(), ImApp.DEFAULT_AVATAR_WIDTH, ImApp.DEFAULT_AVATAR_HEIGHT);
                 if (avatar != null) {
                     vCard.setAvatar(avatar, "image/jpeg");
                 }
@@ -1461,13 +1606,15 @@ public class XmppConnection extends ImConnection {
                         rec.setFrom(aFrom);
                         rec.setDateTime(new Date());
 
+                        rec.setID(smackMessage.getStanzaId());
+
                         rec.setType(Imps.MessageType.INCOMING);
 
                         // Detect if this was said by us, and mark message as outgoing
                         if (isGroupMessage && rec.getFrom().getResource().equals(rec.getTo().getUser())) {
                             //rec.setType(Imps.MessageType.OUTGOING);
                             Occupant oc = mChatGroupManager.getMultiUserChat(rec.getFrom().getBareAddress()).getOccupant(rec.getFrom().getAddress());
-                            if (oc.getJid().equals(mUser.getAddress().getAddress()))
+                            if (oc != null && oc.getJid().equals(mUser.getAddress().getAddress()))
                                 return; //do nothing if it is from us
                         }
 
@@ -1782,7 +1929,8 @@ public class XmppConnection extends ImConnection {
         else
             session = mSessionManager.findSession(address);
 
-        if (session == null) {
+        //create a session if this it not groupchat
+        if (session == null && (!groupChat)) {
             ImEntity participant = findOrCreateParticipant(address, groupChat);
 
             if (participant != null)
@@ -2032,10 +2180,7 @@ public class XmppConnection extends ImConnection {
 
             debug(TAG, "load contact lists");
 
-            if (mConnection == null)
-                return;
 
-            mRoster = Roster.getInstanceFor(mConnection);
             //Set<String> seen = new HashSet<String>();
 
             // This group will also contain all the unfiled contacts.  We will create it locally if it
@@ -2110,39 +2255,41 @@ public class XmppConnection extends ImConnection {
                 notifyContactListCreated(cl);
             }
 
-            for (RosterEntry rEntry : mRoster.getEntries())
-            {
-                String address = rEntry.getUser();
-                String name = rEntry.getName();
+            if (mConnection != null) {
 
-                if (mUser.getAddress().getBareAddress().equals(address)) //don't load a roster for yourself
-                    continue;
+                mRoster = Roster.getInstanceFor(mConnection);
 
-                Contact contact = getContact(address);
+                for (RosterEntry rEntry : mRoster.getEntries()) {
+                    String address = rEntry.getUser();
+                    String name = rEntry.getName();
 
-                if (contact == null)
-                {
-                    XmppAddress xAddr = new XmppAddress(address);
+                    if (mUser.getAddress().getBareAddress().equals(address)) //don't load a roster for yourself
+                        continue;
 
-                    if (name == null || name.length() == 0)
-                        name = xAddr.getUser();
+                    Contact contact = getContact(address);
 
-                    contact = new Contact(xAddr,name);
+                    if (contact == null) {
+                        XmppAddress xAddr = new XmppAddress(address);
 
-                }
-                
-                requestPresenceRefresh(address);
-                                
-                if (!cl.containsContact(contact))
-                {
-                    try {
-                        cl.addExistingContact(contact);
-                    } catch (ImException e) {
-                        debug(TAG,"could not add contact to list: " + e.getLocalizedMessage());
+                        if (name == null || name.length() == 0)
+                            name = xAddr.getUser();
+
+                        contact = new Contact(xAddr, name);
+
                     }
-                }
-                
 
+                    requestPresenceRefresh(address);
+
+                    if (!cl.containsContact(contact)) {
+                        try {
+                            cl.addExistingContact(contact);
+                        } catch (ImException e) {
+                            debug(TAG, "could not add contact to list: " + e.getLocalizedMessage());
+                        }
+                    }
+
+
+                }
             }
 
             notifyContactListLoaded(cl);
@@ -2155,8 +2302,6 @@ public class XmppConnection extends ImConnection {
 
             debug(TAG, "add contacts to lists");
 
-            if (mConnection == null)
-                return;
 
             ContactList cl;
 
@@ -2445,6 +2590,9 @@ public class XmppConnection extends ImConnection {
 
                     }
 
+//                    rEntry = mRoster.getEntry(contact.getAddress().getBareAddress());
+
+
                 } catch (XMPPException e) {
 
                     debug(TAG,"error updating remote roster",e);
@@ -2455,20 +2603,22 @@ public class XmppConnection extends ImConnection {
                     throw new ImException(msg);
                 }
 
-                do_loadContactLists();
-                notifyContactListUpdated(list, ContactListListener.LIST_CONTACT_ADDED, contact);
-
                 //i want your presence
                 org.jivesoftware.smack.packet.Presence reqSubscribe = new org.jivesoftware.smack.packet.Presence(
                         org.jivesoftware.smack.packet.Presence.Type.subscribe);
                 reqSubscribe.setTo(contact.getAddress().getBareAddress());
                 sendPacket(reqSubscribe);
 
+                /**
                 //i approve you having my presence!
                 org.jivesoftware.smack.packet.Presence reqSubscribed = new org.jivesoftware.smack.packet.Presence(
                         org.jivesoftware.smack.packet.Presence.Type.subscribed);
                 reqSubscribe.setTo(contact.getAddress().getBareAddress());
                 sendPacket(reqSubscribe);
+                 **/
+
+                do_loadContactLists();
+                notifyContactListUpdated(list, ContactListListener.LIST_CONTACT_ADDED, contact);
 
             }
         }
@@ -3182,6 +3332,9 @@ public class XmppConnection extends ImConnection {
                 sendPacket(reqSubscribed);
 
                 mContactListManager.getSubscriptionRequestListener().onSubScriptionRequest(contact, mProviderId, mAccountId);
+
+                contact = mContactListManager.getContact(xaddress.getBareAddress());
+
             }
             catch (Exception e)
             {
@@ -3200,8 +3353,7 @@ public class XmppConnection extends ImConnection {
                     contact = new Contact(xAddr, xAddr.getUser());
                 }
 
-                mContactListManager.doAddContactToListAsync(contact,getContactListManager().getDefaultContactList());
-
+           //     mContactListManager.doAddContactToListAsync(contact,getContactListManager().getDefaultContactList());
                 mContactListManager.getSubscriptionRequestListener().onSubscriptionApproved(contact, mProviderId, mAccountId);
             }
             catch (Exception e)
@@ -3228,70 +3380,69 @@ public class XmppConnection extends ImConnection {
             }
 
         }
-        else 
+
+        //this is typical presence, let's get the latest/highest priority
+        debug(TAG,"got presence: " + presence.getFrom() + "=" + presence.getStatus());
+
+        if (contact != null && contact.getPresence() != null)
         {
-            //this is typical presence, let's get the latest/highest priority
-            debug(TAG,"got presence: " + presence.getFrom() + "=" + presence.getStatus());
+            Presence pOld = contact.getPresence();
 
-            if (contact != null && contact.getPresence() != null)
-            {                
-                Presence pOld = contact.getPresence();
+            if (pOld.getResource() != null && pOld.getResource().equals(p.getResource())) //if the same resource as the existing one, then update it
+            {
+                contact.setPresence(p);
+            }
+            else if (p.getPriority() >= pOld.getPriority()) //if priority is higher, then override
+            {
+                contact.setPresence(p);
 
-                if (pOld.getResource() != null && pOld.getResource().equals(p.getResource())) //if the same resource as the existing one, then update it
-                {                    
-                    contact.setPresence(p);
-                }
-                else if (p.getPriority() >= pOld.getPriority()) //if priority is higher, then override    
-                {
-                    contact.setPresence(p);                   
-                    
-                }
-                
-                if (p.getStatus() != Imps.Presence.AVAILABLE)
-                {
-                    //if offline, let's check for another online presence
-                    presence = mRoster.getPresence(presence.getFrom());
-                    p = new Presence(parsePresence(presence), status, null, null,
-                            Presence.CLIENT_TYPE_DEFAULT);
+            }
 
-                    //this is only persisted in memory
-                    p.setPriority(presence.getPriority());
-                    contact.setPresence(p);
-                    
-                }
-                else
-                {
-                    ExtensionElement packetExtension=presence.getExtension("x","vcard-temp:x:update");
-                    if (packetExtension != null) {
+            if (p.getStatus() != Imps.Presence.AVAILABLE)
+            {
+                //if offline, let's check for another online presence
+                presence = mRoster.getPresence(presence.getFrom());
+                p = new Presence(parsePresence(presence), status, null, null,
+                        Presence.CLIENT_TYPE_DEFAULT);
 
-                        DefaultExtensionElement o=(DefaultExtensionElement)packetExtension;
-                        String hash=o.getValue("photo");
-                        if (hash != null) {
-
-
-                            boolean hasMatches = DatabaseUtils.doesAvatarHashExist(mContext.getContentResolver(),  Imps.Avatars.CONTENT_URI, contact.getAddress().getBareAddress(), hash);
-
-                            if (!hasMatches) //we must reload
-                                qAvatar.push(contact.getAddress().getBareAddress());
-
-
-                        }
-                    }
-
-                }
-                
+                //this is only persisted in memory
+                p.setPriority(presence.getPriority());
+                contact.setPresence(p);
 
             }
             else
             {
+                ExtensionElement packetExtension=presence.getExtension("x","vcard-temp:x:update");
+                if (packetExtension != null) {
 
-                //we don't have a presence yet so set one
-                if (contact != null)
-                    contact.setPresence(p);
+                    DefaultExtensionElement o=(DefaultExtensionElement)packetExtension;
+                    String hash=o.getValue("photo");
+                    if (hash != null) {
+
+
+                        boolean hasMatches = DatabaseUtils.doesAvatarHashExist(mContext.getContentResolver(),  Imps.Avatars.CONTENT_URI, contact.getAddress().getBareAddress(), hash);
+
+                        if (!hasMatches) //we must reload
+                            qAvatar.push(contact.getAddress().getBareAddress());
+
+
+                    }
+                }
 
             }
-            
+
+
         }
+        else if (contact != null)
+        {
+
+            //we don't have a presence yet so set one
+            if (contact != null)
+                contact.setPresence(p);
+
+        }
+            
+
         
 
         

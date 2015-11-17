@@ -3,8 +3,8 @@
     package="info.guardianproject.otr.app.im"
     android:installLocation="auto"
     android:sharedUserLabel="@string/perm_label"
-    android:versionCode="1500030"
-    android:versionName="15.0.0-alpha-30" >
+    android:versionCode="1500032"
+    android:versionName="15.0.0-alpha-32" >
 
     <supports-screens
         android:anyDensity="true"
@@ -192,13 +192,14 @@
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <data
                     android:host="zom.im"
-                    android:scheme="https"
                     android:pathPrefix="/i/"
-                    />
+                    android:scheme="https" />
             </intent-filter>
         </activity>
 
@@ -272,9 +273,8 @@
             android:name="org.awesomeapp.messenger.ui.AddContactActivity"
             android:exported="false"
             android:label="@string/add_contact_title"
-            android:theme="@style/InviteDialog"
-            />
-      <activity
+            android:theme="@style/InviteDialog" />
+        <activity
             android:name="org.awesomeapp.messenger.ui.ContactsPickerActivity"
             android:exported="false"
             android:label="@string/choose_friend" >
@@ -355,8 +355,7 @@
         </activity>
         <activity
             android:name="org.awesomeapp.messenger.ui.qr.QrScanActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            />
+            android:configChanges="keyboardHidden|orientation|screenSize" />
 
         <service
             android:name="info.guardianproject.cacheword.CacheWordService"
@@ -381,14 +380,15 @@
         <activity android:name="org.awesomeapp.messenger.ui.widgets.SecureCameraActivity" />
         <activity
             android:name="org.awesomeapp.messenger.MainActivity"
-            android:theme="@style/AppThemeNoAction"
             android:exported="false"
             android:launchMode="singleTop"
-            >
+            android:theme="@style/AppThemeNoAction" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="info.guardianproject.otr.app.im.IMPS_CATEGORY" />
+
                 <data android:mimeType="vnd.android.cursor.item/imps-chats" />
             </intent-filter>
             <intent-filter>
@@ -405,35 +405,35 @@
 
                 <data android:mimeType="vnd.android.cursor.item/imps-contacts" />
             </intent-filter>
-            </activity>
+        </activity>
         <activity
             android:name="org.awesomeapp.messenger.ui.ConversationDetailActivity"
-            android:theme="@style/AppThemeNoAction"
             android:exported="false"
-            android:windowSoftInputMode="adjustPan|stateHidden"
-            />
+            android:theme="@style/AppThemeNoAction"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
             android:name="org.awesomeapp.messenger.ui.ContactListActivity"
             android:exported="false"
-            android:title="@string/contacts"
-            />
-
+            android:title="@string/contacts" />
         <activity
             android:name="org.awesomeapp.messenger.ui.GalleryActivity"
             android:exported="false"
-            android:title="@string/photo_gallery"
-            />
-
+            android:title="@string/photo_gallery" />
         <activity
             android:name="org.awesomeapp.messenger.ui.PanicSetupActivity"
             android:label="@string/panic_trigger_app"
-            android:theme="@style/AppThemeNoAction">
+            android:theme="@style/AppThemeNoAction" >
             <intent-filter>
                 <action android:name="info.guardianproject.panic.action.CONNECT" />
                 <action android:name="info.guardianproject.panic.action.DISCONNECT" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
+        </activity>
+        <activity android:name="org.awesomeapp.messenger.ui.ContactDisplayActivity" >
+        </activity>
+
+        <activity android:name="org.awesomeapp.messenger.ui.GroupDisplayActivity" >
         </activity>
     </application>
 

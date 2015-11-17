@@ -84,7 +84,7 @@
                 android:id="@+id/media_thumbnail"
                 android:layout_width="wrap_content"
                 android:layout_height="200dp"
-                android:scaleType="centerCrop"
+                android:scaleType="centerInside"
                 android:focusableInTouchMode="true"
                 />
             <LinearLayout
@@ -131,7 +131,7 @@
 
         <TextView
                 android:id="@+id/messagets"
-                android:layout_width="160dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="6dp"
             	android:textSize="10sp"
@@ -154,6 +154,7 @@
             android:scaleType="centerCrop" 
             android:visibility="gone"
             android:layout_marginRight="0dip"
+
             />
 		
     

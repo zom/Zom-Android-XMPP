@@ -181,7 +181,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         group.addMemberListener(mListenerAdapter);
 
         try {            
-            mChatSessionManager.getChatGroupManager().joinChatGroupAsync(group.getAddress());
+            mChatSessionManager.getChatGroupManager().joinChatGroupAsync(group.getAddress(),group.getName());
         
             mMessageURI = Imps.Messages.getContentUriByThreadId(mContactId);
     
@@ -279,7 +279,12 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
     }
 
     public String getName() {
-        return mChatSession.getParticipant().getAddress().getUser();
+
+        if (isGroupChatSession())
+            return ((ChatGroup)mChatSession.getParticipant()).getName();
+        else
+            return ((Contact)mChatSession.getParticipant()).getName();
+
     }
 
     public String getAddress() {
@@ -555,17 +560,20 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
     }
 
     void insertGroupMemberInDb(Contact member) {
-        ContentValues values1 = new ContentValues(2);
-        values1.put(Imps.GroupMembers.USERNAME, member.getAddress().getAddress());
-        values1.put(Imps.GroupMembers.NICKNAME, member.getName());
-        ContentValues values = values1;
 
-        long groupId = ContentUris.parseId(mChatURI);
-        Uri uri = ContentUris.withAppendedId(Imps.GroupMembers.CONTENT_URI, groupId);
-        mContentResolver.insert(uri, values);
+        if (mChatURI != null) {
+            ContentValues values1 = new ContentValues(2);
+            values1.put(Imps.GroupMembers.USERNAME, member.getAddress().getAddress());
+            values1.put(Imps.GroupMembers.NICKNAME, member.getName());
+            ContentValues values = values1;
 
-        insertMessageInDb(member.getName(), null, System.currentTimeMillis(),
-                Imps.MessageType.PRESENCE_AVAILABLE);
+            long groupId = ContentUris.parseId(mChatURI);
+            Uri uri = ContentUris.withAppendedId(Imps.GroupMembers.CONTENT_URI, groupId);
+            mContentResolver.insert(uri, values);
+
+          //  insertMessageInDb(member.getName(), null, System.currentTimeMillis(),
+              //      Imps.MessageType.PRESENCE_AVAILABLE);
+        }
     }
 
     void deleteGroupMemberInDb(Contact member) {
@@ -575,8 +583,8 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         Uri uri = ContentUris.withAppendedId(Imps.GroupMembers.CONTENT_URI, groupId);
         mContentResolver.delete(uri, where, selectionArgs);
 
-        insertMessageInDb(member.getName(), null, System.currentTimeMillis(),
-                Imps.MessageType.PRESENCE_UNAVAILABLE);
+      //  insertMessageInDb(member.getName(), null, System.currentTimeMillis(),
+            //    Imps.MessageType.PRESENCE_UNAVAILABLE);
     }
 
     void insertPresenceUpdatesMsg(String contact, Presence presence) {
@@ -671,18 +679,28 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
     class ListenerAdapter implements MessageListener, GroupMemberListener {
 
-        public boolean  onIncomingMessage(ChatSession ses, final org.awesomeapp.messenger.model.Message msg) {
+        public synchronized boolean onIncomingMessage(ChatSession ses, final org.awesomeapp.messenger.model.Message msg) {
             String body = msg.getBody();
             String username = msg.getFrom().getAddress();
             String bareUsername = msg.getFrom().getBareAddress();
             String nickname = getNickName(username);
             long time = msg.getDateTime().getTime();
 
+            if (msg.getID() != null
+                &&
+                Imps.messageExists(mContentResolver, msg.getID()))
+            {
+                return false; //this message is a duplicate
+            }
+
             insertOrUpdateChat(body);
 
-            insertMessageInDb(nickname, body, time, msg.getType());
-
             boolean wasMessageSeen = false;
+
+            if (msg.getID() == null)
+                insertMessageInDb(nickname, body, time, msg.getType());
+            else
+                 insertMessageInDb(nickname, body, time, msg.getType(),0,msg.getID());
 
             int N = mRemoteListeners.beginBroadcast();
             for (int i = 0; i < N; i++) {
@@ -729,6 +747,21 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                 }
             }
             mRemoteListeners.finishBroadcast();
+        }
+
+        public void onSubjectChanged(ChatGroup group, String subject)
+        {
+            if (mChatURI != null) {
+                ContentValues values1 = new ContentValues(1);
+                values1.put(Imps.Contacts.NICKNAME,subject);
+                ContentValues values = values1;
+
+                Uri uriContact = ContentUris.withAppendedId(Imps.Contacts.CONTENT_URI, mContactId);
+                mContentResolver.update(uriContact, values, null, null);
+
+                //  insertMessageInDb(member.getName(), null, System.currentTimeMillis(),
+                //      Imps.MessageType.PRESENCE_AVAILABLE);
+            }
         }
 
         public void onMemberJoined(ChatGroup group, final Contact contact) {
@@ -897,6 +930,8 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
             mContactStatusMap.put(contact.getName(), contact.getPresence().getStatus());
         }
+
+        public void onSubjectChanged(ChatGroup group, String subject){}
 
         public void onGroupDeleted(ChatGroup group) {
         }

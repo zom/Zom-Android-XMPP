@@ -778,6 +778,8 @@ public class ImApp extends Application {
             }
 
 
+            if (cursorProviders != null)
+                cursorProviders.close();
         }
 
         return false;

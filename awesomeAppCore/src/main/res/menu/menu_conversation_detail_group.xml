@@ -28,6 +28,12 @@
          app:showAsAction="always"
          />
 -->
+    <item android:id="@+id/menu_group_info"
+        android:title="@string/menu_view_groups"
+        android:icon="@drawable/ic_info_outline_white_24dp"
+        app:showAsAction="always"
+        />
+
     <item android:id="@+id/menu_add_person"
         android:title="@string/members"
         android:icon="@drawable/ic_person_add_white_36dp"
