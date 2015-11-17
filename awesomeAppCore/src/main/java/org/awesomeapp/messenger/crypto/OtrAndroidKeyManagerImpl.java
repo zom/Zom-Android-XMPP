@@ -590,6 +590,23 @@ public class OtrAndroidKeyManagerImpl extends IOtrKeyManager.Stub implements Otr
         return getRemoteFingerprint(sessionID.getRemoteUserId());
     }
 
+    public boolean hasRemoteFingerprint (String userId)
+    {
+        Enumeration<Object> keys = store.getKeys();
+
+        while (keys.hasMoreElements())
+        {
+            String key = (String)keys.nextElement();
+
+            if (key.startsWith(userId))
+                return true;
+
+
+        }
+
+        return false;
+    }
+
     public String getRemoteFingerprint(String fullUserId) {
 
         if (!Address.hasResource(fullUserId))
