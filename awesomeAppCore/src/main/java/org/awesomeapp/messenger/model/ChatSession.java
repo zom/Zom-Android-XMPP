@@ -115,6 +115,7 @@ public class ChatSession {
         SessionStatus otrStatus = cm.getSessionStatus(sId);
 
         message.setTo(new XmppAddress(sId.getRemoteUserId()));
+        //message.setTo(getParticipant().getAddress());
         
         if (otrStatus == SessionStatus.ENCRYPTED)
         {
