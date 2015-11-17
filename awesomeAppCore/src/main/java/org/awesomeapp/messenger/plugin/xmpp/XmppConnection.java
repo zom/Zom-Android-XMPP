@@ -670,8 +670,8 @@ public class XmppConnection extends ImConnection {
                     XmppAddress xa = new XmppAddress(occupant);
                     Contact mucContact = new Contact(xa,xa.getResource());
                     org.jivesoftware.smack.packet.Presence presence = muc.getOccupantPresence(occupant);
-                    Presence p = new Presence(parsePresence(presence), presence.getStatus(), null, null, Presence.CLIENT_TYPE_DEFAULT);
-                    mucContact.setPresence(p);
+                  //  Presence p = new Presence(parsePresence(presence), presence.getStatus(), null, null, Presence.CLIENT_TYPE_DEFAULT);
+                  //  mucContact.setPresence(p);
                     chatGroup.addMemberAsync(mucContact);
                 }
 
@@ -3267,7 +3267,7 @@ public class XmppConnection extends ImConnection {
 
         //this is only persisted in memory
         p.setPriority(presence.getPriority());
-        
+
         // Get presence from the Roster to handle priorities and such
         // TODO: this causes bad network and performance issues
         //   if (presence.getType() == Type.available) //get the latest presence for the highest priority
@@ -3382,20 +3382,23 @@ public class XmppConnection extends ImConnection {
         }
 
         //this is typical presence, let's get the latest/highest priority
-        debug(TAG,"got presence: " + presence.getFrom() + "=" + presence.getStatus());
+        debug(TAG,"got presence: " + presence.getFrom() + "=" + presence.getType());
 
         if (contact != null && contact.getPresence() != null)
         {
             Presence pOld = contact.getPresence();
 
-            if (pOld.getResource() != null && pOld.getResource().equals(p.getResource())) //if the same resource as the existing one, then update it
+            if (pOld == null || pOld.getResource() == null)
+            {
+                contact.setPresence(p);
+            }
+            else if (pOld.getResource() != null && pOld.getResource().equals(p.getResource())) //if the same resource as the existing one, then update it
             {
                 contact.setPresence(p);
             }
             else if (p.getPriority() >= pOld.getPriority()) //if priority is higher, then override
             {
                 contact.setPresence(p);
-
             }
 
             if (p.getStatus() != Imps.Presence.AVAILABLE)
@@ -3405,9 +3408,11 @@ public class XmppConnection extends ImConnection {
                 p = new Presence(parsePresence(presence), status, null, null,
                         Presence.CLIENT_TYPE_DEFAULT);
 
-                //this is only persisted in memory
-                p.setPriority(presence.getPriority());
-                contact.setPresence(p);
+                if (p.getStatus() == Imps.Presence.AVAILABLE) {
+                    //this is only persisted in memory
+                    p.setPriority(presence.getPriority());
+                    contact.setPresence(p);
+                }
 
             }
             else
@@ -3441,11 +3446,7 @@ public class XmppConnection extends ImConnection {
                 contact.setPresence(p);
 
         }
-            
 
-        
-
-        
         return contact;
     }
 
