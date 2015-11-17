@@ -49,7 +49,7 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
 
     private Context mContext;
 
-    private OtrChatManager(int otrPolicy, RemoteImService imService, OtrKeyManager otrKeyManager) throws Exception {
+    private OtrChatManager(int otrPolicy, RemoteImService imService, OtrAndroidKeyManagerImpl otrKeyManager) throws Exception {
 
         mContext = (Context)imService;
 
@@ -67,7 +67,7 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
     }
 
 
-    public static synchronized OtrChatManager getInstance(int otrPolicy, RemoteImService imService, OtrKeyManager otrKeyManager)
+    public static synchronized OtrChatManager getInstance(int otrPolicy, RemoteImService imService, OtrAndroidKeyManagerImpl otrKeyManager)
             throws Exception {
         if (mInstance == null) {
             mInstance = new OtrChatManager(otrPolicy, imService,otrKeyManager);
@@ -213,7 +213,7 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
         } catch (OtrException e) {
             OtrDebugLogger.log("startSession", e);
 
-            showError(sessionId,"Unable to start OTR session: " + e.getLocalizedMessage());
+            showError(sessionId, "Unable to start OTR session: " + e.getLocalizedMessage());
 
         }
 
@@ -381,6 +381,11 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
             // plaintext by mistake.
         }
 
+    }
+
+    public boolean hasRemoteKeyFingerprint (String userId)
+    {
+        return mOtrEngineHost.hasRemoteKeyFingerprintg(userId);
     }
 
     public String getLocalKeyFingerprint(String localUserId, String remoteUserId) {
