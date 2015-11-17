@@ -80,6 +80,7 @@ import net.java.otr4j.session.SessionStatus;
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.Preferences;
 import org.awesomeapp.messenger.crypto.IOtrChatSession;
+import org.awesomeapp.messenger.crypto.OtrAndroidKeyManagerImpl;
 import org.awesomeapp.messenger.model.Address;
 import org.awesomeapp.messenger.model.Contact;
 import org.awesomeapp.messenger.model.ImConnection;
@@ -218,13 +219,16 @@ public class ConversationView {
 
                     IOtrChatSession otrChatSession = mCurrentChatSession.getOtrChatSession();
 
-                    if (otrChatSession != null)
+                    if (otrChatSession != null && (!isGroupChat()))
                     {
                         String remoteJID = otrChatSession.getRemoteUserId();
                         
-                        boolean isChatSecure = (remoteJID != null && (remoteJID.toLowerCase().contains("chatsecure")||remoteJID.toLowerCase().contains("zom")));
-                            
-                        if (otrPolicyAuto && isChatSecure) //if set to auto, and is chatsecure, then start encryption
+                        boolean doOtr = (remoteJID != null && (remoteJID.toLowerCase().contains("chatsecure")||remoteJID.toLowerCase().contains("zom")));
+
+                        if (!doOtr)
+                            doOtr = OtrAndroidKeyManagerImpl.getInstance(mActivity).hasRemoteFingerprint(remoteJID);
+
+                        if (otrPolicyAuto && doOtr) //if set to auto, and is chatsecure, then start encryption
                         {
                                //automatically attempt to turn on OTR after 1 second
                                 mHandler.postDelayed(new Runnable (){
