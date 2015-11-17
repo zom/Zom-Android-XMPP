@@ -28,6 +28,11 @@ public class OtrChatSessionAdapter extends Stub {
             return null;
     }
 
+    public boolean hasRemoteFingerprint ()
+    {
+        return _chatManager.hasRemoteKeyFingerprint(_remoteUser);
+    }
+
     public void startChatEncryption() throws RemoteException {
         Debug.wrapExceptions(new Runnable() {
             @Override
