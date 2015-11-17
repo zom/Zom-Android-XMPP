@@ -311,7 +311,7 @@ public class MessageListItem extends FrameLayout {
             }
 
         }
-        else if (lastMessage.charAt(0) == '/' && lastMessage.length()>1)
+        else if (lastMessage.length() > 1 && lastMessage.charAt(0) == '/')
         {
             boolean cmdSuccess = false;
 
