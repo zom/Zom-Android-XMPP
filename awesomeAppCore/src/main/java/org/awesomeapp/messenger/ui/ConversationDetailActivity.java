@@ -88,12 +88,11 @@ public class ConversationDetailActivity extends AppCompatActivity {
         Intent intent = getIntent();
         mApp = (ImApp)getApplication();
 
-        mChatId = intent.getLongExtra("id",-1);
+        mChatId = intent.getLongExtra("id", -1);
         mAddress = intent.getStringExtra("address");
         mName = intent.getStringExtra("nickname");
 
         mConvoView = new ConversationView(this);
-        mConvoView.bindChat(mChatId, mAddress, mName);
 
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -113,8 +112,23 @@ public class ConversationDetailActivity extends AppCompatActivity {
             }
         });
 
-        loadBackdrop();
+        processIntent(getIntent());
+
         collapseToolbar();
+    }
+
+    private void processIntent(Intent intent)
+    {
+
+        mApp = (ImApp)getApplication();
+
+        mChatId = intent.getLongExtra("id", -1);
+        mAddress = intent.getStringExtra("address");
+        mName = intent.getStringExtra("nickname");
+
+        mConvoView.bindChat(mChatId, mAddress, mName);
+
+        loadBackdrop();
     }
 
     public void collapseToolbar(){
@@ -141,7 +155,12 @@ public class ConversationDetailActivity extends AppCompatActivity {
         mConvoView.setSelected(false);
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
 
+        processIntent(intent);
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
