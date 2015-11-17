@@ -45,7 +45,7 @@ import android.util.Log;
 /** @author George Politis */
 public class SessionImpl implements Session {
 
-    private static final int MIN_SESSION_START_INTERVAL = 5000;
+    private static final int MIN_SESSION_START_INTERVAL = 10000;
     private SessionID sessionID;
     private OtrEngineHost host;
     private SessionStatus sessionStatus;
