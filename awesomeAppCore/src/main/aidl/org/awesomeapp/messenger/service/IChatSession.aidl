@@ -93,11 +93,22 @@ interface IChatSession {
      * Mark this chat session as read.
      */
     void markAsRead();   
-    
+
+    /**
+        * Get OTR Session Manager
+        */
+    IOtrChatSession getDefaultOtrChatSession();
+
     /**
     * Get OTR Session Manager
     */
-    IOtrChatSession getOtrChatSession();
+    IOtrChatSession getOtrChatSession(int idx);
+
+    /**
+        * Get OTR Session Manager
+        */
+    int getOtrChatSessionCount();
+
     
      /**
     * set class for handling incoming data transfers

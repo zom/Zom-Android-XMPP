@@ -1,19 +1,20 @@
 package org.awesomeapp.messenger.crypto;
 
 import org.awesomeapp.messenger.crypto.IOtrChatSession.Stub;
+import org.awesomeapp.messenger.model.ImEntity;
 import org.awesomeapp.messenger.util.Debug;
 import net.java.otr4j.OtrException;
 import net.java.otr4j.session.SessionID;
 import net.java.otr4j.session.SessionStatus;
 import android.os.RemoteException;
 
-public class OtrChatSessionAdapter extends Stub {
+public class OtrChatSessionAdapter extends IOtrChatSession.Stub {
 
     private OtrChatManager _chatManager;
     private String _localUser;
-    private String _remoteUser;
+    private ImEntity _remoteUser;
 
-    public OtrChatSessionAdapter(String localUser, String remoteUser, OtrChatManager chatManager) {
+    public OtrChatSessionAdapter(String localUser, ImEntity remoteUser, OtrChatManager chatManager) {
 
         _localUser = localUser;
         _remoteUser = remoteUser;
@@ -23,14 +24,14 @@ public class OtrChatSessionAdapter extends Stub {
     private SessionID getSessionID ()
     {
         if (_chatManager != null)
-            return _chatManager.getSessionId(_localUser, _remoteUser);
+            return _chatManager.getSessionId(_localUser, _remoteUser.getAddress().getAddress());
         else
             return null;
     }
 
     public boolean hasRemoteFingerprint ()
     {
-        return _chatManager.hasRemoteKeyFingerprint(_remoteUser);
+        return _chatManager.hasRemoteKeyFingerprint(_remoteUser.getAddress().getAddress());
     }
 
     public void startChatEncryption() throws RemoteException {

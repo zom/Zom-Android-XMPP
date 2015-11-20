@@ -129,6 +129,10 @@ public class ConversationDetailActivity extends AppCompatActivity {
         mConvoView.bindChat(mChatId, mAddress, mName);
 
         loadBackdrop();
+
+        CollapsingToolbarLayout collapsingToolbar =
+                (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+        collapsingToolbar.setTitle(mConvoView.getTitle());
     }
 
     public void collapseToolbar(){

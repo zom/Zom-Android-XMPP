@@ -266,8 +266,6 @@ public class MessageListItem extends FrameLayout {
     public void bindIncomingMessage(int id, int messageType, String address, String nickname, final String mimeType, final String body, Date date, Markup smileyRes,
             boolean scrolling, EncryptionState encryption, boolean showContact, int presenceStatus) {
 
-//        Log.d(ImApp.LOG_TAG,"message: " + body);
-
         mHolder = (MessageViewHolder)getTag();
 
         mHolder.mTextViewForMessages.setVisibility(View.VISIBLE);
@@ -279,12 +277,10 @@ public class MessageListItem extends FrameLayout {
         if (nickname == null)
             nickname = address;
 
-
         lastMessage = formatMessage(body);
         showAvatar(address, nickname, true, presenceStatus);
 
         mHolder.resetOnClickListenerMediaThumbnail();
-
 
         if( mimeType != null ) {
 

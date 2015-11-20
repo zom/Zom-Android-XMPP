@@ -104,7 +104,7 @@
          <item name="inputBackground">#FFFFFF</item>
     <!-- customize the color palette -->
    
-   		<item name="contactTextPrimary">#111111</item>
+   		<item name="contactTextPrimary">#333333</item>
          <item name="contactTextSecondary">#777777</item>
 
         <!--

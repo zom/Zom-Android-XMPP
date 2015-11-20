@@ -217,7 +217,7 @@ public class ConversationView {
                     if (mCurrentChatSession == null)
                         return;
 
-                    IOtrChatSession otrChatSession = mCurrentChatSession.getOtrChatSession();
+                    IOtrChatSession otrChatSession = mCurrentChatSession.getDefaultOtrChatSession();
 
                     if (otrChatSession != null && (!isGroupChat()))
                     {
@@ -296,7 +296,7 @@ public class ConversationView {
 
             if (mCurrentChatSession != null)
             {
-                IOtrChatSession otrChatSession = mCurrentChatSession.getOtrChatSession();
+                IOtrChatSession otrChatSession = mCurrentChatSession.getDefaultOtrChatSession();
 
                 if (otrChatSession != null)
                 {
@@ -306,12 +306,10 @@ public class ConversationView {
                         otrChatSession.startChatEncryption();
                         mIsStartingOtr = true;
 
-                     //   Toast.makeText(getContext(),getResources().getString(R.string.starting_otr_chat), Toast.LENGTH_LONG).show();
                     }
                     else
                     {
                         otrChatSession.stopChatEncryption();
-                       // Toast.makeText(getContext(),getResources().getString(R.string.stopping_otr_chat), Toast.LENGTH_LONG).show();
 
                     }
 
@@ -1042,11 +1040,6 @@ public class ConversationView {
         mIsListening = false;
     }
 
-    public void unbind() {
-        stopListening();
-    }
-
-
     void updateChat() {
         setViewType(VIEW_TYPE_CHAT);
 
@@ -1480,7 +1473,7 @@ public class ConversationView {
     {
         try
         {
-            IOtrChatSession otrChatSession = mCurrentChatSession.getOtrChatSession();
+            IOtrChatSession otrChatSession = mCurrentChatSession.getDefaultOtrChatSession();
 
             if (scannedFingerprint != null && scannedFingerprint.equalsIgnoreCase(otrChatSession.getRemoteFingerprint())) {
                 verifyRemoteFingerprint();
@@ -1594,7 +1587,7 @@ public class ConversationView {
 
             if (mCurrentChatSession != null)
             {
-                IOtrChatSession iOtrSession = mCurrentChatSession.getOtrChatSession();
+                IOtrChatSession iOtrSession = mCurrentChatSession.getDefaultOtrChatSession();
                 iOtrSession.initSmpVerification(question, answer);
             }
 
@@ -1609,7 +1602,7 @@ public class ConversationView {
 
         try {
 
-            IOtrChatSession otrChatSession = mCurrentChatSession.getOtrChatSession();
+            IOtrChatSession otrChatSession = mCurrentChatSession.getDefaultOtrChatSession();
             otrChatSession.verifyKey(otrChatSession.getRemoteUserId());
 
 
@@ -1887,7 +1880,7 @@ public class ConversationView {
             IOtrChatSession otrChatSession = null;
 
             try {
-                otrChatSession = mCurrentChatSession.getOtrChatSession();
+                otrChatSession = mCurrentChatSession.getOtrChatSession(0);
 
                 //check if the chat is otr or not
                 if (otrChatSession != null) {

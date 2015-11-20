@@ -66,7 +66,6 @@ public class OtrEngineHostImpl implements OtrEngineHost {
         else
             return to;
 
-        //return new XmppAddress(session.getRemoteUserId());
     }
 
     public ImConnectionAdapter findConnection(SessionID session) {
@@ -127,7 +126,7 @@ public class OtrEngineHostImpl implements OtrEngineHost {
             ChatSessionManagerAdapter chatSessionManagerAdapter = (ChatSessionManagerAdapter) connection
                     .getChatSessionManager();
             ChatSessionAdapter chatSessionAdapter = (ChatSessionAdapter) chatSessionManagerAdapter
-                    .getChatSession(Address.stripResource(sessionID.getRemoteUserId()));
+                    .getChatSession(sessionID.getRemoteUserId());
 
             if (chatSessionAdapter != null)
             {
@@ -137,32 +136,17 @@ public class OtrEngineHostImpl implements OtrEngineHost {
                     body = ""; //don't allow null messages, only empty ones!
 
                 Message msg = new Message(body);
-
-             //   msg.setFrom(new XmppAddress(sessionID.getLocalUserId()));
-             //   final Address to = chatSessionAdapter.getAdaptee().getParticipant().getAddress();
-                
                 Address to = new XmppAddress(sessionID.getRemoteUserId());
-                
-                try
-                {
-                    //always send OTR messages to a resource
-                    SessionStatus chatStatus = SessionStatus.values()[chatSessionAdapter.getOtrChatSession().getChatStatus()];
-                    msg.setTo(appendSessionResource(sessionID, to));
 
-                }
-                catch (RemoteException e)
-                {
-                    msg.setTo(chatSessionAdapter.getAdaptee().getParticipant().getAddress());
-                }
-                //msg.setTo(to);
-               // msg.setDateTime(new Date());
+                //always send OTR messages to a resource
+                 //   SessionStatus chatStatus = SessionStatus.values()[chatSessionAdapter.getDefaultOtrChatSession().getChatStatus()];
+                msg.setTo(appendSessionResource(sessionID, to));
 
                 // msg ID is set by plugin
                 chatSessionManagerAdapter.getChatSessionManager().sendMessageAsync(chatSessionAdapter.getAdaptee(), msg);
 
             }
-            else
-            {
+            else {
                 OtrDebugLogger.log(sessionID.toString() + ": could not find chatSession");
 
             }

@@ -87,7 +87,6 @@ import info.guardianproject.otr.app.im.R;
  */
 public class MainActivity extends AppCompatActivity {
 
- //   private DrawerLayout mDrawerLayout;
     private ViewPager mViewPager;
     private FloatingActionButton mFab;
     private Toolbar mToolbar;
@@ -112,16 +111,6 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(mToolbar);
 
         final ActionBar ab = getSupportActionBar();
-     //   ab.setHomeAsUpIndicator(R.drawable.ic_menu);
-//        ab.setDisplayHomeAsUpEnabled(true);
-
-        /*
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        if (navigationView != null) {
-            setupDrawerContent(navigationView);
-        }*/
 
         mViewPager = (ViewPager) findViewById(R.id.viewpager);
        final TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
@@ -523,30 +512,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void setupDrawerContent(NavigationView navigationView) {
-        navigationView.setNavigationItemSelectedListener(
-                new NavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(MenuItem menuItem) {
-
-                        if (menuItem.getItemId() == R.id.menu_add_account) {
-
-                            startActivity(new Intent(MainActivity.this, OnboardingActivity.class));
-                            return true;
-
-                        } else {
-
-                            menuItem.setChecked(true);
-                  //          mDrawerLayout.closeDrawers();
-                            return true;
-                        }
-
-
-                    }
-                });
-
-    }
-
     static class Adapter extends FragmentPagerAdapter {
         private final List<Fragment> mFragments = new ArrayList<>();
         private final List<String> mFragmentTitles = new ArrayList<>();
@@ -819,7 +784,6 @@ public class MainActivity extends AppCompatActivity {
     private void checkForUpdates() {
         // Remove this for store builds!
         UpdateManager.register(this, ImApp.HOCKEY_APP_ID);
-
     }
 
     Uri mLastPhoto = null;

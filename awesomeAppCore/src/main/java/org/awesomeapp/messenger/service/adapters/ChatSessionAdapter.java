@@ -99,7 +99,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
     private RemoteImService service = null;
 
-    OtrChatSessionAdapter mOtrChatSession;
+    private ArrayList<OtrChatSessionAdapter> mOtrChatSessions;
     private OtrDataHandler mDataHandler;
 
     private IDataListener mDataListener;
@@ -125,7 +125,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
         mListenerAdapter = new ListenerAdapter();
 
-        initOtrChatSession();//setup first time
+        mOtrChatSessions = new ArrayList<OtrChatSessionAdapter>();
 
         ImEntity participant = mChatSession.getParticipant();
 
@@ -134,10 +134,10 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         } else {
             init((Contact) participant,isNewSession);
         }
-        mDataHandler.setChatId(getId());
+
     }
 
-    private void initOtrChatSession ()
+    private void initOtrChatSession (ImEntity participant)
     {
         try
         {
@@ -147,16 +147,26 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                 mDataHandlerListener = new DataHandlerListenerImpl();
                 mDataHandler.setDataListener(mDataHandlerListener);
 
-                String localUser = mConnection.getLoginUser().getAddress().getAddress();
-                String remoteUser = mChatSession.getParticipant().getAddress().getAddress();
-
                 OtrChatManager cm = service.getOtrChatManager();
 
-                mOtrChatSession = new OtrChatSessionAdapter(localUser, remoteUser, cm);
+                if (participant instanceof Contact)
+                    mOtrChatSessions.add(new OtrChatSessionAdapter(mConnection.getLoginUser().getAddress().getAddress(), participant, cm));
+                else if (participant instanceof ChatGroup)
+                {
+                    ChatGroup group = (ChatGroup)mChatSession.getParticipant();
 
+                    for (Contact contact : group.getMembers())
+                    {
+                        mOtrChatSessions.add(new OtrChatSessionAdapter(mConnection.getLoginUser().getAddress().getAddress(), contact, cm));
+                    }
+
+                }
                 // add OtrChatListener as the intermediary to mListenerAdapter so it can filter OTR msgs
                 mChatSession.setMessageListener(new OtrChatListener(cm, mListenerAdapter));
-               // mChatSession.setOtrChatManager(cm);
+
+
+                mDataHandler.setChatId(getId());
+
             }
         }
         catch (NullPointerException npe)
@@ -165,12 +175,31 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         }
     }
 
-    public synchronized IOtrChatSession getOtrChatSession() {
+    public synchronized IOtrChatSession getDefaultOtrChatSession () {
 
-        if (mOtrChatSession == null)
-            initOtrChatSession();
+        if (mOtrChatSessions.size() == 0)
+            initOtrChatSession(mChatSession.getParticipant());
 
-        return mOtrChatSession;
+        if (mOtrChatSessions.size() > 0)
+            return mOtrChatSessions.get(0);
+        else
+            return null;
+    }
+
+    public synchronized IOtrChatSession getOtrChatSession(int idx) {
+
+        if (mOtrChatSessions.size() == 0)
+            initOtrChatSession(mChatSession.getParticipant());
+
+        return mOtrChatSessions.get(idx);
+    }
+
+    public synchronized int getOtrChatSessionCount ()
+    {
+        if (mOtrChatSessions.size() == 0)
+            initOtrChatSession(mChatSession.getParticipant());
+
+        return mOtrChatSessions.size();
     }
 
     private void init(ChatGroup group, boolean isNewSession) {
@@ -204,8 +233,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
     private void init(Contact contact, boolean isNewSession) {
         mIsGroupChat = false;
-        ContactListManagerAdapter listManager = (ContactListManagerAdapter) mConnection
-                .getContactListManager();
+        ContactListManagerAdapter listManager = (ContactListManagerAdapter) mConnection.getContactListManager();
         
         mContactId = listManager.queryOrInsertContact(contact);
 
@@ -357,9 +385,6 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             return false;
         }
 
-        if (isGroupChatSession()) //for now
-            return false;
-
         HashMap<String, String> headers = null;
         if (type != null) {
             headers = new HashMap<>();
@@ -480,7 +505,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         Uri oldChatUri = mChatURI;
         Uri oldMessageUri = mMessageURI;
         init(group,false);
-        copyHistoryMessages(oldParticipant);
+        //copyHistoryMessages(oldParticipant);
 
         mContentResolver.delete(oldMessageUri, NON_CHAT_MESSAGE_SELECTION, null);
         mContentResolver.delete(oldChatUri, null, null);
@@ -488,6 +513,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         mListenerAdapter.notifyChatSessionConverted();
         mConvertingToGroupChat = false;
     }
+
 
     private void copyHistoryMessages(Contact oldParticipant) {
         List<org.awesomeapp.messenger.model.Message> historyMessages = mChatSession.getHistoryMessages();
@@ -653,7 +679,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
     Uri insertMessageInDb(String contact, String body, long time, int type, int errCode, String id) {
         boolean isEncrypted = true;
         try {
-            isEncrypted = getOtrChatSession().isChatEncrypted();
+            isEncrypted = getOtrChatSession(0).isChatEncrypted();
         } catch (RemoteException e) {
             // Leave it as encrypted so it gets stored in memory
             // FIXME(miron)
@@ -987,15 +1013,15 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
                     try
                     {
-                        boolean isVerified = getOtrChatSession().isKeyVerified(from);
+                        boolean isVerified = getOtrChatSession(0).isKeyVerified(from);
 
                         int type = isVerified ? Imps.MessageType.INCOMING_ENCRYPTED_VERIFIED : Imps.MessageType.INCOMING_ENCRYPTED;
 
                         insertOrUpdateChat(filePath);
-                        
+
                         Uri messageUri = Imps.insertMessageInDb(service.getContentResolver(),
-                                false, getId(),
-                                true, null,
+                                mIsGroupChat, getId(),
+                                true, from,
                                 filePath, System.currentTimeMillis(), type,
                                 0, offerId, mimeType);
 

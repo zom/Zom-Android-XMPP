@@ -73,7 +73,7 @@ public class ContactDisplayActivity extends Activity {
             IChatSessionManager manager = mConn.getChatSessionManager();
             IChatSession session = manager.getChatSession(mUsername);
 
-            mRemoteFingerprint = session.getOtrChatSession().getRemoteFingerprint();
+            mRemoteFingerprint = session.getOtrChatSession(0).getRemoteFingerprint();
 
             //String remoteFingerprint = OtrAndroidKeyManagerImpl.getInstance(this).getRemoteFingerprint(mUsername);
 

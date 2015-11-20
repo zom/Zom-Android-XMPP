@@ -368,7 +368,7 @@ public class ConversationListItem extends FrameLayout {
 
             if (chatSession != null)
             {
-                IOtrChatSession otrChatSession = chatSession.getOtrChatSession();
+                IOtrChatSession otrChatSession = chatSession.getOtrChatSession(0);
                 if (otrChatSession != null)
                 {
                     SessionStatus chatStatus = SessionStatus.values()[otrChatSession.getChatStatus()];

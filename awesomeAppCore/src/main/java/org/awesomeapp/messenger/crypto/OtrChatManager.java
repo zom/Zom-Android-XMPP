@@ -134,6 +134,9 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
 
     public SessionID getSessionId(String localUserId, String remoteUserId) {
 
+      //  if (remoteUserId.indexOf("/")==-1)
+        //    throw new RuntimeException("no resource: " + remoteUserId);
+
         SessionID sIdTemp = new SessionID(localUserId, remoteUserId, "XMPP");
         SessionID sessionId = mSessions.get(sIdTemp.toString());
 
@@ -148,7 +151,6 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
             // Remote has changed (either different presence, or from generic JID to specific presence),
             // Create or replace sessionId with one that is specific to the new presence.
 
-            //sessionId.updateRemoteUserId(remoteUserId);
             sessionId = sIdTemp;
             mSessions.put(sessionId.toString(), sessionId);
 
@@ -317,6 +319,7 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
                 OtrDebugLogger.log("auto-start OTR on data send request");
                 return false;
             }
+
             OtrDebugLogger.log("session status: " + sessionStatus);
 
             try {

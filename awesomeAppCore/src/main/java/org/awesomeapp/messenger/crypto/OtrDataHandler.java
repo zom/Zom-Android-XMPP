@@ -898,6 +898,6 @@ public class OtrDataHandler implements DataHandler {
     private void debug (String msg)
     {
         if (Debug.DEBUG_ENABLED)
-            Log.d(ImApp.LOG_TAG,msg);
+            Log.d("OTRDATA",msg);
     }
 }

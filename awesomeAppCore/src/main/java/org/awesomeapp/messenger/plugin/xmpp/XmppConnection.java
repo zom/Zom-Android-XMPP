@@ -1549,97 +1549,9 @@ public class XmppConnection extends ImConnection {
 
                 org.jivesoftware.smack.packet.Message smackMessage = (org.jivesoftware.smack.packet.Message) stanza;
 
-                String address = smackMessage.getFrom();
-                String body = smackMessage.getBody();
-
-                if (smackMessage.getError() != null) {
-                    //  smackMessage.getError().getCode();
-
-                    String error = "Error " + smackMessage.getError() + " (" + smackMessage.getError().getCondition() + "): " + smackMessage.getError().getConditionText();
-
-                    debug(TAG, error);
-
-                    return;
-
-                }
+                handleMessage(smackMessage);
 
 
-                if (body == null) {
-
-                    Collection<org.jivesoftware.smack.packet.Message.Body> mColl = smackMessage.getBodies();
-                    for (org.jivesoftware.smack.packet.Message.Body bodyPart : mColl) {
-                        String msg = bodyPart.getMessage();
-                        if (msg != null) {
-                            body = msg;
-                            break;
-                        }
-                    }
-
-                }
-
-                DeliveryReceipt drIncoming = (DeliveryReceipt) smackMessage.getExtension("received", DeliveryReceipt.NAMESPACE);
-
-                if (drIncoming != null) {
-
-                    debug(TAG, "got delivery receipt for " + drIncoming.getId());
-                    boolean groupMessage = smackMessage.getType() == org.jivesoftware.smack.packet.Message.Type.groupchat;
-                    ChatSession session = findOrCreateSession(address, groupMessage);
-
-                    if (session != null)
-                        session.onMessageReceipt(drIncoming.getId());
-
-                }
-
-                if (body != null) {
-                    XmppAddress aFrom = new XmppAddress(smackMessage.getFrom());
-                    XmppAddress aTo = new XmppAddress(smackMessage.getTo());
-
-                    boolean isGroupMessage = smackMessage.getType() == org.jivesoftware.smack.packet.Message.Type.groupchat;
-
-                    ChatSession session = findOrCreateSession(address, isGroupMessage);
-
-                    if (session != null) {
-
-                        Message rec = new Message(body);
-
-                        rec.setTo(aTo);
-                        rec.setFrom(aFrom);
-                        rec.setDateTime(new Date());
-
-                        rec.setID(smackMessage.getStanzaId());
-
-                        rec.setType(Imps.MessageType.INCOMING);
-
-                        // Detect if this was said by us, and mark message as outgoing
-                        if (isGroupMessage && rec.getFrom().getResource().equals(rec.getTo().getUser())) {
-                            //rec.setType(Imps.MessageType.OUTGOING);
-                            Occupant oc = mChatGroupManager.getMultiUserChat(rec.getFrom().getBareAddress()).getOccupant(rec.getFrom().getAddress());
-                            if (oc != null && oc.getJid().equals(mUser.getAddress().getAddress()))
-                                return; //do nothing if it is from us
-                        }
-
-                        boolean good = session.onReceiveMessage(rec);
-
-                        if (smackMessage.getExtension("request", DeliveryReceipt.NAMESPACE) != null) {
-                            if (good) {
-                                debug(TAG, "sending delivery receipt");
-                                // got XEP-0184 request, send receipt
-                                sendReceipt(smackMessage);
-                                session.onReceiptsExpected(true);
-                            } else {
-                                debug(TAG, "not sending delivery receipt due to processing error");
-                            }
-
-                        }
-                        else
-                        {
-                            //no request for delivery receipt
-
-                            session.onReceiptsExpected(false);
-                        }
-                    }
-
-                }
             }
         }, new StanzaTypeFilter(org.jivesoftware.smack.packet.Message.class));
 
@@ -1784,6 +1696,98 @@ public class XmppConnection extends ImConnection {
         }
 
         return false;
+    }
+
+    private void handleMessage (org.jivesoftware.smack.packet.Message smackMessage)
+    {
+        String address = smackMessage.getFrom();
+        String body = smackMessage.getBody();
+
+        if (smackMessage.getError() != null) {
+            //  smackMessage.getError().getCode();
+
+            String error = "Error " + smackMessage.getError() + " (" + smackMessage.getError().getCondition() + "): " + smackMessage.getError().getConditionText();
+
+            debug(TAG, error);
+
+            return;
+
+        }
+
+
+        if (body == null) {
+
+            Collection<org.jivesoftware.smack.packet.Message.Body> mColl = smackMessage.getBodies();
+            for (org.jivesoftware.smack.packet.Message.Body bodyPart : mColl) {
+                String msg = bodyPart.getMessage();
+                if (msg != null) {
+                    body = msg;
+                    break;
+                }
+            }
+
+        }
+
+        DeliveryReceipt drIncoming = (DeliveryReceipt) smackMessage.getExtension("received", DeliveryReceipt.NAMESPACE);
+
+        if (drIncoming != null) {
+
+            debug(TAG, "got delivery receipt for " + drIncoming.getId());
+            boolean groupMessage = smackMessage.getType() == org.jivesoftware.smack.packet.Message.Type.groupchat;
+            ChatSession session = findOrCreateSession(address, groupMessage);
+
+            if (session != null)
+                session.onMessageReceipt(drIncoming.getId());
+
+        }
+
+        if (body != null) {
+            XmppAddress aFrom = new XmppAddress(smackMessage.getFrom());
+            XmppAddress aTo = new XmppAddress(smackMessage.getTo());
+
+            boolean isGroupMessage = smackMessage.getType() == org.jivesoftware.smack.packet.Message.Type.groupchat;
+
+            ChatSession session = findOrCreateSession(address, isGroupMessage);
+
+            if (session != null) {
+
+                Message rec = new Message(body);
+
+                rec.setTo(aTo);
+                rec.setFrom(aFrom);
+                rec.setDateTime(new Date());
+
+                rec.setID(smackMessage.getStanzaId());
+
+                rec.setType(Imps.MessageType.INCOMING);
+
+                // Detect if this was said by us, and mark message as outgoing
+                if (isGroupMessage && rec.getFrom().getResource().equals(rec.getTo().getUser())) {
+                    //rec.setType(Imps.MessageType.OUTGOING);
+                    Occupant oc = mChatGroupManager.getMultiUserChat(rec.getFrom().getBareAddress()).getOccupant(rec.getFrom().getAddress());
+                    if (oc != null && oc.getJid().equals(mUser.getAddress().getAddress()))
+                        return; //do nothing if it is from us
+                }
+
+                boolean good = session.onReceiveMessage(rec);
+
+                if (smackMessage.getExtension("request", DeliveryReceipt.NAMESPACE) != null) {
+                    if (good) {
+                        debug(TAG, "sending delivery receipt");
+                        // got XEP-0184 request, send receipt
+                        sendReceipt(smackMessage);
+                        session.onReceiptsExpected(true);
+                    } else {
+                        debug(TAG, "not sending delivery receipt due to processing error");
+                    }
+
+                } else {
+                    //no request for delivery receipt
+
+                    session.onReceiptsExpected(false);
+                }
+            }
+        }
     }
 
     private void sendPresencePacket() {        
@@ -2004,7 +2008,7 @@ public class XmppConnection extends ImConnection {
         @Override
         public void sendMessageAsync(ChatSession session, Message message) {
 
-            MultiUserChat muc = ((XmppChatGroupManager)getChatGroupManager()).getMultiUserChat(message.getTo().getBareAddress());
+            MultiUserChat muc = ((XmppChatGroupManager)getChatGroupManager()).getMultiUserChat(message.getTo().getAddress());
 
             org.jivesoftware.smack.packet.Message msgXmpp = null;
             
