@@ -18,10 +18,10 @@ allprojects {
     }
     project.ext {
         // these are common variables used in */build.gradle
-        buildToolsVersion="23.0.1"
+        buildToolsVersion="23.0.2"
         compileSdkVersion=23
         minSdkVersion=14
-        targetSdkVersion=22
+        targetSdkVersion=23
         appcompat='com.android.support:appcompat-v7:23.1.0'
     }
 }
