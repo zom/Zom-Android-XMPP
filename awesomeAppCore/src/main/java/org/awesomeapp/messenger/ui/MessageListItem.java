@@ -360,6 +360,8 @@ public class MessageListItem extends FrameLayout {
 
         }
 
+        if (isSelected())
+            mHolder.mContainer.setBackgroundColor(getResources().getColor(R.color.holo_blue_bright));
 
         if (lastMessage.length() > 0)
         {
@@ -785,6 +787,9 @@ public class MessageListItem extends FrameLayout {
             mHolder.mContainer.setBackgroundResource(R.drawable.message_view_rounded_light);
 
         }
+
+        if (isSelected())
+            mHolder.mContainer.setBackgroundColor(getResources().getColor(R.color.holo_blue_bright));
 
         if (date != null)
         {
