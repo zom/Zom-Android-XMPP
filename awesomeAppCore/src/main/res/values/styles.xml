@@ -107,19 +107,15 @@
    		<item name="contactTextPrimary">#333333</item>
          <item name="contactTextSecondary">#777777</item>
 
-        <!--
-    <item name="windowActionBar">true</item>
-
-
-       <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
-       <item name="windowActionModeOverlay">true</item>
-       -->
        <item name="attachIcon">@drawable/content_new_attachment_dark</item>
 
         <item name="actionBarTheme">@style/AppBaseTheme.Toolbar</item>
 
         <item name="actionModeStyle">@style/LStyled.ActionMode</item>
         <item name="actionMenuTextColor">@android:color/white</item>
+
+        <item name="windowActionModeOverlay">true</item>
+
     </style>
 
     <style name="LStyled.ActionMode" parent="@style/Widget.AppCompat.ActionMode">
@@ -159,7 +155,6 @@
     <!--   <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>-->
        <item name="windowActionModeOverlay">true</item>
               <item name="attachIcon">@drawable/content_new_attachment</item>
-       
     </style>
     <!--
     

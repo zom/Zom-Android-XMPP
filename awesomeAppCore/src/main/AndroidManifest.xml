@@ -4,7 +4,9 @@
     android:installLocation="auto"
     android:sharedUserLabel="@string/perm_label"
     android:versionCode="1500033"
-    android:versionName="15.0.0-alpha-33" >
+    android:versionName="15.0.0-alpha-33"
+    android:usesCleartextTraffic="false"
+    >
 
     <supports-screens
         android:anyDensity="true"
@@ -40,7 +42,6 @@
     <uses-feature
         android:name="android.hardware.wifi"
         android:required="false" />
-
     <permission
         android:name="org.awesomeapp.messenger.permission.IM_SERVICE"
         android:description="@string/perm_desc"
@@ -69,12 +70,10 @@
         <activity android:name="org.awesomeapp.messenger.RouterActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
                 <action android:name="info.guardianproject.panic.action.TRIGGER" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
             <intent-filter>
@@ -100,7 +99,6 @@
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
