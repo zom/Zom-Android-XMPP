@@ -92,7 +92,7 @@ public class GroupDisplayActivity extends Activity {
 
             try {
                 String inviteLink = OnboardingManager.generateInviteLink(this, mAddress, "");
-                new QrGenAsyncTask(this, iv).execute(inviteLink);
+                new QrGenAsyncTask(this, iv, ImApp.DEFAULT_AVATAR_WIDTH).execute(inviteLink);
             } catch (IOException ioe) {
                 Log.e(ImApp.LOG_TAG, "couldn't generate QR code", ioe);
             }

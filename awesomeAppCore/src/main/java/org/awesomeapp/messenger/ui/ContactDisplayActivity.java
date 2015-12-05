@@ -75,14 +75,14 @@ public class ContactDisplayActivity extends Activity {
 
             mRemoteFingerprint = session.getOtrChatSession(0).getRemoteFingerprint();
 
-            //String remoteFingerprint = OtrAndroidKeyManagerImpl.getInstance(this).getRemoteFingerprint(mUsername);
+            //String remoteFingerprint = OtrAndroidKeyManagerImpl.getInstance(this).getRemoteFingerprint(jabberId);
 
             if (mRemoteFingerprint != null) {
                 tv.setText(prettyPrintFingerprint(mRemoteFingerprint));
 
                 try {
                     String inviteLink = OnboardingManager.generateInviteLink(this, mUsername, mRemoteFingerprint);
-                    new QrGenAsyncTask(this, iv).execute(inviteLink);
+                    new QrGenAsyncTask(this, iv, 256).execute(inviteLink);
                 } catch (IOException ioe) {
                     Log.e(ImApp.LOG_TAG, "couldn't generate QR code", ioe);
                 }
