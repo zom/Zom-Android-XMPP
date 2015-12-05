@@ -60,6 +60,7 @@ android {
 
     lintOptions {
         disable 'MissingTranslation', 'LocaleFolder'
+        abortOnError false
     }
 
     // set timeouts to 10 minutes to prevent random failures
