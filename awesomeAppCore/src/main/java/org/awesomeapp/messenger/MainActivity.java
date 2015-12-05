@@ -224,10 +224,7 @@ public class MainActivity extends AppCompatActivity {
                 } else if (tabIdx == 2) {
                     startPhotoTaker();
                 }
-                else if (tabIdx == 3) {
-                    Intent i = new Intent(MainActivity.this, OnboardingActivity.class);
-                    startActivity(i);
-                }
+
 
 
             }
@@ -486,7 +483,11 @@ public class MainActivity extends AppCompatActivity {
 
             case R.id.menu_lock:
                 handleLock();
+                return true;
 
+            case R.id.menu_new_account:
+                Intent i = new Intent(MainActivity.this, OnboardingActivity.class);
+                startActivity(i);
                 return true;
         }
         return super.onOptionsItemSelected(item);
