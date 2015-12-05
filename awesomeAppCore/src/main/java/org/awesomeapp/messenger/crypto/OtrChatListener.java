@@ -30,7 +30,7 @@ public class OtrChatListener implements MessageListener {
     @Override
     public boolean onIncomingMessage(ChatSession session, Message msg) {
 
-  //      OtrDebugLogger.log("processing incoming message: " + msg.getID());
+        OtrDebugLogger.log("processing incoming message: " + msg.getID());
 
         boolean result = false;
 
@@ -46,51 +46,53 @@ public class OtrChatListener implements MessageListener {
         List<TLV> tlvs = new ArrayList<TLV>();
 
         try {
-            // No OTR for groups (yet)
-            if (!session.getParticipant().isGroup()) {
-                body = mOtrChatManager.decryptMessage(to, from, body, tlvs);
 
-                if (body != null)
-                    result = true;
-                else
-                    OtrDebugLogger.log("Decrypted incoming body was null (otrdata?)");
+            body = mOtrChatManager.decryptMessage(to, from, body, tlvs);
+
+            if (body != null)
+            {
+                result = true;
+                msg.setBody(body);
+                mMessageListener.onIncomingMessage(session, msg);
+            }
+            else {
+
+                OtrDebugLogger.log("Decrypted incoming body was null (otrdata?)");
 
             }
 
-            if (body != null) {
-                msg.setBody(body);
-                mMessageListener.onIncomingMessage(session, msg);
+            for (TLV tlv : tlvs) {
+                if (tlv.getType() == TLV_DATA_REQUEST) {
+                    OtrDebugLogger.log("Got a TLV Data Request: " + new String(tlv.getValue()));
+
+                    mMessageListener.onIncomingDataRequest(session, msg, tlv.getValue());
+                    result = true;
+
+                } else if (tlv.getType() == TLV_DATA_RESPONSE) {
+
+                    OtrDebugLogger.log("Got a TLV Data Response: " + new String(tlv.getValue()));
+
+                    mMessageListener.onIncomingDataResponse(session, msg, tlv.getValue());
+                    result = true;
+
+                }
             }
 
         } catch (OtrException oe) {
 
-            OtrDebugLogger.log("error decrypting message",oe);
+            OtrDebugLogger.log("error decrypting message from: " + from,oe);
 
-           // msg.setBody("[" + "You received an unreadable encrypted message" + "]");
-           // mMessageListener.onIncomingMessage(session, msg);
-        //   mOtrChatManager.injectMessage(sessionID, "[error please stop/start encryption]");
+            // msg.setBody("[" + "You received an unreadable encrypted message" + "]");
+            // mMessageListener.onIncomingMessage(session, msg);
+            //   mOtrChatManager.injectMessage(sessionID, "[error please stop/start encryption]");
 
         }
 
-        for (TLV tlv : tlvs) {
-            if (tlv.getType() == TLV_DATA_REQUEST) {
-                OtrDebugLogger.log("Got a TLV Data Request: " + new String(tlv.getValue()));
-
-                mMessageListener.onIncomingDataRequest(session, msg, tlv.getValue());
-                result = true;
-
-            } else if (tlv.getType() == TLV_DATA_RESPONSE) {
-
-                OtrDebugLogger.log("Got a TLV Data Response: " + new String(tlv.getValue()));
-
-                mMessageListener.onIncomingDataResponse(session, msg, tlv.getValue());
-                result = true;
-
-            }
-        }
 
         SessionStatus newStatus = mOtrChatManager.getSessionStatus(to, from);
         if (newStatus != otrStatus) {
+
+            OtrDebugLogger.log("OTR status changed from: " + otrStatus + " to " + newStatus);
             mMessageListener.onStatusChanged(session, newStatus);
         }
 

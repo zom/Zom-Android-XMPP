@@ -93,11 +93,22 @@ interface IChatSession {
      * Mark this chat session as read.
      */
     void markAsRead();   
-    
+
+    /**
+        * Get OTR Session Manager
+        */
+    IOtrChatSession getDefaultOtrChatSession();
+
     /**
     * Get OTR Session Manager
     */
-    IOtrChatSession getOtrChatSession();
+    IOtrChatSession getOtrChatSession(int idx);
+
+    /**
+        * Get OTR Session Manager
+        */
+    int getOtrChatSessionCount();
+
     
      /**
     * set class for handling incoming data transfers
@@ -107,7 +118,7 @@ interface IChatSession {
     /**
     * respond to incoming data request
     */
-    void setIncomingFileResponse (boolean acceptThis, boolean acceptAll);
+    void setIncomingFileResponse (String transferForm, boolean acceptThis, boolean acceptAll);
     
     /**
     * reinit chatsession if we are starting a new chat

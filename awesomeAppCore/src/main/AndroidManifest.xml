@@ -3,8 +3,10 @@
     package="info.guardianproject.otr.app.im"
     android:installLocation="auto"
     android:sharedUserLabel="@string/perm_label"
-    android:versionCode="1500032"
-    android:versionName="15.0.0-alpha-32" >
+    android:versionCode="1500033"
+    android:versionName="15.0.0-alpha-33"
+    android:usesCleartextTraffic="false"
+    >
 
     <supports-screens
         android:anyDensity="true"
@@ -40,7 +42,6 @@
     <uses-feature
         android:name="android.hardware.wifi"
         android:required="false" />
-
     <permission
         android:name="org.awesomeapp.messenger.permission.IM_SERVICE"
         android:description="@string/perm_desc"
@@ -69,12 +70,10 @@
         <activity android:name="org.awesomeapp.messenger.RouterActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
                 <action android:name="info.guardianproject.panic.action.TRIGGER" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
             <intent-filter>
@@ -100,7 +99,6 @@
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
@@ -351,7 +349,9 @@
         </activity>
         <activity
             android:name="org.awesomeapp.messenger.ui.onboarding.OnboardingActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize" >
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:launchMode="singleTask"
+            >
         </activity>
         <activity
             android:name="org.awesomeapp.messenger.ui.qr.QrScanActivity"
@@ -381,7 +381,7 @@
         <activity
             android:name="org.awesomeapp.messenger.MainActivity"
             android:exported="false"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:theme="@style/AppThemeNoAction" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -410,6 +410,7 @@
             android:name="org.awesomeapp.messenger.ui.ConversationDetailActivity"
             android:exported="false"
             android:theme="@style/AppThemeNoAction"
+            android:launchMode="singleTask"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
             android:name="org.awesomeapp.messenger.ui.ContactListActivity"

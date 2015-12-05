@@ -71,6 +71,9 @@
             android:layout_marginRight="28dp"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="?contactTextPrimary"
+            android:maxLines="3"
+            android:ellipsize="end"
+            android:paddingBottom="6dp"
             />
 
         <ImageView

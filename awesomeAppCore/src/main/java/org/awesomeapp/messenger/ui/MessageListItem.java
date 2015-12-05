@@ -266,8 +266,6 @@ public class MessageListItem extends FrameLayout {
     public void bindIncomingMessage(int id, int messageType, String address, String nickname, final String mimeType, final String body, Date date, Markup smileyRes,
             boolean scrolling, EncryptionState encryption, boolean showContact, int presenceStatus) {
 
-//        Log.d(ImApp.LOG_TAG,"message: " + body);
-
         mHolder = (MessageViewHolder)getTag();
 
         mHolder.mTextViewForMessages.setVisibility(View.VISIBLE);
@@ -279,12 +277,10 @@ public class MessageListItem extends FrameLayout {
         if (nickname == null)
             nickname = address;
 
-
         lastMessage = formatMessage(body);
         showAvatar(address, nickname, true, presenceStatus);
 
         mHolder.resetOnClickListenerMediaThumbnail();
-
 
         if( mimeType != null ) {
 
@@ -311,7 +307,7 @@ public class MessageListItem extends FrameLayout {
             }
 
         }
-        else if (lastMessage.charAt(0) == '/' && lastMessage.length()>1)
+        else if (lastMessage.length() > 1 && lastMessage.charAt(0) == '/')
         {
             boolean cmdSuccess = false;
 
@@ -364,6 +360,8 @@ public class MessageListItem extends FrameLayout {
 
         }
 
+        if (isSelected())
+            mHolder.mContainer.setBackgroundColor(getResources().getColor(R.color.holo_blue_bright));
 
         if (lastMessage.length() > 0)
         {
@@ -789,6 +787,9 @@ public class MessageListItem extends FrameLayout {
             mHolder.mContainer.setBackgroundResource(R.drawable.message_view_rounded_light);
 
         }
+
+        if (isSelected())
+            mHolder.mContainer.setBackgroundColor(getResources().getColor(R.color.holo_blue_bright));
 
         if (date != null)
         {

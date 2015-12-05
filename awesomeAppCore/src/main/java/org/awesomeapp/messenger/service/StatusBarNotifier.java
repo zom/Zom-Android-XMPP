@@ -23,7 +23,10 @@ import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.Preferences;
 import org.awesomeapp.messenger.RouterActivity;
 import org.awesomeapp.messenger.model.Contact;
+import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
 import org.awesomeapp.messenger.provider.Imps;
+import org.awesomeapp.messenger.ui.legacy.DatabaseUtils;
+import org.awesomeapp.messenger.ui.widgets.RoundedAvatarDrawable;
 import org.awesomeapp.messenger.util.SystemServices;
 
 import java.util.HashMap;
@@ -37,6 +40,9 @@ import android.app.PendingIntent;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -73,19 +79,26 @@ public class StatusBarNotifier {
         }
 
         msg = html2text(msg); // strip tags for html client inbound msgs
+        Bitmap avatar = null;
+
+
+        try { byte[] bdata = DatabaseUtils.getAvatarBytesFromAddress(mContext.getContentResolver(), XmppAddress.stripResource(username), ImApp.SMALL_AVATAR_WIDTH, ImApp.SMALL_AVATAR_HEIGHT);
+            avatar = BitmapFactory.decodeByteArray(bdata, 0, bdata.length);
+        }
+        catch (Exception e){}
 
         String title = nickname;
         String snippet = mContext.getString(R.string.new_messages_notify) + ' ' + nickname;// + ": " + msg;
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setDataAndType(ContentUris.withAppendedId(Imps.Chats.CONTENT_URI, chatId),Imps.Chats.CONTENT_ITEM_TYPE);
         intent.addCategory(ImApp.IMPS_CATEGORY);
-        notify(username, title, snippet, msg, providerId, accountId, intent, lightWeightNotify, R.drawable.ic_discuss);
+        notify(username, title, snippet, msg, providerId, accountId, intent, lightWeightNotify, R.drawable.ic_discuss, avatar);
     }
 
     public void notifyError(String username, String error) {
 
         Intent intent = new Intent(mContext, MainActivity.class);
-        notify(username, error, error, error, -1, -1, intent, true, R.drawable.ic_discuss);
+        notify(username, error, error, error, -1, -1, intent, true, R.drawable.alerts_and_states_error);
     }
 
     public void notifySubscriptionRequest(long providerId, long accountId, long contactId,
@@ -101,7 +114,7 @@ public class StatusBarNotifier {
                 ContentUris.withAppendedId(Imps.Contacts.CONTENT_URI, contactId));
         intent.putExtra(ImServiceConstants.EXTRA_INTENT_PROVIDER_ID, providerId);
         intent.putExtra(ImServiceConstants.EXTRA_INTENT_FROM_ADDRESS, username);
-        notify(username, title, message, message, providerId, accountId, intent, false, R.drawable.ic_discuss);
+        notify(username, title, message, message, providerId, accountId, intent, false, R.drawable.ic_people_white_24dp);
     }
 
     public void notifySubscriptionApproved(Contact contact, long providerId, long accountId) {
@@ -117,7 +130,7 @@ public class StatusBarNotifier {
         intent.putExtra(ImServiceConstants.EXTRA_INTENT_PROVIDER_ID, providerId);
         intent.putExtra(ImServiceConstants.EXTRA_INTENT_FROM_ADDRESS, contact.getAddress().getBareAddress());
 
-        notify(contact.getAddress().getBareAddress(), title, message, message, providerId, accountId, intent, false, R.drawable.ic_discuss);
+        notify(contact.getAddress().getBareAddress(), title, message, message, providerId, accountId, intent, false, R.drawable.ic_people_white_24dp);
     }
 
 
@@ -129,7 +142,7 @@ public class StatusBarNotifier {
 
         String title = mContext.getString(R.string.notify_groupchat_label);
         String message = mContext.getString(R.string.group_chat_invite_notify_text, username);
-        notify(username, title, message, message, providerId, accountId, intent, false, R.drawable.ic_discuss);
+        notify(username, title, message, message, providerId, accountId, intent, false, R.drawable.group_chat);
     }
 
     public void notifyLoggedIn(long providerId, long accountId) {
@@ -148,7 +161,7 @@ public class StatusBarNotifier {
 
         String title = mContext.getString(R.string.app_name);
         String message = mContext.getString(R.string.account_setup_pers_now_title);
-        notify(message, title, message, message, -1, -1, intent, true, R.drawable.ic_discuss);
+        notify(message, title, message, message, -1, -1, intent, true, R.drawable.ic_lock_outline_black_18dp);
 
 
     }
@@ -160,7 +173,7 @@ public class StatusBarNotifier {
 
         String title = mContext.getString(R.string.app_name);
         String message = mContext.getString(R.string.presence_offline);
-        notify(message, title, message, message, providerId, accountId, intent, false, R.drawable.ic_discuss);
+        notify(message, title, message, message, providerId, accountId, intent, false, R.drawable.alerts_and_states_error);
     }
 
 
@@ -210,7 +223,13 @@ public class StatusBarNotifier {
     }
 
     private void notify(String sender, String title, String tickerText, String message,
-            long providerId, long accountId, Intent intent, boolean lightWeightNotify, int icon) {
+                        long providerId, long accountId, Intent intent, boolean lightWeightNotify, int iconSmall) {
+
+        notify(sender,title,tickerText,message,providerId,accountId,intent,lightWeightNotify,iconSmall,null);
+    }
+
+        private void notify(String sender, String title, String tickerText, String message,
+                        long providerId, long accountId, Intent intent, boolean lightWeightNotify, int iconSmall, Bitmap iconLarge) {
 
         intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP|Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
@@ -222,14 +241,16 @@ public class StatusBarNotifier {
                 info = new NotificationInfo(providerId, accountId);
                 mNotificationInfos.put(sender, info);
             }
-            info.addItem(sender, title, message, intent);            
+            info.addItem(sender, title, message, intent);
         }
 
         mNotificationManager.notify(info.computeNotificationId(),
-                info.createNotification(tickerText, lightWeightNotify, icon));
+                info.createNotification(tickerText, lightWeightNotify, iconSmall, iconLarge));
 
-        
+
+
     }
+
 
     private void setRinger(long providerId, NotificationCompat.Builder builder) {
         Uri ringtoneUri = Preferences.getNotificationRingtoneUri();
@@ -303,7 +324,7 @@ public class StatusBarNotifier {
             return true;
         }
 
-        public Notification createNotification(String tickerText, boolean lightWeightNotify, int icon) {
+        public Notification createNotification(String tickerText, boolean lightWeightNotify, int icon, Bitmap largeIcon) {
             NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext);
 
             Intent intent = getDefaultIntent();
@@ -329,7 +350,9 @@ public class StatusBarNotifier {
                 .setContentText(getMessage())
                 .setContentIntent(PendingIntent.getActivity(mContext, UNIQUE_INT_PER_CALL++, intent, PendingIntent.FLAG_UPDATE_CURRENT))
                 .setAutoCancel(true);
-                
+
+            if (largeIcon != null)
+                builder.setLargeIcon(largeIcon);
 
             if (!(lightWeightNotify || shouldSuppressSoundNotification())) {
                 setRinger(mProviderId, builder);

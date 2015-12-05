@@ -3,6 +3,7 @@ package org.awesomeapp.messenger.crypto;
 // Originally: package com.zadov.beem;
 
 import org.awesomeapp.messenger.ImApp;
+import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
 import org.awesomeapp.messenger.ui.legacy.SmpResponseActivity;
 import org.awesomeapp.messenger.model.Contact;
 import org.awesomeapp.messenger.model.Message;
@@ -32,6 +33,7 @@ import net.java.otr4j.session.SessionStatus;
 import net.java.otr4j.session.TLV;
 import android.content.Context;
 import android.content.Intent;
+import android.os.RemoteException;
 import android.util.Log;
 
 /*
@@ -49,7 +51,7 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
 
     private Context mContext;
 
-    private OtrChatManager(int otrPolicy, RemoteImService imService, OtrKeyManager otrKeyManager) throws Exception {
+    private OtrChatManager(int otrPolicy, RemoteImService imService, OtrAndroidKeyManagerImpl otrKeyManager) throws Exception {
 
         mContext = (Context)imService;
 
@@ -67,7 +69,7 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
     }
 
 
-    public static synchronized OtrChatManager getInstance(int otrPolicy, RemoteImService imService, OtrKeyManager otrKeyManager)
+    public static synchronized OtrChatManager getInstance(int otrPolicy, RemoteImService imService, OtrAndroidKeyManagerImpl otrKeyManager)
             throws Exception {
         if (mInstance == null) {
             mInstance = new OtrChatManager(otrPolicy, imService,otrKeyManager);
@@ -132,10 +134,25 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
             return "UNKNOWN";
     }
 
+    private final static String SESSION_TYPE_XMPP = "XMPP";
+
     public SessionID getSessionId(String localUserId, String remoteUserId) {
 
-        SessionID sIdTemp = new SessionID(localUserId, remoteUserId, "XMPP");
+        //if (!remoteUserId.contains("/"))
+        //   Log.w(ImApp.LOG_TAG,"resource is not set: " + remoteUserId);
+
+       // boolean stripResource = !remoteUserId.startsWith("group");
+        //SessionID sIdTemp = new SessionID(localUserId, XmppAddress.stripResource(remoteUserId), SESSION_TYPE_XMPP);
+        SessionID sIdTemp = new SessionID(localUserId, remoteUserId, SESSION_TYPE_XMPP);
         SessionID sessionId = mSessions.get(sIdTemp.toString());
+
+        if (sessionId == null)
+        {
+            sIdTemp = new SessionID(localUserId, XmppAddress.stripResource(remoteUserId), SESSION_TYPE_XMPP);
+            sessionId = mSessions.get(sIdTemp.toString());
+            if (sessionId != null)
+                return sessionId;
+        }
 
         if (sessionId == null)
         {
@@ -148,7 +165,6 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
             // Remote has changed (either different presence, or from generic JID to specific presence),
             // Create or replace sessionId with one that is specific to the new presence.
 
-            //sessionId.updateRemoteUserId(remoteUserId);
             sessionId = sIdTemp;
             mSessions.put(sessionId.toString(), sessionId);
 
@@ -156,6 +172,7 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
                 Log.d(ImApp.LOG_TAG,"getting new otr session id: " + sessionId);
 
         }
+
         return sessionId;
     }
 
@@ -198,7 +215,10 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
      * @param localUserId i.e. the account of the user of this phone
      * @param remoteUserId i.e. the account that this user is talking to
      */
-    private SessionID startSession(String localUserId, String remoteUserId) {
+    private SessionID startSession(String localUserId, String remoteUserId) throws Exception {
+
+        if (!remoteUserId.contains("/"))
+            throw new Exception("can't start session without JabberID: " + localUserId);
 
         SessionID sessionId = getSessionId(localUserId, remoteUserId);
 
@@ -206,14 +226,12 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
 
             mOtrEngine.startSession(sessionId);
 
-
-
             return sessionId;
 
         } catch (OtrException e) {
             OtrDebugLogger.log("startSession", e);
 
-            showError(sessionId,"Unable to start OTR session: " + e.getLocalizedMessage());
+            showError(sessionId, "Unable to start OTR session: " + e.getLocalizedMessage());
 
         }
 
@@ -317,6 +335,7 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
                 OtrDebugLogger.log("auto-start OTR on data send request");
                 return false;
             }
+
             OtrDebugLogger.log("session status: " + sessionStatus);
 
             try {
@@ -329,7 +348,10 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
                 }
                 if (sessionStatus != SessionStatus.PLAINTEXT || sessionPolicy.getRequireEncryption()) {
                     body = mOtrEngine.transformSending(sessionId, body, isResponse, data);
-                    message.setTo(mOtrEngineHost.appendSessionResource(sessionId, message.getTo()));
+
+                    if (!message.getTo().getAddress().contains("/"))
+                        message.setTo(mOtrEngineHost.appendSessionResource(sessionId, message.getTo()));
+
                 } else if (sessionStatus == SessionStatus.PLAINTEXT && sessionPolicy.getAllowV2()
                            && sessionPolicy.getSendWhitespaceTag()) {
                     // Work around asmack not sending whitespace tag for auto discovery
@@ -383,8 +405,13 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
 
     }
 
-    public String getLocalKeyFingerprint(String localUserId, String remoteUserId) {
-        return mOtrEngineHost.getLocalKeyFingerprint(getSessionId(localUserId, remoteUserId));
+    public boolean hasRemoteKeyFingerprint (String userId)
+    {
+        return mOtrEngineHost.hasRemoteKeyFingerprintg(userId);
+    }
+
+    public String getLocalKeyFingerprint(String localUserId) {
+        return mOtrEngineHost.getLocalKeyFingerprint(localUserId);
     }
 
     @Override

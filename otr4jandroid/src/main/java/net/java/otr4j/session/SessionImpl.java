@@ -45,7 +45,7 @@ import android.util.Log;
 /** @author George Politis */
 public class SessionImpl implements Session {
 
-    private static final int MIN_SESSION_START_INTERVAL = 5000;
+    private static final int MIN_SESSION_START_INTERVAL = 10000;
     private SessionID sessionID;
     private OtrEngineHost host;
     private SessionStatus sessionStatus;
@@ -75,7 +75,7 @@ public class SessionImpl implements Session {
         // -> setSessionStatus() fires statusChangedEvent
         // -> client application calls OtrEngine.getSessionStatus()
         this.sessionStatus = SessionStatus.PLAINTEXT;
-	assembler = new OtrAssembler();
+	    assembler = new OtrAssembler();
     }
 
     @Override
@@ -553,7 +553,8 @@ public class SessionImpl implements Session {
                 // Display the message to the user, but warn him that the
                 // message was received unencrypted.
                 //showError("The message was received unencrypted.");
-                return "[WARNING UNENCRYPTED: " + plainTextMessage.cleanText + "]";
+                //return "[WARNING UNENCRYPTED: " + plainTextMessage.cleanText + "]";
+                return plainTextMessage.cleanText;
             case PLAINTEXT:
                 // Simply display the message to the user. If
                 // REQUIRE_ENCRYPTION

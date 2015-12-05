@@ -590,10 +590,30 @@ public class OtrAndroidKeyManagerImpl extends IOtrKeyManager.Stub implements Otr
         return getRemoteFingerprint(sessionID.getRemoteUserId());
     }
 
+    public boolean hasRemoteFingerprint (String userId)
+    {
+        Enumeration<Object> keys = store.getKeys();
+
+        while (keys.hasMoreElements())
+        {
+            String key = (String)keys.nextElement();
+
+            if (key.startsWith(userId))
+                return true;
+
+
+        }
+
+        return false;
+    }
+
     public String getRemoteFingerprint(String fullUserId) {
 
-        if (!Address.hasResource(fullUserId))
-          return null;
+        /**
+        if (!Address.hasResource(fullUserId)) {
+             return null;
+
+        }*/
 
         String fingerprint = this.store.getProperty(fullUserId + ".fingerprint");
         if (fingerprint != null) {
@@ -728,8 +748,8 @@ public class OtrAndroidKeyManagerImpl extends IOtrKeyManager.Stub implements Otr
 
     private PublicKey loadRemotePublicKeyFromStore(String fullUserId) {
 
-        if (!Address.hasResource(fullUserId))
-          return null;
+      //  if (!Address.hasResource(fullUserId))
+        //  return null;
 
         byte[] b64PubKey = this.store.getPropertyBytes(fullUserId + ".publicKey");
         if (b64PubKey == null) {
@@ -760,8 +780,8 @@ public class OtrAndroidKeyManagerImpl extends IOtrKeyManager.Stub implements Otr
 
         X509EncodedKeySpec x509EncodedKeySpec = new X509EncodedKeySpec(pubKey.getEncoded());
 
-        if (!Address.hasResource(sessionID.getRemoteUserId()))
-            return;
+      //  if (!Address.hasResource(sessionID.getRemoteUserId()))
+        //    return;
 
         String fullUserId = sessionID.getRemoteUserId();
 

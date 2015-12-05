@@ -38,8 +38,6 @@ public class ChatSession {
     private ImEntity mParticipant;
     private ChatSessionManager mManager;
 
-   // private OtrChatManager mOtrChatManager;
-
     private MessageListener mListener = null;
     private Vector<Message> mHistoryMessages;
     
@@ -48,7 +46,7 @@ public class ChatSession {
      * Creates a new ChatSession with a particular participant.
      *
      * @param participant the participant with who the user communicates.
-     * @param connection the underlying network connection.
+     * @param manager the underlying network connection.
      */
     ChatSession(ImEntity participant, ChatSessionManager manager) {
         mParticipant = participant;
@@ -63,15 +61,6 @@ public class ChatSession {
     public void setParticipant(ImEntity participant) {
         mParticipant = participant;
     }
-
-    /*
-    public void setOtrChatManager(OtrChatManager otrChatManager) {
-        mOtrChatManager = otrChatManager;
-    }
-
-    public OtrChatManager getOtrChatManager() {
-        return mOtrChatManager;
-    }*/
 
     /**
      * Adds a MessageListener so that it can be notified of any new message in
@@ -110,58 +99,57 @@ public class ChatSession {
      */
     public int sendMessageAsync(Message message) {
 
-        OtrChatManager cm = OtrChatManager.getInstance();
-        SessionID sId = cm.getSessionId(message.getFrom().getAddress(), mParticipant.getAddress().getAddress());
-        SessionStatus otrStatus = cm.getSessionStatus(sId);
+        if (mParticipant instanceof Contact) {
+            OtrChatManager cm = OtrChatManager.getInstance();
+            SessionID sId = cm.getSessionId(message.getFrom().getAddress(), mParticipant.getAddress().getAddress());
+            SessionStatus otrStatus = cm.getSessionStatus(sId);
 
-        message.setTo(new XmppAddress(sId.getRemoteUserId()));
-        
-        if (otrStatus == SessionStatus.ENCRYPTED)
-        {
-            boolean verified = cm.getKeyManager().isVerified(sId);
+            message.setTo(new XmppAddress(sId.getRemoteUserId()));
 
-            if (verified)
-            {
-                message.setType(Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED);
+            if (otrStatus == SessionStatus.ENCRYPTED) {
+                boolean verified = cm.getKeyManager().isVerified(sId);
+
+                if (verified) {
+                    message.setType(Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED);
+                } else {
+                    message.setType(Imps.MessageType.OUTGOING_ENCRYPTED);
+                }
+
+            } else if (otrStatus == SessionStatus.FINISHED) {
+                message.setType(Imps.MessageType.POSTPONED);
+                //  onSendMessageError(message, new ImErrorInfo(ImErrorInfo.INVALID_SESSION_CONTEXT,"error - session finished"));
+                return message.getType();
+            } else {
+                //not encrypted, send to all
+                message.setTo(new XmppAddress(XmppAddress.stripResource(sId.getRemoteUserId())));
+                message.setType(Imps.MessageType.OUTGOING);
             }
-            else
-            {
-                message.setType(Imps.MessageType.OUTGOING_ENCRYPTED);
+
+            mHistoryMessages.add(message);
+            boolean canSend = cm.transformSending(message);
+
+            if (canSend) {
+                mManager.sendMessageAsync(this, message);
+            } else {
+                //can't be sent due to OTR state
+                message.setType(Imps.MessageType.POSTPONED);
+
             }
 
-            
         }
-        else if (otrStatus == SessionStatus.FINISHED)
+        else if (mParticipant instanceof ChatGroup)
         {
-            message.setType(Imps.MessageType.POSTPONED);
-          //  onSendMessageError(message, new ImErrorInfo(ImErrorInfo.INVALID_SESSION_CONTEXT,"error - session finished"));
-            return message.getType();
-        }
-        else
-        {
-            //not encrypted, send to all
-            //message.setTo(new XmppAddress(XmppAddress.stripResource(sId.getRemoteUserId())));        
+
+            message.setTo(mParticipant.getAddress());
             message.setType(Imps.MessageType.OUTGOING);
-        }
-
-        mHistoryMessages.add(message);
-        boolean canSend = cm.transformSending(message);
-        
-        if (canSend)
-        {
+            mHistoryMessages.add(message);
             mManager.sendMessageAsync(this, message);
-        }
-        else
-        {
-            //can't be sent due to OTR state
-            message.setType(Imps.MessageType.POSTPONED);
-            
-        }
-        
-        return message.getType();
 
-        
-        
+
+
+        }
+
+        return message.getType();
     }
 
     /**
@@ -173,26 +161,33 @@ public class ChatSession {
     public void sendDataAsync(Message message, boolean isResponse, byte[] data) {
 
         OtrChatManager cm = OtrChatManager.getInstance();
-        SessionID sId = cm.getSessionId(message.getFrom().getAddress(),mParticipant.getAddress().getAddress());
+        sendDataAsync(cm, message, isResponse, data);
+
+
+    }
+
+    private void sendDataAsync (OtrChatManager cm, Message message, boolean isResponse, byte[] data)
+    {
+        SessionID sId = cm.getSessionId(message.getFrom().getAddress(),message.getTo().getAddress());
         SessionStatus otrStatus = cm.getSessionStatus(sId);
 
-        message.setTo(new XmppAddress(sId.getRemoteUserId()));
-
-        if (otrStatus == SessionStatus.ENCRYPTED) {
-            boolean verified = cm.getKeyManager().isVerified(sId);
-
-            if (verified) {
-                message.setType(Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED);
-            } else {
-                message.setType(Imps.MessageType.OUTGOING_ENCRYPTED);
-            }
-
-            boolean canSend = cm.transformSending(message, isResponse, data);
-
-            if (canSend)
-                mManager.sendMessageAsync(this, message);
-
+        if (otrStatus != SessionStatus.ENCRYPTED) {
+            cm.startSession(sId);
+            return; //the request is cached so it can be tried again once encryption is enabled
         }
+
+        boolean verified = cm.getKeyManager().isVerified(sId);
+
+        if (verified) {
+            message.setType(Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED);
+        } else {
+            message.setType(Imps.MessageType.OUTGOING_ENCRYPTED);
+        }
+
+        boolean canSend = cm.transformSending(message, isResponse, data);
+
+        if (canSend)
+            mManager.sendMessageAsync(this, message);
 
     }
 

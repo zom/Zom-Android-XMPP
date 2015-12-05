@@ -29,7 +29,7 @@ public class OtrEngineHostImpl implements OtrEngineHost {
 
     private OtrPolicy mPolicy;
 
-    private OtrKeyManager mOtrKeyManager;
+    private OtrAndroidKeyManagerImpl mOtrKeyManager;
 
     private Context mContext;
 
@@ -37,7 +37,7 @@ public class OtrEngineHostImpl implements OtrEngineHost {
 
     private RemoteImService mImService;
 
-    public OtrEngineHostImpl(OtrPolicy policy, Context context, OtrKeyManager otrKeyManager, RemoteImService imService) throws IOException {
+    public OtrEngineHostImpl(OtrPolicy policy, Context context, OtrAndroidKeyManagerImpl otrKeyManager, RemoteImService imService) throws IOException {
         mPolicy = policy;
         mContext = context;
 
@@ -66,7 +66,6 @@ public class OtrEngineHostImpl implements OtrEngineHost {
         else
             return to;
 
-        //return new XmppAddress(session.getRemoteUserId());
     }
 
     public ImConnectionAdapter findConnection(SessionID session) {
@@ -90,8 +89,17 @@ public class OtrEngineHostImpl implements OtrEngineHost {
         return mOtrKeyManager.getLocalFingerprint(sessionID);
     }
 
+    public String getLocalKeyFingerprint(String userId) {
+        return mOtrKeyManager.getLocalFingerprint(userId);
+    }
+
     public String getRemoteKeyFingerprint(SessionID sessionID) {
         return mOtrKeyManager.getRemoteFingerprint(sessionID);
+    }
+
+    public boolean hasRemoteKeyFingerprintg (String userid)
+    {
+        return mOtrKeyManager.hasRemoteFingerprint(userid);
     }
 
     public KeyPair getKeyPair(SessionID sessionID) {
@@ -122,7 +130,7 @@ public class OtrEngineHostImpl implements OtrEngineHost {
             ChatSessionManagerAdapter chatSessionManagerAdapter = (ChatSessionManagerAdapter) connection
                     .getChatSessionManager();
             ChatSessionAdapter chatSessionAdapter = (ChatSessionAdapter) chatSessionManagerAdapter
-                    .getChatSession(Address.stripResource(sessionID.getRemoteUserId()));
+                    .getChatSession(sessionID.getRemoteUserId());
 
             if (chatSessionAdapter != null)
             {
@@ -132,32 +140,19 @@ public class OtrEngineHostImpl implements OtrEngineHost {
                     body = ""; //don't allow null messages, only empty ones!
 
                 Message msg = new Message(body);
-
-             //   msg.setFrom(new XmppAddress(sessionID.getLocalUserId()));
-             //   final Address to = chatSessionAdapter.getAdaptee().getParticipant().getAddress();
-                
                 Address to = new XmppAddress(sessionID.getRemoteUserId());
-                
-                try
-                {
-                    //always send OTR messages to a resource
-                    SessionStatus chatStatus = SessionStatus.values()[chatSessionAdapter.getOtrChatSession().getChatStatus()];
-                    msg.setTo(appendSessionResource(sessionID, to));
+                msg.setTo(to);
 
+                if (!to.getAddress().contains("/")) {
+                    //always send OTR messages to a resource
+                    msg.setTo(appendSessionResource(sessionID, to));
                 }
-                catch (RemoteException e)
-                {
-                    msg.setTo(chatSessionAdapter.getAdaptee().getParticipant().getAddress());
-                }
-                //msg.setTo(to);
-               // msg.setDateTime(new Date());
 
                 // msg ID is set by plugin
                 chatSessionManagerAdapter.getChatSessionManager().sendMessageAsync(chatSessionAdapter.getAdaptee(), msg);
 
             }
-            else
-            {
+            else {
                 OtrDebugLogger.log(sessionID.toString() + ": could not find chatSession");
 
             }

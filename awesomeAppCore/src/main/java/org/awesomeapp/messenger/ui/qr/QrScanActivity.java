@@ -84,7 +84,7 @@ implements QrCodeDecoder.ResultCallback {
 		layoutMain.addView(qrCodeView);
 		setContentView(layoutMain);
 
-		new QrGenAsyncTask(this, qrCodeView).execute(qrData);
+		new QrGenAsyncTask(this, qrCodeView, display.getWidth()).execute(qrData);
 	}
 
 	@Override

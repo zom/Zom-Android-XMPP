@@ -25,6 +25,8 @@ import java.io.UnsupportedEncodingException;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -95,6 +97,11 @@ public class OtrDataHandler implements DataHandler {
     private IDataListener mDataListener;
     private SessionStatus mOtrStatus;
 
+    HashMap<String, Offer> offerCache = new HashMap<>();//CacheBuilder.newBuilder().maximumSize(100).build();
+    HashMap<String, Request> requestCache =  new HashMap<>();//CacheBuilder.newBuilder().maximumSize(100).build();
+    HashMap<String, Transfer> transferCache =  new HashMap<>();//CacheBuilder.newBuilder().maximumSize(100).build();
+
+
     public OtrDataHandler(ChatSession chatSession) {
         this.mChatSession = chatSession;
     }
@@ -110,9 +117,11 @@ public class OtrDataHandler implements DataHandler {
         }
     }
 
-    private void retryRequests() {
+    private synchronized void retryRequests() {
         // Resend all unfilled requests
-        for (Request request: requestCache.values()) {
+        Collection<Request> requests = new ArrayList<Request>(requestCache.values());
+
+        for (Request request: requests) {
             if (!request.isSeen())
                 sendRequest(request);
         }
@@ -195,24 +204,24 @@ public class OtrDataHandler implements DataHandler {
 
             if (!url.startsWith(URI_PREFIX_OTR_IN_BAND)) {
                 debug("Unknown url scheme " + url);
-                sendResponse(requestUs, 400, "Unknown scheme", uid, EMPTY_BODY);
+                sendResponse(requestUs, requestThem, 400, "Unknown scheme", uid, EMPTY_BODY);
                 return;
             }
 
             if (!req.containsHeader("File-Length"))
             {
-                sendResponse(requestUs, 400, "File-Length must be supplied", uid, EMPTY_BODY);
+                sendResponse(requestUs, requestThem, 400, "File-Length must be supplied", uid, EMPTY_BODY);
                 return;
             }
 
             int length = Integer.parseInt(req.getFirstHeader("File-Length").getValue());
             if (!req.containsHeader("File-Hash-SHA1"))
             {
-                sendResponse(requestUs, 400, "File-Hash-SHA1 must be supplied", uid, EMPTY_BODY);
+                sendResponse(requestUs, requestThem, 400, "File-Hash-SHA1 must be supplied", uid, EMPTY_BODY);
                 return;
             }
 
-            sendResponse(requestUs, 200, "OK", uid, EMPTY_BODY);
+            sendResponse(requestUs, requestThem, 200, "OK", uid, EMPTY_BODY);
 
             String sum = req.getFirstHeader("File-Hash-SHA1").getValue();
             String type = null;
@@ -224,7 +233,7 @@ public class OtrDataHandler implements DataHandler {
 
             Transfer transfer;
             try {
-                transfer = new VfsTransfer(url, type, length, requestUs, sum);
+                transfer = new VfsTransfer(url, type, length, requestUs, requestThem, sum);
             } catch (IOException e) {
                 e.printStackTrace();
                 return;
@@ -259,7 +268,7 @@ public class OtrDataHandler implements DataHandler {
             try {
                 Offer offer = offerCache.get(url);
                 if (offer == null) {
-                    sendResponse(requestUs, 400, "No such offer made", uid, EMPTY_BODY);
+                    sendResponse(requestUs,  requestThem,400, "No such offer made", uid, EMPTY_BODY);
                     return;
                 }
 
@@ -267,27 +276,27 @@ public class OtrDataHandler implements DataHandler {
 
                 if (!req.containsHeader("Range"))
                 {
-                    sendResponse(requestUs, 400, "Range must start with bytes=", uid, EMPTY_BODY);
+                    sendResponse(requestUs, requestThem, 400, "Range must start with bytes=", uid, EMPTY_BODY);
                     return;
                 }
                 String rangeHeader = req.getFirstHeader("Range").getValue();
                 String[] spec = rangeHeader.split("=");
                 if (spec.length != 2 || !spec[0].equals("bytes"))
                 {
-                    sendResponse(requestUs, 400, "Range must start with bytes=", uid, EMPTY_BODY);
+                    sendResponse(requestUs, requestThem, 400, "Range must start with bytes=", uid, EMPTY_BODY);
                     return;
                 }
                 String[] startEnd = spec[1].split("-");
                 if (startEnd.length != 2)
                 {
-                    sendResponse(requestUs, 400, "Range must be START-END", uid, EMPTY_BODY);
+                    sendResponse(requestUs, requestThem, 400, "Range must be START-END", uid, EMPTY_BODY);
                     return;
                 }
 
                 int start = Integer.parseInt(startEnd[0]);
                 int end = Integer.parseInt(startEnd[1]);
                 if (end - start + 1 > MAX_CHUNK_LENGTH) {
-                    sendResponse(requestUs, 400, "Range must be at most " + MAX_CHUNK_LENGTH, uid, EMPTY_BODY);
+                    sendResponse(requestUs, requestThem, 400, "Range must be at most " + MAX_CHUNK_LENGTH, uid, EMPTY_BODY);
                     return;
                 }
 
@@ -330,32 +339,32 @@ public class OtrDataHandler implements DataHandler {
 
             } catch (UnsupportedEncodingException e) {
             //    throw new RuntimeException(e);
-                sendResponse(requestUs, 400, "Unsupported encoding", uid, EMPTY_BODY);
+                sendResponse(requestUs,  requestThem,400, "Unsupported encoding", uid, EMPTY_BODY);
                 return;
             } catch (IOException e) {
                 //throw new RuntimeException(e);
-                sendResponse(requestUs, 400, "IOException", uid, EMPTY_BODY);
+                sendResponse(requestUs,requestThem, 400,  "IOException", uid, EMPTY_BODY);
                 return;
             } catch (NumberFormatException e) {
-                sendResponse(requestUs, 400, "Range is not numeric", uid, EMPTY_BODY);
+                sendResponse(requestUs, requestThem,400,  "Range is not numeric", uid, EMPTY_BODY);
                 return;
             } catch (Exception e) {
-                sendResponse(requestUs, 500, "Unknown error", uid, EMPTY_BODY);
+                sendResponse(requestUs, requestThem,500,  "Unknown error", uid, EMPTY_BODY);
                 return;
             }
 
             byte[] body = byteBuffer.toByteArray();
          //   debug("Sent sha1 is " + sha1sum(body));
-            sendResponse(requestUs, 200, "OK", uid, body);
+            sendResponse(requestUs, requestThem, 200, "OK", uid, body);
 
 
         } else {
             debug("Unknown method / url " + requestMethod + " " + url);
-            sendResponse(requestUs, 400, "OK", uid, EMPTY_BODY);
+            sendResponse(requestUs, requestThem, 400, "OK", uid, EMPTY_BODY);
         }
     }
 
-    public void acceptTransfer (String url)
+    public void acceptTransfer (String url, String address)
     {
         Transfer transfer = transferCache.get(url);
         if (transfer != null)
@@ -398,7 +407,7 @@ public class OtrDataHandler implements DataHandler {
         }
     }
 
-    private void sendResponse(Address us, int code, String statusString, String uid, byte[] body) {
+    private void sendResponse(Address us, Address them, int code, String statusString, String uid, byte[] body) {
         MemorySessionOutputBuffer outBuf = new MemorySessionOutputBuffer();
         HttpMessageWriter writer = new HttpResponseWriter(outBuf, lineFormatter, params);
         HttpMessage response = new BasicHttpResponse(new BasicStatusLine(PROTOCOL_VERSION, code, statusString));
@@ -415,6 +424,7 @@ public class OtrDataHandler implements DataHandler {
         byte[] data = outBuf.getOutput();
         Message message = new Message("");
         message.setFrom(us);
+        message.setTo(them);
         debug("send response " + statusString + " for " + uid);
         mChatSession.sendDataAsync(message, true, data);
     }
@@ -477,7 +487,7 @@ public class OtrDataHandler implements DataHandler {
                             mDataListener.onTransferComplete(
                                     false,
                                     null,
-                                mChatSession.getParticipant().getAddress().getAddress(),
+                                to.getAddress(),
                                 transfer.url,
                                 transfer.type,
                                 vfsUri.toString());
@@ -486,14 +496,14 @@ public class OtrDataHandler implements DataHandler {
                             mDataListener.onTransferFailed(
                                     false,
                                     null,
-                                mChatSession.getParticipant().getAddress().getAddress(),
+                                    to.getAddress(),
                                 transfer.url,
                                 "checksum");
                         debug( "Wrong checksum for file");
                     }
                 } else {
                     if (mDataListener != null)
-                        mDataListener.onTransferProgress(true, null, mChatSession.getParticipant().getAddress().getAddress(), transfer.url,
+                        mDataListener.onTransferProgress(true, null, to.getAddress(), transfer.url,
                             ((float)transfer.chunksReceived) / transfer.chunks);
                     transfer.perform();
                     debug("Progress " + transfer.chunksReceived + " / " + transfer.chunks);
@@ -540,7 +550,7 @@ public class OtrDataHandler implements DataHandler {
     }*/
 
     @Override
-    public void offerData(String id, Address us, String localUri, Map<String, String> headers) throws IOException {
+    public void offerData(String id, Address us, Address them, String localUri, Map<String, String> headers) throws IOException {
 
         // TODO stash localUri and intended recipient
 
@@ -580,16 +590,16 @@ public class OtrDataHandler implements DataHandler {
 
         String[] paths = localUri.split("/");
         String url = URI_PREFIX_OTR_IN_BAND + SystemServices.sanitize(paths[paths.length - 1]);
-        Request request = new Request("OFFER", us, url, headers);
+        Request request = new Request("OFFER", us, them, url, headers);
         offerCache.put(url, new Offer(id, localUri, request));
         sendRequest(request);
 
     }
 
-    public Request performGetData(Address us, String url, Map<String, String> headers, int start, int end) {
+    public Request performGetData(Address us, Address them, String url, Map<String, String> headers, int start, int end) {
         String rangeSpec = "bytes=" + start + "-" + end;
         headers.put("Range", rangeSpec);
-        Request request = new Request("GET", us, url, start, end, headers, EMPTY_BODY);
+        Request request = new Request("GET", us, them, url, start, end, headers, EMPTY_BODY);
 
         sendRequest(request);
         return request;
@@ -621,22 +631,25 @@ public class OtrDataHandler implements DataHandler {
         public void seen() {
             request.seen();
         }
+
+        public boolean isSeen () { return request.isSeen(); }
     }
 
     static class Request {
 
-        public Request(String method, Address us, String url, int start, int end, Map<String, String> headers, byte[] body) {
+        public Request(String method, Address us, Address them, String url, int start, int end, Map<String, String> headers, byte[] body) {
             this.method = method;
             this.url = url;
             this.start = start;
             this.end = end;
             this.us = us;
+            this.them = them;
             this.headers = headers;
             this.body = body;
         }
 
-        public Request(String method, Address us, String url, Map<String, String> headers) {
-            this(method, us, url, -1, -1, headers, null);
+        public Request(String method, Address us, Address them, String url, Map<String, String> headers) {
+            this(method, us, them, url, -1, -1, headers, null);
         }
 
         public String method;
@@ -646,6 +659,7 @@ public class OtrDataHandler implements DataHandler {
         public byte[] data;
         public boolean seen = false;
         public Address us;
+        public Address them;
         public Map<String, String> headers;
         public byte[] body;
 
@@ -667,15 +681,17 @@ public class OtrDataHandler implements DataHandler {
         private int length = 0;
         private int current = 0;
         private Address us;
+        private Address them;
         protected Set<Request> outstanding;
         private byte[] buffer;
         protected String sum;
 
-        public Transfer(String url, String type, int length, Address us, String sum) {
+        public Transfer(String url, String type, int length, Address us, Address them, String sum) {
             this.url = url;
             this.type = type;
             this.length = length;
             this.us = us;
+            this.them = them;
             this.sum = sum;
 
             //Log.e(TAG, "url:"+url + " type:"+ type + " length:"+length) ;
@@ -702,7 +718,7 @@ public class OtrDataHandler implements DataHandler {
                     end = length - 1;
                 }
                 Map<String, String> headers = new HashMap<>();
-                Request request= performGetData(us, url, headers, current, end);
+                Request request= performGetData(us, them, url, headers, current, end);
                 outstanding.add(request);
                 current = end + 1;
             }
@@ -736,8 +752,8 @@ public class OtrDataHandler implements DataHandler {
         String localFilename;
         private RandomAccessFile raf;
 
-        public VfsTransfer(String url, String type, int length, Address us, String sum) throws FileNotFoundException {
-            super(url, type, length, us, sum);
+        public VfsTransfer(String url, String type, int length, Address us, Address them, String sum) throws FileNotFoundException {
+            super(url, type, length, us, them, sum);
         }
 
         @Override
@@ -813,10 +829,6 @@ public class OtrDataHandler implements DataHandler {
         }
     }
 
-    HashMap<String, Offer> offerCache = new HashMap<>();//CacheBuilder.newBuilder().maximumSize(100).build();
-    HashMap<String, Request> requestCache =  new HashMap<>();//CacheBuilder.newBuilder().maximumSize(100).build();
-    HashMap<String, Transfer> transferCache =  new HashMap<>();//CacheBuilder.newBuilder().maximumSize(100).build();
-
     private void sendRequest(Request request) {
         MemorySessionOutputBuffer outBuf = new MemorySessionOutputBuffer();
         HttpMessageWriter writer = new HttpRequestWriter(outBuf, lineFormatter, params);
@@ -841,6 +853,8 @@ public class OtrDataHandler implements DataHandler {
         byte[] data = outBuf.getOutput();
         Message message = new Message("");
         message.setFrom(request.us);
+        message.setTo(request.them);
+
         if (req.containsHeader("Range"))
             debug("send request " + request.method + " " + request.url + " " + req.getFirstHeader("Range"));
         else
@@ -898,6 +912,6 @@ public class OtrDataHandler implements DataHandler {
     private void debug (String msg)
     {
         if (Debug.DEBUG_ENABLED)
-            Log.d(ImApp.LOG_TAG,msg);
+            Log.d("OTRDATA",msg);
     }
 }

@@ -86,7 +86,7 @@
                 android:id="@+id/media_thumbnail"
                 android:layout_width="wrap_content"
                 android:layout_height="200dp"
-                android:scaleType="centerCrop"
+                android:scaleType="centerInside"
                 android:focusableInTouchMode="true"
                 />
             <LinearLayout

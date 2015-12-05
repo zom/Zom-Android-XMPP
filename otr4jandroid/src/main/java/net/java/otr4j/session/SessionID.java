@@ -19,10 +19,15 @@ public final class SessionID {
     public static final SessionID Empty = new SessionID(null, null, null);
 
     public SessionID(String localUserId, String remoteUserId, String protocolName) {
-       mLocalUserId = localUserId;
-       mRemoteUserId = remoteUserId;
-       mProtocolName = protocolName;
-       mSessionId = stripResource(mLocalUserId) + '_' + mProtocolName + '_' + stripResource(mRemoteUserId);
+//        public SessionID(String localUserId, String remoteUserId, String protocolName, boolean stripResource) {
+        mLocalUserId = localUserId;
+        mRemoteUserId = remoteUserId;
+        mProtocolName = protocolName;
+
+        //if (stripResource)
+        //    mSessionId = stripResource(mLocalUserId) + '_' + mProtocolName + '_' + stripResource(mRemoteUserId);
+        //else
+        mSessionId = stripResource(mLocalUserId) + '_' + mProtocolName + '_' + mRemoteUserId;
     }
 
     public String getLocalUserId ()
@@ -40,10 +45,7 @@ public final class SessionID {
         return mProtocolName;
     }
 
-    public String toString() {
-        return mSessionId;
-
-    }
+    public String toString() { return mSessionId; }
 
     public boolean equals(Object obj) {
 
@@ -61,7 +63,7 @@ public final class SessionID {
         return this.toString().hashCode();
     }
 
-    static public String stripResource(String address) {
+    static private String stripResource(String address) {
         if (TextUtils.isEmpty(address))
             return "null";
         else if (address.contains("/"))

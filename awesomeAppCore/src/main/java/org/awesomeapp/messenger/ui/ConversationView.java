@@ -56,9 +56,13 @@ import android.text.TextWatcher;
 import android.text.style.StyleSpan;
 import android.text.style.URLSpan;
 import android.util.Log;
+import android.view.ActionMode;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -80,6 +84,7 @@ import net.java.otr4j.session.SessionStatus;
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.Preferences;
 import org.awesomeapp.messenger.crypto.IOtrChatSession;
+import org.awesomeapp.messenger.crypto.OtrAndroidKeyManagerImpl;
 import org.awesomeapp.messenger.model.Address;
 import org.awesomeapp.messenger.model.Contact;
 import org.awesomeapp.messenger.model.ImConnection;
@@ -216,15 +221,18 @@ public class ConversationView {
                     if (mCurrentChatSession == null)
                         return;
 
-                    IOtrChatSession otrChatSession = mCurrentChatSession.getOtrChatSession();
+                    IOtrChatSession otrChatSession = mCurrentChatSession.getDefaultOtrChatSession();
 
-                    if (otrChatSession != null)
+                    if (otrChatSession != null && (!isGroupChat()))
                     {
                         String remoteJID = otrChatSession.getRemoteUserId();
                         
-                        boolean isChatSecure = (remoteJID != null && (remoteJID.toLowerCase().contains("chatsecure")||remoteJID.toLowerCase().contains("zom")));
-                            
-                        if (otrPolicyAuto && isChatSecure) //if set to auto, and is chatsecure, then start encryption
+                        boolean doOtr = (remoteJID != null && (remoteJID.toLowerCase().contains("chatsecure")||remoteJID.toLowerCase().contains("zom")));
+
+                        if (!doOtr)
+                            doOtr = OtrAndroidKeyManagerImpl.getInstance(mActivity).hasRemoteFingerprint(remoteJID);
+
+                        if (otrPolicyAuto && doOtr) //if set to auto, and is chatsecure, then start encryption
                         {
                                //automatically attempt to turn on OTR after 1 second
                                 mHandler.postDelayed(new Runnable (){
@@ -292,7 +300,7 @@ public class ConversationView {
 
             if (mCurrentChatSession != null)
             {
-                IOtrChatSession otrChatSession = mCurrentChatSession.getOtrChatSession();
+                IOtrChatSession otrChatSession = mCurrentChatSession.getDefaultOtrChatSession();
 
                 if (otrChatSession != null)
                 {
@@ -302,12 +310,10 @@ public class ConversationView {
                         otrChatSession.startChatEncryption();
                         mIsStartingOtr = true;
 
-                     //   Toast.makeText(getContext(),getResources().getString(R.string.starting_otr_chat), Toast.LENGTH_LONG).show();
                     }
                     else
                     {
                         otrChatSession.stopChatEncryption();
-                       // Toast.makeText(getContext(),getResources().getString(R.string.stopping_otr_chat), Toast.LENGTH_LONG).show();
 
                     }
 
@@ -487,7 +493,8 @@ public class ConversationView {
             message.getData().putString("file", file);
             message.getData().putInt("progress", percent);
 
-         //   scheduleRequery(FAST_QUERY_INTERVAL);
+            if (percent == 100)
+                scheduleRequery(FAST_QUERY_INTERVAL);
 
             mHandler.sendMessage(message);
 
@@ -513,7 +520,7 @@ public class ConversationView {
 
     };
 
-    private void showPromptForData (String transferFrom, String filePath)
+    private void showPromptForData (final String transferFrom, String filePath)
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
 
@@ -526,7 +533,7 @@ public class ConversationView {
             public void onClick(DialogInterface dialog, int which) {
 
                 try {
-                    mCurrentChatSession.setIncomingFileResponse(true, true);
+                    mCurrentChatSession.setIncomingFileResponse(transferFrom, true, true);
                 } catch (RemoteException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -541,7 +548,7 @@ public class ConversationView {
 
             public void onClick(DialogInterface dialog, int which) {
                 try {
-                    mCurrentChatSession.setIncomingFileResponse(true, false);
+                    mCurrentChatSession.setIncomingFileResponse(transferFrom, true, false);
                 } catch (RemoteException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -558,7 +565,7 @@ public class ConversationView {
             public void onClick(DialogInterface dialog, int which) {
 
                 try {
-                    mCurrentChatSession.setIncomingFileResponse(false, false);
+                    mCurrentChatSession.setIncomingFileResponse(transferFrom, false, false);
                 } catch (RemoteException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -937,9 +944,9 @@ public class ConversationView {
                     sendMessage();
                 else
                 {
-                    if (mLastSessionStatus == SessionStatus.PLAINTEXT)
-                        mSendButton.setImageResource(R.drawable.ic_send_holo_light);
-                    else if (mLastSessionStatus == SessionStatus.ENCRYPTED)
+                    mSendButton.setImageResource(R.drawable.ic_send_holo_light);
+
+                    if (mLastSessionStatus == SessionStatus.ENCRYPTED)
                         mSendButton.setImageResource(R.drawable.ic_send_secure);
 
                     mSendButton.setVisibility(View.GONE);
@@ -1037,11 +1044,6 @@ public class ConversationView {
         unregisterForConnEvents();
         mIsListening = false;
     }
-
-    public void unbind() {
-        stopListening();
-    }
-
 
     void updateChat() {
         setViewType(VIEW_TYPE_CHAT);
@@ -1476,7 +1478,7 @@ public class ConversationView {
     {
         try
         {
-            IOtrChatSession otrChatSession = mCurrentChatSession.getOtrChatSession();
+            IOtrChatSession otrChatSession = mCurrentChatSession.getDefaultOtrChatSession();
 
             if (scannedFingerprint != null && scannedFingerprint.equalsIgnoreCase(otrChatSession.getRemoteFingerprint())) {
                 verifyRemoteFingerprint();
@@ -1590,7 +1592,7 @@ public class ConversationView {
 
             if (mCurrentChatSession != null)
             {
-                IOtrChatSession iOtrSession = mCurrentChatSession.getOtrChatSession();
+                IOtrChatSession iOtrSession = mCurrentChatSession.getDefaultOtrChatSession();
                 iOtrSession.initSmpVerification(question, answer);
             }
 
@@ -1605,7 +1607,7 @@ public class ConversationView {
 
         try {
 
-            IOtrChatSession otrChatSession = mCurrentChatSession.getOtrChatSession();
+            IOtrChatSession otrChatSession = mCurrentChatSession.getDefaultOtrChatSession();
             otrChatSession.verifyKey(otrChatSession.getRemoteUserId());
 
 
@@ -1863,17 +1865,6 @@ public class ConversationView {
 
         if (this.isGroupChat())
         {
-            //anything to do here?
-            /*
-            visibility = View.VISIBLE;
-            message = getContext().getString(R.string.this_is_a_group_chat);
-            mWarningText.setTextColor(Color.WHITE);
-            mStatusWarningView.setBackgroundColor(Color.LTGRAY);
-            */
-
-           // mButtonAttach.setVisibility(View.GONE);
-
-            mSendButton.setImageResource(R.drawable.ic_send_holo_light);
 
             mComposeMessage.setHint(R.string.this_is_a_group_chat);
 
@@ -1883,7 +1874,7 @@ public class ConversationView {
             IOtrChatSession otrChatSession = null;
 
             try {
-                otrChatSession = mCurrentChatSession.getOtrChatSession();
+                otrChatSession = mCurrentChatSession.getOtrChatSession(0);
 
                 //check if the chat is otr or not
                 if (otrChatSession != null) {
@@ -1954,17 +1945,6 @@ public class ConversationView {
 
         }
 
-        if (!isConnected)
-        {
-          //  visibility = View.VISIBLE;
-         //   iconVisibility = View.VISIBLE;
-           // mWarningText.setTextColor(Color.WHITE);
-           // mStatusWarningView.setBackgroundColor(Color.DKGRAY);
-           // message = mContext.getString(R.string.disconnected_warning);
-         //     mComposeMessage.setHint(R.string.error_suspended_connection);
-
-        }
-
         mStatusWarningView.setVisibility(visibility);
 
         if (visibility == View.VISIBLE) {
@@ -1978,8 +1958,6 @@ public class ConversationView {
                 mWarningText.setVisibility(View.GONE);
             }
         }
-
-//        mNewChatActivity.updateEncryptionMenuState();
 
     }
 
@@ -2050,6 +2028,11 @@ public class ConversationView {
             if (mComposeMessage.getText().length() > 0 && mSendButton.getVisibility() == View.GONE) {
                 mMicButton.setVisibility(View.GONE);
                 mSendButton.setVisibility(View.VISIBLE);
+                mSendButton.setImageResource(R.drawable.ic_send_holo_light);
+
+                if (mLastSessionStatus == SessionStatus.ENCRYPTED)
+                    mSendButton.setImageResource(R.drawable.ic_send_secure);
+
 
             } else if (mComposeMessage.getText().length() == 0) {
                 mMicButton.setVisibility(View.VISIBLE);
@@ -2426,6 +2409,10 @@ public class ConversationView {
         private int mMimeTypeColumn;
         private int mIdColumn;
 
+
+        private ActionMode mActionMode;
+        private View mLastSelectedView;
+
         public ConversationRecyclerViewAdapter(Activity context, Cursor c) {
             super(context, c);
             if (c != null) {
@@ -2514,6 +2501,20 @@ public class ConversationView {
                 view = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.message_view_right, parent, false);
 
+            view.setOnLongClickListener(new View.OnLongClickListener() {
+                // Called when the user long-clicks on someView
+                public boolean onLongClick(View view) {
+                    if (mActionMode != null) {
+                        return false;
+                    }
+
+                    // Start the CAB using the ActionMode.Callback defined above
+                    mActionMode = ((Activity) mContext).startActionMode(mActionModeCallback);
+                    view.setSelected(true);
+                    mLastSelectedView = view;
+                    return true;
+                }
+            });
             return new ViewHolder(view);
         }
 
@@ -2651,6 +2652,52 @@ public class ConversationView {
             mNeedRequeryCursor = requeryCursor;
         }
 
+        ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
+
+            // Called when the action mode is created; startActionMode() was called
+            @Override
+            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                // Inflate a menu resource providing context menu items
+                MenuInflater inflater = mode.getMenuInflater();
+                inflater.inflate(R.menu.menu_message_context, menu);
+                return true;
+            }
+
+            // Called each time the action mode is shown. Always called after onCreateActionMode, but
+            // may be called multiple times if the mode is invalidated.
+            @Override
+            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                return false; // Return false if nothing is done
+            }
+
+            // Called when the user selects a contextual menu item
+            @Override
+            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+
+                switch (item.getItemId()) {
+                    case R.id.menu_message_delete:
+                        //shareCurrentItem();
+                        mode.finish(); // Action picked, so close the CAB
+                        return true;
+                    default:
+                        return false;
+                }
+
+
+            }
+
+            // Called when the user exits the action mode
+            @Override
+            public void onDestroyActionMode(ActionMode mode) {
+                mActionMode = null;
+
+
+                if (mLastSelectedView != null)
+                    mLastSelectedView.setSelected(false);
+
+
+            }
+        };
     }
 
     public Cursor getMessageAtPosition(int position) {

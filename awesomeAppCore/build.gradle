@@ -14,12 +14,13 @@ apply plugin: 'com.android.application'
 apply plugin: 'witness'
 
 android {
+
     compileSdkVersion project.ext.compileSdkVersion
     buildToolsVersion project.ext.buildToolsVersion
 
     dexOptions {
         jumboMode true
-        incremental true
+        incremental false
         javaMaxHeapSize "2g"
         preDexLibraries false
     }
@@ -59,6 +60,7 @@ android {
 
     lintOptions {
         disable 'MissingTranslation', 'LocaleFolder'
+        abortOnError false
     }
 
     // set timeouts to 10 minutes to prevent random failures
@@ -66,9 +68,6 @@ android {
     adbOptions {
         timeOutInMs 600000
     }
-
-    // where to find the native binaries, e.g. for sqlcipher
-    sourceSets.main.jniLibs.srcDirs 'libs'
 
     dependencyVerification {
         verify = [
@@ -136,5 +135,4 @@ dependencies {
     compile 'org.thoughtcrime.ssl.pinning:AndroidPinning:1.0.0'
     compile 'com.github.ge0rg:MemorizingTrustManager:9e30ffdf7d'
     compile 'xyz.danoz:recyclerviewfastscroller:0.1.3'
-
 }

@@ -214,7 +214,7 @@ public class AccountFragment extends Fragment {
 
             try {
                 String inviteLink = OnboardingManager.generateInviteLink(getActivity(), fullUserName, mApp.getDefaultOtrKey());
-                new QrGenAsyncTask(getActivity(), ivScan).execute(inviteLink);
+                new QrGenAsyncTask(getActivity(), ivScan,ImApp.DEFAULT_AVATAR_WIDTH).execute(inviteLink);
             } catch (IOException ioe) {
                 Log.e(ImApp.LOG_TAG, "couldn't generate QR code", ioe);
             }

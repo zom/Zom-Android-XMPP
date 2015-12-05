@@ -160,8 +160,15 @@ public class SecureMediaStore {
         VirtualFileSystem vfs = VirtualFileSystem.get();
 
         if (vfs.isMounted()) {
-            Log.w(TAG, "VFS " + vfs.getContainerPath() + " is already mounted, skipping init()");
-            return;
+            Log.w(TAG, "VFS " + vfs.getContainerPath() + " is already mounted, so unmount()");
+            try
+            {
+                vfs.unmount();
+            }
+            catch (Exception e)
+            {
+                Log.w(TAG, "VFS " + vfs.getContainerPath() + " issues with unmounting: " + e.getMessage());
+            }
         }
 
         Log.w(TAG,"Mounting VFS: " + vfs.getContainerPath());
@@ -171,7 +178,14 @@ public class SecureMediaStore {
         if (!new java.io.File(dbFilePath).exists()) {
             vfs.createNewContainer(dbFilePath, key);
         }
-        vfs.mount(dbFilePath, key);
+
+        try {
+            vfs.mount(dbFilePath, key);
+        }
+        catch (Exception e)
+        {
+            Log.w(TAG, "VFS " + vfs.getContainerPath() + " issues with mounting: " + e.getMessage());
+        }
 
     }
 

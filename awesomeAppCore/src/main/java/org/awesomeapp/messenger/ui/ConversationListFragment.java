@@ -34,7 +34,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.TypedValue;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -184,6 +188,7 @@ public class ConversationListFragment extends Fragment {
             ConversationListItem view = (ConversationListItem)LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.conversation_view, parent, false);
             view.setBackgroundResource(mBackground);
+
             return new ViewHolder(view);
         }
 
@@ -211,6 +216,8 @@ public class ConversationListFragment extends Fragment {
 
 
         }
+
+
 
     }
 
@@ -294,4 +301,6 @@ public class ConversationListFragment extends Fragment {
 
 
     }
+
+
 }

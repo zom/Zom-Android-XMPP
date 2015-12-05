@@ -21,10 +21,12 @@ public class QrGenAsyncTask extends AsyncTask<String, Void, Void> {
     private final Activity activity;
     private ImageView view;
     private Bitmap qrBitmap;
+    private int qrCodeDimension;
 
-    public QrGenAsyncTask(Activity activity, ImageView view) {
+    public QrGenAsyncTask(Activity activity, ImageView view, int qrCodeDimension) {
         this.activity = activity;
         this.view = view;
+        this.qrCodeDimension = qrCodeDimension;
     }
 
     /*
@@ -36,12 +38,13 @@ public class QrGenAsyncTask extends AsyncTask<String, Void, Void> {
     @Override
     protected Void doInBackground(String... s) {
         String qrData = s[0];
-        Display display = activity.getWindowManager().getDefaultDisplay();
+        /*
+        //Display display = activity.getWindowManager().getDefaultDisplay();
+
         Point outSize = new Point();
         int x, y, qrCodeDimension;
-        /* lame, got to use both the new and old APIs here */
         if (Build.VERSION.SDK_INT >= 13) {
-            display.getSize(outSize);
+            view.getSize(outSize);
             x = outSize.x;
             y = outSize.y;
         } else {
@@ -52,7 +55,9 @@ public class QrGenAsyncTask extends AsyncTask<String, Void, Void> {
             qrCodeDimension = x;
         else
             qrCodeDimension = y;
-        Log.i(TAG, "generating QRCode Bitmap of " + qrCodeDimension + "x" + qrCodeDimension);
+        **/
+
+  //      Log.i(TAG, "generating QRCode Bitmap of " + qrCodeDimension + "x" + qrCodeDimension);
         QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(qrData, null,
                 Contents.Type.TEXT, BarcodeFormat.QR_CODE.toString(), qrCodeDimension);
 
