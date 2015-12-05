@@ -41,27 +41,31 @@ public class ChatSessionInitTask extends AsyncTask<String, Void, Boolean> {
 
                     IChatSession session = conn.getChatSessionManager().getChatSession(address);
 
-                    if (mContactType == Imps.Contacts.TYPE_GROUP) {
+                    //always need to recreate the MUC after login
+                    if (mContactType == Imps.Contacts.TYPE_GROUP)
                         session = conn.getChatSessionManager().createMultiUserChatSession(address, null, null, false);
-
-                    }
-
 
                     if (session != null && session.getDefaultOtrChatSession() != null && session.getDefaultOtrChatSession().isChatEncrypted()) {
                             //then do nothing
                         continue;
                     } else {
+
                         if (session == null)
-                            session = conn.getChatSessionManager().createChatSession(address, false);
+                            if (mContactType == Imps.Contacts.TYPE_GROUP)
+                                session = conn.getChatSessionManager().createMultiUserChatSession(address, null, null, false);
+                            else
+                                session = conn.getChatSessionManager().createChatSession(address, false);
 
-                        int sessionCount = session.getOtrChatSessionCount();
+                        if (session != null) {
+                            int sessionCount = session.getOtrChatSessionCount();
 
-                        for (int i = 0; i < sessionCount; i++)
-                        {
-                            IOtrChatSession otrChatSession = session.getOtrChatSession(i);
-                            if (otrChatSession != null)
-                                otrChatSession.startChatEncryption();
+                            for (int i = 0; i < sessionCount; i++) {
+                                IOtrChatSession otrChatSession = session.getOtrChatSession(i);
+                                if (otrChatSession != null)
+                                    otrChatSession.startChatEncryption();
+                            }
                         }
+
                     }
 
 
