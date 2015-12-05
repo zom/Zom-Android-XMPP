@@ -21,6 +21,11 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/menu_new_account"
+        android:icon="@drawable/ic_action_new"
+        android:title="@string/menu_new_account"
+        app:showAsAction="never"/>
+    <item
         android:id="@+id/menu_lock"
         android:icon="@drawable/ic_lock_outline_black_18dp"
         android:title="@string/lock_app"
