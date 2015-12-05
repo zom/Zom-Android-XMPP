@@ -110,7 +110,25 @@ public class OnboardingActivity extends ThemeableActivity {
         });
 
         setAnimLeft();
-        
+
+        ImageView imageLogo = (ImageView)findViewById(R.id.imageLogo);
+        imageLogo.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setAnimLeft();
+                showOnboarding();
+            }
+        });
+
+        Button btnStartOnboarding = (Button) findViewById(R.id.buttonStartOnboarding);
+        btnStartOnboarding.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setAnimLeft();
+                showOnboarding();
+            }
+        });
+
         Button btnShowCreate = (Button) findViewById(R.id.btnShowRegister);
         btnShowCreate.setOnClickListener(new OnClickListener() {
 
@@ -145,7 +163,7 @@ public class OnboardingActivity extends ThemeableActivity {
         });
 
         // set up language chooser button
-        ImageButton languageButton = (ImageButton) findViewById(R.id.languageButton);
+        View languageButton = findViewById(R.id.languageButton);
         languageButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -314,7 +332,7 @@ public class OnboardingActivity extends ThemeableActivity {
     @Override
     public void onBackPressed() {
         // Back button should bring us to the previous screen, unless we're on the first screen
-        if (mViewFlipper.getCurrentView().getId()==R.id.flipView1)
+        if (mViewFlipper.getCurrentView().getId()==R.id.flipViewMain)
         {
             super.onBackPressed();
         } else {
@@ -354,7 +372,13 @@ public class OnboardingActivity extends ThemeableActivity {
         getSupportActionBar().setTitle("");
         mViewFlipper.setDisplayedChild(0);
     }
-    
+
+    private void showOnboarding ()
+    {
+        mViewFlipper.showNext();
+    }
+
+
     private void showSetupScreen ()
     {
         
