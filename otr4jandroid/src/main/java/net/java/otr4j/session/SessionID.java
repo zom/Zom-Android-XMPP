@@ -19,14 +19,15 @@ public final class SessionID {
     public static final SessionID Empty = new SessionID(null, null, null);
 
     public SessionID(String localUserId, String remoteUserId, String protocolName) {
-       mLocalUserId = localUserId;
-       mRemoteUserId = remoteUserId;
-       mProtocolName = protocolName;
+//        public SessionID(String localUserId, String remoteUserId, String protocolName, boolean stripResource) {
+        mLocalUserId = localUserId;
+        mRemoteUserId = remoteUserId;
+        mProtocolName = protocolName;
 
-        if (mRemoteUserId != null && mRemoteUserId.startsWith("group"))
-            mSessionId = stripResource(mLocalUserId) + '_' + mProtocolName + '_' + mRemoteUserId;
-        else
-           mSessionId = stripResource(mLocalUserId) + '_' + mProtocolName + '_' + stripResource(mRemoteUserId);
+        //if (stripResource)
+        //    mSessionId = stripResource(mLocalUserId) + '_' + mProtocolName + '_' + stripResource(mRemoteUserId);
+        //else
+        mSessionId = stripResource(mLocalUserId) + '_' + mProtocolName + '_' + mRemoteUserId;
     }
 
     public String getLocalUserId ()

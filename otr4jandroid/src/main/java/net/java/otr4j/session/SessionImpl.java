@@ -75,7 +75,7 @@ public class SessionImpl implements Session {
         // -> setSessionStatus() fires statusChangedEvent
         // -> client application calls OtrEngine.getSessionStatus()
         this.sessionStatus = SessionStatus.PLAINTEXT;
-	assembler = new OtrAssembler();
+	    assembler = new OtrAssembler();
     }
 
     @Override
