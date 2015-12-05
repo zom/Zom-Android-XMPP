@@ -944,9 +944,9 @@ public class ConversationView {
                     sendMessage();
                 else
                 {
-                    if (mLastSessionStatus == SessionStatus.PLAINTEXT)
-                        mSendButton.setImageResource(R.drawable.ic_send_holo_light);
-                    else if (mLastSessionStatus == SessionStatus.ENCRYPTED)
+                    mSendButton.setImageResource(R.drawable.ic_send_holo_light);
+
+                    if (mLastSessionStatus == SessionStatus.ENCRYPTED)
                         mSendButton.setImageResource(R.drawable.ic_send_secure);
 
                     mSendButton.setVisibility(View.GONE);
@@ -2028,6 +2028,11 @@ public class ConversationView {
             if (mComposeMessage.getText().length() > 0 && mSendButton.getVisibility() == View.GONE) {
                 mMicButton.setVisibility(View.GONE);
                 mSendButton.setVisibility(View.VISIBLE);
+                mSendButton.setImageResource(R.drawable.ic_send_holo_light);
+
+                if (mLastSessionStatus == SessionStatus.ENCRYPTED)
+                    mSendButton.setImageResource(R.drawable.ic_send_secure);
+
 
             } else if (mComposeMessage.getText().length() == 0) {
                 mMicButton.setVisibility(View.VISIBLE);
