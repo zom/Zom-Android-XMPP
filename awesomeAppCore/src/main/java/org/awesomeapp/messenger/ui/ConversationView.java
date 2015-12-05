@@ -493,7 +493,8 @@ public class ConversationView {
             message.getData().putString("file", file);
             message.getData().putInt("progress", percent);
 
-         //   scheduleRequery(FAST_QUERY_INTERVAL);
+            if (percent == 100)
+                scheduleRequery(FAST_QUERY_INTERVAL);
 
             mHandler.sendMessage(message);
 
@@ -519,7 +520,7 @@ public class ConversationView {
 
     };
 
-    private void showPromptForData (String transferFrom, String filePath)
+    private void showPromptForData (final String transferFrom, String filePath)
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
 
@@ -532,7 +533,7 @@ public class ConversationView {
             public void onClick(DialogInterface dialog, int which) {
 
                 try {
-                    mCurrentChatSession.setIncomingFileResponse(true, true);
+                    mCurrentChatSession.setIncomingFileResponse(transferFrom, true, true);
                 } catch (RemoteException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -547,7 +548,7 @@ public class ConversationView {
 
             public void onClick(DialogInterface dialog, int which) {
                 try {
-                    mCurrentChatSession.setIncomingFileResponse(true, false);
+                    mCurrentChatSession.setIncomingFileResponse(transferFrom, true, false);
                 } catch (RemoteException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -564,7 +565,7 @@ public class ConversationView {
             public void onClick(DialogInterface dialog, int which) {
 
                 try {
-                    mCurrentChatSession.setIncomingFileResponse(false, false);
+                    mCurrentChatSession.setIncomingFileResponse(transferFrom, false, false);
                 } catch (RemoteException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -1864,17 +1865,6 @@ public class ConversationView {
 
         if (this.isGroupChat())
         {
-            //anything to do here?
-            /*
-            visibility = View.VISIBLE;
-            message = getContext().getString(R.string.this_is_a_group_chat);
-            mWarningText.setTextColor(Color.WHITE);
-            mStatusWarningView.setBackgroundColor(Color.LTGRAY);
-            */
-
-           // mButtonAttach.setVisibility(View.GONE);
-
-            mSendButton.setImageResource(R.drawable.ic_send_holo_light);
 
             mComposeMessage.setHint(R.string.this_is_a_group_chat);
 
@@ -1955,17 +1945,6 @@ public class ConversationView {
 
         }
 
-        if (!isConnected)
-        {
-          //  visibility = View.VISIBLE;
-         //   iconVisibility = View.VISIBLE;
-           // mWarningText.setTextColor(Color.WHITE);
-           // mStatusWarningView.setBackgroundColor(Color.DKGRAY);
-           // message = mContext.getString(R.string.disconnected_warning);
-         //     mComposeMessage.setHint(R.string.error_suspended_connection);
-
-        }
-
         mStatusWarningView.setVisibility(visibility);
 
         if (visibility == View.VISIBLE) {
@@ -1979,8 +1958,6 @@ public class ConversationView {
                 mWarningText.setVisibility(View.GONE);
             }
         }
-
-//        mNewChatActivity.updateEncryptionMenuState();
 
     }
 
@@ -2429,6 +2406,7 @@ public class ConversationView {
 
 
         private ActionMode mActionMode;
+        private View mLastSelectedView;
 
         public ConversationRecyclerViewAdapter(Activity context, Cursor c) {
             super(context, c);
@@ -2528,6 +2506,7 @@ public class ConversationView {
                     // Start the CAB using the ActionMode.Callback defined above
                     mActionMode = ((Activity) mContext).startActionMode(mActionModeCallback);
                     view.setSelected(true);
+                    mLastSelectedView = view;
                     return true;
                 }
             });
@@ -2689,6 +2668,7 @@ public class ConversationView {
             // Called when the user selects a contextual menu item
             @Override
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+
                 switch (item.getItemId()) {
                     case R.id.menu_message_delete:
                         //shareCurrentItem();
@@ -2697,12 +2677,20 @@ public class ConversationView {
                     default:
                         return false;
                 }
+
+
             }
 
             // Called when the user exits the action mode
             @Override
             public void onDestroyActionMode(ActionMode mode) {
                 mActionMode = null;
+
+
+                if (mLastSelectedView != null)
+                    mLastSelectedView.setSelected(false);
+
+
             }
         };
     }
