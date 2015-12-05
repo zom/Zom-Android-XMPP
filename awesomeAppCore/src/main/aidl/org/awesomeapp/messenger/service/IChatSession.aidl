@@ -118,7 +118,7 @@ interface IChatSession {
     /**
     * respond to incoming data request
     */
-    void setIncomingFileResponse (boolean acceptThis, boolean acceptAll);
+    void setIncomingFileResponse (String transferForm, boolean acceptThis, boolean acceptAll);
     
     /**
     * reinit chatsession if we are starting a new chat

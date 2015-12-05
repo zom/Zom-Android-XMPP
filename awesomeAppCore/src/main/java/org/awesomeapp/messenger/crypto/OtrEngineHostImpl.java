@@ -89,6 +89,10 @@ public class OtrEngineHostImpl implements OtrEngineHost {
         return mOtrKeyManager.getLocalFingerprint(sessionID);
     }
 
+    public String getLocalKeyFingerprint(String userId) {
+        return mOtrKeyManager.getLocalFingerprint(userId);
+    }
+
     public String getRemoteKeyFingerprint(SessionID sessionID) {
         return mOtrKeyManager.getRemoteFingerprint(sessionID);
     }
@@ -137,10 +141,12 @@ public class OtrEngineHostImpl implements OtrEngineHost {
 
                 Message msg = new Message(body);
                 Address to = new XmppAddress(sessionID.getRemoteUserId());
+                msg.setTo(to);
 
-                //always send OTR messages to a resource
-                 //   SessionStatus chatStatus = SessionStatus.values()[chatSessionAdapter.getDefaultOtrChatSession().getChatStatus()];
-                msg.setTo(appendSessionResource(sessionID, to));
+                if (!to.getAddress().contains("/")) {
+                    //always send OTR messages to a resource
+                    msg.setTo(appendSessionResource(sessionID, to));
+                }
 
                 // msg ID is set by plugin
                 chatSessionManagerAdapter.getChatSessionManager().sendMessageAsync(chatSessionAdapter.getAdaptee(), msg);

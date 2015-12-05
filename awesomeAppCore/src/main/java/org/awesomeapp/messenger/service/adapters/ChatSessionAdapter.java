@@ -24,6 +24,7 @@ import org.awesomeapp.messenger.crypto.OtrChatSessionAdapter;
 import org.awesomeapp.messenger.crypto.OtrDataHandler;
 import org.awesomeapp.messenger.crypto.OtrDataHandler.Transfer;
 import org.awesomeapp.messenger.crypto.OtrDebugLogger;
+import org.awesomeapp.messenger.model.Address;
 import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
 import  org.awesomeapp.messenger.service.IChatListener;
 import org.awesomeapp.messenger.service.IDataListener;
@@ -135,6 +136,8 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             init((Contact) participant,isNewSession);
         }
 
+        initOtrChatSession(participant);
+
     }
 
     private void initOtrChatSession (ImEntity participant)
@@ -161,12 +164,12 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                     }
 
                 }
-                // add OtrChatListener as the intermediary to mListenerAdapter so it can filter OTR msgs
-                mChatSession.setMessageListener(new OtrChatListener(cm, mListenerAdapter));
 
 
                 mDataHandler.setChatId(getId());
 
+                // add OtrChatListener as the intermediary to mListenerAdapter so it can filter OTR msgs
+                mChatSession.setMessageListener(new OtrChatListener(cm, mListenerAdapter));
             }
         }
         catch (NullPointerException npe)
@@ -177,29 +180,26 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
     public synchronized IOtrChatSession getDefaultOtrChatSession () {
 
-        if (mOtrChatSessions.size() == 0)
-            initOtrChatSession(mChatSession.getParticipant());
-
         if (mOtrChatSessions.size() > 0)
             return mOtrChatSessions.get(0);
         else
             return null;
     }
 
-    public synchronized IOtrChatSession getOtrChatSession(int idx) {
+    public IOtrChatSession getOtrChatSession(int idx) {
 
-        if (mOtrChatSessions.size() == 0)
-            initOtrChatSession(mChatSession.getParticipant());
-
-        return mOtrChatSessions.get(idx);
+        if (mOtrChatSessions.size() > idx)
+            return mOtrChatSessions.get(idx);
+        else
+            return null;
     }
 
-    public synchronized int getOtrChatSessionCount ()
+    public int getOtrChatSessionCount ()
     {
-        if (mOtrChatSessions.size() == 0)
-            initOtrChatSession(mChatSession.getParticipant());
-
-        return mOtrChatSessions.size();
+        if (mOtrChatSessions != null)
+            return mOtrChatSessions.size();
+        else
+            return 0;
     }
 
     private void init(ChatGroup group, boolean isNewSession) {
@@ -393,10 +393,27 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
         try
         {
-            mDataHandler.offerData(offerId, mConnection.getLoginUser().getAddress(), url, headers);
+            Address localUser = mConnection.getLoginUser().getAddress();
+
+            if (mChatSession.getParticipant() instanceof Contact) {
+
+                Address remoteUser = new XmppAddress(getDefaultOtrChatSession().getRemoteUserId());
+                mDataHandler.offerData(offerId, localUser, remoteUser, url, headers);
+            }
+            else if (mChatSession.getParticipant() instanceof ChatGroup)
+            {
+                ChatGroup group = (ChatGroup)mChatSession.getParticipant();
+
+                for (Contact member : group.getMembers())
+                {
+                    mDataHandler.offerData(offerId, localUser, member.getAddress(), url, headers);
+                }
+
+            }
+
             return true;
         }
-        catch (IOException ioe)
+        catch (Exception ioe)
         {
             Log.w(ImApp.LOG_TAG,"unable to offer data",ioe);
             return false;
@@ -987,14 +1004,14 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
     }
 
     @Override
-    public void setIncomingFileResponse (boolean acceptThis, boolean acceptAll)
+    public void setIncomingFileResponse (String transferForm, boolean acceptThis, boolean acceptAll)
     {
 
         mAcceptTransfer = acceptThis;
         mAcceptAllTransfer = acceptAll;
         mWaitingForResponse = false;
 
-        mDataHandler.acceptTransfer(mLastFileUrl);
+        mDataHandler.acceptTransfer(mLastFileUrl, transferForm);
 
     }
 
@@ -1160,7 +1177,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                 mLastTransferFrom = from;
                 mLastTransferUrl = transferUrl;
 
-                mDataHandler.acceptTransfer(mLastFileUrl);
+                mDataHandler.acceptTransfer(mLastFileUrl, from);
             }
             else
             {

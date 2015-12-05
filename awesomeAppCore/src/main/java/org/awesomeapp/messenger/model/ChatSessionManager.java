@@ -79,8 +79,7 @@ public abstract class ChatSessionManager {
      */
     public ChatSession createChatSession(ImEntity participant, boolean isNewSession) {
 
-        String sessionKey = Address.stripResource(participant.getAddress().getAddress());
-        ChatSession session = mSessions.get(sessionKey);
+        ChatSession session = mSessions.get(participant.getAddress().getBareAddress());
 
         if (session == null)
         {
@@ -88,7 +87,7 @@ public abstract class ChatSessionManager {
             ChatSessionAdapter csa = mAdapter.getChatSessionAdapter(session, isNewSession);
             session.setMessageListener(csa.getAdaptee().getMessageListener());
 
-            mSessions.put(sessionKey,session);
+            mSessions.put(participant.getAddress().getBareAddress(),session);
 
             for (ChatSessionListener listener : mListeners) {
                 listener.onChatSessionCreated(session);

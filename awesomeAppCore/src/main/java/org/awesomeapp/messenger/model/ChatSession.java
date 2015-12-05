@@ -161,35 +161,19 @@ public class ChatSession {
     public void sendDataAsync(Message message, boolean isResponse, byte[] data) {
 
         OtrChatManager cm = OtrChatManager.getInstance();
+        sendDataAsync(cm, message, isResponse, data);
 
-        if (mParticipant instanceof Contact) {
-
-            sendDataAsync(cm, (Contact)mParticipant, message, isResponse, data);
-        }
-        else if (mParticipant instanceof ChatGroup)
-        {
-            ChatGroup group = (ChatGroup)mParticipant;
-
-            for (Contact contact : group.getMembers())
-            {
-                sendDataAsync(cm, contact, message, isResponse, data);
-
-            }
-
-        }
 
     }
 
-    private void sendDataAsync (OtrChatManager cm, Contact contact, Message message, boolean isResponse, byte[] data)
+    private void sendDataAsync (OtrChatManager cm, Message message, boolean isResponse, byte[] data)
     {
-        SessionID sId = cm.getSessionId(message.getFrom().getAddress(),contact.getAddress().getAddress());
+        SessionID sId = cm.getSessionId(message.getFrom().getAddress(),message.getTo().getAddress());
         SessionStatus otrStatus = cm.getSessionStatus(sId);
-
-        message.setTo(new XmppAddress(sId.getRemoteUserId()));
 
         if (otrStatus != SessionStatus.ENCRYPTED) {
             cm.startSession(sId);
-            return;
+            return; //the request is cached so it can be tried again once encryption is enabled
         }
 
         boolean verified = cm.getKeyManager().isVerified(sId);

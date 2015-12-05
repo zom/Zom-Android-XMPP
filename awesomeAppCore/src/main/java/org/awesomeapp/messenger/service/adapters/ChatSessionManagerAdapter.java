@@ -87,8 +87,9 @@ public class ChatSessionManagerAdapter extends
 
         if (contact == null) {
             try {
-                
-                contact = new Contact (new XmppAddress(contactAddress),contactAddress);
+
+               contact = new Contact (new XmppAddress(contactAddress),contactAddress);
+
                // long contactId = listManager.queryOrInsertContact(contact);
                 
                // String[] address = {Address.stripResource(contactAddress)};
@@ -129,11 +130,6 @@ public class ChatSessionManagerAdapter extends
 
             Address address = new XmppAddress(roomAddress); //TODO hard coding XMPP for now
 
-        //    ContactListManagerAdapter listManager = (ContactListManagerAdapter) mConnection
-          //          .getContactListManager();
-
-           //  long contactId = listManager.queryOrInsertContact(new Contact (new XmppAddress(roomAddress),roomAddress));
-            
             ChatGroup chatGroup = groupMan.getChatGroup(address);
 
             if (chatGroup != null)
@@ -149,7 +145,7 @@ public class ChatSessionManagerAdapter extends
         }
         catch (Exception e)
         {
-            Log.e(ImApp.LOG_TAG,"unable to join group chat",e);
+            Log.e(ImApp.LOG_TAG,"unable to join group chat" + e.getMessage());
             return null;
         }
     }
