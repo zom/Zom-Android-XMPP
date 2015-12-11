@@ -22,6 +22,7 @@ import info.guardianproject.otr.app.im.R;
 import org.awesomeapp.messenger.ImUrlActivity;
 import org.awesomeapp.messenger.tasks.ThumbnailLoaderRequest;
 import org.awesomeapp.messenger.tasks.ThumbnailLoaderTask;
+import org.awesomeapp.messenger.ui.widgets.MessageViewHolder;
 import org.awesomeapp.messenger.ui.widgets.VisualizerView;
 import org.awesomeapp.messenger.util.SecureMediaStore;
 import org.awesomeapp.messenger.ui.legacy.DatabaseUtils;
@@ -100,6 +101,8 @@ public class MessageListItem extends FrameLayout {
     }
 
     private CharSequence lastMessage = null;
+    private Uri mediaUri = null;
+    private String mimeType = null;
 
     private Context context;
     private boolean linkify = false;
@@ -114,90 +117,6 @@ public class MessageListItem extends FrameLayout {
     private final static PrettyTime sPrettyTime = new PrettyTime();
     private final static Date DATE_NOW = new Date();
 
-    private final static char DELIVERED_SUCCESS = '\u2714';
-    private final static char DELIVERED_FAIL = '\u2718';
-    private final static String LOCK_CHAR = "Secure";
-
-
-    class MessageViewHolder extends MediaViewHolder
-    {
-        TextView mTextViewForMessages = (TextView) findViewById(R.id.message);
-        TextView mTextViewForTimestamp = (TextView) findViewById(R.id.messagets);
-        ImageView mAvatar = (ImageView) findViewById(R.id.avatar);
-       // View mStatusBlock = findViewById(R.id.status_block);
-
-        View mMediaContainer = findViewById(R.id.media_thumbnail_container);
-
-
-        View mAudioContainer = findViewById(R.id.audio_container);
-        VisualizerView mVisualizerView = (VisualizerView) findViewById(R.id.audio_view);
-        ImageView mAudioButton = (ImageView)findViewById(R.id.audio_button);
-        // save the media uri while the MediaScanner is creating the thumbnail
-        // if the holder was reused, the pair is broken
-
-
-        MessageViewHolder(View view) {
-            super (view);
-            // disable built-in autoLink so we can add custom ones
-            mTextViewForMessages.setAutoLinkMask(0);
-        }
-
-        public void setOnClickListenerMediaThumbnail( final String mimeType, final Uri mediaUri ) {
-
-            if (mimeType.startsWith("audio") && mAudioContainer != null)
-            {
-                mAudioContainer.setOnClickListener(new OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        onClickMediaIcon(mimeType, mediaUri);
-                    }
-                });
-
-                mAudioContainer.setOnLongClickListener(new OnLongClickListener() {
-
-                    @Override
-                    public boolean onLongClick(View view) {
-                        final java.io.File exportPath = SecureMediaStore.exportPath(mimeType, mediaUri);
-
-                        exportMediaFile(mimeType, mediaUri, exportPath);
-                        return true;
-                    }
-                });
-            }
-            else {
-                mMediaThumbnail.setOnClickListener(new OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        onClickMediaIcon(mimeType, mediaUri);
-                    }
-                });
-
-                mActionSend.setOnClickListener(new OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-
-                        reshareMediaFile(mimeType, mediaUri);
-                    }
-                });
-
-                mActionShare.setOnClickListener(new OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        final java.io.File exportPath = SecureMediaStore.exportPath(mimeType, mediaUri);
-
-                        exportMediaFile(mimeType, mediaUri, exportPath);
-                    }
-                });
-            }
-
-        }
-
-        public void resetOnClickListenerMediaThumbnail() {
-            mMediaThumbnail.setOnClickListener( null );
-        }
-
-       long mTimeDiff = -1;
-    }
 
     /**
      * This trickery is needed in order to have clickable links that open things
@@ -272,7 +191,6 @@ public class MessageListItem extends FrameLayout {
         mHolder.mAudioContainer.setVisibility(View.GONE);
         mHolder.mMediaContainer.setVisibility(View.GONE);
         mHolder.mContainer.setBackgroundResource(R.drawable.message_view_rounded_light);
-        mHolder.mAudioButton.setImageResource(R.drawable.media_audio_play);
 
         if (nickname == null)
             nickname = address;
@@ -289,6 +207,8 @@ public class MessageListItem extends FrameLayout {
 
             if (mimeType.startsWith("audio"))
             {
+                mHolder.mAudioButton.setImageResource(R.drawable.media_audio_play);
+
                 try {
                     mHolder.mAudioContainer.setVisibility(View.VISIBLE);
                     showAudioPlayer(mimeType, mediaUri, id, mHolder);
@@ -301,9 +221,11 @@ public class MessageListItem extends FrameLayout {
             }
             else {
                 mHolder.mTextViewForMessages.setVisibility(View.GONE);
-                mHolder.mMediaContainer.setVisibility(View.VISIBLE);
 
                 showMediaThumbnail(mimeType, mediaUri, id, mHolder);
+
+                mHolder.mMediaContainer.setVisibility(View.VISIBLE);
+
             }
 
         }
@@ -406,6 +328,9 @@ public class MessageListItem extends FrameLayout {
 
     private boolean showMediaThumbnail (String mimeType, Uri mediaUri, int id, MessageViewHolder holder)
     {
+        this.mediaUri = mediaUri;
+        this.mimeType = mimeType;
+
         /* Guess the MIME type in case we received a file that we can display or play*/
         if (TextUtils.isEmpty(mimeType) || mimeType.startsWith("application")) {
             String guessed = URLConnection.guessContentTypeFromName(mediaUri.toString());
@@ -416,9 +341,9 @@ public class MessageListItem extends FrameLayout {
                     mimeType = guessed;
             }
         }
+
         holder.setOnClickListenerMediaThumbnail(mimeType, mediaUri);
 
-        holder.mMediaContainer.setVisibility(View.VISIBLE);
         holder.mTextViewForMessages.setText(lastMessage);
         holder.mTextViewForMessages.setVisibility(View.GONE);
 
@@ -431,8 +356,8 @@ public class MessageListItem extends FrameLayout {
             holder.mMediaThumbnail.setImageResource(R.drawable.ic_file); // generic file icon
         }
 
-        holder.mActionSend.setVisibility(View.VISIBLE);
-        holder.mActionShare.setVisibility(View.VISIBLE);
+        holder.mMediaContainer.setVisibility(View.VISIBLE);
+
 
         holder.mContainer.setBackgroundColor(getResources().getColor(android.R.color.transparent));
 
@@ -455,7 +380,6 @@ public class MessageListItem extends FrameLayout {
 
         holder.setOnClickListenerMediaThumbnail(mimeType, mediaUri);
         mHolder.mTextViewForMessages.setText("");
-       // holder.mContainer.setBackgroundColor(getResources().getColor(android.R.color.transparent));
         mAudioPlayer = new AudioPlayer(getContext(), mediaUri.getPath(), mimeType, mHolder.mVisualizerView,mHolder.mTextViewForMessages);
         holder.mContainer.setBackgroundColor(getResources().getColor(android.R.color.transparent));
 
@@ -483,8 +407,7 @@ public class MessageListItem extends FrameLayout {
 
     private AudioPlayer mAudioPlayer;
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    protected void onClickMediaIcon(String mimeType, Uri mediaUri) {
+    public void onClickMediaIcon(String mimeType, Uri mediaUri) {
 
 
         if (mimeType.startsWith("image")) {
@@ -580,7 +503,7 @@ public class MessageListItem extends FrameLayout {
         .create().show();
     }*/
 
-    private void reshareMediaFile (String mimeType, Uri mediaUri)
+    private void forwardMediaFile (String mimeType, Uri mediaUri)
     {
 
         String resharePath = "vfs:/" + mediaUri.getPath();
@@ -591,6 +514,18 @@ public class MessageListItem extends FrameLayout {
 
 
     }
+
+    public void forwardMediaFile ()
+    {
+        forwardMediaFile(mimeType, mediaUri);
+    }
+
+    public void exportMediaFile ()
+    {
+        java.io.File exportPath = SecureMediaStore.exportPath(mimeType, mediaUri);
+        exportMediaFile(mimeType, mediaUri, exportPath);
+
+    };
 
     private void exportMediaFile (String mimeType, Uri mediaUri, java.io.File exportPath)
     {
@@ -903,52 +838,61 @@ public class MessageListItem extends FrameLayout {
 
         deliveryText.append(sPrettyTime.format(date));
 
+        SpannableString spanText = null;
 
         if (delivery != null)
         {
             deliveryText.append(' ');
             //this is for delivery
-            if (delivery == DeliveryState.DELIVERED) {
 
-                deliveryText.append(DELIVERED_SUCCESS);
+            if (messageType == Imps.MessageType.POSTPONED)
+            {
+                //do nothing
+                spanText = new SpannableString(deliveryText.toString());
+            }
+            else if (delivery == DeliveryState.DELIVERED) {
+
+//                deliveryText.append(DELIVERED_SUCCESS);
+
+                deliveryText.append("XX");
+                spanText = new SpannableString(deliveryText.toString());
+                int len = spanText.length();
+
+                spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_delivered_grey), len-2, len-1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                if (encryptionState == EncryptionState.ENCRYPTED||encryptionState == EncryptionState.ENCRYPTED_AND_VERIFIED)
+                    spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_encrypted_grey), len-1, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                else
+                    spanText.setSpan(new String(" "), len-1, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
             } else if (delivery == DeliveryState.UNDELIVERED) {
 
-                deliveryText.append(DELIVERED_FAIL);
+                deliveryText.append("XX");
+                spanText = new SpannableString(deliveryText.toString());
+                int len = spanText.length();
+
+                spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_sent_grey),len-2,len-1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                if (encryptionState == EncryptionState.ENCRYPTED||encryptionState == EncryptionState.ENCRYPTED_AND_VERIFIED)
+                    spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_encrypted_grey), len-1, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                else
+                    spanText.setSpan(new String(" "), len-1, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
             }
 
-            if (messageType != Imps.MessageType.POSTPONED)
-                deliveryText.append(DELIVERED_SUCCESS);//this is for sent, so we know show 2 checks like WhatsApp!
-
         }
-
-        SpannableString spanText = null;
-
-        if (encryptionState == EncryptionState.ENCRYPTED) {
+        else
+        {
+            if (encryptionState == EncryptionState.ENCRYPTED||encryptionState == EncryptionState.ENCRYPTED_AND_VERIFIED)
+            {
                 deliveryText.append('X');
                 spanText = new SpannableString(deliveryText.toString());
                 int len = spanText.length();
 
-                spanText.setSpan(new ImageSpan(getContext(), R.drawable.tj12), len - 1, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-        } else if (encryptionState == EncryptionState.ENCRYPTED_AND_VERIFIED) {
-            deliveryText.append('X');
-            spanText = new SpannableString(deliveryText.toString());
-            int len = spanText.length();
-
-            spanText.setSpan(new ImageSpan(getContext(), R.drawable.tj12), len - 1, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-        } else {
-            spanText = new SpannableString(deliveryText.toString());
-            int len = spanText.length();
-
+                if (encryptionState == EncryptionState.ENCRYPTED||encryptionState == EncryptionState.ENCRYPTED_AND_VERIFIED)
+                    spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_encrypted_grey), len-1, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
         }
-
-     //   spanText.setSpan(new StyleSpan(Typeface.SANS_SERIF), 0, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-       // spanText.setSpan(new RelativeSizeSpan(0.8f), 0, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-    //    spanText.setSpan(new ForegroundColorSpan(R.color.soft_grey),
-      //        0, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         return spanText;
     }

@@ -125,22 +125,6 @@ public class GalleryListItem extends FrameLayout {
                 }
             });
 
-            mActionSend.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                    reshareMediaFile(mimeType, mediaUri);
-                }
-            });
-
-            mActionShare.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    final java.io.File exportPath = SecureMediaStore.exportPath(mimeType, mediaUri);
-
-                    exportMediaFile(mimeType, mediaUri, exportPath);
-                }
-            });
         }
 
         public void resetOnClickListenerMediaThumbnail() {

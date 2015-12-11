@@ -377,7 +377,7 @@ public class ConversationListItem extends FrameLayout {
                     {
                         boolean isVerified = otrChatSession.isKeyVerified(address);
                        // holder.mStatusIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_lock_outline_black_18dp));
-                        holder.mStatusIcon.setImageDrawable(getResources().getDrawable(R.drawable.tj12));
+                        holder.mStatusIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_security_black_18dp));
                         holder.mStatusIcon.setVisibility(View.VISIBLE);
                     }
                 }
