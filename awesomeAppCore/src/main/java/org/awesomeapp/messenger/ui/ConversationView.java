@@ -2499,10 +2499,11 @@ public class ConversationView {
                         return false;
                     }
 
+                    mLastSelectedView = view;
+
                     // Start the CAB using the ActionMode.Callback defined above
                     mActionMode = ((Activity) mContext).startActionMode(mActionModeCallback);
-                    view.setSelected(true);
-                    mLastSelectedView = view;
+
                     return true;
                 }
             });

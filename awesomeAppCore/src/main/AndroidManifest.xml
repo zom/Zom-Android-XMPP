@@ -375,12 +375,11 @@
             android:stateNotNeeded="true"
             android:theme="@android:style/Theme.NoDisplay" />
         <activity
-            android:name="org.awesomeapp.messenger.ui.widgets.ImageViewActivity"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+            android:name="org.awesomeapp.messenger.ui.widgets.ImageViewActivity" />
         <activity android:name="org.awesomeapp.messenger.ui.widgets.SecureCameraActivity" />
         <activity
             android:name="org.awesomeapp.messenger.MainActivity"
-            android:exported="false"
+            android:exported="true"
             android:launchMode="singleTask"
             android:theme="@style/AppThemeNoAction" >
             <intent-filter>

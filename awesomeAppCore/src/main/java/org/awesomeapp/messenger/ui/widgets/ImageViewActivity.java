@@ -2,13 +2,22 @@ package org.awesomeapp.messenger.ui.widgets;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Display;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
+
+import org.awesomeapp.messenger.ImUrlActivity;
+import org.awesomeapp.messenger.util.SecureMediaStore;
 
 import info.guardianproject.iocipher.File;
 import info.guardianproject.iocipher.FileInputStream;
@@ -16,25 +25,62 @@ import info.guardianproject.otr.app.im.R;
 
 import java.io.IOException;
 
-public class ImageViewActivity extends Activity {
+public class ImageViewActivity extends AppCompatActivity {
 
-    public static final String FILENAME = "filename";
+    public static final String URI = "uri";
+    public static final String MIMETYPE = "mimetype";
 
+    private Uri mediaUri;
+    private String mimeType;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.image_view_activity);
+        getSupportActionBar().show();
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        ;
+        setTitle("");
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_message_context, menu);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+            case R.id.menu_message_forward:
+                forwardMediaFile();
+                return true;
+            case R.id.menu_message_share:
+                exportMediaFile();
+                return true;
+            case R.id.menu_message_delete:
+                deleteMediaFile();
+                return true;
+
+            default:
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        final String filename = getIntent().getStringExtra(FILENAME);
+        mediaUri = Uri.parse(getIntent().getStringExtra(URI));
+        mimeType = getIntent().getStringExtra(MIMETYPE);
 
-        runOnUiThread( new Runnable() {
+        runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                display(filename);
+                display(mediaUri.getPath());
             }
         });
     }
@@ -94,4 +140,43 @@ public class ImageViewActivity extends Activity {
         return new Point( display.getWidth(), display.getHeight());
     }
 
+    public void exportMediaFile ()
+    {
+        java.io.File exportPath = SecureMediaStore.exportPath(mimeType, mediaUri);
+        exportMediaFile(mimeType, mediaUri, exportPath);
+
+    };
+
+    private void exportMediaFile (String mimeType, Uri mediaUri, java.io.File exportPath)
+    {
+        try {
+
+            SecureMediaStore.exportContent(mimeType, mediaUri, exportPath);
+            Intent shareIntent = new Intent();
+            shareIntent.setAction(Intent.ACTION_SEND);
+            shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(exportPath));
+            shareIntent.setType(mimeType);
+            startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.export_media)));
+        } catch (IOException e) {
+            Toast.makeText(this, "Export Failed " + e.getMessage(), Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        }
+    }
+
+    private void forwardMediaFile ()
+    {
+
+        String resharePath = mediaUri.toString();
+        Intent shareIntent = new Intent(this, ImUrlActivity.class);
+        shareIntent.setAction(Intent.ACTION_SEND);
+        shareIntent.setDataAndType(Uri.parse(resharePath), mimeType);
+        startActivity(shareIntent);
+
+
+    }
+
+    private void deleteMediaFile ()
+    {
+        Toast.makeText(this,"Feature not quite ready yet!",Toast.LENGTH_SHORT).show();
+    }
 }
