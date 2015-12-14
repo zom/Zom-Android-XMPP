@@ -124,6 +124,7 @@ dependencies {
     compile 'de.hdodenhof:circleimageview:1.3.0'
     compile 'info.guardianproject.cacheword:cachewordlib:0.1'
     compile 'info.guardianproject.iocipher:IOCipher:0.3'
+    compile 'info.guardianproject.netcipher:netcipher:1.2'
     compile files('../libs/panic-0.0-3-gca2df9b.jar')
     //compile 'info.guardianproject.panic:panic:0.0'
     compile 'net.hockeyapp.android:HockeySDK:3.5.0'
