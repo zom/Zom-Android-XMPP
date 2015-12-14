@@ -852,49 +852,58 @@ public class MessageListItem extends FrameLayout {
             if (messageType == Imps.MessageType.POSTPONED)
             {
                 //do nothing
-                spanText = new SpannableString(deliveryText.toString());
             }
             else if (delivery == DeliveryState.DELIVERED) {
 
-//                deliveryText.append(DELIVERED_SUCCESS);
+                if (encryptionState == EncryptionState.ENCRYPTED || encryptionState == EncryptionState.ENCRYPTED_AND_VERIFIED)
+                {
+                    deliveryText.append("XX");
+                    spanText = new SpannableString(deliveryText.toString());
+                    int len = spanText.length();
 
-                deliveryText.append("XX");
-                spanText = new SpannableString(deliveryText.toString());
-                int len = spanText.length();
+                    spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_delivered_grey), len - 2, len - 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_encrypted_grey), len - 1, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-                spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_delivered_grey), len-2, len-1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                } else{
+                    deliveryText.append("X");
+                    spanText = new SpannableString(deliveryText.toString());
+                    int len = spanText.length();
 
-                if (encryptionState == EncryptionState.ENCRYPTED||encryptionState == EncryptionState.ENCRYPTED_AND_VERIFIED)
-                    spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_encrypted_grey), len-1, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                else
-                    spanText.setSpan(new String(" "), len-1, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_delivered_grey), len-1, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                }
+
+
 
             } else if (delivery == DeliveryState.UNDELIVERED) {
 
-                deliveryText.append("XX");
-                spanText = new SpannableString(deliveryText.toString());
-                int len = spanText.length();
 
-               // spanText.setSpan(new ImageSpan(getContext(), R.drawable.),len-2,len-1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                if (encryptionState == EncryptionState.ENCRYPTED||encryptionState == EncryptionState.ENCRYPTED_AND_VERIFIED) {
+                    deliveryText.append("X");
+                    spanText = new SpannableString(deliveryText.toString());
+                    int len = spanText.length();
+                    spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_encrypted_grey), len - 1, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                }
 
-                if (encryptionState == EncryptionState.ENCRYPTED||encryptionState == EncryptionState.ENCRYPTED_AND_VERIFIED)
-                    spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_encrypted_grey), len-1, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                else
-                    spanText.setSpan(new String(" "), len-1, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
             }
             else if (delivery == DeliveryState.NEUTRAL) {
 
-                deliveryText.append("XX");
-                spanText = new SpannableString(deliveryText.toString());
-                int len = spanText.length();
-
-                spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_sent_grey),len-2,len-1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-                if (encryptionState == EncryptionState.ENCRYPTED||encryptionState == EncryptionState.ENCRYPTED_AND_VERIFIED)
-                    spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_encrypted_grey), len-1, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                if (encryptionState == EncryptionState.ENCRYPTED||encryptionState == EncryptionState.ENCRYPTED_AND_VERIFIED) {
+                    deliveryText.append("XX");
+                    spanText = new SpannableString(deliveryText.toString());
+                    int len = spanText.length();
+                    spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_sent_grey),len-2,len-1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_encrypted_grey), len - 1, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                }
                 else
-                    spanText.setSpan(new String(" "), len-1, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                {
+                    deliveryText.append("X");
+                    spanText = new SpannableString(deliveryText.toString());
+                    int len = spanText.length();
+                    spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_sent_grey),len-1,len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                }
 
             }
 
