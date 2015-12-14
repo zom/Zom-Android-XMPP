@@ -16,12 +16,10 @@
 package org.awesomeapp.messenger.ui;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -32,10 +30,7 @@ import android.os.RemoteException;
 import android.provider.BaseColumns;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
-import android.text.SpannableString;
-import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.text.util.Linkify;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -52,13 +47,13 @@ import org.awesomeapp.messenger.ui.legacy.AccountSettingsActivity;
 import org.awesomeapp.messenger.ui.legacy.ImPluginHelper;
 import org.awesomeapp.messenger.ui.legacy.ProviderDef;
 import org.awesomeapp.messenger.ui.legacy.SignInHelper;
-import org.awesomeapp.messenger.ui.legacy.SignoutActivity;
 import org.awesomeapp.messenger.ui.legacy.SimpleAlertHandler;
 import org.awesomeapp.messenger.ui.onboarding.OnboardingManager;
-import org.awesomeapp.messenger.util.OrbotHelper;
 import org.awesomeapp.messenger.crypto.IOtrChatSession;
 import org.awesomeapp.messenger.crypto.OtrAndroidKeyManagerImpl;
 import org.awesomeapp.messenger.service.IImConnection;
+
+import info.guardianproject.netcipher.proxy.OrbotHelper;
 import info.guardianproject.otr.app.im.R;
 import org.awesomeapp.messenger.model.ImConnection;
 import org.awesomeapp.messenger.plugin.xmpp.XmppConnection;
@@ -586,19 +581,18 @@ public class AccountViewFragment extends Fragment {
     private void updateUseTor(boolean useTor) {
         checkUserChanged();
 
-        OrbotHelper orbotHelper = new OrbotHelper(getActivity());
-
         ContentResolver cr = getActivity().getContentResolver();
         Cursor pCursor = cr.query(Imps.ProviderSettings.CONTENT_URI,new String[] {Imps.ProviderSettings.NAME, Imps.ProviderSettings.VALUE},Imps.ProviderSettings.PROVIDER + "=?",new String[] { Long.toString(mProviderId)},null);
 
         Imps.ProviderSettings.QueryMap settings = new Imps.ProviderSettings.QueryMap(
                pCursor, cr, mProviderId, false /* don't keep updated */, null /* no handler */);
 
-        if (useTor && (!orbotHelper.isOrbotInstalled()))
+        if (useTor && (!OrbotHelper.isOrbotInstalled(getActivity())))
         {
             //Toast.makeText(this, "Orbot app is not installed. Please install from Google Play or from https://guardianproject.info/releases", Toast.LENGTH_LONG).show();
 
-            orbotHelper.promptToInstall(getActivity());
+            Intent intentInstallTor = OrbotHelper.getOrbotInstallIntent(getActivity());
+            getActivity().startActivity(intentInstallTor);
 
             //mUseTor.setChecked(false);
             settings.setUseTor(false);
