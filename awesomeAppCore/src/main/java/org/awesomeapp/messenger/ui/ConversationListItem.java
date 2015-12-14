@@ -50,6 +50,7 @@ import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.service.IChatSession;
 import org.awesomeapp.messenger.service.IImConnection;
 import org.awesomeapp.messenger.ui.legacy.DatabaseUtils;
+import org.awesomeapp.messenger.ui.widgets.ConversationViewHolder;
 import org.awesomeapp.messenger.ui.widgets.LetterAvatar;
 import org.awesomeapp.messenger.ui.widgets.RoundedAvatarDrawable;
 import org.awesomeapp.messenger.util.SecureMediaStore;
@@ -102,17 +103,6 @@ public class ConversationListItem extends FrameLayout {
 
     }
 
-    static class ViewHolder
-    {
-
-        TextView mLine1;
-        TextView mLine2;
-        TextView mStatusText;
-        ImageView mAvatar;
-        ImageView mStatusIcon;
-        View mContainer;
-        ImageView mMediaThumb;
-    }
 
     public void bind(Cursor cursor, String underLineText, boolean scrolling) {
         bind(cursor, underLineText, true, scrolling);
@@ -121,21 +111,10 @@ public class ConversationListItem extends FrameLayout {
     public void bind(Cursor cursor, String underLineText, boolean showChatMsg, boolean scrolling) {
 
 
-        ViewHolder holder = (ViewHolder)getTag();
+        ConversationViewHolder holder = (ConversationViewHolder)getTag();
 
         if (holder == null) {
-            holder = new ViewHolder();
-            holder.mLine1 = (TextView) findViewById(R.id.line1);
-            holder.mLine2 = (TextView) findViewById(R.id.line2);
-
-            holder.mAvatar = (ImageView)findViewById(R.id.avatar);
-            holder.mStatusIcon = (ImageView)findViewById(R.id.statusIcon);
-            holder.mStatusText = (TextView)findViewById(R.id.statusText);
-            //holder.mEncryptionIcon = (ImageView)view.findViewById(R.id.encryptionIcon);
-
-            holder.mContainer = findViewById(R.id.message_container);
-
-            holder.mMediaThumb = (ImageView)findViewById(R.id.media_thumbnail);
+            holder = new ConversationViewHolder(this);
             setTag(holder);
         }
 
@@ -353,7 +332,7 @@ public class ConversationListItem extends FrameLayout {
         getEncryptionState (providerId, address, holder);
     }
 
-    private void getEncryptionState (long providerId, String address, ViewHolder holder)
+    private void getEncryptionState (long providerId, String address, ConversationViewHolder holder)
     {
 
          try {
@@ -377,7 +356,7 @@ public class ConversationListItem extends FrameLayout {
                     {
                         boolean isVerified = otrChatSession.isKeyVerified(address);
                        // holder.mStatusIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_lock_outline_black_18dp));
-                        holder.mStatusIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_security_black_18dp));
+                        holder.mStatusIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_encrypted_grey));
                         holder.mStatusIcon.setVisibility(View.VISIBLE);
                     }
                 }
@@ -455,7 +434,7 @@ public class ConversationListItem extends FrameLayout {
      * @param aHolder
      * @param uri
      */
-    private void setThumbnail(final ContentResolver contentResolver, final ViewHolder aHolder, final Uri uri) {
+    private void setThumbnail(final ContentResolver contentResolver, final ConversationViewHolder aHolder, final Uri uri) {
         new AsyncTask<String, Void, Bitmap>() {
 
             @Override

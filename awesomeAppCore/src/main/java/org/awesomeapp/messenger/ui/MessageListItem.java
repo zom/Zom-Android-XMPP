@@ -842,6 +842,8 @@ public class MessageListItem extends FrameLayout {
 
         SpannableString spanText = null;
 
+        spanText = new SpannableString(deliveryText.toString());
+
         if (delivery != null)
         {
             deliveryText.append(' ');
@@ -873,6 +875,20 @@ public class MessageListItem extends FrameLayout {
                 spanText = new SpannableString(deliveryText.toString());
                 int len = spanText.length();
 
+               // spanText.setSpan(new ImageSpan(getContext(), R.drawable.),len-2,len-1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                if (encryptionState == EncryptionState.ENCRYPTED||encryptionState == EncryptionState.ENCRYPTED_AND_VERIFIED)
+                    spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_encrypted_grey), len-1, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                else
+                    spanText.setSpan(new String(" "), len-1, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+            }
+            else if (delivery == DeliveryState.NEUTRAL) {
+
+                deliveryText.append("XX");
+                spanText = new SpannableString(deliveryText.toString());
+                int len = spanText.length();
+
                 spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_sent_grey),len-2,len-1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
                 if (encryptionState == EncryptionState.ENCRYPTED||encryptionState == EncryptionState.ENCRYPTED_AND_VERIFIED)
@@ -881,6 +897,7 @@ public class MessageListItem extends FrameLayout {
                     spanText.setSpan(new String(" "), len-1, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
             }
+
 
         }
         else
