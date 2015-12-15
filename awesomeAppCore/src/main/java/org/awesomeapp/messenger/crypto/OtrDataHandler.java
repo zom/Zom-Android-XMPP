@@ -487,7 +487,7 @@ public class OtrDataHandler implements DataHandler {
                             mDataListener.onTransferComplete(
                                     false,
                                     null,
-                                to.getAddress(),
+                                from.getAddress(),
                                 transfer.url,
                                 transfer.type,
                                 vfsUri.toString());

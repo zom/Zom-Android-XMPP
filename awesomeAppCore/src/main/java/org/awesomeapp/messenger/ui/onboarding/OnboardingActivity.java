@@ -347,18 +347,17 @@ public class OnboardingActivity extends ThemeableActivity {
             setAnimRight();
             showSplashScreen();
         }
-        else if (mViewFlipper.getCurrentView().getId()==R.id.flipView3)
+        else if (mViewFlipper.getCurrentView().getId()==R.id.flipViewCreateNew)
         {
             setAnimRight();
             mViewFlipper.showPrevious();
             getSupportActionBar().setTitle("");
         }
-        else if (mViewFlipper.getCurrentView().getId()==R.id.flip_view_login)
+        else if (mViewFlipper.getCurrentView().getId()==R.id.flipViewLogin)
         {
-
             showSplashScreen();
         }
-        else if (mViewFlipper.getCurrentView().getId()==R.id.flip_view_advanced)
+        else if (mViewFlipper.getCurrentView().getId()==R.id.flipViewAdvanced)
         {
             setAnimRight();
             showLoginScreen();
@@ -535,7 +534,7 @@ public class OnboardingActivity extends ThemeableActivity {
 
     private void showInviteScreen ()
     {
-        mViewFlipper.setDisplayedChild(2);
+        mViewFlipper.setDisplayedChild(5);
         getSupportActionBar().setTitle(R.string.invite_action);
 
         TextView tv = (TextView)findViewById(R.id.statusInviteFriends);

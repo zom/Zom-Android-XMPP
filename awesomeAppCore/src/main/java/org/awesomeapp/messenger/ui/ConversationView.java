@@ -111,6 +111,7 @@ import org.awesomeapp.messenger.ui.stickers.StickerGroup;
 import org.awesomeapp.messenger.ui.stickers.StickerManager;
 import org.awesomeapp.messenger.ui.stickers.StickerPagerAdapter;
 import org.awesomeapp.messenger.ui.stickers.StickerSelectListener;
+import org.awesomeapp.messenger.ui.widgets.MessageViewHolder;
 import org.awesomeapp.messenger.ui.widgets.RoundedAvatarDrawable;
 import org.awesomeapp.messenger.util.Debug;
 import org.awesomeapp.messenger.util.LogCleaner;
@@ -2394,7 +2395,7 @@ public class ConversationView {
     }
 
     public class ConversationRecyclerViewAdapter
-            extends CursorRecyclerViewAdapter<ConversationRecyclerViewAdapter.ViewHolder> {
+            extends CursorRecyclerViewAdapter<MessageViewHolder> {
 
         private int mScrollState;
         private boolean mNeedRequeryCursor;
@@ -2479,26 +2480,16 @@ public class ConversationView {
             }
         }
 
-        public class ViewHolder extends RecyclerView.ViewHolder {
-
-            public final View mView;
-
-            public ViewHolder(View view) {
-                super(view);
-                mView = view;
-            }
-
-        }
 
         @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = null;
+        public MessageViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            MessageListItem view = null;
 
             if (viewType == 0)
-                view = LayoutInflater.from(parent.getContext())
+                view = (MessageListItem)LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.message_view_left, parent, false);
             else
-                view = LayoutInflater.from(parent.getContext())
+                view = (MessageListItem)LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.message_view_right, parent, false);
 
             view.setOnLongClickListener(new View.OnLongClickListener() {
@@ -2508,20 +2499,22 @@ public class ConversationView {
                         return false;
                     }
 
+                    mLastSelectedView = view;
+
                     // Start the CAB using the ActionMode.Callback defined above
                     mActionMode = ((Activity) mContext).startActionMode(mActionModeCallback);
-                    view.setSelected(true);
-                    mLastSelectedView = view;
+
                     return true;
                 }
             });
-            return new ViewHolder(view);
+
+            return new MessageViewHolder(view);
         }
 
         @Override
-        public void onBindViewHolder(ViewHolder viewHolder, Cursor cursor) {
+        public void onBindViewHolder(MessageViewHolder viewHolder, Cursor cursor) {
 
-            MessageListItem messageView = (MessageListItem) viewHolder.mView;
+            MessageListItem messageView = (MessageListItem) viewHolder.itemView;
 
             setLinkifyForMessageView(messageView);
 
@@ -2679,6 +2672,13 @@ public class ConversationView {
                         //shareCurrentItem();
                         mode.finish(); // Action picked, so close the CAB
                         return true;
+                    case R.id.menu_message_share:
+                        ((MessageListItem)mLastSelectedView).exportMediaFile();
+                        return true;
+                    case R.id.menu_message_forward:
+                        ((MessageListItem)mLastSelectedView).forwardMediaFile();
+                        return true;
+
                     default:
                         return false;
                 }

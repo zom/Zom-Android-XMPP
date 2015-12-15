@@ -1060,11 +1060,10 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                         mRemoteListeners.finishBroadcast();
 
                         if (N == 0) {
-                            //reinstated body display here in the notification; per
-                            //
-                            // haps add preferences to turn that off
+                            String nickname = getNickName(from);
+
                             mStatusBarNotifier.notifyChat(mConnection.getProviderId(), mConnection.getAccountId(),
-                                    getId(), from, from,service.getString(R.string.file_notify_text,mimeType,from) , false);
+                                    getId(), from, nickname,service.getString(R.string.file_notify_text,mimeType,nickname) , false);
                         }
                     }
                     catch (Exception e)
@@ -1201,10 +1200,11 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                     {
                         mLastTransferFrom = from;
                         mLastTransferUrl = transferUrl;
+                        String nickname = getNickName(from);
 
                         //reinstated body display here in the notification; perhaps add preferences to turn that off
                         mStatusBarNotifier.notifyChat(mConnection.getProviderId(), mConnection.getAccountId(),
-                                getId(), from, from, "Incoming file request", false);
+                                getId(), from, nickname, "Incoming file request", false);
                     }
                 }
                 finally

@@ -33,7 +33,6 @@ import org.awesomeapp.messenger.provider.ImpsErrorInfo;
 import org.awesomeapp.messenger.service.adapters.ChatSessionAdapter;
 import org.awesomeapp.messenger.ui.legacy.DatabaseUtils;
 import org.awesomeapp.messenger.util.Debug;
-import org.awesomeapp.messenger.util.OrbotHelper;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.PresenceListener;
@@ -65,7 +64,6 @@ import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.disco.provider.DiscoverInfoProvider;
 import org.jivesoftware.smackx.disco.provider.DiscoverItemsProvider;
 import org.jivesoftware.smackx.iqlast.packet.LastActivity;
-import org.jivesoftware.smackx.muc.DiscussionHistory;
 import org.jivesoftware.smackx.muc.InvitationListener;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
@@ -121,11 +119,11 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.X509TrustManager;
 
 import de.duenndns.ssl.MemorizingTrustManager;
+import info.guardianproject.netcipher.proxy.OrbotHelper;
 import info.guardianproject.otr.app.im.R;
 
 public class XmppConnection extends ImConnection {
@@ -1405,11 +1403,16 @@ public class XmppConnection extends ImConnection {
         if ("".equals(server))
             server = null;
 
-        OrbotHelper oHelper = new OrbotHelper(mContext);
-        //if Orbot is on and running, we should use it
-        if (oHelper.isOrbotInstalled() && oHelper.isOrbotRunning()
-                && (server != null && (!doDnsSrv)))
-            useTor = true;
+        try {
+            //if Orbot is on and running, we should use it
+            if (OrbotHelper.isOrbotInstalled(mContext) && OrbotHelper.isOrbotRunning(mContext)
+                    && (server != null && (!doDnsSrv)))
+                useTor = true;
+        }
+        catch (Exception e)
+        {
+            debug(TAG,"There was an error checking Orbot: " + e.getMessage());
+        }
 
         debug(TAG, "TLS required? " + requireTls);
         debug(TAG, "cert verification? " + tlsCertVerify);

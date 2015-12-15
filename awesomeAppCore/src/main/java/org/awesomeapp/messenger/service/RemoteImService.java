@@ -38,13 +38,11 @@ import android.os.PowerManager.WakeLock;
 import android.os.RemoteCallbackList;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
-import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
 
 import net.java.otr4j.OtrEngineListener;
-import net.java.otr4j.OtrKeyManager;
 import net.java.otr4j.OtrKeyManagerListener;
 import net.java.otr4j.OtrPolicy;
 import net.java.otr4j.session.SessionID;
@@ -70,7 +68,6 @@ import org.awesomeapp.messenger.ui.legacy.NetworkConnectivityListener;
 import org.awesomeapp.messenger.ui.legacy.NetworkConnectivityListener.State;
 import org.awesomeapp.messenger.util.Debug;
 import org.awesomeapp.messenger.util.LogCleaner;
-import org.awesomeapp.messenger.util.OrbotHelper;
 import org.awesomeapp.messenger.util.SecureMediaStore;
 
 import java.security.GeneralSecurityException;

@@ -1,9 +1,7 @@
 package org.awesomeapp.messenger.ui.onboarding;
 
-import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.ui.qr.QrScanActivity;
-import org.awesomeapp.messenger.util.OrbotHelper;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -15,7 +13,6 @@ import org.awesomeapp.messenger.util.LogCleaner;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.HashMap;
 
@@ -212,8 +209,6 @@ public class OnboardingManager {
                 pCursor, cr, providerId, false /* don't keep updated */, null /* no handler */);
 
         //should check to see if Orbot is installed and running
-
-        OrbotHelper oHelper = new OrbotHelper(context);
 
         JSONObject obj = new JSONObject(loadServersJSON(context));
         JSONArray servers = obj.getJSONArray("servers");

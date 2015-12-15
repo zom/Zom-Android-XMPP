@@ -87,7 +87,7 @@
 
                 </LinearLayout>
                 <LinearLayout
-                    android:id="@+id/flipView1"
+                    android:id="@+id/flipViewRegister"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="0dp"
@@ -144,10 +144,8 @@
                     </LinearLayout>
 
                 </LinearLayout>
-
-
                 <FrameLayout
-                    android:id="@+id/flipView2"
+                    android:id="@+id/flipViewCreateNew"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="0dp"
@@ -258,9 +256,8 @@
 
 
                 </FrameLayout>
-
                 <LinearLayout
-                    android:id="@+id/flip_view_login"
+                    android:id="@+id/flipViewLogin"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
@@ -330,7 +327,7 @@
                         />
                 </LinearLayout>
                 <LinearLayout
-                    android:id="@+id/flip_view_advanced"
+                    android:id="@+id/flipViewAdvanced"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
@@ -407,7 +404,7 @@
 
 
                 <LinearLayout
-                    android:id="@+id/flipView3"
+                    android:id="@+id/flipViewInviteFriends"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="0dp"

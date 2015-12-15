@@ -96,7 +96,7 @@
         
          <item name="messageRoundBackground">@drawable/message_view_rounded_light</item>             
          <item name="messageTextPrimary">#111111</item>
-         <item name="messageTextSecondary">#777777</item>
+         <item name="messageTextSecondary">#aaaaaa</item>
                   
          <item name="listBackground">#e6e7e8</item>
          
