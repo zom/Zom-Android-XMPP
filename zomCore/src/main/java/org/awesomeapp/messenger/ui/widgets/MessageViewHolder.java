@@ -8,7 +8,7 @@ import android.widget.TextView;
 import org.awesomeapp.messenger.ui.MediaViewHolder;
 import org.awesomeapp.messenger.ui.MessageListItem;
 
-import info.guardianproject.otr.app.im.R;
+import im.zom.messenger.R;
 
 /**
  * Created by n8fr8 on 12/11/15.

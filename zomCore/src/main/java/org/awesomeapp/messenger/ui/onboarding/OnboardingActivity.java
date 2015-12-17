@@ -58,7 +58,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import info.guardianproject.otr.app.im.R;
+import im.zom.messenger.R;
 import info.guardianproject.util.Languages;
 
 public class OnboardingActivity extends ThemeableActivity {

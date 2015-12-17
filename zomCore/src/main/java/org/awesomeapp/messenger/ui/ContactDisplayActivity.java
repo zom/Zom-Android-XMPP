@@ -26,7 +26,8 @@ import org.awesomeapp.messenger.util.LogCleaner;
 
 import java.io.IOException;
 
-import info.guardianproject.otr.app.im.R;
+import im.zom.messenger.R;
+
 
 public class ContactDisplayActivity extends Activity {
 

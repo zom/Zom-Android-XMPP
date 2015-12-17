@@ -56,7 +56,8 @@ import java.util.UUID;
 
 import info.guardianproject.cacheword.CacheWordHandler;
 import info.guardianproject.cacheword.ICacheWordSubscriber;
-import info.guardianproject.otr.app.im.R;
+import im.zom.messenger.R;
+
 import info.guardianproject.panic.Panic;
 import info.guardianproject.panic.PanicReceiver;
 

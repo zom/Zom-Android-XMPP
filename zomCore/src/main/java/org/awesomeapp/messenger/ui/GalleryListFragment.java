@@ -41,7 +41,7 @@ import org.awesomeapp.messenger.provider.Imps;
 
 import java.sql.Date;
 
-import info.guardianproject.otr.app.im.R;
+import im.zom.messenger.R;
 
 //import com.bumptech.glide.Glide;
 

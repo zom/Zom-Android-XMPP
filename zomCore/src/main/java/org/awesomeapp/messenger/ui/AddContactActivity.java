@@ -64,7 +64,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import info.guardianproject.otr.app.im.R;
+import im.zom.messenger.R;
+
 
 public class AddContactActivity extends ActionBarActivity {
     private static final String TAG = "AddContactActivity";

@@ -16,7 +16,7 @@
  */
 package org.awesomeapp.messenger.ui.legacy;
 
-import info.guardianproject.otr.app.im.R;
+import im.zom.messenger.R;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;

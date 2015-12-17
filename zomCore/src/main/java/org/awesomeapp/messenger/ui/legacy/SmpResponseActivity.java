@@ -3,7 +3,7 @@ package org.awesomeapp.messenger.ui.legacy;
 import org.awesomeapp.messenger.crypto.IOtrChatSession;
 import org.awesomeapp.messenger.crypto.OtrDebugLogger;
 import org.awesomeapp.messenger.service.IChatSession;
-import info.guardianproject.otr.app.im.R;
+import im.zom.messenger.R;
 import org.awesomeapp.messenger.model.Address;
 import org.awesomeapp.messenger.service.ImServiceConstants;
 import android.app.Activity;

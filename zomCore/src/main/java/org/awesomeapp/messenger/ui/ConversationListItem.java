@@ -62,7 +62,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 
-import info.guardianproject.otr.app.im.R;
+import im.zom.messenger.R;
 
 public class ConversationListItem extends FrameLayout {
     public static final String[] CONTACT_PROJECTION = { Imps.Contacts._ID, Imps.Contacts.PROVIDER,

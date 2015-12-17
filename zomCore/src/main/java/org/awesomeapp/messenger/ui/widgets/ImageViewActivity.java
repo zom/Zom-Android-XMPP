@@ -21,7 +21,7 @@ import org.awesomeapp.messenger.util.SecureMediaStore;
 
 import info.guardianproject.iocipher.File;
 import info.guardianproject.iocipher.FileInputStream;
-import info.guardianproject.otr.app.im.R;
+import im.zom.messenger.R;
 
 import java.io.IOException;
 

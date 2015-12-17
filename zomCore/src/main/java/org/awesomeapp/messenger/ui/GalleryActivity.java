@@ -53,7 +53,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import info.guardianproject.otr.app.im.R;
+import im.zom.messenger.R;
 
 public class GalleryActivity extends AppCompatActivity {
 

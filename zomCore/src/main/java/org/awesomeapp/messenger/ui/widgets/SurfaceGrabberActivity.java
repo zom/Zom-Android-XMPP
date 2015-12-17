@@ -2,7 +2,7 @@ package org.awesomeapp.messenger.ui.widgets;
 
 import java.io.IOException;
 import java.util.List;
-import info.guardianproject.otr.app.im.R;
+import im.zom.messenger.R;
 
 import android.app.Activity;
 import android.content.Context;

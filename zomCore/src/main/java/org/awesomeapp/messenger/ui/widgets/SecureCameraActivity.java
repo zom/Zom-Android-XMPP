@@ -3,7 +3,7 @@ package org.awesomeapp.messenger.ui.widgets;
 import info.guardianproject.iocipher.File;
 import info.guardianproject.iocipher.FileInputStream;
 import info.guardianproject.iocipher.FileOutputStream;
-import info.guardianproject.otr.app.im.R;
+import im.zom.messenger.R;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;

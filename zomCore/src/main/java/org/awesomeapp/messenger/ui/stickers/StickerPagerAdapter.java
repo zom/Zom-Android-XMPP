@@ -13,7 +13,7 @@ import android.widget.GridView;
 
 import java.util.List;
 
-import info.guardianproject.otr.app.im.R;
+import im.zom.messenger.R;
 
 public class StickerPagerAdapter extends PagerAdapter {
 

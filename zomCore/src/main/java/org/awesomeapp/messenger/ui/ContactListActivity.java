@@ -32,9 +32,7 @@ import org.awesomeapp.messenger.ui.onboarding.OnboardingManager;
 import java.util.ArrayList;
 import java.util.List;
 
-import info.guardianproject.otr.app.im.R;
-
-//import com.bumptech.glide.Glide;
+import im.zom.messenger.R;
 
 public class ContactListActivity extends AppCompatActivity {
 

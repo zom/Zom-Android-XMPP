@@ -58,7 +58,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import info.guardianproject.otr.app.im.R;
+import im.zom.messenger.R;
+
 
 public class AccountFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match

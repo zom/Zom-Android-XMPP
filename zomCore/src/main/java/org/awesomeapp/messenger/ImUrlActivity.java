@@ -59,7 +59,7 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
 
-import info.guardianproject.otr.app.im.R;
+import im.zom.messenger.R;
 
 public class ImUrlActivity extends Activity {
     private static final String TAG = "ImUrlActivity";

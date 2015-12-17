@@ -28,7 +28,8 @@ import org.awesomeapp.messenger.model.Address;
 import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
 import  org.awesomeapp.messenger.service.IChatListener;
 import org.awesomeapp.messenger.service.IDataListener;
-import info.guardianproject.otr.app.im.R;
+import im.zom.messenger.R;
+
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.model.ChatGroup;
 import org.awesomeapp.messenger.model.ChatGroupManager;

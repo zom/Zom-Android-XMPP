@@ -69,7 +69,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import info.guardianproject.otr.app.im.R;
+import im.zom.messenger.R;
 
 public class GalleryListItem extends FrameLayout {
 

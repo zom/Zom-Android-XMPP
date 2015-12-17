@@ -122,7 +122,7 @@ import java.util.Collection;
 import java.util.Date;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import info.guardianproject.otr.app.im.R;
+import im.zom.messenger.R;
 
 public class ConversationView {
     // This projection and index are set for the query of active chats

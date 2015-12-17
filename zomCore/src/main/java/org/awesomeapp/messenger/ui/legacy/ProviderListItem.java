@@ -18,7 +18,7 @@
 package org.awesomeapp.messenger.ui.legacy;
 
 import org.awesomeapp.messenger.service.IImConnection;
-import info.guardianproject.otr.app.im.R;
+import im.zom.messenger.R;
 import org.awesomeapp.messenger.model.ImConnection;
 
 import org.awesomeapp.messenger.ImApp;

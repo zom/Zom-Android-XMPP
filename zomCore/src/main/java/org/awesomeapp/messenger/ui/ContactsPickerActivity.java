@@ -53,7 +53,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
-import info.guardianproject.otr.app.im.R;
+import im.zom.messenger.R;
 
 /** Activity used to pick a contact. */
 public class ContactsPickerActivity extends AppCompatActivity {

@@ -54,7 +54,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.awesomeapp.messenger.service.IChatSession;
-import info.guardianproject.otr.app.im.R;
+import im.zom.messenger.R;
 
 import org.awesomeapp.messenger.service.IChatSessionManager;
 import org.awesomeapp.messenger.util.SecureMediaStore;

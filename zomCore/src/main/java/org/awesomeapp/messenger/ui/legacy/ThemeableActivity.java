@@ -1,6 +1,6 @@
 package org.awesomeapp.messenger.ui.legacy;
 
-import info.guardianproject.otr.app.im.R;
+import im.zom.messenger.R;
 
 import java.io.File;
 

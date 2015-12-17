@@ -51,7 +51,7 @@ import org.awesomeapp.messenger.provider.Imps;
 
 import java.io.IOException;
 
-import info.guardianproject.otr.app.im.R;
+import im.zom.messenger.R;
 import xyz.danoz.recyclerviewfastscroller.sectionindicator.title.SectionTitleIndicator;
 import xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller;
 

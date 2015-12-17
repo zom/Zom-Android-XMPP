@@ -20,7 +20,9 @@ package org.awesomeapp.messenger.ui;
 import org.awesomeapp.messenger.crypto.IOtrChatSession;
 import org.awesomeapp.messenger.service.IChatSession;
 import org.awesomeapp.messenger.service.IImConnection;
-import info.guardianproject.otr.app.im.R;
+
+import im.zom.messenger.R;
+
 import org.awesomeapp.messenger.util.SecureMediaStore;
 import org.awesomeapp.messenger.ui.legacy.DatabaseUtils;
 import org.awesomeapp.messenger.ImApp;

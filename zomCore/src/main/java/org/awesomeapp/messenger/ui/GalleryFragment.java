@@ -8,7 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import info.guardianproject.otr.app.im.R;
+import im.zom.messenger.R;
 
 public class GalleryFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match

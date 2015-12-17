@@ -68,7 +68,7 @@ import java.util.Locale;
 
 import info.guardianproject.cacheword.PRNGFixes;
 import info.guardianproject.iocipher.VirtualFileSystem;
-import info.guardianproject.otr.app.im.R;
+import im.zom.messenger.R;
 import info.guardianproject.util.Languages;
 
 public class ImApp extends Application {

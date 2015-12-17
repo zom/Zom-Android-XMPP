@@ -17,7 +17,7 @@
 
 package org.awesomeapp.messenger.ui.legacy;
 
-import info.guardianproject.otr.app.im.R;
+import im.zom.messenger.R;
 
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.provider.Imps;

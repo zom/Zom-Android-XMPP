@@ -6,7 +6,8 @@ import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
-import info.guardianproject.otr.app.im.R;
+import im.zom.messenger.R;
+
 
 /**
  * Handles all global preferences that do not need to be stored encrypted,

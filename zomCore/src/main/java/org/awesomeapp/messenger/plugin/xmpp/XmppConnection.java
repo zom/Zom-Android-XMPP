@@ -124,7 +124,8 @@ import javax.net.ssl.X509TrustManager;
 
 import de.duenndns.ssl.MemorizingTrustManager;
 import info.guardianproject.netcipher.proxy.OrbotHelper;
-import info.guardianproject.otr.app.im.R;
+import im.zom.messenger.R;
+
 
 public class XmppConnection extends ImConnection {
 

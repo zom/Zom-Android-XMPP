@@ -3,7 +3,7 @@
  */
 package org.awesomeapp.messenger.util;
 
-import info.guardianproject.otr.app.im.R;
+import im.zom.messenger.R;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;

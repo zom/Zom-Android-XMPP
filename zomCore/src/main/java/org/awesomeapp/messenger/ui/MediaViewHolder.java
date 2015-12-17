@@ -8,7 +8,7 @@ import android.widget.ImageView;
 
 import org.awesomeapp.messenger.util.SecureMediaStore;
 
-import info.guardianproject.otr.app.im.R;
+import im.zom.messenger.R;
 
 /**
  * Created by n8fr8 on 8/10/15.

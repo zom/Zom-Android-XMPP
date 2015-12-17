@@ -79,8 +79,7 @@ import java.util.Locale;
 import java.util.UUID;
 
 import info.guardianproject.iocipher.VirtualFileSystem;
-import info.guardianproject.otr.app.im.R;
-
+import im.zom.messenger.R;
 
 /**
  * TODO

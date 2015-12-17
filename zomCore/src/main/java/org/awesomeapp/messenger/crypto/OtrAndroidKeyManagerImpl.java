@@ -1,7 +1,8 @@
 package org.awesomeapp.messenger.crypto;
 
 import org.awesomeapp.messenger.crypto.IOtrKeyManager;
-import info.guardianproject.otr.app.im.R;
+import im.zom.messenger.R;
+
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.model.Address;
 

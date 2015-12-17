@@ -50,7 +50,7 @@ import org.awesomeapp.messenger.MainActivity;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.tasks.ChatSessionInitTask;
 
-import info.guardianproject.otr.app.im.R;
+import im.zom.messenger.R;
 
 public class ConversationListFragment extends Fragment {
 

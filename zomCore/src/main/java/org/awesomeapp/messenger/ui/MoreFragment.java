@@ -13,7 +13,7 @@ import android.widget.Button;
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.MainActivity;
 
-import info.guardianproject.otr.app.im.R;
+import im.zom.messenger.R;
 
 public class MoreFragment extends Fragment {
 

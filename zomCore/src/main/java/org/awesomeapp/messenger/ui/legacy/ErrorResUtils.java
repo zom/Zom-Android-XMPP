@@ -20,7 +20,7 @@ package org.awesomeapp.messenger.ui.legacy;
 import org.awesomeapp.messenger.model.ImErrorInfo;
 import org.awesomeapp.messenger.provider.ImpsErrorInfo;
 
-import info.guardianproject.otr.app.im.R;
+import im.zom.messenger.R;
 
 import android.content.res.Resources;
 

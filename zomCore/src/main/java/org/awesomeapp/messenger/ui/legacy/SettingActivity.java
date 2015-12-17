@@ -38,7 +38,7 @@ import org.awesomeapp.messenger.ui.PanicSetupActivity;
 
 import java.util.ArrayList;
 
-import info.guardianproject.otr.app.im.R;
+import im.zom.messenger.R;
 import info.guardianproject.panic.Panic;
 import info.guardianproject.panic.PanicReceiver;
 import info.guardianproject.util.Languages;

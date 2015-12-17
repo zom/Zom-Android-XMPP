@@ -79,7 +79,8 @@ import java.util.Map;
 
 import info.guardianproject.cacheword.CacheWordHandler;
 import info.guardianproject.cacheword.ICacheWordSubscriber;
-import info.guardianproject.otr.app.im.R;
+import im.zom.messenger.R;
+
 
 public class RemoteImService extends Service implements OtrEngineListener, ImService, ICacheWordSubscriber {
 

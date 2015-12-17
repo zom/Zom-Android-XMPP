@@ -54,7 +54,8 @@ import org.awesomeapp.messenger.crypto.OtrAndroidKeyManagerImpl;
 import org.awesomeapp.messenger.service.IImConnection;
 
 import info.guardianproject.netcipher.proxy.OrbotHelper;
-import info.guardianproject.otr.app.im.R;
+import im.zom.messenger.R;
+
 import org.awesomeapp.messenger.model.ImConnection;
 import org.awesomeapp.messenger.plugin.xmpp.XmppConnection;
 

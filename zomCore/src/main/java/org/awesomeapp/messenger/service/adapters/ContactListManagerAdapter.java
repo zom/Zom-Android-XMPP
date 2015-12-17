@@ -20,7 +20,8 @@ package org.awesomeapp.messenger.service.adapters;
 import org.awesomeapp.messenger.service.IContactList;
 import org.awesomeapp.messenger.service.IContactListListener;
 import org.awesomeapp.messenger.service.ISubscriptionListener;
-import info.guardianproject.otr.app.im.R;
+import im.zom.messenger.R;
+
 import org.awesomeapp.messenger.model.Address;
 import org.awesomeapp.messenger.model.ChatGroup;
 import org.awesomeapp.messenger.model.Contact;

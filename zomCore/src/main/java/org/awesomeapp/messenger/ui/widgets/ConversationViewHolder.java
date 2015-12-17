@@ -4,7 +4,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import info.guardianproject.otr.app.im.R;
+import im.zom.messenger.R;
 
 /**
  * Created by n8fr8 on 12/14/15.

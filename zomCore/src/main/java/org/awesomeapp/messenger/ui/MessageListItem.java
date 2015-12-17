@@ -17,7 +17,7 @@
 
 package org.awesomeapp.messenger.ui;
 
-import info.guardianproject.otr.app.im.R;
+import im.zom.messenger.R;
 
 import org.awesomeapp.messenger.ImUrlActivity;
 import org.awesomeapp.messenger.tasks.ThumbnailLoaderRequest;

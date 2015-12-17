@@ -17,7 +17,7 @@ import org.awesomeapp.messenger.Preferences;
 
 import java.util.ArrayList;
 
-import info.guardianproject.otr.app.im.R;
+import im.zom.messenger.R;
 import info.guardianproject.panic.PanicReceiver;
 
 public class PanicSetupActivity extends AppCompatActivity {
