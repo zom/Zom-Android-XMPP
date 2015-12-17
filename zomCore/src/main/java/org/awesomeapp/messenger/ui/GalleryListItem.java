@@ -374,7 +374,7 @@ public class GalleryListItem extends FrameLayout {
             }
             catch (Exception e)
             {
-                Log.e(ImApp.LOG_TAG,"unable to load thumbnail",e);
+                Log.e(ImApp.LOG_TAG,"unable to load thumbnail: " + e.getMessage());
             }
         }
         else if (mediaUri.getScheme().equals("asset"))
