@@ -51,8 +51,7 @@ android {
             applicationId = "org.awesomeapp.messenger"
             applicationId 'org.awesomeapp.messenger'
         }
-        release {
-            applicationId 'im.zom.messenger'
+        zomrelease {
         }
     }
 
