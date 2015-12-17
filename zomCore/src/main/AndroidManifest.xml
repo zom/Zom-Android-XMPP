@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="info.guardianproject.otr.app.im"
+    package="im.zom.messenger"
     android:installLocation="auto"
     android:sharedUserLabel="@string/perm_label"
     android:versionCode="1500101"

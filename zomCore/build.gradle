@@ -26,10 +26,10 @@ android {
     }
 
     defaultConfig {
-        applicationId "org.awesomeapp.messenger"
+        applicationId 'im.zom.messenger'
         minSdkVersion project.ext.minSdkVersion
         targetSdkVersion project.ext.targetSdkVersion
-        testApplicationId "org.awesomeapp.messenger.test"
+        testApplicationId 'im.zom.messenger.test'
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
 
     }
