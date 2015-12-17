@@ -52,7 +52,7 @@
         android:name="org.awesomeapp.messenger.permission.READ_ONLY"
         android:description="@string/ro_perm_desc"
         android:label="@string/ro_perm_label"
-        android:permissionGroup="android.permission-group.MESSAGES"
+    android:permissionGroup="android.permission-group.MESSAGES"
         android:protectionLevel="dangerous" />
     <permission
         android:name="org.awesomeapp.messenger.permission.WRITE_ONLY"
@@ -213,7 +213,8 @@
                 android:value="Jabber (XMPP)" />
             <meta-data
                 android:name="info.guardianproject.otr.app.im.provider_full_name"
-                android:value="@string/provider_full_name_xmpp" />
+                android:value="@string/provider_full_name_xmpp"/>
+
             <meta-data
                 android:name="info.guardianproject.otr.app.im.signup_url"
                 android:value="http://xmpp.org/services/" />
@@ -278,14 +279,11 @@
             android:label="@string/choose_friend" >
             <intent-filter>
                 <action android:name="android.intent.action.PICK" />
-
                 <category android:name="android.intent.category.DEFAULT" />
-
                 <data android:mimeType="vnd.android.cursor.dir/imps-contacts" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.PICK" />
-
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <data android:mimeType="vnd.android.cursor.dir/imps-chats" />
@@ -295,11 +293,9 @@
             android:name="org.awesomeapp.messenger.ui.legacy.AccountSettingsActivity"
             android:exported="false" >
             <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
+                <action android:name="android.intent.action.PICK" />
                 <category android:name="info.guardianproject.otr.app.im.IMPS_CATEGORY" />
                 <category android:name="android.intent.category.DEFAULT" />
-
                 <data android:mimeType="vnd.android-dir/imps-providerSettings" />
             </intent-filter>
         </activity>
@@ -307,11 +303,9 @@
             android:name="org.awesomeapp.messenger.ui.legacy.SettingActivity"
             android:exported="false" >
             <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
+                <action android:name="android.intent.action.PICK" />
                 <category android:name="info.guardianproject.otr.app.im.IMPS_CATEGORY" />
                 <category android:name="android.intent.category.DEFAULT" />
-
                 <data android:mimeType="vnd.android-dir/imps-providerSettings" />
             </intent-filter>
         </activity>
@@ -413,8 +407,7 @@
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
             android:name="org.awesomeapp.messenger.ui.ContactListActivity"
-            android:exported="false"
-            android:title="@string/contacts" />
+            android:exported="false"/>
         <activity
             android:name="org.awesomeapp.messenger.ui.GalleryActivity"
             android:exported="false"
@@ -435,6 +428,10 @@
 
         <activity android:name="org.awesomeapp.messenger.ui.GroupDisplayActivity" >
         </activity>
+
+        <meta-data
+            android:name="org.awesomeapp.messenger.tasks.GlideVFSModule"
+            android:value="GlideModule" />
     </application>
 
 </manifest>

@@ -334,42 +334,6 @@ public class ContactListItem extends FrameLayout {
         return Color.TRANSPARENT;
     }
 
-    /**
-     * @param contentResolver
-     * @param aHolder
-     * @param uri
-     */
-    private void setThumbnail(final ContentResolver contentResolver, final ViewHolder aHolder, final Uri uri) {
-        new AsyncTask<String, Void, Bitmap>() {
-
-            @Override
-            protected Bitmap doInBackground(String... params) {
-
-                Bitmap result = mBitmapCache.get(uri.toString());
-
-                if (result == null)
-                    return MessageListItem.getThumbnail(getContext(),contentResolver, uri );
-                else
-                    return result;
-            }
-
-            @Override
-            protected void onPostExecute(Bitmap result) {
-
-                if (uri != null && result != null)
-                {
-                    mBitmapCache.put(uri.toString(), result);
-
-                    // set the thumbnail
-                    aHolder.mMediaThumb.setImageBitmap(result);
-                }
-            }
-        }.execute();
-    }
-
-
-    private static int sCacheSize = 10; // 1MiB
-    private static LruCache<String,Bitmap> mBitmapCache = new LruCache<String,Bitmap>(sCacheSize);
 
     /*
     private String queryGroupMembers(ContentResolver resolver, long groupId) {
