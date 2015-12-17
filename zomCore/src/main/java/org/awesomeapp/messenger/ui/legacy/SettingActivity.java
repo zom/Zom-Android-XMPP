@@ -41,7 +41,7 @@ import java.util.ArrayList;
 import im.zom.messenger.R;
 import info.guardianproject.panic.Panic;
 import info.guardianproject.panic.PanicReceiver;
-import info.guardianproject.util.Languages;
+import org.awesomeapp.messenger.util.Languages;
 
 public class SettingActivity extends PreferenceActivity {
     private static final String TAG = "SettingActivity";

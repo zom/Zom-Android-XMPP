@@ -1,4 +1,4 @@
-package info.guardianproject.util;
+package org.awesomeapp.messenger.util;
 
 import android.annotation.TargetApi;
 import android.app.Activity;

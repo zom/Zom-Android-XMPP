@@ -69,7 +69,7 @@ import java.util.Locale;
 import info.guardianproject.cacheword.PRNGFixes;
 import info.guardianproject.iocipher.VirtualFileSystem;
 import im.zom.messenger.R;
-import info.guardianproject.util.Languages;
+import org.awesomeapp.messenger.util.Languages;
 
 public class ImApp extends Application {
 

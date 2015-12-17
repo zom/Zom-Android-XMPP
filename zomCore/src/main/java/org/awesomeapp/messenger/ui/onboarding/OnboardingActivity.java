@@ -27,9 +27,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.ViewFlipper;
@@ -56,10 +54,9 @@ import java.io.InputStream;
 import java.security.KeyPair;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import im.zom.messenger.R;
-import info.guardianproject.util.Languages;
+import org.awesomeapp.messenger.util.Languages;
 
 public class OnboardingActivity extends ThemeableActivity {
 

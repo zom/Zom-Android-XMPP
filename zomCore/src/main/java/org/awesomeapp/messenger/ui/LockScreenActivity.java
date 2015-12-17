@@ -1,10 +1,6 @@
 package org.awesomeapp.messenger.ui;
 
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,10 +14,8 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
@@ -34,11 +28,7 @@ import info.guardianproject.cacheword.PassphraseSecrets;
 import im.zom.messenger.R;
 
 import org.awesomeapp.messenger.ImApp;
-import org.awesomeapp.messenger.RouterActivity;
 import org.awesomeapp.messenger.ui.legacy.ThemeableActivity;
-import org.awesomeapp.messenger.util.SecureMediaStore;
-
-import info.guardianproject.util.Languages;
 
 public class LockScreenActivity extends ThemeableActivity implements ICacheWordSubscriber {
     private static final String TAG = "LockScreenActivity";
