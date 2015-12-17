@@ -570,6 +570,11 @@ public class MessageListItem extends FrameLayout {
      * @param mediaUri
      */
     private void setImageThumbnail(final ContentResolver contentResolver, final int id, final MessageViewHolder aHolder, final Uri mediaUri) {
+
+        //if the same URI, we don't need to reload
+        if (aHolder.mMediaUri != null && aHolder.mMediaUri.getPath().equals(mediaUri.getPath()))
+            return;
+
         // pair this holder to the uri. if the holder is recycled, the pairing is broken
         aHolder.mMediaUri = mediaUri;
         // if a content uri - already scanned
@@ -605,38 +610,6 @@ public class MessageListItem extends FrameLayout {
 
     }
 
-    public static Bitmap getThumbnailFile(Context context, ContentResolver cr, Uri uri, int thumbnailSize) {
-
-        try
-        {
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inJustDecodeBounds = true;
-            options.inInputShareable = true;
-            options.inPurgeable = true;
-    
-            InputStream is = cr.openInputStream(uri);
-            BitmapFactory.decodeStream(is, null, options);
-            if ((options.outWidth == -1) || (options.outHeight == -1))
-                return null;
-    
-            int originalSize = (options.outHeight > options.outWidth) ? options.outHeight
-                    : options.outWidth;
-    
-            BitmapFactory.Options opts = new BitmapFactory.Options();
-            opts.inSampleSize = originalSize / thumbnailSize;
-    
-            is = cr.openInputStream(uri);
-         
-            Bitmap scaledBitmap = BitmapFactory.decodeStream(is, null, options);
-    
-            return scaledBitmap;
-        }
-        catch (Exception e)
-        {
-            Log.d(ImApp.LOG_TAG,"could not getThumbnailFile",e);
-            return null;
-        }
-    }
 
     private String formatMessage (String body)
     {

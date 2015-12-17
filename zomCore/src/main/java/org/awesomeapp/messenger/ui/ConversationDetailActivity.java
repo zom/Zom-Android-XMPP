@@ -16,6 +16,7 @@
 
 package org.awesomeapp.messenger.ui;
 
+import android.Manifest;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -31,6 +32,9 @@ import android.provider.MediaStore;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -264,27 +268,113 @@ public class ConversationDetailActivity extends AppCompatActivity {
     }
 
     Uri mLastPhoto = null;
+    private final static int MY_PERMISSIONS_REQUEST_CAMERA = 707070;
 
     void startPhotoTaker() {
+        int permissionCheck = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.CAMERA);
 
-        // create Intent to take a picture and return control to the calling application
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        File photo = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),  "cs_" + new Date().getTime() + ".jpg");
-        mLastPhoto = Uri.fromFile(photo);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT,
-                mLastPhoto);
+        if (permissionCheck ==PackageManager.PERMISSION_DENIED)
+        {
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.CAMERA)) {
 
-        // start the image capture Intent
-        startActivityForResult(intent, REQUEST_TAKE_PICTURE);
+
+                // Show an expanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+                Snackbar.make(mConvoView.getHistoryView(), R.string.grant_perms, Snackbar.LENGTH_LONG).show();
+            } else {
+
+                // No explanation needed, we can request the permission.
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.CAMERA},
+                        MY_PERMISSIONS_REQUEST_CAMERA);
+
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        }
+        else {
+            // create Intent to take a picture and return control to the calling application
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            File photo = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), "cs_" + new Date().getTime() + ".jpg");
+            mLastPhoto = Uri.fromFile(photo);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT,
+                    mLastPhoto);
+
+            // start the image capture Intent
+            startActivityForResult(intent, ConversationDetailActivity.REQUEST_TAKE_PICTURE);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_CAMERA: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
     }
 
 
     void startFilePicker() {
-        Intent selectFile = new Intent(Intent.ACTION_GET_CONTENT);
-        Intent intentChooser = Intent.createChooser(selectFile, "Select File");
 
-        if (intentChooser != null)
-            startActivityForResult(Intent.createChooser(selectFile, "Select File"), REQUEST_SEND_FILE);
+        int permissionCheck = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_EXTERNAL_STORAGE);
+
+        if (permissionCheck ==PackageManager.PERMISSION_DENIED)
+        {
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.READ_EXTERNAL_STORAGE)) {
+
+
+                // Show an expanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+                Snackbar.make(mConvoView.getHistoryView(), R.string.grant_perms, Snackbar.LENGTH_LONG).show();
+            } else {
+
+                // No explanation needed, we can request the permission.
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                        MY_PERMISSIONS_REQUEST_CAMERA);
+
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        }
+        else {
+
+
+            Intent selectFile = new Intent(Intent.ACTION_GET_CONTENT);
+            Intent intentChooser = Intent.createChooser(selectFile, "Select File");
+
+            if (intentChooser != null)
+                startActivityForResult(Intent.createChooser(selectFile, "Select File"), REQUEST_SEND_FILE);
+        }
     }
 
     private boolean isCallable(Intent intent) {
@@ -478,26 +568,53 @@ public class ConversationDetailActivity extends AppCompatActivity {
 
     public void startAudioRecording ()
     {
-        mMediaRecorder = new MediaRecorder();
+        int permissionCheck = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.RECORD_AUDIO);
 
-        mAudioFilePath = new File(getFilesDir(),"audiotemp.m4a");
-
-        mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-        mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
-        mMediaRecorder.setAudioChannels(1);
-        mMediaRecorder.setAudioEncodingBitRate(22050);
-        mMediaRecorder.setAudioSamplingRate(64000);
-        mMediaRecorder.setOutputFile(mAudioFilePath.getAbsolutePath());
-
-        try {
-            mIsAudioRecording = true;
-            mMediaRecorder.prepare();
-            mMediaRecorder.start();
-        }
-        catch (Exception e)
+        if (permissionCheck ==PackageManager.PERMISSION_DENIED)
         {
-            Log.e(ImApp.LOG_TAG,"couldn't start audio",e);
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.RECORD_AUDIO)) {
+
+
+                // Show an expanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+                Snackbar.make(mConvoView.getHistoryView(), R.string.grant_perms, Snackbar.LENGTH_LONG).show();
+            } else {
+
+                // No explanation needed, we can request the permission.
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.RECORD_AUDIO},
+                        MY_PERMISSIONS_REQUEST_CAMERA);
+
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        }
+        else {
+            mMediaRecorder = new MediaRecorder();
+
+            mAudioFilePath = new File(getFilesDir(), "audiotemp.m4a");
+
+            mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+            mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+            mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+            mMediaRecorder.setAudioChannels(1);
+            mMediaRecorder.setAudioEncodingBitRate(22050);
+            mMediaRecorder.setAudioSamplingRate(64000);
+            mMediaRecorder.setOutputFile(mAudioFilePath.getAbsolutePath());
+
+            try {
+                mIsAudioRecording = true;
+                mMediaRecorder.prepare();
+                mMediaRecorder.start();
+            } catch (Exception e) {
+                Log.e(ImApp.LOG_TAG, "couldn't start audio", e);
+            }
         }
     }
 
