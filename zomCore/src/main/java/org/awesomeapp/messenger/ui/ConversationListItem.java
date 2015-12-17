@@ -41,6 +41,9 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+
 import net.java.otr4j.session.SessionStatus;
 
 import org.awesomeapp.messenger.ImApp;
@@ -58,6 +61,7 @@ import org.awesomeapp.messenger.util.SystemServices;
 import org.awesomeapp.messenger.util.SystemServices.FileInfo;
 import org.ocpsoft.prettytime.PrettyTime;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
@@ -325,6 +329,9 @@ public class ConversationListItem extends FrameLayout {
         {
             statusText = address;
             holder.mLine2.setText(statusText);
+
+            if (holder.mMediaThumb != null)
+                holder.mMediaThumb.setVisibility(View.GONE);
         }
 
         holder.mLine1.setVisibility(View.VISIBLE);
@@ -429,52 +436,48 @@ public class ConversationListItem extends FrameLayout {
         return Color.TRANSPARENT;
     }
 
+    private Uri mLastMediaUri = null;
+
     /**
      * @param contentResolver
      * @param aHolder
-     * @param uri
+     * @param mediaUri
      */
-    private void setThumbnail(final ContentResolver contentResolver, final ConversationViewHolder aHolder, final Uri uri) {
-        new AsyncTask<String, Void, Bitmap>() {
+    private void setThumbnail(final ContentResolver contentResolver, final ConversationViewHolder aHolder, final Uri mediaUri) {
 
-            @Override
-            protected Bitmap doInBackground(String... params) {
+        if (mLastMediaUri != null && mLastMediaUri.getPath().equals(mediaUri.getPath()))
+            return;
 
-                Bitmap result = mBitmapCache.get(uri.toString());
+        mLastMediaUri = mediaUri;
 
-                if (result == null) {
-                    if (uri.getScheme().equals("asset")) {
-                        AssetManager assetManager = getContext().getAssets();
-
-                        try {
-                            InputStream is = assetManager.open("stickers" + uri.getPath());
-                            Bitmap bitmap = BitmapFactory.decodeStream(is);
-                            is.close();
-                            return bitmap;
-                        } catch (IOException e) {
-                        //    e.printStackTrace();
-                        }
-
-                    } else
-
-                        return MessageListItem.getThumbnail(getContext(), contentResolver, uri);
-                }
-
-                return result;
+        if(SecureMediaStore.isVfsUri(mediaUri))
+        {
+            try {
+                Glide.with(getContext())
+                        .load(new info.guardianproject.iocipher.FileInputStream(new File(mediaUri.getPath()).getPath()))
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .into(aHolder.mMediaThumb);
             }
-
-            @Override
-            protected void onPostExecute(Bitmap result) {
-
-                if (uri != null && result != null)
-                {
-                    mBitmapCache.put(uri.toString(), result);
-
-                    // set the thumbnail
-                    aHolder.mMediaThumb.setImageBitmap(result);
-                }
+            catch (Exception e)
+            {
+                Log.e(ImApp.LOG_TAG,"unable to load thumbnail",e);
             }
-        }.execute();
+        }
+        else if (mediaUri.getScheme().equals("asset"))
+        {
+            String assetPath = "file:///android_asset/" + mediaUri.getPath().substring(1);
+            Glide.with(getContext())
+                    .load(assetPath)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .into(aHolder.mMediaThumb);
+        }
+        else
+        {
+            Glide.with(getContext())
+                    .load(mediaUri)
+                    .into(aHolder.mMediaThumb);
+        }
+
     }
 
 

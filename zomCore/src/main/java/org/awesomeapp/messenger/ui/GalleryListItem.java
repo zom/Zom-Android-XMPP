@@ -26,14 +26,12 @@ import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.provider.MediaStore;
 import android.support.v4.util.LruCache;
@@ -47,22 +45,21 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.ImUrlActivity;
 import org.awesomeapp.messenger.model.Presence;
 import org.awesomeapp.messenger.provider.Imps;
-import org.awesomeapp.messenger.tasks.ThumbnailLoaderRequest;
-import org.awesomeapp.messenger.tasks.ThumbnailLoaderTask;
 import org.awesomeapp.messenger.ui.widgets.ImageViewActivity;
 import org.awesomeapp.messenger.ui.widgets.RoundedAvatarDrawable;
 import org.awesomeapp.messenger.util.SecureMediaStore;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URLConnection;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -362,22 +359,37 @@ public class GalleryListItem extends FrameLayout {
     /**
      * @param contentResolver
      * @param aHolder
-     * @param uri
+     * @param mediaUri
      */
-    private void setThumbnail(ContentResolver contentResolver, GalleryMediaViewHolder aHolder, Uri uri) {
+    private void setThumbnail(ContentResolver contentResolver, GalleryMediaViewHolder aHolder, Uri mediaUri) {
 
-        ThumbnailLoaderRequest request = new ThumbnailLoaderRequest();
-        request.mHolder = aHolder;
-        request.mUri = uri;
-        request.mResolver = contentResolver;
-
-        aHolder.mMediaThumbnail.setImageResource(R.drawable.ic_photo_library_white_36dp);
-        Bitmap result=sBitmapCache.get(uri.toString());
-        if (result == null)
-            new ThumbnailLoaderTask(sBitmapCache).execute(request);
+        if(SecureMediaStore.isVfsUri(mediaUri))
+        {
+            try {
+                Glide.with(context)
+                        .load(new info.guardianproject.iocipher.FileInputStream(new File(mediaUri.getPath()).getPath()))
+                        .centerCrop()
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .into(aHolder.mMediaThumbnail);
+            }
+            catch (Exception e)
+            {
+                Log.e(ImApp.LOG_TAG,"unable to load thumbnail: " + e.getMessage());
+            }
+        }
+        else if (mediaUri.getScheme().equals("asset"))
+        {
+            String assetPath = "file:///android_asset/" + mediaUri.getPath().substring(1);
+            Glide.with(context)
+                    .load(assetPath)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .into(aHolder.mMediaThumbnail);
+        }
         else
         {
-            aHolder.mMediaThumbnail.setImageBitmap(result);
+            Glide.with(context)
+                    .load(mediaUri)
+                    .into(aHolder.mMediaThumbnail);
         }
 
     }

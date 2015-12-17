@@ -49,12 +49,13 @@ import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.MainActivity;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.tasks.ChatSessionInitTask;
+import org.awesomeapp.messenger.ui.widgets.ConversationViewHolder;
 
 import im.zom.messenger.R;
 
 public class ConversationListFragment extends Fragment {
 
-    private MessageListRecyclerViewAdapter mAdapter = null;
+    private ConversationListRecyclerViewAdapter mAdapter = null;
     private Uri mUri;
     private MyLoaderCallbacks mLoaderCallbacks;
     private LoaderManager mLoaderManager;
@@ -99,7 +100,7 @@ public class ConversationListFragment extends Fragment {
         mLoaderManager.initLoader(mLoaderId, null, mLoaderCallbacks);
 
         Cursor cursor = null;
-        mAdapter = new MessageListRecyclerViewAdapter(getActivity(),cursor);
+        mAdapter = new ConversationListRecyclerViewAdapter(getActivity(),cursor);
 
 
         // init swipe to dismiss logic
@@ -158,25 +159,14 @@ public class ConversationListFragment extends Fragment {
 
     }
 
-    public static class MessageListRecyclerViewAdapter
-            extends CursorRecyclerViewAdapter<MessageListRecyclerViewAdapter.ViewHolder> {
+    public static class ConversationListRecyclerViewAdapter
+            extends CursorRecyclerViewAdapter<ConversationViewHolder> {
 
         private final TypedValue mTypedValue = new TypedValue();
         private int mBackground;
         private Context mContext;
 
-        public static class ViewHolder extends RecyclerView.ViewHolder {
-
-            public final ConversationListItem mView;
-
-            public ViewHolder(ConversationListItem view) {
-                super(view);
-                mView = view;
-            }
-
-        }
-
-        public MessageListRecyclerViewAdapter(Context context, Cursor cursor) {
+        public ConversationListRecyclerViewAdapter(Context context, Cursor cursor) {
             super(context,cursor);
             context.getTheme().resolveAttribute(R.attr.selectableItemBackground, mTypedValue, true);
             mBackground = mTypedValue.resourceId;
@@ -184,24 +174,23 @@ public class ConversationListFragment extends Fragment {
         }
 
         @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public ConversationViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             ConversationListItem view = (ConversationListItem)LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.conversation_view, parent, false);
             view.setBackgroundResource(mBackground);
-
-            return new ViewHolder(view);
+            return new ConversationViewHolder(view);
         }
 
         @Override
-        public void onBindViewHolder(ViewHolder viewHolder, Cursor cursor) {
+        public void onBindViewHolder(ConversationViewHolder viewHolder, Cursor cursor) {
 
             final long chatId =  cursor.getLong(ConversationListItem.COLUMN_CONTACT_ID);
             final String address = cursor.getString(ConversationListItem.COLUMN_CONTACT_USERNAME);
             final String nickname = cursor.getString(ConversationListItem.COLUMN_CONTACT_NICKNAME);
 
-            viewHolder.mView.bind(cursor, null, true, false);
+            ((ConversationListItem)viewHolder.itemView).bind(cursor, null, true, false);
 
-            viewHolder.mView.setOnClickListener(new View.OnClickListener() {
+            viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Context context = v.getContext();
@@ -247,7 +236,8 @@ public class ConversationListFragment extends Fragment {
             CursorLoader loader = new CursorLoader(getActivity(), mUri, CHAT_PROJECTION,
                     buf == null ? null : buf.toString(), null, Imps.Contacts.TIME_ORDER);
 
-            //     loader.setUpdateThrottle(10L);
+            loader.setUpdateThrottle(1000L);
+
             return loader;
         }
 

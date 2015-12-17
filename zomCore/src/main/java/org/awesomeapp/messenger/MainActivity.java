@@ -778,12 +778,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        UpdateManager.unregister();
+    //    UpdateManager.unregister();
     }
 
     private void checkForUpdates() {
         // Remove this for store builds!
-        UpdateManager.register(this, ImApp.HOCKEY_APP_ID);
+     //   UpdateManager.register(this, ImApp.HOCKEY_APP_ID);
     }
 
     Uri mLastPhoto = null;

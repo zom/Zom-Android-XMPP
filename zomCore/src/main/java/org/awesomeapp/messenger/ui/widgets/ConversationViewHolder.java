@@ -1,5 +1,6 @@
 package org.awesomeapp.messenger.ui.widgets;
 
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -9,7 +10,7 @@ import im.zom.messenger.R;
 /**
  * Created by n8fr8 on 12/14/15.
  */
-public class ConversationViewHolder
+public class ConversationViewHolder extends RecyclerView.ViewHolder
 {
 
     public TextView mLine1;
@@ -22,6 +23,8 @@ public class ConversationViewHolder
 
     public ConversationViewHolder(View view)
     {
+        super(view);
+
         mLine1 = (TextView) view.findViewById(R.id.line1);
         mLine2 = (TextView) view.findViewById(R.id.line2);
 

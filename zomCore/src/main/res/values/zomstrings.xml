@@ -54,7 +54,7 @@
   <string name="search_history">Search History</string>
   <string name="rebort_abuse">Report Abuse</string>
   <string name="delete_leave">Delete and Leave</string>
-  <string name="photo_gallery">Gallery</string>
+  <string name="photo_gallery">Photo Stream</string>
   <string name="download">Download</string>
   <string name="copy_action">Copy</string>
   <string name="delete_action">Delete</string>
@@ -102,4 +102,5 @@
   <string name="choose_language">Switch Language</string>
   <string name="welcome_to_zom">WELCOME TO ZOM</string>
   <string name="onboarding_generate">To create a ZOM id, enter a username, and we will generate a secure password for you.</string>
+  <string name="grant_perms">You must grant permission for Zom to user the camera</string>
 </resources>

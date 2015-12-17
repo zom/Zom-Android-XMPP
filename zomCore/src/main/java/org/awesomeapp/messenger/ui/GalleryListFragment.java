@@ -140,9 +140,9 @@ public class GalleryListFragment extends Fragment {
         public void onBindViewHolder(ViewHolder viewHolder, Cursor cursor) {
 
             int id = cursor.getInt(0);
-            String mimeType = cursor.getString(1);
-            String body = cursor.getString(2);
-            java.util.Date ts = new Date(cursor.getLong(3));
+            String mimeType = "image/jpeg";
+            String body = cursor.getString(1);
+            java.util.Date ts = new Date(cursor.getLong(2));
 
           viewHolder.mView.bind(id,mimeType,body,ts);
 
@@ -152,12 +152,6 @@ public class GalleryListFragment extends Fragment {
                 }
             });
 
-
-            /**
-            Glide.with(holder.mAvatar.getContext())
-                    .load(R.drawable.awesome_title)
-                    .fitCenter()
-                    .into(holder.mAvatar);*/
         }
 
     }
@@ -169,15 +163,14 @@ public class GalleryListFragment extends Fragment {
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
             StringBuilder buf = new StringBuilder();
 
-
             buf.append(Imps.Messages.MIME_TYPE);
             buf.append(" LIKE ");
             buf.append("'image/jpeg'");
+            buf.append(" AND ").append(Imps.Messages.BODY).append(" IS NOT NULL) GROUP BY (").append(Imps.Messages.BODY); //GROUP BY
 
             CursorLoader loader = new CursorLoader(getActivity(), mUri, MESSAGE_PROJECTION,
-                    buf == null ? null : buf.toString(), null, Imps.Messages.REVERSE_SORT_ORDER);
+                    buf == null ? null : buf.toString(), null, "maxDate DESC");
 
-            //     loader.setUpdateThrottle(10L);
             return loader;
         }
 
@@ -214,12 +207,10 @@ public class GalleryListFragment extends Fragment {
 
         }
 
-        public final String[] MESSAGE_PROJECTION = { Imps.Messages._ID,
-                Imps.Messages.MIME_TYPE,
+        public final String[] MESSAGE_PROJECTION = {
+                "MAX (" + Imps.Messages._ID + ") as _id",
                 Imps.Messages.BODY,
-                Imps.Messages.DATE
-
-
+                "MAX (" + Imps.Messages.DATE + ") as maxDate"
         };
 
 

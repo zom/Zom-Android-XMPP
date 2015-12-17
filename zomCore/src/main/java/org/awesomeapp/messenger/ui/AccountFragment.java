@@ -1,5 +1,6 @@
 package org.awesomeapp.messenger.ui;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.ContentUris;
@@ -18,7 +19,10 @@ import android.os.Handler;
 import android.os.Parcelable;
 import android.os.RemoteException;
 import android.provider.MediaStore;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -77,6 +81,7 @@ public class AccountFragment extends Fragment {
     ImApp mApp;
     Handler mHandler = new Handler();
     ImageView ivScan;
+    View mView;
 
     /**
      * Use this factory method to create a new instance of
@@ -116,17 +121,17 @@ public class AccountFragment extends Fragment {
 
         mApp = ((ImApp) getActivity().getApplication());
 
-        View view = inflater.inflate(R.layout.awesome_fragment_account, container, false);
+       mView = inflater.inflate(R.layout.awesome_fragment_account, container, false);
 
         String fullUserName = mApp.getDefaultUsername();
 
         XmppAddress xAddress = new XmppAddress(fullUserName);
 
-        TextView tvNickname = (TextView) view.findViewById(R.id.tvNickname);
+        TextView tvNickname = (TextView) mView.findViewById(R.id.tvNickname);
 
-        TextView tvUsername = (TextView) view.findViewById(R.id.edtName);
-        mTvPassword = (TextView) view.findViewById(R.id.edtPass);
-        View btnShowPassword = view.findViewById(R.id.btnShowPass);
+        TextView tvUsername = (TextView) mView.findViewById(R.id.edtName);
+        mTvPassword = (TextView) mView.findViewById(R.id.edtPass);
+        View btnShowPassword = mView.findViewById(R.id.btnShowPass);
         btnShowPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -135,9 +140,9 @@ public class AccountFragment extends Fragment {
             }
         });
 
-        TextView tvFingerprint = (TextView) view.findViewById(R.id.tvFingerprint);
+        TextView tvFingerprint = (TextView) mView.findViewById(R.id.tvFingerprint);
 
-        ivScan = (ImageView) view.findViewById(R.id.qrcode);
+        ivScan = (ImageView) mView.findViewById(R.id.qrcode);
 
         ivScan.setOnClickListener(new View.OnClickListener() {
 
@@ -157,18 +162,18 @@ public class AccountFragment extends Fragment {
 
         });
 
-        mIvAvatar = (ImageView) view.findViewById(R.id.imageAvatar);
+        mIvAvatar = (ImageView) mView.findViewById(R.id.imageAvatar);
         mIvAvatar.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
 
-                startActivityForResult(getPickImageChooserIntent(), 200);
+                startAvatarTaker();
 
             }
         });
 
-        ImageView btnQrShare = (ImageView)view.findViewById(R.id.qrshare);
+        ImageView btnQrShare = (ImageView)mView.findViewById(R.id.qrshare);
         btnQrShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -183,7 +188,7 @@ public class AccountFragment extends Fragment {
         });
 
 
-        Switch switchOnline = (Switch) view.findViewById(R.id.switchOnline);
+        Switch switchOnline = (Switch) mView.findViewById(R.id.switchOnline);
         switchOnline.setChecked(checkConnection());
 
         switchOnline.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -221,7 +226,7 @@ public class AccountFragment extends Fragment {
             }
         }
 
-        Button btnLock = (Button)view.findViewById(R.id.btnLock);
+        Button btnLock = (Button)mView.findViewById(R.id.btnLock);
         btnLock.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -230,7 +235,7 @@ public class AccountFragment extends Fragment {
         });
 
 
-        return view;
+        return mView;
     }
 
     private boolean checkConnection() {
@@ -513,5 +518,41 @@ public class AccountFragment extends Fragment {
         }
 
     }
+
+    private final static int MY_PERMISSIONS_REQUEST_CAMERA = 707070;
+
+    void startAvatarTaker() {
+        int permissionCheck = ContextCompat.checkSelfPermission(getActivity(),
+                Manifest.permission.CAMERA);
+
+        if (permissionCheck ==PackageManager.PERMISSION_DENIED)
+        {
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
+                    Manifest.permission.CAMERA)) {
+
+                // Show an expanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+                Snackbar.make(mView, R.string.grant_perms, Snackbar.LENGTH_LONG).show();
+            } else {
+
+                // No explanation needed, we can request the permission.
+
+                ActivityCompat.requestPermissions(getActivity(),
+                        new String[]{Manifest.permission.CAMERA},
+                        MY_PERMISSIONS_REQUEST_CAMERA);
+
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        }
+        else {
+
+            startActivityForResult(getPickImageChooserIntent(), 200);
+        }
+    }
+
 
 }

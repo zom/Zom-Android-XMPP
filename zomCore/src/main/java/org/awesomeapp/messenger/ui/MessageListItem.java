@@ -20,10 +20,7 @@ package org.awesomeapp.messenger.ui;
 import im.zom.messenger.R;
 
 import org.awesomeapp.messenger.ImUrlActivity;
-import org.awesomeapp.messenger.tasks.ThumbnailLoaderRequest;
-import org.awesomeapp.messenger.tasks.ThumbnailLoaderTask;
 import org.awesomeapp.messenger.ui.widgets.MessageViewHolder;
-import org.awesomeapp.messenger.ui.widgets.VisualizerView;
 import org.awesomeapp.messenger.util.SecureMediaStore;
 import org.awesomeapp.messenger.ui.legacy.DatabaseUtils;
 import org.awesomeapp.messenger.ImApp;
@@ -38,25 +35,17 @@ import org.awesomeapp.messenger.util.LinkifyHelper;
 import org.ocpsoft.prettytime.PrettyTime;
 
 import java.io.File;
-import java.io.FileDescriptor;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLConnection;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import android.annotation.TargetApi;
-import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.AssetFileDescriptor;
-import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -65,7 +54,6 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.provider.Browser;
 import android.provider.MediaStore;
@@ -82,9 +70,10 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 public class MessageListItem extends FrameLayout {
 
@@ -519,13 +508,33 @@ public class MessageListItem extends FrameLayout {
 
     public void forwardMediaFile ()
     {
-        forwardMediaFile(mimeType, mediaUri);
+        if (mimeType != null && mediaUri != null) {
+            forwardMediaFile(mimeType, mediaUri);
+        }
+        else
+        {
+            Intent shareIntent = new Intent(context, ImUrlActivity.class);
+            shareIntent.setAction(Intent.ACTION_SEND);
+            shareIntent.putExtra(Intent.EXTRA_TEXT, lastMessage);
+            shareIntent.setType("text/plain");
+            context.startActivity(shareIntent);
+        }
     }
 
     public void exportMediaFile ()
     {
-        java.io.File exportPath = SecureMediaStore.exportPath(mimeType, mediaUri);
-        exportMediaFile(mimeType, mediaUri, exportPath);
+        if (mimeType != null && mediaUri != null) {
+            java.io.File exportPath = SecureMediaStore.exportPath(mimeType, mediaUri);
+            exportMediaFile(mimeType, mediaUri, exportPath);
+        }
+        else
+        {
+            Intent shareIntent = new Intent();
+            shareIntent.setAction(Intent.ACTION_SEND);
+            shareIntent.putExtra(Intent.EXTRA_TEXT,lastMessage);
+            shareIntent.setType("text/plain");
+            context.startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.export_media)));
+        }
 
     };
 
@@ -539,7 +548,7 @@ public class MessageListItem extends FrameLayout {
             shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(exportPath));
             shareIntent.setType(mimeType);
             context.startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.export_media)));
-        } catch (IOException e) {
+        } catch (Exception e) {
             Toast.makeText(getContext(), "Export Failed " + e.getMessage(), Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
@@ -561,69 +570,46 @@ public class MessageListItem extends FrameLayout {
      * @param mediaUri
      */
     private void setImageThumbnail(final ContentResolver contentResolver, final int id, final MessageViewHolder aHolder, final Uri mediaUri) {
+
+        //if the same URI, we don't need to reload
+        if (aHolder.mMediaUri != null && aHolder.mMediaUri.getPath().equals(mediaUri.getPath()))
+            return;
+
         // pair this holder to the uri. if the holder is recycled, the pairing is broken
         aHolder.mMediaUri = mediaUri;
         // if a content uri - already scanned
 
-        ThumbnailLoaderRequest request = new ThumbnailLoaderRequest();
-        request.mHolder = aHolder;
-        request.mUri = mediaUri;
-        request.mResolver = contentResolver;
-        request.mContext = context;
-
-        if (mTask != null)
-            mTask.cancel(true);
-
-        mTask = new ThumbnailLoaderTask(sBitmapCache);
-        mTask.execute(request);
-
-
-    }
-
-    ThumbnailLoaderTask mTask;
-
-    public final static int THUMBNAIL_SIZE_DEFAULT = 400;
-
-    public static Bitmap getThumbnail(Context context, ContentResolver cr, Uri uri) {
-     //   Log.e( MessageView.class.getSimpleName(), "getThumbnail uri:" + uri);
-        if (SecureMediaStore.isVfsUri(uri)) {
-            return SecureMediaStore.getThumbnailVfs(uri, THUMBNAIL_SIZE_DEFAULT);
-        }
-        return getThumbnailFile(context, cr, uri, THUMBNAIL_SIZE_DEFAULT);
-    }
-
-    public static Bitmap getThumbnailFile(Context context, ContentResolver cr, Uri uri, int thumbnailSize) {
-
-        try
+        if(SecureMediaStore.isVfsUri(mediaUri))
         {
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inJustDecodeBounds = true;
-            options.inInputShareable = true;
-            options.inPurgeable = true;
-    
-            InputStream is = cr.openInputStream(uri);
-            BitmapFactory.decodeStream(is, null, options);
-            if ((options.outWidth == -1) || (options.outHeight == -1))
-                return null;
-    
-            int originalSize = (options.outHeight > options.outWidth) ? options.outHeight
-                    : options.outWidth;
-    
-            BitmapFactory.Options opts = new BitmapFactory.Options();
-            opts.inSampleSize = originalSize / thumbnailSize;
-    
-            is = cr.openInputStream(uri);
-         
-            Bitmap scaledBitmap = BitmapFactory.decodeStream(is, null, options);
-    
-            return scaledBitmap;
+            try {
+                Glide.with(context)
+                        .load(new info.guardianproject.iocipher.FileInputStream(new File(mediaUri.getPath()).getPath()))
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .into(aHolder.mMediaThumbnail);
+            }
+            catch (Exception e)
+            {
+                Log.e(ImApp.LOG_TAG,"unable to load thumbnail",e);
+            }
         }
-        catch (Exception e)
+        else if (mediaUri.getScheme().equals("asset"))
         {
-            Log.d(ImApp.LOG_TAG,"could not getThumbnailFile",e);
-            return null;
+            String assetPath = "file:///android_asset/" + mediaUri.getPath().substring(1);
+            Glide.with(context)
+                    .load(assetPath)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .into(aHolder.mMediaThumbnail);
         }
+        else
+        {
+            Glide.with(context)
+                    .load(mediaUri)
+                    .into(aHolder.mMediaThumbnail);
+        }
+
+
     }
+
 
     private String formatMessage (String body)
     {

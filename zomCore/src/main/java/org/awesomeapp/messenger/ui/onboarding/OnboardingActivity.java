@@ -1,5 +1,6 @@
 package org.awesomeapp.messenger.ui.onboarding;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ComponentName;
@@ -11,10 +12,14 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Parcelable;
 import android.os.ResultReceiver;
 import android.provider.MediaStore;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -53,6 +58,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.KeyPair;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import im.zom.messenger.R;
@@ -101,7 +107,8 @@ public class OnboardingActivity extends ThemeableActivity {
             @Override
             public void onClick(View view) {
 
-                startActivityForResult(getPickImageChooserIntent(), OnboardingManager.REQUEST_CHOOSE_AVATAR);
+
+               startAvatarTaker();
 
             }
         });
@@ -824,5 +831,38 @@ public class OnboardingActivity extends ThemeableActivity {
         return isCamera ? getCaptureImageOutputUri() : data.getData();
     }
 
+    private final static int MY_PERMISSIONS_REQUEST_CAMERA = 707070;
+
+    void startAvatarTaker() {
+        int permissionCheck = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.CAMERA);
+
+        if (permissionCheck ==PackageManager.PERMISSION_DENIED)
+        {
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.CAMERA)) {
+
+                // Show an expanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+                Snackbar.make(mViewFlipper, R.string.grant_perms, Snackbar.LENGTH_LONG).show();
+            } else {
+
+                // No explanation needed, we can request the permission.
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.CAMERA},
+                        MY_PERMISSIONS_REQUEST_CAMERA);
+
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        }
+        else {
+            startActivityForResult(getPickImageChooserIntent(), OnboardingManager.REQUEST_CHOOSE_AVATAR);
+        }
+    }
 
 }

@@ -20,20 +20,23 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.UPDATE_APP_OPS_STATS" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
+    <!--
+    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
     <uses-permission android:name="com.google.android.googleapps.permission.GOOGLE_AUTH" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    -->
 
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature
@@ -52,7 +55,7 @@
         android:name="org.awesomeapp.messenger.permission.READ_ONLY"
         android:description="@string/ro_perm_desc"
         android:label="@string/ro_perm_label"
-        android:permissionGroup="android.permission-group.MESSAGES"
+    android:permissionGroup="android.permission-group.MESSAGES"
         android:protectionLevel="dangerous" />
     <permission
         android:name="org.awesomeapp.messenger.permission.WRITE_ONLY"
@@ -213,7 +216,8 @@
                 android:value="Jabber (XMPP)" />
             <meta-data
                 android:name="info.guardianproject.otr.app.im.provider_full_name"
-                android:value="@string/provider_full_name_xmpp" />
+                android:value="@string/provider_full_name_xmpp"/>
+
             <meta-data
                 android:name="info.guardianproject.otr.app.im.signup_url"
                 android:value="http://xmpp.org/services/" />
@@ -278,14 +282,11 @@
             android:label="@string/choose_friend" >
             <intent-filter>
                 <action android:name="android.intent.action.PICK" />
-
                 <category android:name="android.intent.category.DEFAULT" />
-
                 <data android:mimeType="vnd.android.cursor.dir/imps-contacts" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.PICK" />
-
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <data android:mimeType="vnd.android.cursor.dir/imps-chats" />
@@ -295,11 +296,9 @@
             android:name="org.awesomeapp.messenger.ui.legacy.AccountSettingsActivity"
             android:exported="false" >
             <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
+                <action android:name="android.intent.action.PICK" />
                 <category android:name="info.guardianproject.otr.app.im.IMPS_CATEGORY" />
                 <category android:name="android.intent.category.DEFAULT" />
-
                 <data android:mimeType="vnd.android-dir/imps-providerSettings" />
             </intent-filter>
         </activity>
@@ -307,11 +306,9 @@
             android:name="org.awesomeapp.messenger.ui.legacy.SettingActivity"
             android:exported="false" >
             <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
+                <action android:name="android.intent.action.PICK" />
                 <category android:name="info.guardianproject.otr.app.im.IMPS_CATEGORY" />
                 <category android:name="android.intent.category.DEFAULT" />
-
                 <data android:mimeType="vnd.android-dir/imps-providerSettings" />
             </intent-filter>
         </activity>
@@ -413,8 +410,7 @@
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
             android:name="org.awesomeapp.messenger.ui.ContactListActivity"
-            android:exported="false"
-            android:title="@string/contacts" />
+            android:exported="false"/>
         <activity
             android:name="org.awesomeapp.messenger.ui.GalleryActivity"
             android:exported="false"
@@ -435,6 +431,10 @@
 
         <activity android:name="org.awesomeapp.messenger.ui.GroupDisplayActivity" >
         </activity>
+
+        <meta-data
+            android:name="org.awesomeapp.messenger.tasks.GlideVFSModule"
+            android:value="GlideModule" />
     </application>
 
 </manifest>
