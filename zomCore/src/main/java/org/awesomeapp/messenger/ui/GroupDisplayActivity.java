@@ -20,6 +20,7 @@ import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.service.IChatSession;
 import org.awesomeapp.messenger.service.IChatSessionManager;
 import org.awesomeapp.messenger.service.IImConnection;
+import org.awesomeapp.messenger.tasks.ChatSessionInitTask;
 import org.awesomeapp.messenger.ui.legacy.DatabaseUtils;
 import org.awesomeapp.messenger.ui.onboarding.OnboardingManager;
 import org.awesomeapp.messenger.ui.qr.QrGenAsyncTask;
@@ -148,61 +149,28 @@ public class GroupDisplayActivity extends Activity {
     }
 
 
+
     public void startChat ()
     {
-        long chatId = startChat(mProviderId, mAccountId, mAddress, Imps.ContactsColumns.TYPE_NORMAL,true, null);
 
-        if (chatId != -1) {
-            Intent intent = new Intent(this, ConversationDetailActivity.class);
-            intent.putExtra("id", chatId);
-            startActivity(intent);
-
-            finish();
-        }
-    }
-
-    private long startChat (long providerId, long accountId, String address,int userType, boolean isNewChat, String message)
-    {
-        IImConnection conn = ((ImApp)getApplication()).getConnection(providerId,accountId);
-        long mRequestedChatId = -1;
-
-        if (conn != null)
+        new ChatSessionInitTask(((ImApp)getApplication()),mProviderId, mAccountId, Imps.Contacts.TYPE_GROUP)
         {
-            try {
-                IChatSessionManager manager = conn.getChatSessionManager();
-                IChatSession session = manager.getChatSession(address);
+            @Override
+            protected void onPostExecute(Long chatId) {
 
-                //even if there is an existing session, it might be ended, so let's start a new one!
+                if (chatId != -1) {
+                    Intent intent = new Intent(GroupDisplayActivity.this, ConversationDetailActivity.class);
+                    intent.putExtra("id", chatId);
+                    startActivity(intent);
 
-                if (manager != null) {
-
-                    // Create session.  Stash requested contact ID for when we get called back.
-                    if (userType == Imps.ContactsColumns.TYPE_GROUP)
-                        session = manager.createMultiUserChatSession(address, null, null, isNewChat);
-                    else
-                        session = manager.createChatSession(address, isNewChat);
-
-                    if (session != null)
-                    {
-                        mRequestedChatId = session.getId();
-                        if (message != null)
-                            session.sendMessage(message,false);
-                    }
-
+                    finish();
                 }
 
-            } catch (RemoteException e) {
-                //  mHandler.showServiceErrorAlert(e.getMessage());
-                LogCleaner.debug(ImApp.LOG_TAG, "remote exception starting chat");
-
+                super.onPostExecute(chatId);
             }
+        }.execute(mAddress);
 
-        }
-        else
-        {
-            LogCleaner.debug(ImApp.LOG_TAG, "could not start chat as connection was null");
-        }
 
-        return mRequestedChatId;
     }
+
 }

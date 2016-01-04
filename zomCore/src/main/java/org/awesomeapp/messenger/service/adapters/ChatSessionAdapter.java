@@ -49,6 +49,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 import net.java.otr4j.session.SessionStatus;
 
@@ -364,18 +365,19 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         }
 
         org.awesomeapp.messenger.model.Message msg = new org.awesomeapp.messenger.model.Message(text);
+        msg.setID(nextID());
 
         msg.setFrom(mConnection.getLoginUser().getAddress());
         msg.setType(Imps.MessageType.OUTGOING);
 
-        int newType = mChatSession.sendMessageAsync(msg);
-
         if (!isResend) {
-            long now = System.currentTimeMillis();
-
-            insertMessageInDb(null, text, now, newType, 0, msg.getID());
+            insertMessageInDb(null, text, System.currentTimeMillis(), msg.getType(), 0, msg.getID());
             insertOrUpdateChat(text);
         }
+
+        int newType = mChatSession.sendMessageAsync(msg);
+
+        updateMessageInDb(msg.getID(),newType,System.currentTimeMillis());
 
 
     }
