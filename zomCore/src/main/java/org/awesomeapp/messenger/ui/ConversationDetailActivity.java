@@ -17,8 +17,11 @@
 package org.awesomeapp.messenger.ui;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
@@ -82,6 +85,20 @@ public class ConversationDetailActivity extends AppCompatActivity {
     private AppBarLayout appBarLayout;
     private CoordinatorLayout mRootLayout;
 
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+        public void onReceive(final Context context, final Intent intent) {
+            //check if the broadcast is our desired one
+            if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
+//here define your method to be executed when screen is going to sleep
+                mConvoView.setSelected(false);
+            }
+            else if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
+//here define your method to be executed when screen is going to sleep
+                mConvoView.setSelected(true);
+            }
+
+        }};
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -119,6 +136,23 @@ public class ConversationDetailActivity extends AppCompatActivity {
         processIntent(getIntent());
 
         collapseToolbar();
+
+        IntentFilter regFilter = new IntentFilter();
+    // get device sleep evernt
+
+        regFilter .addAction(Intent.ACTION_SCREEN_OFF);
+        regFilter .addAction(Intent.ACTION_SCREEN_ON);
+
+        registerReceiver(receiver, regFilter);
+
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        unregisterReceiver(receiver);
     }
 
     private void processIntent(Intent intent)
