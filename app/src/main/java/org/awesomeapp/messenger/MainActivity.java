@@ -808,38 +808,32 @@ public class MainActivity extends AppCompatActivity {
 
     private void checkCustomFont ()
     {
-        if (CustomTypefaceManager.getCurrentTypeface(this)==null)
+
+        if (Preferences.getLanguage().equalsIgnoreCase("bo"))
         {
+            CustomTypefaceManager.loadFromAssets(this);
 
-            if (Preferences.getLanguage().equalsIgnoreCase("bo"))
-            {
-                CustomTypefaceManager.loadFromAssets(this);
+        }
+        else
+        {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            List<InputMethodInfo> mInputMethodProperties = imm.getEnabledInputMethodList();
 
-            }
-            else
-            {
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                List<InputMethodInfo> mInputMethodProperties = imm.getEnabledInputMethodList();
+            final int N = mInputMethodProperties.size();
 
-                final int N = mInputMethodProperties.size();
+            for (int i = 0; i < N; i++) {
 
-                for (int i = 0; i < N; i++) {
+                InputMethodInfo imi = mInputMethodProperties.get(i);
 
-                    InputMethodInfo imi = mInputMethodProperties.get(i);
+                //imi contains the information about the keyboard you are using
+                if (imi.getPackageName().equals("org.ironrabbit.bhoboard")) {
+                    //                    CustomTypefaceManager.loadFromKeyboard(this);
+                    CustomTypefaceManager.loadFromAssets(this);
 
-                    //imi contains the information about the keyboard you are using
-                    if (imi.getPackageName().equals("org.ironrabbit.bhoboard")) {
-                        //                    CustomTypefaceManager.loadFromKeyboard(this);
-                        CustomTypefaceManager.loadFromAssets(this);
-
-                        break;
-                    }
-
+                    break;
                 }
+
             }
-
-
-
         }
 
     }
