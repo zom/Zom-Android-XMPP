@@ -128,7 +128,7 @@ public class ContactDisplayActivity extends Activity {
 
         }
 
-        Button btn = (Button)findViewById(R.id.btnStartChat);
+        View btn = findViewById(R.id.btnStartChat);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

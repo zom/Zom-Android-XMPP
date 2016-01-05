@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -28,6 +29,7 @@ import android.view.View.OnClickListener;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -41,6 +43,7 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.MainActivity;
+import org.awesomeapp.messenger.Preferences;
 import org.awesomeapp.messenger.crypto.OtrAndroidKeyManagerImpl;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.tasks.AddContactAsyncTask;
@@ -63,6 +66,7 @@ import java.util.List;
 
 import im.zom.messenger.R;
 import org.awesomeapp.messenger.util.Languages;
+import org.ironrabbit.type.CustomTypefaceManager;
 
 public class OnboardingActivity extends ThemeableActivity {
 
@@ -70,7 +74,7 @@ public class OnboardingActivity extends ThemeableActivity {
     private EditText mEditUsername;
     private View mSetupProgress;
     private TextView mSetupStatus;
-    private Button mSetupButton;
+    private View mSetupButton;
     private ImageView mImageAvatar;
 
     private InstantAutoCompleteTextView mSpinnerDomains;
@@ -86,7 +90,9 @@ public class OnboardingActivity extends ThemeableActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+
+        checkCustomFont();
+
         setContentView(R.layout.awesome_onboarding);        
         getSupportActionBar().hide();
         getSupportActionBar().setTitle("");
@@ -124,7 +130,7 @@ public class OnboardingActivity extends ThemeableActivity {
             }
         });
 
-        Button btnStartOnboarding = (Button) findViewById(R.id.buttonStartOnboarding);
+        View btnStartOnboarding = findViewById(R.id.buttonStartOnboarding);
         btnStartOnboarding.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -133,7 +139,7 @@ public class OnboardingActivity extends ThemeableActivity {
             }
         });
 
-        Button btnShowCreate = (Button) findViewById(R.id.btnShowRegister);
+        View btnShowCreate = findViewById(R.id.btnShowRegister);
         btnShowCreate.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -144,7 +150,7 @@ public class OnboardingActivity extends ThemeableActivity {
 
         });
 
-        Button btnShowLogin = (Button) findViewById(R.id.btnShowLogin);
+        View btnShowLogin = findViewById(R.id.btnShowLogin);
         btnShowLogin.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -155,7 +161,7 @@ public class OnboardingActivity extends ThemeableActivity {
 
         });
 
-        Button btnShowAdvanced = (Button) findViewById(R.id.btnAdvanced);
+        View btnShowAdvanced = findViewById(R.id.btnAdvanced);
         btnShowAdvanced.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -219,7 +225,7 @@ public class OnboardingActivity extends ThemeableActivity {
             }
         });
 
-        Button btnCreateAdvanced = (Button)findViewById(R.id.btnNewRegister);
+        View btnCreateAdvanced = findViewById(R.id.btnNewRegister);
         btnCreateAdvanced.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -227,8 +233,8 @@ public class OnboardingActivity extends ThemeableActivity {
                 startAdvancedSetup();
             }
         });
-        
-        Button btnInviteSms = (Button)findViewById(R.id.btnInviteSMS);
+
+        View btnInviteSms = findViewById(R.id.btnInviteSMS);
         btnInviteSms.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -240,7 +246,7 @@ public class OnboardingActivity extends ThemeableActivity {
 
         });
 
-        Button btnInviteShare = (Button)findViewById(R.id.btnInviteShare);
+        View btnInviteShare = findViewById(R.id.btnInviteShare);
         btnInviteShare.setOnClickListener(new OnClickListener()
         {
 
@@ -253,7 +259,7 @@ public class OnboardingActivity extends ThemeableActivity {
             
         });
 
-        Button btnInviteQR = (Button)findViewById(R.id.btnInviteScan);
+        View btnInviteQR = findViewById(R.id.btnInviteScan);
         btnInviteQR.setOnClickListener(new OnClickListener()
         {
 
@@ -266,7 +272,7 @@ public class OnboardingActivity extends ThemeableActivity {
             
         });
 
-        Button btnInviteSkip = (Button)findViewById(R.id.btnInviteSkip);
+        View btnInviteSkip = findViewById(R.id.btnInviteSkip);
         btnInviteSkip.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -278,7 +284,7 @@ public class OnboardingActivity extends ThemeableActivity {
 
         });
 
-        mSetupButton = (Button)findViewById(R.id.btnRegister);
+        mSetupButton = findViewById(R.id.btnRegister);
         mSetupButton.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -290,7 +296,7 @@ public class OnboardingActivity extends ThemeableActivity {
 
         });
 
-        Button btnSignIn = (Button)findViewById(R.id.btnSignIn);
+        View btnSignIn = findViewById(R.id.btnSignIn);
         btnSignIn.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -864,5 +870,44 @@ public class OnboardingActivity extends ThemeableActivity {
             startActivityForResult(getPickImageChooserIntent(), OnboardingManager.REQUEST_CHOOSE_AVATAR);
         }
     }
+
+    private void checkCustomFont ()
+    {
+        if (CustomTypefaceManager.getCurrentTypeface(this)==null)
+        {
+
+            if (Preferences.getLanguage().equalsIgnoreCase("bo"))
+            {
+                CustomTypefaceManager.loadFromAssets(this);
+
+            }
+            else
+            {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                List<InputMethodInfo> mInputMethodProperties = imm.getEnabledInputMethodList();
+
+                final int N = mInputMethodProperties.size();
+
+                for (int i = 0; i < N; i++) {
+
+                    InputMethodInfo imi = mInputMethodProperties.get(i);
+
+                    //imi contains the information about the keyboard you are using
+                    if (imi.getPackageName().equals("org.ironrabbit.bhoboard")) {
+                        //                    CustomTypefaceManager.loadFromKeyboard(this);
+                        CustomTypefaceManager.loadFromAssets(this);
+
+                        break;
+                    }
+
+                }
+            }
+
+
+
+        }
+
+    }
+
 
 }

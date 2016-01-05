@@ -40,7 +40,7 @@
             android:padding="10dp">
 
 
-                <TextView android:id="@+id/tvNickname"
+                <org.ironrabbit.type.CustomTypefaceTextView android:id="@+id/tvNickname"
                     android:selectAllOnFocus="true"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -51,7 +51,7 @@
                     android:textSize="30dp"
 
                     />
-                <TextView android:id="@+id/tvUsername"
+                <org.ironrabbit.type.CustomTypefaceTextView android:id="@+id/tvUsername"
                     android:selectAllOnFocus="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -71,7 +71,7 @@
                 android:layout_marginTop="12dp"
                 android:layout_marginBottom="12dp"
                 />
-            <TextView
+            <org.ironrabbit.type.CustomTypefaceTextView
                 android:selectAllOnFocus="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -81,7 +81,7 @@
                 android:textColor="?contactTextSecondary"
                 android:textStyle="bold"
                 />
-            <TextView android:id="@+id/tvMembers"
+            <org.ironrabbit.type.CustomTypefaceTextView android:id="@+id/tvMembers"
                 android:selectAllOnFocus="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

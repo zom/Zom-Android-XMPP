@@ -60,7 +60,7 @@
 				android:layout_height="wrap_content"
 				android:orientation="horizontal"
 				android:padding="6dp">
-			<TextView android:id="@+id/tvNickname"
+			<org.ironrabbit.type.CustomTypefaceTextView android:id="@+id/tvNickname"
 				android:selectAllOnFocus="true"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
@@ -86,7 +86,7 @@
 				android:layout_height="wrap_content"
 				android:orientation="horizontal"
 				android:padding="6dp">
-			<TextView android:id="@+id/edtName"
+			<org.ironrabbit.type.CustomTypefaceTextView android:id="@+id/edtName"
 			                               android:selectAllOnFocus="true"
 			                               android:layout_width="wrap_content"
 			                               android:layout_height="wrap_content"

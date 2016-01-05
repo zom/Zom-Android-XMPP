@@ -70,6 +70,7 @@ import info.guardianproject.cacheword.PRNGFixes;
 import info.guardianproject.iocipher.VirtualFileSystem;
 import im.zom.messenger.R;
 import org.awesomeapp.messenger.util.Languages;
+import org.ironrabbit.type.CustomTypefaceManager;
 
 public class ImApp extends Application {
 
@@ -254,6 +255,15 @@ public class ImApp extends Application {
             Languages.setLanguage(activity, language);
             Preferences.setLanguage(language);
             Languages.forceChangeLanguage(activity);
+
+            if (language.equalsIgnoreCase("bo"))
+            {
+                CustomTypefaceManager.loadFromAssets(activity);
+            }
+            else
+            {
+                CustomTypefaceManager.setTypeface(null);
+            }
         }
     }
 

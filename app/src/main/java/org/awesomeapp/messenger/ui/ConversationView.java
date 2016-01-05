@@ -175,7 +175,7 @@ public class ConversationView {
     /*package*/RecyclerView mHistory;
     EditText mComposeMessage;
     private ImageButton mSendButton, mMicButton;
-    private Button mButtonTalk;
+    private TextView mButtonTalk;
     private ImageButton mButtonAttach;
     private View mViewAttach;
 
@@ -669,7 +669,7 @@ public class ConversationView {
         mComposeMessage = (EditText) mActivity.findViewById(R.id.composeMessage);
         mSendButton = (ImageButton) mActivity.findViewById(R.id.btnSend);
         mMicButton = (ImageButton) mActivity.findViewById(R.id.btnMic);
-        mButtonTalk = (Button)mActivity.findViewById(R.id.buttonHoldToTalk);
+        mButtonTalk = (TextView)mActivity.findViewById(R.id.buttonHoldToTalk);
 
         mButtonDeleteVoice = (ImageView)mActivity.findViewById(R.id.btnDeleteVoice);
         mViewDeleteVoice = mActivity.findViewById(R.id.viewDeleteVoice);
@@ -961,7 +961,7 @@ public class ConversationView {
             }
         });
 
-        Button btnApproveSubscription = (Button)mActivity.findViewById(R.id.btnApproveSubscription);
+        View btnApproveSubscription = mActivity.findViewById(R.id.btnApproveSubscription);
         btnApproveSubscription.setOnClickListener(new View.OnClickListener()
         {
 
@@ -977,7 +977,7 @@ public class ConversationView {
 
         });
 
-        Button btnDeclineSubscription = (Button)mActivity.findViewById(R.id.btnDeclineSubscription);
+        View btnDeclineSubscription = mActivity.findViewById(R.id.btnDeclineSubscription);
         btnDeclineSubscription.setOnClickListener(new View.OnClickListener() {
 
             @Override
