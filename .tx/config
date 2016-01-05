@@ -8,8 +8,9 @@ host = https://www.transifex.com
 source_file = app/src/main/res/values/strings.xml
 source_lang = en
 
-[zom-messenger.zomstringsxml]
+[zom-messenger.zomstringsxml-1]
 file_filter = app/src/main/res/values-<lang>/zomstrings.xml
 host = https://www.transifex.com
 source_file = app/src/main/res/values/zomstrings.xml
 source_lang = en
+

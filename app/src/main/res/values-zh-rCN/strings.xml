@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <!--General: Names-->
   <string name="app_name">ChatSecure</string>
@@ -291,14 +291,14 @@ OTR协议跟桌面客户端（比如：Adium或Pidgin）兼容</string>
   <string name="pref_group_looknfeel_title">用户界面</string>
   <string name="menu_locale">语言</string>
   <string name="KEY_PREF_LANGUAGE_TITLE">多国语言</string>
-
-
+  <string name="pref_theme_dark">使用暗色主题</string>
+  <string name="pref_theme_dark_summary">改为使用深色应用主题</string>
   <string name="pref_in_memory_db_title">只在内存中存储消息</string>
   <string name="pref_in_memory_db_summary">只把消息存在内存中而不存在闪存中以抵御电子数据提取(可能会丢失消息)</string>
-
-
-
-
+  <string name="pref_background_title">背景图片</string>
+  <string name="pref_background_summary">将(“/sdcard/foo.jpg”)设置为背景图片壁纸</string>
+  <string name="pref_show_grid">显示联系人格子</string>
+  <string name="pref_show_grid_summary">显示联系人列表作为头像格子</string>
   <string name="button_yes_accept_all">接受全部</string>
   <!--Actions: Settings: General: Other Tuning-->
   <string name="pref_group_tuning_title">其他调整</string>
@@ -393,7 +393,7 @@ OTR协议跟桌面客户端（比如：Adium或Pidgin）兼容</string>
   <string name="contact_not_in_list_warning"><xliff:g id="USER">%1$s</xliff:g>不在您的联系人列表中。</string>
   <string name="account_settings_title">帐号设置</string>
 
-
+  <string name="warning_alpha">警告！这是一个早期的ChatSecure发行版，可能包含安全问题导致聊天被窥探！！！</string>
   <!--added 2011/09/01-->
   <string name="menu_view_groups">群组</string>
   <string name="_open_conversations">打开对话</string>

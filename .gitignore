@@ -39,3 +39,6 @@ Thumbs.db
 .idea/
 .gradle/
 build/
+
+#tfx
+.transifexrc
