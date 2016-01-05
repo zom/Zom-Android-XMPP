@@ -77,9 +77,6 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 public class MessageListItem extends FrameLayout {
 
-    private static int sCacheSize = 10; // 1MiB
-    private static LruCache<String,Bitmap> sBitmapCache = new LruCache<String,Bitmap>(sCacheSize);
-
     public enum DeliveryState {
         NEUTRAL, DELIVERED, UNDELIVERED
     }

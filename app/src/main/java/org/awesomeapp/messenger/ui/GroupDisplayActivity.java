@@ -91,12 +91,13 @@ public class GroupDisplayActivity extends Activity {
             IChatSessionManager manager = mConn.getChatSessionManager();
             IChatSession session = manager.getChatSession(mAddress);
 
+            /**
             try {
                 String inviteLink = OnboardingManager.generateInviteLink(this, mAddress, "");
                 new QrGenAsyncTask(this, iv, ImApp.DEFAULT_AVATAR_WIDTH).execute(inviteLink);
             } catch (IOException ioe) {
                 Log.e(ImApp.LOG_TAG, "couldn't generate QR code", ioe);
-            }
+            }*/
 
             iv.setOnClickListener(new View.OnClickListener() {
 

@@ -123,6 +123,7 @@
                 android:layout_height="64dp"
                 android:id="@+id/qrcode"
                 android:background="#dddddd"
+                android:src="@drawable/qr"
                 android:layout_alignParentLeft="true"
                 />
 

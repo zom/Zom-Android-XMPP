@@ -218,12 +218,13 @@ public class AccountFragment extends Fragment {
         if (mApp.getDefaultOtrKey() != null) {
             tvFingerprint.setText(prettyPrintFingerprint(mApp.getDefaultOtrKey()));
 
+            /**
             try {
                 String inviteLink = OnboardingManager.generateInviteLink(getActivity(), fullUserName, mApp.getDefaultOtrKey());
                 new QrGenAsyncTask(getActivity(), ivScan,ImApp.DEFAULT_AVATAR_WIDTH).execute(inviteLink);
             } catch (IOException ioe) {
                 Log.e(ImApp.LOG_TAG, "couldn't generate QR code", ioe);
-            }
+            }*/
         }
 
         Button btnLock = (Button)mView.findViewById(R.id.btnLock);

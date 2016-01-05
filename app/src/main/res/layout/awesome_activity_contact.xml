@@ -99,6 +99,7 @@
                 android:layout_height="64dp"
                 android:id="@+id/qrcode"
                 android:background="#dddddd"
+                android:src="@drawable/qr"
                 android:layout_alignParentLeft="true"
                 />
 
@@ -108,7 +109,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="6dp"
                 android:autoLink="none"
-                android:text="AAAA AAAAA AAAA AAAA AAAA"
+                android:text=""
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="?contactTextSecondary"
 
