@@ -13,7 +13,7 @@ import org.awesomeapp.messenger.service.IImConnection;
 /**
  * Created by n8fr8 on 10/23/15.
  */
-public class ChatSessionInitTask extends AsyncTask<String, Void, Boolean> {
+public class ChatSessionInitTask extends AsyncTask<String, Void, Long> {
 
     ImApp mApp;
     long mProviderId;
@@ -30,7 +30,7 @@ public class ChatSessionInitTask extends AsyncTask<String, Void, Boolean> {
 
 
     @Override
-    protected Boolean doInBackground(String... remoteAddresses) {
+    protected Long doInBackground(String... remoteAddresses) {
 
 
         if (mProviderId != -1 && mAccountId != -1) {
@@ -68,6 +68,8 @@ public class ChatSessionInitTask extends AsyncTask<String, Void, Boolean> {
 
                     }
 
+                    return session.getId();
+
 
                 }
 
@@ -76,6 +78,6 @@ public class ChatSessionInitTask extends AsyncTask<String, Void, Boolean> {
             }
         }
 
-        return false;
+        return -1L;
     }
 }

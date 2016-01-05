@@ -100,6 +100,7 @@ import org.awesomeapp.messenger.service.IContactListListener;
 import org.awesomeapp.messenger.service.IContactListManager;
 import org.awesomeapp.messenger.service.IImConnection;
 import org.awesomeapp.messenger.service.ImServiceConstants;
+import org.awesomeapp.messenger.tasks.ChatSessionInitTask;
 import org.awesomeapp.messenger.ui.MessageListItem.DeliveryState;
 import org.awesomeapp.messenger.ui.MessageListItem.EncryptionState;
 import org.awesomeapp.messenger.ui.legacy.DatabaseUtils;
@@ -1680,8 +1681,6 @@ public class ConversationView {
 
         try
         {
-            checkConnection ();
-
             if (mConn != null) {
                     IChatSessionManager sessionMgr = mConn.getChatSessionManager();
                     if (sessionMgr != null) {
@@ -1691,7 +1690,10 @@ public class ConversationView {
 
                         if (mContactType == Imps.Contacts.TYPE_GROUP)
                         {
-                            session = sessionMgr.createMultiUserChatSession(remoteAddress,null,null, false);
+                            //session = sessionMgr.createMultiUserChatSession(remoteAddress,null,null, false);
+
+                            new ChatSessionInitTask(((ImApp)mActivity.getApplication()),mProviderId, mAccountId, Imps.Contacts.TYPE_GROUP).execute(remoteAddress);
+
                         }
                         else
                         {
@@ -1708,7 +1710,7 @@ public class ConversationView {
         } catch (Exception e) {
 
             //mHandler.showServiceErrorAlert(e.getLocalizedMessage());
-            LogCleaner.error(ImApp.LOG_TAG, "issue getting chat session",e);
+            LogCleaner.error(ImApp.LOG_TAG, "issue getting chat session", e);
         }
 
         return null;
@@ -1736,7 +1738,7 @@ public class ConversationView {
         } catch (Exception e) {
 
             //mHandler.showServiceErrorAlert(e.getLocalizedMessage());
-            LogCleaner.error(ImApp.LOG_TAG, "error getting chat session",e);
+            LogCleaner.error(ImApp.LOG_TAG, "error getting chat session", e);
         }
 
         return null;
@@ -1749,14 +1751,27 @@ public class ConversationView {
     void sendMessage() {
 
         String msg = mComposeMessage.getText().toString();
-        new SendMessageAsyncTask().execute(msg);
+        //new SendMessageAsyncTask().execute(msg);
+        sendMessageAsync(msg);
     }
 
-    void sendMessageAsync(String msg) {
+    void sendMessageAsync(final String msg) {
 
-        new SendMessageAsyncTask().execute(msg);
+        //new SendMessageAsyncTask().execute(msg);
+
+        new Thread ()
+        {
+            public void run ()
+            {
+                sendMessage(msg,false);
+            }
+        }.start();
+
+        mComposeMessage.setText("");
+        mComposeMessage.requestFocus();
     }
 
+    /**
     class SendMessageAsyncTask extends AsyncTask<String, Void, Boolean>
     {
         @Override
@@ -1773,7 +1788,7 @@ public class ConversationView {
         protected Boolean doInBackground(String... strings) {
             return sendMessage(strings[0],false);
         }
-    };
+    };*/
 
     boolean sendMessage(String msg, boolean isResend) {
 
