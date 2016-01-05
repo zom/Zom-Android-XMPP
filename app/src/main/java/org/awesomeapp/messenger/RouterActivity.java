@@ -59,7 +59,7 @@ import info.guardianproject.cacheword.ICacheWordSubscriber;
 import im.zom.messenger.R;
 
 import info.guardianproject.panic.Panic;
-import info.guardianproject.panic.PanicReceiver;
+import info.guardianproject.panic.PanicResponder;
 
 public class RouterActivity extends ThemeableActivity implements ICacheWordSubscriber  {
 
@@ -120,7 +120,7 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
 
             return;
         } else if (Panic.isTriggerIntent(intent)) {
-            if (PanicReceiver.receivedTrustedTrigger(this)) {
+            if (PanicResponder.receivedTriggerFromConnectedApp(this)) {
                 if (Preferences.uninstallApp()) {
                     Intent uninstall = new Intent(Intent.ACTION_DELETE);
                     uninstall.setData(Uri.parse("package:" + getPackageName()));
@@ -129,7 +129,7 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
                     shutdownAndLock(this);
                 }
                 // TODO add other responses here, paying attention to if/else order
-            } else if (PanicReceiver.shouldUseDefaultResponseToTrigger(this)) {
+            } else if (PanicResponder.shouldUseDefaultResponseToTrigger(this)) {
                 if (Preferences.lockApp()) {
                     shutdownAndLock(this);
                 }

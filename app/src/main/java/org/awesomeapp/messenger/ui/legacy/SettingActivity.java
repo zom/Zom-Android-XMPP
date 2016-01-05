@@ -40,7 +40,7 @@ import java.util.ArrayList;
 
 import im.zom.messenger.R;
 import info.guardianproject.panic.Panic;
-import info.guardianproject.panic.PanicReceiver;
+import info.guardianproject.panic.PanicResponder;
 import org.awesomeapp.messenger.util.Languages;
 
 public class SettingActivity extends PreferenceActivity {
@@ -85,7 +85,7 @@ public class SettingActivity extends PreferenceActivity {
         entryValues.add(0, Panic.PACKAGE_NAME_NONE);
         entryValues.add(1, Panic.PACKAGE_NAME_DEFAULT);
 
-        for (ResolveInfo resolveInfo : PanicReceiver.resolveTriggerApps(pm)) {
+        for (ResolveInfo resolveInfo : PanicResponder.resolveTriggerApps(pm)) {
             if (resolveInfo.activityInfo == null)
                 continue;
             entries.add(resolveInfo.activityInfo.loadLabel(pm));
@@ -93,7 +93,7 @@ public class SettingActivity extends PreferenceActivity {
         }
         mPanicTriggerApp.setEntries(entries.toArray(new CharSequence[entries.size()]));
         mPanicTriggerApp.setEntryValues(entryValues.toArray(new CharSequence[entryValues.size()]));
-        setPanicTriggerAppDisplay(PanicReceiver.getTriggerPackageName(this));
+        setPanicTriggerAppDisplay(PanicResponder.getTriggerPackageName(this));
     }
 
     private void setPanicTriggerAppDisplay(String triggerPackageName) {
@@ -163,7 +163,7 @@ public class SettingActivity extends PreferenceActivity {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 String packageName = (String) newValue;
-                PanicReceiver.setTriggerPackageName(SettingActivity.this, packageName);
+                PanicResponder.setTriggerPackageName(SettingActivity.this, packageName);
                 setPanicTriggerAppDisplay(packageName);
                 return true;
             }
