@@ -22,7 +22,7 @@ android:
     - tools
     - platform-tools
     - extra-android-m2repository
-    - build-tools-23.0.1
+    - build-tools-23.0.2
     - android-23
 #    - sys-img-x86-android-22
 

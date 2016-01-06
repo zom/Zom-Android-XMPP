@@ -32,7 +32,7 @@
         android:padding="0dp"
             />
 
-        <TextView android:id="@android:id/empty"
+        <org.ironrabbit.type.CustomTypefaceTextView android:id="@android:id/empty"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:textAppearance="?android:attr/textAppearanceSmall"

@@ -139,7 +139,7 @@ public class Languages {
         return singleton;
     }
 
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
+    //@TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     public static void setLanguage(final ContextWrapper contextWrapper, String language) {
         if (locale != null && TextUtils.equals(locale.getLanguage(), language)) {
             return; // already configured
@@ -164,6 +164,7 @@ public class Languages {
         }
         resources.updateConfiguration(config, resources.getDisplayMetrics());
         Locale.setDefault(locale);
+
     }
 
     /**

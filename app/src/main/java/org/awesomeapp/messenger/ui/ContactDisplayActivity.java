@@ -82,12 +82,13 @@ public class ContactDisplayActivity extends Activity {
             if (mRemoteFingerprint != null) {
                 tv.setText(prettyPrintFingerprint(mRemoteFingerprint));
 
+                /**
                 try {
                     String inviteLink = OnboardingManager.generateInviteLink(this, mUsername, mRemoteFingerprint);
                     new QrGenAsyncTask(this, iv, 256).execute(inviteLink);
                 } catch (IOException ioe) {
                     Log.e(ImApp.LOG_TAG, "couldn't generate QR code", ioe);
-                }
+                }*/
 
                 iv.setOnClickListener(new View.OnClickListener() {
 
@@ -127,7 +128,7 @@ public class ContactDisplayActivity extends Activity {
 
         }
 
-        Button btn = (Button)findViewById(R.id.btnStartChat);
+        View btn = findViewById(R.id.btnStartChat);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

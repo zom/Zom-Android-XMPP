@@ -32,7 +32,7 @@
                     android:gravity="center"
                     android:orientation="vertical" >
 
-                        <TextView
+                        <org.ironrabbit.type.CustomTypefaceTextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_toLeftOf="@+id/languageButton"
@@ -41,7 +41,7 @@
                             android:text="@string/lock_screen_passphrase_not_set_enter" />
 
 
-                    <EditText
+                    <org.ironrabbit.type.CustomTypefaceEditText
                         android:id="@+id/editNewPassphrase"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
@@ -62,7 +62,7 @@
                     android:gravity="center"
                     android:orientation="vertical" >
 
-                    <EditText
+                    <org.ironrabbit.type.CustomTypefaceEditText
                         android:id="@+id/editConfirmNewPassphrase"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
@@ -110,7 +110,7 @@
                 android:layout_margin="5dp"
                 android:gravity="center" >
 
-                <EditText
+                <org.ironrabbit.type.CustomTypefaceEditText
                     android:id="@+id/editEnterPassphrase"
                     android:layout_width="300dip"
                     android:layout_height="wrap_content"
@@ -122,7 +122,7 @@
                     >
 
                     <requestFocus />
-                </EditText>
+                </org.ironrabbit.type.CustomTypefaceEditText>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

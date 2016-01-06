@@ -49,7 +49,7 @@ public class MoreFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_more, container, false);
 
-        Button btn = (Button)view.findViewById(R.id.btnOpenGalllery);
+        View btn = view.findViewById(R.id.btnOpenGalllery);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -59,7 +59,7 @@ public class MoreFragment extends Fragment {
             }
         });
 
-        btn = (Button)view.findViewById(R.id.btnOpenGroups);
+        btn = view.findViewById(R.id.btnOpenGroups);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

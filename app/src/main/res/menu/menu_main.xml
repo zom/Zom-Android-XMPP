@@ -10,21 +10,16 @@
         app:showAsAction="always" />
 
     <item
-        android:id="@+id/menu_group_chat"
-        android:icon="@drawable/social_add_person"
-        android:title="@string/create_group"
-        app:showAsAction="never" />
+        android:id="@+id/menu_new_account"
+        android:icon="@drawable/ic_action_new"
+        android:title="@string/menu_new_account"
+        app:showAsAction="never"/>
     <item
         android:id="@+id/menu_settings"
         android:icon="@drawable/ic_settings_white_24dp"
         android:title="@string/menu_settings"
         app:showAsAction="never" />
 
-    <item
-        android:id="@+id/menu_new_account"
-        android:icon="@drawable/ic_action_new"
-        android:title="@string/menu_new_account"
-        app:showAsAction="never"/>
     <item
         android:id="@+id/menu_lock"
         android:icon="@drawable/ic_lock_outline_black_18dp"

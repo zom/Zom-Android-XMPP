@@ -99,6 +99,7 @@
                 android:layout_height="64dp"
                 android:id="@+id/qrcode"
                 android:background="#dddddd"
+                android:src="@drawable/qr"
                 android:layout_alignParentLeft="true"
                 />
 
@@ -108,7 +109,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="6dp"
                 android:autoLink="none"
-                android:text="AAAA AAAAA AAAA AAAA AAAA"
+                android:text=""
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="?contactTextSecondary"
 
@@ -134,7 +135,7 @@
             android:layout_marginTop="5dp"
             android:layout_margin="10dp"
             >
-            <Button android:id="@+id/btnStartChat"
+            <org.ironrabbit.type.CustomTypefaceTextView android:id="@+id/btnStartChat"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/send_message"
@@ -144,19 +145,21 @@
                 android:padding="6dp"
                 android:layout_margin="1dp"
                 android:textColor="?android:colorForegroundInverse"
+                android:gravity="center"
 
                 />
 
-            <Button android:id="@+id/btnDeleteContact"
+            <org.ironrabbit.type.CustomTypefaceTextView android:id="@+id/btnDeleteContact"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/menu_block_contact"
-                android:drawableLeft="@drawable/ic_menu_trash"
+                android:drawableLeft="@drawable/ic_people_white_36dp"
                 android:textAppearance="?android:attr/textAppearanceMediumInverse"
                 android:background="?toolbarBackground"
                 android:padding="6dp"
                 android:layout_margin="1dp"
                 android:textColor="?android:colorForegroundInverse"
+                android:gravity="center"
 
                 />
 

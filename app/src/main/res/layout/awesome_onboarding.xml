@@ -40,7 +40,7 @@
                         android:layout_marginTop="60dp"
                         android:src="@drawable/whitelogo"
                         />
-                    <Button
+                    <org.ironrabbit.type.CustomTypefaceTextView
                         android:id="@+id/buttonStartOnboarding"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -48,6 +48,7 @@
                         android:text="@string/welcome_to_zom"
                         android:background="?android:attr/selectableItemBackground"
                         android:textColor="@android:color/white"
+                        android:gravity="center"
                         />
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -68,16 +69,18 @@
 
                             />
 
-                        <Button
+                        <org.ironrabbit.type.CustomTypefaceTextView
                             android:id="@+id/languageButton"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:textAppearance="?android:attr/textAppearanceMedium"
                             android:text="@string/choose_language"
                             android:layout_margin="0dp"
-                            android:layout_gravity="bottom"
+                            android:layout_gravity="center_vertical"
                             android:background="?android:attr/selectableItemBackground"
                             android:textColor="@android:color/white"
+                            android:gravity="center|center_vertical"
+
                             />
 
                     </LinearLayout>
@@ -105,7 +108,7 @@
                         android:gravity="top"
                         />
 
-                    <Button
+                    <org.ironrabbit.type.CustomTypefaceTextView
                         android:id="@+id/btnShowRegister"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -129,7 +132,7 @@
                         android:orientation="horizontal"
 
                         >
-                        <Button
+                        <org.ironrabbit.type.CustomTypefaceTextView
                             android:id="@+id/btnShowLogin"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -139,6 +142,8 @@
                             android:layout_gravity="bottom"
                             android:background="?android:attr/selectableItemBackground"
                             android:textColor="@android:color/black"
+                            android:gravity="center"
+
                             />
 
                     </LinearLayout>
@@ -162,15 +167,16 @@
                         android:orientation="vertical"
                         >
 
-                        <TextView
+                        <org.ironrabbit.type.CustomTypefaceTextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_margin="20dp"
                             android:text="@string/create_id"
                             android:textAppearance="?android:attr/textAppearanceLarge"
                             android:textColor="?colorPrimary"
+
                             />
-                        <EditText android:id="@+id/edtNewName"
+                        <org.ironrabbit.type.CustomTypefaceEditText android:id="@+id/edtNewName"
                             android:selectAllOnFocus="true"
                             android:layout_width="300dp"
                             android:layout_height="wrap_content"
@@ -186,7 +192,7 @@
                             android:padding="6dp"
                             android:background="@drawable/rounded_rect"
                             />
-                        <TextView
+                        <org.ironrabbit.type.CustomTypefaceTextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_margin="20dp"
@@ -219,7 +225,7 @@
                             android:visibility="gone"
                             />
 
-                        <TextView
+                        <org.ironrabbit.type.CustomTypefaceTextView
                             android:id="@+id/statusNewUser"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -230,7 +236,7 @@
                             />
 
 
-                        <Button android:id="@+id/btnRegister"
+                        <org.ironrabbit.type.CustomTypefaceTextView android:id="@+id/btnRegister"
                             android:text="@string/lock_screen_skip"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="3dip"
@@ -243,7 +249,7 @@
                     </LinearLayout>
 
 
-                    <Button android:id="@+id/btnAdvanced"
+                    <org.ironrabbit.type.CustomTypefaceTextView android:id="@+id/btnAdvanced"
                         android:text="@string/advanced"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="3dip"
@@ -252,6 +258,8 @@
 
                         android:background="@android:color/transparent"
                         android:textColor="?colorPrimary"
+                        android:gravity="center"
+
                         />
 
 
@@ -265,7 +273,7 @@
                     android:paddingTop="40dp"
                     >
 
-                    <TextView
+                    <org.ironrabbit.type.CustomTypefaceTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="20dp"
@@ -274,7 +282,7 @@
                         android:textColor="@android:color/black"
                         />
 
-                    <EditText android:id="@+id/edtName"
+                    <org.ironrabbit.type.CustomTypefaceEditText android:id="@+id/edtName"
                         android:selectAllOnFocus="true"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -288,7 +296,7 @@
                         android:layout_margin="3dp"
                         />
 
-                    <EditText android:id="@+id/edtPass"
+                    <org.ironrabbit.type.CustomTypefaceEditText android:id="@+id/edtPass"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/account_setup_password"
@@ -300,7 +308,7 @@
                         android:layout_margin="3dp"
                         />
 
-                    <Button android:id="@+id/btnSignIn"
+                    <org.ironrabbit.type.CustomTypefaceTextView android:id="@+id/btnSignIn"
                         android:text="@string/sign_in"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="3dip"
@@ -308,6 +316,8 @@
                         android:layout_gravity="bottom"
                         android:background="?colorPrimary"
                         android:textColor="@android:color/white"
+                        android:gravity="center"
+
                         />
 
                     <ProgressBar
@@ -317,6 +327,7 @@
                         android:layout_margin="10dp"
                         android:visibility="gone"
                         android:layout_gravity="center_horizontal"
+
                         />
                     <ImageView
                         android:id="@+id/progressExistingImage"
@@ -336,7 +347,7 @@
                     >
 
 
-                    <EditText android:id="@+id/edtNameAdvanced"
+                    <org.ironrabbit.type.CustomTypefaceEditText android:id="@+id/edtNameAdvanced"
                         android:selectAllOnFocus="true"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -364,7 +375,7 @@
 
                         />
 
-                    <EditText android:id="@+id/edtNewPass"
+                    <org.ironrabbit.type.CustomTypefaceEditText android:id="@+id/edtNewPass"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/account_setup_password"
@@ -375,7 +386,7 @@
                         android:layout_margin="3dp"
                         />
 
-                    <EditText android:id="@+id/edtNewPassConfirm"
+                    <org.ironrabbit.type.CustomTypefaceEditText android:id="@+id/edtNewPassConfirm"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/account_setup_password_confirm"
@@ -389,7 +400,7 @@
                         />
 
 
-                    <Button android:id="@+id/btnNewRegister"
+                    <org.ironrabbit.type.CustomTypefaceTextView android:id="@+id/btnNewRegister"
                         android:text="@string/btn_create_new_account"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="3dip"
@@ -397,6 +408,8 @@
                         android:layout_gravity="bottom"
                         android:background="?colorPrimary"
                         android:textColor="@android:color/white"
+                        android:gravity="center"
+
                         />
 
 
@@ -422,7 +435,7 @@
                         android:layout_margin="0dp"
                         />
 
-                    <TextView
+                    <org.ironrabbit.type.CustomTypefaceTextView
                         android:id="@+id/statusInviteFriends"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -441,7 +454,7 @@
                         android:gravity="center_horizontal|top"
                         android:orientation="horizontal" >
 
-                        <Button
+                        <org.ironrabbit.type.CustomTypefaceTextView
                             android:id="@+id/btnInviteSMS"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -451,8 +464,10 @@
                             android:drawableLeft="@android:drawable/ic_menu_send"
                             android:textColor="@android:color/white"
                             android:background="?colorPrimary"
+                            android:gravity="center"
 
-                            />   <Button
+
+                            />   <org.ironrabbit.type.CustomTypefaceTextView
                         android:id="@+id/btnInviteShare"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -462,9 +477,11 @@
                         android:drawableLeft="@android:drawable/ic_menu_share"
                         android:textColor="@android:color/white"
                         android:background="?colorPrimary"
+                        android:gravity="center"
+
 
                         />
-                        <Button
+                        <org.ironrabbit.type.CustomTypefaceTextView
                             android:id="@+id/btnInviteScan"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -474,11 +491,13 @@
                             android:drawableLeft="@android:drawable/ic_menu_camera"
                             android:textColor="@android:color/white"
                             android:background="?colorPrimary"
+                            android:gravity="center"
+
 
                             />
 
                     </LinearLayout>
-                    <Button
+                    <org.ironrabbit.type.CustomTypefaceTextView
                         android:id="@+id/btnInviteSkip"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -487,6 +506,8 @@
                         android:textSize="14dp"
                         android:background="?colorPrimary"
                         android:textColor="@android:color/white"
+                        android:gravity="center"
+
                         />
                 </LinearLayout>
 

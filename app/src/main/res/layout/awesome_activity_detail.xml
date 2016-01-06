@@ -95,7 +95,7 @@
             android:id="@+id/btnDeleteVoice"
             />
 
-        <TextView
+        <org.ironrabbit.type.CustomTypefaceTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/swipe_up_delete"
@@ -149,7 +149,7 @@
                 android:padding="2dp"
                 />
 
-            <Button
+            <org.ironrabbit.type.CustomTypefaceTextView
                 android:layout_width="0dip"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -285,7 +285,7 @@
         android:visibility="gone"
         >
 
-        <TextView android:id="@+id/txtInvitation"
+        <org.ironrabbit.type.CustomTypefaceTextView android:id="@+id/txtInvitation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/invitation_prompt" />
@@ -294,12 +294,12 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <Button android:id="@+id/btnAccept"
+            <org.ironrabbit.type.CustomTypefaceTextView android:id="@+id/btnAccept"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/accept_invitation" />
 
-            <Button android:id="@+id/btnDecline"
+            <org.ironrabbit.type.CustomTypefaceTextView android:id="@+id/btnDecline"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="10dip"
@@ -320,12 +320,12 @@
             android:padding="10dip"
             android:text="@string/subscription_prompt" />
 
-            <Button android:id="@+id/btnApproveSubscription"
+            <org.ironrabbit.type.CustomTypefaceTextView android:id="@+id/btnApproveSubscription"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/approve_subscription" />
 
-            <Button android:id="@+id/btnDeclineSubscription"
+            <org.ironrabbit.type.CustomTypefaceTextView android:id="@+id/btnDeclineSubscription"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="10dip"
@@ -343,7 +343,7 @@
         android:visibility="gone">
 
 
-        <TextView android:id="@+id/warningText"
+        <org.ironrabbit.type.CustomTypefaceTextView android:id="@+id/warningText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"

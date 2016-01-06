@@ -19,9 +19,11 @@ package org.awesomeapp.messenger;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentUris;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -44,6 +46,8 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
 import net.hockeyapp.android.UpdateManager;
@@ -70,6 +74,7 @@ import org.awesomeapp.messenger.util.LogCleaner;
 import org.awesomeapp.messenger.util.SecureMediaStore;
 import org.awesomeapp.messenger.util.SystemServices;
 import org.awesomeapp.messenger.util.XmppUriHelper;
+import org.ironrabbit.type.CustomTypefaceManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -109,7 +114,10 @@ public class MainActivity extends AppCompatActivity {
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
+        applyFontForToolbarTitle(mToolbar);
 
+        setTitle(getString(R.string.app_name_zom));
+        
         final ActionBar ab = getSupportActionBar();
 
         mViewPager = (ViewPager) findViewById(R.id.viewpager);
@@ -150,43 +158,7 @@ public class MainActivity extends AppCompatActivity {
 
                 mViewPager.setCurrentItem(tab.getPosition());
 
-                StringBuffer sb = new StringBuffer();
-                sb.append(getString(R.string.app_name));
-                sb.append(" | ");
-
-                switch (tab.getPosition()) {
-                    case 0:
-                        sb.append(getString(R.string.chats));
-                        break;
-                    case 1:
-                        sb.append(getString(R.string.friends));
-                        break;
-                    case 2:
-                        sb.append(getString(R.string.title_more));
-                        break;
-                    case 3:
-                        sb.append(getString(R.string.me_title));
-                        break;
-                }
-
-                mToolbar.setTitle(sb.toString());
-                mFab.setVisibility(View.VISIBLE);
-
-                if (tab.getPosition() == 1) {
-                    mFab.setImageResource(R.drawable.ic_person_add_white_36dp);
-                }
-                else if (tab.getPosition() == 2) {
-//                    mFab.setImageResource(R.drawable.ic_photo_camera_white_36dp);
-                    mFab.setVisibility(View.GONE);
-
-                }
-                else if (tab.getPosition() == 3)
-                {
-                    mFab.setVisibility(View.GONE);
-                }
-                else {
-                    mFab.setImageResource(R.drawable.ic_add_white_24dp);
-                }
+                setToolbarTitle(tab.getPosition());
 
             }
 
@@ -230,8 +202,51 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        setToolbarTitle(1);
+
         //don't wnat this to happen to often
         checkForUpdates();
+
+    }
+
+    private void setToolbarTitle (int tabPosition)
+    {
+        StringBuffer sb = new StringBuffer();
+        sb.append(getString(R.string.app_name_zom));
+        sb.append(" | ");
+
+        switch (tabPosition) {
+            case 0:
+                sb.append(getString(R.string.chats));
+                break;
+            case 1:
+                sb.append(getString(R.string.friends));
+                break;
+            case 2:
+                sb.append(getString(R.string.title_more));
+                break;
+            case 3:
+                sb.append(getString(R.string.me_title));
+                break;
+        }
+
+        mToolbar.setTitle(sb.toString());
+
+        if (mFab != null) {
+            mFab.setVisibility(View.VISIBLE);
+
+            if (tabPosition == 1) {
+                mFab.setImageResource(R.drawable.ic_person_add_white_36dp);
+            } else if (tabPosition == 2) {
+                //                    mFab.setImageResource(R.drawable.ic_photo_camera_white_36dp);
+                mFab.setVisibility(View.GONE);
+
+            } else if (tabPosition == 3) {
+                mFab.setVisibility(View.GONE);
+            } else {
+                mFab.setImageResource(R.drawable.ic_add_white_24dp);
+            }
+        }
 
     }
 
@@ -475,10 +490,6 @@ public class MainActivity extends AppCompatActivity {
             case R.id.menu_settings:
                 Intent sintent = new Intent(this, SettingActivity.class);
                 startActivity(sintent);
-                return true;
-
-            case R.id.menu_group_chat:
-                showGroupChatDialog();
                 return true;
 
             case R.id.menu_lock:
@@ -776,4 +787,56 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.awesome_activity_main);
 
     }*/
+
+    public void applyFontForToolbarTitle(Toolbar toolbar) {
+
+        checkCustomFont ();
+        Typeface typeface = CustomTypefaceManager.getCurrentTypeface(this);
+
+        if (typeface != null) {
+            for (int i = 0; i < toolbar.getChildCount(); i++) {
+                View view = toolbar.getChildAt(i);
+                if (view instanceof TextView) {
+                    TextView tv = (TextView) view;
+
+                    tv.setTypeface(typeface);
+                    break;
+                }
+            }
+        }
+
+    }
+
+    private void checkCustomFont ()
+    {
+
+        if (Preferences.getLanguage().equalsIgnoreCase("bo"))
+        {
+            CustomTypefaceManager.loadFromAssets(this);
+
+        }
+        else
+        {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            List<InputMethodInfo> mInputMethodProperties = imm.getEnabledInputMethodList();
+
+            final int N = mInputMethodProperties.size();
+
+            for (int i = 0; i < N; i++) {
+
+                InputMethodInfo imi = mInputMethodProperties.get(i);
+
+                //imi contains the information about the keyboard you are using
+                if (imi.getPackageName().equals("org.ironrabbit.bhoboard")) {
+                    //                    CustomTypefaceManager.loadFromKeyboard(this);
+                    CustomTypefaceManager.loadFromAssets(this);
+
+                    break;
+                }
+
+            }
+        }
+
+    }
+
 }
