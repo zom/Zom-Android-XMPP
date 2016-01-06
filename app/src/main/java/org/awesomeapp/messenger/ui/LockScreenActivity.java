@@ -1,6 +1,7 @@
 package org.awesomeapp.messenger.ui;
 
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,6 +14,7 @@ import android.view.View.OnClickListener;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -28,7 +30,11 @@ import info.guardianproject.cacheword.PassphraseSecrets;
 import im.zom.messenger.R;
 
 import org.awesomeapp.messenger.ImApp;
+import org.awesomeapp.messenger.Preferences;
 import org.awesomeapp.messenger.ui.legacy.ThemeableActivity;
+import org.ironrabbit.type.CustomTypefaceManager;
+
+import java.util.List;
 
 public class LockScreenActivity extends ThemeableActivity implements ICacheWordSubscriber {
     private static final String TAG = "LockScreenActivity";
@@ -48,8 +54,8 @@ public class LockScreenActivity extends ThemeableActivity implements ICacheWordS
     private TwoViewSlider mSlider;
 
     private ImApp mApp;
-    private Button mBtnCreate;
-    private Button mBtnSkip;
+    private TextView mBtnCreate;
+    private TextView mBtnSkip;
 
     public static final String ACTION_CHANGE_PASSPHRASE = "cp";
 
@@ -63,6 +69,7 @@ public class LockScreenActivity extends ThemeableActivity implements ICacheWordS
         super.onCreate(savedInstanceState);
 
         mApp = (ImApp)getApplication();
+        checkCustomFont ();
 
         getSupportActionBar().hide();
 
@@ -89,8 +96,7 @@ public class LockScreenActivity extends ThemeableActivity implements ICacheWordS
         mSlider = new TwoViewSlider(vf, flipView1, flipView2, mNewPassphrase, mConfirmNewPassphrase);
 
 
-
-        mBtnSkip = (Button)findViewById(R.id.btnSkip);
+        mBtnSkip = (TextView)findViewById(R.id.btnSkip);
         mBtnSkip.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -227,7 +233,7 @@ public class LockScreenActivity extends ThemeableActivity implements ICacheWordS
             }
         });
 
-        mBtnCreate = (Button) findViewById(R.id.btnCreate);
+        mBtnCreate = (TextView)findViewById(R.id.btnCreate);
         mBtnCreate.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -386,6 +392,38 @@ public class LockScreenActivity extends ThemeableActivity implements ICacheWordS
             mCacheWord.setTimeout(0);
             setResult(RESULT_OK);
             finish();
+        }
+
+    }
+
+    private void checkCustomFont ()
+    {
+
+        if (Preferences.getLanguage().equalsIgnoreCase("bo"))
+        {
+            CustomTypefaceManager.loadFromAssets(this);
+
+        }
+        else
+        {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            List<InputMethodInfo> mInputMethodProperties = imm.getEnabledInputMethodList();
+
+            final int N = mInputMethodProperties.size();
+
+            for (int i = 0; i < N; i++) {
+
+                InputMethodInfo imi = mInputMethodProperties.get(i);
+
+                //imi contains the information about the keyboard you are using
+                if (imi.getPackageName().equals("org.ironrabbit.bhoboard")) {
+                    //                    CustomTypefaceManager.loadFromKeyboard(this);
+                    CustomTypefaceManager.loadFromAssets(this);
+
+                    break;
+                }
+
+            }
         }
 
     }
