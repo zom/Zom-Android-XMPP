@@ -140,8 +140,8 @@ public class Languages {
     }
 
     //@TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
-    public static void setLanguage(final ContextWrapper contextWrapper, String language) {
-        if (locale != null && TextUtils.equals(locale.getLanguage(), language)) {
+    public static void setLanguage(final ContextWrapper contextWrapper, String language, boolean refresh) {
+        if (locale != null && TextUtils.equals(locale.getLanguage(), language) && (!refresh)) {
             return; // already configured
         } else if (language == null || language == USE_SYSTEM_DEFAULT) {
             locale = defaultLocale;

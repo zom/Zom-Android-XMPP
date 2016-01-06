@@ -131,7 +131,7 @@ public class AddContactActivity extends ActionBarActivity {
     private void setupActions ()
     {
 
-        Button btnInviteSms = (Button)findViewById(R.id.btnInviteSMS);
+        View btnInviteSms = findViewById(R.id.btnInviteSMS);
         btnInviteSms.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -145,7 +145,7 @@ public class AddContactActivity extends ActionBarActivity {
 
         });
 
-        Button btnInviteShare = (Button)findViewById(R.id.btnInviteShare);
+        View btnInviteShare = findViewById(R.id.btnInviteShare);
         btnInviteShare.setOnClickListener(new View.OnClickListener()
         {
 
@@ -163,7 +163,7 @@ public class AddContactActivity extends ActionBarActivity {
 
         });
 
-        Button btnInviteQR = (Button)findViewById(R.id.btnInviteScan);
+        View btnInviteQR = findViewById(R.id.btnInviteScan);
         btnInviteQR.setOnClickListener(new View.OnClickListener() {
 
             @Override

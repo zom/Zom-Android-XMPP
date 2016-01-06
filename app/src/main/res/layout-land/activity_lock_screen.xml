@@ -36,7 +36,7 @@
                         android:layout_height="match_parent"
                         android:orientation="horizontal" >
 
-                        <TextView
+                        <org.ironrabbit.type.CustomTypefaceTextView
                                android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_toLeftOf="@+id/languageButton"
@@ -57,7 +57,7 @@
                             android:src="@drawable/ic_settings_language" />
                     </RelativeLayout>
 
-                        <EditText
+                        <org.ironrabbit.type.CustomTypefaceEditText
                             android:id="@+id/editNewPassphrase"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -74,7 +74,7 @@
                         android:layout_margin="5dp" 
                         android:orientation="vertical" >
 
-                        <EditText
+                        <org.ironrabbit.type.CustomTypefaceEditText
                             android:id="@+id/editConfirmNewPassphrase"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -85,7 +85,7 @@
                          </LinearLayout>
                 </ViewFlipper>
                 
-                  <Button
+                  <org.ironrabbit.type.CustomTypefaceTextView
                     android:id="@+id/btnCreate"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -94,7 +94,7 @@
                     android:layout_marginTop="0dp"
                     android:text="@string/lock_screen_create_passphrase" />
                   
-                           <Button
+                           <org.ironrabbit.type.CustomTypefaceTextView
                     android:id="@+id/btnSkip"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -115,7 +115,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp" >
 
-                    <EditText
+                    <org.ironrabbit.type.CustomTypefaceEditText
                         android:id="@+id/editEnterPassphrase"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -125,7 +125,7 @@
                         android:inputType="textPassword" >
 
                         <requestFocus />
-                    </EditText>
+                    </org.ironrabbit.type.CustomTypefaceEditText>
                 </LinearLayout>
             </LinearLayout>
     </LinearLayout>

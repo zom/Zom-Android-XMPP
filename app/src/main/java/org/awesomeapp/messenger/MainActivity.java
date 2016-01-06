@@ -48,6 +48,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.TextView;
 
 import net.hockeyapp.android.UpdateManager;
@@ -117,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
         applyFontForToolbarTitle(mToolbar);
 
         setTitle(getString(R.string.app_name_zom));
-        
+
         final ActionBar ab = getSupportActionBar();
 
         mViewPager = (ViewPager) findViewById(R.id.viewpager);
@@ -594,7 +595,7 @@ public class MainActivity extends AppCompatActivity {
        // final Spinner listAccounts = (Spinner) dialogGroup.findViewById(R.id.choose_list);
        // setupAccountSpinner(listAccounts);
 
-        new AlertDialog.Builder(this)
+        AlertDialog dialog = new AlertDialog.Builder(this)
                 .setTitle(R.string.create_group)
                 .setView(dialogGroup)
                 .setPositiveButton(R.string.connect, new DialogInterface.OnClickListener() {
@@ -639,8 +640,35 @@ public class MainActivity extends AppCompatActivity {
                         dialog.dismiss();
                     }
                 })
-                .create().show();
+                .create();
+        dialog.show();
 
+        Typeface typeface;
+
+        if ((typeface = CustomTypefaceManager.getCurrentTypeface(this))!=null) {
+            TextView textView = (TextView) dialog.findViewById(android.R.id.message);
+            if (textView != null)
+                textView.setTypeface(typeface);
+
+            textView = (TextView) dialog.findViewById(R.id.alertTitle);
+            if (textView != null)
+                textView.setTypeface(typeface);
+
+            Button btn = (Button)dialog.findViewById(android.R.id.button1);
+            if (btn != null)
+                btn.setTypeface(typeface);
+
+            btn = (Button)dialog.findViewById(android.R.id.button2);
+            if (btn != null)
+                btn.setTypeface(typeface);
+
+
+            btn = (Button)dialog.findViewById(android.R.id.button3);
+            if (btn != null)
+                btn.setTypeface(typeface);
+
+
+        }
 
 
     }

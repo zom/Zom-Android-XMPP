@@ -76,7 +76,7 @@
                 </LinearLayout>
             </ViewFlipper>
 
-            <Button
+            <org.ironrabbit.type.CustomTypefaceTextView
                 android:id="@+id/btnCreate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -85,7 +85,7 @@
                 android:layout_marginTop="0dp"
                 android:text="@string/lock_screen_create_passphrase" />
 
-            <Button
+            <org.ironrabbit.type.CustomTypefaceTextView
                 android:id="@+id/btnSkip"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

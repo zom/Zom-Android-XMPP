@@ -167,7 +167,7 @@ public class ImApp extends Application {
 
         Preferences.setup(this);
         Languages.setup(MainActivity.class, R.string.use_system_default);
-        Languages.setLanguage(this, Preferences.getLanguage());
+        Languages.setLanguage(this, Preferences.getLanguage(),false);
 
         sImApp = this;
 
@@ -252,7 +252,7 @@ public class ImApp extends Application {
             /* Set the preference after setting the locale in case something goes
              * wrong. If setting the locale causes an Exception, it should not be set in
              * the preferences, otherwise this will be stuck in a crash loop. */
-            Languages.setLanguage(activity, language);
+            Languages.setLanguage(activity, language, true);
             Preferences.setLanguage(language);
             Languages.forceChangeLanguage(activity);
 
@@ -821,4 +821,11 @@ public class ImApp extends Application {
         return mDefaultAccountId;
     }
 
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        Languages.setLanguage(this, Preferences.getLanguage(),true);
+
+    }
 }
