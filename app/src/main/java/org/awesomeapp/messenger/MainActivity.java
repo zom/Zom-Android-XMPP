@@ -116,7 +116,8 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(mToolbar);
         applyFontForToolbarTitle(mToolbar);
 
-
+        setTitle(getString(R.string.app_name_zom));
+        
         final ActionBar ab = getSupportActionBar();
 
         mViewPager = (ViewPager) findViewById(R.id.viewpager);
