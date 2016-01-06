@@ -18,7 +18,7 @@ import org.awesomeapp.messenger.Preferences;
 import java.util.ArrayList;
 
 import im.zom.messenger.R;
-import info.guardianproject.panic.PanicReceiver;
+import info.guardianproject.panic.PanicResponder;
 
 public class PanicSetupActivity extends AppCompatActivity {
 
@@ -30,7 +30,7 @@ public class PanicSetupActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (PanicReceiver.checkForDisconnectIntent(this)) {
+        if (PanicResponder.checkForDisconnectIntent(this)) {
             finish();
             return;
         }
@@ -114,7 +114,7 @@ public class PanicSetupActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_done:
-                PanicReceiver.setTriggerPackageName(this);
+                PanicResponder.setTriggerPackageName(this);
                 setResult(Activity.RESULT_OK, intent);
                 finish();
                 return true;

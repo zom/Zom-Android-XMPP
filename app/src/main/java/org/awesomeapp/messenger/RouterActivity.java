@@ -18,7 +18,6 @@ package org.awesomeapp.messenger;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.app.Service;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
@@ -26,10 +25,8 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.net.Uri.Builder;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Message;
-import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
@@ -37,9 +34,7 @@ import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
-import org.awesomeapp.messenger.model.ImConnection;
 import org.awesomeapp.messenger.provider.Imps;
-import org.awesomeapp.messenger.service.IImConnection;
 import org.awesomeapp.messenger.ui.AddContactActivity;
 import org.awesomeapp.messenger.ui.legacy.ImPluginHelper;
 import org.awesomeapp.messenger.ui.LockScreenActivity;
@@ -59,7 +54,7 @@ import info.guardianproject.cacheword.ICacheWordSubscriber;
 import im.zom.messenger.R;
 
 import info.guardianproject.panic.Panic;
-import info.guardianproject.panic.PanicReceiver;
+import info.guardianproject.panic.PanicResponder;
 
 public class RouterActivity extends ThemeableActivity implements ICacheWordSubscriber  {
 
@@ -120,16 +115,23 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
 
             return;
         } else if (Panic.isTriggerIntent(intent)) {
-            if (PanicReceiver.receivedTrustedTrigger(this)) {
+            if (PanicResponder.receivedTriggerFromConnectedApp(this)) {
                 if (Preferences.uninstallApp()) {
+                    // lock and delete first for rapid response, then uninstall
+                    shutdownAndLock(this);
+                    PanicResponder.deleteAllAppData(this);
                     Intent uninstall = new Intent(Intent.ACTION_DELETE);
                     uninstall.setData(Uri.parse("package:" + getPackageName()));
                     startActivity(uninstall);
+                } else if (Preferences.clearAppData()) {
+                    // lock first for rapid response, then delete
+                    shutdownAndLock(this);
+                    PanicResponder.deleteAllAppData(this);
                 } else if (Preferences.lockApp()) {
                     shutdownAndLock(this);
                 }
                 // TODO add other responses here, paying attention to if/else order
-            } else if (PanicReceiver.shouldUseDefaultResponseToTrigger(this)) {
+            } else if (PanicResponder.shouldUseDefaultResponseToTrigger(this)) {
                 if (Preferences.lockApp()) {
                     shutdownAndLock(this);
                 }
