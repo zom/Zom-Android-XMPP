@@ -21,6 +21,7 @@ import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -874,8 +875,7 @@ public class OnboardingActivity extends ThemeableActivity {
 
     private void checkCustomFont ()
     {
-
-        if (Preferences.getLanguage().equalsIgnoreCase("bo"))
+        if (Preferences.isLanguageTibetan())
         {
             CustomTypefaceManager.loadFromAssets(this);
 
