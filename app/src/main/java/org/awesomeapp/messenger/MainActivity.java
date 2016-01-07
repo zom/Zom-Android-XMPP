@@ -32,7 +32,6 @@ import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -49,8 +48,6 @@ import android.view.View;
 import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
-
-import net.hockeyapp.android.UpdateManager;
 
 import org.awesomeapp.messenger.model.ImConnection;
 import org.awesomeapp.messenger.provider.Imps;
@@ -70,7 +67,6 @@ import org.awesomeapp.messenger.ui.MoreFragment;
 import org.awesomeapp.messenger.ui.legacy.SettingActivity;
 import org.awesomeapp.messenger.ui.onboarding.OnboardingActivity;
 import org.awesomeapp.messenger.ui.onboarding.OnboardingManager;
-import org.awesomeapp.messenger.util.LogCleaner;
 import org.awesomeapp.messenger.util.SecureMediaStore;
 import org.awesomeapp.messenger.util.SystemServices;
 import org.awesomeapp.messenger.util.XmppUriHelper;
@@ -84,8 +80,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
-import info.guardianproject.iocipher.VirtualFileSystem;
 import im.zom.messenger.R;
+import info.guardianproject.iocipher.VirtualFileSystem;
 
 /**
  * TODO
@@ -810,7 +806,7 @@ public class MainActivity extends AppCompatActivity {
     private void checkCustomFont ()
     {
 
-        if (Preferences.getLanguage().equalsIgnoreCase("bo"))
+        if (Preferences.isLanguageTibetan())
         {
             CustomTypefaceManager.loadFromAssets(this);
 

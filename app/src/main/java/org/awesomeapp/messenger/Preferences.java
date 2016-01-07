@@ -6,6 +6,8 @@ import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
+import org.awesomeapp.messenger.util.Languages;
+
 import im.zom.messenger.R;
 
 
@@ -205,6 +207,10 @@ public class Preferences {
 
     public static void setLanguage(String code) {
         preferences.edit().putString(LANGUAGE, code).apply();
+    }
+
+    public static boolean isLanguageTibetan() {
+        return TextUtils.equals(getLanguage(), Languages.TIBETAN.getLanguage());
     }
 
     public static Uri getNotificationRingtoneUri() {

@@ -30,18 +30,17 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
-import android.text.TextUtils;
 
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.Preferences;
 import org.awesomeapp.messenger.ui.PanicSetupActivity;
+import org.awesomeapp.messenger.util.Languages;
 
 import java.util.ArrayList;
 
 import im.zom.messenger.R;
 import info.guardianproject.panic.Panic;
 import info.guardianproject.panic.PanicResponder;
-import org.awesomeapp.messenger.util.Languages;
 
 public class SettingActivity extends PreferenceActivity {
     private static final String TAG = "SettingActivity";
@@ -93,33 +92,8 @@ public class SettingActivity extends PreferenceActivity {
         }
         mPanicTriggerApp.setEntries(entries.toArray(new CharSequence[entries.size()]));
         mPanicTriggerApp.setEntryValues(entryValues.toArray(new CharSequence[entryValues.size()]));
-        setPanicTriggerAppDisplay(PanicResponder.getTriggerPackageName(this));
-    }
-
-    private void setPanicTriggerAppDisplay(String triggerPackageName) {
-        if (TextUtils.isEmpty(triggerPackageName)
-                || triggerPackageName.equals(Panic.PACKAGE_NAME_DEFAULT)) {
-            mPanicTriggerApp.setValue(Panic.PACKAGE_NAME_DEFAULT);
-            mPanicTriggerApp.setDefaultValue(Panic.PACKAGE_NAME_DEFAULT);
-            mPanicTriggerApp.setSummary(R.string.panic_trigger_app_summary);
-            mPanicTriggerApp.setIcon(null);
-        } else {
-            mPanicTriggerApp.setValue(triggerPackageName);
-            mPanicTriggerApp.setDefaultValue(triggerPackageName);
-            if (triggerPackageName.equals(Panic.PACKAGE_NAME_NONE)) {
-                mPanicTriggerApp.setSummary(R.string.panic_app_none_summary);
-                mPanicTriggerApp.setIcon(android.R.drawable.ic_menu_close_clear_cancel);
-            } else {
-                try {
-                    mPanicTriggerApp.setSummary(pm.getApplicationLabel(
-                            pm.getApplicationInfo(triggerPackageName, 0)));
-                    mPanicTriggerApp.setIcon(pm.getApplicationIcon(triggerPackageName));
-                } catch (PackageManager.NameNotFoundException e) {
-                    mPanicTriggerApp.setSummary(R.string.panic_trigger_app_summary);
-                    mPanicTriggerApp.setIcon(null);
-                }
-            }
-        }
+        PanicResponder.configTriggerAppListPreference(mPanicTriggerApp,
+                R.string.panic_trigger_app_summary, R.string.panic_app_none_summary);
     }
 
     @Override
@@ -164,7 +138,8 @@ public class SettingActivity extends PreferenceActivity {
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 String packageName = (String) newValue;
                 PanicResponder.setTriggerPackageName(SettingActivity.this, packageName);
-                setPanicTriggerAppDisplay(packageName);
+                PanicResponder.configTriggerAppListPreference(mPanicTriggerApp,
+                        R.string.panic_trigger_app_summary, R.string.panic_app_none_summary);
                 return true;
             }
         });
