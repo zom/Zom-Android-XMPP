@@ -91,7 +91,7 @@ android {
                 'de.measite.minidns:minidns:5df876bdcdf42a2109d52f7408af8b145fd6d45ba4da776a5a0e73210286186c',
                 'info.guardianproject.cacheword:cachewordlib:933d8119f14af5024b90c17c3c64c13efccf48c8f37080c7c09a9fb0318cd1fe',
                 'info.guardianproject.iocipher:IOCipher:898b3b8d113b2e83b76998101655944f6c5a14475deeb81159fdf6375d70258d',
-                'info.guardianproject.panic:panic:d60aa28e234978ddb880fe7f0b853cd6294b24ff2e0ace07032370b76a45e5c3',
+                'info.guardianproject.panic:panic:a7ed9439826db2e9901649892cf9afbe76f00991b768d8f4c26332d7c9406cb2',
                 'net.hockeyapp.android:HockeySDK:6e73ad1188af47e7c0e054ed21da66b1b9ae227db7e9401d4de4e6b2b437d194',
                 'net.zetetic:android-database-sqlcipher:e7594bd98cf77e93579c084cbf08d99b742b71a8d2063169ffc1858f8de21aa8',
                 'org.igniterealtime.smack:smack-android-extensions:4c1732d09e460107f1d3e0c25a3ac6c2f8a1b8cba2e9dfa726a866aa55c13bc8',
@@ -130,7 +130,7 @@ dependencies {
     compile 'info.guardianproject.iocipher:IOCipher:0.3'
     compile 'info.guardianproject.netcipher:netcipher:1.2'
     compile files('../libs/panic-0.0-3-gca2df9b.jar')
-    compile 'info.guardianproject.panic:panic:0.4'
+    compile 'info.guardianproject.panic:panic:0.5'
     compile 'net.hockeyapp.android:HockeySDK:3.5.0'
     compile 'org.igniterealtime.smack:smack-android:4.1.4'
     compile 'org.igniterealtime.smack:smack-android-extensions:4.1.4'
