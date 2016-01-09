@@ -370,6 +370,14 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         msg.setFrom(mConnection.getLoginUser().getAddress());
         msg.setType(Imps.MessageType.OUTGOING);
 
+        try {
+            SessionStatus otrSessionStatus = SessionStatus.values()[getDefaultOtrChatSession().getChatStatus()];
+
+            if (otrSessionStatus == SessionStatus.ENCRYPTED)
+                msg.setType(Imps.MessageType.OUTGOING_ENCRYPTED);
+
+        }catch(RemoteException re){}
+
         if (!isResend) {
             insertMessageInDb(null, text, System.currentTimeMillis(), msg.getType(), 0, msg.getID());
             insertOrUpdateChat(text);
@@ -625,10 +633,12 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
     void deleteGroupMemberInDb(Contact member) {
         String where = Imps.GroupMembers.USERNAME + "=?";
         String[] selectionArgs = { member.getAddress().getAddress() };
-        long groupId = ContentUris.parseId(mChatURI);
-        Uri uri = ContentUris.withAppendedId(Imps.GroupMembers.CONTENT_URI, groupId);
-        mContentResolver.delete(uri, where, selectionArgs);
 
+        if (mChatURI != null) {
+            long groupId = ContentUris.parseId(mChatURI);
+            Uri uri = ContentUris.withAppendedId(Imps.GroupMembers.CONTENT_URI, groupId);
+            mContentResolver.delete(uri, where, selectionArgs);
+        }
       //  insertMessageInDb(member.getName(), null, System.currentTimeMillis(),
             //    Imps.MessageType.PRESENCE_UNAVAILABLE);
     }

@@ -34,6 +34,7 @@ import net.java.otr4j.session.TLV;
 import android.content.Context;
 import android.content.Intent;
 import android.os.RemoteException;
+import android.text.TextUtils;
 import android.util.Log;
 
 /*
@@ -290,6 +291,7 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
     }
 
     public String decryptMessage(String localUserId, String remoteUserId, String msg, List<TLV> tlvs) throws OtrException {
+
         String plain = null;
 
         SessionID sessionId = getSessionId(localUserId, remoteUserId);
@@ -298,7 +300,9 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
         if (mOtrEngine != null && sessionId != null) {
 
             mOtrEngineHost.putSessionResource(sessionId, processResource(remoteUserId));
+
             plain = mOtrEngine.transformReceiving(sessionId, msg, tlvs);
+
             OtrSm otrSm = mOtrSms.get(sessionId.toString());
 
             if (otrSm != null) {
@@ -309,9 +313,11 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
                 }
             }
 
-            if (plain != null && plain.length() == 0)
+            //not null, but empty so make it null!
+            if (TextUtils.isEmpty(plain))
                 return null;
         }
+
         return plain;
     }
 

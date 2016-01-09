@@ -75,8 +75,8 @@ public class OtrDataHandler implements DataHandler {
 
     public static final String URI_PREFIX_OTR_IN_BAND = "otr-in-band:/storage/";
 
-    private static final int MAX_OUTSTANDING = 10;
-    private static final int MAX_CHUNK_LENGTH = 32768/2;
+    private static final int MAX_OUTSTANDING = 5;
+    private static final int MAX_CHUNK_LENGTH = 32768/4;
 
     private static final int MAX_TRANSFER_LENGTH = 1024*1024*10; //10MB max file size
 
@@ -175,7 +175,7 @@ public class OtrDataHandler implements DataHandler {
         }
     }
 
-    public void onIncomingRequest(Address requestThem, Address requestUs, byte[] value) {
+    public synchronized void onIncomingRequest(Address requestThem, Address requestUs, byte[] value) {
         //Log.e( TAG, "onIncomingRequest:" + requestThem);
 
         SessionInputBuffer inBuf = new MemorySessionInputBuffer(value);
@@ -708,11 +708,21 @@ public class OtrDataHandler implements DataHandler {
             return sum.equals(sha1sum(buffer));
         }
 
-        public boolean perform() {
+        public synchronized boolean perform() {
             // TODO global throttle rather than this local hack
             while (outstanding.size() < MAX_OUTSTANDING) {
-                if (current >= length)
+                if (current >= length) {
+                    if (outstanding.size() > 0)
+                    {
+                        //resend any existing
+                        for (Request request : outstanding)
+                        {
+                            debug( "resending request that starts:" + request.start) ;
+                            sendRequest(request);
+                        }
+                    }
                     return false;
+                }
                 int end = current + MAX_CHUNK_LENGTH - 1;
                 if (end >= length) {
                     end = length - 1;
@@ -781,7 +791,7 @@ public class OtrDataHandler implements DataHandler {
         }
 
         @Override
-        public boolean perform() {
+        public synchronized boolean perform() {
             boolean result = super.perform();
             try {
                 if (raf == null) {

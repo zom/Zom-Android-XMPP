@@ -27,7 +27,7 @@ public final class SessionID {
         //if (stripResource)
         //    mSessionId = stripResource(mLocalUserId) + '_' + mProtocolName + '_' + stripResource(mRemoteUserId);
         //else
-        mSessionId = stripResource(mLocalUserId) + '_' + mProtocolName + '_' + mRemoteUserId;
+        mSessionId = stripResource(mLocalUserId) + '_' + mProtocolName + '_' + stripResource(mRemoteUserId);
     }
 
     public String getLocalUserId ()

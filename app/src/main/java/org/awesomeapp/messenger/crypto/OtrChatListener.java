@@ -1,5 +1,7 @@
 package org.awesomeapp.messenger.crypto;
 
+import android.text.TextUtils;
+
 import org.awesomeapp.messenger.model.ChatSession;
 import org.awesomeapp.messenger.model.ImErrorInfo;
 import org.awesomeapp.messenger.model.Message;
@@ -35,27 +37,26 @@ public class OtrChatListener implements MessageListener {
         boolean result = false;
 
         String body = msg.getBody();
-        String from = msg.getFrom().getAddress();
-        String to = msg.getTo().getAddress();
+        String remoteAddress = msg.getFrom().getAddress();
+        String localAddress = msg.getTo().getAddress();
 
-        body = Debug.injectErrors(body);
+        //body = Debug.injectErrors(body);
 
-        SessionID sessionID = mOtrChatManager.getSessionId(to, from);
+        SessionID sessionID = mOtrChatManager.getSessionId(localAddress, remoteAddress);
         SessionStatus otrStatus = mOtrChatManager.getSessionStatus(sessionID);
+
 
         List<TLV> tlvs = new ArrayList<TLV>();
 
         try {
 
-            body = mOtrChatManager.decryptMessage(to, from, body, tlvs);
+            body = mOtrChatManager.decryptMessage(localAddress, remoteAddress, body, tlvs);
 
-            if (body != null)
-            {
+            if (!TextUtils.isEmpty(body)) {
                 result = true;
                 msg.setBody(body);
                 mMessageListener.onIncomingMessage(session, msg);
-            }
-            else {
+            } else {
 
                 OtrDebugLogger.log("Decrypted incoming body was null (otrdata?)");
 
@@ -80,16 +81,16 @@ public class OtrChatListener implements MessageListener {
 
         } catch (OtrException oe) {
 
-            OtrDebugLogger.log("error decrypting message from: " + from,oe);
+            OtrDebugLogger.log("error decrypting message from: " + sessionID.getLocalUserId(), oe);
 
+            //mOtrChatManager.refreshSession(sessionID.getLocalUserId(),sessionID.getRemoteUserId());
             // msg.setBody("[" + "You received an unreadable encrypted message" + "]");
             // mMessageListener.onIncomingMessage(session, msg);
             //   mOtrChatManager.injectMessage(sessionID, "[error please stop/start encryption]");
 
         }
 
-
-        SessionStatus newStatus = mOtrChatManager.getSessionStatus(to, from);
+        SessionStatus newStatus = mOtrChatManager.getSessionStatus(sessionID.getLocalUserId(),sessionID.getRemoteUserId());
         if (newStatus != otrStatus) {
 
             OtrDebugLogger.log("OTR status changed from: " + otrStatus + " to " + newStatus);

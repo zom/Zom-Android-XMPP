@@ -62,7 +62,7 @@ public class SessionImpl implements Session {
     private long lastStart;
     private OtrAssembler assembler;
 
-    private final static boolean DEBUG_ENABLED = false;
+    private final static boolean DEBUG_ENABLED = true;
     private final static String LOG_TAG = "OTR4J";
 
     public SessionImpl(SessionID sessionID, OtrEngineHost listener) {
@@ -310,6 +310,7 @@ public class SessionImpl implements Session {
      * net.java.otr4j.session.ISession#handleReceivingMessage(java.lang.String)
      */
     public String transformReceiving(String msgText, List<TLV> tlvs) throws OtrException, NullPointerException {
+
         OtrPolicy policy = getSessionPolicy();
         if (!policy.getAllowV1() && !policy.getAllowV2()) {
             if (DEBUG_ENABLED) Log.d(LOG_TAG,"Policy does not allow neither V1 not V2, ignoring message.");
@@ -319,7 +320,7 @@ public class SessionImpl implements Session {
         try {
             msgText = assembler.accumulate(msgText);
         } catch (ProtocolException e) {
-            if (DEBUG_ENABLED) if (DEBUG_ENABLED) Log.d(LOG_TAG,"An invalid message fragment was discarded.");
+            if (DEBUG_ENABLED) Log.d(LOG_TAG,"An invalid message fragment was discarded.");
             return null;
         }
 
@@ -334,7 +335,7 @@ public class SessionImpl implements Session {
         }
 
         if (m == null)
-            return msgText; // Propably null or empty.
+            return null;//msgText; // Propably null or empty.
 
         switch (m.messageType) {
         case AbstractEncodedMessage.MESSAGE_DATA:
@@ -440,29 +441,81 @@ public class SessionImpl implements Session {
             byte[] computedMAC = otrCryptoEngine.sha1Hmac(serializedT,
                     matchingKeys.getReceivingMACKey(), SerializationConstants.TYPE_LEN_MAC);
 
+            String decryptedMsgContent = null;
+
             if (!Arrays.equals(computedMAC, data.mac)) {
-                throw new OtrException("MAC verification failed, ignoring message");
+                //    throw new OtrException("MAC verification failed, ignoring message");
+                if (DEBUG_ENABLED) Log.d(LOG_TAG,"MAC verification failed, ignoring message");
             }
+            else
+            {
 
-            if (DEBUG_ENABLED) Log.d(LOG_TAG,"Computed HmacSHA1 value matches sent one.");
 
-            // Mark this MAC key as old to be revealed.
-            matchingKeys.setIsUsedReceivingMACKey(true);
+                if (DEBUG_ENABLED) Log.d(LOG_TAG, "Computed HmacSHA1 value matches sent one.");
 
-            matchingKeys.setReceivingCtr(data.ctr);
+                // Mark this MAC key as old to be revealed.
+                matchingKeys.setIsUsedReceivingMACKey(true);
 
-            byte[] dmc = otrCryptoEngine.aesDecrypt(matchingKeys.getReceivingAESKey(),
-                    matchingKeys.getReceivingCtr(), data.encryptedMessage);
-            String decryptedMsgContent;
-            try {
-                // Expect bytes to be text encoded in UTF-8.
-                decryptedMsgContent = new String(dmc, "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                throw new OtrException(e);
+                matchingKeys.setReceivingCtr(data.ctr);
+
+                byte[] dmc = otrCryptoEngine.aesDecrypt(matchingKeys.getReceivingAESKey(),
+                        matchingKeys.getReceivingCtr(), data.encryptedMessage);
+                try {
+                    // Expect bytes to be text encoded in UTF-8.
+                    decryptedMsgContent = new String(dmc, "UTF-8");
+
+                    if (DEBUG_ENABLED)
+                        Log.d(LOG_TAG, "Decrypted message: \"" + decryptedMsgContent + "\"");
+                    // FIXME extraKey = authContext.getExtraSymmetricKey();
+
+
+                    // Handle TLVs
+                    if (tlvs == null) {
+                        tlvs = new ArrayList<TLV>();
+                    }
+
+                    int tlvIndex = decryptedMsgContent.indexOf((char) 0x0);
+                    if (tlvIndex > -1) {
+                        decryptedMsgContent = decryptedMsgContent.substring(0, tlvIndex);
+                        tlvIndex++;
+                        byte[] tlvsb = new byte[dmc.length - tlvIndex];
+                        System.arraycopy(dmc, tlvIndex, tlvsb, 0, tlvsb.length);
+
+                        ByteArrayInputStream tin = new ByteArrayInputStream(tlvsb);
+                        while (tin.available() > 0) {
+                            int type;
+                            byte[] tdata;
+                            OtrInputStream eois = new OtrInputStream(tin);
+                            try {
+                                type = eois.readShort();
+                                tdata = eois.readTlvData();
+                                eois.close();
+                            } catch (IOException e) {
+                                throw new OtrException(e);
+                            }
+
+                            tlvs.add(new TLV(type, tdata));
+                        }
+                    }
+                    if (tlvs.size() > 0) {
+                        for (TLV tlv : tlvs) {
+                            switch (tlv.getType()) {
+                                case TLV.DISCONNECTED:
+                                    this.setSessionStatus(SessionStatus.FINISHED);
+                                    return null;
+                                default:
+                                    for (OtrTlvHandler handler : tlvHandlers) {
+                                        handler.processTlv(tlv);
+                                    }
+                            }
+                        }
+                    }
+                } catch (UnsupportedEncodingException e) {
+                    //throw new OtrException(e);
+                    if (DEBUG_ENABLED)
+                        Log.e(LOG_TAG, "unsupported encoding exception",e);
+                }
             }
-
-            if (DEBUG_ENABLED) Log.d(LOG_TAG,"Decrypted message: \"" + decryptedMsgContent + "\"");
-            // FIXME extraKey = authContext.getExtraSymmetricKey();
 
             // Rotate keys if necessary.
             SessionKeys mostRecent = this.getMostRecentSessionKeys();
@@ -471,48 +524,6 @@ public class SessionImpl implements Session {
 
             if (mostRecent.getRemoteKeyID() == senderKeyID)
                 this.rotateRemoteSessionKeys(data.nextDH);
-
-            // Handle TLVs
-            if (tlvs == null) {
-                tlvs = new ArrayList<TLV>();
-            }
-
-            int tlvIndex = decryptedMsgContent.indexOf((char) 0x0);
-            if (tlvIndex > -1) {
-                decryptedMsgContent = decryptedMsgContent.substring(0, tlvIndex);
-                tlvIndex++;
-                byte[] tlvsb = new byte[dmc.length - tlvIndex];
-                System.arraycopy(dmc, tlvIndex, tlvsb, 0, tlvsb.length);
-
-                ByteArrayInputStream tin = new ByteArrayInputStream(tlvsb);
-                while (tin.available() > 0) {
-                    int type;
-                    byte[] tdata;
-                    OtrInputStream eois = new OtrInputStream(tin);
-                    try {
-                        type = eois.readShort();
-                        tdata = eois.readTlvData();
-                        eois.close();
-                    } catch (IOException e) {
-                        throw new OtrException(e);
-                    }
-
-                    tlvs.add(new TLV(type, tdata));
-                }
-            }
-            if (tlvs.size() > 0) {
-                for (TLV tlv : tlvs) {
-                    switch (tlv.getType()) {
-                    case TLV.DISCONNECTED:
-                        this.setSessionStatus(SessionStatus.FINISHED);
-                        return null;
-                    default:
-                        for (OtrTlvHandler handler : tlvHandlers) {
-                            handler.processTlv(tlv);
-                        }
-                    }
-                }
-            }
 
             return decryptedMsgContent;
 

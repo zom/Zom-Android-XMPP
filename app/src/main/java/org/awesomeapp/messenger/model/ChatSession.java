@@ -171,23 +171,23 @@ public class ChatSession {
         SessionID sId = cm.getSessionId(message.getFrom().getAddress(),message.getTo().getAddress());
         SessionStatus otrStatus = cm.getSessionStatus(sId);
 
-        if (otrStatus != SessionStatus.ENCRYPTED) {
-            cm.startSession(sId);
-            return; //the request is cached so it can be tried again once encryption is enabled
+        //can't send if not encrypted session
+        if (otrStatus == SessionStatus.ENCRYPTED) {
+
+            boolean verified = cm.getKeyManager().isVerified(sId);
+
+            if (verified) {
+                message.setType(Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED);
+            } else {
+                message.setType(Imps.MessageType.OUTGOING_ENCRYPTED);
+            }
+
+            boolean canSend = cm.transformSending(message, isResponse, data);
+
+            if (canSend)
+                mManager.sendMessageAsync(this, message);
         }
 
-        boolean verified = cm.getKeyManager().isVerified(sId);
-
-        if (verified) {
-            message.setType(Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED);
-        } else {
-            message.setType(Imps.MessageType.OUTGOING_ENCRYPTED);
-        }
-
-        boolean canSend = cm.transformSending(message, isResponse, data);
-
-        if (canSend)
-            mManager.sendMessageAsync(this, message);
 
     }
 
