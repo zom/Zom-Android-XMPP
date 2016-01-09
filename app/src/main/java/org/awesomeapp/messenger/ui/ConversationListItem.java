@@ -309,7 +309,13 @@ public class ConversationListItem extends FrameLayout {
                         holder.mMediaThumb.setVisibility(View.GONE);
                     
                     holder.mLine2.setVisibility(View.VISIBLE);
-                    holder.mLine2.setText(android.text.Html.fromHtml(lastMsg).toString());
+
+
+
+                    try {
+                        holder.mLine2.setText(android.text.Html.fromHtml(lastMsg).toString());
+                    }
+                    catch (RuntimeException re){}
                 }
             }
 
@@ -452,15 +458,19 @@ public class ConversationListItem extends FrameLayout {
 
         if(SecureMediaStore.isVfsUri(mediaUri))
         {
-            try {
-                Glide.with(getContext())
-                        .load(new info.guardianproject.iocipher.FileInputStream(new File(mediaUri.getPath()).getPath()))
-                        .diskCacheStrategy(DiskCacheStrategy.NONE)
-                        .into(aHolder.mMediaThumb);
-            }
-            catch (Exception e)
+            info.guardianproject.iocipher.File fileMedia = new info.guardianproject.iocipher.File(mediaUri.getPath());
+            if (fileMedia.exists())
             {
-                Log.e(ImApp.LOG_TAG,"unable to load thumbnail",e);
+                try {
+                    Glide.with(getContext())
+                            .load(new info.guardianproject.iocipher.FileInputStream(fileMedia))
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
+                            .into(aHolder.mMediaThumb);
+                }
+                catch (Exception e)
+                {
+                    Log.e(ImApp.LOG_TAG,"unable to load thumbnail",e);
+                }
             }
         }
         else if (mediaUri.getScheme().equals("asset"))

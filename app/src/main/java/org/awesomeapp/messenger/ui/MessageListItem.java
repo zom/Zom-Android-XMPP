@@ -339,7 +339,21 @@ public class MessageListItem extends FrameLayout {
         }
         else
         {
+
+            try {
+                Glide.with(context)
+                        .load(R.drawable.ic_file)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .into(holder.mMediaThumbnail);
+            }
+            catch (Exception e)
+            {
+                Log.e(ImApp.LOG_TAG,"unable to load thumbnail",e);
+            }
             holder.mMediaThumbnail.setImageResource(R.drawable.ic_file); // generic file icon
+            holder.mTextViewForMessages.setText(mediaUri.getLastPathSegment());
+            holder.mTextViewForMessages.setVisibility(View.VISIBLE);
+
         }
 
         holder.mMediaContainer.setVisibility(View.VISIBLE);
@@ -423,7 +437,8 @@ public class MessageListItem extends FrameLayout {
         }
         else
         {
-
+            exportMediaFile();
+            /**
             String body = convertMediaUriToPath(mediaUri);
 
             if (body == null)
@@ -436,7 +451,8 @@ public class MessageListItem extends FrameLayout {
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
             //set a general mime type not specific
-            intent.setData(Uri.parse(body));
+            intent.setDataAndType(Uri.parse(body), mimeType);
+
 
             Context context = getContext().getApplicationContext();
 
@@ -448,7 +464,8 @@ public class MessageListItem extends FrameLayout {
             {
 
                 intent = new Intent(Intent.ACTION_SEND);
-                intent.setData(Uri.parse( body ));
+                intent.setDataAndType(Uri.parse(body), mimeType);
+
                 if (isIntentAvailable(context, intent))
                 {
                     context.startActivity(intent);
@@ -456,7 +473,7 @@ public class MessageListItem extends FrameLayout {
                 else {
                     Toast.makeText(getContext(), R.string.there_is_no_viewer_available_for_this_file_format, Toast.LENGTH_LONG).show();
                 }
-            }
+            }**/
         }
     }
 
@@ -610,10 +627,16 @@ public class MessageListItem extends FrameLayout {
 
     private String formatMessage (String body)
     {
+
         if (body != null)
-            return android.text.Html.fromHtml(body).toString();
+            try {
+                return (android.text.Html.fromHtml(body).toString()); //this happens on Xiaomi sometimes
+            }
+            catch (RuntimeException re){
+                return "";
+            }
         else
-            return null;
+            return "";
     }
 
     public void bindOutgoingMessage(int id, int messageType, String address, final String mimeType, final String body, Date date, Markup smileyRes, boolean scrolling,

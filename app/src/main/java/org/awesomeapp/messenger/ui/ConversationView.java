@@ -1454,6 +1454,12 @@ public class ConversationView {
         return mMessageAdapter == null ? null : mMessageAdapter.getCursor();
     }
 
+    public void refreshSession ()
+    {
+        setOTRState(false);
+        setOTRState(true);
+    }
+
     public void closeChatSession(boolean doDelete) {
         if (getChatSession() != null) {
             try {
