@@ -28,6 +28,12 @@
          app:showAsAction="always"
          />
 
+    <item android:id="@+id/menu_refresh_encryption"
+        android:title="@string/menu_refresh"
+        android:icon="@drawable/ic_menu_encrypt"
+        app:showAsAction="never"
+
+        />
 
     <item android:id="@+id/menu_end_conversation"
         android:title="@string/menu_end_conversation" 
