@@ -103,4 +103,7 @@
   <string name="welcome_to_zom">WELCOME TO ZOM</string>
   <string name="onboarding_generate">To create a ZOM id, enter a username, and we will generate a secure password for you.</string>
   <string name="grant_perms">You must grant permission for Zom to user the camera</string>
+
+  <string name="menu_refresh">Refresh Session</string>
+
 </resources>
