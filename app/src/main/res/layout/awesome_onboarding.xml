@@ -28,7 +28,6 @@
                     android:gravity="center_horizontal"
                     android:orientation="vertical"
                     android:background="?colorPrimary"
-
                     >
 
 
@@ -120,6 +119,7 @@
                         android:textStyle="bold"
                         android:gravity="center"
                         android:textAppearance="?android:attr/textAppearanceLarge"
+                        style="@android:style/Widget.Button"
 
                         />
 
@@ -143,6 +143,7 @@
                             android:background="?android:attr/selectableItemBackground"
                             android:textColor="@android:color/black"
                             android:gravity="center"
+                            style="@android:style/Widget.Button"
 
                             />
 
@@ -245,6 +246,8 @@
                             android:visibility="gone"
                             android:textColor="@android:color/white"
                             android:background="?colorPrimary"
+                            style="@android:style/Widget.Button"
+
                             />
                     </LinearLayout>
 
@@ -317,6 +320,7 @@
                         android:background="?colorPrimary"
                         android:textColor="@android:color/white"
                         android:gravity="center"
+                        style="@android:style/Widget.Button"
 
                         />
 
@@ -409,6 +413,7 @@
                         android:background="?colorPrimary"
                         android:textColor="@android:color/white"
                         android:gravity="center"
+                        style="@android:style/Widget.Button"
 
                         />
 
@@ -460,11 +465,12 @@
                             android:layout_height="wrap_content"
                             android:layout_margin="5dp"
                             android:textSize="10dp"
-                            android:text="Invite SMS"
+                            android:text="@string/invite_sms"
                             android:drawableLeft="@android:drawable/ic_menu_send"
                             android:textColor="@android:color/white"
                             android:background="?colorPrimary"
                             android:gravity="center"
+                            style="@android:style/Widget.Button"
 
 
                             />   <org.ironrabbit.type.CustomTypefaceTextView
@@ -473,11 +479,12 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="5dp"
                         android:textSize="10dp"
-                        android:text="Invite Share"
+                        android:text="@string/invite_share"
                         android:drawableLeft="@android:drawable/ic_menu_share"
                         android:textColor="@android:color/white"
                         android:background="?colorPrimary"
                         android:gravity="center"
+                        style="@android:style/Widget.Button"
 
 
                         />
@@ -487,11 +494,12 @@
                             android:layout_height="wrap_content"
                             android:layout_margin="5dp"
                             android:textSize="10dp"
-                            android:text="Scan QR"
+                            android:text="@string/invite_scan_qr"
                             android:drawableLeft="@android:drawable/ic_menu_camera"
                             android:textColor="@android:color/white"
                             android:background="?colorPrimary"
                             android:gravity="center"
+                            style="@android:style/Widget.Button"
 
 
                             />
