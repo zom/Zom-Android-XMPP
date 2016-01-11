@@ -40,7 +40,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="10dp"
-            android:layout_margin="1dp"
+            android:layout_margin="6dp"
+            style="@android:style/Widget.Button"
 
             android:text="@string/invite_sms"
             android:drawableLeft="@android:drawable/ic_menu_send"
@@ -51,7 +52,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="10dp"
-        android:layout_margin="1dp"
+        android:layout_margin="6dp"
+        style="@android:style/Widget.Button"
 
         android:text="@string/invite_share"
         android:drawableLeft="@android:drawable/ic_menu_share"
@@ -63,7 +65,8 @@
             android:id="@+id/btnInviteScan"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="1dp"
+            android:layout_margin="6dp"
+            style="@android:style/Widget.Button"
 
             android:textSize="10dp"
             android:text="@string/invite_scan_qr"

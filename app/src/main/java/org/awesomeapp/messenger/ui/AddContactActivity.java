@@ -27,6 +27,7 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -38,6 +39,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.MultiAutoCompleteTextView;
@@ -67,7 +69,7 @@ import java.util.Map;
 import im.zom.messenger.R;
 
 
-public class AddContactActivity extends ActionBarActivity {
+public class AddContactActivity extends AppCompatActivity {
     private static final String TAG = "AddContactActivity";
 
     private static final String[] CONTACT_LIST_PROJECTION = { Imps.ContactList._ID,
@@ -85,14 +87,17 @@ public class AddContactActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+
         super.onCreate(savedInstanceState);
 
         mApp = (ImApp)getApplication();
-        mApp.setAppTheme(this);
+     //   mApp.setAppTheme(this);
         mHandler = new SimpleAlertHandler(this);
 
         setContentView(R.layout.add_contact_activity);
-        setTitle(R.string.add_contact_title);
+//        setTitle(R.string.add_contact_title);
 
         TextView label = (TextView) findViewById(R.id.input_contact_label);
         label.setText(R.string.input_contact_label);
