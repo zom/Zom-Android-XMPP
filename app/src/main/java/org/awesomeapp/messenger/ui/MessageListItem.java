@@ -681,7 +681,7 @@ public class MessageListItem extends FrameLayout {
             }
 
         }
-        else if (lastMessage.charAt(0) == '/' && lastMessage.length()>1)
+        else if ((!TextUtils.isEmpty(lastMessage)) && lastMessage.charAt(0) == '/' && lastMessage.length()>1)
         {
             String cmd = lastMessage.toString().substring(1);
             boolean cmdSuccess = false;
