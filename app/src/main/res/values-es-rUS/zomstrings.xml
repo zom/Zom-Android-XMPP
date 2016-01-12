@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string name="cancel_action">Cancelar</string>
+  <string name="accept_action">Aceptar</string>
+  <string name="sign_in_action">Inicia sesión</string>
+  <string name="settings_action">Configuración</string>
+  <string name="send_message">Escribir para componer</string>
+  <string name="me_title">Yo</string>
+  <string name="blocked">Bloqueado</string>
+</resources>

@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string name="app_name_zom">شات سيكيور ChatSecure</string>
+  <string name="next_action">التالي</string>
+  <string name="cancel_action">إلغاء</string>
+  <string name="accept_action">قبول</string>
+  <string name="sign_in_action">تسجيل الدخول</string>
+  <string name="settings_action">إعدادات</string>
+  <string name="send_message">أرسل رسالة</string>
+  <string name="delete_action">حذف</string>
+  <string name="me_title">أنا</string>
+  <string name="profile">الملف الشخصي</string>
+  <string name="password">كلمة السر</string>
+  <string name="add_account_action">إضافة حساب</string>
+  <string name="blocked">محجوب</string>
+  <string name="language">اللغة</string>
+  <string name="about">حول التطبيق</string>
+</resources>

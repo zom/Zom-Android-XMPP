@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string name="app_name_zom">ChatSecure</string>
+  <string name="next_action">Næste</string>
+  <string name="cancel_action">Annuller</string>
+  <string name="accept_action">Accepter</string>
+  <string name="sign_in_action">Log ind</string>
+  <string name="settings_action">Indstillinger</string>
+  <string name="send_message">Send besked</string>
+  <string name="me_title">Mig</string>
+  <string name="profile">Profil</string>
+  <string name="password">Adgangskode</string>
+  <string name="add_account_action">Tilføj konto</string>
+  <string name="blocked">Blokeret</string>
+  <string name="language">Sprog</string>
+  <string name="about">Om</string>
+</resources>

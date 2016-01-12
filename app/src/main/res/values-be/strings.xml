@@ -1,6 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <!--General: Names-->
+  <string name="ic_launcher_name">ChatSecure</string>
   <string name="app_name">ChatSecure</string>
   <string name="im_label">ChatSecure</string>
   <!--General: Permissions-->
@@ -34,12 +35,12 @@
   <!--Views: Setup-->
   <string name="landing_page_title">Абярыце акаўнт</string>
   <string name="choose_account_title">Абярыце акаўнт</string>
-  <string name="add_account">Дадаць <xliff:g id="account">%1$s</xliff:g> акаўнт</string>
+  <string name="add_account">Дадаць &lt;xliff:g id="account"&gt;%1$s&lt;/xliff:g&gt; акаўнт</string>
   <string name="menu_about">Пра прыладу</string>
   <string name="menu_sign_out_all">Выйсці адусюль</string>
   <string name="signout_all_confirm_message">Вы жадаеце выйсці з усіх сервісаў</string>
-  <string name="signed_out_prompt">Вы выйшлі з <xliff:g id="account">%1$s</xliff:g>.</string>
-  <string name="signed_out_prompt_with_error">Вы выйшлі з <xliff:g id="account">%1$s</xliff:g> бо <xliff:g id="reason">%2$s</xliff:g></string>
+  <string name="signed_out_prompt">Вы выйшлі з &lt;xliff:g id="account"&gt;%1$s&lt;/xliff:g&gt;.</string>
+  <string name="signed_out_prompt_with_error">Вы выйшлі з &lt;xliff:g id="account"&gt;%1$s&lt;/xliff:g&gt; бо &lt;xliff:g id="reason"&gt;%2$s&lt;/xliff:g&gt;</string>
   <string name="welcome_first">Першы раз карыстаецеся ChatSecure?</string>
   <string name="welcome_skip">Ня можаце дачакацца каб пачаць?</string>
   <string name="welcome_about">Пачаць</string>

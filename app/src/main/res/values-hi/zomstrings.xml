@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string name="app_name_zom">चैटसिक्योर </string>
+  <string name="next_action">अगला </string>
+  <string name="cancel_action">रद्द करें</string>
+  <string name="settings_action">विकल्प </string>
+  <string name="password">कूटशब्द </string>
+  <string name="add_account_action">खाता जोड़ें </string>
+  <string name="language">भाषा </string>
+  <string name="about">परिचय </string>
+</resources>

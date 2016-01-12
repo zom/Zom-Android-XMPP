@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string name="app_name_zom">安全聊天</string>
+  <string name="next_action">下一個</string>
+  <string name="cancel_action">取消</string>
+  <string name="accept_action">接受</string>
+  <string name="sign_in_action">登入</string>
+  <string name="settings_action">設定</string>
+  <string name="me_title">我</string>
+  <string name="profile">個人資料</string>
+  <string name="add_account_action">編輯帳戶</string>
+  <string name="blocked">封鎖</string>
+  <string name="language">語言</string>
+  <string name="about">關於</string>
+</resources>
