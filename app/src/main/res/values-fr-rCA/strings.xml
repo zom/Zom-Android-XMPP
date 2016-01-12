@@ -204,7 +204,7 @@
   <string name="contact_away">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt; est absent</string>
   <string name="contact_busy">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt; est occupé</string>
   <string name="contact_offline">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt; est hors ligne</string>
-  <string name="contact_joined">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt; s'est joint</string>
+  <string name="contact_joined">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt; s\'est joint</string>
   <string name="contact_left">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt; est parti</string>
   <string name="menu_send_image">Envoyer une photo</string>
   <string name="menu_send_file">Envoyer un fichier</string>
@@ -254,8 +254,8 @@
   <string name="subscription_prompt">Ajouter le contact?</string>
   <string name="approve_subscription">Oui</string>
   <string name="decline_subscription">Non</string>
-  <string name="approve_subscription_error">Impossible d'approuver l'abonnement de &lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt;. Veuillez ressayer ultérieurement.</string>
-  <string name="decline_subscription_error">Impossible de refuser l'abonnement de &lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt;. Veuillez ressayer ultérieurement.</string>
+  <string name="approve_subscription_error">Impossible d\'approuver l\'abonnement de &lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt;. Veuillez ressayer ultérieurement.</string>
+  <string name="decline_subscription_error">Impossible de refuser l\'abonnement de &lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt;. Veuillez ressayer ultérieurement.</string>
   <!--Security: OTR-->
   <string name="menu_otr_start">Démarrer le chiffrement</string>
   <string name="menu_otr_stop">Arrêter le chiffrement</string>
@@ -361,7 +361,7 @@
   <!--Alerts: Notifications-->
   <string name="newMessages_label">Nouveaux messages &lt;xliff:g id="provider"&gt;%1$s&lt;/xliff:g&gt;</string>
   <string name="num_unread_chats">&lt;xliff:g id="number"&gt;%1$d&lt;/xliff:g&gt; clavardage non lus</string>
-  <string name="subscription_notify_text">Nouvelle invitation d'amitié de &lt;xliff:g id="user"&gt;%s&lt;/xliff:g&gt;</string>
+  <string name="subscription_notify_text">Nouvelle invitation d\'amitié de &lt;xliff:g id="user"&gt;%s&lt;/xliff:g&gt;</string>
   <string name="file_notify_text">Nouveau fichier &lt;xliff:g id="filename"&gt;%1$s&lt;/xliff:g&gt; de &lt;xliff:g id="user"&gt;%2$s&lt;/xliff:g&gt;</string>
   <string name="notify_groupchat_label">Invitation à un clavardage de groupe</string>
   <string name="group_chat_invite_notify_text">Nouvelle invitation de clavardage de groupe de &lt;xliff:g id="user"&gt;%s&lt;/xliff:g&gt;</string>
@@ -372,7 +372,7 @@
   <!--Alerts: Exceptions-->
   <string name="error">Attention</string>
   <string name="error_prefix">Erreur :</string>
-  <string name="general_error">Code d'erreur &lt;xliff:g id="code"&gt;%1$d&lt;/xliff:g&gt;</string>
+  <string name="general_error">Code d\'erreur &lt;xliff:g id="code"&gt;%1$d&lt;/xliff:g&gt;</string>
   <string name="login_service_failed">Impossible de se connecter au service &lt;xliff:g id="service"&gt;%1$s&lt;/xliff:g&gt;. Veuillez ressayer ultérieurement.\n"(Détails : &lt;xliff:g id="description"&gt;%2$s&lt;/xliff:g&gt;)</string>
   <string name="add_list_failed">La liste n\'a pas été ajoutée.</string>
   <string name="block_contact_failed">Le contact n\'a pas été bloqué.</string>
@@ -428,7 +428,7 @@
   <string name="msg_sent_failed">Impossible d\'envoyer ce message.</string>
   <string name="disconnected_warning">Vous êtes déconnecté. Les messages seront transmis après votre reconnexion.</string>
   <string name="contact_offline_warning">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt; est hors ligne. Les messages que vous envoyez seront livrés quand &lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt; sera en ligne.</string>
-  <string name="contact_not_in_list_warning">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt; n'est pas dans votre liste de contacts.</string>
+  <string name="contact_not_in_list_warning">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt; n\'est pas dans votre liste de contacts.</string>
   <string name="error_account_password_mismatch">Vos mots de passe ne correspondent pas</string>
   <string name="error_account_settings_priority">La priorité doit être un chiffre entre [0 … 127]</string>
   <string name="error_account_settings_port">Le numéro de port doit être un numéro</string>

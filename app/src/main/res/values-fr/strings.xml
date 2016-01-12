@@ -230,7 +230,7 @@ Appuyez ici pour en ajouter un !</string>
   <string name="delete">Supprimer</string>
   <!--Views: Chat: Group-->
   <string name="invitation_prompt">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; vous a invité à rejoindre un chat en groupe.</string>
-  <string name="invitation_sent_prompt">L'invitation a été envoyé à &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;.</string>
+  <string name="invitation_sent_prompt">L\'invitation a été envoyé à &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;.</string>
   <string name="accept_invitation">Accepter</string>
   <string name="decline_invitation">Refuser</string>
   <string name="menu_new_group_chat">Discussion de groupe</string>
@@ -244,8 +244,8 @@ Appuyez ici pour en ajouter un !</string>
 Appuyez pour inviter.</string>
   <string name="approve_subscription">Oui</string>
   <string name="decline_subscription">Non</string>
-  <string name="approve_subscription_error">Impossible d'approuver l'inscription de &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;. Veuillez réessayer ultérieurement.</string>
-  <string name="decline_subscription_error">Impossible de refuser l'inscription de &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;. Veuillez réessayer ultérieurement.</string>
+  <string name="approve_subscription_error">Impossible d\'approuver l\'inscription de &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;. Veuillez réessayer ultérieurement.</string>
+  <string name="decline_subscription_error">Impossible de refuser l\'inscription de &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;. Veuillez réessayer ultérieurement.</string>
   <!--Security: OTR-->
   <string name="menu_otr_start">Chiffrer</string>
   <string name="menu_otr_stop">Arrêter le chiffrement</string>
@@ -325,7 +325,7 @@ Appuyez pour inviter.</string>
   <string name="pref_debug_summary">Afficher journal de l\'application sur la sortie standard / logcat pour déboguage</string>
   <!--Alerts: Dialogs-->
   <string name="bg_data_prompt_title">Données d\'arrière-plan désactivées</string>
-  <string name="bg_data_prompt_message">Les données d'arrière-plan sont requises pour l'activation de &lt;xliff:g id="PROVIDER"&gt;%1$s&lt;/xliff:g&gt;.</string>
+  <string name="bg_data_prompt_message">Les données d\'arrière-plan sont requises pour l\'activation de &lt;xliff:g id="PROVIDER"&gt;%1$s&lt;/xliff:g&gt;.</string>
   <string name="bg_data_prompt_ok">Activer</string>
   <string name="bg_data_prompt_cancel">Quitter</string>
   <string name="signout_kill_confirm_message">Voulez-vous vous déconnecter de tous les services ET tuer tous les processus (hard exit) ?</string>
@@ -339,7 +339,7 @@ Appuyez pour inviter.</string>
   <string name="app_unlocked">Activé &amp; déverrouillé</string>
   <!--Alerts: Exceptions-->
   <string name="error">Avertissement</string>
-  <string name="general_error">Code d'erreur &lt;xliff:g id="CODE"&gt;%1$d&lt;/xliff:g&gt;</string>
+  <string name="general_error">Code d\'erreur &lt;xliff:g id="CODE"&gt;%1$d&lt;/xliff:g&gt;</string>
   <string name="login_service_failed">Connexion au service &lt;xliff:g id="SERVICE"&gt;%1$s&lt;/xliff:g&gt; impossible. Veuillez réessayer ultérieurement."\n"(Détails : &lt;xliff:g id="DESCRIPTION"&gt;%2$s&lt;/xliff:g&gt;)</string>
   <string name="add_list_failed">La liste n\'a pas été ajoutée.</string>
   <string name="block_contact_failed">Le contact n\'a pas été bloqué.</string>
@@ -392,7 +392,7 @@ Appuyez pour inviter.</string>
   <string name="msg_sent_failed">Ce message n\'a pas pu être envoyé.</string>
   <string name="disconnected_warning">Les messages seront transmis lorsque vous serez reconnecté</string>
   <string name="contact_offline_warning">&lt;xliff:g id="USER_0"&gt;%1$s&lt;/xliff:g&gt; est hors ligne. Les messages que vous lui envoyez lui seront remis lorsque &lt;xliff:g id="USER_1"&gt;%1$s&lt;/xliff:g&gt; se reconnectera.</string>
-  <string name="contact_not_in_list_warning">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; n'est pas dans votre liste de contacts.</string>
+  <string name="contact_not_in_list_warning">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; n\'est pas dans votre liste de contacts.</string>
   <string name="account_settings_title">Paramètres du compte</string>
   <!--added 2011/09/01-->
   <string name="menu_view_groups">Groupes</string>

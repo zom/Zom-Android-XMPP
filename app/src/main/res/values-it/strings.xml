@@ -240,7 +240,7 @@ Tocca qui per aggiungerne uno!</string>
   <string name="end_chat_and_delete">Chiudi Chat ed Elimina File</string>
   <!--Views: Chat: Group-->
   <string name="invitation_prompt">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; ti ha invitato a unirti a una conversazione di gruppo.</string>
-  <string name="invitation_sent_prompt">L'invito è stato inviato a &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;.</string>
+  <string name="invitation_sent_prompt">L\'invito è stato inviato a &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;.</string>
   <string name="accept_invitation">Accetto</string>
   <string name="decline_invitation">Rifiuto</string>
   <string name="menu_new_group_chat">Chat di Gruppo</string>
@@ -254,8 +254,8 @@ Tocca qui per aggiungerne uno!</string>
 Tocca per invitare qualcuno.</string>
   <string name="approve_subscription">Sì</string>
   <string name="decline_subscription">No</string>
-  <string name="approve_subscription_error">Impossibile approvare l'iscrizione di &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;. Riprova più tardi.</string>
-  <string name="decline_subscription_error">Impossibile rifiutare l'iscrizione di &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;. Riprova più tardi.</string>
+  <string name="approve_subscription_error">Impossibile approvare l\'iscrizione di &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;. Riprova più tardi.</string>
+  <string name="decline_subscription_error">Impossibile rifiutare l\'iscrizione di &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;. Riprova più tardi.</string>
   <!--Security: OTR-->
   <string name="menu_otr_start">Avvio di crittografia</string>
   <string name="menu_otr_stop">Stop di crittografia</string>
@@ -337,7 +337,7 @@ Tocca per invitare qualcuno.</string>
   <string name="pref_debug_title">Attiva Registri di Debug</string>
   <!--Alerts: Dialogs-->
   <string name="bg_data_prompt_title">Dati in background disattivati</string>
-  <string name="bg_data_prompt_message">&lt;xliff:g id="PROVIDER"&gt;%1$s&lt;/xliff:g&gt; richiede l'attivazione dei dati in background.</string>
+  <string name="bg_data_prompt_message">&lt;xliff:g id="PROVIDER"&gt;%1$s&lt;/xliff:g&gt; richiede l\'attivazione dei dati in background.</string>
   <string name="bg_data_prompt_ok">Attiva</string>
   <string name="bg_data_prompt_cancel">Esci</string>
   <string name="signout_kill_confirm_message">Vuoi uscire E uccidere tutti i processi (hard exit)?</string>
@@ -365,7 +365,7 @@ Tocca per invitare qualcuno.</string>
   <string name="service_error">Errore del servizio.</string>
   <string name="load_contact_list_failed">Elenco contatti non caricato.</string>
   <string name="cant_connect_to_server">Impossibile collegarsi al server. Controllare la connessione.</string>
-  <string name="contact_already_exist">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; già presente nell'elenco contatti.</string>
+  <string name="contact_already_exist">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; già presente nell\'elenco contatti.</string>
   <string name="contact_blocked">Il contatto "&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;" è stato bloccato.</string>
   <string name="contact_not_loaded">Attendere il caricamento dell\'elenco contatti.</string>
   <string name="network_error">Errore di rete.</string>
@@ -406,7 +406,7 @@ Tocca per invitare qualcuno.</string>
   <string name="msg_sent_failed">Impossibile inviare il messaggio.</string>
   <string name="disconnected_warning">I messaggi saranno inviati quando verrà ristabilita la connessione</string>
   <string name="contact_offline_warning">&lt;xliff:g id="USER_0"&gt;%1$s&lt;/xliff:g&gt; è offline. I messaggi inviati saranno consegnati non appena &lt;xliff:g id="USER_1"&gt;%1$s&lt;/xliff:g&gt; torna online.</string>
-  <string name="contact_not_in_list_warning">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; non presente nell'elenco contatti.</string>
+  <string name="contact_not_in_list_warning">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; non presente nell\'elenco contatti.</string>
   <string name="error_account_settings_priority">La priorità dev\'essere un numero compreso nell\'intervallo [0 .. 127]</string>
   <string name="error_account_settings_port">Il numero di porta dev\'essere un numero</string>
   <string name="account_settings_title">Impostazioni Account</string>

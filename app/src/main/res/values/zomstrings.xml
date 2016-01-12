@@ -28,14 +28,14 @@
   <string name="invite_accepted">Your friend said YES to Zom!</string>
   <string name="invite_rejected">Your friend said NO to Zom :(</string>
   <string name="invite_redundant">You are already friends</string>
-  <string name="error_general">Hmm... little problem here. Please try again!</string>
+  <string name="error_general">Hmm… little problem here. Please try again!</string>
   <string name="chats">Chats</string>
   <string name="choose_friend">Choose a Friend</string>
   <string name="send_message">Send a message</string>
   <string name="clear_history">Clear History</string>
   <string name="push_to_talk">Push to talk</string>
-  <string name="recording_release">Recording... Release to send</string>
-  <string name="recording_delete">Recording... Release to delete</string>
+  <string name="recording_release">Recording… Release to send</string>
+  <string name="recording_delete">Recording… Release to delete</string>
   <string name="swipe_up_delete">Swipe up to delete</string>
   <string name="contact_offline_message">Friend is offline</string>
   <string name="message_failed">Whoops! Message failed to send. Please try again.</string> 

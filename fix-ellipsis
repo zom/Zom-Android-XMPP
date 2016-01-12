@@ -2,4 +2,4 @@
 
 # Fix TypographyEllipsis programmatically
 
-sed -i 's/\.\.\./…/g' res/values*/*.xml
+sed -i 's/\.\.\./…/g' app/src/main/res/values*/*.xml
