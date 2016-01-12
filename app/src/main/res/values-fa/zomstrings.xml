@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string name="app_name_zom">چت امن</string>
+  <string name="next_action">بعدی</string>
+  <string name="cancel_action">انصراف</string>
+  <string name="accept_action">بپذیر</string>
+  <string name="sign_in_action">ورود</string>
+  <string name="settings_action">تنظیمات</string>
+  <string name="send_message">ارسال یک پیام</string>
+  <string name="delete_action">حذف</string>
+  <string name="me_title">من</string>
+  <string name="profile">نمایه</string>
+  <string name="password">رمز عبور</string>
+  <string name="add_account_action">اضافه کردن حساب کاربری</string>
+  <string name="blocked">مسدود شده</string>
+  <string name="language">زبان</string>
+  <string name="about">درباره</string>
+</resources>

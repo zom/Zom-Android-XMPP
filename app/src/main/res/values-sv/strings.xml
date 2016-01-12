@@ -1,6 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <!--General: Names-->
+  <string name="ic_launcher_name">ChatSecure</string>
   <string name="app_name">ChatSecure</string>
   <string name="im_label">ChatSecure</string>
   <!--General: Permissions-->
@@ -37,13 +38,13 @@ Tillåt applikationer att skriva data till IM innehållsleverantör.
   <!--Views: Setup-->
   <string name="landing_page_title">Välj ett konto</string>
   <string name="choose_account_title">Välj ett konto</string>
-  <string name="conversations">(<xliff:g id="number" example="27">%1$d</xliff:g>)</string>
-  <string name="add_account">Lägg till kontot <xliff:g id="ACCOUNT">%1$s</xliff:g></string>
+  <string name="conversations">(&lt;xliff:g id="number" example="27"&gt;%1$d&lt;/xliff:g&gt;)</string>
+  <string name="add_account">Lägg till kontot &lt;xliff:g id="ACCOUNT"&gt;%1$s&lt;/xliff:g&gt;</string>
   <string name="menu_about">Om</string>
   <string name="menu_sign_out_all">Logga ut alla</string>
   <string name="signout_all_confirm_message">Vill du logga ut från alla tjänster?</string>
-  <string name="signed_out_prompt">Du har loggats ut från <xliff:g id="ACCOUNT">%1$s</xliff:g>.</string>
-  <string name="signed_out_prompt_with_error">Du har loggats ut från <xliff:g id="account">%1$s</xliff:g> på grund av <xliff:g id="reason">%2$s</xliff:g></string>
+  <string name="signed_out_prompt">Du har loggats ut från &lt;xliff:g id="ACCOUNT"&gt;%1$s&lt;/xliff:g&gt;.</string>
+  <string name="signed_out_prompt_with_error">Du har loggats ut från &lt;xliff:g id="account"&gt;%1$s&lt;/xliff:g&gt; på grund av &lt;xliff:g id="reason"&gt;%2$s&lt;/xliff:g&gt;</string>
   <string name="welcome_first">Första gången du använder ChatSecure?</string>
   <string name="welcome_skip">Kan du inte vänta på att komma igång?</string>
   <string name="welcome_about">Kom igång</string>
@@ -163,27 +164,27 @@ Klicka här för att starta en!</string>
 konton konfigurerade.
 
 Tappa här för att lägga till ett!</string>
-  <string name="buddy_list_title">Kontaktlista - <xliff:g id="username">%1$s</xliff:g></string>
+  <string name="buddy_list_title">Kontaktlista - &lt;xliff:g id="username"&gt;%1$s&lt;/xliff:g&gt;</string>
   <string name="menu_add_contact">Lägg till kontakt</string>
   <string name="menu_remove_contact">Ta bort kontakt</string>
   <string name="menu_block_contact">Blockera kontakt</string>
   <string name="menu_contact_nickname">Kontaktsmeknamn</string>
   <string name="menu_view_blocked">Blockerad</string>
-  <string name="confirm_delete_contact">Kontakten <xliff:g id="USER">%1$s</xliff:g> tas bort.</string>
-  <string name="confirm_block_contact">Kontakten <xliff:g id="USER">%1$s</xliff:g> blockeras.</string>
-  <string name="confirm_unblock_contact">Blockering hävs för kontakten <xliff:g id="USER">%1$s</xliff:g>.</string>
-  <string name="add_contact_success">Kontakten <xliff:g id="USER">%1$s</xliff:g> har lagts till.</string>
-  <string name="delete_contact_success">Kontakten <xliff:g id="USER">%1$s</xliff:g> har tagits bort.</string>
-  <string name="block_contact_success">Kontakten <xliff:g id="USER">%1$s</xliff:g> är blockerad.</string>
-  <string name="unblock_contact_success">Blockering hävs för kontakten <xliff:g id="USER">%1$s</xliff:g>.</string>
+  <string name="confirm_delete_contact">Kontakten &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; tas bort.</string>
+  <string name="confirm_block_contact">Kontakten &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; blockeras.</string>
+  <string name="confirm_unblock_contact">Blockering hävs för kontakten &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;.</string>
+  <string name="add_contact_success">Kontakten &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; har lagts till.</string>
+  <string name="delete_contact_success">Kontakten &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; har tagits bort.</string>
+  <string name="block_contact_success">Kontakten &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; är blockerad.</string>
+  <string name="unblock_contact_success">Blockering hävs för kontakten &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;.</string>
   <string name="menu_new_chat">Ny chatt</string>
   <string name="menu_search_contacts">Sök kontakter</string>
   <string name="menu_show_grid">Visa rutnät</string>
   <string name="menu_start_chat">Öppna chatt</string>
   <string name="menu_view_profile">Se profil</string>
   <string name="menu_verify">Verifiera nyckel</string>
-  <string name="ongoing_conversation">Pågående chattar (<xliff:g id="NUMBER">%1$d</xliff:g>)</string>
-  <string name="online_count"><xliff:g id="NUMBER">%1$d</xliff:g> online</string>
+  <string name="ongoing_conversation">Pågående chattar (&lt;xliff:g id="NUMBER"&gt;%1$d&lt;/xliff:g&gt;)</string>
+  <string name="online_count">&lt;xliff:g id="NUMBER"&gt;%1$d&lt;/xliff:g&gt; online</string>
   <string name="subscriptions">Kompisinbjudningar</string>
   <string name="unknown_contact">(\"<i>\"Okänd\"</i>\")</string>
   <string name="empty_contact_group">Logga ut</string>
@@ -202,17 +203,17 @@ Tappa här för att lägga till ett!</string>
   <string name="label_client_type">Klienttyp:</string>
   <string name="client_type_computer">Dator</string>
   <string name="client_type_mobile">Mobil</string>
-  <string name="blocked_list_title">Blockerade kontakter – <xliff:g id="USER">%1$s</xliff:g></string>
+  <string name="blocked_list_title">Blockerade kontakter – &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;</string>
   <string name="no_blocked_contact">Inga blockerade kontakter.</string>
   <!--Views: Chat: Single-->
-  <string name="chat_with">Chatt med <xliff:g id="USER">%1$s</xliff:g></string>
+  <string name="chat_with">Chatt med &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;</string>
   <string name="me">Jag</string>
-  <string name="contact_online"><xliff:g id="USER">%1$s</xliff:g> är online</string>
-  <string name="contact_away"><xliff:g id="USER">%1$s</xliff:g> är borta</string>
-  <string name="contact_busy"><xliff:g id="USER">%1$s</xliff:g> är upptagen</string>
-  <string name="contact_offline"><xliff:g id="USER">%1$s</xliff:g> är offline</string>
-  <string name="contact_joined"><xliff:g id="USER">%1$s</xliff:g> är med</string>
-  <string name="contact_left"><xliff:g id="USER">%1$s</xliff:g> har lämnat chatten</string>
+  <string name="contact_online">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; är online</string>
+  <string name="contact_away">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; är borta</string>
+  <string name="contact_busy">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; är upptagen</string>
+  <string name="contact_offline">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; är offline</string>
+  <string name="contact_joined">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; är med</string>
+  <string name="contact_left">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; har lämnat chatten</string>
   <string name="menu_send_image">Skicka foto</string>
   <string name="menu_send_file">Skicka fil</string>
   <string name="menu_send_audio">Skicka ljud</string>
@@ -247,8 +248,8 @@ Tappa här för att lägga till ett!</string>
   <string name="end_chat_summary">Alla säkra mediafiler för denna session kommer raderas. Exportera mediafiler genom långt tryck på ikonen.</string>
   <string name="end_chat_and_delete">Avsluta chatt och radera filer</string>
   <!--Views: Chat: Group-->
-  <string name="invitation_prompt"><xliff:g id="USER">%1$s</xliff:g> har bjudit in dig till en gruppchatt.</string>
-  <string name="invitation_sent_prompt">Inbjudan har skickats till <xliff:g id="USER">%1$s</xliff:g>.</string>
+  <string name="invitation_prompt">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; har bjudit in dig till en gruppchatt.</string>
+  <string name="invitation_sent_prompt">Inbjudan har skickats till &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;.</string>
   <string name="accept_invitation">Acceptera</string>
   <string name="decline_invitation">Avvisa</string>
   <string name="menu_new_group_chat">Gruppchatt</string>
@@ -260,8 +261,8 @@ Tappa här för att lägga till ett!</string>
   <string name="empty_contact_list">Inga kontakter funna.
 
 Klicka för att bjuda in.</string>
-  <string name="approve_subscription_error">Det gick inte att godkänna prenumeration från <xliff:g id="USER">%1$s</xliff:g>. Försök igen lite senare.</string>
-  <string name="decline_subscription_error">Det gick inte att avvisa prenumeration från <xliff:g id="USER">%1$s</xliff:g>. Försök igen senare.</string>
+  <string name="approve_subscription_error">Det gick inte att godkänna prenumeration från &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;. Försök igen lite senare.</string>
+  <string name="decline_subscription_error">Det gick inte att avvisa prenumeration från &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;. Försök igen senare.</string>
   <!--Security: OTR-->
   <string name="menu_otr_start">Starta kryptering</string>
   <string name="menu_otr_stop">Stoppa kryptering</string>
@@ -322,14 +323,8 @@ Klicka för att bjuda in.</string>
   <string name="menu_locale">Språk</string>
   <string name="KEY_PREF_LANGUAGE_TITLE">Språk</string>
   <string name="use_system_default">Använd systemets standardinställning</string>
-
-
   <string name="pref_in_memory_db_title">Endast lagring av meddelanden i minnet</string>
   <string name="pref_in_memory_db_summary">Lagra endast meddelanden i minnet, inte på flash lagringen, för att skydda mot att någon kommer åt meddelandena. (Kan orsaka förlorade meddelanden)</string>
-
-
-
-
   <string name="button_yes_accept_all">Ja, acceptera alla</string>
   <string name="pref_delete_unsecured_media_title">Radera osäker media</string>
   <string name="pref_delete_unsecured_media_summary">När du delat en bild eller en fil - radera automatiskt originalfilen från den ursprungliga lagringsplatsen</string>
@@ -371,16 +366,13 @@ Nätverkstrafik (även i bakgrunden) krävs för att kunna logga in med appen.</
   <string name="dialog_cert_expires">Förfaller:</string>
   <string name="dialog_connect_chatroom_title">Anslut till chattrum?</string>
   <string name="dialog_connect_chatroom_message">En extern app försöker ansluta dig till ett chattrum. Tillåt?</string>
-
-
-
   <!--Alerts: Notifications-->
-  <string name="newMessages_label">Nya meddelanden från <xliff:g id="PROVIDER">%1$s</xliff:g></string>
-  <string name="num_unread_chats"><xliff:g id="number">%1$d</xliff:g> olästa chattmeddelanden</string>
-  <string name="subscription_notify_text">Ny kontaktförfrågan från <xliff:g id="user">%s</xliff:g></string>
-  <string name="file_notify_text">Ny fil <xliff:g id="filename">%1$s</xliff:g> från <xliff:g id="user">%2$s</xliff:g></string>
+  <string name="newMessages_label">Nya meddelanden från &lt;xliff:g id="PROVIDER"&gt;%1$s&lt;/xliff:g&gt;</string>
+  <string name="num_unread_chats">&lt;xliff:g id="number"&gt;%1$d&lt;/xliff:g&gt; olästa chattmeddelanden</string>
+  <string name="subscription_notify_text">Ny kontaktförfrågan från &lt;xliff:g id="user"&gt;%s&lt;/xliff:g&gt;</string>
+  <string name="file_notify_text">Ny fil &lt;xliff:g id="filename"&gt;%1$s&lt;/xliff:g&gt; från &lt;xliff:g id="user"&gt;%2$s&lt;/xliff:g&gt;</string>
   <string name="notify_groupchat_label">Inbjudan till gruppchatt</string>
-  <string name="group_chat_invite_notify_text">Ny gruppchattinbjudan från <xliff:g id="user">%s</xliff:g></string>
+  <string name="group_chat_invite_notify_text">Ny gruppchattinbjudan från &lt;xliff:g id="user"&gt;%s&lt;/xliff:g&gt;</string>
   <string name="new_messages_notify">Nytt meddelande(n) från</string>
   <string name="starting_the_chatsecure_service_">Startar ChatSecure service…</string>
   <string name="app_unlocked">Aktiverad &amp; olåst</string>
@@ -388,8 +380,8 @@ Nätverkstrafik (även i bakgrunden) krävs för att kunna logga in med appen.</
   <!--Alerts: Exceptions-->
   <string name="error">Obs!</string>
   <string name="error_prefix">Fel:</string>
-  <string name="general_error">Felkod <xliff:g id="CODE">%1$d</xliff:g></string>
-  <string name="login_service_failed">Det gick inte att logga in till tjänsten <xliff:g id="SERVICE">%1$s</xliff:g>. Försök igen senare."\n"(Information: <xliff:g id="DESCRIPTION">%2$s</xliff:g>)</string>
+  <string name="general_error">Felkod &lt;xliff:g id="CODE"&gt;%1$d&lt;/xliff:g&gt;</string>
+  <string name="login_service_failed">Det gick inte att logga in till tjänsten &lt;xliff:g id="SERVICE"&gt;%1$s&lt;/xliff:g&gt;. Försök igen senare."\n"(Information: &lt;xliff:g id="DESCRIPTION"&gt;%2$s&lt;/xliff:g&gt;)</string>
   <string name="add_list_failed">Det gick inte att lägga till listan.</string>
   <string name="block_contact_failed">Kontakten blockerades inte.</string>
   <string name="unblock_contact_failed">Blockeringen hävdes inte för kontakten.</string>
@@ -398,8 +390,8 @@ Nätverkstrafik (även i bakgrunden) krävs för att kunna logga in med appen.</
   <string name="service_error">Fel på tjänsten!</string>
   <string name="load_contact_list_failed">Det gick inte att hämta kontaktlistan.</string>
   <string name="cant_connect_to_server">Det går inte att ansluta till servern. Kontrollera anslutningen.</string>
-  <string name="contact_already_exist"><xliff:g id="USER">%1$s</xliff:g> finns redan i din Kontaktlista.</string>
-  <string name="contact_blocked">Kontakten <xliff:g id="USER">%1$s</xliff:g> har blockerats.</string>
+  <string name="contact_already_exist">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; finns redan i din Kontaktlista.</string>
+  <string name="contact_blocked">Kontakten &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; har blockerats.</string>
   <string name="contact_not_loaded">Vänta medan vi hämtar din Kontaktlista.</string>
   <string name="network_error">Ett nätverksfel inträffade.</string>
   <string name="wifi_not_connected_error">WiFi behövs för denna anslutning.</string>
@@ -443,8 +435,8 @@ Nätverkstrafik (även i bakgrunden) krävs för att kunna logga in med appen.</
   <string name="otr_keysync_warning_message">Var vänlig kopiera \'otr_keystore.ofcaes\' filen från OtrFileConverter verktyget till rotkatalogen på din enhet</string>
   <string name="msg_sent_failed">Det gick inte att skicka meddelandet.</string>
   <string name="disconnected_warning">Meddelanden kommer skickas vid återanslutning</string>
-  <string name="contact_offline_warning"><xliff:g id="USER_0">%1$s</xliff:g> är offline. Meddelanden som du skickar levereras när <xliff:g id="USER_1">%1$s</xliff:g> är online igen.</string>
-  <string name="contact_not_in_list_warning"><xliff:g id="USER">%1$s</xliff:g> är inte med i din Kontaktlista.</string>
+  <string name="contact_offline_warning">&lt;xliff:g id="USER_0"&gt;%1$s&lt;/xliff:g&gt; är offline. Meddelanden som du skickar levereras när &lt;xliff:g id="USER_1"&gt;%1$s&lt;/xliff:g&gt; är online igen.</string>
+  <string name="contact_not_in_list_warning">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; är inte med i din Kontaktlista.</string>
   <string name="error_account_password_mismatch">Dina lösenord matchar inte</string>
   <string name="error_account_settings_priority">Prioritet måste anges som ett tal mellan [0 .. 127]</string>
   <string name="error_account_settings_port">Portnummer måste vara ett tal</string>
@@ -453,8 +445,6 @@ Nätverkstrafik (även i bakgrunden) krävs för att kunna logga in med appen.</
   <string name="error_welcome_database">Allvarligt fel: kan inte låsa upp eller ladda appdatabasen. Vänligen installera om appen eller rensa data.</string>
   <string name="error_no_app_to_handle_url">Ingen installerad applikation kan hantera den länken!</string>
   <string name="account_settings_title">Kontoinställningar</string>
-
-
   <!--added 2011/09/01-->
   <string name="menu_view_groups">Grupper</string>
   <string name="_open_conversations">öppna konversation(er)</string>
@@ -567,10 +557,10 @@ Nätverkstrafik (även i bakgrunden) krävs för att kunna logga in med appen.</
   <string name="start_orbot_">Starta Orbot?</string>
   <string name="orbot_doesn_t_appear_to_be_running_would_you_like_to_start_it_up_and_connect_to_tor_">Orbot verkar inte köras. Vill du starta Orbot och ansluta till Tor?</string>
   <string name="muc_dialog_nickname">nick att använda i chattrum</string>
-
   <string name="muc_dialog_server">gruppchattserver conference.foo.com)</string>
   <string name="your_keystore_is_corrupted_please_re_install_chatsecure_or_clear_data_for_the_app">Din nyckellagring är korrupt. Installera om ChatSecure eller radera data för appen</string>
   <string name="you_received_an_unreadable_encrypted_message">Du tog emot ett oläsbart krypterat meddelande</string>
   <string name="i_could_not_decrypt_the_message_you_sent">Jag kunde inte dekryptera meddelandet du skickade</string>
   <string name="swipe_hint">&lt; svep vänster och höger för fler alternativ &gt;</string>
+  <string name="title_me">Jag</string>
 </resources>

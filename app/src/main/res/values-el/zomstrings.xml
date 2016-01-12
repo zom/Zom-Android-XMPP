@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string name="app_name_zom">ChatSecure</string>
+  <string name="next_action">Επόμενο</string>
+  <string name="cancel_action">Ακύρωση</string>
+  <string name="accept_action">Αποδοχή</string>
+  <string name="sign_in_action">Σύνδεση</string>
+  <string name="settings_action">Ρυθμίσεις</string>
+  <string name="send_message">Στείλτε ένα μήνυμα</string>
+  <string name="me_title">Εγώ</string>
+  <string name="profile">Προφίλ</string>
+  <string name="password">Κωδικός</string>
+  <string name="add_account_action">Προσθήκη λογαριασμού</string>
+  <string name="blocked">Αποκλεισμένος/η</string>
+  <string name="language">Γλώσσα</string>
+  <string name="about">Σχετικά με</string>
+</resources>

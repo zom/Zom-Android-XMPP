@@ -1,6 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <!--General: Names-->
+  <string name="ic_launcher_name">चॅटसिक्यॉर</string>
   <string name="app_name">चॅटसिक्यॉर</string>
   <string name="im_label">चॅटसिक्यॉर</string>
   <!--General: Permissions-->
@@ -33,12 +34,12 @@
   <string name="client_type_mobile">भ्रमणध्वनी</string>
   <!--Views: Chat: Single-->
   <string name="me">मी</string>
-  <string name="contact_online"><xliff:g id="user">%1$s</xliff:g> ऑनलाइन आहेत</string>
-  <string name="contact_away"><xliff:g id="user">%1$s</xliff:g> बाहेर गेले आहेत</string>
-  <string name="contact_busy"><xliff:g id="user">%1$s</xliff:g> व्यस्त आहेत</string>
-  <string name="contact_offline"><xliff:g id="user">%1$s</xliff:g> ऑफलाइन आहेत</string>
-  <string name="contact_joined"><xliff:g id="user">%1$s</xliff:g> आले आहेत</string>
-  <string name="contact_left"><xliff:g id="user">%1$s</xliff:g> सोडून गेले</string>
+  <string name="contact_online">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt; ऑनलाइन आहेत</string>
+  <string name="contact_away">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt; बाहेर गेले आहेत</string>
+  <string name="contact_busy">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt; व्यस्त आहेत</string>
+  <string name="contact_offline">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt; ऑफलाइन आहेत</string>
+  <string name="contact_joined">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt; आले आहेत</string>
+  <string name="contact_left">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt; सोडून गेले</string>
   <string name="menu_resend">पुन्हा पाठवा</string>
   <string name="menu_end_conversation">गप्पा थांबवा</string>
   <string name="menu_clear_chat">गप्पा पुसा</string>
@@ -84,4 +85,5 @@
   <!--Other: Presence States-->
   <!--Other: Smileys-->
   <!--[Do not localize!]-->
+  <string name="title_me">मी</string>
 </resources>

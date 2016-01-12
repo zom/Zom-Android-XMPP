@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <!--General: Names-->
   <!--General: Permissions-->
@@ -32,12 +32,12 @@
   <!--Views: Setup-->
   <string name="landing_page_title">Alege un cont</string>
   <string name="choose_account_title">Alege un cont</string>
-  <string name="conversations">(<xliff:g id="number" example="27">%1$d</xliff:g>)</string>
-  <string name="add_account">Adauga cont <xliff:g id="account">%1$s</xliff:g></string>
+  <string name="conversations">(&lt;xliff:g id="number" example="27"&gt;%1$d&lt;/xliff:g&gt;)</string>
+  <string name="add_account">Adauga cont &lt;xliff:g id="account"&gt;%1$s&lt;/xliff:g&gt;</string>
   <string name="menu_about">Despre</string>
   <string name="menu_sign_out_all">Deconecteaza-te de la toate serviciile</string>
   <string name="signout_all_confirm_message">Doresti sa te deconectezi de la toate serviciile?</string>
-  <string name="signed_out_prompt">Ai fost deconectat de la <xliff:g id="account">%1$s</xliff:g>.</string>
+  <string name="signed_out_prompt">Ai fost deconectat de la &lt;xliff:g id="account"&gt;%1$s&lt;/xliff:g&gt;.</string>
   <string name="welcome_first">Folosesti ChatSecure pentru prima data?</string>
   <string name="welcome_skip">Abia astepti sa incepi?</string>
   <string name="welcome_about">Incepe</string>

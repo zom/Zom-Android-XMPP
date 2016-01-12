@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string name="app_name_zom">ChatSecure</string>
+  <string name="cancel_action">Mégsem</string>
+  <string name="settings_action">Beállítások</string>
+  <string name="about">Rólunk</string>
+</resources>

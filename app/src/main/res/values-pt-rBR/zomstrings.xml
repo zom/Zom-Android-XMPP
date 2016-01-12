@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string name="next_action">Próximo</string>
+  <string name="cancel_action">Cancelar</string>
+  <string name="accept_action">Aceitar</string>
+  <string name="settings_action">Configurações</string>
+  <string name="blocked">Bloqueado</string>
+  <string name="language">Idioma</string>
+  <string name="about">Sobre</string>
+</resources>

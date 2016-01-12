@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <!--General: Names-->
   <!--General: Permissions-->
@@ -183,11 +183,8 @@ The OTR-protocol is compatible with desktop chat clients such as Adium or Pidgin
   <string name="pref_group_looknfeel_title">User Interface</string>
   <string name="menu_locale">ဘာသာစကား</string>
   <string name="KEY_PREF_LANGUAGE_TITLE">ဘာသာစကားများ</string>
-
   <string name="pref_in_memory_db_title">စာများကို မမ်မိုရီအတွင်းသာ သိမ်းရန်</string>
   <string name="pref_in_memory_db_summary">Only store messages in memory, not on flash storage, to defend against messages being extracted. (May cause lost messages)</string>
-
-
   <!--Actions: Settings: General: Other Tuning-->
   <string name="pref_group_tuning_title">အခြား</string>
   <string name="start_on_boot_summary">နဂိုဝင်သုံးဖူးသည့် အကောင့်များသို့ အလိုအလျှောက် ဝင်ရန်</string>
@@ -251,7 +248,6 @@ The OTR-protocol is compatible with desktop chat clients such as Adium or Pidgin
   <string name="warning_tor_connect">Tor ကို အသုံးပြုမည် ဖြစ်၍ XMPP \'ဆာဗာ ချိတ်ဆက်မှု\' အိမ်ရှင်စက်အမည်ကို အကောင့်ဆက်တင်ထဲတွင် တိုက်ရိုက် ရိုက်ထည့်ရမည်</string>
   <string name="msg_sent_failed">ဤအကြောင်းကြားချက်အားမပို့နိုင်</string>
   <string name="account_settings_title">အကောင့်ဆက်တင်</string>
-
   <!--added 2011/09/01-->
   <string name="menu_view_groups">အဖွဲ့များ</string>
   <string name="_open_conversations">ဖွင့်ထားသော စကားဝိုင်းများ</string>
@@ -334,4 +330,5 @@ The OTR-protocol is compatible with desktop chat clients such as Adium or Pidgin
     <item>o_O</item>
   </string-array>
   <string name="i_need_a_new_account">အကောင့်အသစ်</string>
+  <string name="title_me">ကျွန်ုပ်</string>
 </resources>
