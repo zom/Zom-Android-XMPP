@@ -24,6 +24,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -125,115 +126,117 @@ public class AccountFragment extends Fragment {
 
         String fullUserName = mApp.getDefaultUsername();
 
-        XmppAddress xAddress = new XmppAddress(fullUserName);
+        if (!TextUtils.isEmpty(fullUserName)) {
+            XmppAddress xAddress = new XmppAddress(fullUserName);
 
-        TextView tvNickname = (TextView) mView.findViewById(R.id.tvNickname);
+            TextView tvNickname = (TextView) mView.findViewById(R.id.tvNickname);
 
-        TextView tvUsername = (TextView) mView.findViewById(R.id.edtName);
-        mTvPassword = (TextView) mView.findViewById(R.id.edtPass);
-        View btnShowPassword = mView.findViewById(R.id.btnShowPass);
-        btnShowPassword.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+            TextView tvUsername = (TextView) mView.findViewById(R.id.edtName);
+            mTvPassword = (TextView) mView.findViewById(R.id.edtPass);
+            View btnShowPassword = mView.findViewById(R.id.btnShowPass);
+            btnShowPassword.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
 
-                mTvPassword.setText(getAccountPassword(mApp.getDefaultProviderId()));
-            }
-        });
+                    mTvPassword.setText(getAccountPassword(mApp.getDefaultProviderId()));
+                }
+            });
 
-        TextView tvFingerprint = (TextView) mView.findViewById(R.id.tvFingerprint);
+            TextView tvFingerprint = (TextView) mView.findViewById(R.id.tvFingerprint);
 
-        ivScan = (ImageView) mView.findViewById(R.id.qrcode);
+            ivScan = (ImageView) mView.findViewById(R.id.qrcode);
 
-        ivScan.setOnClickListener(new View.OnClickListener() {
+            ivScan.setOnClickListener(new View.OnClickListener() {
 
-            @Override
-            public void onClick(View v) {
+                @Override
+                public void onClick(View v) {
 
-                String inviteString;
-                try {
-                    inviteString = OnboardingManager.generateInviteLink(getActivity(), mApp.getDefaultUsername(), mApp.getDefaultOtrKey());
-                    OnboardingManager.inviteScan(getActivity(), inviteString);
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    String inviteString;
+                    try {
+                        inviteString = OnboardingManager.generateInviteLink(getActivity(), mApp.getDefaultUsername(), mApp.getDefaultOtrKey());
+                        OnboardingManager.inviteScan(getActivity(), inviteString);
+                    } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+
                 }
 
-            }
+            });
 
-        });
+            mIvAvatar = (ImageView) mView.findViewById(R.id.imageAvatar);
+            mIvAvatar.setOnClickListener(new View.OnClickListener() {
 
-        mIvAvatar = (ImageView) mView.findViewById(R.id.imageAvatar);
-        mIvAvatar.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
 
-            @Override
-            public void onClick(View view) {
+                    startAvatarTaker();
 
-                startAvatarTaker();
-
-            }
-        });
-
-        ImageView btnQrShare = (ImageView)mView.findViewById(R.id.qrshare);
-        btnQrShare.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                try {
-                    String inviteLink = OnboardingManager.generateInviteLink(getActivity(), mApp.getDefaultUsername(), mApp.getDefaultOtrKey());
-                    new QrShareAsyncTask(getActivity()).execute(inviteLink);
-                } catch (IOException ioe) {
-                    Log.e(ImApp.LOG_TAG, "couldn't generate QR code", ioe);
                 }
-            }
-        });
+            });
 
+            ImageView btnQrShare = (ImageView) mView.findViewById(R.id.qrshare);
+            btnQrShare.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
 
-        Switch switchOnline = (Switch) mView.findViewById(R.id.switchOnline);
-        switchOnline.setChecked(checkConnection());
-
-        switchOnline.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    signIn();
-                } else {
-                    // The toggle is disabled
-                    signOut();
+                    try {
+                        String inviteLink = OnboardingManager.generateInviteLink(getActivity(), mApp.getDefaultUsername(), mApp.getDefaultOtrKey());
+                        new QrShareAsyncTask(getActivity()).execute(inviteLink);
+                    } catch (IOException ioe) {
+                        Log.e(ImApp.LOG_TAG, "couldn't generate QR code", ioe);
+                    }
                 }
-            }
-        });
+            });
 
-        try {
-            
-            Drawable avatar = DatabaseUtils.getAvatarFromAddress(mApp.getContentResolver(), fullUserName, ImApp.DEFAULT_AVATAR_WIDTH, ImApp.DEFAULT_AVATAR_HEIGHT, false);
 
-            if (avatar != null)
-                mIvAvatar.setImageDrawable(avatar);
-        } catch (Exception e) {
-            Log.w(ImApp.LOG_TAG, "error getting avatar", e);
-        }
+            Switch switchOnline = (Switch) mView.findViewById(R.id.switchOnline);
+            switchOnline.setChecked(checkConnection());
 
-        tvUsername.setText(fullUserName);
-        tvNickname.setText(xAddress.getUser());
+            switchOnline.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (isChecked) {
+                        signIn();
+                    } else {
+                        // The toggle is disabled
+                        signOut();
+                    }
+                }
+            });
 
-        if (mApp.getDefaultOtrKey() != null) {
-            tvFingerprint.setText(prettyPrintFingerprint(mApp.getDefaultOtrKey()));
-
-            /**
             try {
-                String inviteLink = OnboardingManager.generateInviteLink(getActivity(), fullUserName, mApp.getDefaultOtrKey());
-                new QrGenAsyncTask(getActivity(), ivScan,ImApp.DEFAULT_AVATAR_WIDTH).execute(inviteLink);
-            } catch (IOException ioe) {
-                Log.e(ImApp.LOG_TAG, "couldn't generate QR code", ioe);
-            }*/
-        }
 
-        Button btnLock = (Button)mView.findViewById(R.id.btnLock);
-        btnLock.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ((MainActivity)getActivity()).handleLock();
+                Drawable avatar = DatabaseUtils.getAvatarFromAddress(mApp.getContentResolver(), fullUserName, ImApp.DEFAULT_AVATAR_WIDTH, ImApp.DEFAULT_AVATAR_HEIGHT, false);
+
+                if (avatar != null)
+                    mIvAvatar.setImageDrawable(avatar);
+            } catch (Exception e) {
+                Log.w(ImApp.LOG_TAG, "error getting avatar", e);
             }
-        });
+
+            tvUsername.setText(fullUserName);
+            tvNickname.setText(xAddress.getUser());
+
+            if (mApp.getDefaultOtrKey() != null) {
+                tvFingerprint.setText(prettyPrintFingerprint(mApp.getDefaultOtrKey()));
+
+                /**
+                 try {
+                 String inviteLink = OnboardingManager.generateInviteLink(getActivity(), fullUserName, mApp.getDefaultOtrKey());
+                 new QrGenAsyncTask(getActivity(), ivScan,ImApp.DEFAULT_AVATAR_WIDTH).execute(inviteLink);
+                 } catch (IOException ioe) {
+                 Log.e(ImApp.LOG_TAG, "couldn't generate QR code", ioe);
+                 }*/
+            }
+
+            Button btnLock = (Button) mView.findViewById(R.id.btnLock);
+            btnLock.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ((MainActivity) getActivity()).handleLock();
+                    }
+            });
+        }
 
 
         return mView;

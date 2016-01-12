@@ -3274,6 +3274,9 @@ public class XmppConnection extends ImConnection {
         {            
             if (mRoster == null)
                 return null;
+
+            if (from == null)
+                return null;
             
             presence = mRoster.getPresence(from);
         }

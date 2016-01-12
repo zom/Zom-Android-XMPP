@@ -684,6 +684,10 @@ public class ConversationDetailActivity extends AppCompatActivity {
             {
                 Log.e(ImApp.LOG_TAG,"error stopping audio recording",ise);
             }
+            catch (RuntimeException re) //stop can fail so we should catch this here
+            {
+                Log.e(ImApp.LOG_TAG,"error stopping audio recording",re);
+            }
 
             mIsAudioRecording = false;
         }

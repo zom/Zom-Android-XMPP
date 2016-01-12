@@ -2,6 +2,7 @@ package org.awesomeapp.messenger.plugin.xmpp;
 
 import org.awesomeapp.messenger.model.Address;
 import android.os.Parcel;
+import android.text.TextUtils;
 
 public class XmppAddress extends Address {
 
@@ -22,13 +23,14 @@ public class XmppAddress extends Address {
 
     public XmppAddress(String fullJid) {
 
-        mUser = fullJid.replaceFirst("@.*", "");
-        mAddress = fullJid;
+        if (!TextUtils.isEmpty(fullJid)) {
+            mUser = fullJid.replaceFirst("@.*", "");
+            mAddress = fullJid;
 
-        String[] presenceParts = fullJid.split("/");
-        if (presenceParts.length > 1)
-            mResource = presenceParts[1];
-
+            String[] presenceParts = fullJid.split("/");
+            if (presenceParts.length > 1)
+                mResource = presenceParts[1];
+        }
     }
 
     @Override
