@@ -1155,7 +1155,7 @@ public class XmppConnection extends ImConnection {
                 {
                     debug (TAG, "google failed; may need to refresh");
 
-                    String newPassword = refreshGoogleToken (userName, mPassword,providerSettings.getDomain());
+                    String newPassword = null;//refreshGoogleToken (userName, mPassword,providerSettings.getDomain());
 
                     if (newPassword != null)
                         mPassword = newPassword;
@@ -1206,6 +1206,7 @@ public class XmppConnection extends ImConnection {
 
     }
 
+    /**
     private String refreshGoogleToken (String userName, String expiredToken, String domain)
     {
         
@@ -1223,7 +1224,7 @@ public class XmppConnection extends ImConnection {
 
         return newToken;
 
-    }
+    }*/
 
     // TODO shouldn't setProxy be handled in Imps/settings?
     public void setProxy(String type, String host, int port) {
