@@ -70,7 +70,9 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/ic_launcher_name"
         android:theme="@style/AppTheme" >
-        <activity android:name="org.awesomeapp.messenger.RouterActivity" >
+        <activity android:name="org.awesomeapp.messenger.RouterActivity"
+            android:theme="@style/InviteDialog"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -133,7 +135,7 @@
                 <category android:name="info.guardianproject.otr.app.im.category.XMPP" />
 
                 <data android:scheme="im" />
-            </intent-filter>
+            </intent-filter>RouterAct
             <intent-filter>
                 <action android:name="android.intent.action.SENDTO" />
 
@@ -260,7 +262,9 @@
             android:readPermission="org.awesomeapp.messenger.permission.READ_ONLY"
             android:writePermission="org.awesomeapp.messenger.permission.WRITE_ONLY" />
 
-        <activity android:name="org.awesomeapp.messenger.ImUrlActivity" >
+        <activity android:name="org.awesomeapp.messenger.ImUrlActivity"
+            android:theme="@style/InviteDialog"
+            >
         </activity>
         <activity
             android:name="org.awesomeapp.messenger.ui.legacy.SignoutActivity"
