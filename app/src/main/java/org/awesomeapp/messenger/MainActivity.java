@@ -68,6 +68,7 @@ import org.awesomeapp.messenger.ui.MoreFragment;
 import org.awesomeapp.messenger.ui.legacy.SettingActivity;
 import org.awesomeapp.messenger.ui.onboarding.OnboardingActivity;
 import org.awesomeapp.messenger.ui.onboarding.OnboardingManager;
+import org.awesomeapp.messenger.util.AssetUtil;
 import org.awesomeapp.messenger.util.SecureMediaStore;
 import org.awesomeapp.messenger.util.SystemServices;
 import org.awesomeapp.messenger.util.XmppUriHelper;
@@ -204,6 +205,14 @@ public class MainActivity extends AppCompatActivity {
         //don't wnat this to happen to often
         checkForUpdates();
 
+        installRingtones ();
+
+    }
+
+    private void installRingtones ()
+    {
+        AssetUtil.installRingtone(getApplicationContext(),R.raw.bell,"Zom Bell");
+        AssetUtil.installRingtone(getApplicationContext(),R.raw.chant,"Zom Chant");
     }
 
     private void setToolbarTitle (int tabPosition)
