@@ -45,8 +45,8 @@ public class AssetUtil {
     public static boolean installRingtone(final Context context, int resid, final String toneName) {
 
         String exStoragePath = Environment.getExternalStorageDirectory().getAbsolutePath();
-        String filename = "zomtone" + resid + ".mp3";
-        File fileAlarms = new File(exStoragePath,"/Alarms");
+        String filename = toneName + ".mp3";
+        File fileAlarms = new File(exStoragePath,"/Notifications");
         final File fileTone = new File(fileAlarms,filename);
 
         if (fileTone.exists())
