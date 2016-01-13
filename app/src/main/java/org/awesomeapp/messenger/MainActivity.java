@@ -250,7 +250,7 @@ public class MainActivity extends AppCompatActivity {
     public void inviteContact ()
     {
         Intent i = new Intent(MainActivity.this, AddContactActivity.class);
-        startActivityForResult(i,MainActivity.REQUEST_ADD_CONTACT);
+        startActivityForResult(i, MainActivity.REQUEST_ADD_CONTACT);
     }
 
 
@@ -306,6 +306,12 @@ public class MainActivity extends AppCompatActivity {
 
 
             }
+            else if (intent.hasExtra("username"))
+            {
+                //launch a new chat based on the intent value
+                startChat(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), intent.getStringExtra("username"));
+            }
+
 
             setIntent(null);
         }

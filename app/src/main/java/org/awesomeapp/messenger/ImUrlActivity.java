@@ -392,6 +392,10 @@ public class ImUrlActivity extends Activity {
 
                 new AddContactAsyncTask(app.getDefaultProviderId(), app.getDefaultAccountId(), (ImApp)getApplication()).execute(username, fingerprint);
 
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra("newcontact",username);
+                setResult(RESULT_OK,resultIntent);
+
                 //if they are for a group chat, then add the group
                 return false; //the work is done so we will finish!
             }

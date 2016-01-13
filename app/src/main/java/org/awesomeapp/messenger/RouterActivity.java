@@ -99,6 +99,10 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
     private CacheWordHandler mCacheWord = null;
     private boolean mDoLock;
 
+
+    private final int REQUEST_LOCK_SCREEN = 9999;
+    private final int REQUEST_HANDLE_LINK = REQUEST_LOCK_SCREEN+1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -253,12 +257,15 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
                 if (intent.getData() != null)
                     imUrlIntent.setData(intent.getData());
 
-                imUrlIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+              //  imUrlIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 if (intent.getExtras() != null)
-                    imUrlIntent.putExtras(intent.getExtras());
-                startActivity(imUrlIntent);
-            setIntent(null);
-            finish();
+                    imUrlIntent.putExtras(intent.getExtras())
+                            ;
+                startActivityForResult(imUrlIntent, REQUEST_HANDLE_LINK);
+
+           // setIntent(null);
+            //finish();
+
         }
         else if (countAvailable > 0)
         {
@@ -387,6 +394,13 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
         finish();
     }
 
+    void openChat(String username) {
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra("username",username);
+        startActivity(intent);
+        finish();
+    }
+
     void showOnboarding () {
         
         //now show onboarding UI
@@ -398,7 +412,6 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
         finish();
     }
 
-    private final static int REQUEST_LOCK_SCREEN = 9999;
     
     void showLockScreen() {
         Intent intent = new Intent(this, LockScreenActivity.class);
@@ -412,10 +425,19 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        if (requestCode == REQUEST_LOCK_SCREEN && resultCode == RESULT_OK)
-        {
-            showMain();
+        if (resultCode == RESULT_OK) {
+            if (requestCode == REQUEST_LOCK_SCREEN) {
+                showMain();
+                return;
+            } else if (requestCode == REQUEST_HANDLE_LINK) {
+                if (data.hasExtra("newcontact")) {
+                    String username = data.getStringExtra("newcontact");
+                    openChat(username);
+                }
+            }
         }
+
+        finish();
     }
 
     @Override

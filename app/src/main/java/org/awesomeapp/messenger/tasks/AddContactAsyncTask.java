@@ -42,6 +42,7 @@ public class AddContactAsyncTask extends AsyncTask<String, Void, Integer> {
     @Override
     protected void onPostExecute(Integer response) {
         super.onPostExecute(response);
+
     }
 
     private int addToContactList (String address, String otrFingperint)
