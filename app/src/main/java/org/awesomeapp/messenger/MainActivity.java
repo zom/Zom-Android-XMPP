@@ -213,6 +213,9 @@ public class MainActivity extends AppCompatActivity {
     {
         AssetUtil.installRingtone(getApplicationContext(),R.raw.bell,"Zom Bell");
         AssetUtil.installRingtone(getApplicationContext(),R.raw.chant,"Zom Chant");
+        AssetUtil.installRingtone(getApplicationContext(),R.raw.yak,"Zom Yak");
+        AssetUtil.installRingtone(getApplicationContext(),R.raw.dranyen,"Zom Dranyen");
+
     }
 
     private void setToolbarTitle (int tabPosition)
