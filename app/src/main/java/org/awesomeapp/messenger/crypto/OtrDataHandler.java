@@ -76,7 +76,9 @@ public class OtrDataHandler implements DataHandler {
     public static final String URI_PREFIX_OTR_IN_BAND = "otr-in-band:/storage/";
 
     private static final int MAX_OUTSTANDING = 5;
-    private static final int MAX_CHUNK_LENGTH = 32768/4;
+
+    private static final int MAX_CHUNK_LENGTH = 32768;
+    private static final int MAX_REQUEST_LENGTH = 32768/4;
 
     private static final int MAX_TRANSFER_LENGTH = 1024*1024*10; //10MB max file size
 
@@ -699,7 +701,7 @@ public class OtrDataHandler implements DataHandler {
             if (length > MAX_TRANSFER_LENGTH || length <= 0) {
                 throw new RuntimeException("Invalid transfer size " + length);
             }
-            chunks = ((length - 1) / MAX_CHUNK_LENGTH) + 1;
+            chunks = ((length - 1) / MAX_REQUEST_LENGTH) + 1;
             buffer = new byte[length];
             outstanding = new HashSet<Request>();
         }
