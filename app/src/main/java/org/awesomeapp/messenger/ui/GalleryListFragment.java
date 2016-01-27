@@ -141,8 +141,9 @@ public class GalleryListFragment extends Fragment {
 
             int id = cursor.getInt(0);
             String mimeType = "image/jpeg";
-            String body = cursor.getString(1);
-            java.util.Date ts = new Date(cursor.getLong(2));
+            String nickname = cursor.getString(1);
+            String body = cursor.getString(2);
+            java.util.Date ts = new Date(cursor.getLong(3));
 
           viewHolder.mView.bind(id,mimeType,body,ts);
 
