@@ -209,7 +209,9 @@ public class GalleryListFragment extends Fragment {
 
         public final String[] MESSAGE_PROJECTION = {
                 "MAX (" + Imps.Messages._ID + ") as _id",
+                Imps.Messages.NICKNAME,
                 Imps.Messages.BODY,
+
                 "MAX (" + Imps.Messages.DATE + ") as maxDate"
         };
 

@@ -159,18 +159,17 @@ public class GalleryListItem extends FrameLayout {
 
         mHolder = (GalleryMediaViewHolder)getTag();
 
-            if( mimeType != null ) {
+        if( mimeType != null ) {
 
-                mHolder.mContainer.setVisibility(View.VISIBLE);
+            mHolder.mContainer.setVisibility(View.VISIBLE);
 
-                Uri mediaUri = Uri.parse( body ) ;
-                showMediaThumbnail(mimeType, mediaUri, id, mHolder);
+            Uri mediaUri = Uri.parse( body ) ;
+            showMediaThumbnail(mimeType, mediaUri, id, mHolder);
 
-            }
-            else {
-                mHolder.mContainer.setVisibility(View.GONE);
-
-            }
+        }
+        else {
+            mHolder.mContainer.setVisibility(View.GONE);
+        }
 
     }
 

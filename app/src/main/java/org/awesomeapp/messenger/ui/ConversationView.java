@@ -195,13 +195,65 @@ public class ConversationView {
     private boolean mIsStartingOtr = false;
     private boolean mIsVerified = false;
 
+    private ConversationRecyclerViewAdapter mMessageAdapter;
+    private boolean isServiceUp;
+    private IChatSession mCurrentChatSession;
+
+    long mLastChatId=-1;
+    String mRemoteNickname;
+    String mRemoteAddress;
+    RoundedAvatarDrawable mRemoteAvatar = null;
+    Drawable mRemoteHeader = null;
+    int mSubscriptionType;
+    int mSubscriptionStatus;
+
+    long mProviderId = -1;
+    long mAccountId = -1;
+    long mInvitationId;
+    private Context mContext; // TODO
+    private int mPresenceStatus;
+
+    private int mViewType;
+
+    private static final int VIEW_TYPE_CHAT = 1;
+    private static final int VIEW_TYPE_INVITATION = 2;
+    private static final int VIEW_TYPE_SUBSCRIPTION = 3;
+
+    private static final long SHOW_TIME_STAMP_INTERVAL = 30 * 1000; // 15 seconds
+    private static final long SHOW_DELIVERY_INTERVAL = 5 * 1000; // 5 seconds
+    private static final long SHOW_MEDIA_DELIVERY_INTERVAL = 120 * 1000; // 2 minutes
+    private static final long DEFAULT_QUERY_INTERVAL = 2000;
+    private static final long FAST_QUERY_INTERVAL = 200;
+
+
+    private RequeryCallback mRequeryCallback = null;
+
+    public SimpleAlertHandler getHandler() {
+        return mHandler;
+    }
+
+    public int getType() {
+        return mViewType;
+    }
+
+    private class RequeryCallback implements Runnable {
+        public void run() {
+            if (Log.isLoggable(ImApp.LOG_TAG, Log.DEBUG)) {
+                log("RequeryCallback");
+            }
+            requeryCursor();
+
+        }
+    }
+
+
     public void setSelected (boolean isSelected)
     {
         mIsSelected = isSelected;
 
         if (mIsSelected)
         {
-          //  bindChat(mLastChatId);
+            //  bindChat(mLastChatId);
             startListening();
 
             updateWarningView();
@@ -228,7 +280,7 @@ public class ConversationView {
                     if (otrChatSession != null && (!isGroupChat()))
                     {
                         String remoteJID = otrChatSession.getRemoteUserId();
-                        
+
                         boolean doOtr = (remoteJID != null && (remoteJID.toLowerCase().contains("chatsecure")||remoteJID.toLowerCase().contains("zom")));
 
                         if (!doOtr)
@@ -236,14 +288,14 @@ public class ConversationView {
 
                         if (otrPolicyAuto && doOtr) //if set to auto, and is chatsecure, then start encryption
                         {
-                               //automatically attempt to turn on OTR after 1 second
-                                mHandler.postDelayed(new Runnable (){
-                                    public void run (){
-                                        setOTRState(true);
-                                        scheduleRequery(DEFAULT_QUERY_INTERVAL);
+                            //automatically attempt to turn on OTR after 1 second
+                            mHandler.postDelayed(new Runnable (){
+                                public void run (){
+                                    setOTRState(true);
+                                    scheduleRequery(DEFAULT_QUERY_INTERVAL);
 
-                                    }
-                                 },100);
+                                }
+                            },100);
                         }
                     }
 
@@ -279,13 +331,13 @@ public class ConversationView {
 
     private boolean checkConnection ()
     {
-            if (mConn == null && mProviderId != -1) {
-                mConn = mApp.getConnection(mProviderId, mAccountId);
+        if (mConn == null && mProviderId != -1) {
+            mConn = mApp.getConnection(mProviderId, mAccountId);
 
-                if (mConn == null)
-                    return false;
+            if (mConn == null)
+                return false;
 
-            }
+        }
 
         return true;
 
@@ -334,55 +386,6 @@ public class ConversationView {
 
     }
 
-    private ConversationRecyclerViewAdapter mMessageAdapter;
-    private boolean isServiceUp;
-    private IChatSession mCurrentChatSession;
-
-    long mLastChatId=-1;
-    String mRemoteNickname;
-    String mRemoteAddress;
-    RoundedAvatarDrawable mRemoteAvatar = null;
-    Drawable mRemoteHeader = null;
-    int mSubscriptionType;
-    int mSubscriptionStatus;
-
-    long mProviderId = -1;
-    long mAccountId = -1;
-    long mInvitationId;
-    private Context mContext; // TODO
-    private int mPresenceStatus;
-
-    private int mViewType;
-
-    private static final int VIEW_TYPE_CHAT = 1;
-    private static final int VIEW_TYPE_INVITATION = 2;
-    private static final int VIEW_TYPE_SUBSCRIPTION = 3;
-
-    private static final long SHOW_TIME_STAMP_INTERVAL = 30 * 1000; // 15 seconds
-    private static final long SHOW_DELIVERY_INTERVAL = 5 * 1000; // 5 seconds
-    private static final long SHOW_MEDIA_DELIVERY_INTERVAL = 120 * 1000; // 2 minutes
-    private static final long DEFAULT_QUERY_INTERVAL = 2000;
-    private static final long FAST_QUERY_INTERVAL = 200;
-
-    public SimpleAlertHandler getHandler() {
-        return mHandler;
-    }
-
-    public int getType() {
-        return mViewType;
-    }
-
-    private class RequeryCallback implements Runnable {
-        public void run() {
-            if (Log.isLoggable(ImApp.LOG_TAG, Log.DEBUG)) {
-                log("RequeryCallback");
-            }
-            requeryCursor();
-
-        }
-    }
-
-    private RequeryCallback mRequeryCallback = null;
 
 
     private OnItemClickListener mOnItemClickListener = new OnItemClickListener() {
@@ -434,32 +437,26 @@ public class ConversationView {
         @Override
         public boolean onIncomingMessage(IChatSession ses,
                 org.awesomeapp.messenger.model.Message msg) {
-//            scheduleRequery(FAST_QUERY_INTERVAL);
-  //          updatePresenceDisplay();
 
             return mIsSelected;
         }
 
         @Override
         public void onContactJoined(IChatSession ses, Contact contact) {
-          //  scheduleRequery(DEFAULT_QUERY_INTERVAL);
         }
 
         @Override
         public void onContactLeft(IChatSession ses, Contact contact) {
-         //   scheduleRequery(DEFAULT_QUERY_INTERVAL);
         }
 
         @Override
         public void onSendMessageError(IChatSession ses,
                 org.awesomeapp.messenger.model.Message msg, ImErrorInfo error) {
-        //    scheduleRequery(FAST_QUERY_INTERVAL);
         }
 
         @Override
         public void onIncomingReceipt(IChatSession ses, String packetId) throws RemoteException {
-            scheduleRequery(FAST_QUERY_INTERVAL);
-
+            scheduleRequery(DEFAULT_QUERY_INTERVAL);
         }
 
         @Override
@@ -481,7 +478,6 @@ public class ConversationView {
             message.getData().putString("file", sanitizedPath);
             mHandler.sendMessage(message);
 
-
             log("onIncomingFileTransfer: " + transferFrom + " @ " + transferUrl);
 
         }
@@ -490,15 +486,17 @@ public class ConversationView {
         public void onIncomingFileTransferProgress(String file, int percent)
                 throws RemoteException {
 
+            if (percent == 100)
+                scheduleRequery(FAST_QUERY_INTERVAL);
+
+
+            /**
             android.os.Message message = android.os.Message.obtain(null, SHOW_DATA_PROGRESS, (int) (mProviderId >> 32),
                     (int) mProviderId, -1);
             message.getData().putString("file", file);
             message.getData().putInt("progress", percent);
 
-            if (percent == 100)
-                scheduleRequery(FAST_QUERY_INTERVAL);
-
-            mHandler.sendMessage(message);
+            mHandler.sendMessage(message);*/
 
             log ("onIncomingFileTransferProgress: " + file + " " + percent + "%");
 
@@ -2031,7 +2029,7 @@ public class ConversationView {
         if (getChatSession() != null && mIsListening) {
             try {
                 getChatSession().markAsRead();
-                updateWarningView();
+                //updateWarningView();
 
             } catch (RemoteException e) {
 
