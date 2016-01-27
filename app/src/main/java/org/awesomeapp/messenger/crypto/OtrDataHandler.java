@@ -725,7 +725,7 @@ public class OtrDataHandler implements DataHandler {
                     }
                     return false;
                 }
-                int end = current + MAX_CHUNK_LENGTH - 1;
+                int end = current + MAX_REQUEST_LENGTH - 1;
                 if (end >= length) {
                     end = length - 1;
                 }
