@@ -137,23 +137,9 @@ public class ConversationDetailActivity extends AppCompatActivity {
 
         collapseToolbar();
 
-        IntentFilter regFilter = new IntentFilter();
-    // get device sleep evernt
-
-        regFilter .addAction(Intent.ACTION_SCREEN_OFF);
-        regFilter .addAction(Intent.ACTION_SCREEN_ON);
-
-        registerReceiver(receiver, regFilter);
-
 
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        unregisterReceiver(receiver);
-    }
 
     private void processIntent(Intent intent)
     {
@@ -188,6 +174,13 @@ public class ConversationDetailActivity extends AppCompatActivity {
         super.onResume();
 
         mConvoView.setSelected(true);
+
+        IntentFilter regFilter = new IntentFilter();
+        regFilter .addAction(Intent.ACTION_SCREEN_OFF);
+        regFilter .addAction(Intent.ACTION_SCREEN_ON);
+        registerReceiver(receiver, regFilter);
+
+
     }
 
     @Override
@@ -195,6 +188,8 @@ public class ConversationDetailActivity extends AppCompatActivity {
         super.onPause();
 
         mConvoView.setSelected(false);
+
+        unregisterReceiver(receiver);
     }
 
     @Override
@@ -635,11 +630,14 @@ public class ConversationDetailActivity extends AppCompatActivity {
         else {
             mMediaRecorder = new MediaRecorder();
 
-            mAudioFilePath = new File(getFilesDir(), "audiotemp.m4a");
+            String fileName = UUID.randomUUID().toString().substring(0,8) + ".m4a";
+            mAudioFilePath = new File(getFilesDir(), fileName);
 
             mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
             mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
             mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+
+            //maybe we can modify these in the future, or allow people to tweak them
             mMediaRecorder.setAudioChannels(1);
             mMediaRecorder.setAudioEncodingBitRate(22050);
             mMediaRecorder.setAudioSamplingRate(64000);
