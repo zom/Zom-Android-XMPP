@@ -711,29 +711,41 @@ public class OtrDataHandler implements DataHandler {
         }
 
         public synchronized boolean perform() {
+
             // TODO global throttle rather than this local hack
-            while (outstanding.size() < MAX_OUTSTANDING) {
+
+            int performIdx = 0;
+
+            while (current < length && outstanding.size() < MAX_OUTSTANDING) {
+
+
+               // debug("perform: " + performIdx++);
+                /**
                 if (current >= length) {
                     if (outstanding.size() > 0)
                     {
                         //resend any existing
                         for (Request request : outstanding)
                         {
-                            debug( "resending request that starts:" + request.start) ;
+                            debug("resending request that starts:" + request.start);
                             sendRequest(request);
                         }
                     }
                     return false;
-                }
-                int end = current + MAX_REQUEST_LENGTH - 1;
-                if (end >= length) {
-                    end = length - 1;
-                }
+                }*/
+
                 Map<String, String> headers = new HashMap<>();
+                int end = Math.min(length, current + MAX_REQUEST_LENGTH)-1;
+
                 Request request= performGetData(us, them, url, headers, current, end);
                 outstanding.add(request);
+
                 current = end + 1;
+
+            //    debug("current: " + current);
+
             }
+
             return true;
         }
 
@@ -770,11 +782,11 @@ public class OtrDataHandler implements DataHandler {
 
         @Override
         public void chunkReceived(Request request, byte[] bs) {
-            debug( "chunkReceived: start: :" + request.start + " length " + bs.length) ;
+            debug( "chunkReceived: " + request.start + "-" + request.end) ;
             chunksReceived++;
             try {
                 raf.seek( request.start );
-                raf.write(bs) ;
+                raf.write(bs);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -794,7 +806,6 @@ public class OtrDataHandler implements DataHandler {
 
         @Override
         public synchronized boolean perform() {
-            boolean result = super.perform();
             try {
                 if (raf == null) {
                     raf = openFile(url);
@@ -803,7 +814,7 @@ public class OtrDataHandler implements DataHandler {
                 e.printStackTrace();
                 return false;
             }
-            return result;
+            return super.perform();
         }
 
         private RandomAccessFile openFile(String url) throws FileNotFoundException {
