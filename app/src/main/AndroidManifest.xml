@@ -4,7 +4,7 @@
     android:installLocation="auto"
     android:sharedUserLabel="@string/perm_label"
     android:versionCode="1500106"
-    android:versionName="15.0.0-beta-6"
+    android:versionName="15.0.0-RC-1"
     android:usesCleartextTraffic="false"
     >
 
