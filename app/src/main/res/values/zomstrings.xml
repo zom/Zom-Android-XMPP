@@ -63,7 +63,7 @@
   <string name="me_title">Me</string>
   <string name="profile">Profile</string>
   <string name="accounts">My Accounts</string>
-  <string name="select_avatar">Select of Create an Avatar</string> 
+  <string name="select_avatar">Select or Create an Avatar</string>
   <string name="change_avatar">Change Avatar</string>
   <string name="change_id">Change Zom ID</string>
   <string name="password">Password</string>

@@ -37,6 +37,9 @@ public class ChatSessionInitTask extends AsyncTask<String, Void, Long> {
             try {
                 IImConnection conn = mApp.getConnection(mProviderId, mAccountId);
 
+                if (conn == null || conn.getState() != ImConnection.LOGGED_IN)
+                    return -1l;
+
                 for (String address : remoteAddresses) {
 
                     IChatSession session = conn.getChatSessionManager().getChatSession(address);

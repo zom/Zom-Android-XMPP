@@ -74,7 +74,6 @@ public class OnboardingActivity extends ThemeableActivity {
     private ViewFlipper mViewFlipper;
     private EditText mEditUsername;
     private View mSetupProgress;
-    private TextView mSetupStatus;
     private View mSetupButton;
     private ImageView mImageAvatar;
 
@@ -100,15 +99,23 @@ public class OnboardingActivity extends ThemeableActivity {
 
         mHandler = new SimpleAlertHandler(this);
 
+        View viewSplash = findViewById(R.id.flipViewMain);
+        View viewRegister =  findViewById(R.id.flipViewRegister);
+        View viewCreate = findViewById(R.id.flipViewCreateNew);
+        View viewLogin = findViewById(R.id.flipViewLogin);
+        View viewInvite = findViewById(R.id.flipViewInviteFriends);
+        View viewAdvanced  = findViewById(R.id.flipViewAdvanced);
+
         mViewFlipper = (ViewFlipper) findViewById(R.id.viewFlipper1);
-        mEditUsername = (EditText)findViewById(R.id.edtNewName);
-        mSpinnerDomains = (InstantAutoCompleteTextView)findViewById(R.id.spinnerDomains);
+
+        mEditUsername = (EditText)viewCreate.findViewById(R.id.edtNewName);
+        mSpinnerDomains = (InstantAutoCompleteTextView)viewAdvanced.findViewById(R.id.spinnerDomains);
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_dropdown_item_1line, OnboardingManager.getServers(this));
         mSpinnerDomains.setAdapter(adapter);
 
-        mImageAvatar = (ImageView) findViewById(R.id.imageAvatar);
+        mImageAvatar = (ImageView) viewCreate.findViewById(R.id.imageAvatar);
         mImageAvatar.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -122,7 +129,7 @@ public class OnboardingActivity extends ThemeableActivity {
 
         setAnimLeft();
 
-        ImageView imageLogo = (ImageView)findViewById(R.id.imageLogo);
+        ImageView imageLogo = (ImageView)viewSplash.findViewById(R.id.imageLogo);
         imageLogo.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -131,7 +138,7 @@ public class OnboardingActivity extends ThemeableActivity {
             }
         });
 
-        View btnStartOnboarding = findViewById(R.id.buttonStartOnboarding);
+        View btnStartOnboarding = viewSplash.findViewById(R.id.buttonStartOnboarding);
         btnStartOnboarding.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -140,7 +147,7 @@ public class OnboardingActivity extends ThemeableActivity {
             }
         });
 
-        View btnShowCreate = findViewById(R.id.btnShowRegister);
+        View btnShowCreate = viewRegister.findViewById(R.id.btnShowRegister);
         btnShowCreate.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -151,7 +158,7 @@ public class OnboardingActivity extends ThemeableActivity {
 
         });
 
-        View btnShowLogin = findViewById(R.id.btnShowLogin);
+        View btnShowLogin = viewRegister.findViewById(R.id.btnShowLogin);
         btnShowLogin.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -162,7 +169,7 @@ public class OnboardingActivity extends ThemeableActivity {
 
         });
 
-        View btnShowAdvanced = findViewById(R.id.btnAdvanced);
+        View btnShowAdvanced = viewCreate.findViewById(R.id.btnAdvanced);
         btnShowAdvanced.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -174,7 +181,7 @@ public class OnboardingActivity extends ThemeableActivity {
         });
 
         // set up language chooser button
-        View languageButton = findViewById(R.id.languageButton);
+        View languageButton = viewSplash.findViewById(R.id.languageButton);
         languageButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -227,7 +234,7 @@ public class OnboardingActivity extends ThemeableActivity {
             }
         });
 
-        View btnCreateAdvanced = findViewById(R.id.btnNewRegister);
+        View btnCreateAdvanced = viewAdvanced.findViewById(R.id.btnNewRegister);
         btnCreateAdvanced.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -236,7 +243,7 @@ public class OnboardingActivity extends ThemeableActivity {
             }
         });
 
-        View btnInviteSms = findViewById(R.id.btnInviteSMS);
+        View btnInviteSms = viewInvite.findViewById(R.id.btnInviteSMS);
         btnInviteSms.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -248,7 +255,7 @@ public class OnboardingActivity extends ThemeableActivity {
 
         });
 
-        View btnInviteShare = findViewById(R.id.btnInviteShare);
+        View btnInviteShare = viewInvite.findViewById(R.id.btnInviteShare);
         btnInviteShare.setOnClickListener(new OnClickListener()
         {
 
@@ -261,7 +268,7 @@ public class OnboardingActivity extends ThemeableActivity {
             
         });
 
-        View btnInviteQR = findViewById(R.id.btnInviteScan);
+        View btnInviteQR = viewInvite.findViewById(R.id.btnInviteScan);
         btnInviteQR.setOnClickListener(new OnClickListener()
         {
 
@@ -274,7 +281,7 @@ public class OnboardingActivity extends ThemeableActivity {
             
         });
 
-        View btnInviteSkip = findViewById(R.id.btnInviteSkip);
+        View btnInviteSkip = viewInvite.findViewById(R.id.btnInviteSkip);
         btnInviteSkip.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -286,7 +293,7 @@ public class OnboardingActivity extends ThemeableActivity {
 
         });
 
-        mSetupButton = findViewById(R.id.btnRegister);
+        mSetupButton = viewCreate.findViewById(R.id.btnRegister);
         mSetupButton.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -298,7 +305,7 @@ public class OnboardingActivity extends ThemeableActivity {
 
         });
 
-        View btnSignIn = findViewById(R.id.btnSignIn);
+        View btnSignIn = viewLogin.findViewById(R.id.btnSignIn);
         btnSignIn.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -431,33 +438,36 @@ public class OnboardingActivity extends ThemeableActivity {
 
         mEditUsername.setText(jabberUserId);
 
-        mSetupStatus = (TextView)findViewById(R.id.statusNewUser);
-        mSetupStatus.setVisibility(View.VISIBLE);
-
         String domain = ((InstantAutoCompleteTextView)findViewById(R.id.spinnerDomains)).getText().toString();
 
         String password = ((EditText)findViewById(R.id.edtNewPass)).getText().toString();
 
-        mViewFlipper.setDisplayedChild(1);
+        mViewFlipper.setDisplayedChild(2);
 
-        new FindServerTask ().execute(mRequestedUserName,jabberUserId, domain, password);
+        showSetupProgress();
+
+        new FindServerTask ().execute(mRequestedUserName, jabberUserId, domain, password);
 
     }
     
     private void startAccountSetup()
     {
         setAnimLeft();
-        mSetupProgress = findViewById(R.id.progressNewUser);
-        mSetupProgress.setVisibility(View.VISIBLE);
 
-        mSetupStatus = (TextView)findViewById(R.id.statusNewUser);
-        mSetupStatus.setVisibility(View.VISIBLE);
-
-        findViewById(R.id.progressImage).setVisibility(View.VISIBLE);
+        showSetupProgress ();
 
         String jabberUserId = mRequestedUserName.replaceAll(USERNAME_ONLY_ALPHANUM, "").toLowerCase();
 
         new FindServerTask ().execute(mRequestedUserName,jabberUserId);
+    }
+
+    private void showSetupProgress ()
+    {
+        View viewCreate = findViewById(R.id.flipViewCreateNew);
+        viewCreate.findViewById(R.id.viewProgress).setVisibility(View.VISIBLE);
+        viewCreate.findViewById(R.id.viewCreate).setVisibility(View.GONE);
+        viewCreate.findViewById(R.id.btnAdvanced).setVisibility(View.GONE);
+
     }
 
     private class FindServerTask extends AsyncTask<String, Void, OnboardingAccount> {
@@ -501,33 +511,21 @@ public class OnboardingActivity extends ThemeableActivity {
         @Override
         protected void onPostExecute(OnboardingAccount account) {
 
+            View viewCreate = findViewById(R.id.flipViewCreateNew);
+            viewCreate.findViewById(R.id.progressImage).setVisibility(View.GONE);
+
             if (account != null) {
                 mFullUserName = account.username + '@' + account.domain;
-
-                findViewById(R.id.progressImage).setVisibility(View.GONE);
-
-                //EditText etAccountInfo = (EditText) findViewById(R.id.statusAccountInfo);
-                //tAccountInfo.setVisibility(View.VISIBLE);
 
                 StringBuffer sb = new StringBuffer();
                 sb.append(getString(R.string.account_congrats)).append("\n\n");
                 sb.append(getString(R.string.save_account_info));
-                mSetupStatus.setText(sb.toString());
+                TextView statusSuccess = (TextView)viewCreate.findViewById(R.id.statusSuccess);
+                statusSuccess.setText(sb.toString());
 
-                /*
-                sb = new StringBuffer();
-                sb.append(getString(R.string.zom_id)).append(account.username).append("\n");
-                sb.append(getString(R.string.account_password_label)).append(account.password).append("\n");
-                sb.append(getString(R.string.account_server_label)).append(account.domain);
-                etAccountInfo.setText(sb.toString());
-                etAccountInfo.setSelected(true);*/
+                viewCreate.findViewById(R.id.viewProgress).setVisibility(View.GONE);
 
-                mEditUsername.setVisibility(View.GONE);
-                mSetupProgress.setVisibility(View.GONE);
-
-                mImageAvatar.setVisibility(View.VISIBLE);
-
-                mSetupButton.setVisibility(View.VISIBLE);
+                viewCreate.findViewById(R.id.viewSuccess).setVisibility(View.VISIBLE);
 
                 SignInHelper signInHelper = new SignInHelper(OnboardingActivity.this, mHandler);
                 signInHelper.activateAccount(account.providerId, account.accountId);
@@ -535,9 +533,15 @@ public class OnboardingActivity extends ThemeableActivity {
             }
             else
             {
+                viewCreate.findViewById(R.id.viewProgress).setVisibility(View.GONE);
+                viewCreate.findViewById(R.id.viewCreate).setVisibility(View.VISIBLE);
+                viewCreate.findViewById(R.id.btnAdvanced).setVisibility(View.VISIBLE);
+
                 StringBuffer sb = new StringBuffer();
                 sb.append(getString(R.string.account_setup_error_server));
-                mSetupStatus.setText(sb.toString());
+                TextView status = (TextView)viewCreate.findViewById(R.id.statusError);
+                status.setText(sb.toString());
+
 
                 //need to try again somehow
             }

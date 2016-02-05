@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:layout_margin="0dp"
+android:gravity="center_horizontal|top"
+android:orientation="vertical"
+android:background="?colorPrimary"
+    >
+<ImageView
+    android:layout_width="256dp"
+    android:layout_height="256dp"
+    android:src="@drawable/onboarding_invite"
+    android:layout_margin="0dp"
+    />
+
+<org.ironrabbit.type.CustomTypefaceTextView
+    android:id="@+id/statusInviteFriends"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    android:text="____________________"
+    android:textSize="18dp"
+    android:textAlignment="center"
+    android:textColor="@android:color/white"
+    />
+
+<LinearLayout
+    android:id="@+id/inviteOptions"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="0dp"
+    android:gravity="center_horizontal|top"
+    android:orientation="horizontal" >
+
+    <org.ironrabbit.type.CustomTypefaceButton
+        android:id="@+id/btnInviteSMS"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:textSize="10dp"
+        android:text="@string/invite_sms"
+        android:drawableLeft="@android:drawable/ic_menu_send"
+        android:textColor="@android:color/white"
+        android:background="@android:color/transparent"
+        android:gravity="center"
+        style="@android:style/Widget.Button"
+
+
+        />   <org.ironrabbit.type.CustomTypefaceButton
+    android:id="@+id/btnInviteShare"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    android:textSize="10dp"
+    android:text="@string/invite_share"
+    android:drawableLeft="@android:drawable/ic_menu_share"
+    android:textColor="@android:color/white"
+    android:background="@android:color/transparent"
+    android:gravity="center"
+    style="@android:style/Widget.Button"
+
+
+    />
+    <org.ironrabbit.type.CustomTypefaceButton
+        android:id="@+id/btnInviteScan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:textSize="10dp"
+        android:text="@string/invite_scan_qr"
+        android:drawableLeft="@android:drawable/ic_menu_camera"
+        android:textColor="@android:color/white"
+        android:background="@android:color/transparent"
+        android:gravity="center"
+        style="@android:style/Widget.Button"
+
+
+        />
+
+</LinearLayout>
+<org.ironrabbit.type.CustomTypefaceButton
+    android:id="@+id/btnInviteSkip"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/lock_screen_skip"
+    android:layout_marginTop="40dp"
+    android:textSize="14dp"
+    android:gravity="center"
+
+    android:background="@android:color/transparent"
+    android:textColor="@android:color/white"
+    />
+</LinearLayout>

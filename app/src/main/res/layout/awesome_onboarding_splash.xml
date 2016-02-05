@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:layout_margin="0dp"
+android:gravity="center_horizontal"
+android:orientation="vertical"
+android:background="?colorPrimary"
+    >
+<ImageView
+    android:id="@+id/imageLogo"
+    android:layout_width="196dp"
+    android:layout_height="196dp"
+    android:layout_marginTop="60dp"
+    android:src="@drawable/whitelogo"
+    />
+<org.ironrabbit.type.CustomTypefaceTextView
+    android:id="@+id/buttonStartOnboarding"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:textAppearance="?android:attr/textAppearanceMedium"
+    android:text="@string/welcome_to_zom"
+    android:background="?android:attr/selectableItemBackground"
+    android:textColor="@android:color/white"
+    android:gravity="center"
+    />
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="center_horizontal|center_vertical"
+    android:orientation="horizontal"
+    android:layout_marginTop="60dp"
+
+    >
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/menu_locale"
+        android:padding="0dp"
+        android:src="@drawable/ic_language_white_36dp"
+        android:layout_gravity="center_horizontal|center_vertical"
+
+        />
+
+    <org.ironrabbit.type.CustomTypefaceTextView
+        android:id="@+id/languageButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/choose_language"
+        android:layout_margin="0dp"
+        android:layout_gravity="center_vertical"
+        android:background="?android:attr/selectableItemBackground"
+        android:textColor="@android:color/white"
+        android:gravity="center|center_vertical"
+
+        />
+
+</LinearLayout>
+
+
+
+
+</LinearLayout>
