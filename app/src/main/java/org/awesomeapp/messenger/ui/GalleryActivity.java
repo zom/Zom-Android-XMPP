@@ -70,7 +70,7 @@ public class GalleryActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.awesome_activity_gallery);
-
+        setTitle(R.string.photo_gallery);
         Intent intent = getIntent();
         mApp = (ImApp)getApplication();
 

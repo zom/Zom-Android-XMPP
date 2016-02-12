@@ -36,6 +36,7 @@ public class ConversationViewHolder extends RecyclerView.ViewHolder
         mContainer = view.findViewById(R.id.message_container);
 
         mMediaThumb = (ImageView)view.findViewById(R.id.media_thumbnail);
+
     }
 
 }

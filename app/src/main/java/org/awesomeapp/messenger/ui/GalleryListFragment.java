@@ -100,24 +100,14 @@ public class GalleryListFragment extends Fragment {
 
     }
 
-
     public static class MessageListRecyclerViewAdapter
-            extends CursorRecyclerViewAdapter<MessageListRecyclerViewAdapter.ViewHolder> {
+            extends CursorRecyclerViewAdapter<GalleryMediaViewHolder> {
 
         private final TypedValue mTypedValue = new TypedValue();
         private int mBackground;
         private Context mContext;
 
-        public static class ViewHolder extends RecyclerView.ViewHolder {
 
-            public final GalleryListItem mView;
-
-            public ViewHolder(GalleryListItem view) {
-                super(view);
-                mView = view;
-            }
-
-        }
 
         public MessageListRecyclerViewAdapter(Context context, Cursor cursor) {
             super(context,cursor);
@@ -127,17 +117,16 @@ public class GalleryListFragment extends Fragment {
         }
 
         @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public GalleryMediaViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             GalleryListItem view = (GalleryListItem)LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.gallery_item_view, parent, false);
             view.setBackgroundResource(mBackground);
 
-            return new ViewHolder(view);
+            return new GalleryMediaViewHolder(view,view.getContext());
         }
 
-
         @Override
-        public void onBindViewHolder(ViewHolder viewHolder, Cursor cursor) {
+        public void onBindViewHolder(GalleryMediaViewHolder viewHolder, Cursor cursor) {
 
             int id = cursor.getInt(0);
             String mimeType = "image/jpeg";
@@ -145,13 +134,8 @@ public class GalleryListFragment extends Fragment {
             String body = cursor.getString(2);
             java.util.Date ts = new Date(cursor.getLong(3));
 
-          viewHolder.mView.bind(id,mimeType,body,ts);
+             viewHolder.bind(id, mimeType, body, ts);
 
-            viewHolder.mView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                }
-            });
 
         }
 
@@ -179,13 +163,12 @@ public class GalleryListFragment extends Fragment {
         public void onLoadFinished(Loader<Cursor> loader, Cursor newCursor) {
             if (newCursor == null)
                 return; // the app was quit or something while this was working
-            newCursor.setNotificationUri(getActivity().getContentResolver(), mUri);
 
+            newCursor.setNotificationUri(getActivity().getContentResolver(), mUri);
             mAdapter.changeCursor(newCursor);
 
             if (mRecView.getAdapter() == null)
                 mRecView.setAdapter(mAdapter);
-
 
             if (mAdapter.getItemCount() == 0) {
                 mRecView.setVisibility(View.GONE);
@@ -193,7 +176,7 @@ public class GalleryListFragment extends Fragment {
                 mEmptyViewImage.setVisibility(View.VISIBLE);
 
             }
-            else {
+            else if (mRecView.getVisibility() == View.GONE) {
                 mRecView.setVisibility(View.VISIBLE);
                 mEmptyView.setVisibility(View.GONE);
                 mEmptyViewImage.setVisibility(View.GONE);
@@ -208,12 +191,13 @@ public class GalleryListFragment extends Fragment {
 
         }
 
+
+
         public final String[] MESSAGE_PROJECTION = {
                 "MAX (" + Imps.Messages._ID + ") as _id",
                 Imps.Messages.NICKNAME,
                 Imps.Messages.BODY,
-
-                "MAX (" + Imps.Messages.DATE + ") as maxDate"
+               "MAX (" + Imps.Messages.DATE + ") as maxDate"
         };
 
 

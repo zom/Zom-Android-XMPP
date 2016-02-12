@@ -86,14 +86,12 @@ public class GalleryListItem extends FrameLayout {
     private CharSequence lastMessage = null;
 
     private Context context;
-    private boolean linkify = false;
 
     public GalleryListItem(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
     }
 
-    private GalleryMediaViewHolder mHolder = null;
 
     private final static DateFormat MESSAGE_DATETIME_FORMAT = SimpleDateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
     private final static DateFormat MESSAGE_TIME_FORMAT = SimpleDateFormat.getTimeInstance(DateFormat.SHORT);
@@ -106,110 +104,23 @@ public class GalleryListItem extends FrameLayout {
     private final static String LOCK_CHAR = "Secure";
 
 
-    public class GalleryMediaViewHolder extends MediaViewHolder
-    {
-
-        public GalleryMediaViewHolder (View view)
-        {
-            super(view);
-        }
-
-        public void setOnClickListenerMediaThumbnail( final String mimeType, final Uri mediaUri ) {
-            mMediaThumbnail.setOnClickListener( new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onClickMediaIcon( mimeType, mediaUri );
-                }
-            });
-
-        }
-
-        public void resetOnClickListenerMediaThumbnail() {
-            mMediaThumbnail.setOnClickListener( null );
-        }
-
-        long mTimeDiff = -1;
-    }
 
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
 
 
-        mHolder = (GalleryMediaViewHolder)getTag();
-
-        if (mHolder == null)
-        {
-            mHolder = new GalleryMediaViewHolder(this);
-            setTag(mHolder);
-
-        }
     }
-
+/**
     public void setMessageBackground (Drawable d) {
         mHolder.mContainer.setBackgroundDrawable(d);
     }
-
+*/
 
     public String getLastMessage () {
         return lastMessage.toString();
     }
 
-    public void bind(int id, final String mimeType, final String body, Date date) {
-
-        mHolder = (GalleryMediaViewHolder)getTag();
-
-        if( mimeType != null ) {
-
-            mHolder.mContainer.setVisibility(View.VISIBLE);
-
-            Uri mediaUri = Uri.parse( body ) ;
-            showMediaThumbnail(mimeType, mediaUri, id, mHolder);
-
-        }
-        else {
-            mHolder.mContainer.setVisibility(View.GONE);
-        }
-
-    }
-
-    private void showMediaThumbnail (String mimeType, Uri mediaUri, int id, GalleryMediaViewHolder holder)
-    {
-        /* Guess the MIME type in case we received a file that we can display or play*/
-        if (TextUtils.isEmpty(mimeType) || mimeType.startsWith("application")) {
-            String guessed = URLConnection.guessContentTypeFromName(mediaUri.toString());
-            if (!TextUtils.isEmpty(guessed)) {
-                if (TextUtils.equals(guessed, "video/3gpp"))
-                    mimeType = "audio/3gpp";
-                else
-                    mimeType = guessed;
-            }
-        }
-        holder.setOnClickListenerMediaThumbnail(mimeType, mediaUri);
-
-        holder.mMediaThumbnail.setVisibility(View.VISIBLE);
-        if( mimeType.startsWith("image/") ) {
-            setImageThumbnail( getContext().getContentResolver(), id, holder, mediaUri );
-            holder.mMediaThumbnail.setBackgroundColor(Color.TRANSPARENT);
-           // holder.mMediaThumbnail.setBackgroundColor(Color.WHITE);
-
-        }
-        else if (mimeType.startsWith("audio"))
-        {
-            holder.mMediaThumbnail.setImageResource(R.drawable.media_audio_play);
-            holder.mMediaThumbnail.setBackgroundColor(Color.TRANSPARENT);
-        }
-        else
-        {
-            holder.mMediaThumbnail.setImageResource(R.drawable.ic_file); // generic file icon
-
-        }
-
-        holder.mContainer.setBackgroundColor(getResources().getColor(android.R.color.transparent));
-
-
-
-    }
 
 
     private boolean isSameDay (Date date1, Date date2)
@@ -339,59 +250,6 @@ public class GalleryListItem extends FrameLayout {
     }
 
 
-    /**
-     * @param contentResolver
-     * @param id
-     * @param aHolder
-     * @param mediaUri
-     */
-    private void setImageThumbnail(ContentResolver contentResolver, int id, GalleryMediaViewHolder aHolder, Uri mediaUri) {
-        // pair this holder to the uri. if the holder is recycled, the pairing is broken
-        aHolder.mMediaUri = mediaUri;
-        // if a content uri - already scanned
-
-        setThumbnail(contentResolver, aHolder, mediaUri);
-
-
-    }
-
-    /**
-     * @param contentResolver
-     * @param aHolder
-     * @param mediaUri
-     */
-    private void setThumbnail(ContentResolver contentResolver, GalleryMediaViewHolder aHolder, Uri mediaUri) {
-
-        if(SecureMediaStore.isVfsUri(mediaUri))
-        {
-            try {
-                Glide.with(context)
-                        .load(new info.guardianproject.iocipher.FileInputStream(new File(mediaUri.getPath()).getPath()))
-                        .centerCrop()
-                        .diskCacheStrategy(DiskCacheStrategy.NONE)
-                        .into(aHolder.mMediaThumbnail);
-            }
-            catch (Exception e)
-            {
-                Log.e(ImApp.LOG_TAG,"unable to load thumbnail: " + e.getMessage());
-            }
-        }
-        else if (mediaUri.getScheme().equals("asset"))
-        {
-            String assetPath = "file:///android_asset/" + mediaUri.getPath().substring(1);
-            Glide.with(context)
-                    .load(assetPath)
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .into(aHolder.mMediaThumbnail);
-        }
-        else
-        {
-            Glide.with(context)
-                    .load(mediaUri)
-                    .into(aHolder.mMediaThumbnail);
-        }
-
-    }
 
 
     private String formatMessage (String body)
@@ -463,79 +321,6 @@ public class GalleryListItem extends FrameLayout {
         return spanText;
     }
 
-    private CharSequence formatPresenceUpdates(String contact, int type, boolean isGroupChat,
-            boolean scrolling) {
-        String body;
-
-        Resources resources =getResources();
-
-        switch (type) {
-        case Imps.MessageType.PRESENCE_AVAILABLE:
-            body = resources.getString(isGroupChat ? R.string.contact_joined
-                                                   : R.string.contact_online, contact);
-            break;
-
-        case Imps.MessageType.PRESENCE_AWAY:
-            body = resources.getString(R.string.contact_away, contact);
-            break;
-
-        case Imps.MessageType.PRESENCE_DND:
-            body = resources.getString(R.string.contact_busy, contact);
-            break;
-
-        case Imps.MessageType.PRESENCE_UNAVAILABLE:
-            body = resources.getString(isGroupChat ? R.string.contact_left
-                                                   : R.string.contact_offline, contact);
-            break;
-
-        default:
-            return null;
-        }
-
-        if (scrolling) {
-            return body;
-        } else {
-            SpannableString spanText = new SpannableString(body);
-            int len = spanText.length();
-            spanText.setSpan(new StyleSpan(Typeface.ITALIC), 0, len,
-                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            spanText.setSpan(new RelativeSizeSpan((float) 0.8), 0, len,
-                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            return spanText;
-        }
-    }
-
-    public void setAvatarBorder(int status, RoundedAvatarDrawable avatar) {
-        switch (status) {
-        case Presence.AVAILABLE:
-            avatar.setBorderColor(getResources().getColor(R.color.holo_green_light));
-            avatar.setAlpha(255);
-            break;
-
-        case Presence.IDLE:
-            avatar.setBorderColor(getResources().getColor(R.color.holo_green_dark));
-            avatar.setAlpha(255);
-
-            break;
-
-        case Presence.AWAY:
-            avatar.setBorderColor(getResources().getColor(R.color.holo_orange_light));
-            avatar.setAlpha(255);
-            break;
-
-        case Presence.DO_NOT_DISTURB:
-            avatar.setBorderColor(getResources().getColor(R.color.holo_red_dark));
-            avatar.setAlpha(255);
-
-            break;
-
-        case Presence.OFFLINE:
-            avatar.setBorderColor(getResources().getColor(R.color.holo_grey_light));
-            avatar.setAlpha(150);
-            break;
 
 
-        default:
-        }
-    }
 }

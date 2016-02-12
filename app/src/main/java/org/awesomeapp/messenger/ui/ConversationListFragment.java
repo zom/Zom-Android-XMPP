@@ -143,7 +143,7 @@ public class ConversationListFragment extends Fragment {
             mEmptyViewImage.setVisibility(View.VISIBLE);
 
         }
-        else {
+        else if (mRecView.getVisibility() == View.GONE) {
             mRecView.setVisibility(View.VISIBLE);
             mEmptyView.setVisibility(View.GONE);
             mEmptyViewImage.setVisibility(View.GONE);
@@ -188,7 +188,7 @@ public class ConversationListFragment extends Fragment {
             final String address = cursor.getString(ConversationListItem.COLUMN_CONTACT_USERNAME);
             final String nickname = cursor.getString(ConversationListItem.COLUMN_CONTACT_NICKNAME);
 
-            ((ConversationListItem)viewHolder.itemView).bind(cursor, null, true, false);
+            ((ConversationListItem)viewHolder.itemView).bind(viewHolder, cursor, null, true, false);
 
             viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

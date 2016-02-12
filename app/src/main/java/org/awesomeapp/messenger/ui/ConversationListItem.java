@@ -108,19 +108,13 @@ public class ConversationListItem extends FrameLayout {
     }
 
 
-    public void bind(Cursor cursor, String underLineText, boolean scrolling) {
-        bind(cursor, underLineText, true, scrolling);
+    public void bind(ConversationViewHolder holder, Cursor cursor, String underLineText, boolean scrolling) {
+        bind(holder, cursor, underLineText, true, scrolling);
     }
 
-    public void bind(Cursor cursor, String underLineText, boolean showChatMsg, boolean scrolling) {
+    public void bind(ConversationViewHolder holder, Cursor cursor, String underLineText, boolean showChatMsg, boolean scrolling) {
 
 
-        ConversationViewHolder holder = (ConversationViewHolder)getTag();
-
-        if (holder == null) {
-            holder = new ConversationViewHolder(this);
-            setTag(holder);
-        }
 
         final long providerId = cursor.getLong(COLUMN_CONTACT_PROVIDER);
         final String address = cursor.getString(COLUMN_CONTACT_USERNAME);
