@@ -327,6 +327,8 @@ public class MessageListItem extends FrameLayout {
         else
         {
 
+            Glide.clear(holder.mMediaThumbnail);
+
             try {
                 Glide.with(context)
                         .load(R.drawable.ic_file)
@@ -580,6 +582,7 @@ public class MessageListItem extends FrameLayout {
         aHolder.mMediaUri = mediaUri;
         // if a content uri - already scanned
 
+        Glide.clear(aHolder.mMediaThumbnail);
         if(SecureMediaStore.isVfsUri(mediaUri))
         {
             try {

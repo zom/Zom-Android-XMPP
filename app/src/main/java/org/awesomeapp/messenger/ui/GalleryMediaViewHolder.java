@@ -125,6 +125,9 @@ public class GalleryMediaViewHolder extends MediaViewHolder
      */
     private void setThumbnail(ContentResolver contentResolver, Uri mediaUri) {
 
+        Glide.clear(mMediaThumbnail);
+        mMediaThumbnail.setImageBitmap(null);
+
         if(SecureMediaStore.isVfsUri(mediaUri))
         {
             try {

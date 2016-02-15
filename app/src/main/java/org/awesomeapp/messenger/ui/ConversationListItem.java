@@ -450,6 +450,8 @@ public class ConversationListItem extends FrameLayout {
 
         mLastMediaUri = mediaUri;
 
+        Glide.clear(aHolder.mMediaThumb);
+
         if(SecureMediaStore.isVfsUri(mediaUri))
         {
             info.guardianproject.iocipher.File fileMedia = new info.guardianproject.iocipher.File(mediaUri.getPath());
