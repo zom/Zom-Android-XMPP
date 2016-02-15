@@ -1,0 +1,3 @@
+[submodule "chatsecure-push"]
+	path = chatsecure-push
+	url = https://github.com/ChatSecure/ChatSecure-Push-Android.git

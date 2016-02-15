@@ -38,6 +38,7 @@ import android.os.PowerManager.WakeLock;
 import android.os.RemoteCallbackList;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
@@ -69,6 +70,8 @@ import org.awesomeapp.messenger.ui.legacy.NetworkConnectivityListener.State;
 import org.awesomeapp.messenger.util.Debug;
 import org.awesomeapp.messenger.util.LogCleaner;
 import org.awesomeapp.messenger.util.SecureMediaStore;
+import org.chatsecure.pushsecure.PushSecureClient;
+import org.chatsecure.pushsecure.response.Account;
 
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
@@ -995,7 +998,52 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
         }
 
     }
-    
+
+    PushSecureClient mPushClient;
+
+    private synchronized void initPushManager ()
+    {
+        if (mPushClient == null) {
+            mPushClient = new PushSecureClient("https://chatsecure-push.herokuapp.com/api/v1/");
+
+            String requiredUsername = "foo@foo.com";
+            String requiredPassword = "foobar1234";
+            String optionalEmail = "foo@foo.com";
+
+            mPushClient.authenticateAccount(requiredUsername, requiredPassword, optionalEmail,
+                    new PushSecureClient.RequestCallback<Account>() {
+                        @Override
+                        public void onSuccess(Account response) {
+                            // Authenticated Account
+                            // Register this account with the api client
+                            // to perform authenticated requests
+                            mPushClient.setAccount(response);
+                        }
+
+                        @Override
+                        public void onFailure(Throwable throwable) {
+                            // An error occurred
+                        }
+                    });
+        }
+    }
+
+    private void sendPushMessage (String requiredWhitelistTokenString, String optionalData)
+    {
+        mPushClient.sendMessage(requiredWhitelistTokenString, optionalData, new PushSecureClient.RequestCallback<org.chatsecure.pushsecure.response.Message>() {
+            @Override
+            public void onSuccess(@NonNull org.chatsecure.pushsecure.response.Message response) {
+
+            }
+
+            @Override
+            public void onFailure(@NonNull Throwable t) {
+
+            }
+        });
+
+
+    }
 
 
 }
