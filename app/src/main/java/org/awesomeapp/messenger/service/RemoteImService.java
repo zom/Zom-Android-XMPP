@@ -999,51 +999,6 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
     }
 
-    PushSecureClient mPushClient;
-
-    private synchronized void initPushManager ()
-    {
-        if (mPushClient == null) {
-            mPushClient = new PushSecureClient("https://chatsecure-push.herokuapp.com/api/v1/");
-
-            String requiredUsername = "foo@foo.com";
-            String requiredPassword = "foobar1234";
-            String optionalEmail = "foo@foo.com";
-
-            mPushClient.authenticateAccount(requiredUsername, requiredPassword, optionalEmail,
-                    new PushSecureClient.RequestCallback<Account>() {
-                        @Override
-                        public void onSuccess(Account response) {
-                            // Authenticated Account
-                            // Register this account with the api client
-                            // to perform authenticated requests
-                            mPushClient.setAccount(response);
-                        }
-
-                        @Override
-                        public void onFailure(Throwable throwable) {
-                            // An error occurred
-                        }
-                    });
-        }
-    }
-
-    private void sendPushMessage (String requiredWhitelistTokenString, String optionalData)
-    {
-        mPushClient.sendMessage(requiredWhitelistTokenString, optionalData, new PushSecureClient.RequestCallback<org.chatsecure.pushsecure.response.Message>() {
-            @Override
-            public void onSuccess(@NonNull org.chatsecure.pushsecure.response.Message response) {
-
-            }
-
-            @Override
-            public void onFailure(@NonNull Throwable t) {
-
-            }
-        });
-
-
-    }
 
 
 }
