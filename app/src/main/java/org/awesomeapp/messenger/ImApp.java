@@ -72,6 +72,9 @@ import im.zom.messenger.R;
 import org.awesomeapp.messenger.util.Languages;
 import org.ironrabbit.type.CustomTypefaceManager;
 
+import android.support.multidex.MultiDex;
+import android.support.multidex.MultiDexApplication;
+
 public class ImApp extends Application {
 
     public static final String LOG_TAG = "Zom";
@@ -151,6 +154,11 @@ public class ImApp extends Application {
     static final void log(String log) {
         Log.d(LOG_TAG, log);
     }
+/**
+    protected void attachBaseContext(Context base) {
+                super.attachBaseContext(base);
+                MultiDex.install(this);
+            }*/
 
     @Override
     public ContentResolver getContentResolver() {
