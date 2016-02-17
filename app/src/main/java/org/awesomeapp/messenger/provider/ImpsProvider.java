@@ -1559,37 +1559,6 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
             appendWhere(whereClause, Imps.Messages.THREAD_ID, "=", url.getPathSegments().get(1));
             // fall thru.
 
-        case MATCH_OTR_MESSAGES_BY_PACKET_ID:
-            appendWhere(whereClause, Imps.Messages.PACKET_ID, "=", url.getPathSegments().get(1));
-            qb.setTables(TABLE_MESSAGES);
-
-            final String selectionClausePacketId = whereClause.toString();
-            final String query1PacketId = qb.buildQuery(projectionIn, selectionClausePacketId, null, null, null,
-                    null, null /* limit */);
-
-            // Build the second query for frequent
-            qb = new SQLiteQueryBuilder();
-            qb.setTables(TABLE_IN_MEMORY_MESSAGES);
-            final String query2PacketId = qb.buildQuery(projectionIn, selectionClausePacketId, null, null, null,
-                    null, null /* limit */);
-
-            // Put them together
-            final String queryPacketId = qb.buildUnionQuery(new String[] { query1PacketId, query2PacketId }, sort, null);
-            final SQLiteDatabase dbPacketId = getDBHelper().getWritableDatabase();
-            String[] doubleArgsPacketId = null;
-            if (selectionArgs != null) {
-
-                doubleArgsPacketId = new String[ selectionArgs.length * 2];//Arrays.copyOf(selectionArgs, selectionArgs.length * 2);
-                System.arraycopy(selectionArgs, 0, doubleArgsPacketId, 0, selectionArgs.length);
-                System.arraycopy(selectionArgs, 0, doubleArgsPacketId, selectionArgs.length, selectionArgs.length);
-            }
-
-            Cursor cPacketId = dbPacketId.rawQueryWithFactory(null, queryPacketId, doubleArgsPacketId, TABLE_MESSAGES);
-            if ((cPacketId != null) && !isTemporary()) {
-                cPacketId.setNotificationUri(getContext().getContentResolver(), url);
-            }
-            return cPacketId;
-
         case MATCH_MESSAGES:
             qb.setTables(TABLE_MESSAGES);
 
@@ -1619,6 +1588,37 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
                 c.setNotificationUri(getContext().getContentResolver(), url);
             }
             return c;
+
+            case MATCH_OTR_MESSAGES_BY_PACKET_ID:
+                appendWhere(whereClause, Imps.Messages.PACKET_ID, "=", url.getPathSegments().get(1));
+                qb.setTables(TABLE_MESSAGES);
+
+                final String selectionClausePacketId = whereClause.toString();
+                final String query1PacketId = qb.buildQuery(projectionIn, selectionClausePacketId, null, null, null,
+                        null, null /* limit */);
+
+                // Build the second query for frequent
+                qb = new SQLiteQueryBuilder();
+                qb.setTables(TABLE_IN_MEMORY_MESSAGES);
+                final String query2PacketId = qb.buildQuery(projectionIn, selectionClausePacketId, null, null, null,
+                        null, null /* limit */);
+
+                // Put them together
+                final String queryPacketId = qb.buildUnionQuery(new String[] { query1PacketId, query2PacketId }, sort, null);
+                final SQLiteDatabase dbPacketId = getDBHelper().getWritableDatabase();
+                String[] doubleArgsPacketId = null;
+                if (selectionArgs != null) {
+
+                    doubleArgsPacketId = new String[ selectionArgs.length * 2];//Arrays.copyOf(selectionArgs, selectionArgs.length * 2);
+                    System.arraycopy(selectionArgs, 0, doubleArgsPacketId, 0, selectionArgs.length);
+                    System.arraycopy(selectionArgs, 0, doubleArgsPacketId, selectionArgs.length, selectionArgs.length);
+                }
+
+                Cursor cPacketId = dbPacketId.rawQueryWithFactory(null, queryPacketId, doubleArgsPacketId, TABLE_MESSAGES);
+                if ((cPacketId != null) && !isTemporary()) {
+                    cPacketId.setNotificationUri(getContext().getContentResolver(), url);
+                }
+                return cPacketId;
 
         case MATCH_MESSAGE:
             qb.setTables(TABLE_MESSAGES);

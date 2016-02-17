@@ -114,8 +114,6 @@ public class ConversationListItem extends FrameLayout {
 
     public void bind(ConversationViewHolder holder, Cursor cursor, String underLineText, boolean showChatMsg, boolean scrolling) {
 
-
-
         final long providerId = cursor.getLong(COLUMN_CONTACT_PROVIDER);
         final String address = cursor.getString(COLUMN_CONTACT_USERNAME);
 
