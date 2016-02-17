@@ -136,7 +136,7 @@ public class ConversationListFragment extends Fragment {
         });
         swipeToDismissTouchHelper.attachToRecyclerView(recyclerView);
 
-        
+
         if (mAdapter.getItemCount() == 0) {
             mRecView.setVisibility(View.GONE);
             mEmptyView.setVisibility(View.VISIBLE);

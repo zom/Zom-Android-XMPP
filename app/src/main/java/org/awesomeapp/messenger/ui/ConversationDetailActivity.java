@@ -300,7 +300,10 @@ public class ConversationDetailActivity extends AppCompatActivity {
     }
 
     Uri mLastPhoto = null;
-    private final static int MY_PERMISSIONS_REQUEST_CAMERA = 707070;
+    private final static int MY_PERMISSIONS_REQUEST_AUDIO = 1;
+    private final static int MY_PERMISSIONS_REQUEST_CAMERA = 2;
+    private final static int MY_PERMISSIONS_REQUEST_FILE = 3;
+    
 
     void startPhotoTaker() {
         int permissionCheck = ContextCompat.checkSelfPermission(this,
@@ -391,7 +394,7 @@ public class ConversationDetailActivity extends AppCompatActivity {
 
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                        MY_PERMISSIONS_REQUEST_CAMERA);
+                        MY_PERMISSIONS_REQUEST_FILE);
 
                 // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
                 // app-defined int constant. The callback method gets the
@@ -620,7 +623,7 @@ public class ConversationDetailActivity extends AppCompatActivity {
 
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.RECORD_AUDIO},
-                        MY_PERMISSIONS_REQUEST_CAMERA);
+                        MY_PERMISSIONS_REQUEST_AUDIO);
 
                 // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
                 // app-defined int constant. The callback method gets the
