@@ -34,7 +34,7 @@
 
         <ImageView
             android:layout_width="match_parent"
-            android:layout_height="198dp"
+            android:layout_height="256dp"
             android:src="@drawable/avatar_unknown"
             android:id="@+id/imageAvatar"
             android:scaleType="centerCrop"
@@ -42,13 +42,20 @@
             />
 
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="10dp">
 
-
+            <ImageView android:id="@+id/btnStartChat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_action_message"
+                android:padding="6dp"
+                android:layout_margin="1dp"
+                android:layout_alignParentRight="true"
+                />
                 <TextView android:id="@+id/tvNickname"
                     android:selectAllOnFocus="true"
                     android:layout_width="match_parent"
@@ -73,6 +80,7 @@
                     android:text="user@domain.com"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textColor="?contactTextSecondary"
+                    android:layout_below="@+id/tvNickname"
 
                     />
 
@@ -80,7 +88,7 @@
 
 
 
-        </LinearLayout>
+        </RelativeLayout>
 
 
 
@@ -88,8 +96,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="left"
-            android:paddingLeft="12dp"
+            android:padding="10dp"
             >
 
 
@@ -120,10 +127,10 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:id="@+id/qrshare"
-                android:layout_centerVertical="true"
-
                 android:layout_alignParentRight="true"
                 android:src="@android:drawable/ic_menu_share"
+                android:padding="6dp"
+                android:layout_margin="1dp"
                 />
 
         </RelativeLayout>
@@ -135,20 +142,8 @@
             android:layout_marginTop="5dp"
             android:layout_margin="10dp"
             >
-            <org.ironrabbit.type.CustomTypefaceTextView android:id="@+id/btnStartChat"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/send_message"
-                android:drawableLeft="@drawable/ic_menu_msg_compose"
-                android:textAppearance="?android:attr/textAppearanceMediumInverse"
-                android:background="?toolbarBackground"
-                android:padding="6dp"
-                android:layout_margin="1dp"
-                android:textColor="?android:colorForegroundInverse"
-                android:gravity="center"
 
-                />
-
+<!--
             <org.ironrabbit.type.CustomTypefaceTextView android:id="@+id/btnDeleteContact"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -162,7 +157,7 @@
                 android:gravity="center"
 
                 />
-
+-->
 
         </LinearLayout>
 
