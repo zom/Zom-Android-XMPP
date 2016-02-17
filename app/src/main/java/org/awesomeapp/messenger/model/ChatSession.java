@@ -27,6 +27,8 @@ import java.util.Vector;
 
 import net.java.otr4j.session.SessionID;
 import net.java.otr4j.session.SessionStatus;
+
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 /**
@@ -106,7 +108,17 @@ public class ChatSession {
 
             message.setTo(new XmppAddress(sId.getRemoteUserId()));
 
+            if (((Contact) mParticipant).getPresence().getStatus() == Presence.OFFLINE) {
+                // ChatSecure-Push: If the remote peer is offline, send them a push
+                OtrChatManager.getInstance().sendKnockPushMessage(sId);
+            }
+
             if (otrStatus == SessionStatus.ENCRYPTED) {
+
+                // ChatSecure-Push : If OTR session is available when sending peer message,
+                // ensure we have exchanged Push Whitelist tokens with that peer
+                cm.maybeBeginPushWhitelistTokenExchange(sId);
+
                 boolean verified = cm.getKeyManager().isVerified(sId);
 
                 if (verified) {
@@ -116,10 +128,20 @@ public class ChatSession {
                 }
 
             } else if (otrStatus == SessionStatus.FINISHED) {
+
+                // ChatSecure-Push : If no session is available when sending peer message,
+                // attempt to send a "Knock" push message to the peer asking them to come online
+                cm.sendKnockPushMessage(sId);
+
                 message.setType(Imps.MessageType.POSTPONED);
                 //  onSendMessageError(message, new ImErrorInfo(ImErrorInfo.INVALID_SESSION_CONTEXT,"error - session finished"));
                 return message.getType();
             } else {
+
+                // ChatSecure-Push : If no session is available when sending peer message,
+                // attempt to send a "Knock" push message to the peer asking them to come online
+                cm.sendKnockPushMessage(sId);
+
                 //not encrypted, send to all
                 message.setTo(new XmppAddress(XmppAddress.stripResource(sId.getRemoteUserId())));
                 message.setType(Imps.MessageType.OUTGOING);
@@ -168,7 +190,7 @@ public class ChatSession {
 
     private void sendDataAsync (OtrChatManager cm, Message message, boolean isResponse, byte[] data)
     {
-        SessionID sId = cm.getSessionId(message.getFrom().getAddress(),message.getTo().getAddress());
+        SessionID sId = cm.getSessionId(message.getFrom().getAddress(), message.getTo().getAddress());
         SessionStatus otrStatus = cm.getSessionStatus(sId);
 
         //can't send if not encrypted session
@@ -282,5 +304,29 @@ public class ChatSession {
         return Collections.unmodifiableList(mHistoryMessages);
     }
 
+    public void sendPushWhitelistTokenAsync(@NonNull Message message,
+                                            @NonNull String[] whitelistTokens) {
 
+        OtrChatManager cm = OtrChatManager.getInstance();
+        SessionID sId = cm.getSessionId(message.getFrom().getAddress(), mParticipant.getAddress().getAddress());
+        SessionStatus otrStatus = cm.getSessionStatus(sId);
+
+        message.setTo(new XmppAddress(sId.getRemoteUserId()));
+
+        if (otrStatus == SessionStatus.ENCRYPTED) {
+            boolean verified = cm.getKeyManager().isVerified(sId);
+
+            if (verified) {
+                message.setType(Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED);
+            } else {
+                message.setType(Imps.MessageType.OUTGOING_ENCRYPTED);
+            }
+
+            boolean canSend = cm.transformPushWhitelistTokenSending(message, whitelistTokens);
+
+            if (canSend)
+                mManager.sendMessageAsync(this, message);
+
+        }
+    }
 }
