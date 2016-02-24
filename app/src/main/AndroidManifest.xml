@@ -3,8 +3,8 @@
     package="im.zom.messenger"
     android:installLocation="auto"
     android:sharedUserLabel="@string/perm_label"
-    android:versionCode="1500206"
-    android:versionName="15.0.0-RC-2"
+    android:versionCode="1501000"
+    android:versionName="15.0.1-ALPHA-1"
     android:usesCleartextTraffic="false"
     >
 
