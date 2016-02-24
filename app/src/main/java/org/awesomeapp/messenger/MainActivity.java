@@ -587,12 +587,11 @@ public class MainActivity extends AppCompatActivity {
                     Intent intent = new Intent(MainActivity.this, ConversationDetailActivity.class);
                     intent.putExtra("id", chatId);
                     startActivity(intent);
-
-                    finish();
                 }
 
                 super.onPostExecute(chatId);
             }
+
         }.execute(username);
     }
 

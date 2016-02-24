@@ -1694,8 +1694,6 @@ public class ConversationView {
 
                         if (mContactType == Imps.Contacts.TYPE_GROUP)
                         {
-                            //session = sessionMgr.createMultiUserChatSession(remoteAddress,null,null, false);
-
                             new ChatSessionInitTask(((ImApp)mActivity.getApplication()),mProviderId, mAccountId, Imps.Contacts.TYPE_GROUP).execute(remoteAddress);
 
                         }

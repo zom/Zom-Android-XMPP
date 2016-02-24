@@ -303,7 +303,7 @@ public class ConversationDetailActivity extends AppCompatActivity {
     private final static int MY_PERMISSIONS_REQUEST_AUDIO = 1;
     private final static int MY_PERMISSIONS_REQUEST_CAMERA = 2;
     private final static int MY_PERMISSIONS_REQUEST_FILE = 3;
-    
+
 
     void startPhotoTaker() {
         int permissionCheck = ContextCompat.checkSelfPermission(this,
