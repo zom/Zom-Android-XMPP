@@ -116,7 +116,7 @@ public class PushManager {
                                                 @NonNull final PushSecureClient.RequestCallback<TLV> callback,
                                                 @Nullable final String extraData) throws UnsupportedEncodingException {
 
-        if (!assertAuthenticated()) return;
+     //   if (!assertAuthenticated()) return;
 
         Timber.d("createWhitelistTokenExchangeTlv recipient %s issuer %s", recipientIdentifier, issuerIdentifier);
         // Note that an outgoing Whitelist token must have the host identifier as it's "recipient"
@@ -485,7 +485,7 @@ public class PushManager {
                                              @NonNull final String recipientIdentifier,
                                              @NonNull final PushSecureClient.RequestCallback<Void> callback) {
 
-        if (!assertAuthenticated()) return;
+   //     if (!assertAuthenticated()) return;
 
         final Cursor recipientTokens = getPersistedTokenCursor(issuerIdentifier, recipientIdentifier, false);
         if (recipientTokens != null && recipientTokens.getCount() > 0) {
@@ -548,7 +548,7 @@ public class PushManager {
                                       @NonNull final String recipientIdentifier,
                                       @NonNull final PushSecureClient.RequestCallback<org.chatsecure.pushsecure.response.Message> callback) {
 
-        if (!assertAuthenticated()) return;
+      //  if (!assertAuthenticated()) return;
 
         Timber.d("Send push to %s from %s", recipientIdentifier, issuerIdentifier);
         getPersistedWhitelistToken(recipientIdentifier, issuerIdentifier, new PushSecureClient.RequestCallback<PushToken>() {
@@ -749,7 +749,7 @@ public class PushManager {
     private void sendPushMessageToToken(@NonNull String recipientWhitelistToken,
                                         @NonNull PushSecureClient.RequestCallback<org.chatsecure.pushsecure.response.Message> callback) {
 
-        if (!assertAuthenticated()) return;
+    //    if (!assertAuthenticated()) return;
 
         client.sendMessage(recipientWhitelistToken, "" /* push payload */, callback);
     }
