@@ -140,23 +140,10 @@ public class MessageListItem extends FrameLayout {
     protected void onFinishInflate() {
         super.onFinishInflate();
 
-
-        mHolder = (MessageViewHolder)getTag();
-
-        if (mHolder == null)
-        {
-            mHolder = new MessageViewHolder(this);
-            setTag(mHolder);
-
-        }
     }
 
     public void setLinkify(boolean linkify) {
         this.linkify = linkify;
-    }
-
-    public void setMessageBackground (Drawable d) {
-        mHolder.mContainer.setBackgroundDrawable(d);
     }
 
     public URLSpan[] getMessageLinks() {
@@ -168,10 +155,10 @@ public class MessageListItem extends FrameLayout {
         return lastMessage.toString();
     }
 
-    public void bindIncomingMessage(int id, int messageType, String address, String nickname, final String mimeType, final String body, Date date, Markup smileyRes,
+    public void bindIncomingMessage(MessageViewHolder holder, int id, int messageType, String address, String nickname, final String mimeType, final String body, Date date, Markup smileyRes,
             boolean scrolling, EncryptionState encryption, boolean showContact, int presenceStatus) {
 
-        mHolder = (MessageViewHolder)getTag();
+        mHolder = holder;
 
         mHolder.mTextViewForMessages.setVisibility(View.VISIBLE);
         mHolder.mAudioContainer.setVisibility(View.GONE);
@@ -339,6 +326,8 @@ public class MessageListItem extends FrameLayout {
         }
         else
         {
+
+            Glide.clear(holder.mMediaThumbnail);
 
             try {
                 Glide.with(context)
@@ -593,6 +582,7 @@ public class MessageListItem extends FrameLayout {
         aHolder.mMediaUri = mediaUri;
         // if a content uri - already scanned
 
+        Glide.clear(aHolder.mMediaThumbnail);
         if(SecureMediaStore.isVfsUri(mediaUri))
         {
             try {
@@ -639,10 +629,10 @@ public class MessageListItem extends FrameLayout {
             return "";
     }
 
-    public void bindOutgoingMessage(int id, int messageType, String address, final String mimeType, final String body, Date date, Markup smileyRes, boolean scrolling,
+    public void bindOutgoingMessage(MessageViewHolder holder, int id, int messageType, String address, final String mimeType, final String body, Date date, Markup smileyRes, boolean scrolling,
             DeliveryState delivery, EncryptionState encryption) {
 
-        mHolder = (MessageViewHolder)getTag();
+        mHolder = holder;
 
         mHolder.mTextViewForMessages.setVisibility(View.VISIBLE);
         mHolder.mAudioContainer.setVisibility(View.GONE);
@@ -811,9 +801,9 @@ public class MessageListItem extends FrameLayout {
         return Color.TRANSPARENT;
     }
 
-    public void bindPresenceMessage(String contact, int type, Date date, boolean isGroupChat, boolean scrolling) {
+    public void bindPresenceMessage(MessageViewHolder holder, String contact, int type, Date date, boolean isGroupChat, boolean scrolling) {
 
-        mHolder = (MessageViewHolder)getTag();
+        mHolder = holder;
         mHolder.mContainer.setBackgroundResource(android.R.color.transparent);
         mHolder.mTextViewForMessages.setVisibility(View.GONE);
         mHolder.mTextViewForTimestamp.setVisibility(View.VISIBLE);

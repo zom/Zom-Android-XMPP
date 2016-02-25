@@ -1,3 +1,4 @@
 include ':otr4jandroid'
 include ':tibetanTextLibrary'
+include ':chatsecure-push:sdk'
 include ':app'

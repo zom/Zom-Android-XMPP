@@ -38,6 +38,7 @@ import android.os.PowerManager.WakeLock;
 import android.os.RemoteCallbackList;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
@@ -69,6 +70,8 @@ import org.awesomeapp.messenger.ui.legacy.NetworkConnectivityListener.State;
 import org.awesomeapp.messenger.util.Debug;
 import org.awesomeapp.messenger.util.LogCleaner;
 import org.awesomeapp.messenger.util.SecureMediaStore;
+import org.chatsecure.pushsecure.PushSecureClient;
+import org.chatsecure.pushsecure.response.Account;
 
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
@@ -995,7 +998,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
         }
 
     }
-    
+
 
 
 }

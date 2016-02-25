@@ -124,5 +124,10 @@ interface IChatSession {
     * reinit chatsession if we are starting a new chat
     */
     void reInit();
+
+    /**
+         * Sends a ChatSecure-Push Whitelist token to all participants in this ChatSession.
+     */
+     boolean sendPushWhitelistToken(String token);
 }
 

@@ -3,7 +3,6 @@ package org.awesomeapp.messenger.util;
 /**
  * Found here: https://gist.github.com/chalup/4201307da02b9cfe4f40
  */
-import com.google.common.collect.Iterables;
 
 import android.content.ContentResolver;
 import android.database.ContentObservable;
@@ -127,7 +126,10 @@ public class MultiUriCursorWrapper extends CursorWrapper {
 
     public MultiUriCursorWrapper withNotificationUris(ContentResolver cr, Iterable<Uri> uris) {
         synchronized (mSelfObserverLock) {
-            Iterables.addAll(mNotifyUris, uris);
+            //Iterables.addAll(mNotifyUris, uris);
+            for (Uri uri : uris)
+                mNotifyUris.add(uri);
+
             mContentResolver = cr;
             if (mSelfObserver == null) {
                 mSelfObserver = new SelfContentObserver(this);
@@ -159,7 +161,7 @@ public class MultiUriCursorWrapper extends CursorWrapper {
     @Override
     public Uri getNotificationUri() {
         synchronized (mSelfObserverLock) {
-            return Iterables.getFirst(mNotifyUris, null);
+            return mNotifyUris.iterator().next();
         }
     }
 

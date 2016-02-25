@@ -1694,8 +1694,6 @@ public class ConversationView {
 
                         if (mContactType == Imps.Contacts.TYPE_GROUP)
                         {
-                            //session = sessionMgr.createMultiUserChatSession(remoteAddress,null,null, false);
-
                             new ChatSessionInitTask(((ImApp)mActivity.getApplication()),mProviderId, mAccountId, Imps.Contacts.TYPE_GROUP).execute(remoteAddress);
 
                         }
@@ -2586,7 +2584,7 @@ public class ConversationView {
 
             switch (messageType) {
             case Imps.MessageType.INCOMING:
-                messageView.bindIncomingMessage(id, messageType, mRemoteAddress, nickname, mimeType, body, date, mMarkup, false, encState, isGroupChat(), mPresenceStatus);
+                messageView.bindIncomingMessage(viewHolder,id, messageType, mRemoteAddress, nickname, mimeType, body, date, mMarkup, false, encState, isGroupChat(), mPresenceStatus);
 
                 break;
 
@@ -2597,14 +2595,14 @@ public class ConversationView {
                 if (errCode != 0) {
                     messageView.bindErrorMessage(errCode);
                 } else {
-                    messageView.bindOutgoingMessage(id, messageType, null, mimeType, body, date, mMarkup, false,
+                    messageView.bindOutgoingMessage(viewHolder, id, messageType, null, mimeType, body, date, mMarkup, false,
                             deliveryState, encState);
                 }
 
                 break;
 
             default:
-                messageView.bindPresenceMessage(nickname, messageType, date, isGroupChat(), false);
+                messageView.bindPresenceMessage(viewHolder, nickname, messageType, date, isGroupChat(), false);
             }
 
            // updateWarningView();

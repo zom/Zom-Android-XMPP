@@ -13,12 +13,13 @@ import org.awesomeapp.messenger.service.IImConnection;
 /**
  * Created by n8fr8 on 10/23/15.
  */
-public class ChatSessionInitTask extends AsyncTask<String, Void, Long> {
+public class ChatSessionInitTask implements Runnable {
 
     ImApp mApp;
     long mProviderId;
     long mAccountId;
     int mContactType;
+    String[] mRemoteAddresses;
 
     public ChatSessionInitTask (ImApp app, long providerId, long accountId, int contactType)
     {
@@ -28,19 +29,34 @@ public class ChatSessionInitTask extends AsyncTask<String, Void, Long> {
         mContactType = contactType;
     }
 
+    public void execute (String[] remoteAddresses)
+    {
+        mRemoteAddresses = remoteAddresses;
 
-    @Override
-    protected Long doInBackground(String... remoteAddresses) {
 
+        new Thread(this).start();
+    }
+
+    public void execute (String remoteAddress)
+    {
+        mRemoteAddresses = new String[1];
+        mRemoteAddresses[0] = remoteAddress;
+
+        new Thread(this).start();
+    }
+
+
+    public void run ()
+    {
 
         if (mProviderId != -1 && mAccountId != -1) {
             try {
                 IImConnection conn = mApp.getConnection(mProviderId, mAccountId);
 
                 if (conn == null || conn.getState() != ImConnection.LOGGED_IN)
-                    return -1l;
+                    return;
 
-                for (String address : remoteAddresses) {
+                for (String address : mRemoteAddresses) {
 
                     IChatSession session = conn.getChatSessionManager().getChatSession(address);
 
@@ -71,7 +87,7 @@ public class ChatSessionInitTask extends AsyncTask<String, Void, Long> {
 
                     }
 
-                    return session.getId();
+                    onPostExecute(session.getId());
 
 
                 }
@@ -81,6 +97,11 @@ public class ChatSessionInitTask extends AsyncTask<String, Void, Long> {
             }
         }
 
-        return -1L;
+        return;
+    }
+
+    protected void onPostExecute(Long chatId) {
+
+
     }
 }
