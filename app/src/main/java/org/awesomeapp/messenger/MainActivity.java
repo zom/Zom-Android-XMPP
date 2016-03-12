@@ -58,6 +58,7 @@ import org.awesomeapp.messenger.service.IImConnection;
 import org.awesomeapp.messenger.tasks.AddContactAsyncTask;
 import org.awesomeapp.messenger.tasks.ChatSessionInitTask;
 import org.awesomeapp.messenger.ui.AccountFragment;
+import org.awesomeapp.messenger.ui.AccountsActivity;
 import org.awesomeapp.messenger.ui.AddContactActivity;
 import org.awesomeapp.messenger.ui.ContactsListFragment;
 import org.awesomeapp.messenger.ui.ContactsPickerActivity;
@@ -512,7 +513,7 @@ public class MainActivity extends AppCompatActivity {
                 return true;
 
             case R.id.menu_new_account:
-                Intent i = new Intent(MainActivity.this, OnboardingActivity.class);
+                Intent i = new Intent(MainActivity.this, AccountsActivity.class);
                 startActivity(i);
                 return true;
         }

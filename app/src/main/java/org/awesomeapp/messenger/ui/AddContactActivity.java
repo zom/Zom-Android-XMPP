@@ -254,7 +254,8 @@ public class AddContactActivity extends AppCompatActivity {
         @Override
         public View onCreateView(String name, Context context, AttributeSet attrs) {
             if (name != null && name.equals(ProviderListItem.class.getName())) {
-                return new ProviderListItem(context, AddContactActivity.this, null);
+            //    return new ProviderListItem(context, AddContactActivity.this, null);
+                return new ProviderListItem(context, attrs);
             }
             return null;
         }

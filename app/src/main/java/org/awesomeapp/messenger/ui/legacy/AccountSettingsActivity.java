@@ -31,13 +31,21 @@ import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.PreferenceActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 public class AccountSettingsActivity extends PreferenceActivity implements
         OnSharedPreferenceChangeListener {
 
     private long mProviderId;
+    private long mAccountId;
 
     private EditTextPreference mXmppResource;
     private EditTextPreference mXmppResourcePrio;
@@ -79,6 +87,16 @@ public class AccountSettingsActivity extends PreferenceActivity implements
         mDoDnsSrv.setChecked(settings.getDoDnsSrv());
 
         settings.close();
+    }
+
+
+    private void deleteAccount ()
+    {
+
+        //need to delete
+        ((ImApp)getApplication()).deleteAccount(getContentResolver(),mAccountId, mProviderId);
+
+        finish();
     }
 
     /* save the preferences in Imps so they are accessible everywhere */
@@ -151,8 +169,11 @@ public class AccountSettingsActivity extends PreferenceActivity implements
         // the DB in onSharedPreferenceChanged().
         getPreferenceManager().setSharedPreferencesName("account");
         addPreferencesFromResource(R.xml.account_settings);
+
         Intent intent = getIntent();
         mProviderId = intent.getLongExtra(ImServiceConstants.EXTRA_INTENT_PROVIDER_ID, -1);
+        mAccountId = intent.getLongExtra(ImServiceConstants.EXTRA_INTENT_ACCOUNT_ID, -1);
+
         if (mProviderId < 0) {
             Log.e(ImApp.LOG_TAG, "AccountSettingsActivity intent requires provider id extra");
             throw new RuntimeException(
@@ -166,6 +187,35 @@ public class AccountSettingsActivity extends PreferenceActivity implements
         mRequireTls = (CheckBoxPreference) findPreference(("pref_security_require_tls"));
         mDoDnsSrv = (CheckBoxPreference) findPreference(("pref_security_do_dns_srv"));
     }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+
+        LinearLayout root = (LinearLayout)findViewById(android.R.id.list).getParent().getParent().getParent();
+        Toolbar bar = (Toolbar) LayoutInflater.from(this).inflate(R.layout.settings_toolbar, root, false);
+        root.addView(bar, 0); // insert at top
+        bar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+        bar.inflateMenu(R.menu.menu_accounts);
+        bar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+
+            @Override
+            public boolean onMenuItemClick(MenuItem arg0) {
+                if(arg0.getItemId() == R.id.menu_delete){
+                    deleteAccount();
+                }
+                return false;
+            }
+        });
+    }
+    
+
 
     @Override
     protected void onResume() {

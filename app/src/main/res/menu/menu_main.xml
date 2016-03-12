@@ -12,7 +12,7 @@
     <item
         android:id="@+id/menu_new_account"
         android:icon="@drawable/ic_action_new"
-        android:title="@string/menu_new_account"
+        android:title="@string/accounts"
         app:showAsAction="never"/>
     <item
         android:id="@+id/menu_settings"

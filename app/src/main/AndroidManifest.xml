@@ -3,10 +3,9 @@
     package="im.zom.messenger"
     android:installLocation="auto"
     android:sharedUserLabel="@string/perm_label"
-    android:versionCode="1501000"
-    android:versionName="15.0.1-ALPHA-1"
     android:usesCleartextTraffic="false"
-    >
+    android:versionCode="1501000"
+    android:versionName="15.0.1-ALPHA-1">
 
     <supports-screens
         android:anyDensity="true"
@@ -28,7 +27,7 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" ></uses-permission>
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
 
     <!--
     <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
@@ -46,6 +45,7 @@
     <uses-feature
         android:name="android.hardware.wifi"
         android:required="false" />
+
     <permission
         android:name="org.awesomeapp.messenger.permission.IM_SERVICE"
         android:description="@string/perm_desc"
@@ -56,7 +56,7 @@
         android:name="org.awesomeapp.messenger.permission.READ_ONLY"
         android:description="@string/ro_perm_desc"
         android:label="@string/ro_perm_label"
-    android:permissionGroup="android.permission-group.MESSAGES"
+        android:permissionGroup="android.permission-group.MESSAGES"
         android:protectionLevel="dangerous" />
     <permission
         android:name="org.awesomeapp.messenger.permission.WRITE_ONLY"
@@ -70,16 +70,18 @@
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/ic_launcher_name"
-        android:theme="@style/AppTheme" >
-        <activity android:name="org.awesomeapp.messenger.RouterActivity"
-            android:theme="@style/InviteDialog"
-            >
+        android:theme="@style/AppTheme">
+        <activity
+            android:name="org.awesomeapp.messenger.RouterActivity"
+            android:theme="@style/InviteDialog">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
                 <action android:name="info.guardianproject.panic.action.TRIGGER" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
             <intent-filter>
@@ -105,6 +107,7 @@
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
@@ -136,7 +139,8 @@
                 <category android:name="info.guardianproject.otr.app.im.category.XMPP" />
 
                 <data android:scheme="im" />
-            </intent-filter>RouterAct
+            </intent-filter>
+            RouterAct
             <intent-filter>
                 <action android:name="android.intent.action.SENDTO" />
 
@@ -209,7 +213,7 @@
 
         <service
             android:name="org.awesomeapp.messenger.plugin.xmpp.XmppImPlugin"
-            android:exported="false" >
+            android:exported="false">
             <intent-filter>
                 <action android:name="org.awesomeapp.messenger.plugin" />
             </intent-filter>
@@ -219,8 +223,7 @@
                 android:value="Jabber (XMPP)" />
             <meta-data
                 android:name="info.guardianproject.otr.app.im.provider_full_name"
-                android:value="@string/provider_full_name_xmpp"/>
-
+                android:value="@string/provider_full_name_xmpp" />
             <meta-data
                 android:name="info.guardianproject.otr.app.im.signup_url"
                 android:value="http://xmpp.org/services/" />
@@ -245,7 +248,7 @@
         <service
             android:name="org.awesomeapp.messenger.service.RemoteImService"
             android:exported="false"
-            android:permission="org.awesomeapp.messenger.permission.IM_SERVICE" >
+            android:permission="org.awesomeapp.messenger.permission.IM_SERVICE">
             <intent-filter>
                 <action android:name="info.guardianproject.otr.app.im.IRemoteImService" />
                 <action android:name="info.guardianproject.otr.app.im.SERVICE" />
@@ -263,13 +266,12 @@
             android:readPermission="org.awesomeapp.messenger.permission.READ_ONLY"
             android:writePermission="org.awesomeapp.messenger.permission.WRITE_ONLY" />
 
-        <activity android:name="org.awesomeapp.messenger.ImUrlActivity"
-            android:theme="@style/InviteDialog"
-            >
-        </activity>
+        <activity
+            android:name="org.awesomeapp.messenger.ImUrlActivity"
+            android:theme="@style/InviteDialog"></activity>
         <activity
             android:name="org.awesomeapp.messenger.ui.legacy.SignoutActivity"
-            android:exported="false" >
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -284,36 +286,62 @@
         <activity
             android:name="org.awesomeapp.messenger.ui.ContactsPickerActivity"
             android:exported="false"
-            android:label="@string/choose_friend" >
+            android:label="@string/choose_friend">
             <intent-filter>
                 <action android:name="android.intent.action.PICK" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="vnd.android.cursor.dir/imps-contacts" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.PICK" />
+
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <data android:mimeType="vnd.android.cursor.dir/imps-chats" />
             </intent-filter>
         </activity>
         <activity
+            android:name="org.awesomeapp.messenger.ui.AccountActivity"
+            android:exported="false"
+            android:windowSoftInputMode="stateUnchanged" >
+            <intent-filter>
+                <action android:name="android.intent.action.EDIT" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="org.awesomeapp.messenger.service.IMPS_CATEGORY" />
+
+                <data android:mimeType="vnd.android.cursor.item/imps-accounts" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.INSERT" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="org.awesomeapp.messenger.service.IMPS_CATEGORY" />
+                <data android:mimeType="vnd.android.cursor.item/imps-providers" />
+            </intent-filter>
+        </activity>
+
+        <activity
             android:name="org.awesomeapp.messenger.ui.legacy.AccountSettingsActivity"
-            android:exported="false" >
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.PICK" />
+
                 <category android:name="info.guardianproject.otr.app.im.IMPS_CATEGORY" />
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="vnd.android-dir/imps-providerSettings" />
             </intent-filter>
         </activity>
         <activity
             android:name="org.awesomeapp.messenger.ui.legacy.SettingActivity"
-            android:exported="false" >
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.PICK" />
+
                 <category android:name="info.guardianproject.otr.app.im.IMPS_CATEGORY" />
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="vnd.android-dir/imps-providerSettings" />
             </intent-filter>
         </activity>
@@ -330,7 +358,7 @@
         <receiver
             android:name="org.awesomeapp.messenger.ui.legacy.NetworkConnectivityListener"
             android:enabled="true"
-            android:exported="true" >
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
@@ -338,23 +366,19 @@
         <receiver
             android:name="org.awesomeapp.messenger.service.BootCompletedListener"
             android:enabled="true"
-            android:exported="true" >
+            android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" >
-                </action>
+                <action android:name="android.intent.action.BOOT_COMPLETED"></action>
             </intent-filter>
         </receiver>
 
         <activity
             android:name="org.awesomeapp.messenger.ui.LockScreenActivity"
-            android:label="@string/title_activity_lock_screen" >
-        </activity>
+            android:label="@string/title_activity_lock_screen"></activity>
         <activity
             android:name="org.awesomeapp.messenger.ui.onboarding.OnboardingActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:launchMode="singleTask"
-            >
-        </activity>
+            android:launchMode="singleTask"></activity>
         <activity
             android:name="org.awesomeapp.messenger.ui.qr.QrScanActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
@@ -376,14 +400,13 @@
             android:noHistory="true"
             android:stateNotNeeded="true"
             android:theme="@android:style/Theme.NoDisplay" />
-        <activity
-            android:name="org.awesomeapp.messenger.ui.widgets.ImageViewActivity" />
+        <activity android:name="org.awesomeapp.messenger.ui.widgets.ImageViewActivity" />
         <activity android:name="org.awesomeapp.messenger.ui.widgets.SecureCameraActivity" />
         <activity
             android:name="org.awesomeapp.messenger.MainActivity"
             android:exported="true"
             android:launchMode="singleTask"
-            android:theme="@style/AppThemeNoAction" >
+            android:theme="@style/AppThemeNoAction">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -410,12 +433,12 @@
         <activity
             android:name="org.awesomeapp.messenger.ui.ConversationDetailActivity"
             android:exported="false"
-            android:theme="@style/AppThemeNoAction"
             android:launchMode="singleTask"
+            android:theme="@style/AppThemeNoAction"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
             android:name="org.awesomeapp.messenger.ui.ContactListActivity"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name="org.awesomeapp.messenger.ui.GalleryActivity"
             android:exported="false"
@@ -423,7 +446,7 @@
         <activity
             android:name="org.awesomeapp.messenger.ui.PanicSetupActivity"
             android:label="@string/panic_trigger_app"
-            android:theme="@style/AppThemeNoAction" >
+            android:theme="@style/AppThemeNoAction">
             <intent-filter>
                 <action android:name="info.guardianproject.panic.action.CONNECT" />
                 <action android:name="info.guardianproject.panic.action.DISCONNECT" />
@@ -431,15 +454,16 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name="org.awesomeapp.messenger.ui.ContactDisplayActivity" >
-        </activity>
-
-        <activity android:name="org.awesomeapp.messenger.ui.GroupDisplayActivity" >
-        </activity>
+        <activity android:name="org.awesomeapp.messenger.ui.ContactDisplayActivity"></activity>
+        <activity android:name="org.awesomeapp.messenger.ui.GroupDisplayActivity"></activity>
 
         <meta-data
             android:name="org.awesomeapp.messenger.tasks.GlideVFSModule"
             android:value="GlideModule" />
+
+        <activity
+            android:name="org.awesomeapp.messenger.ui.AccountsActivity"
+            android:label="@string/accounts"></activity>
     </application>
 
 </manifest>

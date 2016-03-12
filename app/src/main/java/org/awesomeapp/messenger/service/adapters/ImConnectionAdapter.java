@@ -39,6 +39,8 @@ import org.awesomeapp.messenger.tasks.ChatSessionInitTask;
 import org.awesomeapp.messenger.ui.ConversationListFragment;
 import org.awesomeapp.messenger.util.Debug;
 
+import java.util.Collection;
+import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -487,12 +489,17 @@ public class ImConnectionAdapter extends org.awesomeapp.messenger.service.IImCon
                     mContactListManager.loadContactLists();
                 }
 
-                for (ChatSessionAdapter session : mChatSessionManager.mActiveChatSessionAdapters
-                        .values()) {
-                    session.sendPostponedMessages();
-                }
+                try {
+                    Collection<ChatSessionAdapter> adapters = mChatSessionManager.mActiveChatSessionAdapters.values();
 
-                //                mService.getStatusBarNotifier().notifyLoggedIn(mProviderId, mAccountId);
+                    for (ChatSessionAdapter session : adapters) {
+                        session.sendPostponedMessages();
+                    }
+                }
+                catch (ConcurrentModificationException cme)
+                {
+                    Log.w(ImApp.LOG_TAG,"concurrent mod exception on login",cme);
+                }
 
                 loadSavedPresence();
                 
