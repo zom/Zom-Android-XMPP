@@ -8,29 +8,46 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.RemoteException;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import org.awesomeapp.messenger.ImApp;
-import org.awesomeapp.messenger.model.ImConnection;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.service.IImConnection;
-import org.awesomeapp.messenger.ui.legacy.ProviderListItem;
+import org.awesomeapp.messenger.ui.legacy.SignInHelper;
 
-public class AccountAdapter extends CursorAdapter {
+public class AccountAdapter extends CursorAdapter implements ProviderListItem.SignInManager {
+
     private LayoutInflater mInflater;
     private int mResId;
     private Cursor mStashCursor;
     private AsyncTask<Void, Void, List<AccountSetting>> mBindTask;
     private Listener mListener;
     private Activity mActivity;
+
+
+    private static Handler sHandler = new Handler()
+    {
+
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+
+            //update notifications from async task
+        }
+
+    };
 
     public AccountAdapter(Activity context,
             LayoutInflater.Factory factory, int resId) {
@@ -117,7 +134,7 @@ public class AccountAdapter extends CursorAdapter {
         // bindView(), which can be called more often.
         ProviderListItem view = (ProviderListItem) mInflater.inflate(mResId, parent, false);
         boolean showLongName = false;
-        view.init(mActivity, cursor, showLongName);
+        view.init(mActivity, cursor, showLongName, this);
         return view;
     }
 
@@ -201,4 +218,87 @@ public class AccountAdapter extends CursorAdapter {
     public interface Listener {
         void onPopulate();
     }
+
+    public void signIn(long accountId) {
+        if (accountId <= 0) {
+            return;
+        }
+        Cursor cursor = getCursor();
+
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast())
+        {
+            long cAccountId = cursor.getLong(ACTIVE_ACCOUNT_ID_COLUMN);
+
+            if (cAccountId == accountId)
+                break;
+
+            cursor.moveToNext();
+        }
+
+        // Remember that the user signed in.
+        setKeepSignedIn(accountId, true);
+
+        long providerId = cursor.getLong(PROVIDER_ID_COLUMN);
+        String password = cursor.getString(ACTIVE_ACCOUNT_PW_COLUMN);
+
+        boolean isActive = false; // TODO(miron)
+
+        new SignInHelper(mActivity, sHandler).signIn(password, providerId, accountId, isActive);
+
+        cursor.moveToPosition(-1);
+    }
+
+
+    public void signOut(final long accountId) {
+        // Remember that the user signed out and do not auto sign in until they
+        // explicitly do so
+        setKeepSignedIn(accountId, false);
+
+        Cursor cursor = getCursor();
+
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast())
+        {
+            long cAccountId = cursor.getLong(ACTIVE_ACCOUNT_ID_COLUMN);
+
+            if (cAccountId == accountId)
+                break;
+
+            cursor.moveToNext();
+        }
+
+        // Remember that the user signed in.
+        setKeepSignedIn(accountId, true);
+
+        long providerId = cursor.getLong(PROVIDER_ID_COLUMN);
+        cursor.moveToPosition(-1);
+
+        try {
+            IImConnection conn =  ((ImApp)mActivity.getApplication()).getConnection(providerId, accountId);
+            if (conn != null) {
+                conn.logout();
+            }
+        } catch (Exception ex) {
+        }
+    }
+
+    private void setKeepSignedIn(final long accountId, boolean signin) {
+        Uri mAccountUri = ContentUris.withAppendedId(Imps.Account.CONTENT_URI, accountId);
+        ContentValues values = new ContentValues();
+        values.put(Imps.Account.KEEP_SIGNED_IN, signin);
+        mActivity.getContentResolver().update(mAccountUri, values, null, null);
+    }
+
+    static final int PROVIDER_ID_COLUMN = 0;
+    static final int PROVIDER_NAME_COLUMN = 1;
+    static final int PROVIDER_FULLNAME_COLUMN = 2;
+    static final int PROVIDER_CATEGORY_COLUMN = 3;
+    static final int ACTIVE_ACCOUNT_ID_COLUMN = 4;
+    static final int ACTIVE_ACCOUNT_USERNAME_COLUMN = 5;
+    static final int ACTIVE_ACCOUNT_PW_COLUMN = 6;
+    static final int ACTIVE_ACCOUNT_LOCKED = 7;
+    static final int ACTIVE_ACCOUNT_KEEP_SIGNED_IN = 8;
+    static final int ACCOUNT_PRESENCE_STATUS = 9;
+    static final int ACCOUNT_CONNECTION_STATUS = 10;
 }

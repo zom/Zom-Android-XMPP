@@ -17,7 +17,7 @@
  */
 -->
 
-<org.awesomeapp.messenger.ui.legacy.ProviderListItem
+<org.awesomeapp.messenger.ui.ProviderListItem
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:layout_width="fill_parent"
@@ -70,4 +70,4 @@
             -->
       
     </LinearLayout>
-</org.awesomeapp.messenger.ui.legacy.ProviderListItem>
+</org.awesomeapp.messenger.ui.ProviderListItem>
