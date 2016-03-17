@@ -114,7 +114,18 @@ public class GalleryListFragment extends Fragment {
             context.getTheme().resolveAttribute(R.attr.selectableItemBackground, mTypedValue, true);
             mBackground = mTypedValue.resourceId;
             mContext = context;
+
+            setHasStableIds(true);
         }
+
+        public long getItemId (int position)
+        {
+            Cursor c = getCursor();
+            c.moveToPosition(position);
+            long chatId =  c.getLong(0); //id is first column
+            return chatId;
+        }
+
 
         @Override
         public GalleryMediaViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {

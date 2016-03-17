@@ -2436,6 +2436,8 @@ public class ConversationView {
             if (c != null) {
                 resolveColumnIndex(c);
             }
+
+            setHasStableIds(true);
         }
 
         private void resolveColumnIndex(Cursor c) {
@@ -2458,6 +2460,14 @@ public class ConversationView {
             return super.swapCursor(newCursor);
         }
 
+        @Override
+        public long getItemId (int position)
+        {
+            Cursor c = getCursor();
+            c.moveToPosition(position);
+            long chatId =  c.getLong(mIdColumn);
+            return chatId;
+        }
 
         @Override
         public int getItemViewType(int position) {
