@@ -122,7 +122,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 import im.zom.messenger.R;
 
 public class ConversationView {
@@ -716,7 +715,7 @@ public class ConversationView {
 
         });
 
-        ((CircleImageView) mActivity.findViewById(R.id.btnAttachPicture)).setOnClickListener(new View.OnClickListener() {
+        mActivity.findViewById(R.id.btnAttachPicture).setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -725,7 +724,7 @@ public class ConversationView {
 
         });
 
-        ((CircleImageView) mActivity.findViewById(R.id.btnTakePicture)).setOnClickListener(new View.OnClickListener() {
+        mActivity.findViewById(R.id.btnTakePicture).setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -734,7 +733,7 @@ public class ConversationView {
 
         });
 
-        ((CircleImageView) mActivity.findViewById(R.id.btnAttachFile)).setOnClickListener(new View.OnClickListener() {
+        mActivity.findViewById(R.id.btnAttachFile).setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -743,7 +742,7 @@ public class ConversationView {
 
         });
 
-        ((CircleImageView) mActivity.findViewById(R.id.btnAttachSticker)).setOnClickListener(new View.OnClickListener() {
+        mActivity.findViewById(R.id.btnAttachSticker).setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {

@@ -10,4 +10,8 @@
       <attr name="toolbarBackground" format="color" />
       <attr name="inputBackground" format="color"/>      
       <attr name="attachIcon" format="reference"/>
+
+  <declare-styleable name="CircleColorImageView">
+    <attr name="circleColor" format="color"/>
+  </declare-styleable>
 </resources>
