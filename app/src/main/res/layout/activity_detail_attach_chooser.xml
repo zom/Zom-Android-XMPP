@@ -4,17 +4,7 @@
 
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <HorizontalScrollView
-        android:id="@+id/attachPanel"
-        android:layout_width="match_parent"
-        android:layout_height="96dip"
-        android:fillViewport="true"
-        android:measureAllChildren="false"
-        android:scrollbars="none"
-        android:background="@android:color/white"
-        android:layout_gravity="center_vertical"
-        android:gravity="center_vertical"
-        >
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -22,6 +12,7 @@
             android:layout_gravity="center"
             android:gravity="center_vertical|center_horizontal"
             android:orientation="horizontal"
+            android:layout_margin="6dp"
             >
 
 
@@ -68,5 +59,58 @@
                 android:layout_height="64dp"
                 />
         </LinearLayout>
-    </HorizontalScrollView>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center_vertical|center_horizontal"
+        android:orientation="horizontal"
+        android:layout_margin="6dp"
+
+        >
+
+
+        <org.awesomeapp.messenger.ui.CircleColorImageView
+            android:id="@+id/btnAttachPicture"
+            android:src="@drawable/ic_insert_photo_white_36dp"
+            android:layout_margin="3dp"
+            android:padding="6dp"
+
+            app:circleColor="@android:color/holo_green_light"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            />
+
+        <org.awesomeapp.messenger.ui.CircleColorImageView
+            android:id="@+id/btnTakePicture"
+            android:src="@drawable/ic_photo_camera_white_36dp"
+            android:layout_margin="3dp"
+            app:circleColor="@android:color/holo_blue_light"
+            android:padding="6dp"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+
+            />
+
+        <org.awesomeapp.messenger.ui.CircleColorImageView
+            android:id="@+id/btnAttachSticker"
+            android:src="@drawable/ic_insert_emoticon_white_36dp"
+            android:layout_margin="3dp"
+            android:padding="6dp"
+            app:circleColor="@android:color/holo_orange_light"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            />
+
+
+        <org.awesomeapp.messenger.ui.CircleColorImageView
+            android:id="@+id/btnAttachFile"
+            android:src="@drawable/ic_insert_drive_file_white_36dp"
+            android:layout_margin="3dp"
+            android:padding="6dp"
+            app:circleColor="@android:color/holo_red_light"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            />
+    </LinearLayout>
 </LinearLayout>

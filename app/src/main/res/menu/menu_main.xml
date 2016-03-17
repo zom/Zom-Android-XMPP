@@ -5,9 +5,10 @@
 
     <item
         android:id="@+id/menu_search"
+        app:actionViewClass="android.support.v7.widget.SearchView"
         android:icon="@drawable/ic_search_white_24dp"
-        android:title="@string/search_button_text"
-        app:showAsAction="always" />
+        app:showAsAction="always|collapseActionView"
+        android:title="@string/search_by_id"/>
 
     <item
         android:id="@+id/menu_new_account"
