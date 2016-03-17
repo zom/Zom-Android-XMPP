@@ -234,7 +234,7 @@ public class ConversationListFragment extends Fragment {
                 final long messageDate = cursor.getLong(cursor.getColumnIndexOrThrow(Imps.Messages.DATE));
 
                 if (address != null) {
-                    ((ConversationListItem) viewHolder.itemView).bind(viewHolder, chatId, -1, address, nickname, -1, body, messageDate, -1, null, true, false);
+                    ((ConversationListItem) viewHolder.itemView).bind(viewHolder, chatId, -1, address, nickname, -1, body, messageDate, -1, mSearchString, true, false);
 
                     viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                         @Override
