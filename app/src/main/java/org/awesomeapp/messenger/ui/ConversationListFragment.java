@@ -33,6 +33,7 @@ import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
@@ -179,7 +180,7 @@ public class ConversationListFragment extends Fragment {
         {
             Cursor c = getCursor();
             c.moveToPosition(position);
-            long chatId =  c.getLong(ConversationListItem.COLUMN_CONTACT_ID);
+            long chatId = c.getLong(ConversationListItem.COLUMN_CONTACT_ID);
             return chatId;
         }
 
@@ -195,24 +196,60 @@ public class ConversationListFragment extends Fragment {
         @Override
         public void onBindViewHolder(ConversationViewHolder viewHolder, Cursor cursor) {
 
-            final long chatId =  cursor.getLong(ConversationListItem.COLUMN_CONTACT_ID);
-            final String address = cursor.getString(ConversationListItem.COLUMN_CONTACT_USERNAME);
-            final String nickname = cursor.getString(ConversationListItem.COLUMN_CONTACT_NICKNAME);
+            if (TextUtils.isEmpty(mSearchString)) {
 
-            ((ConversationListItem)viewHolder.itemView).bind(viewHolder, cursor, null, true, false);
+                final long chatId = cursor.getLong(ConversationListItem.COLUMN_CONTACT_ID);
+                final String address = cursor.getString(ConversationListItem.COLUMN_CONTACT_USERNAME);
+                final String nickname = cursor.getString(ConversationListItem.COLUMN_CONTACT_NICKNAME);
 
-            viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Context context = v.getContext();
-                    Intent intent = new Intent(context, ConversationDetailActivity.class);
-                    intent.putExtra("id", chatId);
-                    intent.putExtra("address", address);
-                    intent.putExtra("nickname", nickname);
+                final long providerId = cursor.getLong(ConversationListItem.COLUMN_CONTACT_PROVIDER);
 
-                    context.startActivity(intent);
+                final int type = cursor.getInt(ConversationListItem.COLUMN_CONTACT_TYPE);
+                final String lastMsg = cursor.getString(ConversationListItem.COLUMN_LAST_MESSAGE);
+
+                long lastMsgDate = cursor.getLong(ConversationListItem.COLUMN_LAST_MESSAGE_DATE);
+                final int presence = cursor.getInt(ConversationListItem.COLUMN_CONTACT_PRESENCE_STATUS);
+
+                ((ConversationListItem) viewHolder.itemView).bind(viewHolder, chatId, providerId, address, nickname, type, lastMsg, lastMsgDate, presence, null, true, false);
+
+                viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Context context = v.getContext();
+                        Intent intent = new Intent(context, ConversationDetailActivity.class);
+                        intent.putExtra("id", chatId);
+                        intent.putExtra("address", address);
+                        intent.putExtra("nickname", nickname);
+
+                        context.startActivity(intent);
+                    }
+                });
+            }
+            else
+            {
+                final long chatId = cursor.getLong(cursor.getColumnIndexOrThrow(Imps.Messages.THREAD_ID));
+                final String nickname = cursor.getString(cursor.getColumnIndexOrThrow(Imps.Contacts.NICKNAME));
+                final String address = cursor.getString(cursor.getColumnIndexOrThrow(Imps.Messages.CONTACT));
+                final String body = cursor.getString(cursor.getColumnIndexOrThrow(Imps.Messages.BODY));
+                final long messageDate = cursor.getLong(cursor.getColumnIndexOrThrow(Imps.Messages.DATE));
+
+                if (address != null) {
+                    ((ConversationListItem) viewHolder.itemView).bind(viewHolder, chatId, -1, address, nickname, -1, body, messageDate, -1, null, true, false);
+
+                    viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Context context = v.getContext();
+                            Intent intent = new Intent(context, ConversationDetailActivity.class);
+                            intent.putExtra("id", chatId);
+                            intent.putExtra("address", nickname);
+                            intent.putExtra("nickname", nickname);
+
+                            context.startActivity(intent);
+                        }
+                    });
                 }
-            });
+            }
 
 
         }
@@ -221,7 +258,15 @@ public class ConversationListFragment extends Fragment {
 
     }
 
-    String mSearchString = null;
+    static String mSearchString = null;
+
+    public void doSearch (String searchString)
+    {
+        mSearchString = searchString;
+
+        mLoaderManager.restartLoader(mLoaderId, null, mLoaderCallbacks);
+
+    }
 
     class MyLoaderCallbacks implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -231,24 +276,32 @@ public class ConversationListFragment extends Fragment {
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
             StringBuilder buf = new StringBuilder();
 
-            //search nickname, jabber id, or last message
-            if (mSearchString != null) {
+            CursorLoader loader = null;
 
-                buf.append(Imps.Contacts.NICKNAME);
+            //search nickname, jabber id, or last message
+            if (!TextUtils.isEmpty(mSearchString)) {
+
+                mUri = Imps.Messages.CONTENT_URI_MESSAGES_BY_SEARCH;
+
+                buf.append("contacts." + Imps.Contacts.NICKNAME);
                 buf.append(" LIKE ");
                 DatabaseUtils.appendValueToSql(buf, "%" + mSearchString + "%");
                 buf.append(" OR ");
-                buf.append(Imps.Contacts.USERNAME);
-                buf.append(" LIKE ");
-                buf.append(" OR ");
-                DatabaseUtils.appendValueToSql(buf, "%" + mSearchString + "%");
-                buf.append(Imps.Chats.LAST_UNREAD_MESSAGE);
+                buf.append(Imps.Messages.BODY);
                 buf.append(" LIKE ");
                 DatabaseUtils.appendValueToSql(buf, "%" + mSearchString + "%");
+
+                loader = new CursorLoader(getActivity(), mUri, null,
+                        buf == null ? null : buf.toString(), null, Imps.Messages.DEFAULT_SORT_ORDER);
+            }
+            else
+            {
+                mUri = Imps.Contacts.CONTENT_URI_CHAT_CONTACTS_BY;
+                loader = new CursorLoader(getActivity(), mUri, CHAT_PROJECTION,
+                        buf == null ? null : buf.toString(), null, Imps.Contacts.TIME_ORDER);
             }
 
-            CursorLoader loader = new CursorLoader(getActivity(), mUri, CHAT_PROJECTION,
-                    buf == null ? null : buf.toString(), null, Imps.Contacts.TIME_ORDER);
+
 
           //  loader.setUpdateThrottle(1000L);
 

@@ -936,6 +936,10 @@ public class Imps {
         public static final Uri CONTENT_URI_MESSAGES_BY_ACCOUNT_AND_CONTACT = Uri
                 .parse("content://org.awesomeapp.messenger.provider.Imps/messagesByAcctAndContact");
 
+        /** The content:// style URL for messages by account and contact */
+        public static final Uri CONTENT_URI_MESSAGES_BY_SEARCH = Uri
+                .parse("content://org.awesomeapp.messenger.provider.Imps/messagesBySearch");
+
         /** The content:// style URL for messages by provider */
         public static final Uri CONTENT_URI_MESSAGES_BY_PROVIDER = Uri
                 .parse("content://org.awesomeapp.messenger.provider.Imps/messagesByProvider");

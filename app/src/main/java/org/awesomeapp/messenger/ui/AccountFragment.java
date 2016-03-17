@@ -229,13 +229,14 @@ public class AccountFragment extends Fragment {
                  }*/
             }
 
+            /**
             Button btnLock = (Button) mView.findViewById(R.id.btnLock);
             btnLock.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     ((MainActivity) getActivity()).handleLock();
                     }
-            });
+            });*/
         }
 
 

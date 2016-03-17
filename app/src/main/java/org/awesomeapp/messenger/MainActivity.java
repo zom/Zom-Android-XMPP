@@ -18,6 +18,7 @@ package org.awesomeapp.messenger;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.app.SearchManager;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -36,9 +37,11 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -488,11 +491,47 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
+    private SearchView mSearchView;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        mSearchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.menu_search));
+
+        if (mSearchView != null )
+        {
+            mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+            mSearchView.setIconifiedByDefault(false);
+
+            SearchView.OnQueryTextListener queryTextListener = new SearchView.OnQueryTextListener()
+            {
+                public boolean onQueryTextChange(String query)
+                {
+                    mConversationList.doSearch(query);
+                    return true;
+                }
+
+                public boolean onQueryTextSubmit(String query)
+                {
+                    mConversationList.doSearch(query);
+
+                    return true;
+                }
+            };
+
+            mSearchView.setOnQueryTextListener(queryTextListener);
+
+            mSearchView.setOnCloseListener(new SearchView.OnCloseListener() {
+                @Override
+                public boolean onClose() {
+                    mConversationList.doSearch(null);
+                    return false;
+                }
+            });
+        }
+
         return true;
     }
 
