@@ -16,12 +16,10 @@
 package org.awesomeapp.messenger.ui;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -30,27 +28,18 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.RemoteException;
 import android.provider.BaseColumns;
-import android.support.v7.app.ActionBarActivity;
 
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
-import android.text.SpannableString;
-import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.text.util.Linkify;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -77,7 +66,6 @@ import java.util.HashMap;
 import java.util.Locale;
 
 import im.zom.messenger.R;
-import info.guardianproject.netcipher.proxy.OrbotHelper;
 
 public class AccountActivity extends AppCompatActivity {
 
@@ -889,7 +877,7 @@ public class AccountActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_accounts, menu);
+        inflater.inflate(R.menu.menu_account_settings, menu);
 
         if (isEdit) {
             //add delete menu option

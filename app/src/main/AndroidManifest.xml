@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="im.zom.messenger"
     android:installLocation="auto"
     android:sharedUserLabel="@string/perm_label"
@@ -70,7 +71,9 @@
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/ic_launcher_name"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:replace="android:icon,android:allowBackup,android:label"
+        >
         <activity
             android:name="org.awesomeapp.messenger.RouterActivity"
             android:theme="@style/InviteDialog">

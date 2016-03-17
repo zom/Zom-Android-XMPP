@@ -44,7 +44,7 @@
 
     <!-- Views -->
     <string name="lock_screen_open">Open</string>
-    <string name="title_activity_lock_screen">ChatSecure Locked</string>
+    <string name="title_activity_lock_screen">Zom Locked</string>
     <string name="lock_screen_create_passphrase">Set Password</string>
     <string name="lock_screen_confirm_passphrase">Confirm Password</string>
     <string name="lock_screen_passphrase_hint">Password</string>

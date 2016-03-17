@@ -34,12 +34,11 @@ import android.preference.PreferenceActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+import cn.pedant.SweetAlert.*;
 
 public class AccountSettingsActivity extends PreferenceActivity implements
         OnSharedPreferenceChangeListener {
@@ -91,6 +90,23 @@ public class AccountSettingsActivity extends PreferenceActivity implements
 
 
     private void deleteAccount ()
+    {
+        new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE)
+                .setTitleText(getString(R.string.delete_account))
+           //     .setContentText("Won't be able to recover this account!")
+                .setConfirmText(getString(R.string.confirm))
+                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sDialog) {
+                        confirmDeleteAccount();
+                        sDialog.dismissWithAnimation();
+                    }
+                })
+                .show();
+
+    }
+
+    private void confirmDeleteAccount ()
     {
 
         //need to delete
@@ -202,7 +218,7 @@ public class AccountSettingsActivity extends PreferenceActivity implements
             }
         });
 
-        bar.inflateMenu(R.menu.menu_accounts);
+        bar.inflateMenu(R.menu.menu_account_settings);
         bar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
 
             @Override

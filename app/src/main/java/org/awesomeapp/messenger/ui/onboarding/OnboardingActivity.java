@@ -87,9 +87,13 @@ public class OnboardingActivity extends ThemeableActivity {
 
     private static final String USERNAME_ONLY_ALPHANUM = "[^A-Za-z0-9]";
 
+    private boolean mShowSplash = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mShowSplash = getIntent().getBooleanExtra("showSplash",true);
 
         checkCustomFont();
 
@@ -224,7 +228,6 @@ public class OnboardingActivity extends ThemeableActivity {
                             }
 
 
-
                         }
                     });
                     return true;
@@ -317,6 +320,11 @@ public class OnboardingActivity extends ThemeableActivity {
 
         });
 
+        if (!mShowSplash)
+        {
+            setAnimLeft();
+            showOnboarding();
+        }
     }
 
     private void setAnimLeft ()
@@ -374,7 +382,10 @@ public class OnboardingActivity extends ThemeableActivity {
         }
         else if (mViewFlipper.getCurrentView().getId()==R.id.flipViewLogin)
         {
-            showSplashScreen();
+            if (mShowSplash)
+                showSplashScreen();
+            else
+                finish();
         }
         else if (mViewFlipper.getCurrentView().getId()==R.id.flipViewAdvanced)
         {

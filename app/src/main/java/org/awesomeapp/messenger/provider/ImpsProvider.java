@@ -1808,8 +1808,12 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
             if (c != null) {
                 switch (match) {
                 case MATCH_CHATTING_CONTACTS:
-                case MATCH_CONTACTS_BY_PROVIDER:
                 case MATCH_CHATTING_CONTACTS_BY_PROVIDER:
+
+                    url = Contacts.CONTENT_URI_CHAT_CONTACTS_BY;
+                    break;
+
+                case MATCH_CONTACTS_BY_PROVIDER:
                 case MATCH_ONLINE_CONTACTS_BY_PROVIDER:
                 case MATCH_OFFLINE_CONTACTS_BY_PROVIDER:
                 case MATCH_CONTACTS_BAREBONE:

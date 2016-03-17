@@ -155,7 +155,7 @@ public class ConversationListFragment extends Fragment {
     private void endConversation (long itemId)
     {
         Uri chatUri = ContentUris.withAppendedId(Imps.Chats.CONTENT_URI, itemId);
-        getActivity().getContentResolver().delete(chatUri,null,null);
+        getActivity().getContentResolver().delete(chatUri, null, null);
 
     }
 
@@ -171,7 +171,18 @@ public class ConversationListFragment extends Fragment {
             context.getTheme().resolveAttribute(R.attr.selectableItemBackground, mTypedValue, true);
             mBackground = mTypedValue.resourceId;
             mContext = context;
+
+            setHasStableIds(true);
         }
+
+        public long getItemId (int position)
+        {
+            Cursor c = getCursor();
+            c.moveToPosition(position);
+            long chatId =  c.getLong(ConversationListItem.COLUMN_CONTACT_ID);
+            return chatId;
+        }
+
 
         @Override
         public ConversationViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -213,6 +224,9 @@ public class ConversationListFragment extends Fragment {
     String mSearchString = null;
 
     class MyLoaderCallbacks implements LoaderManager.LoaderCallbacks<Cursor> {
+
+        private int mLastCount = 0;
+
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
             StringBuilder buf = new StringBuilder();
@@ -236,7 +250,7 @@ public class ConversationListFragment extends Fragment {
             CursorLoader loader = new CursorLoader(getActivity(), mUri, CHAT_PROJECTION,
                     buf == null ? null : buf.toString(), null, Imps.Contacts.TIME_ORDER);
 
-            loader.setUpdateThrottle(1000L);
+          //  loader.setUpdateThrottle(1000L);
 
             return loader;
         }
@@ -254,18 +268,22 @@ public class ConversationListFragment extends Fragment {
                 mRecView.setAdapter(mAdapter);
 
 
-            if (mAdapter.getItemCount() == 0) {
-                mRecView.setVisibility(View.GONE);
-                mEmptyView.setVisibility(View.VISIBLE);
-                mEmptyViewImage.setVisibility(View.VISIBLE);
-
-            }
-            else {
+            if (mLastCount == 0 && mAdapter.getItemCount() > 0)
+            {
                 mRecView.setVisibility(View.VISIBLE);
                 mEmptyView.setVisibility(View.GONE);
                 mEmptyViewImage.setVisibility(View.GONE);
 
             }
+            else if (mAdapter.getItemCount() == 0) {
+                mRecView.setVisibility(View.GONE);
+                mEmptyView.setVisibility(View.VISIBLE);
+                mEmptyViewImage.setVisibility(View.VISIBLE);
+
+            }
+
+            mLastCount = mAdapter.getItemCount();
+
         }
 
         @Override
