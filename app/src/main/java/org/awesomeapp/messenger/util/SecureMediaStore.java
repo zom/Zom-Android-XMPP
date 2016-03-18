@@ -211,12 +211,12 @@ public class SecureMediaStore {
      * @throws IOException
      */
     public static Uri importContent(String sessionId, String sourcePath) throws IOException {
-        list("/");
+        //list("/");
         File sourceFile = new File(sourcePath);
         String targetPath = "/" + sessionId + "/upload/" + sourceFile.getName();
         targetPath = createUniqueFilename(targetPath);
         copyToVfs( sourcePath, targetPath );
-        list("/");
+        //list("/");
         return vfsUri(targetPath);
     }
     
@@ -230,11 +230,11 @@ public class SecureMediaStore {
      * @throws IOException
      */
     public static Uri importContent(String sessionId, String fileName, InputStream sourceStream) throws IOException {
-        list("/");
+        //list("/");
         String targetPath = "/" + sessionId + "/upload/" + fileName;
         targetPath = createUniqueFilename(targetPath);
         copyToVfs( sourceStream, targetPath );
-        list("/");
+        //list("/");
         return vfsUri(targetPath);
     }
 

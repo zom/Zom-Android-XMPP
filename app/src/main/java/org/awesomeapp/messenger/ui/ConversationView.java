@@ -115,9 +115,11 @@ import org.awesomeapp.messenger.ui.stickers.StickerSelectListener;
 import org.awesomeapp.messenger.ui.widgets.MessageViewHolder;
 import org.awesomeapp.messenger.ui.widgets.RoundedAvatarDrawable;
 import org.awesomeapp.messenger.util.Debug;
+import org.awesomeapp.messenger.util.GiphyAPI;
 import org.awesomeapp.messenger.util.LogCleaner;
 import org.awesomeapp.messenger.util.SystemServices;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -1797,6 +1799,11 @@ public class ConversationView {
             return false;
         }
 
+        if (msg.startsWith("/giphy "))
+        {
+            return doGiphy(msg);
+        }
+
         IChatSession session = getChatSession();
 
         if (session == null)
@@ -1819,6 +1826,50 @@ public class ConversationView {
         }
 
         return false;
+    }
+
+    private static GiphyAPI.Monitor mMonitor = null;
+
+    private synchronized boolean doGiphy (String search)
+    {
+        mMonitor = new GiphyAPI.Monitor() {
+
+            public void onSearchComplete(GiphyAPI.SearchResult result) {
+
+                if (result.data != null && result.data.length > 0) {
+
+                    final GiphyAPI.GifImage gifResult = result.data[0].images.original;
+
+                    new Thread() {
+                        public void run() {
+
+                            mActivity.handleSendDelete(getChatSession(), Uri.parse(gifResult.url), "image/gif", false, false, true);
+                        }
+                    }.start();
+
+
+                }
+                else
+                {
+                    Toast.makeText(mActivity,"No giphy stickers available for your search",Toast.LENGTH_SHORT).show();
+                }
+
+                GiphyAPI.get().removeMonitor(mMonitor);
+                mMonitor = null;
+
+            }
+        };
+
+        GiphyAPI.get().addMonitor(mMonitor);
+
+
+        try {
+            GiphyAPI.get().search(URLEncoder.encode(search.substring(7).trim(), "UTF-8"));
+
+        }
+        catch (Exception e){}
+
+        return true;
     }
 
     void registerChatListener() {

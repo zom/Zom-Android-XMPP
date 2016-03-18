@@ -62,7 +62,7 @@ public class SessionImpl implements Session {
     private long lastStart;
     private OtrAssembler assembler;
 
-    private final static boolean DEBUG_ENABLED = true;
+    private final static boolean DEBUG_ENABLED = false;
     private final static String LOG_TAG = "OTR4J";
 
     public SessionImpl(SessionID sessionID, OtrEngineHost listener) {

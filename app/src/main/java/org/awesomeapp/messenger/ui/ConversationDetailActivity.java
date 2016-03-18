@@ -54,6 +54,9 @@ import org.awesomeapp.messenger.provider.Imps;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Date;
@@ -418,7 +421,12 @@ public class ConversationDetailActivity extends AppCompatActivity {
         return list.size() > 0;
     }
 
-    public void handleSendDelete( Uri contentUri, String defaultType, boolean delete, boolean resizeImage, boolean importContent) {
+    public void handleSendDelete(Uri contentUri, String defaultType, boolean delete, boolean resizeImage, boolean importContent) {
+
+        handleSendDelete(mConvoView.getChatSession(),contentUri,defaultType,delete,resizeImage,importContent);
+    }
+
+    public void handleSendDelete(IChatSession session, Uri contentUri, String defaultType, boolean delete, boolean resizeImage, boolean importContent) {
         try {
 
             // import
@@ -436,6 +444,10 @@ public class ConversationDetailActivity extends AppCompatActivity {
 
                 if (contentUri.getScheme() == null || contentUri.getScheme().equals("assets"))
                     vfsUri = SecureMediaStore.importContent(sessionId, info.path,getResources().getAssets().open(info.path));
+                else if (contentUri.getScheme().startsWith("http"))
+                {
+                    vfsUri = SecureMediaStore.importContent(sessionId,contentUri.getLastPathSegment(), new URL(contentUri.toString()).openConnection().getInputStream());
+                }
                 else
                     vfsUri = SecureMediaStore.importContent(sessionId, info.path);
             }
@@ -445,7 +457,7 @@ public class ConversationDetailActivity extends AppCompatActivity {
             }
 
             // send
-            boolean sent = handleSendData(vfsUri, info.type);
+            boolean sent = handleSendData(session, vfsUri, info.type);
             if (!sent) {
                 // not deleting if not sent
                 return;
@@ -553,7 +565,7 @@ public class ConversationDetailActivity extends AppCompatActivity {
         }
     }
 
-    public boolean handleSendData(Uri uri, String mimeType) {
+    public boolean handleSendData(IChatSession session, Uri uri, String mimeType) {
         try {
             SystemServices.FileInfo info = SystemServices.getFileInfoFromURI(this, uri);
 
@@ -561,8 +573,6 @@ public class ConversationDetailActivity extends AppCompatActivity {
                 info.type = mimeType;
 
             //if (info != null && info.path != null && SecureMediaStore.exists(info.path))
-
-            IChatSession session = mConvoView.getChatSession();
 
             if (session != null) {
                 if (info.type == null)
