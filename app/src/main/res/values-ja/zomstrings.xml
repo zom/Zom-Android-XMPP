@@ -1,18 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
   <string name="app_name_zom">ChatSecure</string>
-  <string name="next_action">次へ</string>
-  <string name="cancel_action">キャンセル</string>
-  <string name="accept_action">承認</string>
-  <string name="sign_in_action">ログイン</string>
-  <string name="settings_action">設定</string>
   <string name="send_message">メッセージを送信</string>
-  <string name="delete_action">削除</string>
   <string name="me_title">自分</string>
-  <string name="profile">プロフィール</string>
-  <string name="password">パスワード</string>
   <string name="add_account_action">アカウントを追加</string>
-  <string name="blocked">ブロック</string>
-  <string name="language">言語</string>
-  <string name="about">アプリについて</string>
-</resources>
+  </resources>

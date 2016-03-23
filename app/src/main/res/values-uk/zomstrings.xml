@@ -1,18 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
   <string name="app_name_zom">ChatSecure</string>
-  <string name="next_action">Далі</string>
-  <string name="cancel_action">Скасувати</string>
-  <string name="accept_action">Прийняти</string>
-  <string name="sign_in_action">Увійти</string>
-  <string name="settings_action">Налаштування</string>
   <string name="send_message">Надіслати повідомлення</string>
-  <string name="delete_action">Вилучити</string>
   <string name="me_title">Я</string>
-  <string name="profile">Профіль</string>
-  <string name="password">Пароль</string>
   <string name="add_account_action">Додати екаунт</string>
-  <string name="blocked">Заблоковано</string>
-  <string name="language">Мова</string>
-  <string name="about">Про програму</string>
-</resources>
+  </resources>

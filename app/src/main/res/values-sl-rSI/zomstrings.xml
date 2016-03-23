@@ -1,16 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
   <string name="app_name_zom">ChatSecure</string>
-  <string name="next_action">Naprej</string>
-  <string name="cancel_action">Prekini</string>
-  <string name="accept_action">Sprejmi</string>
-  <string name="sign_in_action">Prijavi se</string>
-  <string name="settings_action">Nastavitve</string>
-  <string name="delete_action">Zbriši</string>
   <string name="me_title">Jaz</string>
-  <string name="profile">Profil</string>
   <string name="add_account_action">Dodaj račun</string>
-  <string name="blocked">Blokiran</string>
-  <string name="language">Jezik</string>
-  <string name="about">O programu</string>
-</resources>
+  </resources>

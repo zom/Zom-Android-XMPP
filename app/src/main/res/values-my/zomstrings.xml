@@ -1,14 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
-  <string name="next_action">ရှေ့သို့</string>
-  <string name="cancel_action">ပယ်ဖျက်</string>
-  <string name="accept_action">လက်ခံ</string>
-  <string name="sign_in_action">ဝင်ရောက်</string>
-  <string name="settings_action">ဆက်တင်</string>
   <string name="me_title">ကျွန်ုပ်</string>
-  <string name="profile">ပရိုဖိုင်</string>
   <string name="add_account_action">အကောင့်ပေါင်းထည့်</string>
-  <string name="blocked">ပိတ်ထားသော</string>
-  <string name="language">ဘာသာစကား</string>
-  <string name="about">အကြောင်း</string>
-</resources>
+  </resources>

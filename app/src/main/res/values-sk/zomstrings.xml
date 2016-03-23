@@ -1,12 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
-  <string name="cancel_action">Zrušiť</string>
-  <string name="accept_action">Prijať</string>
-  <string name="sign_in_action">Prihlásiť sa</string>
-  <string name="settings_action">Nastavenie</string>
   <string name="me_title">Mňa</string>
-  <string name="profile">Profil</string>
   <string name="add_account_action">Pridať účet</string>
-  <string name="blocked">Blokované</string>
-  <string name="language">Jazyk</string>
-</resources>
+  </resources>

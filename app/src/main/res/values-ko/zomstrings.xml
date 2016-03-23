@@ -1,14 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
-  <string name="next_action">다음</string>
-  <string name="cancel_action">취소</string>
-  <string name="accept_action">수락</string>
-  <string name="sign_in_action">로그인</string>
-  <string name="settings_action">설정</string>
   <string name="me_title">나</string>
-  <string name="profile">프로필</string>
   <string name="add_account_action">계정 추가</string>
-  <string name="blocked">차단 목록</string>
-  <string name="language">언어</string>
-  <string name="about">이 앱에 대하여</string>
-</resources>
+  </resources>

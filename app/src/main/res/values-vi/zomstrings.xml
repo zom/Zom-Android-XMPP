@@ -1,18 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
   <string name="app_name_zom">ChatSecure</string>
-  <string name="next_action">Tiếp Theo</string>
-  <string name="cancel_action">Hủy Bỏ</string>
-  <string name="accept_action">Chấp thuận</string>
-  <string name="sign_in_action">Đăng nhập</string>
-  <string name="settings_action">Điều chỉnh</string>
   <string name="send_message">Gửi một tin nhắn</string>
-  <string name="delete_action">Xóa</string>
   <string name="me_title">Tôi</string>
-  <string name="profile">Hồ sơ</string>
-  <string name="password">Mật khẩu</string>
   <string name="add_account_action">Thêm tài khoản</string>
-  <string name="blocked">Đã chặn</string>
-  <string name="language">Ngôn Ngữ</string>
-  <string name="about">Thông tin</string>
-</resources>
+  </resources>

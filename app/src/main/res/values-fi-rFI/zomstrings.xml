@@ -1,17 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
   <string name="app_name_zom">ChatSecure</string>
-  <string name="next_action">Seuraava</string>
-  <string name="cancel_action">Peruuta</string>
-  <string name="accept_action">Hyväksy</string>
-  <string name="sign_in_action">Kirjaudu sisään</string>
-  <string name="settings_action">Asetukset</string>
-  <string name="delete_action">Poista</string>
   <string name="me_title">Minä</string>
-  <string name="profile">Profiili</string>
-  <string name="password">Salasana</string>
   <string name="add_account_action">Lisää tili</string>
-  <string name="blocked">Estetty</string>
-  <string name="language">Kieli</string>
-  <string name="about">Tietoa</string>
-</resources>
+  </resources>

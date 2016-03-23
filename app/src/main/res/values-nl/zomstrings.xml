@@ -1,18 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
   <string name="app_name_zom">ChatSecure</string>
-  <string name="next_action">Verder</string>
-  <string name="cancel_action">Annuleren</string>
-  <string name="accept_action">Accepteren</string>
-  <string name="sign_in_action">Aanmelden</string>
-  <string name="settings_action">Instellingen</string>
   <string name="send_message">Verstuur een bericht</string>
-  <string name="delete_action">Verwijderen</string>
   <string name="me_title">Ik</string>
-  <string name="profile">Profiel</string>
-  <string name="password">Wachtwoord</string>
   <string name="add_account_action">Account toevoegen</string>
-  <string name="blocked">Geblokkeerd</string>
-  <string name="language">Taal</string>
-  <string name="about">Over</string>
-</resources>
+  </resources>

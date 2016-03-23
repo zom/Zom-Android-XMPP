@@ -1,18 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
   <string name="app_name_zom">ChatSecure</string>
-  <string name="next_action">Nästa</string>
-  <string name="cancel_action">Avbryt</string>
-  <string name="accept_action">Acceptera</string>
-  <string name="sign_in_action">Logga in</string>
-  <string name="settings_action">Inställningar</string>
   <string name="send_message">Skicka ett meddelande</string>
-  <string name="delete_action">Radera</string>
   <string name="me_title">Jag</string>
-  <string name="profile">Profil</string>
-  <string name="password">Lösenord</string>
   <string name="add_account_action">Lägg till konto</string>
-  <string name="blocked">Blockerad</string>
-  <string name="language">Språk</string>
-  <string name="about">Om</string>
-</resources>
+  </resources>

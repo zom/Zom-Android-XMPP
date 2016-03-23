@@ -13,9 +13,6 @@
   <!--Views: About: Security-->
   <!--Views: Account list-->
   <!--Views: Setup: Account-->
-  <string name="label_username">User@Host</string>
-  <string name="label_password">סיסמה</string>
-  <string name="account_setup_personal_profile_sub">פתק קצר עליך</string>
   <!--Views: Settings: Account-->
   <!--Views: Contact list-->
   <!--Views: Chat: Single-->

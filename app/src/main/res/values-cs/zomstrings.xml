@@ -1,18 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
   <string name="app_name_zom">ChatSecure</string>
-  <string name="next_action">Další</string>
-  <string name="cancel_action">Zrušit</string>
-  <string name="accept_action">Přijmout</string>
-  <string name="sign_in_action">Přihlásit se</string>
-  <string name="settings_action">Nastavení</string>
   <string name="send_message">Poslat zprávu</string>
-  <string name="delete_action">Smazat</string>
   <string name="me_title">Já</string>
-  <string name="profile">Profil</string>
-  <string name="password">Heslo</string>
   <string name="add_account_action">Přidat účet</string>
-  <string name="blocked">Blokovaní uživatelé</string>
-  <string name="language">Jazyk</string>
-  <string name="about">O</string>
-</resources>
+  </resources>

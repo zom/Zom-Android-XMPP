@@ -1,18 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
   <string name="app_name_zom">ChatSecure</string>
-  <string name="next_action">Dalej</string>
-  <string name="cancel_action">Anuluj</string>
-  <string name="accept_action">Zaakceptuj</string>
-  <string name="sign_in_action">Zaloguj</string>
-  <string name="settings_action">Ustawienia</string>
   <string name="send_message">Wyślij wiadomość</string>
-  <string name="delete_action">Usuń</string>
   <string name="me_title">Ja</string>
-  <string name="profile">Profil</string>
-  <string name="password">Hasło</string>
   <string name="add_account_action">Dodaj konto</string>
-  <string name="blocked">Zablokowano</string>
-  <string name="language">Język</string>
-  <string name="about">O ChatSecure</string>
-</resources>
+  </resources>
