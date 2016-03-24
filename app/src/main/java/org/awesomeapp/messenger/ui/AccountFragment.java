@@ -84,6 +84,11 @@ public class AccountFragment extends Fragment {
     ImageView ivScan;
     View mView;
 
+    long mProviderId;
+    long mAccountId;
+    String mUserAddress;
+    String mUserKey;
+
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -113,6 +118,7 @@ public class AccountFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
     }
 
     @Override
@@ -121,13 +127,15 @@ public class AccountFragment extends Fragment {
         // Inflate the layout for this fragment
 
         mApp = ((ImApp) getActivity().getApplication());
+        mProviderId = mApp.getDefaultProviderId();
+        mAccountId = mApp.getDefaultAccountId();
+        mUserAddress = mApp.getDefaultUsername();
+        mUserKey = mApp.getDefaultOtrKey();
 
        mView = inflater.inflate(R.layout.awesome_fragment_account, container, false);
 
-        String fullUserName = mApp.getDefaultUsername();
-
-        if (!TextUtils.isEmpty(fullUserName)) {
-            XmppAddress xAddress = new XmppAddress(fullUserName);
+        if (!TextUtils.isEmpty(mUserAddress)) {
+            XmppAddress xAddress = new XmppAddress(mUserAddress);
 
             TextView tvNickname = (TextView) mView.findViewById(R.id.tvNickname);
 
@@ -138,7 +146,7 @@ public class AccountFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
 
-                    mTvPassword.setText(getAccountPassword(mApp.getDefaultProviderId()));
+                    mTvPassword.setText(getAccountPassword(mProviderId));
                 }
             });
 
@@ -153,7 +161,7 @@ public class AccountFragment extends Fragment {
 
                     String inviteString;
                     try {
-                        inviteString = OnboardingManager.generateInviteLink(getActivity(), mApp.getDefaultUsername(), mApp.getDefaultOtrKey());
+                        inviteString = OnboardingManager.generateInviteLink(getActivity(), mUserAddress, mUserKey);
                         OnboardingManager.inviteScan(getActivity(), inviteString);
                     } catch (IOException e) {
                         // TODO Auto-generated catch block
@@ -181,7 +189,7 @@ public class AccountFragment extends Fragment {
                 public void onClick(View v) {
 
                     try {
-                        String inviteLink = OnboardingManager.generateInviteLink(getActivity(), mApp.getDefaultUsername(), mApp.getDefaultOtrKey());
+                        String inviteLink = OnboardingManager.generateInviteLink(getActivity(), mUserAddress, mUserKey);
                         new QrShareAsyncTask(getActivity()).execute(inviteLink);
                     } catch (IOException ioe) {
                         Log.e(ImApp.LOG_TAG, "couldn't generate QR code", ioe);
@@ -206,7 +214,7 @@ public class AccountFragment extends Fragment {
 
             try {
 
-                Drawable avatar = DatabaseUtils.getAvatarFromAddress(mApp.getContentResolver(), fullUserName, ImApp.DEFAULT_AVATAR_WIDTH, ImApp.DEFAULT_AVATAR_HEIGHT, false);
+                Drawable avatar = DatabaseUtils.getAvatarFromAddress(mApp.getContentResolver(), mUserAddress, ImApp.DEFAULT_AVATAR_WIDTH, ImApp.DEFAULT_AVATAR_HEIGHT, false);
 
                 if (avatar != null)
                     mIvAvatar.setImageDrawable(avatar);
@@ -214,11 +222,11 @@ public class AccountFragment extends Fragment {
                 Log.w(ImApp.LOG_TAG, "error getting avatar", e);
             }
 
-            tvUsername.setText(fullUserName);
+            tvUsername.setText(mUserAddress);
             tvNickname.setText(xAddress.getUser());
 
-            if (mApp.getDefaultOtrKey() != null) {
-                tvFingerprint.setText(prettyPrintFingerprint(mApp.getDefaultOtrKey()));
+            if (mUserKey != null) {
+                tvFingerprint.setText(prettyPrintFingerprint(mUserKey));
 
                 /**
                  try {
@@ -245,7 +253,7 @@ public class AccountFragment extends Fragment {
 
     private boolean checkConnection() {
         try {
-            IImConnection conn = mApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
+            IImConnection conn = mApp.getConnection(mProviderId, mAccountId);
 
             if (conn.getState() == ImConnection.DISCONNECTED)
                 return false;
@@ -332,13 +340,9 @@ public class AccountFragment extends Fragment {
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             bmp.compress(Bitmap.CompressFormat.JPEG, 90, stream);
 
-            long providerId = app.getDefaultProviderId();
-            long accountId = app.getDefaultAccountId();
             byte[] avatarBytesCompressed = stream.toByteArray();
             String avatarHash = "nohash";
-            String userAddress = app.getDefaultUsername();
-
-            DatabaseUtils.insertAvatarBlob(getActivity().getContentResolver(), Imps.Avatars.CONTENT_URI, providerId, accountId, avatarBytesCompressed, avatarHash, userAddress);
+            DatabaseUtils.insertAvatarBlob(getActivity().getContentResolver(), Imps.Avatars.CONTENT_URI, mProviderId, mAccountId, avatarBytesCompressed, avatarHash, mUserAddress);
         } catch (Exception e) {
             Log.w(ImApp.LOG_TAG, "error loading image bytes", e);
         }
@@ -484,7 +488,7 @@ public class AccountFragment extends Fragment {
             }
         });
 
-        helper.signIn(getAccountPassword(mApp.getDefaultProviderId()), mApp.getDefaultProviderId(), mApp.getDefaultAccountId(),true);
+        helper.signIn(getAccountPassword(mProviderId), mProviderId, mAccountId,true);
 
     }
 
@@ -492,8 +496,8 @@ public class AccountFragment extends Fragment {
         //if you are signing out, then we will deactive "auto" sign in
         ContentValues values = new ContentValues();
         values.put(Imps.AccountColumns.KEEP_SIGNED_IN, 0);
-        getActivity().getContentResolver().update(ContentUris.withAppendedId(Imps.Account.CONTENT_URI, mApp.getDefaultAccountId()), values, null, null);
-        signOut(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
+        getActivity().getContentResolver().update(ContentUris.withAppendedId(Imps.Account.CONTENT_URI, mAccountId), values, null, null);
+        signOut(mProviderId, mAccountId);
         ;
     }
 
@@ -501,7 +505,7 @@ public class AccountFragment extends Fragment {
 
         try {
 
-            IImConnection conn = mApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
+            IImConnection conn = mApp.getConnection(mProviderId, mAccountId);
             if (conn != null) {
                 conn.logout();
             } else {
