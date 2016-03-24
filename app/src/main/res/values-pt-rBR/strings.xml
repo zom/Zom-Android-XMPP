@@ -7,8 +7,6 @@
   <string name="cancel">Cancelar</string>
   <string name="yes">OK</string>
   <string name="no">Cancelar</string>
-  <string name="btn_next">Próximo</string>
-  <string name="btn_back">Anterior</string>
   <!--Views-->
   <!--Views: Setup-->
   <string name="menu_about">Sobre</string>
@@ -20,7 +18,6 @@
   <!--Views: Settings: Account-->
   <!--Views: Contact list-->
   <string name="menu_view_blocked">Bloqueado</string>
-  <string name="search_button_text">Vai</string>
   <!--Views: Chat: Single-->
   <!--Views: Chat: Group-->
   <string name="accept_invitation">Aceitar</string>
@@ -43,7 +40,6 @@
   <!--Alerts: Notifications-->
   <!--Alerts: Exceptions-->
   <!--added 2011/09/01-->
-  <string name="menu_panic">Pânico</string>
   <!--Other-->
   <!--Other: Slide Menu-->
   <string name="menu_settings">Configurações</string>

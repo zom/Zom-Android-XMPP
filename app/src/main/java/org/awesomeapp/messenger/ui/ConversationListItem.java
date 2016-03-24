@@ -107,28 +107,14 @@ public class ConversationListItem extends FrameLayout {
 
     }
 
-
+/**
     public void bind(ConversationViewHolder holder, Cursor cursor, String underLineText, boolean scrolling) {
         bind(holder, cursor, underLineText, true, scrolling);
     }
+*/
 
-    public void bind(ConversationViewHolder holder, Cursor cursor, String underLineText, boolean showChatMsg, boolean scrolling) {
+    public void bind(ConversationViewHolder holder, long contactId, long providerId, String address, String nickname, int contactType, String message, long messageDate, int presence, String underLineText, boolean showChatMsg, boolean scrolling) {
 
-        final long providerId = cursor.getLong(COLUMN_CONTACT_PROVIDER);
-        final String address = cursor.getString(COLUMN_CONTACT_USERNAME);
-
-        String nickname = cursor.getString(COLUMN_CONTACT_NICKNAME);
-
-        final int type = cursor.getInt(COLUMN_CONTACT_TYPE);
-        final String lastMsg = cursor.getString(COLUMN_LAST_MESSAGE);
-
-        long lastMsgDate = cursor.getLong(COLUMN_LAST_MESSAGE_DATE);
-        final int presence = cursor.getInt(COLUMN_CONTACT_PRESENCE_STATUS);
-
-        final int subType = cursor.getInt(COLUMN_SUBSCRIPTION_TYPE);
-        final int subStatus = cursor.getInt(COLUMN_SUBSCRIPTION_STATUS);
-
-        String statusText = cursor.getString(COLUMN_CONTACT_CUSTOM_STATUS);
 
         if (nickname == null)
         {
@@ -139,9 +125,9 @@ public class ConversationListItem extends FrameLayout {
             nickname = nickname.split("@")[0];
         }
 
-        if (Imps.Contacts.TYPE_GROUP == type) {
+        if (Imps.Contacts.TYPE_GROUP == contactType) {
 
-            String groupCountString = getGroupCount(getContext().getContentResolver(), cursor.getLong(COLUMN_CONTACT_ID));
+            String groupCountString = getGroupCount(getContext().getContentResolver(), contactId);
             nickname += groupCountString;
         }
 
@@ -168,7 +154,7 @@ public class ConversationListItem extends FrameLayout {
 
         if (holder.mAvatar != null)
         {
-            if (Imps.Contacts.TYPE_GROUP == type) {
+            if (Imps.Contacts.TYPE_GROUP == contactType) {
 
                 holder.mAvatar.setVisibility(View.VISIBLE);
 
@@ -181,16 +167,16 @@ public class ConversationListItem extends FrameLayout {
 
 
             }
-            else if (cursor.getColumnIndex(Imps.Contacts.AVATAR_DATA)!=-1)
-            {
+         //   else if (cursor.getColumnIndex(Imps.Contacts.AVATAR_DATA)!=-1)
+           else {
 //                holder.mAvatar.setVisibility(View.GONE);
 
-                RoundedAvatarDrawable avatar = null;
+                Drawable avatar = null;
 
                 try
                 {
-                  //  avatar = DatabaseUtils.getAvatarFromAddress(this.getContext().getContentResolver(),address, ImApp.DEFAULT_AVATAR_WIDTH,ImApp.DEFAULT_AVATAR_HEIGHT);
-                   avatar = DatabaseUtils.getAvatarFromCursor(cursor, COLUMN_AVATAR_DATA, ImApp.SMALL_AVATAR_WIDTH, ImApp.SMALL_AVATAR_HEIGHT);
+                    avatar = DatabaseUtils.getAvatarFromAddress(this.getContext().getContentResolver(), address, ImApp.DEFAULT_AVATAR_WIDTH, ImApp.DEFAULT_AVATAR_HEIGHT);
+                  // avatar = DatabaseUtils.getAvatarFromCursor(cursor, COLUMN_AVATAR_DATA, ImApp.SMALL_AVATAR_WIDTH, ImApp.SMALL_AVATAR_HEIGHT);
                 }
                 catch (Exception e)
                 {
@@ -202,7 +188,9 @@ public class ConversationListItem extends FrameLayout {
                 {
                     if (avatar != null)
                     {
-                        setAvatarBorder(presence,avatar);
+                        if (avatar instanceof RoundedAvatarDrawable)
+                            setAvatarBorder(presence,(RoundedAvatarDrawable)avatar);
+
                         holder.mAvatar.setImageDrawable(avatar);
                     }
                     else
@@ -230,24 +218,16 @@ public class ConversationListItem extends FrameLayout {
                 }
 
             }
-            else
-            {
-                //holder.mAvatar.setImageDrawable(getContext().getResources().getDrawable(R.drawable.avatar_unknown));
-                holder.mAvatar.setVisibility(View.GONE);
-
-
-
-            }
         }
 
-        if (showChatMsg && lastMsg != null) {
+        if (showChatMsg && message != null) {
 
 
             if (holder.mLine2 != null)
             {
-                if (SecureMediaStore.isVfsUri(lastMsg))
+                if (SecureMediaStore.isVfsUri(message))
                 {
-                    FileInfo fInfo = SystemServices.getFileInfoFromURI(getContext(), Uri.parse(lastMsg));
+                    FileInfo fInfo = SystemServices.getFileInfoFromURI(getContext(), Uri.parse(message));
                     
                     if (fInfo.type == null || fInfo.type.startsWith("image"))
                     {
@@ -266,7 +246,7 @@ public class ConversationListItem extends FrameLayout {
 
                             }
 
-                            setThumbnail(getContext().getContentResolver(), holder, Uri.parse(lastMsg));
+                            setThumbnail(getContext().getContentResolver(), holder, Uri.parse(message));
 
                                     holder.mLine2.setVisibility(View.GONE);
                                     
@@ -278,9 +258,9 @@ public class ConversationListItem extends FrameLayout {
                     }
 
                 }
-                else if (lastMsg.length()>1 && lastMsg.charAt(0) == '/')
+                else if (message.length()>1 && message.charAt(0) == '/')
                 {
-                    String cmd = lastMsg.toString().substring(1);
+                    String cmd = message.toString().substring(1);
 
                     if (cmd.startsWith("sticker"))
                     {
@@ -305,15 +285,15 @@ public class ConversationListItem extends FrameLayout {
 
 
                     try {
-                        holder.mLine2.setText(android.text.Html.fromHtml(lastMsg).toString());
+                        holder.mLine2.setText(android.text.Html.fromHtml(message).toString());
                     }
                     catch (RuntimeException re){}
                 }
             }
 
-            if (lastMsgDate != -1)
+            if (messageDate != -1)
             {
-                Date dateLast = new Date(lastMsgDate);
+                Date dateLast = new Date(messageDate);
                 holder.mStatusText.setText(sPrettyTime.format(dateLast));
 
             }
@@ -325,8 +305,7 @@ public class ConversationListItem extends FrameLayout {
         }
         else if (holder.mLine2 != null)
         {
-            statusText = address;
-            holder.mLine2.setText(statusText);
+            holder.mLine2.setText(address);
 
             if (holder.mMediaThumb != null)
                 holder.mMediaThumb.setVisibility(View.GONE);
@@ -334,7 +313,8 @@ public class ConversationListItem extends FrameLayout {
 
         holder.mLine1.setVisibility(View.VISIBLE);
 
-        getEncryptionState (providerId, address, holder);
+        if (providerId != -1)
+            getEncryptionState (providerId, address, holder);
     }
 
     private void getEncryptionState (long providerId, String address, ConversationViewHolder holder)
@@ -382,29 +362,24 @@ public class ConversationListItem extends FrameLayout {
         switch (status) {
         case Presence.AVAILABLE:
             avatar.setBorderColor(getResources().getColor(R.color.holo_green_light));
-            avatar.setAlpha(255);
             break;
 
         case Presence.IDLE:
             avatar.setBorderColor(getResources().getColor(R.color.holo_green_dark));
-            avatar.setAlpha(255);
 
             break;
 
         case Presence.AWAY:
             avatar.setBorderColor(getResources().getColor(R.color.holo_orange_light));
-            avatar.setAlpha(255);
             break;
 
         case Presence.DO_NOT_DISTURB:
             avatar.setBorderColor(getResources().getColor(R.color.holo_red_dark));
-            avatar.setAlpha(255);
 
             break;
 
         case Presence.OFFLINE:
             avatar.setBorderColor(getResources().getColor(android.R.color.transparent));
-            avatar.setAlpha(100);
             break;
 
 

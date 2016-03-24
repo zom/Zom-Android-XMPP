@@ -2,6 +2,7 @@ package org.awesomeapp.messenger.ui;
 
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.text.TextUtils;
@@ -12,6 +13,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import org.awesomeapp.messenger.ImApp;
+import org.awesomeapp.messenger.ui.widgets.ImageViewActivity;
 import org.awesomeapp.messenger.util.SecureMediaStore;
 
 import java.io.File;
@@ -39,7 +41,7 @@ public class GalleryMediaViewHolder extends MediaViewHolder
         mMediaThumbnail.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //   onClickMediaIcon( mimeType, mediaUri );
+                   onClickMediaIcon( mimeType, mediaUri );
             }
         });
 
@@ -82,7 +84,7 @@ public class GalleryMediaViewHolder extends MediaViewHolder
 
         mMediaThumbnail.setVisibility(View.VISIBLE);
         if( mimeType.startsWith("image/") ) {
-            setImageThumbnail(context.getContentResolver(), id, mediaUri );
+            setImageThumbnail(context.getContentResolver(), id, mediaUri);
             mMediaThumbnail.setBackgroundColor(Color.TRANSPARENT);
             // holder.mMediaThumbnail.setBackgroundColor(Color.WHITE);
 
@@ -160,4 +162,47 @@ public class GalleryMediaViewHolder extends MediaViewHolder
 
     }
 
+
+    public void onClickMediaIcon(String mimeType, Uri mediaUri) {
+
+
+        if (mimeType.startsWith("image")) {
+            Intent intent = new Intent(context, ImageViewActivity.class);
+            intent.putExtra( ImageViewActivity.URI, mediaUri.toString());
+            intent.putExtra( ImageViewActivity.MIMETYPE, mimeType);
+
+            context.startActivity(intent);
+        }
+    }
+
+
+    /**
+     protected void onLongClickMediaIcon(final String mimeType, final Uri mediaUri) {
+
+     final java.io.File exportPath = SecureMediaStore.exportPath(mimeType, mediaUri);
+
+     new AlertDialog.Builder(context)
+     .setTitle(context.getString(R.string.export_media))
+     .setMessage(context.getString(R.string.export_media_file_to, exportPath.getAbsolutePath()))
+     .setNeutralButton("Share on Zom", new DialogInterface.OnClickListener() {
+    @Override
+    public void onClick(DialogInterface dialogInterface, int i) {
+    reshareMediaFile(mimeType, mediaUri);
+    }
+    })
+     .setPositiveButton(R.string.export, new DialogInterface.OnClickListener() {
+    @Override
+    public void onClick(DialogInterface dialog, int whichButton) {
+    exportMediaFile(mimeType, mediaUri, exportPath);
+    return;
+    }
+    })
+     .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+    @Override
+    public void onClick(DialogInterface dialog, int whichButton) {
+    return;
+    }
+    })
+     .create().show();
+     }*/
 }

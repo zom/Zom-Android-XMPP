@@ -1,18 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
   <string name="app_name_zom">ChatSecure</string>
-  <string name="next_action">İleri</string>
-  <string name="cancel_action">İptal</string>
-  <string name="accept_action">Kabul Et</string>
-  <string name="sign_in_action">Oturum aç</string>
-  <string name="settings_action">Ayarlar</string>
   <string name="send_message">Bir ileti gönder</string>
-  <string name="delete_action">Sil</string>
   <string name="me_title">Ben</string>
-  <string name="profile">Profil</string>
-  <string name="password">Parola</string>
   <string name="add_account_action">Hesap ekle</string>
-  <string name="blocked">Engellenenler</string>
-  <string name="language">Dil</string>
-  <string name="about">Hakkında</string>
-</resources>
+  </resources>

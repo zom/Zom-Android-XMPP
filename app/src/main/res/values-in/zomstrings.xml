@@ -1,17 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
   <string name="app_name_zom">ChatSecure</string>
-  <string name="next_action">Berikutnya</string>
-  <string name="cancel_action">Batal</string>
-  <string name="accept_action">Setuju</string>
-  <string name="sign_in_action">Masuk</string>
-  <string name="settings_action">Pengaturan</string>
   <string name="send_message">Kirim sebuah pesan</string>
   <string name="me_title">Saya</string>
-  <string name="profile">Profil</string>
-  <string name="password">Password</string>
   <string name="add_account_action">Tambah akun</string>
-  <string name="blocked">Diblokir</string>
-  <string name="language">Bahasa</string>
-  <string name="about">Tentang</string>
-</resources>
+  </resources>

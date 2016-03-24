@@ -1,9 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
   <string name="app_name_zom">चॅटसिक्यॉर</string>
-  <string name="next_action">पुढे</string>
-  <string name="cancel_action">रद्द करा</string>
-  <string name="accept_action">स्वीकार करा</string>
   <string name="me_title">मी</string>
-  <string name="password">परवलीचा शब्द</string>
-</resources>
+  </resources>

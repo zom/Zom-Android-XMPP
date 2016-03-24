@@ -1,17 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
   <string name="app_name_zom">ChatSecure</string>
-  <string name="next_action">Hurrengoa</string>
-  <string name="cancel_action">Utzi</string>
-  <string name="accept_action">Onartu</string>
-  <string name="sign_in_action">Saioa hasi</string>
-  <string name="settings_action">Ezarpenak</string>
   <string name="send_message">Mezua bidali</string>
   <string name="me_title">Ni</string>
-  <string name="profile">Profila</string>
-  <string name="password">Pasahitza</string>
   <string name="add_account_action">Kontua gehitu</string>
-  <string name="blocked">Blokeatuta</string>
-  <string name="language">Hizkuntza</string>
-  <string name="about">Honi buruz</string>
-</resources>
+  </resources>

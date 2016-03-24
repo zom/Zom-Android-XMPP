@@ -115,14 +115,15 @@ import org.awesomeapp.messenger.ui.stickers.StickerSelectListener;
 import org.awesomeapp.messenger.ui.widgets.MessageViewHolder;
 import org.awesomeapp.messenger.ui.widgets.RoundedAvatarDrawable;
 import org.awesomeapp.messenger.util.Debug;
+import org.awesomeapp.messenger.util.GiphyAPI;
 import org.awesomeapp.messenger.util.LogCleaner;
 import org.awesomeapp.messenger.util.SystemServices;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 import im.zom.messenger.R;
 
 public class ConversationView {
@@ -716,7 +717,7 @@ public class ConversationView {
 
         });
 
-        ((CircleImageView) mActivity.findViewById(R.id.btnAttachPicture)).setOnClickListener(new View.OnClickListener() {
+        mActivity.findViewById(R.id.btnAttachPicture).setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -725,7 +726,7 @@ public class ConversationView {
 
         });
 
-        ((CircleImageView) mActivity.findViewById(R.id.btnTakePicture)).setOnClickListener(new View.OnClickListener() {
+        mActivity.findViewById(R.id.btnTakePicture).setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -734,7 +735,7 @@ public class ConversationView {
 
         });
 
-        ((CircleImageView) mActivity.findViewById(R.id.btnAttachFile)).setOnClickListener(new View.OnClickListener() {
+        mActivity.findViewById(R.id.btnAttachFile).setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -743,7 +744,7 @@ public class ConversationView {
 
         });
 
-        ((CircleImageView) mActivity.findViewById(R.id.btnAttachSticker)).setOnClickListener(new View.OnClickListener() {
+        mActivity.findViewById(R.id.btnAttachSticker).setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -1798,6 +1799,11 @@ public class ConversationView {
             return false;
         }
 
+        if (msg.startsWith("/giphy "))
+        {
+            return doGiphy(msg);
+        }
+
         IChatSession session = getChatSession();
 
         if (session == null)
@@ -1820,6 +1826,50 @@ public class ConversationView {
         }
 
         return false;
+    }
+
+    private static GiphyAPI.Monitor mMonitor = null;
+
+    private synchronized boolean doGiphy (String search)
+    {
+        mMonitor = new GiphyAPI.Monitor() {
+
+            public void onSearchComplete(GiphyAPI.SearchResult result) {
+
+                if (result.data != null && result.data.length > 0) {
+
+                    final GiphyAPI.GifImage gifResult = result.data[0].images.original;
+
+                    new Thread() {
+                        public void run() {
+
+                            mActivity.handleSendDelete(getChatSession(), Uri.parse(gifResult.url), "image/gif", false, false, true);
+                        }
+                    }.start();
+
+
+                }
+                else
+                {
+                    Toast.makeText(mActivity,"No giphy stickers available for your search",Toast.LENGTH_SHORT).show();
+                }
+
+                GiphyAPI.get().removeMonitor(mMonitor);
+                mMonitor = null;
+
+            }
+        };
+
+        GiphyAPI.get().addMonitor(mMonitor);
+
+
+        try {
+            GiphyAPI.get().search(URLEncoder.encode(search.substring(7).trim(), "UTF-8"));
+
+        }
+        catch (Exception e){}
+
+        return true;
     }
 
     void registerChatListener() {
@@ -2436,6 +2486,8 @@ public class ConversationView {
             if (c != null) {
                 resolveColumnIndex(c);
             }
+
+            setHasStableIds(true);
         }
 
         private void resolveColumnIndex(Cursor c) {
@@ -2458,6 +2510,14 @@ public class ConversationView {
             return super.swapCursor(newCursor);
         }
 
+        @Override
+        public long getItemId (int position)
+        {
+            Cursor c = getCursor();
+            c.moveToPosition(position);
+            long chatId =  c.getLong(mIdColumn);
+            return chatId;
+        }
 
         @Override
         public int getItemViewType(int position) {

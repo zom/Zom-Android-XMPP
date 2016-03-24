@@ -1,9 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <resources>
 
     <!-- Notification Settings -->
-    <bool name="cacheword_use_notification_default">false</bool>
-
     <!-- To configure the notification icon create a drawable resource named:
            cacheword_notification_icon
     -->
@@ -15,8 +13,6 @@
                    A value of 0 represents instant timeout
                    A value < 0  represents no timeout (or infinite timeout)
     -->
-    <integer name="cacheword_timeout_minutes_default">-1</integer>
-
     <!--
     In August 2013 a severe bug was found in Android's SecureRandom implementation. This affected all
     versions of Android up to and including 4.3.
@@ -30,6 +26,4 @@
     the PRNG is fixed as soon as possible. If you do this, change this value to false.
 
      -->
-    <bool name="cacheword_apply_android_securerandom_fixes">false</bool>
-</resources>
-
+    </resources>

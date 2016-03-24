@@ -47,7 +47,7 @@ import android.widget.ListView;
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.Preferences;
 import org.awesomeapp.messenger.provider.Imps;
-import org.awesomeapp.messenger.ui.legacy.ContactListFilterView.ContactListListener;
+
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -574,6 +574,14 @@ public class ContactsPickerActivity extends AppCompatActivity {
         }
 
     }
+
+
+    public interface ContactListListener {
+
+        public void openChat (Cursor c);
+        public void showProfile (Cursor c);
+    }
+
 
 
 

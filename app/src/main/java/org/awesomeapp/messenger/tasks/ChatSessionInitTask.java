@@ -53,8 +53,19 @@ public class ChatSessionInitTask implements Runnable {
             try {
                 IImConnection conn = mApp.getConnection(mProviderId, mAccountId);
 
-                if (conn == null || conn.getState() != ImConnection.LOGGED_IN)
-                    return;
+                int maxRetry = 5;
+                int attempt = 0;
+
+                while (conn == null || conn.getState() != ImConnection.LOGGED_IN) {
+
+                    Thread.sleep(2000);
+
+                    conn = mApp.getConnection(mProviderId, mAccountId);
+
+                    if (attempt++ > maxRetry)
+                        return; //do nothing
+                }
+
 
                 for (String address : mRemoteAddresses) {
 
@@ -66,7 +77,7 @@ public class ChatSessionInitTask implements Runnable {
 
                     if (session != null && session.getDefaultOtrChatSession() != null && session.getDefaultOtrChatSession().isChatEncrypted()) {
                             //then do nothing
-                        continue;
+
                     } else {
 
                         if (session == null)
@@ -87,7 +98,8 @@ public class ChatSessionInitTask implements Runnable {
 
                     }
 
-                    onPostExecute(session.getId());
+                    if (session != null)
+                        onPostExecute(session.getId());
 
 
                 }

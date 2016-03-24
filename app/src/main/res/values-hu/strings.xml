@@ -14,30 +14,17 @@
   <string name="no">Mégsem</string>
   <!--Views-->
   <!--Views: Setup-->
-  <string name="landing_page_title">Felhasználói fiók kiválasztása</string>
-  <string name="choose_account_title">Felhasználói fiók kiválasztása</string>
   <string name="menu_about">Rólunk</string>
-  <string name="rekey_message">Adj meg egy új jelszót! A jelszónak tartalmaznia kell legalább egy nagy-, egy kisbetűt, és egy számjegyet, valamint legalább hat karakter hosszúnak kell lennie.</string>
-  <string name="enter_pass">Jelszó megadása:</string>
-  <string name="new_pass">Üdvözlünk! Adj meg egy nehezen megfejthető jelszót a jegyzeteid titkosításához! A jelszónak tartalmaznia kell legalább egy nagy-, egy kisbetűt, és egy számjegyet, valamint legalább hat karakter hosszúnak kell lennie.</string>
   <string name="pass_err_length">Az álatlad megadott jelszó nem elég hosszú</string>
-  <string name="pass_err_upper">Az általad megadott jelszó nem tartalmaz nagybetűt</string>
-  <string name="pass_err_lower">Az általad megadott jelszó nem tartalmaz kisbetűt</string>
-  <string name="pass_err_num">Az általad megadott jelszó nem tartalmaz számjegyet</string>
   <!--Views: About: Welcome-->
   <!--Views: About: OTR-->
   <!--Views: About: Security-->
   <!--Views: Account list-->
   <!--Views: Setup: Account-->
-  <string name="label_password">Jelszó:</string>
   <!--Views: Settings: Account-->
   <!--Views: Contact list-->
-  <string name="empty_contact_group">Üres</string>
   <!--Views: Chat: Single-->
-  <string name="menu_send_file">Fájl küldése</string>
-  <string name="send">Küldés</string>
   <string name="menu_end_conversation">Üzenetváltás befejezése</string>
-  <string name="menu_plus">Menü+</string>
   <!--Views: Chat: Group-->
   <!--Security: OTR-->
   <!--Security: OTR: Keyring-->
@@ -55,8 +42,6 @@
   <string name="notification_vibrate_title">Rezgés</string>
   <!--Actions: Settings: General: Developer-->
   <!--Alerts: Dialogs-->
-  <string name="bg_data_prompt_ok">Engedélyez</string>
-  <string name="bg_data_prompt_cancel">Kilépés</string>
   <!--Alerts: Notifications-->
   <!--Alerts: Exceptions-->
   <!--added 2011/09/01-->

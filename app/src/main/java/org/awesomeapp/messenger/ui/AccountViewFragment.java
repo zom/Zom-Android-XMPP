@@ -86,13 +86,6 @@ public class AccountViewFragment extends Fragment {
     private static final int ACCOUNT_PROVIDER_COLUMN = 1;
     private static final int ACCOUNT_USERNAME_COLUMN = 2;
     private static final int ACCOUNT_PASSWORD_COLUMN = 3;
-
-    public final static String DEFAULT_SERVER_GOOGLE = "talk.l.google.com";
-    public final static String DEFAULT_SERVER_FACEBOOK = "chat.facebook.com";
-    public final static String DEFAULT_SERVER_JABBERORG = "hermes2.jabber.org";
-    public final static String DEFAULT_SERVER_DUKGO = "dukgo.com";
-    public final static String ONION_JABBERCCC = "okj7xc6j2szr2y75.onion";
-    public final static String ONION_CALYX = "ijeeynrc6x2uy5ob.onion";
     
     private static final String USERNAME_VALIDATOR = "[^a-z0-9\\.\\-_\\+]";
     //    private static final int ACCOUNT_KEEP_SIGNED_IN_COLUMN = 4;
@@ -724,88 +717,23 @@ public class AccountViewFragment extends Fragment {
         settings.setAllowPlainAuth(false);
         settings.setPort(DEFAULT_PORT);
 
-        if (domain.equals("gmail.com")) {
-            // Google only supports a certain configuration for XMPP:
-            // http://code.google.com/apis/talk/open_communications.html
+        settings.setDomain(domain);
+        settings.setPort(port);
 
+        //if use Tor, turn off DNS resolution, and set Server manually from Domain
+        if (settings.getUseTor())
+        {
             settings.setDoDnsSrv(false);
-            settings.setServer(DEFAULT_SERVER_GOOGLE); //set the google connect server
-            settings.setDomain(domain);
+
+            //if Tor is off, and the user has not provided any values here, set to the @domain
+            if (settings.getServer() == null || settings.getServer().length() == 0)
+                settings.setServer(domain);
         }
-        //mEditPass can be NULL if this activity is used in "headless" mode for auto account setup
-
-        else if (domain.equals("jabber.org")) {
-
-            if (settings.getUseTor())
-            {
-                settings.setDoDnsSrv(false);
-                settings.setServer(DEFAULT_SERVER_JABBERORG);
-            }
-
-            settings.setDomain(domain);
-
-        } else if (domain.equals("facebook.com")) {
-
-            if (settings.getUseTor())
-            {
-                settings.setDoDnsSrv(false);
-                settings.setServer(DEFAULT_SERVER_FACEBOOK);
-
-            }
-
-            settings.setDomain(DEFAULT_SERVER_FACEBOOK);
-        }
-        else if (domain.equals("jabber.calyxinstitute.org")) {
-
-            if (settings.getUseTor())
-            {
-                settings.setDoDnsSrv(false);
-                settings.setServer(ONION_CALYX);
-            }
-            else
-            {
-                settings.setDoDnsSrv(false);
-                settings.setServer("");
-            }
-
-            settings.setDomain(domain);
-        }
-        else if (domain.equals("jabber.ccc.de")) {
-
-            if (settings.getUseTor())
-            {
-                settings.setDoDnsSrv(false);
-                settings.setServer(ONION_JABBERCCC);
-            }
-            else
-            {
-                settings.setDoDnsSrv(true);
-                settings.setServer("");
-            }
-
-            settings.setDomain(domain);
-        }
-        else {
-
-            settings.setDomain(domain);
-            settings.setPort(port);
-
-            //if use Tor, turn off DNS resolution, and set Server manually from Domain
-            if (settings.getUseTor())
-            {
-                settings.setDoDnsSrv(false);
-
-                //if Tor is off, and the user has not provided any values here, set to the @domain
-                if (settings.getServer() == null || settings.getServer().length() == 0)
-                    settings.setServer(domain);
-            }
-            else if (settings.getServer() == null || settings.getServer().length() == 0)
-            {
-                //if Tor is off, and the user has not provided any values here, then reset to nothing
-                settings.setDoDnsSrv(true);
-                settings.setServer("");
-            }
-
+        else if (settings.getServer() == null || settings.getServer().length() == 0)
+        {
+            //if Tor is off, and the user has not provided any values here, then reset to nothing
+            settings.setDoDnsSrv(true);
+            settings.setServer("");
         }
 
         settings.requery();

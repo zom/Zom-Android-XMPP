@@ -99,16 +99,17 @@
             />
 
     </FrameLayout>
-          	
-    
-		<ImageView
-            android:id="@+id/avatar"
-            android:layout_width="42dp"
-            android:layout_height="42dp"
-            android:scaleType="centerCrop" 
-            android:layout_margin="6dp"
-            android:visibility="gone"            
-            android:layout_gravity="left|top"
-            />	
-	        
+
+
+    <ImageView
+        android:id="@+id/avatar"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:scaleType="centerCrop"
+        android:layout_margin="3dp"
+        android:visibility="gone"
+        android:layout_gravity="left|top"
+        />
+
+
 </view>

@@ -695,7 +695,7 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
 
                     @Override
                     public void onFailure(@NonNull Throwable t) {
-                        Log.e(TAG, "Failed to send push message to " + sessionID.getRemoteUserId(), t);
+                        Log.d(TAG, "Failed to send push message to " + sessionID.getRemoteUserId());
                     }
                 });
     }

@@ -482,24 +482,23 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
             int isActive = cursor.getInt(ACCOUNT_ACTIVE);
             int isKeepSignedIn = cursor.getInt(ACCOUNT_KEEP_SIGNED_IN);
 
-            IImConnection conn = do_createConnection(providerId, accountId);
+            if (isActive == 1 && isKeepSignedIn == 1) {
+                IImConnection conn = do_createConnection(providerId, accountId);
 
-            try
-            {
-                if (conn.getState() != ImConnection.LOGGED_IN)
-                {
-                    try {
-                        conn.login(null, true, true);
+                try {
+                    if (conn.getState() != ImConnection.LOGGED_IN) {
+                        try {
+                            conn.login(null, true, true);
 
-                    } catch (RemoteException e) {
-                        Log.w(TAG, "Logging error while automatically login!");
+                        } catch (RemoteException e) {
+                            Log.w(TAG, "Logging error while automatically login!");
+                        }
                     }
+                } catch (Exception e) {
+                    Log.d(ImApp.LOG_TAG, "error auto logging into ImConnection", e);
+                    cursor.close();
+                    return false;
                 }
-            }
-            catch (Exception e){
-                Log.d(ImApp.LOG_TAG,"error auto logging into ImConnection",e);
-                cursor.close();
-                return false;
             }
         }
         cursor.close();

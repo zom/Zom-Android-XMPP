@@ -1,18 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
   <string name="app_name_zom">Сигурно ћаскање</string>
-  <string name="next_action">Следеће</string>
-  <string name="cancel_action">Одустани</string>
-  <string name="accept_action">Прихвати</string>
-  <string name="sign_in_action">Пријава</string>
-  <string name="settings_action">Поставке</string>
   <string name="send_message">Пошаљи поруку</string>
-  <string name="delete_action">Обриши</string>
   <string name="me_title">Ја</string>
-  <string name="profile">Профил</string>
-  <string name="password">Лозинка</string>
   <string name="add_account_action">Додај налог</string>
-  <string name="blocked">Блокиран</string>
-  <string name="language">Језик</string>
-  <string name="about">О програму</string>
-</resources>
+  </resources>

@@ -146,6 +146,7 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
     protected static final int MATCH_OTR_MESSAGES_BY_ACCOUNT = 60;
     protected static final int MATCH_OTR_MESSAGE = 61;
     protected static final int MATCH_OTR_MESSAGES_BY_PACKET_ID = 62;
+    protected static final int MATCH_MESSAGES_BY_SEARCH = 501;
 
     protected static final int MATCH_GROUP_MEMBERS = 65;
     protected static final int MATCH_GROUP_MEMBERS_BY_GROUP = 66;
@@ -1149,6 +1150,7 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
 
         mUrlMatcher.addURI(authority, "messages", MATCH_MESSAGES);
         mUrlMatcher.addURI(authority, "messagesByAcctAndContact/#/*", MATCH_MESSAGES_BY_CONTACT);
+        mUrlMatcher.addURI(authority, "messagesBySearch", MATCH_MESSAGES_BY_SEARCH);
         mUrlMatcher.addURI(authority, "messagesByThreadId/#", MATCH_MESSAGES_BY_THREAD_ID);
         mUrlMatcher.addURI(authority, "messagesByProvider/#", MATCH_MESSAGES_BY_PROVIDER);
         mUrlMatcher.addURI(authority, "messagesByAccount/#", MATCH_MESSAGES_BY_ACCOUNT);
@@ -1651,6 +1653,31 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
             }
             return c2;
 
+        case MATCH_MESSAGES_BY_SEARCH:
+            qb.setTables(MESSAGE_JOIN_CONTACT_TABLE);
+            qb.setProjectionMap(sMessagesProjectionMap);
+
+            limit = "20";
+
+            final String q4 = qb.buildQuery(projectionIn, whereClause.toString(), null, null, null, null, null);
+
+            // Build the second query for frequent
+            qb = new SQLiteQueryBuilder();
+            qb.setTables(IN_MEMORY_MESSAGES_JOIN_CONTACT_TABLE);
+            qb.setProjectionMap(sInMemoryMessagesProjectionMap);
+            final String q5 = qb.buildQuery(projectionIn, whereClause.toString(), null, null, null, null, null);
+
+            // Put them together
+            final String q6 = qb.buildUnionQuery(new String[] { q4, q5 }, sort, limit);
+            final SQLiteDatabase db3 = getDBHelper().getWritableDatabase();
+            Cursor c3 = db3.rawQueryWithFactory(null, q6, null, MESSAGE_JOIN_CONTACT_TABLE);
+            if ((c3 != null) && !isTemporary()) {
+                c3.setNotificationUri(getContext().getContentResolver(), url);
+            }
+
+
+            return c3;
+
         case MATCH_INVITATIONS:
             qb.setTables(TABLE_INVITATIONS);
             break;
@@ -1808,8 +1835,12 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
             if (c != null) {
                 switch (match) {
                 case MATCH_CHATTING_CONTACTS:
-                case MATCH_CONTACTS_BY_PROVIDER:
                 case MATCH_CHATTING_CONTACTS_BY_PROVIDER:
+
+                    url = Contacts.CONTENT_URI_CHAT_CONTACTS_BY;
+                    break;
+
+                case MATCH_CONTACTS_BY_PROVIDER:
                 case MATCH_ONLINE_CONTACTS_BY_PROVIDER:
                 case MATCH_OFFLINE_CONTACTS_BY_PROVIDER:
                 case MATCH_CONTACTS_BAREBONE:
@@ -1938,6 +1969,7 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
 
         case MATCH_MESSAGES:
         case MATCH_MESSAGES_BY_CONTACT:
+        case MATCH_MESSAGES_BY_SEARCH:
         case MATCH_MESSAGES_BY_THREAD_ID:
         case MATCH_MESSAGES_BY_PROVIDER:
         case MATCH_MESSAGES_BY_ACCOUNT:
