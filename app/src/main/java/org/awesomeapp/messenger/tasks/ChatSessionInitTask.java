@@ -98,7 +98,8 @@ public class ChatSessionInitTask implements Runnable {
 
                     }
 
-                    onPostExecute(session.getId());
+                    if (session != null)
+                        onPostExecute(session.getId());
 
 
                 }

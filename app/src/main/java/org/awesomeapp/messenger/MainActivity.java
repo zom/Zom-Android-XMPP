@@ -328,7 +328,6 @@ public class MainActivity extends AppCompatActivity {
                 startChat(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), intent.getStringExtra("username"));
             }
 
-
             setIntent(null);
         }
     }

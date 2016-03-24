@@ -173,14 +173,15 @@ public class ContactsListFragment extends Fragment {
 
     }
 
-    private static void deleteContact (Activity activity, long itemId, String address)
+    private static void deleteContact (Activity activity, long itemId, String address, long providerId, long accountId)
     {
         ImApp app = ((ImApp)activity.getApplication());
 
-        IImConnection conn = app.getDefaultConnection();
+        IImConnection conn = app.getConnection(providerId, accountId);
 
         try {
             IContactListManager manager = conn.getContactListManager();
+
             int res = manager.removeContact(address);
             if (res != ImErrorInfo.NO_ERROR) {
                 //mHandler.showAlert(R.string.error,
@@ -277,7 +278,7 @@ public class ContactsListFragment extends Fragment {
                                     public void onClick(View v) {
                                         //if they click, then cancel timer that will be used to end the chat
 
-                                        deleteContact(((MainActivity) mContext), viewHolder.mView.getId(), viewHolder.mAddress);
+                                        deleteContact(((MainActivity) mContext), viewHolder.mView.getId(), viewHolder.mAddress, viewHolder.mProviderId, viewHolder.mAccountId);
                                     }
                                 }).show();
 

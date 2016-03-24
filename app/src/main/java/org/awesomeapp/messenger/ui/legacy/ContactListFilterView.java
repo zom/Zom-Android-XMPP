@@ -26,6 +26,7 @@ import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.ui.ContactListItem;
 
+import org.awesomeapp.messenger.ui.ContactsPickerActivity;
 import org.awesomeapp.messenger.util.LogCleaner;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -71,7 +72,7 @@ public class ContactListFilterView extends LinearLayout {
 
     private MyLoaderCallbacks mLoaderCallbacks;
 
-    private ContactListListener mListener = null;
+    private ContactsPickerActivity.ContactListListener mListener = null;
     private LoaderManager mLoaderManager;
     private int mLoaderId;
 
@@ -87,10 +88,10 @@ public class ContactListFilterView extends LinearLayout {
     protected void onFinishInflate() {
         super.onFinishInflate();
 
-        mFilterList = (AbsListView) findViewById(R.id.filteredList);
+//        mFilterList = (AbsListView) findViewById(R.id.filteredList);
         mFilterList.setTextFilterEnabled(true);
 
-        mEmptyView = (TextView) findViewById(R.id.empty);
+  //      mEmptyView = (TextView) findViewById(R.id.empty);
 
         mFilterList.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -297,17 +298,6 @@ public class ContactListFilterView extends LinearLayout {
         
     }
 
-    public interface ContactListListener {
-
-        public void openChat (Cursor c);
-        public void showProfile (Cursor c);
-    }
-
-
-    public void setListener (ContactListListener listener)
-    {
-        mListener = listener;
-    }
 
     private void setContactNickname(int aPosition) {
         Cursor cursor = (Cursor)mFilterList.getItemAtPosition(aPosition);

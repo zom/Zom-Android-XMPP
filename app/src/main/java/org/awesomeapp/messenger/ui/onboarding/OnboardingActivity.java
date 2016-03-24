@@ -82,6 +82,7 @@ public class OnboardingActivity extends ThemeableActivity {
     private String mRequestedUserName;
     private String mFullUserName;
     private String mFingerprint;
+    private OnboardingAccount mNewAccount;
 
     private SimpleAlertHandler mHandler;
 
@@ -527,6 +528,7 @@ public class OnboardingActivity extends ThemeableActivity {
 
             if (account != null) {
                 mFullUserName = account.username + '@' + account.domain;
+                mNewAccount = account;
 
                 StringBuffer sb = new StringBuffer();
                 sb.append(getString(R.string.account_congrats)).append("\n\n");
@@ -710,7 +712,7 @@ public class OnboardingActivity extends ThemeableActivity {
                     builder.setView(mCropImageView)
                             .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
-                                    setAvatar(mCropImageView.getCroppedImage());
+                                    setAvatar(mCropImageView.getCroppedImage(), mNewAccount);
                                     showInviteScreen();
                                 }
                             })
@@ -732,7 +734,7 @@ public class OnboardingActivity extends ThemeableActivity {
     }
 
 
-    private void setAvatar(Bitmap bmp) {
+    private void setAvatar(Bitmap bmp, OnboardingAccount account) {
 
         RoundedAvatarDrawable avatar = new RoundedAvatarDrawable(bmp);
         mImageAvatar.setImageDrawable(avatar);
@@ -744,13 +746,10 @@ public class OnboardingActivity extends ThemeableActivity {
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             bmp.compress(Bitmap.CompressFormat.JPEG, 90, stream);
 
-            long providerId = app.getDefaultProviderId();
-            long accountId = app.getDefaultAccountId();
             byte[] avatarBytesCompressed = stream.toByteArray();
             String avatarHash = "nohash";
-            String userAddress = app.getDefaultUsername();
 
-            DatabaseUtils.insertAvatarBlob(getContentResolver(), Imps.Avatars.CONTENT_URI, providerId, accountId, avatarBytesCompressed, avatarHash, userAddress);
+            DatabaseUtils.insertAvatarBlob(getContentResolver(), Imps.Avatars.CONTENT_URI, account.providerId, account.accountId, avatarBytesCompressed, avatarHash, account.username + '@' + account.domain);
         } catch (Exception e) {
             Log.w(ImApp.LOG_TAG, "error loading image bytes", e);
         }
