@@ -5,8 +5,8 @@
     android:installLocation="auto"
     android:sharedUserLabel="@string/perm_label"
     android:usesCleartextTraffic="false"
-    android:versionCode="1501200"
-    android:versionName="15.0.1-ALPHA-2">
+    android:versionCode="1501300"
+    android:versionName="15.0.1-ALPHA-3">
 
     <supports-screens
         android:anyDensity="true"
