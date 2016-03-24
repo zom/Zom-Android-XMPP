@@ -27,7 +27,7 @@ import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.service.IImConnection;
 import org.awesomeapp.messenger.ui.legacy.SignInHelper;
 
-public class AccountAdapter extends CursorAdapter implements ProviderListItem.SignInManager {
+public class AccountAdapter extends CursorAdapter implements AccountListItem.SignInManager {
 
     private LayoutInflater mInflater;
     private int mResId;
@@ -132,7 +132,7 @@ public class AccountAdapter extends CursorAdapter implements ProviderListItem.Si
         // create a custom view, so we can manage it ourselves. Mainly, we want to
         // initialize the widget views (by calling getViewById()) in newView() instead of in
         // bindView(), which can be called more often.
-        ProviderListItem view = (ProviderListItem) mInflater.inflate(mResId, parent, false);
+        AccountListItem view = (AccountListItem) mInflater.inflate(mResId, parent, false);
         boolean showLongName = false;
         view.init(mActivity, cursor, showLongName, this);
         return view;
@@ -140,7 +140,7 @@ public class AccountAdapter extends CursorAdapter implements ProviderListItem.Si
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-        ((ProviderListItem) view).bindView(cursor);
+        ((AccountListItem) view).bindView(cursor);
 
     }
 

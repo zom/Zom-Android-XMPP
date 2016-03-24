@@ -489,15 +489,12 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
                     if (conn.getState() != ImConnection.LOGGED_IN) {
                         try {
                             conn.login(null, true, true);
-
                         } catch (RemoteException e) {
-                            Log.w(TAG, "Logging error while automatically login!");
+                            Log.w(TAG, "Logging error while automatically login: " + accountId);
                         }
                     }
                 } catch (Exception e) {
-                    Log.d(ImApp.LOG_TAG, "error auto logging into ImConnection", e);
-                    cursor.close();
-                    return false;
+                    Log.d(ImApp.LOG_TAG, "error auto logging into ImConnection: " + accountId);
                 }
             }
         }

@@ -635,14 +635,13 @@ public class ImApp extends Application implements ICacheWordSubscriber {
                 // register the listener before fetch so that we won't miss any connection.
                 mImService.addConnectionCreatedListener(mConnCreationListener);
                 synchronized (mConnections) {
-
                     for (IBinder binder : (List<IBinder>) mImService.getActiveConnections()) {
                         IImConnection conn = IImConnection.Stub.asInterface(binder);
                         long providerId = conn.getProviderId();
-                    //    if (!mConnections.containsKey(providerId)) {
+                        if (!mConnections.containsKey(providerId)) {
                             mConnections.put(providerId, conn);
                             conn.registerConnectionListener(mConnectionListener);
-                      //  }
+                     }
                     }
                 }
             } catch (RemoteException e) {
@@ -655,10 +654,10 @@ public class ImApp extends Application implements ICacheWordSubscriber {
         public void onConnectionCreated(IImConnection conn) throws RemoteException {
             long providerId = conn.getProviderId();
             synchronized (mConnections) {
-              //  if (!mConnections.containsKey(providerId)) {
+                if (!mConnections.containsKey(providerId)) {
                     mConnections.put(providerId, conn);
                     conn.registerConnectionListener(mConnectionListener);
-               // }
+                }
             }
             broadcastConnEvent(EVENT_CONNECTION_CREATED, providerId, null);
         }
@@ -677,7 +676,7 @@ public class ImApp extends Application implements ICacheWordSubscriber {
 
             try {
 
-               // fetchActiveConnections();
+                fetchActiveConnections();
 
                 int what = -1;
                 long providerId = conn.getProviderId();
@@ -783,9 +782,54 @@ public class ImApp extends Application implements ICacheWordSubscriber {
         });
     }
 
+    public boolean setDefaultAccount (long providerId, long accountId)
+    {
+
+        final Uri uri = Imps.Provider.CONTENT_URI_WITH_ACCOUNT;
+        String[] PROVIDER_PROJECTION = {
+                Imps.Provider._ID,
+                Imps.Provider.ACTIVE_ACCOUNT_ID,
+                Imps.Provider.ACTIVE_ACCOUNT_USERNAME
+        };
+
+        final Cursor cursorProviders = getContentResolver().query(uri, PROVIDER_PROJECTION,
+                Imps.Provider.ACTIVE_ACCOUNT_ID + "=" + accountId
+                        + " AND " + Imps.Provider.CATEGORY + "=?"
+                        + " AND " + Imps.Provider.ACTIVE_ACCOUNT_USERNAME + " NOT NULL" /* selection */,
+                new String[]{ImApp.IMPS_CATEGORY} /* selection args */,
+                Imps.Provider.DEFAULT_SORT_ORDER);
+
+        if (cursorProviders != null && cursorProviders.getCount() > 0) {
+            cursorProviders.moveToFirst();
+            mDefaultProviderId = cursorProviders.getLong(0);
+            mDefaultAccountId = cursorProviders.getLong(1);
+            mDefaultUsername = cursorProviders.getString(2);
+
+            Cursor pCursor = getContentResolver().query(Imps.ProviderSettings.CONTENT_URI, new String[]{Imps.ProviderSettings.NAME, Imps.ProviderSettings.VALUE}, Imps.ProviderSettings.PROVIDER + "=?", new String[]{Long.toString(mDefaultProviderId)}, null);
+
+            Imps.ProviderSettings.QueryMap settings = new Imps.ProviderSettings.QueryMap(
+                    pCursor, getContentResolver(), mDefaultProviderId, false /* don't keep updated */, null /* no handler */);
+
+            mDefaultUsername = mDefaultUsername + '@' + settings.getDomain();
+            mDefaultOtrFingerprint = OtrAndroidKeyManagerImpl.getInstance(this).getLocalFingerprint(mDefaultUsername);
+
+            settings.close();
+            cursorProviders.close();
+
+            return true;
+        }
+
+
+        if (cursorProviders != null)
+            cursorProviders.close();
+
+        return false;
+    }
+
     public boolean initAccountInfo ()
     {
         if (mDefaultProviderId == -1 || mDefaultAccountId == -1) {
+
             final Uri uri = Imps.Provider.CONTENT_URI_WITH_ACCOUNT;
             String[] PROVIDER_PROJECTION = {
                     Imps.Provider._ID,
