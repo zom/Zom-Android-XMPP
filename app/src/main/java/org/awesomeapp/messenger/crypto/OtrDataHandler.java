@@ -103,7 +103,6 @@ public class OtrDataHandler implements DataHandler {
     HashMap<String, Request> requestCache =  new HashMap<>();//CacheBuilder.newBuilder().maximumSize(100).build();
     HashMap<String, Transfer> transferCache =  new HashMap<>();//CacheBuilder.newBuilder().maximumSize(100).build();
 
-
     public OtrDataHandler(ChatSession chatSession) {
         this.mChatSession = chatSession;
     }
@@ -782,15 +781,22 @@ public class OtrDataHandler implements DataHandler {
 
         @Override
         public void chunkReceived(Request request, byte[] bs) {
-            debug( "chunkReceived: " + request.start + "-" + request.end) ;
+
+            if (raf == null) {
+                if (!perform()) //initialize file
+                    return;
+            }
+
+            debug("chunkReceived: " + request.start + "-" + request.end);
             chunksReceived++;
             try {
-                raf.seek( request.start );
+                raf.seek(request.start);
                 raf.write(bs);
             } catch (IOException e) {
                 e.printStackTrace();
             }
             outstanding.remove(request);
+
         }
 
         @Override
