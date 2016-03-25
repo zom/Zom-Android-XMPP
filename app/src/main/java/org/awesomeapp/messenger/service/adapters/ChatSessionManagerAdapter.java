@@ -51,6 +51,7 @@ public class ChatSessionManagerAdapter extends
     static HashMap<String, ChatSessionAdapter> mActiveChatSessionAdapters;
 
     public ChatSessionManagerAdapter(ImConnectionAdapter connection) {
+
         mConnection = connection;
         ImConnection connAdaptee = connection.getAdaptee();
 

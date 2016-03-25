@@ -450,19 +450,19 @@ public class ImConnectionAdapter extends org.awesomeapp.messenger.service.IImCon
 
                         Uri.Builder builder = baseUri.buildUpon();
                         builder.appendQueryParameter(Imps.Contacts.PROVIDER,mProviderId+"");
+                        builder.appendQueryParameter(Imps.Contacts.ACCOUNT,mAccountId+"");
+
                         Uri uriChats = builder.build();
                         Cursor c = getContext().getContentResolver().query(uriChats, CHAT_PROJECTION, null, null, Imps.Contacts.TIME_ORDER);
 
                         if (c != null) {
-                            if (c.getColumnCount() > 0) {
-
+                            if (c.getCount() > 0) {
                                 while (c.moveToNext()) {
                                     int chatType = c.getInt(5);
                                     String remoteAddress = c.getString(3);
                                     new ChatSessionInitTask((ImApp) getContext().getApplication(), mProviderId, mAccountId, chatType).execute(remoteAddress);
                                 }
                             }
-
                             c.close();
                         }
 

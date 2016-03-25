@@ -117,7 +117,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
     private OtrChatManager mOtrChatManager;
 
     private ImPluginHelper mPluginHelper;
-    private Hashtable<String, ImConnectionAdapter> mConnections;
+    private Hashtable<Long, ImConnectionAdapter> mConnections;
 
     private Handler mHandler;
 
@@ -237,7 +237,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
             Debug.recordTrail(this, PREV_CONNECTIONS_TRAIL_TAG, prevConnections);
         Debug.recordTrail(this, CONNECTIONS_TRAIL_TAG, "0");
         
-        mConnections = new Hashtable<String, ImConnectionAdapter>();
+        mConnections = new Hashtable<Long, ImConnectionAdapter>();
         mHandler = new Handler();
 
         Debug.onServiceStart();
@@ -657,7 +657,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
             providerSettings.close();
 
-            mConnections.put(userName + '@' + domain,imConnectionAdapter);
+            mConnections.put(providerId,imConnectionAdapter);
             Debug.recordTrail(this, CONNECTIONS_TRAIL_TAG, "" + mConnections.size());
 
             synchronized (mRemoteListeners)
@@ -794,7 +794,14 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
 
     public ImConnectionAdapter getConnection(String username) {
-       return mConnections.get(username);
+
+        for (ImConnectionAdapter conn: mConnections.values())
+        {
+            if (conn.getLoginUser().getAddress().getBareAddress().equals(username))
+                return conn;
+        }
+
+       return null;
     }
 
 
@@ -831,6 +838,11 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
                 result.add(conn.asBinder());
             }
             return result;
+        }
+
+        @Override
+        public IImConnection getConnection(long providerId) {
+            return mConnections.get(providerId);
         }
 
         @Override

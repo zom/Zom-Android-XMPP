@@ -676,7 +676,7 @@ public class OnboardingActivity extends ThemeableActivity {
                         //parse each string and if they are for a new user then add the user
                         String[] parts = OnboardingManager.decodeInviteLink(resultScan);
 
-                        new AddContactAsyncTask(mApp.getDefaultProviderId(),mApp.getDefaultAccountId(), mApp).execute(parts[0],parts[1]);
+                        new AddContactAsyncTask(mNewAccount.providerId, mNewAccount.accountId, mApp).execute(parts[0],parts[1]);
 
                         //if they are for a group chat, then add the group
                     }

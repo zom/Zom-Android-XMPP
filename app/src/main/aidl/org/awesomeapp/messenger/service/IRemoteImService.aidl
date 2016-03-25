@@ -46,6 +46,11 @@ interface IRemoteImService {
     IImConnection createConnection(long providerId, long accountId);
 
     /**
+     * Create a connection for the given provider.
+     */
+    IImConnection getConnection(long providerId);
+
+    /**
      * Get all the active connections.
      */
     List getActiveConnections();

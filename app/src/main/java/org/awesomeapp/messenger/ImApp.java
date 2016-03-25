@@ -130,7 +130,7 @@ public class ImApp extends Application implements ICacheWordSubscriber {
 
     IRemoteImService mImService;
 
-    HashMap<Long, IImConnection> mConnections;
+   // HashMap<Long, IImConnection> mConnections;
     MyConnListener mConnectionListener;
     HashMap<Long, ProviderDef> mProviders;
 
@@ -210,7 +210,7 @@ public class ImApp extends Application implements ICacheWordSubscriber {
         SQLiteDatabase.loadLibs(getApplicationContext());
         VirtualFileSystem.get().isMounted();
 
-        mConnections = new HashMap<Long, IImConnection>();
+       // mConnections = new HashMap<Long, IImConnection>();
         mApplicationContext = this;
 
         //initTrustManager();
@@ -328,7 +328,13 @@ public class ImApp extends Application implements ICacheWordSubscriber {
 
     public boolean hasActiveConnections ()
     {
-        return !mConnections.isEmpty();
+        try {
+            return !mImService.getActiveConnections().isEmpty();
+        }
+        catch (RemoteException re)
+        {
+            return false;
+        }
 
     }
 
@@ -379,7 +385,7 @@ public class ImApp extends Application implements ICacheWordSubscriber {
                 log("service connected");
 
             mImService = IRemoteImService.Stub.asInterface(service);
-            fetchActiveConnections();
+         //   fetchActiveConnections();
 
             synchronized (mQueue) {
                 for (Message msg : mQueue) {
@@ -401,7 +407,7 @@ public class ImApp extends Application implements ICacheWordSubscriber {
             if (Log.isLoggable(LOG_TAG, Log.DEBUG))
                 log("service disconnected");
 
-            mConnections.clear();
+           // mConnections.clear();
             mImService = null;
         }
     };
@@ -507,42 +513,37 @@ public class ImApp extends Application implements ICacheWordSubscriber {
     }
 
     public IImConnection getConnection(long providerId,long accountId) {
-        synchronized (mConnections) {
 
-            IImConnection im = mConnections.get(providerId);
+        try {
+            IImConnection im = mImService.getConnection(providerId);
 
-            if (im != null)
-            {
-                try
-                {
-                    im.getState();
-                }
-                catch (RemoteException doe)
-                {
-                    mConnections.clear();
-                    //something is wrong
-                    fetchActiveConnections();
-                    im = mConnections.get(providerId);
-                }
-            }
-            else
-            {
-                try {
-                    im = createConnection(providerId, accountId);
-                }
-                catch (RemoteException re)
-                {
-                    Log.e(ImApp.LOG_TAG,"error creating connection",re);
-                }
+            if (im != null) {
+
+                im.getState();
+
+            } else {
+                im = createConnection(providerId, accountId);
+
             }
 
             return im;
         }
+        catch (RemoteException re)
+        {
+            return null;
+        }
     }
+
 
     public Collection<IImConnection> getActiveConnections() {
 
-        return mConnections.values();
+        try {
+            return mImService.getActiveConnections();
+        }
+        catch (RemoteException re)
+        {
+            return null;
+        }
     }
 
     public void callWhenServiceConnected(Handler target, Runnable callback) {
@@ -628,6 +629,7 @@ public class ImApp extends Application implements ICacheWordSubscriber {
         }
     }
 
+    /**
     private void fetchActiveConnections() {
         if (mImService != null)
         {
@@ -648,17 +650,20 @@ public class ImApp extends Application implements ICacheWordSubscriber {
                 Log.e(LOG_TAG, "fetching active connections", e);
             }
         }
-    }
+    }*/
 
     private final IConnectionCreationListener mConnCreationListener = new IConnectionCreationListener.Stub() {
         public void onConnectionCreated(IImConnection conn) throws RemoteException {
             long providerId = conn.getProviderId();
+             conn.registerConnectionListener(mConnectionListener);
+
+            /**
             synchronized (mConnections) {
                 if (!mConnections.containsKey(providerId)) {
                     mConnections.put(providerId, conn);
                     conn.registerConnectionListener(mConnectionListener);
                 }
-            }
+            }*/
             broadcastConnEvent(EVENT_CONNECTION_CREATED, providerId, null);
         }
     };
@@ -676,7 +681,7 @@ public class ImApp extends Application implements ICacheWordSubscriber {
 
             try {
 
-                fetchActiveConnections();
+                //fetchActiveConnections();
 
                 int what = -1;
                 long providerId = conn.getProviderId();
