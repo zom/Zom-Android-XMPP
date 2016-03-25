@@ -10,10 +10,12 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.TypedValue;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import org.awesomeapp.messenger.ImUrlActivity;
@@ -41,7 +43,11 @@ public class ImageViewActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         ;
         setTitle("");
+
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -62,10 +68,11 @@ public class ImageViewActivity extends AppCompatActivity {
             case R.id.menu_message_share:
                 exportMediaFile();
                 return true;
+            /**
             case R.id.menu_message_delete:
                 deleteMediaFile();
                 return true;
-
+                */
             default:
         }
         return super.onOptionsItemSelected(item);
@@ -172,6 +179,16 @@ public class ImageViewActivity extends AppCompatActivity {
         shareIntent.setDataAndType(Uri.parse(resharePath), mimeType);
         startActivity(shareIntent);
 
+    }
+
+    private void resendMediaFile ()
+    {
+
+        String resharePath = mediaUri.toString();
+        Intent shareIntent = new Intent(this, ImUrlActivity.class);
+        shareIntent.setAction(Intent.ACTION_SEND);
+        shareIntent.setDataAndType(Uri.parse(resharePath), mimeType);
+        startActivity(shareIntent);
 
     }
 

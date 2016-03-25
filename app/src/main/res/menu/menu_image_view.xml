@@ -10,12 +10,6 @@
         app:showAsAction="always" />
 
 
-    <item
-        android:id="@+id/menu_message_resend"
-        android:icon="@drawable/ic_refresh_white_24dp"
-        android:title="@string/send_message"
-        app:showAsAction="always"
-        />
 
     <item
         android:id="@+id/menu_message_forward"

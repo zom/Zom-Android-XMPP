@@ -2751,9 +2751,15 @@ public class ConversationView {
                         return true;
                     case R.id.menu_message_share:
                         ((MessageListItem)mLastSelectedView).exportMediaFile();
+                        mode.finish(); // Action picked, so close the CAB
                         return true;
                     case R.id.menu_message_forward:
                         ((MessageListItem)mLastSelectedView).forwardMediaFile();
+                        mode.finish(); // Action picked, so close the CAB
+                        return true;
+                    case R.id.menu_message_resend:
+                        sendMessageAsync(((MessageListItem)mLastSelectedView).getLastMessage());
+                        mode.finish(); // Action picked, so close the CAB
                         return true;
 
                     default:

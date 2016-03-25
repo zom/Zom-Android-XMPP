@@ -403,6 +403,7 @@ public class MessageListItem extends FrameLayout {
             Intent intent = new Intent(context, ImageViewActivity.class);
             intent.putExtra( ImageViewActivity.URI, mediaUri.toString());
             intent.putExtra( ImageViewActivity.MIMETYPE, mimeType);
+            intent.putExtra( ImageViewActivity.MIMETYPE, mimeType);
 
             context.startActivity(intent);
         }
@@ -848,6 +849,8 @@ public class MessageListItem extends FrameLayout {
             if (messageType == Imps.MessageType.POSTPONED)
             {
                 //do nothing
+                deliveryText.append("X");
+                spanText = new SpannableString(deliveryText.toString());
             }
             else if (delivery == DeliveryState.DELIVERED) {
 
@@ -873,12 +876,20 @@ public class MessageListItem extends FrameLayout {
 
             } else if (delivery == DeliveryState.UNDELIVERED) {
 
-
                 if (encryptionState == EncryptionState.ENCRYPTED||encryptionState == EncryptionState.ENCRYPTED_AND_VERIFIED) {
-                    deliveryText.append("X");
+                    deliveryText.append("XXX");
                     spanText = new SpannableString(deliveryText.toString());
                     int len = spanText.length();
+                    spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_sent_grey),len-2,len-1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                     spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_encrypted_grey), len - 1, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                }
+                else
+                {
+                    deliveryText.append("XX");
+                    spanText = new SpannableString(deliveryText.toString());
+                    int len = spanText.length();
+                    spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_sent_grey),len-1,len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
                 }
 
 
