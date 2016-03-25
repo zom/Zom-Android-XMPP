@@ -2745,10 +2745,12 @@ public class ConversationView {
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
 
                 switch (item.getItemId()) {
+                    /**
                     case R.id.menu_message_delete:
                         //shareCurrentItem();
                         mode.finish(); // Action picked, so close the CAB
                         return true;
+                     */
                     case R.id.menu_message_share:
                         ((MessageListItem)mLastSelectedView).exportMediaFile();
                         mode.finish(); // Action picked, so close the CAB
