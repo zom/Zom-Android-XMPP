@@ -402,7 +402,7 @@ public class PushManager {
             ContentValues tokenValues = new ContentValues(7);
             tokenValues.put(PushDatabase.Tokens.RECIPIENT, recipientIdentifier);
             tokenValues.put(PushDatabase.Tokens.ISSUER, issuerIdentifier);
-            tokenValues.put(PushDatabase.Tokens.ISSUED, 1);
+            tokenValues.put(PushDatabase.Tokens.ISSUED, 1);//they have been issued to you
             tokenValues.put(PushDatabase.Tokens.PROVIDER, tlv.endpoint);
             tokenValues.put(PushDatabase.Tokens.NAME, createWhitelistTokenName(recipientIdentifier, issuerIdentifier));
             tokenValues.put(PushDatabase.Tokens.TOKEN, tlv.tokens[idx]);
@@ -463,6 +463,27 @@ public class PushManager {
         if (result != 1) Timber.e("Failed to mark token %d as issued", tokenLocalId);
         else {
             Timber.d("Marked token %d issued", tokenLocalId);
+            logAllTokens();
+        }
+    }
+
+    /**
+     * Mark a Whitelist token as issued. This means we should consider it successfully transmitted
+     * to its {@link PushDatabase.Tokens#RECIPIENT}, and it should not be transmitted to any other peers.
+     *
+     * @param token the token value to make as issued/used
+     */
+    public void markWhitelistTokenIssued(String token) {
+        ContentValues tokenValues = new ContentValues(1);
+        tokenValues.put(PushDatabase.Tokens.ISSUED, 1);
+        int result = context.getContentResolver().update(
+                PushDatabase.Tokens.CONTENT_URI,
+                tokenValues,
+                PushDatabase.Tokens.TOKEN + " = ?",
+                new String[]{token});
+        if (result != 1) Timber.e("Failed to mark token %d as issued", token);
+        else {
+            Timber.d("Marked token as issued: " + token);
             logAllTokens();
         }
     }
