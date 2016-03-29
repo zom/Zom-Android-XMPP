@@ -69,7 +69,7 @@ import timber.log.Timber;
  */
 public class PushManager {
 
-    public static final String DEFAULT_PROVIDER = "https://chatsecure-push.herokuapp.com/api/v1/";
+    public static final String DEFAULT_PROVIDER = "https://push.zom.im/api/v1/";
 
     enum State {UNAUTHENTICATED, AUTHENTICATED}
 
@@ -144,7 +144,7 @@ public class PushManager {
                     TLV tlv = new TLV(WhitelistTokenTlv.TLV_WHITELIST_TOKEN,
                             WhitelistTokenTlv.createGson().toJson(
                                     new WhitelistTokenTlv(
-                                            providerUrl,
+                                            response.providerUrl,
                                             new String[]{response.token},
                                             extraData))
                                     .getBytes("UTF-8"));
