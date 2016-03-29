@@ -20,7 +20,7 @@ public class GlideVFSModule implements GlideModule {
         //ViewTarget.setTagId(1234);//R.id.glide_tag_id);
 
         //builder.setDecodeFormat(DecodeFormat.PREFER_ARGB_8888);
-        
+
 
     }
 
