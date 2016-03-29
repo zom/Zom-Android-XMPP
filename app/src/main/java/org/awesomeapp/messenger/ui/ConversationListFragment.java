@@ -190,7 +190,14 @@ public class ConversationListFragment extends Fragment {
             ConversationListItem view = (ConversationListItem)LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.conversation_view, parent, false);
             view.setBackgroundResource(mBackground);
-            return new ConversationViewHolder(view);
+            ConversationViewHolder viewHolder = (ConversationViewHolder)view.getTag();
+
+            if (viewHolder == null) {
+                viewHolder = new ConversationViewHolder(view);
+                view.setTag(viewHolder);
+            }
+
+            return viewHolder;
         }
 
         @Override

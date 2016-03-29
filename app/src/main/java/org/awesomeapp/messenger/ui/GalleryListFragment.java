@@ -108,9 +108,8 @@ public class GalleryListFragment extends Fragment {
         private Context mContext;
 
 
-
         public MessageListRecyclerViewAdapter(Context context, Cursor cursor) {
-            super(context,cursor);
+            super(context, cursor);
             context.getTheme().resolveAttribute(R.attr.selectableItemBackground, mTypedValue, true);
             mBackground = mTypedValue.resourceId;
             mContext = context;
@@ -118,11 +117,12 @@ public class GalleryListFragment extends Fragment {
             setHasStableIds(true);
         }
 
+        @Override
         public long getItemId (int position)
         {
             Cursor c = getCursor();
             c.moveToPosition(position);
-            long chatId =  c.getLong(0); //id is first column
+            long chatId =  c.getLong(3); //timestamp! id is first column
             return chatId;
         }
 
@@ -131,9 +131,17 @@ public class GalleryListFragment extends Fragment {
         public GalleryMediaViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             GalleryListItem view = (GalleryListItem)LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.gallery_item_view, parent, false);
-            view.setBackgroundResource(mBackground);
+            //view.setBackgroundResource(mBackground);
 
-            return new GalleryMediaViewHolder(view,view.getContext());
+            GalleryMediaViewHolder viewHolder = (GalleryMediaViewHolder)view.getTag();
+
+            if (viewHolder == null)
+            {
+                viewHolder =  new GalleryMediaViewHolder(view,view.getContext());
+                view.setTag(viewHolder);
+            }
+
+            return viewHolder;
         }
 
         @Override
@@ -145,8 +153,7 @@ public class GalleryListFragment extends Fragment {
             String body = cursor.getString(2);
             java.util.Date ts = new Date(cursor.getLong(3));
 
-             viewHolder.bind(id, mimeType, body, ts);
-
+            viewHolder.bind(id, mimeType, body, ts);
 
         }
 
@@ -201,7 +208,6 @@ public class GalleryListFragment extends Fragment {
             mAdapter.swapCursor(null);
 
         }
-
 
 
         public final String[] MESSAGE_PROJECTION = {

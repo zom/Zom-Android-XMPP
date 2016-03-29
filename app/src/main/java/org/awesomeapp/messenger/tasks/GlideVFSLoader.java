@@ -29,6 +29,7 @@ import info.guardianproject.iocipher.FileInputStream;
 
 
 public class GlideVFSLoader implements StreamModelLoader<info.guardianproject.iocipher.FileInputStream> {
+
     private final Context context;
     public GlideVFSLoader(Context context) {
         this.context = context.getApplicationContext();
@@ -43,6 +44,7 @@ public class GlideVFSLoader implements StreamModelLoader<info.guardianproject.io
             return new GlideVFSLoader(context);
         }
         @Override public void teardown() {
+
 
         }
     }
@@ -72,9 +74,16 @@ class VFSDataFetcher implements DataFetcher<InputStream> {
         }
     }
     @Override public String getId() {
-        return context.getPackageName() + "@" + new Date().getTime();
+        return context.getPackageName() + "@" + new Date().getTime() + Math.random();
     }
     @Override public void cancel() {
         // do nothing
+        try {
+            if (vfsFileStream != null) {
+                vfsFileStream.close();
+            }
+        } catch (IOException e) {
+            Log.w("VFSDataFetcher", "Cannot clean up after stream", e);
+        }
     }
 }

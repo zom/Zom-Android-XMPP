@@ -42,7 +42,9 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.Preferences;
@@ -510,7 +512,27 @@ public class ContactsPickerActivity extends AppCompatActivity {
         @Override
         public void bindView(View view, Context context, Cursor cursor) {
             ContactListItem v = (ContactListItem) view;
-            v.bind(cursor, mSearchString, false);
+
+            ContactViewHolder holder = (ContactViewHolder)view.getTag();
+
+            if (holder == null) {
+                holder = new ContactViewHolder(v);
+                holder.mLine1 = (TextView) view.findViewById(R.id.line1);
+                holder.mLine2 = (TextView) view.findViewById(R.id.line2);
+
+                holder.mAvatar = (ImageView)view.findViewById(R.id.avatar);
+                holder.mStatusIcon = (ImageView)view.findViewById(R.id.statusIcon);
+                holder.mStatusText = (TextView)view.findViewById(R.id.statusText);
+                //holder.mEncryptionIcon = (ImageView)view.findViewById(R.id.encryptionIcon);
+
+                holder.mContainer = view.findViewById(R.id.message_container);
+
+                // holder.mMediaThumb = (ImageView)findViewById(R.id.media_thumbnail);
+                view.setTag(holder);
+            }
+
+
+            v.bind(holder, cursor, mSearchString, false);
         }
     }
 

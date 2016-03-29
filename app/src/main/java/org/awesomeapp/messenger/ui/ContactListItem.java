@@ -47,6 +47,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v4.util.LruCache;
+import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -101,42 +102,14 @@ public class ContactListItem extends FrameLayout {
 
     }
 
-    static class ViewHolder
-    {
 
-        TextView mLine1;
-        TextView mLine2;
-        TextView mStatusText;
-        ImageView mAvatar;
-        ImageView mStatusIcon;
-        View mContainer;
-        ImageView mMediaThumb;
+    public void bind(ContactViewHolder holder, Cursor cursor, String underLineText, boolean scrolling) {
+        bind(holder, cursor, underLineText, true, scrolling);
     }
 
-    public void bind(Cursor cursor, String underLineText, boolean scrolling) {
-        bind(cursor, underLineText, true, scrolling);
-    }
-
-    public void bind(Cursor cursor, String underLineText, boolean showChatMsg, boolean scrolling) {
+    public void bind(ContactViewHolder holder, Cursor cursor, String underLineText, boolean showChatMsg, boolean scrolling) {
 
 
-        ViewHolder holder = (ViewHolder)getTag();
-
-        if (holder == null) {
-            holder = new ViewHolder();
-            holder.mLine1 = (TextView) findViewById(R.id.line1);
-            holder.mLine2 = (TextView) findViewById(R.id.line2);
-
-            holder.mAvatar = (ImageView)findViewById(R.id.avatar);
-            holder.mStatusIcon = (ImageView)findViewById(R.id.statusIcon);
-            holder.mStatusText = (TextView)findViewById(R.id.statusText);
-            //holder.mEncryptionIcon = (ImageView)view.findViewById(R.id.encryptionIcon);
-
-            holder.mContainer = findViewById(R.id.message_container);
-
-           // holder.mMediaThumb = (ImageView)findViewById(R.id.media_thumbnail);
-            setTag(holder);
-        }
 
         final long providerId = cursor.getLong(COLUMN_CONTACT_PROVIDER);
         final String address = cursor.getString(COLUMN_CONTACT_USERNAME);
