@@ -282,29 +282,24 @@ public class ContactListItem extends FrameLayout {
         switch (status) {
         case Presence.AVAILABLE:
             avatar.setBorderColor(getResources().getColor(R.color.holo_green_light));
-            avatar.setAlpha(255);
             break;
 
         case Presence.IDLE:
             avatar.setBorderColor(getResources().getColor(R.color.holo_green_dark));
-            avatar.setAlpha(255);
 
             break;
 
         case Presence.AWAY:
             avatar.setBorderColor(getResources().getColor(R.color.holo_orange_light));
-            avatar.setAlpha(255);
             break;
 
         case Presence.DO_NOT_DISTURB:
             avatar.setBorderColor(getResources().getColor(R.color.holo_red_dark));
-            avatar.setAlpha(255);
 
             break;
 
         case Presence.OFFLINE:
             avatar.setBorderColor(getResources().getColor(android.R.color.transparent));
-            avatar.setAlpha(100);
             break;
 
 
