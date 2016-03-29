@@ -3375,7 +3375,7 @@ public class XmppConnection extends ImConnection {
         }
         else if (presence.getType() == org.jivesoftware.smack.packet.Presence.Type.subscribed) {
 
-            debug(TAG,"got subscribed confirmation request: " + presence.getFrom());
+            debug(TAG, "got subscribed confirmation request: " + presence.getFrom());
             try
             {
                 if (contact == null) {
@@ -3474,6 +3474,7 @@ public class XmppConnection extends ImConnection {
 
         }
 
+
         return contact;
     }
 
@@ -3500,12 +3501,19 @@ public class XmppConnection extends ImConnection {
                         if (contact != null)
                         {
                             alUpdate.add(contact);
+                            ChatSession session = mSessionManager.findSession(contact.getAddress().getBareAddress());
+                            if (session != null)
+                            {
+                                session.setParticipant(contact); //we need to update the session participant
+                            }
+
                         }
 
                     }
                     
                     //Log.d(TAG,"XMPP processed presence q=" + alUpdate.size());                    
                     mContactListManager.notifyContactsPresenceUpdated(alUpdate.toArray(new Contact[alUpdate.size()]));
+
                     loadVCardsAsync();
 
                 }
