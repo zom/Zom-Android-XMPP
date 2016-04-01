@@ -373,9 +373,9 @@ public class ContactsListFragment extends Fragment {
                 Imps.Presence.PRESENCE_STATUS,
                 Imps.Presence.PRESENCE_CUSTOM_STATUS,
                 Imps.Chats.LAST_MESSAGE_DATE,
-                Imps.Chats.LAST_UNREAD_MESSAGE,
-                Imps.Contacts.AVATAR_HASH,
-                Imps.Contacts.AVATAR_DATA
+                Imps.Chats.LAST_UNREAD_MESSAGE
+        ///        Imps.Contacts.AVATAR_HASH,
+           //     Imps.Contacts.AVATAR_DATA
 
         };
 

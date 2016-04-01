@@ -311,10 +311,11 @@ public class ImApp extends Application implements ICacheWordSubscriber {
         if (Log.isLoggable(LOG_TAG, Log.DEBUG))
             log("start ImService");
 
-        Intent serviceIntent = new Intent(this, RemoteImService.class);
+        if (mImService == null) {
+
+            Intent serviceIntent = new Intent(this, RemoteImService.class);
 //        serviceIntent.putExtra(ImServiceConstants.EXTRA_CHECK_AUTO_LOGIN, isBoot);
 
-        if (mImService == null) {
             mApplicationContext.startService(serviceIntent);
 
             mConnectionListener = new MyConnListener(new Handler());

@@ -174,16 +174,17 @@ public class ContactListItem extends FrameLayout {
 
                     holder.mAvatar.setImageDrawable(AVATAR_DEFAULT_GROUP);
 
-
             }
-            else if (cursor.getColumnIndex(Imps.Contacts.AVATAR_DATA)!=-1)
+            else
             {
 
-                RoundedAvatarDrawable avatar = null;
+                Drawable avatar = null;
 
                 try
                 {
-                   avatar = DatabaseUtils.getAvatarFromCursor(cursor, COLUMN_AVATAR_DATA, ImApp.SMALL_AVATAR_WIDTH, ImApp.SMALL_AVATAR_HEIGHT);
+                   //avatar = DatabaseUtils.getAvatarFromCursor(cursor, COLUMN_AVATAR_DATA, ImApp.SMALL_AVATAR_WIDTH, ImApp.SMALL_AVATAR_HEIGHT);
+                    avatar = DatabaseUtils.getAvatarFromAddress(this.getContext().getContentResolver(), address, ImApp.SMALL_AVATAR_WIDTH, ImApp.SMALL_AVATAR_HEIGHT);
+
                 }
                 catch (Exception e)
                 {
@@ -195,7 +196,9 @@ public class ContactListItem extends FrameLayout {
                 {
                     if (avatar != null)
                     {
-                        setAvatarBorder(presence,avatar);
+                        if (avatar instanceof RoundedAvatarDrawable)
+                            setAvatarBorder(presence,(RoundedAvatarDrawable)avatar);
+
                         holder.mAvatar.setImageDrawable(avatar);
                     }
                     else
@@ -221,14 +224,6 @@ public class ContactListItem extends FrameLayout {
                 {
                     //this seems to happen now and then even on tiny images; let's catch it and just not set an avatar
                 }
-
-            }
-            else
-            {
-                //holder.mAvatar.setImageDrawable(getContext().getResources().getDrawable(R.drawable.avatar_unknown));
-                holder.mAvatar.setVisibility(View.GONE);
-
-
 
             }
         }
