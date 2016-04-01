@@ -207,7 +207,7 @@ public class MessageListItem extends FrameLayout {
             boolean cmdSuccess = false;
 
             String cmd = lastMessage.toString().substring(1);
-            if (cmd.startsWith("sticker"))
+            if (cmd.startsWith("sticker:"))
             {
                 String[] cmds = cmd.split(":");
 
