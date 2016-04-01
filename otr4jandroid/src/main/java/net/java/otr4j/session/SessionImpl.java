@@ -256,7 +256,7 @@ public class SessionImpl implements Session {
      * @see net.java.otr4j.session.ISession#getSessionStatus()
      */
 
-    public synchronized SessionStatus getSessionStatus() {
+    public SessionStatus getSessionStatus() {
         return sessionStatus;
     }
 

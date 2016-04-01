@@ -117,7 +117,8 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
     private OtrChatManager mOtrChatManager;
 
     private ImPluginHelper mPluginHelper;
-    private Hashtable<String, ImConnectionAdapter> mConnections;
+    private Hashtable<Long, ImConnectionAdapter> mConnections;
+    private Hashtable<String, ImConnectionAdapter> mConnectionsByUser;
 
     private Handler mHandler;
 
@@ -237,7 +238,9 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
             Debug.recordTrail(this, PREV_CONNECTIONS_TRAIL_TAG, prevConnections);
         Debug.recordTrail(this, CONNECTIONS_TRAIL_TAG, "0");
         
-        mConnections = new Hashtable<String, ImConnectionAdapter>();
+        mConnections = new Hashtable<Long, ImConnectionAdapter>();
+        mConnectionsByUser = new Hashtable<String, ImConnectionAdapter>();
+
         mHandler = new Handler();
 
         Debug.onServiceStart();
@@ -483,21 +486,21 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
             int isKeepSignedIn = cursor.getInt(ACCOUNT_KEEP_SIGNED_IN);
 
             if (isActive == 1 && isKeepSignedIn == 1) {
-                IImConnection conn = do_createConnection(providerId, accountId);
+                IImConnection conn = mConnections.get(providerId);
+
+                if (conn == null)
+                    conn = do_createConnection(providerId, accountId);
 
                 try {
                     if (conn.getState() != ImConnection.LOGGED_IN) {
                         try {
                             conn.login(null, true, true);
-
                         } catch (RemoteException e) {
-                            Log.w(TAG, "Logging error while automatically login!");
+                            Log.w(TAG, "Logging error while automatically login: " + accountId);
                         }
                     }
                 } catch (Exception e) {
-                    Log.d(ImApp.LOG_TAG, "error auto logging into ImConnection", e);
-                    cursor.close();
-                    return false;
+                    Log.d(ImApp.LOG_TAG, "error auto logging into ImConnection: " + accountId);
                 }
             }
         }
@@ -616,10 +619,11 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
         if (providerId == -1)
             return null;
 
+        Map<String, String> settings = loadProviderSettings(providerId);
+
         //make sure OTR is init'd before you create your first connection
         initOtrChatManager();
 
-        Map<String, String> settings = loadProviderSettings(providerId);
         ConnectionFactory factory = ConnectionFactory.getInstance();
         try {
 
@@ -660,7 +664,9 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
             providerSettings.close();
 
-            mConnections.put(userName + '@' + domain,imConnectionAdapter);
+            mConnections.put(providerId, imConnectionAdapter);
+            mConnectionsByUser.put(imConnectionAdapter.getLoginUser().getAddress().getBareAddress(),imConnectionAdapter);
+
             Debug.recordTrail(this, CONNECTIONS_TRAIL_TAG, "" + mConnections.size());
 
             synchronized (mRemoteListeners)
@@ -694,6 +700,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
     public void removeConnection(ImConnectionAdapter connection) {
 
         mConnections.remove(connection);
+        mConnectionsByUser.remove(connection.getLoginUser());
 
         if (mConnections.size() == 0)
             if (Preferences.getUseForegroundPriority())
@@ -796,8 +803,8 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
     }
 
 
-    public ImConnectionAdapter getConnection(String username) {
-       return mConnections.get(username);
+    public ImConnectionAdapter getConnection(String userAddress) {
+       return mConnectionsByUser.get(userAddress);
     }
 
 
@@ -834,6 +841,11 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
                 result.add(conn.asBinder());
             }
             return result;
+        }
+
+        @Override
+        public IImConnection getConnection(long providerId) {
+            return mConnections.get(providerId);
         }
 
         @Override

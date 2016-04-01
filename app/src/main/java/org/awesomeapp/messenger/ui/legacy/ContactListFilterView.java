@@ -26,6 +26,7 @@ import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.ui.ContactListItem;
 
+import org.awesomeapp.messenger.ui.ContactViewHolder;
 import org.awesomeapp.messenger.ui.ContactsPickerActivity;
 import org.awesomeapp.messenger.util.LogCleaner;
 import android.app.Activity;
@@ -43,6 +44,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.ResourceCursorAdapter;
+import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -53,6 +55,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -265,35 +268,34 @@ public class ContactListFilterView extends LinearLayout {
         
         @Override
         public View newView(Context context, Cursor cursor, ViewGroup parent) {
-            View view = super.newView(context, cursor, parent);
+            ContactListItem view = (ContactListItem)super.newView(context, cursor, parent);
 
-            /**
+            ContactViewHolder holder = (ContactViewHolder)view.getTag();
 
-            ContactListItem.ViewHolder holder = null;
+            if (holder == null) {
+                holder = new ContactViewHolder(view);
+                holder.mLine1 = (TextView) view.findViewById(R.id.line1);
+                holder.mLine2 = (TextView) view.findViewById(R.id.line2);
 
-            holder = new ContactListItem.ViewHolder();
+                holder.mAvatar = (ImageView)view.findViewById(R.id.avatar);
+                holder.mStatusIcon = (ImageView)view.findViewById(R.id.statusIcon);
+                holder.mStatusText = (TextView)view.findViewById(R.id.statusText);
+                //holder.mEncryptionIcon = (ImageView)view.findViewById(R.id.encryptionIcon);
 
-            holder.mLine1 = (TextView) view.findViewById(R.id.line1);
-            holder.mLine2 = (TextView) view.findViewById(R.id.line2);
+                holder.mContainer = view.findViewById(R.id.message_container);
 
-            holder.mAvatar = (ImageView)view.findViewById(R.id.avatar);
-            holder.mStatusIcon = (ImageView)view.findViewById(R.id.statusIcon);
-            //holder.mEncryptionIcon = (ImageView)view.findViewById(R.id.encryptionIcon);
+                // holder.mMediaThumb = (ImageView)findViewById(R.id.media_thumbnail);
+                view.setTag(holder);
+            }
 
-            holder.mContainer = view.findViewById(R.id.message_container);
 
-            holder.mMediaThumb = (ImageView)view.findViewById(R.id.media_thumbnail);
-            
-            view.setTag(holder);
-            */
-           return view;
+            return view;
         }
         
         @Override
         public void bindView(View view, Context context, Cursor cursor) {
             ContactListItem v = (ContactListItem) view;
-            v.bind(cursor, mSearchString, true);
-
+            v.bind((ContactViewHolder)view.getTag(),cursor, mSearchString, true);
         }
         
     }

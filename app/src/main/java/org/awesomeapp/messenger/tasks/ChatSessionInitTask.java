@@ -13,13 +13,12 @@ import org.awesomeapp.messenger.service.IImConnection;
 /**
  * Created by n8fr8 on 10/23/15.
  */
-public class ChatSessionInitTask implements Runnable {
+public class ChatSessionInitTask extends AsyncTask<String, Long, Long> {
 
     ImApp mApp;
     long mProviderId;
     long mAccountId;
     int mContactType;
-    String[] mRemoteAddresses;
 
     public ChatSessionInitTask (ImApp app, long providerId, long accountId, int contactType)
     {
@@ -29,45 +28,16 @@ public class ChatSessionInitTask implements Runnable {
         mContactType = contactType;
     }
 
-    public void execute (String[] remoteAddresses)
+    public Long doInBackground (String... remoteAddresses)
     {
-        mRemoteAddresses = remoteAddresses;
-
-
-        new Thread(this).start();
-    }
-
-    public void execute (String remoteAddress)
-    {
-        mRemoteAddresses = new String[1];
-        mRemoteAddresses[0] = remoteAddress;
-
-        new Thread(this).start();
-    }
-
-
-    public void run ()
-    {
-
-        if (mProviderId != -1 && mAccountId != -1) {
+        if (mProviderId != -1 && mAccountId != -1 && remoteAddresses != null) {
             try {
                 IImConnection conn = mApp.getConnection(mProviderId, mAccountId);
 
-                int maxRetry = 5;
-                int attempt = 0;
+                if (conn == null)
+                    return -1L;
 
-                while (conn == null || conn.getState() != ImConnection.LOGGED_IN) {
-
-                    Thread.sleep(2000);
-
-                    conn = mApp.getConnection(mProviderId, mAccountId);
-
-                    if (attempt++ > maxRetry)
-                        return; //do nothing
-                }
-
-
-                for (String address : mRemoteAddresses) {
+                for (String address : remoteAddresses) {
 
                     IChatSession session = conn.getChatSessionManager().getChatSession(address);
 
@@ -99,7 +69,7 @@ public class ChatSessionInitTask implements Runnable {
                     }
 
                     if (session != null)
-                        onPostExecute(session.getId());
+                        return (session.getId());
 
 
                 }
@@ -109,7 +79,7 @@ public class ChatSessionInitTask implements Runnable {
             }
         }
 
-        return;
+        return -1L;
     }
 
     protected void onPostExecute(Long chatId) {

@@ -1,13 +1,10 @@
 package org.awesomeapp.messenger.ui;
 
 import android.app.Activity;
-import android.content.ContentUris;
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
@@ -23,8 +20,6 @@ import android.widget.ListView;
 
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.provider.Imps;
-import org.awesomeapp.messenger.service.IImConnection;
-import org.awesomeapp.messenger.ui.legacy.SignInHelper;
 
 import im.zom.messenger.R;
 
@@ -39,7 +34,7 @@ public class AccountsFragment extends ListFragment {
 
             mActivity = (FragmentActivity)activity;
 
-            mAccountLayoutView = R.layout.account_view;
+            mAccountLayoutView = R.layout.account_list_item;
 
             initProviderCursor();
 
@@ -67,7 +62,7 @@ public class AccountsFragment extends ListFragment {
         int position = info.position;
 
         // Now you can do whatever.. (Example, load different menus for different items)
-        //list.getItem(position);
+        //list.getItem(position);account_view
 
         menu.add("One");
         menu.add("Two");
@@ -126,8 +121,8 @@ public class AccountsFragment extends ListFragment {
 
         private class ProviderListItemFactory implements LayoutInflater.Factory {
             public View onCreateView(String name, Context context, AttributeSet attrs) {
-                if (name != null && name.equals(ProviderListItem.class.getName())) {
-                    return new ProviderListItem(context,attrs);
+                if (name != null && name.equals(AccountListItem.class.getName())) {
+                    return new AccountListItem(context,attrs);
                 }
                 return null;
             }

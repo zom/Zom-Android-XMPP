@@ -47,6 +47,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v4.util.LruCache;
+import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -101,42 +102,14 @@ public class ContactListItem extends FrameLayout {
 
     }
 
-    static class ViewHolder
-    {
 
-        TextView mLine1;
-        TextView mLine2;
-        TextView mStatusText;
-        ImageView mAvatar;
-        ImageView mStatusIcon;
-        View mContainer;
-        ImageView mMediaThumb;
+    public void bind(ContactViewHolder holder, Cursor cursor, String underLineText, boolean scrolling) {
+        bind(holder, cursor, underLineText, true, scrolling);
     }
 
-    public void bind(Cursor cursor, String underLineText, boolean scrolling) {
-        bind(cursor, underLineText, true, scrolling);
-    }
-
-    public void bind(Cursor cursor, String underLineText, boolean showChatMsg, boolean scrolling) {
+    public void bind(ContactViewHolder holder, Cursor cursor, String underLineText, boolean showChatMsg, boolean scrolling) {
 
 
-        ViewHolder holder = (ViewHolder)getTag();
-
-        if (holder == null) {
-            holder = new ViewHolder();
-            holder.mLine1 = (TextView) findViewById(R.id.line1);
-            holder.mLine2 = (TextView) findViewById(R.id.line2);
-
-            holder.mAvatar = (ImageView)findViewById(R.id.avatar);
-            holder.mStatusIcon = (ImageView)findViewById(R.id.statusIcon);
-            holder.mStatusText = (TextView)findViewById(R.id.statusText);
-            //holder.mEncryptionIcon = (ImageView)view.findViewById(R.id.encryptionIcon);
-
-            holder.mContainer = findViewById(R.id.message_container);
-
-           // holder.mMediaThumb = (ImageView)findViewById(R.id.media_thumbnail);
-            setTag(holder);
-        }
 
         final long providerId = cursor.getLong(COLUMN_CONTACT_PROVIDER);
         final String address = cursor.getString(COLUMN_CONTACT_USERNAME);
@@ -201,16 +174,17 @@ public class ContactListItem extends FrameLayout {
 
                     holder.mAvatar.setImageDrawable(AVATAR_DEFAULT_GROUP);
 
-
             }
-            else if (cursor.getColumnIndex(Imps.Contacts.AVATAR_DATA)!=-1)
+            else
             {
 
-                RoundedAvatarDrawable avatar = null;
+                Drawable avatar = null;
 
                 try
                 {
-                   avatar = DatabaseUtils.getAvatarFromCursor(cursor, COLUMN_AVATAR_DATA, ImApp.SMALL_AVATAR_WIDTH, ImApp.SMALL_AVATAR_HEIGHT);
+                   //avatar = DatabaseUtils.getAvatarFromCursor(cursor, COLUMN_AVATAR_DATA, ImApp.SMALL_AVATAR_WIDTH, ImApp.SMALL_AVATAR_HEIGHT);
+                    avatar = DatabaseUtils.getAvatarFromAddress(this.getContext().getContentResolver(), address, ImApp.SMALL_AVATAR_WIDTH, ImApp.SMALL_AVATAR_HEIGHT);
+
                 }
                 catch (Exception e)
                 {
@@ -222,7 +196,9 @@ public class ContactListItem extends FrameLayout {
                 {
                     if (avatar != null)
                     {
-                        setAvatarBorder(presence,avatar);
+                        if (avatar instanceof RoundedAvatarDrawable)
+                            setAvatarBorder(presence,(RoundedAvatarDrawable)avatar);
+
                         holder.mAvatar.setImageDrawable(avatar);
                     }
                     else
@@ -250,14 +226,6 @@ public class ContactListItem extends FrameLayout {
                 }
 
             }
-            else
-            {
-                //holder.mAvatar.setImageDrawable(getContext().getResources().getDrawable(R.drawable.avatar_unknown));
-                holder.mAvatar.setVisibility(View.GONE);
-
-
-
-            }
         }
 
         holder.mStatusText.setText("");
@@ -282,29 +250,24 @@ public class ContactListItem extends FrameLayout {
         switch (status) {
         case Presence.AVAILABLE:
             avatar.setBorderColor(getResources().getColor(R.color.holo_green_light));
-            avatar.setAlpha(255);
             break;
 
         case Presence.IDLE:
             avatar.setBorderColor(getResources().getColor(R.color.holo_green_dark));
-            avatar.setAlpha(255);
 
             break;
 
         case Presence.AWAY:
             avatar.setBorderColor(getResources().getColor(R.color.holo_orange_light));
-            avatar.setAlpha(255);
             break;
 
         case Presence.DO_NOT_DISTURB:
             avatar.setBorderColor(getResources().getColor(R.color.holo_red_dark));
-            avatar.setAlpha(255);
 
             break;
 
         case Presence.OFFLINE:
             avatar.setBorderColor(getResources().getColor(android.R.color.transparent));
-            avatar.setAlpha(100);
             break;
 
 

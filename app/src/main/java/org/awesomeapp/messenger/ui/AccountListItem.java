@@ -38,6 +38,7 @@ import android.graphics.Color;
 import android.os.Handler;
 import android.os.Message;
 import android.os.RemoteException;
+import android.support.design.widget.Snackbar;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -45,7 +46,7 @@ import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class ProviderListItem extends LinearLayout {
+public class AccountListItem extends LinearLayout {
 
     private Activity mActivity;
 
@@ -82,7 +83,7 @@ public class ProviderListItem extends LinearLayout {
 
     };
 
-    public ProviderListItem(Context context, AttributeSet attrs) {
+    public AccountListItem(Context context, AttributeSet attrs) {
         super(context, attrs);
 
     }
@@ -124,6 +125,19 @@ public class ProviderListItem extends LinearLayout {
 
         });
 
+        setOnLongClickListener(new OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+
+                ImApp app = (ImApp)mActivity.getApplication();
+
+                app.setDefaultAccount(mProviderId, mAccountId);
+
+                Snackbar.make(v, "Default account changed", Snackbar.LENGTH_LONG).show();
+
+                return true;
+            }
+        });
 
 
         if (mSignInSwitch != null)

@@ -190,7 +190,14 @@ public class ConversationListFragment extends Fragment {
             ConversationListItem view = (ConversationListItem)LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.conversation_view, parent, false);
             view.setBackgroundResource(mBackground);
-            return new ConversationViewHolder(view);
+            ConversationViewHolder viewHolder = (ConversationViewHolder)view.getTag();
+
+            if (viewHolder == null) {
+                viewHolder = new ConversationViewHolder(view);
+                view.setTag(viewHolder);
+            }
+
+            return viewHolder;
         }
 
         @Override
@@ -264,7 +271,8 @@ public class ConversationListFragment extends Fragment {
     {
         mSearchString = searchString;
 
-        mLoaderManager.restartLoader(mLoaderId, null, mLoaderCallbacks);
+        if (mLoaderManager != null)
+            mLoaderManager.restartLoader(mLoaderId, null, mLoaderCallbacks);
 
     }
 
@@ -283,16 +291,16 @@ public class ConversationListFragment extends Fragment {
 
                 mUri = Imps.Messages.CONTENT_URI_MESSAGES_BY_SEARCH;
 
-                buf.append("contacts." + Imps.Contacts.NICKNAME);
-                buf.append(" LIKE ");
-                DatabaseUtils.appendValueToSql(buf, "%" + mSearchString + "%");
-                buf.append(" OR ");
+           //     buf.append("contacts." + Imps.Contacts.NICKNAME);
+            //    buf.append(" LIKE ");
+            //    DatabaseUtils.appendValueToSql(buf, "%" + mSearchString + "%");
+             //     buf.append(" OR ");
                 buf.append(Imps.Messages.BODY);
                 buf.append(" LIKE ");
                 DatabaseUtils.appendValueToSql(buf, "%" + mSearchString + "%");
 
                 loader = new CursorLoader(getActivity(), mUri, null,
-                        buf == null ? null : buf.toString(), null, Imps.Messages.DEFAULT_SORT_ORDER);
+                        buf == null ? null : buf.toString(), null, Imps.Messages.REVERSE_SORT_ORDER);
             }
             else
             {
@@ -354,9 +362,9 @@ public class ConversationListFragment extends Fragment {
                 Imps.Presence.PRESENCE_STATUS,
                 Imps.Presence.PRESENCE_CUSTOM_STATUS,
                 Imps.Chats.LAST_MESSAGE_DATE,
-                Imps.Chats.LAST_UNREAD_MESSAGE,
-                Imps.Contacts.AVATAR_HASH,
-                Imps.Contacts.AVATAR_DATA
+                Imps.Chats.LAST_UNREAD_MESSAGE
+      //          Imps.Contacts.AVATAR_HASH,
+        //        Imps.Contacts.AVATAR_DATA
 
         };
 

@@ -38,6 +38,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import org.awesomeapp.messenger.MainActivity;
 import org.awesomeapp.messenger.model.ImConnection;
@@ -198,25 +200,11 @@ public class ContactsListFragment extends Fragment {
     }
 
     public static class ContactListRecyclerViewAdapter
-            extends CursorRecyclerViewAdapter<ContactListRecyclerViewAdapter.ViewHolder> {
+            extends CursorRecyclerViewAdapter<ContactViewHolder> {
 
         private final TypedValue mTypedValue = new TypedValue();
         private int mBackground;
         private Context mContext;
-
-        public static class ViewHolder extends RecyclerView.ViewHolder {
-
-            public final ContactListItem mView;
-            public long mProviderId = -1;
-            public long mAccountId = -1;
-            public String mAddress = null;
-
-            public ViewHolder(ContactListItem view) {
-                super(view);
-                mView = view;
-            }
-
-        }
 
         public ContactListRecyclerViewAdapter(Context context, Cursor cursor) {
             super(context,cursor);
@@ -226,21 +214,42 @@ public class ContactsListFragment extends Fragment {
         }
 
         @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public ContactViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             ContactListItem view = (ContactListItem)LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.contact_view, parent, false);
             view.setBackgroundResource(mBackground);
-            return new ViewHolder(view);
+
+            ContactViewHolder holder = (ContactViewHolder)view.getTag();
+
+            if (holder == null) {
+                holder = new ContactViewHolder(view);
+                holder.mLine1 = (TextView) view.findViewById(R.id.line1);
+                holder.mLine2 = (TextView) view.findViewById(R.id.line2);
+
+                holder.mAvatar = (ImageView)view.findViewById(R.id.avatar);
+                holder.mStatusIcon = (ImageView)view.findViewById(R.id.statusIcon);
+                holder.mStatusText = (TextView)view.findViewById(R.id.statusText);
+                //holder.mEncryptionIcon = (ImageView)view.findViewById(R.id.encryptionIcon);
+
+                holder.mContainer = view.findViewById(R.id.message_container);
+
+                // holder.mMediaThumb = (ImageView)findViewById(R.id.media_thumbnail);
+                view.setTag(holder);
+            }
+
+            return holder;
+
         }
 
         @Override
-        public void onBindViewHolder(final ViewHolder viewHolder, Cursor cursor) {
+        public void onBindViewHolder(final ContactViewHolder viewHolder, Cursor cursor) {
 
            viewHolder.mAddress =  cursor.getString(ContactListItem.COLUMN_CONTACT_USERNAME);
 
-            viewHolder.mView.bind(cursor,"", false, false);
             viewHolder.mProviderId = cursor.getLong(ContactListItem.COLUMN_CONTACT_PROVIDER);
             viewHolder.mAccountId = cursor.getLong(ContactListItem.COLUMN_CONTACT_ACCOUNT);
+
+            viewHolder.mView.bind(viewHolder, cursor,"", false, false);
 
             viewHolder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -364,9 +373,9 @@ public class ContactsListFragment extends Fragment {
                 Imps.Presence.PRESENCE_STATUS,
                 Imps.Presence.PRESENCE_CUSTOM_STATUS,
                 Imps.Chats.LAST_MESSAGE_DATE,
-                Imps.Chats.LAST_UNREAD_MESSAGE,
-                Imps.Contacts.AVATAR_HASH,
-                Imps.Contacts.AVATAR_DATA
+                Imps.Chats.LAST_UNREAD_MESSAGE
+        ///        Imps.Contacts.AVATAR_HASH,
+           //     Imps.Contacts.AVATAR_DATA
 
         };
 

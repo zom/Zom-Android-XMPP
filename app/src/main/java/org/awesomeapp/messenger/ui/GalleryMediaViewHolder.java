@@ -3,6 +3,7 @@ package org.awesomeapp.messenger.ui;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.text.TextUtils;
@@ -11,6 +12,7 @@ import android.view.View;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.target.ImageViewTarget;
 
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.ui.widgets.ImageViewActivity;
@@ -28,6 +30,8 @@ import im.zom.messenger.R;
 public class GalleryMediaViewHolder extends MediaViewHolder
 {
     private Context context;
+
+    private ImageViewTarget<Bitmap> mTarget;
 
     public GalleryMediaViewHolder (View view, Context context)
     {
@@ -57,7 +61,10 @@ public class GalleryMediaViewHolder extends MediaViewHolder
 
 
         if( mimeType != null ) {
-            mContainer.setVisibility(View.VISIBLE);
+
+            if (mContainer.getVisibility() == View.GONE)
+                mContainer.setVisibility(View.VISIBLE);
+
             Uri mediaUri = Uri.parse( body ) ;
             showMediaThumbnail(mimeType, mediaUri, id);
 
@@ -82,10 +89,12 @@ public class GalleryMediaViewHolder extends MediaViewHolder
         }
         setOnClickListenerMediaThumbnail(mimeType, mediaUri);
 
-        mMediaThumbnail.setVisibility(View.VISIBLE);
+        if (mMediaThumbnail.getVisibility() == View.GONE)
+            mMediaThumbnail.setVisibility(View.VISIBLE);
+
         if( mimeType.startsWith("image/") ) {
             setImageThumbnail(context.getContentResolver(), id, mediaUri);
-            mMediaThumbnail.setBackgroundColor(Color.TRANSPARENT);
+          //  mMediaThumbnail.setBackgroundColor(Color.TRANSPARENT);
             // holder.mMediaThumbnail.setBackgroundColor(Color.WHITE);
 
         }
@@ -127,17 +136,26 @@ public class GalleryMediaViewHolder extends MediaViewHolder
      */
     private void setThumbnail(ContentResolver contentResolver, Uri mediaUri) {
 
-        Glide.clear(mMediaThumbnail);
-        mMediaThumbnail.setImageBitmap(null);
+        if (mTarget != null)
+            Glide.clear(mTarget);
+
+        mTarget = new ImageViewTarget<Bitmap>(mMediaThumbnail) {
+            @Override
+            protected void setResource(Bitmap resource) {
+
+                mMediaThumbnail.setImageBitmap(resource);
+            }
+        };
 
         if(SecureMediaStore.isVfsUri(mediaUri))
         {
             try {
                 Glide.with(context)
                         .load(new info.guardianproject.iocipher.FileInputStream(new File(mediaUri.getPath()).getPath()))
-                        .centerCrop()
+                        .asBitmap()
+                        .placeholder(R.drawable.ic_photo_library_white_36dp)
                         .diskCacheStrategy(DiskCacheStrategy.NONE)
-                        .into(mMediaThumbnail);
+                        .into(mTarget);
             }
             catch (Exception e)
             {
@@ -149,15 +167,18 @@ public class GalleryMediaViewHolder extends MediaViewHolder
             String assetPath = "file:///android_asset/" + mediaUri.getPath().substring(1);
             Glide.with(context)
                     .load(assetPath)
+                    .asBitmap()
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .into(mMediaThumbnail);
+                   .into(mTarget);
         }
         else
         {
             Glide.with(context)
                     .load(mediaUri)
-                    .centerCrop()
-                    .into(mMediaThumbnail);
+                    .asBitmap()
+                    .placeholder(R.drawable.ic_photo_library_white_36dp)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .into(mTarget);
         }
 
     }

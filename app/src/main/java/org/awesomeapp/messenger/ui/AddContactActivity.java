@@ -248,9 +248,9 @@ public class AddContactActivity extends AppCompatActivity {
     public class ProviderListItemFactory implements LayoutInflater.Factory {
         @Override
         public View onCreateView(String name, Context context, AttributeSet attrs) {
-            if (name != null && name.equals(ProviderListItem.class.getName())) {
+            if (name != null && name.equals(AccountListItem.class.getName())) {
             //    return new ProviderListItem(context, AddContactActivity.this, null);
-                return new ProviderListItem(context, attrs);
+                return new AccountListItem(context, attrs);
             }
             return null;
         }

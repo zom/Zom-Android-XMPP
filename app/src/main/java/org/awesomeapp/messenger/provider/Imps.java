@@ -529,6 +529,9 @@ public class Imps {
         public static final String TIME_ORDER = "last_message_date DESC";
 
         /** The default sort order for this table */
+        public static final String TIME_ORDER_ASC = "last_message_date ASC";
+
+        /** The default sort order for this table */
         public static final String ALPHA_SORT_ORDER = "nickname COLLATE NOCASE ASC";
 
         /** The default sort order for this table */

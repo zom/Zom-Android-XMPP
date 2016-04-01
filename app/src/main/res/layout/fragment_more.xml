@@ -12,7 +12,9 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="6dp"
-        android:background="@color/window_background">
+        android:background="@color/window_background"
+        android:id="@+id/btnOpenGalllery"
+        >
 
         <org.awesomeapp.messenger.ui.CircleColorImageView
             android:layout_width="64dp"
@@ -24,7 +26,7 @@
             app:circleColor="@android:color/holo_blue_light"
             />
         <org.ironrabbit.type.CustomTypefaceTextView
-            android:id="@+id/btnOpenGalllery"
+
             android:layout_width="match_parent"
             android:layout_height="96dp"
             android:text="@string/photo_gallery"
@@ -40,7 +42,9 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="6dp"
-        android:background="@color/window_background">
+        android:background="@color/window_background"
+        android:id="@+id/btnOpenGroups"
+        >
 
         <org.awesomeapp.messenger.ui.CircleColorImageView
             android:layout_width="64dp"
@@ -52,7 +56,6 @@
             app:circleColor="@android:color/holo_green_light"
             />
     <org.ironrabbit.type.CustomTypefaceTextView
-        android:id="@+id/btnOpenGroups"
         android:layout_width="match_parent"
         android:layout_height="96dp"
         android:text="@string/create_group"

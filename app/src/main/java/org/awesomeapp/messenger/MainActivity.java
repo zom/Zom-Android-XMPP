@@ -287,8 +287,8 @@ public class MainActivity extends AppCompatActivity {
             ImApp app = (ImApp) getApplication();
 
             app.checkForCrashes(this);
-            mApp.initAccountInfo();
             mApp.maybeInit(this);
+            mApp.initAccountInfo();
 
         }
 
@@ -621,21 +621,22 @@ public class MainActivity extends AppCompatActivity {
     public void startChat (long providerId, long accountId, String username)
     {
 
-        new ChatSessionInitTask(((ImApp)getApplication()),providerId, accountId, Imps.Contacts.TYPE_NORMAL)
-        {
-            @Override
-            protected void onPostExecute(Long chatId) {
+        if (username != null)
+            new ChatSessionInitTask(((ImApp)getApplication()),providerId, accountId, Imps.Contacts.TYPE_NORMAL)
+            {
+                @Override
+                protected void onPostExecute(Long chatId) {
 
-                if (chatId != -1) {
-                    Intent intent = new Intent(MainActivity.this, ConversationDetailActivity.class);
-                    intent.putExtra("id", chatId);
-                    startActivity(intent);
+                    if (chatId != -1) {
+                        Intent intent = new Intent(MainActivity.this, ConversationDetailActivity.class);
+                        intent.putExtra("id", chatId);
+                        startActivity(intent);
+                    }
+
+                    super.onPostExecute(chatId);
                 }
 
-                super.onPostExecute(chatId);
-            }
-
-        }.execute(username);
+            }.execute(username);
     }
 
     public void showGroupChatDialog ()

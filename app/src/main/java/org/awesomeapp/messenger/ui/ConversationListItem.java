@@ -78,8 +78,6 @@ public class ConversationListItem extends FrameLayout {
                                                 Imps.Presence.PRESENCE_CUSTOM_STATUS,
                                                 Imps.Chats.LAST_MESSAGE_DATE,
                                                 Imps.Chats.LAST_UNREAD_MESSAGE,
-                                                Imps.Contacts.AVATAR_HASH,
-                                                Imps.Contacts.AVATAR_DATA
 
     };
 
@@ -96,8 +94,6 @@ public class ConversationListItem extends FrameLayout {
     public static final int COLUMN_CONTACT_CUSTOM_STATUS = 9;
     public static final int COLUMN_LAST_MESSAGE_DATE = 10;
     public static final int COLUMN_LAST_MESSAGE = 11;
-    public static final int COLUMN_AVATAR_HASH = 12;
-    public static final int COLUMN_AVATAR_DATA = 13;
 
     static Drawable AVATAR_DEFAULT_GROUP = null;
     private final static PrettyTime sPrettyTime = new PrettyTime();
@@ -175,7 +171,7 @@ public class ConversationListItem extends FrameLayout {
 
                 try
                 {
-                    avatar = DatabaseUtils.getAvatarFromAddress(this.getContext().getContentResolver(), address, ImApp.DEFAULT_AVATAR_WIDTH, ImApp.DEFAULT_AVATAR_HEIGHT);
+                    avatar = DatabaseUtils.getAvatarFromAddress(this.getContext().getContentResolver(), address, ImApp.SMALL_AVATAR_WIDTH, ImApp.SMALL_AVATAR_HEIGHT);
                   // avatar = DatabaseUtils.getAvatarFromCursor(cursor, COLUMN_AVATAR_DATA, ImApp.SMALL_AVATAR_WIDTH, ImApp.SMALL_AVATAR_HEIGHT);
                 }
                 catch (Exception e)
@@ -458,10 +454,6 @@ public class ConversationListItem extends FrameLayout {
         }
 
     }
-
-
-    private static int sCacheSize = 10; // 1MiB
-    private static LruCache<String,Bitmap> mBitmapCache = new LruCache<String,Bitmap>(sCacheSize);
 
     private String getGroupCount(ContentResolver resolver, long groupId) {
         String[] projection = { Imps.GroupMembers.NICKNAME };
