@@ -48,7 +48,7 @@ public class ChatSessionManagerAdapter extends
     ChatSessionListenerAdapter mSessionListenerAdapter;
     final RemoteCallbackList<IChatSessionListener> mRemoteListeners = new RemoteCallbackList<IChatSessionListener>();
 
-    static HashMap<String, ChatSessionAdapter> mActiveChatSessionAdapters;
+    HashMap<String, ChatSessionAdapter> mActiveChatSessionAdapters;
 
     public ChatSessionManagerAdapter(ImConnectionAdapter connection) {
 
