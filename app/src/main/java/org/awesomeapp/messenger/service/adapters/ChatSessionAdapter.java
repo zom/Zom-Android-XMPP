@@ -449,7 +449,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
     void sendPostponedMessages() {
         String[] projection = new String[] { BaseColumns._ID, Imps.Messages.BODY,
                                              Imps.Messages.PACKET_ID,
-                                            Imps.Messages.DATE, Imps.Messages.TYPE, };
+                                            Imps.Messages.DATE, Imps.Messages.TYPE, Imps.Messages.IS_DELIVERED };
         String selection = Imps.Messages.TYPE + "=?";
 
         Cursor c = mContentResolver.query(mMessageURI, projection, selection,
