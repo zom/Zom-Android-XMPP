@@ -1695,7 +1695,8 @@ public class ConversationView {
 
                         if (mContactType == Imps.Contacts.TYPE_GROUP)
                         {
-                            new ChatSessionInitTask(((ImApp)mActivity.getApplication()),mProviderId, mAccountId, Imps.Contacts.TYPE_GROUP).execute(remoteAddress);
+                            new ChatSessionInitTask(((ImApp)mActivity.getApplication()),mProviderId, mAccountId, Imps.Contacts.TYPE_GROUP)
+                                    .executeOnExecutor(ImApp.sThreadPoolExecutor,remoteAddress);
 
                         }
                         else
@@ -1774,36 +1775,21 @@ public class ConversationView {
         mComposeMessage.requestFocus();
     }
 
-    /**
-    class SendMessageAsyncTask extends AsyncTask<String, Void, Boolean>
-    {
-        @Override
-        protected void onPostExecute(Boolean aBoolean) {
-            super.onPostExecute(aBoolean);
-
-            if (aBoolean.booleanValue()) {
-                mComposeMessage.setText("");
-                mComposeMessage.requestFocus();
-            }
-        }
-
-        @Override
-        protected Boolean doInBackground(String... strings) {
-            return sendMessage(strings[0],false);
-        }
-    };*/
 
     boolean sendMessage(String msg, boolean isResend) {
 
+        //don't send empty messages
         if (TextUtils.isEmpty(msg.trim())) {
             return false;
         }
 
+        //if the message starts with a command (just /giphy for now) do something else
         if (msg.startsWith("/giphy "))
         {
             return doGiphy(msg);
         }
 
+        //otherwise get the session, create if necessary, and then send
         IChatSession session = getChatSession();
 
         if (session == null)

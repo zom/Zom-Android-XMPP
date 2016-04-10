@@ -163,14 +163,13 @@ public class ContactDisplayActivity extends Activity {
                     Intent intent = new Intent(ContactDisplayActivity.this, ConversationDetailActivity.class);
                     intent.putExtra("id", chatId);
                     startActivity(intent);
-
-                    finish();
                 }
 
                 super.onPostExecute(chatId);
             }
-        }.execute(mUsername);
+        }.executeOnExecutor(ImApp.sThreadPoolExecutor,mUsername);
 
+        finish();
 
     }
 

@@ -169,7 +169,9 @@ public class GroupDisplayActivity extends Activity {
 
                 super.onPostExecute(chatId);
             }
-        }.execute(mAddress);
+        }
+        .executeOnExecutor(ImApp.sThreadPoolExecutor,mAddress);
+
 
 
     }
