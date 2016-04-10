@@ -150,9 +150,9 @@ public class AccountListItem extends LinearLayout {
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
                     if (isChecked)
-                        mSignInManager.signIn(mAccountId);
+                        mSignInManager.signIn(mProviderId, mAccountId);
                     else
-                        mSignInManager.signOut(mAccountId);
+                        mSignInManager.signOut(mProviderId, mAccountId);
 
                     mUserChanged = true;
                 }
@@ -306,9 +306,9 @@ public class AccountListItem extends LinearLayout {
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
                         if (isChecked)
-                            mSignInManager.signIn(mAccountId);
+                            mSignInManager.signIn(mProviderId, mAccountId);
                         else
-                            mSignInManager.signOut(mAccountId);
+                            mSignInManager.signOut(mProviderId, mAccountId);
 
                         mUserChanged = true;
                     }
@@ -402,8 +402,8 @@ public class AccountListItem extends LinearLayout {
 
     public interface SignInManager
     {
-        public void signIn (long accountId);
-        public void signOut (long accountId);
+        public void signIn (long providerId, long accountId);
+        public void signOut (long providerId, long accountId);
     }
 
 

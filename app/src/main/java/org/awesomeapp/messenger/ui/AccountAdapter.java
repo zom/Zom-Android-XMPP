@@ -219,7 +219,7 @@ public class AccountAdapter extends CursorAdapter implements AccountListItem.Sig
         void onPopulate();
     }
 
-    public void signIn(long accountId) {
+    public void signIn(long providerId, long accountId) {
         if (accountId <= 0) {
             return;
         }
@@ -239,10 +239,10 @@ public class AccountAdapter extends CursorAdapter implements AccountListItem.Sig
         // Remember that the user signed in.
         setKeepSignedIn(accountId, true);
 
-        long providerId = cursor.getLong(PROVIDER_ID_COLUMN);
+ //       long providerId = cursor.getLong(PROVIDER_ID_COLUMN);
         String password = cursor.getString(ACTIVE_ACCOUNT_PW_COLUMN);
 
-        boolean isActive = false; // TODO(miron)
+        boolean isActive = true; // TODO(miron)
 
         new SignInHelper(mActivity, sHandler).signIn(password, providerId, accountId, isActive);
 
@@ -250,29 +250,10 @@ public class AccountAdapter extends CursorAdapter implements AccountListItem.Sig
     }
 
 
-    public void signOut(final long accountId) {
+    public void signOut(final long providerId, final long accountId) {
         // Remember that the user signed out and do not auto sign in until they
         // explicitly do so
         setKeepSignedIn(accountId, false);
-
-        Cursor cursor = getCursor();
-
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast())
-        {
-            long cAccountId = cursor.getLong(ACTIVE_ACCOUNT_ID_COLUMN);
-
-            if (cAccountId == accountId)
-                break;
-
-            cursor.moveToNext();
-        }
-
-        // Remember that the user signed in.
-        setKeepSignedIn(accountId, true);
-
-        long providerId = cursor.getLong(PROVIDER_ID_COLUMN);
-        cursor.moveToPosition(-1);
 
         try {
             IImConnection conn =  ((ImApp)mActivity.getApplication()).getConnection(providerId, accountId);
