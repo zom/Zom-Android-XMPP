@@ -64,6 +64,7 @@ import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.disco.provider.DiscoverInfoProvider;
 import org.jivesoftware.smackx.disco.provider.DiscoverItemsProvider;
 import org.jivesoftware.smackx.iqlast.packet.LastActivity;
+import org.jivesoftware.smackx.muc.DiscussionHistory;
 import org.jivesoftware.smackx.muc.InvitationListener;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
@@ -574,21 +575,24 @@ public class XmppConnection extends ImConnection {
 
                 try
                 {
-
                     // Create the room
-                    mucCreated = muc.createOrJoin(nickname);
-
-
+                    DiscussionHistory history = new DiscussionHistory();
+                    history.setMaxStanzas(20);
+                    long timeout = 30*1000;//30 seconds
+                    mucCreated = muc.createOrJoin(nickname, null, history, timeout);
                 }
                 catch (Exception iae)
                 {
+
                     if (iae.getMessage().contains("Creation failed"))
                     {
                         //some server's don't return the proper 201 create code, so we can just assume the room was created!
                     }
                     else
                     {
+
                         throw iae;
+
                     }
                 }
 
@@ -1561,7 +1565,7 @@ public class XmppConnection extends ImConnection {
 
         mConfig.setSendPresence(true);
 
-      //  XMPPTCPConnection.setUseStreamManagementDefault(true);
+        XMPPTCPConnection.setUseStreamManagementDefault(true);
 
         //mConfig.setRosterLoadedAtLogin(true);
 
