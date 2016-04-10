@@ -232,9 +232,10 @@ public class SessionImpl implements Session {
 
 
         if (sessionStatus == SessionStatus.ENCRYPTED && doTransmitLastMessage && lastSentMessage != null) {
-            String retransmit = (isLastMessageRetransmit ? "[resent] " : "");
-            String msg = transformSending(retransmit + lastSentMessage, null);
+            //String retransmit = (isLastMessageRetransmit ? "[resent] " : "");
+            String msg = transformSending(lastSentMessage, null);
             getHost().injectMessage(getSessionID(), msg);
+            sessionStatusChanged = true;
         }
 
         doTransmitLastMessage = false;
