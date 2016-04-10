@@ -9,8 +9,6 @@
     >
 
 
-
-
             <ViewFlipper
                 android:id="@+id/viewFlipper1"
                 android:layout_width="match_parent"
