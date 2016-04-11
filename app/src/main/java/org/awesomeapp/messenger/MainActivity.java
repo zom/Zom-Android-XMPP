@@ -827,8 +827,7 @@ public class MainActivity extends AppCompatActivity {
 
 
             }
-        }.execute(room, server, nickname);
-
+        }.executeOnExecutor(ImApp.sThreadPoolExecutor,room, server, nickname);
 
 
     }

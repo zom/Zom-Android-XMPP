@@ -390,7 +390,7 @@ public class ImUrlActivity extends Activity {
                 if (parts.length > 1)
                     fingerprint = parts[1];
 
-                new AddContactAsyncTask(app.getDefaultProviderId(), app.getDefaultAccountId(), (ImApp)getApplication()).execute(username, fingerprint);
+                new AddContactAsyncTask(app.getDefaultProviderId(), app.getDefaultAccountId(), (ImApp)getApplication()).executeOnExecutor(ImApp.sThreadPoolExecutor,username, fingerprint);
 
                 Intent resultIntent = new Intent();
                 resultIntent.putExtra("newcontact",username);
