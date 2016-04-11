@@ -1416,6 +1416,7 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
         // Generate the body of the query
         int match = mUrlMatcher.match(url);
 
+        /**
          {
             //log("query " + url + ", match " + match + ", where " + selection);
             if (selectionArgs != null) {
@@ -1423,7 +1424,7 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
                   //  log("     selectionArg: " + selectionArg);
                 }
             }
-        }
+        }*/
 
         switch (match) {
         case MATCH_PROVIDERS_BY_ID:
