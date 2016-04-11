@@ -126,13 +126,7 @@ public class ConversationListFragment extends Fragment {
 
                 endConversation(itemId);
 
-                Snackbar.make(mRecView, "You ended the conversation", Snackbar.LENGTH_LONG)
-                     .setAction("UNDO", new View.OnClickListener() {
-                         @Override
-                         public void onClick(View v) {
-                             //if they click, then cancel timer that will be used to end the chat
-                         }
-                     }).show();
+                Snackbar.make(mRecView, getString(R.string.action_archived), Snackbar.LENGTH_LONG).show();
             }
         });
         swipeToDismissTouchHelper.attachToRecyclerView(recyclerView);

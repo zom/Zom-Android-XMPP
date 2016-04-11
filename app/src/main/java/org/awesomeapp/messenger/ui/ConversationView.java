@@ -1296,9 +1296,9 @@ public class ConversationView {
 
         setViewType(VIEW_TYPE_SUBSCRIPTION);
 
-        TextView text = (TextView) mActivity.findViewById(R.id.txtSubscription);
-        String displayableAddr = ImpsAddressUtils.getDisplayableAddress(from);
-        text.setText(mContext.getString(R.string.subscription_prompt, displayableAddr));
+        //TextView text = (TextView) mActivity.findViewById(R.id.txtSubscription);
+        //String displayableAddr = ImpsAddressUtils.getDisplayableAddress(from);
+        //text.setText(mContext.getString(R.string.subscription_prompt, displayableAddr));
     //.displayableAdd    mNewChatActivity.setTitle(mContext.getString(R.string.chat_with, displayableAddr));
 
         mApp.dismissChatNotification(providerId, from);
@@ -1481,6 +1481,7 @@ public class ConversationView {
 
     }
 
+    /**
     public void verifyScannedFingerprint (String scannedFingerprint)
     {
         try
@@ -1495,68 +1496,17 @@ public class ConversationView {
         {
             LogCleaner.error(ImApp.LOG_TAG, "unable to perform manual key verification", e);
         }
-    }
+    }*/
 
     public void showVerifyDialog() {
 
-        Intent intent = new Intent(mContext,ContactDisplayActivity.class);
+        Intent intent = new Intent(mContext, ContactDisplayActivity.class);
         intent.putExtra("contact", mRemoteAddress);
-        intent.putExtra("provider",mProviderId);
+        intent.putExtra("provider", mProviderId);
         intent.putExtra("account", mAccountId);
         mContext.startActivity(intent);
 
-        /**
-        if (getChatId() == -1)
-            return;
-
-
-
-        try {
-            IOtrChatSession otrChatSession = mCurrentChatSession.getOtrChatSession();
-            if (otrChatSession == null) {
-                return;
-            }
-
-            String localFingerprint = otrChatSession.getLocalFingerprint();
-            String remoteFingerprint = otrChatSession.getRemoteFingerprint();
-            if (TextUtils.isEmpty(localFingerprint) || TextUtils.isEmpty(remoteFingerprint)) {
-                return;
-            }
-
-            StringBuffer message = new StringBuffer();
-            message.append(mContext.getString(R.string.fingerprint_for_you)).append("\n")
-                    .append(prettyPrintFingerprint(localFingerprint)).append("\n\n");
-            message.append(mContext.getString(R.string.fingerprint_for_))
-                    .append(otrChatSession.getRemoteUserId()).append("\n")
-                    .append(prettyPrintFingerprint(remoteFingerprint)).append("\n\n");
-
-            message.append(mContext.getString(R.string.are_you_sure_you_want_to_confirm_this_key_));
-
-
-            new AlertDialog.Builder(mContext)
-                    .setTitle(mRemoteNickname)
-                    .setMessage(message.toString())
-                    .setPositiveButton(R.string.menu_verify_fingerprint,
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                    verifyRemoteFingerprint();
-                                }
-                            })
-                    .setNegativeButton(R.string.menu_verify_secret,
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                    initSmpUI();
-                                }
-                            })
-                  .show();
-        } catch (RemoteException e) {
-            LogCleaner.error(ImApp.LOG_TAG, "unable to perform manual key verification", e);
-        }
-         */
     }
-
 
     public void showGroupInfo () {
 
@@ -1570,77 +1520,7 @@ public class ConversationView {
         mContext.startActivity(intent);
     }
 
-    private void initSmpUI() {
-        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        final View viewSmp = inflater.inflate(R.layout.smp_question_dialog, null, false);
 
-        if (viewSmp != null)
-        {
-            new AlertDialog.Builder(mContext).setTitle(mContext.getString(R.string.otr_qa_title)).setView(viewSmp)
-                    .setPositiveButton(mContext.getString(R.string.otr_qa_send), new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-
-                            EditText eiQuestion = (EditText) viewSmp.findViewById(R.id.editSmpQuestion);
-                            EditText eiAnswer = (EditText) viewSmp.findViewById(R.id.editSmpAnswer);
-                            String question = eiQuestion.getText().toString();
-                            String answer = eiAnswer.getText().toString();
-                            initSmp(question, answer);
-                        }
-                    }).setNegativeButton(mContext.getString(R.string.otr_qa_cancel), new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            // Do nothing.
-                        }
-                    }).show();
-        }
-    }
-
-    private void initSmp(String question, String answer) {
-        try {
-
-            if (mCurrentChatSession != null)
-            {
-                IOtrChatSession iOtrSession = mCurrentChatSession.getDefaultOtrChatSession();
-                iOtrSession.initSmpVerification(question, answer);
-            }
-
-        } catch (RemoteException e) {
-            Log.e(ImApp.LOG_TAG, "error init SMP", e);
-
-        }
-    }
-
-    private void verifyRemoteFingerprint() {
-
-
-        try {
-
-            IOtrChatSession otrChatSession = mCurrentChatSession.getDefaultOtrChatSession();
-            otrChatSession.verifyKey(otrChatSession.getRemoteUserId());
-
-
-        } catch (RemoteException e) {
-            Log.e(ImApp.LOG_TAG, "error init otr", e);
-
-        }
-
-        updateWarningView();
-
-
-    }
-
-
-    private static String prettyPrintFingerprint (String fingerprint)
-    {
-        StringBuffer spacedFingerprint = new StringBuffer();
-
-        for (int i = 0; i + 8 <= fingerprint.length(); i+=8)
-        {
-            spacedFingerprint.append(fingerprint.subSequence(i,i+8));
-            spacedFingerprint.append(' ');
-        }
-
-        return spacedFingerprint.toString();
-    }
 
     public void blockContact() {
         // TODO: unify with codes in ContactListView
