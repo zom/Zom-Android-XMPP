@@ -447,6 +447,33 @@ public class PushManager {
     }
 
     /**
+     * Retrieve a persisted Whitelist token for sending a push to {@param pushRecipientIdentifier} on behalf of
+     * {@param pushSenderIdentifier}.
+     * <p>
+     * TODO: Make fully asynchronous or remove
+     *
+     * @param pushRecipientIdentifier a String uniquely identifying the remote peer who should receive
+     *                                the push message. This identifier will be used to query
+     * @param pushSenderIdentifier    a String uniquely identifying the local user which the push message
+     *                                should be sent on behalf of.
+     * @param callback                a callback which will receive the {@link PersistedPushToken}
+     *                                or a {@link NoSuchElementException}
+     */
+    public boolean hasPersistedWhitelistToken(@NonNull final String pushRecipientIdentifier,
+                                           @NonNull final String pushSenderIdentifier) {
+
+        boolean response = false;
+
+        Timber.d("Lookup push token issued by %s received by %s", pushRecipientIdentifier, pushSenderIdentifier);
+        Cursor persistedTokens = getPersistedTokenCursor(pushRecipientIdentifier, pushSenderIdentifier, true);
+        response = (persistedTokens != null && persistedTokens.getCount() > 0);
+
+        if (persistedTokens != null) persistedTokens.close();
+
+        return response;
+    }
+
+    /**
      * Mark a Whitelist token as issued. This means we should consider it successfully transmitted
      * to its {@link PushDatabase.Tokens#RECIPIENT}, and it should not be transmitted to any other peers.
      *

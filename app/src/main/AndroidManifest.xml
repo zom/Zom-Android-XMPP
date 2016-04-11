@@ -5,8 +5,8 @@
     android:installLocation="auto"
     android:sharedUserLabel="@string/perm_label"
     android:usesCleartextTraffic="false"
-    android:versionCode="1501600"
-    android:versionName="15.0.1-BETA-1">
+    android:versionCode="1501700"
+    android:versionName="15.0.1-BETA-2">
 
     <supports-screens
         android:anyDensity="true"
@@ -385,7 +385,9 @@
         <activity
             android:name="org.awesomeapp.messenger.ui.qr.QrScanActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
-
+        <activity
+            android:name="org.awesomeapp.messenger.ui.qr.QrDisplayActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize" />
         <service
             android:name="info.guardianproject.cacheword.CacheWordService"
             android:enabled="true"
@@ -457,7 +459,10 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name="org.awesomeapp.messenger.ui.ContactDisplayActivity"></activity>
+        <activity android:name="org.awesomeapp.messenger.ui.ContactDisplayActivity"
+            android:exported="false"
+            android:theme="@style/AppThemeNoAction"
+            ></activity>
         <activity android:name="org.awesomeapp.messenger.ui.GroupDisplayActivity"></activity>
 
         <meta-data

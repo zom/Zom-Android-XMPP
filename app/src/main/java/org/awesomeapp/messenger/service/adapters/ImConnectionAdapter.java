@@ -462,7 +462,7 @@ public class ImConnectionAdapter extends org.awesomeapp.messenger.service.IImCon
                                     String remoteAddress = c.getString(3);
 
                                     if (remoteAddress != null)
-                                        new ChatSessionInitTask((ImApp) getContext().getApplication(), mProviderId, mAccountId, chatType).execute(remoteAddress);
+                                        new ChatSessionInitTask((ImApp) getContext().getApplication(), mProviderId, mAccountId, chatType).executeOnExecutor(ImApp.sThreadPoolExecutor,remoteAddress);
                                 }
                             }
                             c.close();

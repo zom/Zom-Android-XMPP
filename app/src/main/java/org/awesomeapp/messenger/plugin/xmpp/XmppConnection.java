@@ -64,6 +64,7 @@ import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.disco.provider.DiscoverInfoProvider;
 import org.jivesoftware.smackx.disco.provider.DiscoverItemsProvider;
 import org.jivesoftware.smackx.iqlast.packet.LastActivity;
+import org.jivesoftware.smackx.muc.DiscussionHistory;
 import org.jivesoftware.smackx.muc.InvitationListener;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
@@ -574,21 +575,24 @@ public class XmppConnection extends ImConnection {
 
                 try
                 {
-
                     // Create the room
-                    mucCreated = muc.createOrJoin(nickname);
-
-
+                    DiscussionHistory history = new DiscussionHistory();
+                    history.setMaxStanzas(20);
+                    long timeout = 30*1000;//30 seconds
+                    mucCreated = muc.createOrJoin(nickname, null, history, timeout);
                 }
                 catch (Exception iae)
                 {
+
                     if (iae.getMessage().contains("Creation failed"))
                     {
                         //some server's don't return the proper 201 create code, so we can just assume the room was created!
                     }
                     else
                     {
+
                         throw iae;
+
                     }
                 }
 
@@ -1168,8 +1172,10 @@ public class XmppConnection extends ImConnection {
                 {
                     debug(TAG, "not authorized - will not retry");
                     info = new ImErrorInfo(ImErrorInfo.INVALID_USERNAME, "invalid user/password");
+                    setState(SUSPENDED, info);
                     mRetryLogin = false;
                     mNeedReconnect = false;
+
                 }
             }
 
@@ -1561,7 +1567,7 @@ public class XmppConnection extends ImConnection {
 
         mConfig.setSendPresence(true);
 
-      //  XMPPTCPConnection.setUseStreamManagementDefault(true);
+        XMPPTCPConnection.setUseStreamManagementDefault(true);
 
         //mConfig.setRosterLoadedAtLogin(true);
 
@@ -1622,7 +1628,19 @@ public class XmppConnection extends ImConnection {
             @Override
             public void reconnectionFailed(Exception e) {
                 // We are not using the reconnection manager
-                throw new UnsupportedOperationException();
+             //   throw new UnsupportedOperationException();
+                execute(new Runnable() {
+
+                    public void run() {
+
+                        mNeedReconnect = true;
+                        setState(LOGGING_IN,
+                                new ImErrorInfo(ImErrorInfo.NETWORK_ERROR, "network error"));
+                        reconnect();
+
+                    }
+
+                });
             }
 
             @Override
@@ -1661,7 +1679,6 @@ public class XmppConnection extends ImConnection {
                         public void run() {
                             if (getState() == LOGGED_IN)
                             {
-                                //Thread.sleep(1000);
                                 mNeedReconnect = true;
                                 setState(LOGGING_IN,
                                       new ImErrorInfo(ImErrorInfo.NETWORK_ERROR, "network error"));
@@ -1703,6 +1720,23 @@ public class XmppConnection extends ImConnection {
                  *   - due to network error
                  *   - due to login failing
                  */
+
+                //if the state is logged in, we should try to reconnect!
+                if (getState() == LOGGED_IN)
+                {
+                    execute(new Runnable() {
+
+                        public void run() {
+
+                            mNeedReconnect = true;
+                            setState(LOGGING_IN,
+                                    new ImErrorInfo(ImErrorInfo.NETWORK_ERROR, "network error"));
+                            reconnect();
+
+                        }
+
+                    });
+                }
             }
         };
 

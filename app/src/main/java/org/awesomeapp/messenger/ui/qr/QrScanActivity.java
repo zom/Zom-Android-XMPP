@@ -29,6 +29,7 @@ import android.widget.Toast;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
 
+import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.ui.onboarding.OnboardingManager;
 
 import java.util.ArrayList;
@@ -84,7 +85,7 @@ implements QrCodeDecoder.ResultCallback {
 		layoutMain.addView(qrCodeView);
 		setContentView(layoutMain);
 
-		new QrGenAsyncTask(this, qrCodeView, display.getWidth()).execute(qrData);
+		new QrGenAsyncTask(this, qrCodeView, display.getWidth()).executeOnExecutor(ImApp.sThreadPoolExecutor,qrData);
 	}
 
 	@Override

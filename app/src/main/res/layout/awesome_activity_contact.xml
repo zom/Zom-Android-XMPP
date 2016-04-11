@@ -18,10 +18,23 @@
  */
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+
     android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:padding="0dp"
-    android:background="@color/window_background">
+    android:padding="0dp">
+
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            app:layout_scrollFlags="scroll|enterAlways" />
+
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -29,6 +42,7 @@
         android:orientation="vertical"
         android:padding="0dp"
         android:gravity="center_horizontal"
+        android:id="@+id/contactmain"
         >
 
 

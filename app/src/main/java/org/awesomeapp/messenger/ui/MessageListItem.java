@@ -400,12 +400,15 @@ public class MessageListItem extends FrameLayout {
 
 
         if (mimeType.startsWith("image")) {
-            Intent intent = new Intent(context, ImageViewActivity.class);
-            intent.putExtra( ImageViewActivity.URI, mediaUri.toString());
-            intent.putExtra( ImageViewActivity.MIMETYPE, mimeType);
-            intent.putExtra( ImageViewActivity.MIMETYPE, mimeType);
 
-            context.startActivity(intent);
+            if (mimeType.equals("image/jpeg")) {
+                Intent intent = new Intent(context, ImageViewActivity.class);
+                intent.putExtra(ImageViewActivity.URI, mediaUri.toString());
+                intent.putExtra(ImageViewActivity.MIMETYPE, mimeType);
+                intent.putExtra(ImageViewActivity.MIMETYPE, mimeType);
+
+                context.startActivity(intent);
+            }
         }
         else if (mimeType.startsWith("audio")) {
 

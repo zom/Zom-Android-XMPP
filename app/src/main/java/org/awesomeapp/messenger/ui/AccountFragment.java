@@ -528,7 +528,7 @@ public class AccountFragment extends Fragment {
 
     }
 
-    private final static int MY_PERMISSIONS_REQUEST_CAMERA = 707070;
+    private final static int MY_PERMISSIONS_REQUEST_CAMERA = 1;
 
     void startAvatarTaker() {
         int permissionCheck = ContextCompat.checkSelfPermission(getActivity(),

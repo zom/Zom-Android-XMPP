@@ -109,7 +109,7 @@ public class ConversationListItem extends FrameLayout {
     }
 */
 
-    public void bind(ConversationViewHolder holder, long contactId, long providerId, String address, String nickname, int contactType, String message, long messageDate, int presence, String underLineText, boolean showChatMsg, boolean scrolling) {
+    public void bind(ConversationViewHolder holder, long contactId, long providerId, long accountId, String address, String nickname, int contactType, String message, long messageDate, int presence, String underLineText, boolean showChatMsg, boolean scrolling) {
 
 
         if (nickname == null)
@@ -310,17 +310,17 @@ public class ConversationListItem extends FrameLayout {
         holder.mLine1.setVisibility(View.VISIBLE);
 
         if (providerId != -1)
-            getEncryptionState (providerId, address, holder);
+            getEncryptionState (providerId, accountId, address, holder);
     }
 
-    private void getEncryptionState (long providerId, String address, ConversationViewHolder holder)
+    private void getEncryptionState (long providerId, long accountId, String address, ConversationViewHolder holder)
     {
 
          try {
 
              ImApp app = ((ImApp)((Activity) getContext()).getApplication());
 
-             IImConnection conn = app.getConnection(providerId,-1);
+             IImConnection conn = app.getConnection(providerId,accountId);
              if (conn == null || conn.getChatSessionManager() == null)
                  return;
 

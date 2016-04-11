@@ -787,13 +787,15 @@ public class OtrDataHandler implements DataHandler {
                     return;
             }
 
-            debug("chunkReceived: " + request.start + "-" + request.end);
-            chunksReceived++;
+
             try {
                 raf.seek(request.start);
                 raf.write(bs);
-            } catch (IOException e) {
-                e.printStackTrace();
+                debug("chunkReceived: " + request.start + "-" + request.end);
+                chunksReceived++;
+            } catch (Exception e) {
+                debug("chunkReceived failure: " + request.start + "-" + request.end + ": " + e.toString());
+
             }
             outstanding.remove(request);
 

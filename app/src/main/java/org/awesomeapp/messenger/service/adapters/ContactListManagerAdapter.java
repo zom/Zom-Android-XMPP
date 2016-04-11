@@ -83,9 +83,6 @@ public class ContactListManagerAdapter extends
     HashSet<String> mValidatedContacts;
     HashSet<String> mValidatedBlockedContacts;
 
-    private long mAccountId;
-    private long mProviderId;
-
     private Uri mAvatarUrl;
     private Uri mContactUrl;
 
@@ -118,22 +115,19 @@ public class ContactListManagerAdapter extends
         mAdaptee.addContactListListener(mContactListListenerAdapter);
         mAdaptee.setSubscriptionRequestListener(mSubscriptionListenerAdapter);
 
-        mAccountId = mConn.getAccountId();
-        mProviderId = mConn.getProviderId();
-
         Uri.Builder builder = Imps.Avatars.CONTENT_URI_AVATARS_BY.buildUpon();
-        ContentUris.appendId(builder, mProviderId);
-        ContentUris.appendId(builder, mAccountId);
+        ContentUris.appendId(builder,  mConn.getProviderId());
+        ContentUris.appendId(builder, mConn.getAccountId());
 
         mAvatarUrl = builder.build();
 
         builder = Imps.Contacts.CONTENT_URI_CONTACTS_BY.buildUpon();
-        ContentUris.appendId(builder, mProviderId);
-        ContentUris.appendId(builder, mAccountId);
+        ContentUris.appendId(builder,  mConn.getProviderId());
+        ContentUris.appendId(builder, mConn.getAccountId());
 
         mContactUrl = builder.build();
 
-        if (mAccountId != -1)
+        if (mConn.getAccountId() != -1)
             seedInitialPresences();
 
        // loadOfflineContacts();
@@ -463,8 +457,8 @@ public class ContactListManagerAdapter extends
         // added since login, yet still exist in db from a prior login
         exclusion = new Exclusion(Imps.BlockedList.USERNAME, mValidatedBlockedContacts);
         Uri.Builder builder = Imps.BlockedList.CONTENT_URI.buildUpon();
-        ContentUris.appendId(builder, mProviderId);
-        ContentUris.appendId(builder, mAccountId);
+        ContentUris.appendId(builder, mConn.getProviderId());
+        ContentUris.appendId(builder, mConn.getAccountId());
         Uri uri = builder.build();
         mResolver.delete(uri, exclusion.getSelection(), exclusion.getSelectionArgs());
 
@@ -472,8 +466,8 @@ public class ContactListManagerAdapter extends
         // added since login, yet still exist in db from a prior login
         exclusion = new Exclusion(Imps.ContactList.NAME, mValidatedContactLists);
         builder = Imps.ContactList.CONTENT_URI.buildUpon();
-        ContentUris.appendId(builder, mProviderId);
-        ContentUris.appendId(builder, mAccountId);
+        ContentUris.appendId(builder, mConn.getProviderId());
+        ContentUris.appendId(builder, mConn.getAccountId());
         uri = builder.build();
         mResolver.delete(uri, exclusion.getSelection(), exclusion.getSelectionArgs());
 
@@ -712,13 +706,13 @@ public class ContactListManagerAdapter extends
 
             boolean hadListener = broadcast(new SubscriptionBroadcaster() {
                 public void broadcast(ISubscriptionListener listener) throws RemoteException {
-                    listener.onSubScriptionRequest(from, mProviderId, mAccountId);
+                    listener.onSubScriptionRequest(from,  mConn.getProviderId(), mConn.getAccountId());
                 }
             });
 
             if (!hadListener)
             {
-               // mContext.getStatusBarNotifier().notifySubscriptionRequest(mProviderId, mAccountId,
+               // mContext.getStatusBarNotifier().notifySubscriptionRequest( mConn.getProviderId(), mConn.getAccountId(),
                  //       ContentUris.parseId(uri), username, nickname);
             }
         }
@@ -758,7 +752,7 @@ public class ContactListManagerAdapter extends
 
             broadcast(new SubscriptionBroadcaster() {
                 public void broadcast(ISubscriptionListener listener) throws RemoteException {
-                    listener.onSubscriptionApproved(contact, mProviderId, mAccountId);
+                    listener.onSubscriptionApproved(contact,  mConn.getProviderId(), mConn.getAccountId());
                 }
             });
 
@@ -771,7 +765,7 @@ public class ContactListManagerAdapter extends
 
             broadcast(new SubscriptionBroadcaster() {
                 public void broadcast(ISubscriptionListener listener) throws RemoteException {
-                    listener.onSubscriptionDeclined(contact, mProviderId, mAccountId);
+                    listener.onSubscriptionDeclined(contact,  mConn.getProviderId(), mConn.getAccountId());
                 }
             });
         }
@@ -804,8 +798,8 @@ public class ContactListManagerAdapter extends
         removeBlockedContactFromDataBase(contact);
 
         Uri.Builder builder = Imps.BlockedList.CONTENT_URI.buildUpon();
-        ContentUris.appendId(builder, mProviderId);
-        ContentUris.appendId(builder, mAccountId);
+        ContentUris.appendId(builder,  mConn.getProviderId());
+        ContentUris.appendId(builder, mConn.getAccountId());
         Uri uri = builder.build();
 
         String username = mAdaptee.normalizeAddress(contact.getAddress().getAddress());
@@ -822,8 +816,8 @@ public class ContactListManagerAdapter extends
         String address = mAdaptee.normalizeAddress(contact.getAddress().getAddress());
 
         Uri.Builder builder = Imps.BlockedList.CONTENT_URI.buildUpon();
-        ContentUris.appendId(builder, mProviderId);
-        ContentUris.appendId(builder, mAccountId);
+        ContentUris.appendId(builder,  mConn.getProviderId());
+        ContentUris.appendId(builder, mConn.getAccountId());
 
         Uri uri = builder.build();
         mResolver.delete(uri, Imps.BlockedList.USERNAME + "=?", new String[] { address });
@@ -981,7 +975,7 @@ public class ContactListManagerAdapter extends
         }
 
         ContentValues values = new ContentValues();
-        values.put(Imps.Contacts.ACCOUNT, mAccountId);
+        values.put(Imps.Contacts.ACCOUNT, mConn.getAccountId());
         putStringArrayList(values, Imps.Contacts.USERNAME, usernames);
         putStringArrayList(values, Imps.Contacts.NICKNAME, nicknames);
         putStringArrayList(values, Imps.Presence.PRESENCE_STATUS, statusArray);
@@ -1016,8 +1010,8 @@ public class ContactListManagerAdapter extends
             // notify avatar changed
             Intent i = new Intent(ImServiceConstants.ACTION_AVATAR_CHANGED);
             i.putExtra(ImServiceConstants.EXTRA_INTENT_FROM_ADDRESS, usernames);
-            i.putExtra(ImServiceConstants.EXTRA_INTENT_PROVIDER_ID, mProviderId);
-            i.putExtra(ImServiceConstants.EXTRA_INTENT_ACCOUNT_ID, mAccountId);
+            i.putExtra(ImServiceConstants.EXTRA_INTENT_PROVIDER_ID,  mConn.getProviderId());
+            i.putExtra(ImServiceConstants.EXTRA_INTENT_ACCOUNT_ID, mConn.getAccountId());
             mContext.sendBroadcast(i);
         }
     }
@@ -1042,8 +1036,8 @@ public class ContactListManagerAdapter extends
     void addContactListContent(ContactList list) {
         String selection = Imps.ContactList.NAME + "=? AND " + Imps.ContactList.PROVIDER
                            + "=? AND " + Imps.ContactList.ACCOUNT + "=?";
-        String[] selectionArgs = { list.getName(), Long.toString(mProviderId),
-                                  Long.toString(mAccountId) };
+        String[] selectionArgs = { list.getName(), Long.toString( mConn.getProviderId()),
+                                  Long.toString(mConn.getAccountId()) };
         Cursor cursor = mResolver.query(Imps.ContactList.CONTENT_URI, CONTACT_LIST_ID_PROJECTION,
                 selection, selectionArgs, null); // no sort order
         long listId = 0;
@@ -1059,8 +1053,8 @@ public class ContactListManagerAdapter extends
         if (uri == null) {
             ContentValues contactListValues = new ContentValues(3);
             contactListValues.put(Imps.ContactList.NAME, list.getName());
-            contactListValues.put(Imps.ContactList.PROVIDER, mProviderId);
-            contactListValues.put(Imps.ContactList.ACCOUNT, mAccountId);
+            contactListValues.put(Imps.ContactList.PROVIDER,  mConn.getProviderId());
+            contactListValues.put(Imps.ContactList.ACCOUNT, mConn.getAccountId());
 
             uri = mResolver.insert(Imps.ContactList.CONTENT_URI, contactListValues);
             listId = ContentUris.parseId(uri);
@@ -1124,8 +1118,8 @@ public class ContactListManagerAdapter extends
         }
         ContentValues values = new ContentValues(6);
 
-        values.put(Imps.Contacts.PROVIDER, mProviderId);
-        values.put(Imps.Contacts.ACCOUNT, mAccountId);
+        values.put(Imps.Contacts.PROVIDER,  mConn.getProviderId());
+        values.put(Imps.Contacts.ACCOUNT, mConn.getAccountId());
         values.put(Imps.Contacts.CONTACTLIST, listId);
         putStringArrayList(values, Imps.Contacts.USERNAME, usernames);
         putStringArrayList(values, Imps.Contacts.NICKNAME, nicknames);
@@ -1221,7 +1215,7 @@ public class ContactListManagerAdapter extends
     }
 
     void clearHistoryMessages(String contact) {
-        Uri uri = Imps.Messages.getContentUriByContact(mAccountId, contact);
+        Uri uri = Imps.Messages.getContentUriByContact(mConn.getAccountId(), contact);
         mResolver.delete(uri, null, null);
     }
 
@@ -1315,7 +1309,7 @@ public class ContactListManagerAdapter extends
         where.append(" in (select _id from contacts where ");
         where.append(Imps.Contacts.ACCOUNT);
         where.append("=");
-        where.append(mAccountId);
+        where.append(mConn.getAccountId());
         where.append(")");
         mResolver.delete(Imps.Presence.CONTENT_URI, where.toString(), null);
     }
@@ -1344,7 +1338,7 @@ public class ContactListManagerAdapter extends
 
     private void seedInitialPresences() {
         Builder builder = Imps.Presence.SEED_PRESENCE_BY_ACCOUNT_CONTENT_URI.buildUpon();
-        ContentUris.appendId(builder, mAccountId);
+        ContentUris.appendId(builder, mConn.getAccountId());
         mResolver.insert(builder.build(), new ContentValues(0));
     }
 }

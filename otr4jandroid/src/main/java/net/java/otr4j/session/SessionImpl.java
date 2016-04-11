@@ -200,7 +200,7 @@ public class SessionImpl implements Session {
 
         switch (sessionStatus) {
             case ENCRYPTED:
-                AuthContext auth = this.getAuthContext();
+                AuthContext auth = this.getAuthContext(false);
                 ess = auth.getS();
                 if (DEBUG_ENABLED) Log.d(LOG_TAG,"Setting most recent session keys from auth.");
                 for (int i = 0; i < this.getSessionKeys()[0].length; i++) {
@@ -232,9 +232,10 @@ public class SessionImpl implements Session {
 
 
         if (sessionStatus == SessionStatus.ENCRYPTED && doTransmitLastMessage && lastSentMessage != null) {
-            String retransmit = (isLastMessageRetransmit ? "[resent] " : "");
-            String msg = transformSending(retransmit + lastSentMessage, null);
+            //String retransmit = (isLastMessageRetransmit ? "[resent] " : "");
+            String msg = transformSending(lastSentMessage, null);
             getHost().injectMessage(getSessionID(), msg);
+            sessionStatusChanged = true;
         }
 
         doTransmitLastMessage = false;
@@ -287,8 +288,8 @@ public class SessionImpl implements Session {
         return sessionKeys;
     }
 
-    private AuthContext getAuthContext() {
-        if (authContext == null)
+    private AuthContext getAuthContext(boolean refresh) {
+        if (authContext == null || refresh)
             authContext = new AuthContextImpl(this);
         return authContext;
     }
@@ -352,7 +353,7 @@ public class SessionImpl implements Session {
         case AbstractEncodedMessage.MESSAGE_DHKEY:
         case AbstractEncodedMessage.MESSAGE_REVEALSIG:
         case AbstractEncodedMessage.MESSAGE_SIGNATURE:
-            AuthContext auth = this.getAuthContext();
+            AuthContext auth = this.getAuthContext(false);
             auth.handleReceivingMessage(m);
 
             if (auth.getIsSecure()) {
@@ -375,7 +376,7 @@ public class SessionImpl implements Session {
         OtrPolicy policy = getSessionPolicy();
         if (queryMessage.versions.contains(2) && policy.getAllowV2()) {
             if (DEBUG_ENABLED) Log.d(LOG_TAG,"Query message with V2 support found.");
-            getAuthContext().respondV2Auth();
+            getAuthContext(true).respondV2Auth();
         } else if (queryMessage.versions.contains(1) && policy.getAllowV1()) {
             if (DEBUG_ENABLED) Log.d(LOG_TAG,"Query message with V1 support found - ignoring.");
         }
@@ -599,7 +600,7 @@ public class SessionImpl implements Session {
 
                 if (plainTextMessage.versions.contains(2) && policy.getAllowV2()) {
                     if (DEBUG_ENABLED) Log.d(LOG_TAG,"V2 tag found.");
-                    getAuthContext().respondV2Auth();
+                    getAuthContext(false).respondV2Auth();
                 } else if (plainTextMessage.versions.contains(1) && policy.getAllowV1()) {
                     throw new UnsupportedOperationException();
                 }
@@ -735,7 +736,7 @@ public class SessionImpl implements Session {
         if (!getSessionPolicy().getAllowV2())
             throw new OtrException("OTRv2 is not supported by this session");
 
-        this.getAuthContext().startV2Auth();
+        this.getAuthContext(true).startV2Auth();
     }
 
     /*

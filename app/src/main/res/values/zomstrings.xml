@@ -41,4 +41,7 @@
 
   <string name="menu_refresh">Refresh Session</string>
 
+  <string name="action_archived">Archived</string>
+  <string name="action_verified">Verified</string>
+
 </resources>

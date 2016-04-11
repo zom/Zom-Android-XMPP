@@ -70,6 +70,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Executor;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import im.zom.messenger.BuildConfig;
@@ -219,11 +224,22 @@ public class ImApp extends Application implements ICacheWordSubscriber {
 
         setAppTheme(null,null);
 
-
         // ChatSecure-Push needs to do initial setup as soon as Cacheword is ready
         mCacheWord = new CacheWordHandler(this, this);
         mCacheWord.connectToService();
+
+        if (sThreadPoolExecutor == null) {
+            int corePoolSize = 20;
+            int maximumPoolSize = 40;
+            int keepAliveTime = 20;
+            BlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<Runnable>(maximumPoolSize);
+            sThreadPoolExecutor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, TimeUnit.SECONDS, workQueue);
+        }
+
     }
+
+
+    public static Executor sThreadPoolExecutor = null;
 
     private boolean mThemeDark = false;
 

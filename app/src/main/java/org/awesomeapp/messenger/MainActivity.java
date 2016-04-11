@@ -95,6 +95,7 @@ import info.guardianproject.iocipher.VirtualFileSystem;
 public class MainActivity extends AppCompatActivity {
 
     private ViewPager mViewPager;
+    private TabLayout mTabLayout;
     private FloatingActionButton mFab;
     private Toolbar mToolbar;
 
@@ -123,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
         final ActionBar ab = getSupportActionBar();
 
         mViewPager = (ViewPager) findViewById(R.id.viewpager);
-       final TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        mTabLayout = (TabLayout) findViewById(R.id.tabs);
 
         mConversationList = new ConversationListFragment();
         mContactList = new ContactsListFragment();
@@ -140,25 +141,25 @@ public class MainActivity extends AppCompatActivity {
 
         mViewPager.setAdapter(adapter);
 
-        mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLayout));
 
-        TabLayout.Tab tab = tabLayout.newTab();
+        TabLayout.Tab tab = mTabLayout.newTab();
         tab.setIcon(R.drawable.ic_discuss);
-        tabLayout.addTab(tab);
+        mTabLayout.addTab(tab);
 
-        tab = tabLayout.newTab();
+        tab = mTabLayout.newTab();
         tab.setIcon(R.drawable.ic_people_white_36dp);
-        tabLayout.addTab(tab);
+        mTabLayout.addTab(tab);
 
-        tab = tabLayout.newTab();
+        tab = mTabLayout.newTab();
         tab.setIcon(R.drawable.ic_explore_white_24dp);
-        tabLayout.addTab(tab);
+        mTabLayout.addTab(tab);
 
-        tab = tabLayout.newTab();
+        tab = mTabLayout.newTab();
         tab.setIcon(R.drawable.ic_face_white_24dp);
-        tabLayout.addTab(tab);
+        mTabLayout.addTab(tab);
 
-        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        mTabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
 
@@ -636,7 +637,7 @@ public class MainActivity extends AppCompatActivity {
                     super.onPostExecute(chatId);
                 }
 
-            }.execute(username);
+            }.executeOnExecutor(ImApp.sThreadPoolExecutor,username);
     }
 
     public void showGroupChatDialog ()
@@ -826,8 +827,7 @@ public class MainActivity extends AppCompatActivity {
 
 
             }
-        }.execute(room, server, nickname);
-
+        }.executeOnExecutor(ImApp.sThreadPoolExecutor,room, server, nickname);
 
 
     }

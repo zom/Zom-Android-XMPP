@@ -145,7 +145,7 @@
          
     <!-- customize the color palette -->
     
-    <item name="colorPrimary">#E7275A</item>
+    <item name="colorPrimary">#323232</item>
     <item name="colorPrimaryDark">#111111</item>
     <item name="colorAccent">#ffff2b62</item>
     

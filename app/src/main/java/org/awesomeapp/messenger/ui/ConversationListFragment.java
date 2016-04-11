@@ -126,13 +126,7 @@ public class ConversationListFragment extends Fragment {
 
                 endConversation(itemId);
 
-                Snackbar.make(mRecView, "You ended the conversation", Snackbar.LENGTH_LONG)
-                     .setAction("UNDO", new View.OnClickListener() {
-                         @Override
-                         public void onClick(View v) {
-                             //if they click, then cancel timer that will be used to end the chat
-                         }
-                     }).show();
+                Snackbar.make(mRecView, getString(R.string.action_archived), Snackbar.LENGTH_LONG).show();
             }
         });
         swipeToDismissTouchHelper.attachToRecyclerView(recyclerView);
@@ -210,14 +204,14 @@ public class ConversationListFragment extends Fragment {
                 final String nickname = cursor.getString(ConversationListItem.COLUMN_CONTACT_NICKNAME);
 
                 final long providerId = cursor.getLong(ConversationListItem.COLUMN_CONTACT_PROVIDER);
-
+                final long accountId = cursor.getLong(ConversationListItem.COLUMN_CONTACT_ACCOUNT);
                 final int type = cursor.getInt(ConversationListItem.COLUMN_CONTACT_TYPE);
                 final String lastMsg = cursor.getString(ConversationListItem.COLUMN_LAST_MESSAGE);
 
                 long lastMsgDate = cursor.getLong(ConversationListItem.COLUMN_LAST_MESSAGE_DATE);
                 final int presence = cursor.getInt(ConversationListItem.COLUMN_CONTACT_PRESENCE_STATUS);
 
-                ((ConversationListItem) viewHolder.itemView).bind(viewHolder, chatId, providerId, address, nickname, type, lastMsg, lastMsgDate, presence, null, true, false);
+                ((ConversationListItem) viewHolder.itemView).bind(viewHolder, chatId, providerId, accountId, address, nickname, type, lastMsg, lastMsgDate, presence, null, true, false);
 
                 viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -241,7 +235,7 @@ public class ConversationListFragment extends Fragment {
                 final long messageDate = cursor.getLong(cursor.getColumnIndexOrThrow(Imps.Messages.DATE));
 
                 if (address != null) {
-                    ((ConversationListItem) viewHolder.itemView).bind(viewHolder, chatId, -1, address, nickname, -1, body, messageDate, -1, mSearchString, true, false);
+                    ((ConversationListItem) viewHolder.itemView).bind(viewHolder, chatId, -1, -1, address, nickname, -1, body, messageDate, -1, mSearchString, true, false);
 
                     viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                         @Override

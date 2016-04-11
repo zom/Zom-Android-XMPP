@@ -318,7 +318,6 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
             if (mNeedCheckAutoLogin && mNetworkState != NetworkConnectivityListener.State.NOT_CONNECTED) {
                 debug("autoLogin from heartbeat");
                 mNeedCheckAutoLogin = !autoLogin();;
-
             }
 
             mHeartbeatInterval = Preferences.getHeartbeatInterval();
@@ -479,6 +478,9 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
             Log.w(TAG, "Can't query account!");
             return false;
         }
+
+        boolean didAutoLogin = false;
+
         while (cursor.moveToNext()) {
             long accountId = cursor.getLong(ACCOUNT_ID_COLUMN);
             long providerId = cursor.getLong(ACCOUNT_PROVIDER_COLUMN);
@@ -502,45 +504,18 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
                 } catch (Exception e) {
                     Log.d(ImApp.LOG_TAG, "error auto logging into ImConnection: " + accountId);
                 }
+
+                didAutoLogin = true;
             }
         }
         cursor.close();
 
-        return true;
+        return didAutoLogin;
     }
 
     private Map<String, String> loadProviderSettings(long providerId) {
         ContentResolver cr = getContentResolver();
         Map<String, String> settings = Imps.ProviderSettings.queryProviderSettings(cr, providerId);
-
-//        NetworkInfo networkInfo = mNetworkConnectivityListener.getNetworkInfo();
-        // Insert a fake msisdn on emulator. We don't need this on device
-        // because the mobile network will take care of it.
-        //        if ("1".equals(SystemProperties.get("ro.kernel.qemu"))) {
-        /*
-        if (false) {
-            settings.put(ImpsConfigNames.MSISDN, "15555218135");
-        } else if (networkInfo != null
-                && networkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
-            if (!TextUtils.isEmpty(settings.get(ImpsConfigNames.SMS_ADDR))) {
-                // Send authentication through sms if SMS data channel is
-                // supported and WiFi is used.
-                settings.put(ImpsConfigNames.SMS_AUTH, "true");
-                settings.put(ImpsConfigNames.SECURE_LOGIN, "false");
-            } else {
-                // Wi-Fi network won't insert a MSISDN, we should get from the SIM
-                // card. Assume we can always get the correct MSISDN from SIM, otherwise,
-                // the sign in would fail and an error message should be shown to warn
-                // the user to contact their operator.
-                String msisdn = ""; // TODO TelephonyManager.getDefault().getLine1Number();
-                if (TextUtils.isEmpty(msisdn)) {
-                    Log.w(TAG, "Can not read MSISDN from SIM, use a fake one."
-                         + " SMS related feature won't work.");
-                    msisdn = "15555218135";
-                }
-                settings.put(ImpsConfigNames.MSISDN, msisdn);
-            }
-        }*/
 
         return settings;
     }

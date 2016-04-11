@@ -152,6 +152,17 @@ public class OnboardingActivity extends ThemeableActivity {
             }
         });
 
+        View btnStartOnboardingNext = viewSplash.findViewById(R.id.nextButton);
+        btnStartOnboardingNext.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setAnimLeft();
+                showOnboarding();
+            }
+        });
+
+
+
         View btnShowCreate = viewRegister.findViewById(R.id.btnShowRegister);
         btnShowCreate.setOnClickListener(new OnClickListener() {
 
@@ -382,6 +393,13 @@ public class OnboardingActivity extends ThemeableActivity {
             getSupportActionBar().setTitle("");
         }
         else if (mViewFlipper.getCurrentView().getId()==R.id.flipViewLogin)
+        {
+            if (mShowSplash)
+                showSplashScreen();
+            else
+                finish();
+        }
+        else if (mViewFlipper.getCurrentView().getId()==R.id.flipViewRegister)
         {
             if (mShowSplash)
                 showSplashScreen();

@@ -135,6 +135,7 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
 
     public void addOtrEngineListener(OtrEngineListener oel) {
         mOtrEngine.addOtrEngineListener(oel);
+
     }
 
     public void setPolicy(int otrPolicy) {
@@ -394,7 +395,7 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
     }
 
     @Override
-    public synchronized void sessionStatusChanged(final SessionID sessionID) {
+    public void sessionStatusChanged(final SessionID sessionID) {
         SessionStatus sStatus = mOtrEngine.getSessionStatus(sessionID);
 
         OtrDebugLogger.log("session status changed: " + sStatus);
@@ -454,16 +455,22 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
                         new PushSecureClient.RequestCallback<PersistedPushToken>() {
                             @Override
                             public void onSuccess(@NonNull PersistedPushToken response) {
-                                Log.d(TAG, "Prepared push whitelist token for " + sessionID.getRemoteUserId());
+
+                                if (Debug.DEBUG_ENABLED)
+                                    Log.d(TAG, "Prepared push whitelist token for " + sessionID.getRemoteUserId());
                                 // the token has already been persisted by pushManager
                             }
 
                             @Override
                             public void onFailure(@NonNull Throwable t) {
-                                Log.e(TAG, "Failed to prepare push whitelist token for " + sessionID.getRemoteUserId(), t);
+                                if (Debug.DEBUG_ENABLED)
+                                    Log.e(TAG, "Failed to prepare push whitelist token for " + sessionID.getRemoteUserId(), t);
                             }
                         });
             }
+
+
+
         } else if (sStatus == SessionStatus.PLAINTEXT) {
             if (otrSm != null) {
                 session.removeTlvHandler(otrSm);
@@ -631,6 +638,7 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
             return true;
 
         } catch (UnsupportedEncodingException e) {
+
             Log.e(ImApp.LOG_TAG, "Failed to craft ChatSecure-Push Whitelist Token TLV", e);
             return false;
         } catch (OtrException e) {
@@ -660,7 +668,8 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
                                 outboundTlvs.add(response);
                                 String encrypted = mOtrEngine.transformSending(sessionID, "", outboundTlvs);
                                 mOtrEngineHost.injectMessage(sessionID, encrypted);
-                                Log.d(TAG, "Began Push Whitelist Token TLV Exchange");
+                                if (Debug.DEBUG_ENABLED)
+                                    Log.d(TAG, "Began Push Whitelist Token TLV Exchange");
                             } catch (OtrException e) {
                                 Log.e(TAG, "Failed to encrypt outbound Whitelist Token TLV");
                                 mWhitelistTokenExchangedSessions.remove(sessionID.toString());
@@ -684,20 +693,32 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
      * given {@param sessionID}.
      */
     public void sendKnockPushMessage(@NonNull final SessionID sessionID) {
+
         mPushManager.sendPushMessageToPeer(
                 PushManager.stripJabberIdResource(sessionID.getLocalUserId()),
                 PushManager.stripJabberIdResource(sessionID.getRemoteUserId()),
                 new PushSecureClient.RequestCallback<org.chatsecure.pushsecure.response.Message>() {
                     @Override
                     public void onSuccess(@NonNull org.chatsecure.pushsecure.response.Message response) {
-                        Log.d(TAG, "Sent push message to " + sessionID.getRemoteUserId());
+                        if (Debug.DEBUG_ENABLED)
+                            Log.d(TAG, "Sent push message to " + sessionID.getRemoteUserId());
                     }
 
                     @Override
                     public void onFailure(@NonNull Throwable t) {
-                        Log.d(TAG, "Failed to send push message to " + sessionID.getRemoteUserId());
+                        if (Debug.DEBUG_ENABLED)
+                            Log.d(TAG, "Failed to send push message to " + sessionID.getRemoteUserId());
                     }
                 });
     }
 
+    /**
+     * Send a ChatSecure-Push "Knock" Push Message to the remote peer in the
+     * given {@param sessionID}.
+     */
+    public boolean canDoKnockPushMessage(@NonNull final SessionID sessionID) {
+        return mPushManager.hasPersistedWhitelistToken(
+                PushManager.stripJabberIdResource(sessionID.getRemoteUserId()),
+                PushManager.stripJabberIdResource(sessionID.getLocalUserId()));
+    }
 }

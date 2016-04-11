@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.Menu;
@@ -18,6 +19,10 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+
+import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.ImUrlActivity;
 import org.awesomeapp.messenger.util.SecureMediaStore;
 
@@ -101,9 +106,31 @@ public class ImageViewActivity extends AppCompatActivity {
 
     private void display( String filename ) {
         try {
-            Bitmap bitmap = fitToScreen(filename);
+
             PZSImageView imageView = (PZSImageView) findViewById(R.id.pzs_image_view);
-            imageView.setImageBitmap(bitmap);
+
+            if (mimeType.equals("image/gif")) {
+                if (SecureMediaStore.isVfsUri(mediaUri)) {
+                    try {
+                        Glide.with(this)
+                                .load(new info.guardianproject.iocipher.FileInputStream(new java.io.File(mediaUri.getPath()).getPath()))
+                                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                                .into(imageView);
+                    } catch (Exception e) {
+                        Log.e(ImApp.LOG_TAG, "unable to load thumbnail", e);
+                    }
+                } else {
+                    Glide.with(this)
+                            .load(mediaUri)
+                            .into(imageView);
+                }
+            }
+            else
+            {
+                imageView.setImageBitmap(fitToScreen(filename));
+            }
+
+//            imageView.setImageBitmap(bitmap);
         } catch (Throwable t) { // may run Out Of Memory
             findViewById(R.id.pzs_image_view).setVisibility(View.INVISIBLE);
             findViewById(R.id.pzs_broken_image_view).setVisibility(View.VISIBLE);
