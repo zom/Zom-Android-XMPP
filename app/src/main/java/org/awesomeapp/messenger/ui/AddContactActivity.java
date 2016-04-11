@@ -17,14 +17,19 @@
 
 package org.awesomeapp.messenger.ui;
 
+import android.Manifest;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -168,21 +173,45 @@ public class AddContactActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                ImApp app = ((ImApp) getApplication());
 
-                String inviteString;
-                try {
-                    inviteString = OnboardingManager.generateInviteLink(AddContactActivity.this, app.getDefaultUsername(), app.getDefaultOtrKey());
-                    OnboardingManager.inviteScan(AddContactActivity.this, inviteString);
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                if (hasCameraPermission()) {
+                    ImApp app = ((ImApp) getApplication());
+
+                    String inviteString;
+                    try {
+                        inviteString = OnboardingManager.generateInviteLink(AddContactActivity.this, app.getDefaultUsername(), app.getDefaultOtrKey());
+                        OnboardingManager.inviteScan(AddContactActivity.this, inviteString);
+                    } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
                 }
             }
 
         });
 
 
+    }
+
+    private final static int MY_PERMISSIONS_REQUEST_CAMERA = 1;
+
+    boolean hasCameraPermission () {
+        int permissionCheck = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.CAMERA);
+
+        if (permissionCheck == PackageManager.PERMISSION_DENIED)
+        {
+
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.CAMERA},
+                    MY_PERMISSIONS_REQUEST_CAMERA);
+
+            return false;
+        }
+        else {
+
+            return true;
+        }
     }
 
 
