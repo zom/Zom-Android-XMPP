@@ -478,6 +478,9 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
             Log.w(TAG, "Can't query account!");
             return false;
         }
+
+        boolean didAutoLogin = false;
+
         while (cursor.moveToNext()) {
             long accountId = cursor.getLong(ACCOUNT_ID_COLUMN);
             long providerId = cursor.getLong(ACCOUNT_PROVIDER_COLUMN);
@@ -501,11 +504,13 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
                 } catch (Exception e) {
                     Log.d(ImApp.LOG_TAG, "error auto logging into ImConnection: " + accountId);
                 }
+
+                didAutoLogin = true;
             }
         }
         cursor.close();
 
-        return true;
+        return didAutoLogin;
     }
 
     private Map<String, String> loadProviderSettings(long providerId) {
