@@ -1626,7 +1626,7 @@ public class XmppConnection extends ImConnection {
             @Override
             public void reconnectionFailed(Exception e) {
                 // We are not using the reconnection manager
-                throw new UnsupportedOperationException();
+             //   throw new UnsupportedOperationException();
             }
 
             @Override
@@ -1665,7 +1665,6 @@ public class XmppConnection extends ImConnection {
                         public void run() {
                             if (getState() == LOGGED_IN)
                             {
-                                //Thread.sleep(1000);
                                 mNeedReconnect = true;
                                 setState(LOGGING_IN,
                                       new ImErrorInfo(ImErrorInfo.NETWORK_ERROR, "network error"));
@@ -1707,6 +1706,23 @@ public class XmppConnection extends ImConnection {
                  *   - due to network error
                  *   - due to login failing
                  */
+
+                //if the state is logged in, we should try to reconnect!
+                if (getState() == LOGGED_IN)
+                {
+                    execute(new Runnable() {
+
+                        public void run() {
+
+                            mNeedReconnect = true;
+                            setState(LOGGING_IN,
+                                    new ImErrorInfo(ImErrorInfo.NETWORK_ERROR, "network error"));
+                            reconnect();
+
+                        }
+
+                    });
+                }
             }
         };
 
