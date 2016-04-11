@@ -1172,8 +1172,10 @@ public class XmppConnection extends ImConnection {
                 {
                     debug(TAG, "not authorized - will not retry");
                     info = new ImErrorInfo(ImErrorInfo.INVALID_USERNAME, "invalid user/password");
+                    setState(SUSPENDED, info);
                     mRetryLogin = false;
                     mNeedReconnect = false;
+
                 }
             }
 
@@ -1627,6 +1629,18 @@ public class XmppConnection extends ImConnection {
             public void reconnectionFailed(Exception e) {
                 // We are not using the reconnection manager
              //   throw new UnsupportedOperationException();
+                execute(new Runnable() {
+
+                    public void run() {
+
+                        mNeedReconnect = true;
+                        setState(LOGGING_IN,
+                                new ImErrorInfo(ImErrorInfo.NETWORK_ERROR, "network error"));
+                        reconnect();
+
+                    }
+
+                });
             }
 
             @Override
