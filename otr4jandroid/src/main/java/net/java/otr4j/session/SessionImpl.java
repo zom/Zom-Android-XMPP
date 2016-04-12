@@ -600,7 +600,7 @@ public class SessionImpl implements Session {
 
                 if (plainTextMessage.versions.contains(2) && policy.getAllowV2()) {
                     if (DEBUG_ENABLED) Log.d(LOG_TAG,"V2 tag found.");
-                    getAuthContext(false).respondV2Auth();
+                    getAuthContext(true).respondV2Auth();
                 } else if (plainTextMessage.versions.contains(1) && policy.getAllowV1()) {
                     throw new UnsupportedOperationException();
                 }
