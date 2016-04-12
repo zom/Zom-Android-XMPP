@@ -1411,6 +1411,8 @@ public class XmppConnection extends ImConnection {
         if ("".equals(server))
             server = null;
 
+        /**
+         * //need to move this to the new NetCipher BroadcastReceiver API
         try {
             //if Orbot is on and running, we should use it
             if (OrbotHelper.isOrbotInstalled(mContext) && OrbotHelper.isOrbotRunning(mContext)
@@ -1420,7 +1422,7 @@ public class XmppConnection extends ImConnection {
         catch (Exception e)
         {
             debug(TAG,"There was an error checking Orbot: " + e.getMessage());
-        }
+        }*/
 
         debug(TAG, "TLS required? " + requireTls);
         debug(TAG, "cert verification? " + tlsCertVerify);
