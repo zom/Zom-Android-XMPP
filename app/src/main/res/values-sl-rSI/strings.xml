@@ -121,7 +121,6 @@ Dotaknite se tu in ga dodajte!</string>
   <!--Alerts: Notifications-->
   <string name="notify_groupchat_label">Povabilo v skupinski klepet</string>
   <string name="new_messages_notify">Novo sporočilo od</string>
-  <string name="starting_the_chatsecure_service_">ChatSecure storitev se zaganja …</string>
   <!--Alerts: Exceptions-->
   <string name="error">Pozor</string>
   <string name="general_error">Koda napake &lt;xliff:g id="code"&gt;%1$d&lt;/xliff:g&gt;</string>

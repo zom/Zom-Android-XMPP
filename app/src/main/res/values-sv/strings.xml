@@ -22,7 +22,6 @@ Tillåt applikationer att skriva data till IM innehållsleverantör.
   <string name="no">Avbryt</string>
   <string name="connect">Anslut</string>
   <!--Views-->
-  <string name="title_activity_lock_screen">ChatSecure låst</string>
   <string name="lock_screen_create_passphrase">Bestäm lösenord</string>
   <string name="lock_screen_confirm_passphrase">Bekräfta lösenord</string>
   <string name="lock_screen_passphrase_hint">Lösenord</string>
@@ -146,7 +145,6 @@ Klicka för att bjuda in.</string>
   <string name="pref_delete_unsecured_media_summary">När du delat en bild eller en fil - radera automatiskt originalfilen från den ursprungliga lagringsplatsen</string>
   <!--Actions: Settings: General: Other Tuning-->
   <string name="pref_group_tuning_title">Andra inställningar</string>
-  <string name="start_on_boot">Starta ChatSecure automatiskt</string>
   <string name="start_on_boot_summary">Starta alltid och logga automatiskt in på tidigare inloggade konton</string>
   <string name="hide_offline_contacts">Dölj offlinekontakter</string>
   <string name="foreground_service_title">Använd förgrundsprioritet</string>
@@ -176,7 +174,6 @@ Nätverkstrafik (även i bakgrunden) krävs för att kunna logga in med appen.</
   <string name="notify_groupchat_label">Inbjudan till gruppchatt</string>
   <string name="group_chat_invite_notify_text">Ny gruppchattinbjudan från &lt;xliff:g id="user"&gt;%s&lt;/xliff:g&gt;</string>
   <string name="new_messages_notify">Nytt meddelande(n) från</string>
-  <string name="starting_the_chatsecure_service_">Startar ChatSecure service…</string>
   <string name="app_unlocked">Aktiverad &amp; olåst</string>
   <!--Alerts: Exceptions-->
   <string name="error">Obs!</string>
@@ -213,7 +210,6 @@ Nätverkstrafik (även i bakgrunden) krävs för att kunna logga in med appen.</
   <string name="error_suspended_connection">ChatSecure har tappat anslutningen till nätverket</string>
   <string name="unable_to_create_or_join_group_chat">Kan inte skapa eller gå med i grupp chatt</string>
   <string name="unsupported_incoming_data">Ej supporterat inkommande data, kan inte dela!</string>
-  <string name="swipe_alert">ChatSecure upptäckte att en begäran gjordes för att ta bort sin uppgift. ChatSecure kommer troligtvis att krascha. Var vänlig använd \"Logga ut alla\" alternativet i menyn från kontolistan istället.</string>
   <string name="there_is_no_viewer_available_for_this_file_format">Det finns ingen visare för detta filformat</string>
   <string name="otr_keysync_warning_message">Var vänlig kopiera \'otr_keystore.ofcaes\' filen från OtrFileConverter verktyget till rotkatalogen på din enhet</string>
   <string name="msg_sent_failed">Det gick inte att skicka meddelandet.</string>
@@ -304,7 +300,6 @@ Nätverkstrafik (även i bakgrunden) krävs för att kunna logga in med appen.</
   </string-array>
   <string name="this_is_a_group_chat">Detta är en gruppchatt</string>
   <string name="unable_to_securely_share_this_file">Kan inte dela denna fil säkert</string>
-  <string name="your_keystore_is_corrupted_please_re_install_chatsecure_or_clear_data_for_the_app">Din nyckellagring är korrupt. Installera om ChatSecure eller radera data för appen</string>
   <string name="swipe_hint">&lt; svep vänster och höger för fler alternativ &gt;</string>
   <string name="title_me">Jag</string>
 </resources>

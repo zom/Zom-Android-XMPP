@@ -21,7 +21,6 @@ Sallii tietojen kirjoittamisen pikaviestisovelluksiin.</string>
   <string name="no">Peruuta</string>
   <string name="connect">Liity</string>
   <!--Views-->
-  <string name="title_activity_lock_screen">ChatSecure lukittu</string>
   <string name="lock_screen_create_passphrase">Aseta salasana</string>
   <string name="lock_screen_confirm_passphrase">Vahvista salasana</string>
   <string name="lock_screen_passphrase_hint">Salasana</string>
@@ -110,7 +109,6 @@ Klikkaa kutsuaksesi.</string>
   <string name="button_yes_accept_all">Kyllä, hyväksy kaikki</string>
   <!--Actions: Settings: General: Other Tuning-->
   <string name="pref_group_tuning_title">Muita hienosäätöjä</string>
-  <string name="start_on_boot">Käynnistä ChatSecure automaattisesti</string>
   <string name="start_on_boot_summary">Aina käynnistä ja kirjaudu automaattisesti viimeksi sisäänkirjattuihin tileihin</string>
   <string name="hide_offline_contacts">Piilota poissaolevat käyttäjät</string>
   <!--Actions: Settings: General: Notifications-->
@@ -137,7 +135,6 @@ Klikkaa kutsuaksesi.</string>
   <string name="notify_groupchat_label">Ryhmächatkutsu</string>
   <string name="group_chat_invite_notify_text">Uusi ryhmächatkutsu henkilöltä &lt;xliff:g id="user"&gt;%s&lt;/xliff:g&gt;</string>
   <string name="new_messages_notify">Uusia viestejä henkilöltä</string>
-  <string name="starting_the_chatsecure_service_">Käynnistetään ChatSecure-palvelua…</string>
   <string name="app_unlocked">Aktivoitu &amp; lukitsematon</string>
   <!--Alerts: Exceptions-->
   <string name="error">Huomio</string>
@@ -171,7 +168,6 @@ Klikkaa kutsuaksesi.</string>
   <string name="msisdn_error">Pahoittelut, puhelinnumeroa ei voitu lukea SIM-kortiltasi. Ota yhteyttä operaattoriisi avun saamiseksi.</string>
   <string name="not_signed_in">Et ole kirjautunut sisään tällä hetkellä.</string>
   <string name="unable_to_create_or_join_group_chat">Ryhmäkeskustelua ei voitu luoda tai siihen ei voitu liittyä</string>
-  <string name="swipe_alert">ChatSecure on havainnut pyynnön prosessinsa sulkemiseen. ChatSecure kaatuu todennäköisesti. Käytä Kirjaudu ulos kaikista -toimintoa tililistalta.</string>
   <string name="there_is_no_viewer_available_for_this_file_format">Kyseiselle tiedostotyypille ei ole katseluohjelmaa</string>
   <string name="otr_keysync_warning_message">Kopioi \'otr_keystore.ofcaes\' tiedosto työpöydän OtrFileConverter-työkalusta laitteesi muistin juureen.</string>
   <string name="msg_sent_failed">Viestiä ei voitu lähettää.</string>

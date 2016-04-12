@@ -19,7 +19,6 @@
   <string name="no">Одустани</string>
   <string name="connect">Повежи</string>
   <!--Views-->
-  <string name="title_activity_lock_screen">Сигурно ћаскање је закључано</string>
   <string name="lock_screen_create_passphrase">Постави лозинку</string>
   <string name="lock_screen_confirm_passphrase">Потврди лозинку</string>
   <string name="lock_screen_passphrase_hint">Лозинка</string>
@@ -142,7 +141,6 @@
   <string name="pref_delete_unsecured_media_summary">Након дељења слике или фајла, аутоматски их обриши са изворног, небезбедног складишта након увоза</string>
   <!--Actions: Settings: General: Other Tuning-->
   <string name="pref_group_tuning_title">Остала подешавања</string>
-  <string name="start_on_boot">Покрени Сигурно ћаскање аутоматски</string>
   <string name="start_on_boot_summary">Увек покрени и аутоматски пријави претходно пријављене налоге</string>
   <string name="hide_offline_contacts">Сакриј контакте ван везе</string>
   <string name="foreground_service_title">Користи приоритет првог плана</string>
@@ -171,7 +169,6 @@
   <string name="notify_groupchat_label">Позивница за групно ћаскање</string>
   <string name="group_chat_invite_notify_text">Нова позивница за групно ћаскање од &lt;xliff:g id="user"&gt;%s&lt;/xliff:g&gt;</string>
   <string name="new_messages_notify">Нове поруке од</string>
-  <string name="starting_the_chatsecure_service_">Покрећем сервис Сигурног ћаскања…</string>
   <string name="app_unlocked">Активирано и откључано</string>
   <!--Alerts: Exceptions-->
   <string name="error">Пажња</string>
@@ -208,7 +205,6 @@
   <string name="error_suspended_connection">Мрежа је ван везе</string>
   <string name="unable_to_create_or_join_group_chat">Не могу да направим или се придружим групном ћаскању</string>
   <string name="unsupported_incoming_data">Неподржани долазни подаци, не могу да делим!</string>
-  <string name="swipe_alert">Сигурно ћаскање је открило захтев за уклањањем свог процеса.  Сигурно ћаскање ће вероватно да се сруши.  Уместо тога користите „Одјави све“ ставку менија са екрана списка налога.</string>
   <string name="there_is_no_viewer_available_for_this_file_format">Нема доступног прегледача за овај формат фајлова</string>
   <string name="otr_keysync_warning_message">Копирајте фајл „otr_keystore.ofcaes“ са радне површи OtrFileConverter алатке у корени директоријум складишта вашег уређаја</string>
   <string name="msg_sent_failed">Порука није могла бити послата.</string>
@@ -299,7 +295,6 @@
   </string-array>
   <string name="this_is_a_group_chat">Ово је групно ћаскање</string>
   <string name="unable_to_securely_share_this_file">Не могу да безбедно делим овај фајл</string>
-  <string name="your_keystore_is_corrupted_please_re_install_chatsecure_or_clear_data_for_the_app">Ваше складиште кључева је оштећено. Поново инсталирајте Сигурно ћаскање или „обришите податке“ за апликацију</string>
   <string name="swipe_hint">&lt; превуците прстом лево и десно за још опција &gt;</string>
   <string name="title_me">Ја</string>
 </resources>

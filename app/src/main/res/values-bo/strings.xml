@@ -1,38 +1,36 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <!--General: Names-->
-  <string name="app_name">ཉེན་སྲུང་གླེང་མོལ། </string>
-  <string name="im_label">ཉེན་སྲུང་གླེང་མོལ། </string>
+  <string name="ic_launcher_name">འཛོམས།</string>
+  <string name="app_name">འཛོམས།</string>
+  <string name="im_label">འཛོམས།</string>
   <!--General: Permissions-->
   <string name="ro_perm_label">འཕྲིན་ཐུང་རྣམས་ཀློགས།</string>
-  <string name="ro_perm_desc">
-འཕྲིན་ཐུང་གི་དཀར་ཆག་མཁོ་སྤྲོད་གྱི་རྩ་ནས་ཉེར་སྤྱོད་མ་ལག་ལ་ནང་གསེས་དོན་ཚན་ཁག་ཀློག་བཅུག</string>
+  <string name="ro_perm_desc">ཉེར་སྤྱོད་མ་ལག་ལ་འཕྲིན་ཐུང་གི་དཀར་ཆག་མཁོ་སྤྲོད་བྱས་ནས་བརྗོད་བྱ་ཁག་ཀློག་ཏུ་བཅུག</string>
   <string name="wo_perm_label">འཕྲིན་ཐུང་ཕྲིས། </string>
-  <string name="wo_perm_desc">
-ཉེར་སྤྱོད་མ་ལག་དག་ལ་འཕྲིན་ཐུང་གི་དཀར་ཆག་མཁོ་སྤྲོད་ཀྱི་སྒང་དུ་བརྗོད་བྱ་དག་ནང་འཇུག་བྱེད་བཅུག</string>
+  <string name="wo_perm_desc">ཉེར་སྤྱོད་མ་ལག་དག་ལ་འཕྲིན་ཐུང་གི་དཀར་ཆག་མཁོ་སྤྲོད་བྱས་ནས་བརྗོད་བྱ་དག་ནང་འཇུག་བྱེད་ཏུ་བཅུག</string>
   <string name="perm_label">འཕྲིན་ཐུང་ཞབས་ཞུ་འགོ་ཚུགས།</string>
   <string name="perm_desc">ཉེར་སྤྱོད་ཁག་ལ། དྲ་ལམ་བརྒྱུད་འཕྲིན་ཐུང་ཞབས་ཞུ་བེད་སྤྱོད་གཏོང་བཅུག</string>
   <!--General: Actions-->
   <string name="confirm">ངེས་བརྟན་གྱིས།</string>
   <string name="ok">འགྲིག</string>
-  <string name="cancel">ཕྱིར་འཐེན་བྱེད།</string>
+  <string name="cancel">ཕྱིར་འཐེན།</string>
   <string name="yes">འགྲིག</string>
-  <string name="no">ཕྱིར་འཐེན་བྱེད།</string>
-  <string name="connect">མཐུད་། </string>
+  <string name="no">ཕྱིར་འཐེན།</string>
+  <string name="connect">མཐུད། </string>
   <!--Views-->
-  <string name="title_activity_lock_screen">ཉེན་སྲུང་གླེང་མོལ་སྒོ་བརྒྱབ་འདུག </string>
   <string name="lock_screen_create_passphrase">གསང་ཚིག་བཟོས། </string>
   <string name="lock_screen_confirm_passphrase">གསང་ཚིག་ངེས་གཏན་བཟོས། </string>
   <string name="lock_screen_passphrase_hint">གསང་ཚིག </string>
-  <string name="lock_screen_passphrase_not_set_enter">ཁྱེད་རང་ལ་ཉེན་སྲུང་གླེང་མོལ་ཆེད་གསང་ཡིག་གཙོ་བོ་ཞིག་བཟོ་རྒྱུའི་གདམ་ཀ་ཡོད། དེ་བཟོས་ན་གསང་ཡིག་མེད་པར་གཞན་གྱིས་ཁྱེད་རང་གི་ཡིག་ཆུང་དང་འབྲེལ་ཐོར་བལྟ་མི་ཐུབ།</string>
+  <string name="lock_screen_passphrase_not_set_enter">འཛོམས་ཆེད་གསང་ཡིག་ཨ་མ་དེ་བཟོས།</string>
   <string name="lock_screen_passphrase_not_set_confirm">གསང་ཚིག་གསར་པ་ངེས་གཏན་བཟོས།</string>
-  <string name="lock_screen_passphrases_not_matching">གསང་ཡིག་གཉིས་མཐུན་གྱི་མིན་འདུག བསྐྱར་དུ་བཟོས།</string>
+  <string name="lock_screen_passphrases_not_matching">གསང་ཡིག་གཉིས་མཐུན་གྱི་མི་འདུག བསྐྱར་དུ་བཟོས།</string>
   <string name="lock_screen_skip">གཡུག་ཞོག</string>
   <!--Views: Setup-->
-  <string name="add_account">ཐོ་བྱང་<xliff:g id="account">%1$s</xliff:g>ཡི་ཁར་སྣོན། </string>
+  <string name="add_account">ཐོ་བྱང་&lt;xliff:g id="account"&gt;%1$s&lt;/xliff:g&gt;ཡི་ཁར་སྣོན། </string>
   <string name="menu_about">དེའི་སྐོར།</string>
-  <string name="signed_out_prompt_with_error">ཁྱེད་རང་<xliff:g id="account">%1$s</xliff:g>ནས་ཕྱིར་ཕུད་འདུག  རྒྱུ་མཚན་ནི་<xliff:g id="reason">%2$s</xliff:g></string>
-  <string name="pass_err_length">ཁྱོད་ཀྱི་གསང་ཚིག་དེ་རིང་པོ་རེད་མི་འདུག </string>
+  <string name="signed_out_prompt_with_error">ཁྱེད་རང་&lt;xliff:g id="account"&gt;%1$s&lt;/xliff:g&gt;ནས་ཕྱིར་བུད་འདུག  རྒྱུ་མཚན་ནི་&lt;xliff:g id="reason"&gt;%2$s&lt;/xliff:g&gt;</string>
+  <string name="pass_err_length">ཁྱོད་ཀྱི་གསང་ཡིག་དེ་ཐུང་དྲགས་འདུག </string>
   <!--Views: About: Welcome-->
   <!--Views: About: OTR-->
   <!--Views: About: Security-->
@@ -52,12 +50,12 @@
   <string name="signing_out_wait">ཕྱི་ལ་ཐོན་བཞིན་ཡོད།\u2026</string>
   <!--Views: Settings: Account-->
   <string name="do_srv_lookup">SRVལ་ལྟོས། </string>
-  <string name="use_dns_srv_to_find_actual_xmpp_server_from_domain_name">དྲ་ཁོངས་ཀྱི་མིང་ནས་སྤྱིར་བཏང་གིXMPP ཞབས་ཞུ་དེ་འཚོལ་བར་། DRV བེད་སྤྱོད་ཐོངས་། </string>
+  <string name="use_dns_srv_to_find_actual_xmpp_server_from_domain_name">དྲ་ཁོངས་ཀྱི་མིང་ནས་སྤྱིར་བཏང་གིXMPP ཞབས་ཞུ་དེ་འཚོལ་བར་། DRV བེད་སྤྱོད་ཐོངས། </string>
   <string name="allow_the_username_and_password_to_be_sent_as_plain_text_when_using_an_unencrypted_transport">གསང་སྡོམ་མ་བྱས་བའི་འགྲུལ་བཞུད་སྐབས་སུ། མིང་དང་གསང་ཚིག་གཉིས་འཕྲིན་ཐུང་དཀྱུས་མ་ལྟར་ཐོངས། </string>
   <string name="allow_plain_text_auth">འཕྲིན་ཐུང་དཀྱུས་མ་བེད་སྤྱོད་གཏོང་བའི་ཆོག་མཆན་སྤྲོད། </string>
   <string name="require_tls_ssl_connection">TLS ཡི་འབྲེལ་མཐུད་དགོས།</string>
   <string name="transport_encryption">གསང་སྡོམ་དེ་བསྐུར། </string>
-  <string name="how_encrypted_chats_are_started">གསང་སྡོམ་ཅན་གྱི་གླེང་མོལ་གང་འདྲ་བྱས་ནས་འགོ་འཛུགས་ཀྱི་ཡོད་དམ།</string>
+  <string name="how_encrypted_chats_are_started">གསང་སྡོམ་ཅན་གྱི་གླེང་མོལ་གང་འདྲ་བྱས་ནས་འགོ་འཛུགས་བྱེད་ཀྱི་ཡོད་དམ།</string>
   <string name="the_server_to_connect_to_if_needed">གལ་སྲིད་དགོས་མཁོ་བྱུང་ན། འབྲེལ་མཐུད་བྱེད་སའི་ཞབས་ཞུ་འདི་རེད།</string>
   <string name="connect_server">དྲ་ཐོག་ཞབས་ཞུར་མཐུད།</string>
   <string name="tcp_port_for_xmpp_server">ཞབས་འཕྲུལ་XMPP ཡི་མཐུད་སྣེ TCP</string>
@@ -65,7 +63,7 @@
   <string name="xmpp_resource">XMPP ཡི་ཁོངས་མཛོད་། </string>
   <string name="to_distinguish_this_connection_from_other_clients_that_are_also_logged_in">འབྲེལ་མཐུད་འདི་ནང་འཛུལ་བྱས་ཟིན་པའི་བཀོལ་ཆས་གཞན་པ་དག་ལས་ལོགས་སུ་དབྱེ། </string>
   <string name="xmpp_resource_prio_title">XMPP ཡི་ཡོང་ཁུངས་སྔོན་སྤྱོད་རིམ་པ། </string>
-  <string name="xmpp_resource_prio_summary">ཐོན་ཁོངས་སྣ་མང་ཅན་གྱི་འཕྲིན་ཐུང་དེ་སྔོན་སྤྱོད་རིམ་པ་མཐོ་ཤོས་ཀྱི་ཁོངས་སུ་གཏོང་གི་རེད་། </string>
+  <string name="xmpp_resource_prio_summary">ཐོན་ཁུངས་སྣ་མང་ཅན་གྱི་འཕྲིན་ཐུང་དེ་སྔོན་སྤྱོད་རིམ་པ་མཐོ་ཤོས་ཀྱི་ཁོངས་སུ་གཏོང་གི་རེད། </string>
   <!--Views: Contact list-->
   <string name="title_chats">གླེང་མོལ་ཁག</string>
   <string name="empty_account_message">ཁྱོད་ལ་སྡེབ་སྒྲིག་ཟིན་པའི་ཐོ་མཛོད་མི་འདུག⏎
@@ -74,80 +72,88 @@
   <string name="menu_contact_nickname">འབྲེལ་གཏུགས་ཀྱི་སྙུག་མིང་། </string>
   <string name="menu_view_blocked">བཀག་ཟིན།</string>
   <string name="nickname">སྙུག་མིང་།</string>
-  <string name="confirm_delete_contact">འབྲེལ་མིང་འདི་"<xliff:g id="user">%1$s</xliff:g>"གསུབ་ཀྱི་རེད།</string>
-  <string name="confirm_block_contact">འབྲེལ་མིང་འདི་"<xliff:g id="user">%1$s</xliff:g>" བཀག་གི་རེད།</string>
-  <string name="add_contact_success">འབྲེལ་མིང་ "<xliff:g id="user">%1$s</xliff:g>" བསྣན་ཟིན། </string>
-  <string name="delete_contact_success">འབྲེལ་མིང་ "<xliff:g id="user">%1$s</xliff:g>" གསུབ་ཟིན།</string>
-  <string name="block_contact_success">འབྲེལ་མིང་ "<xliff:g id="user">%1$s</xliff:g>" བཀག་ཟིན།</string>
-  <string name="unblock_contact_success">འབྲེལ་མིང་"<xliff:g id="user">%1$s</xliff:g>"ཁ་ཕྱེས་ཟིན། </string>
+  <string name="confirm_delete_contact">འབྲེལ་མིང་འདི་"&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt;"གསུབ་ཀྱི་རེད།</string>
+  <string name="confirm_block_contact">འབྲེལ་མིང་འདི་"&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt;" བཀག་གི་རེད།</string>
+  <string name="add_contact_success">འབྲེལ་མིང་ "&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt;" བསྣན་ཟིན། </string>
+  <string name="delete_contact_success">འབྲེལ་མིང་ "&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt;" གསུབ་ཟིན།</string>
+  <string name="block_contact_success">འབྲེལ་མིང་ "&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt;" བཀག་ཟིན།</string>
+  <string name="unblock_contact_success">འབྲེལ་མིང་"&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt;"ཁ་ཕྱེས་ཟིན། </string>
   <string name="menu_verify">འབྲེལ་གཏུག་ར་སྤྲོད་གྱིས།</string>
-  <string name="empty_conversation_group">གླེང་མོལ་སྒོ་ཕྱེ་མེད། གླེང་མོལ་བྱེད་སྒོ་བཙུགས།</string>
+  <string name="empty_conversation_group">གླེང་མོལ་སྒོ་ཕྱེ་མེད། གླེང་མོལ་བྱེད་འགོ་བཙུགས།</string>
   <string name="search_label">འབྲེལ་མིང་། </string>
   <string name="search_hint">གླེང་མོལ་བྱེད་འདོད་ཡོད་ས་ཞིག་གི་མིང་ཕྲིས།</string>
   <string name="input_contact_label">ཁྱེད་ཀྱིས་མགྲོན་འབོད་བྱེད་འདོད་ཡོད་པའི་གང་ཟག་དེའི་དྲ་རྒྱའི་ཁ་བྱང་། </string>
   <!--Views: Chat: Single-->
-  <string name="contact_online"><xliff:g id="user">%1$s</xliff:g> དྲ་ཐོག་ཏུ་ཡོད་།</string>
-  <string name="contact_away"><xliff:g id="user">%1$s</xliff:g> ད་ལྟ་འདིར་མེད།</string>
-  <string name="contact_busy"><xliff:g id="user">%1$s</xliff:g> ལ་ད་ལྟ་བྲེལ་བའདུག</string>
-  <string name="contact_offline"><xliff:g id="user">%1$s</xliff:g> དྲ་ཐོག་ཏུ་མེད་།</string>
-  <string name="contact_joined"><xliff:g id="user">%1$s</xliff:g>ཞུགས་སོང་།</string>
-  <string name="contact_left"><xliff:g id="user">%1$s</xliff:g>ཕྱིན་ཞག</string>
+  <string name="contact_online">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt; དྲ་ཐོག་ཏུ་ཡོད།</string>
+  <string name="contact_away">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt; ད་ལྟ་འདིར་མེད།</string>
+  <string name="contact_busy">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt; ལ་ད་ལྟ་བྲེལ་བ་འདུག</string>
+  <string name="contact_offline">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt; དྲ་ཐོག་ཏུ་མེད།</string>
+  <string name="contact_joined">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt;ཞུགས་སོང་།</string>
+  <string name="contact_left">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt;དྲ་ཐོག་ནས་ལོག་སོང་།</string>
   <string name="file_transfer">ཡིག་ཆ་ཐོངས།</string>
-  <string name="accept_transfer_">བཏང་བ་དེ་ཁས་ལེན་གྱི་ཡིན་ནམ།</string>
-  <string name="wants_to_send_you_the_file">ནས་ཁྱོད་ལ་ཡིག་ཆ་ཞིག་གཏོང་འདོད་། </string>
+  <string name="accept_transfer_">གཏོང་བ་ངོས་ལེན་བྱེད་ཀྱི་ཡིན་ནམ།</string>
+  <string name="wants_to_send_you_the_file">ནས་ཁྱོད་ལ་ཡིག་ཆ་ཞིག་གཏོང་འདོད། </string>
   <string name="no_connection_for_sending">ཁྱེད་ཀྱི་ཡིག་ཆ་དེ་གཏོང་བར་དྲ་འབྲེལ་མི་འདུག</string>
   <string name="compose_hint">འཕྲིན་ཐུང་ཞིག་ཐོངས། </string>
   <string name="compose_hint_secure">ཉེན་སྲུང་ཅན་གྱི་འཕྲིན་ཐུང་ཐོངས། </string>
   <string name="menu_end_conversation">གླེང་མོལ་མཚམས་ཞོག </string>
   <string name="select_link_title">འབྲེལ་ཐག་འདེམས།</string>
   <string name="delete">གསུབ། </string>
-  <string name="export_media">རྒྱུད་ལམ་གྱི་ཡིག་ཆ་གཞན་ལ་དབོར་གྱི་ཡིན་ནམ།</string>
+  <string name="export_media">བརྒྱུད་ལམ་གྱི་ཡིག་ཆ་གཞན་ལ་དབོར་གྱི་ཡིན་ནམ།</string>
   <!--Views: Chat: Group-->
-  <string name="invitation_prompt"><xliff:g id="user">%1$s</xliff:g> ཡིས་ཁྱེད་རང་མཉམ་འདུས་གླེང་མོལ་ལ་མགྲོན་འབོད་བཏང་ཟིན། </string>
+  <string name="invitation_prompt">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt; ཡིས་ཁྱེད་རང་མཉམ་འདུས་གླེང་མོལ་ཞིག་ལ་མགྲོན་འབོད་བཏང་འདུག </string>
   <string name="accept_invitation">མོས་མཐུན་ཡོད།</string>
   <string name="decline_invitation">མོས་མཐུན་མེད། </string>
   <string name="connecting_to_group_chat_">མཉམ་འདུས་གླེང་མོལ་ལ་འབྲེལ་མཐུད་བྱེད་བཞིན་ཡོད་། </string>
   <string name="empty_contact_list">འབྲེལ་མིང་ཅི་ཡང་རྙེད་མ་སོང་།⏎
 ⏎
 མགྲོན་འབོད་བྱེད་རྒྱུའི་འབྲེལ་མིང་དག་གདམ།</string>
-  <string name="approve_subscription_error"><xliff:g id="user">%1$s</xliff:g>  ཡི་མངགས་ཆ་དེར་བཀའ་འཁྲོལ་ཐུབ་མ་སོང་། སྐུ་མཁྱེན། རྗེས་སུ་ཚོད་ལྟ་བྱེད་རོགས།</string>
-  <string name="decline_subscription_error"><xliff:g id="user">%1$s</xliff:g>  ཡི་མངགས་ཆ་དེ་ཕྱིར་འཐེན་བྱེད་ཐུབ་མ་སོང་། སྐུ་མཁྱེན། རྗེས་སུ་ཚོད་ལྟ་བྱེད་རོགས།</string>
+  <string name="subscription_prompt">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;སྣོན་གྱི་ཡིིན་ནམ?</string>
+  <string name="approve_subscription">ཡིན་ལགས།</string>
+  <string name="decline_subscription">མིན།</string>
+  <string name="approve_subscription_error">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt;  ཡི་མངགས་ཆ་དེར་བཀའ་འཁྲོལ་ཐུབ་མ་སོང་། སྐུ་མཁྱེན། རྗེས་སུ་ཚོད་ལྟ་བྱེད་རོགས།</string>
+  <string name="decline_subscription_error">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt;  ཡི་མངགས་ཆ་དེ་ཕྱིར་འཐེན་བྱེད་ཐུབ་མ་སོང་། སྐུ་མཁྱེན། རྗེས་སུ་ཚོད་ལྟ་བྱེད་རོགས།</string>
   <!--Security: OTR-->
   <string name="otr_session_status_finished">ཁྱོད་ཀྱི་འབྲེལ་མི་དེས་ཉེན་སྲུང་གླེང་མོལ་མཚམས་བཞག་འདུག </string>
+  <string name="otr_mode_force">བཙན་གྱིས/མཁོ་བ།</string>
+  <string name="otr_mode_auto">རང་བཞིན་གྱིས་ཐབས་ཤེས་བྱེད་པ།</string>
+  <string name="otr_mode_requested">རེ་བསྐུལ་ཞུ་བ་བཞིན།</string>
+  <string name="otr_mode_disabled">ནུས་མེད་བཟོས་ཟིན/ནམ་ཡང་།</string>
   <!--Security: OTR: Keyring-->
   <string name="detected_Otr_keystore_import">ང་ཚོས་གསང་སྡོམ་འཕྲིན་ཐུང་གི་ལྡེ་མིག་ཉར་མཛོད་ཞིག་ནང་འདྲེན་ཆེད་རྙེད་སོང་།  ཁྱེད་ཀྱིས་ཨང་ཚབ་གསང་ཚིག་དེར་བརྟག་དཔྱད་བྱེད་ཀྱི་ཡིན་ནམ།</string>
   <!--Security: OTR: Verification-->
   <!--Security: OTR: Verification: QA-->
-  <string name="smp_question_title">ར་སྤྲོད་ཁུངས་སྐྱེལ།</string>
+  <string name="smp_question_title">ཁུངས་སྐྱེལ་ར་སྤྲོད།</string>
   <string name="smp_question_summary">ཁོང་ཚོ་སུ་ཡིན་མིན་ར་སྤྲོད་ཕྱིར་། སོ་སོའི་འབྲེལ་མིང་ལ་དྲི་བ་གཏོང་བ་དང་དྲི་ལན་འགྲིག་པ་དེ་ཡང་མཉམ་དུ་ཞོག </string>
   <string name="smp_question_hint">དྲི་བ་གཏོང་རྒྱུ་དེ། </string>
   <string name="qmp_answer_hint">དྲི་ལན་འགྲིག་པ་དེ། </string>
-  <string name="remote_verified_us">ཁྱེད་ཀྱི་འབྲེལ་བ་དེས་ཁྱེད་རང་་དག་སྐྱེལ་ལེགས་འགྲུབ་བྱས་འདུག ད། ཁྱེད་ཀྱིས་ཁོང་ལ་དྲི་བ་དྲིས་ནས་ངོ་ཁྲོད་པ་བྱེད་དགོས།</string>
+  <string name="remote_verified_us">ཁྱེད་ཀྱི་འབྲེལ་བ་དེས་ཁྱེད་རང་ར་སྤྲོད་བྱས་འདུག ད། ཁྱེད་ཀྱིས་ཁོང་ལ་དྲི་བ་དྲིས་ནས་ངོ་འཕྲོད་པ་བྱེད་དགོས།</string>
   <string name="otr_qa_title"> OTR Q&amp;ར་སྤྲོད་ཞིག </string>
   <string name="chat_encryption_title">གླེང་མོལ་གསང་སྡོམ།</string>
   <string name="otr_qa_send">གཏོང་།</string>
-  <string name="otr_qa_cancel">ཕྱིར་འཐེན་བྱེད།</string>
+  <string name="otr_qa_cancel">ཕྱིར་འཐེན།</string>
   <!--Views: VoIP-->
   <!--Views: Settings: General-->
   <!--Actions: Settings: General: Security and Privacy-->
   <string name="pref_group_security_title">ཉེན་སྲུང་དང་བདེ་འཇགས། </string>
   <string name="encryption_and_anonymity_title">གསང་སྡོམ་དང་སྦས་མིང་། </string>
   <!--Actions: Settings: General: User Interface-->
+  <string name="pref_linkify_on_tor_title">ཌོར་ཐོག་གནོན་ཐུབ་པའི་འབྲེལ་ཐག</string>
+  <string name="pref_linkify_on_tor_summary">མིང་ཐོ་ཁག་གིས་ཌོར་བེད་སྤྱོད་གཏོང་བར།གླེང་མོལ་ནང་གི་འབྲེལ་ཐག་དེ་གནོན་ཐུབ་པ་བཟོས།(ཉེན་བརྡཿགསང་བ་ཤོར་ཉེན་འདུག)</string>
   <string name="menu_locale">སྐད་ཡིག</string>
   <string name="KEY_PREF_LANGUAGE_TITLE">སྐད་ཡིག་ཁག </string>
   <string name="use_system_default">མ་ལག་འཆར་ཅན་དེ་བེད་སྤྱོད་ཐོངས། </string>
-  <string name="button_yes_accept_all">རེད་། ཚང་མ་ཁས་ལེན་བྱོས།</string>
+  <string name="button_yes_accept_all">རེད། ཚང་མ་ཁས་ལེན་བྱོས།</string>
   <string name="pref_delete_unsecured_media_title">ཉེན་སྲུང་མིན་པའི་བརྒྱུད་ལམ་དེ་གསུབ། </string>
-  <string name="pref_delete_unsecured_media_summary">ཡིག་ཆའམ་ཡང་ན་འདྲ་པར་ཞིག་བགོ་བའི་རྗེས་སུ། དེ་ཁོངས་ཨ་མ་ནས་རང་བཞིན་གྱིས་གསུབ་འགྲོ་གི་རེད་། </string>
+  <string name="pref_delete_unsecured_media_summary">ཡིག་ཆའམ་ཡང་ན་འདྲ་པར་ཞིག་བགོ་འགྲེམས་བྱས་པའི་རྗེས་སུ། དེ་ཁོངས་ཨ་མ་ནས་རང་བཞིན་གྱིས་གསུབ་འགྲོ་གི་རེད། </string>
   <!--Actions: Settings: General: Other Tuning-->
   <string name="pref_group_tuning_title">ཉར་གསོག་གཞན་པ། </string>
-  <string name="start_on_boot">ཉེན་སྲུང་གླེང་མོལ་དེ་རང་བཞིན་གྱིས་འགོ་ཚུགས། </string>
-  <string name="start_on_boot_summary">རྟག་དུ་འགོ་འཛུགས་པ་དང་རང་བཞིན་ནས་ཁ་སྔོན་ནང་འཛུལ་བྱས་བའི་ཐོ་མཛོད་དེ་ལ་ཐོ་འགོད་བྱོས། </string>
+  <string name="start_on_boot_summary">རྟག་དུ་འགོ་འཛུགས་དུས་རང་བཞིན་གྱིས་དེ་སྔོན་ནང་འཛུལ་བྱས་བའི་ཐོ་མཛོད་དེ་ལ་ཐོ་འགོད་བྱོས། </string>
   <string name="hide_offline_contacts">དྲ་ལམ་ན་མེད་པའི་འབྲེལ་གཏུགས་ཁག་སྦས།</string>
-  <string name="foreground_service_title">སྔོན་སྤྱོད་རིམ་པ་གལ་ཆེ་ཤོས་དེ་བེད་སྤྱོད་ཐོངས་། </string>
-  <string name="foreground_service_summary">ཡིས་ང་ཚོའི་དྲ་འབྲེལ་ཞབས་ཞུ་བསྐྱར་དུ་འགོ་འཛུགས་བྱེད་པའི་གོ་སྐབས་ཉུང་དུ་ཐོངས་། འདི་ཡིས་བརྡ་གཏོང་ཁོར་ཡུག་ཏུ་བརྡ་འཇོག་གི་རེད་། </string>
+  <string name="foreground_service_title">སྔོན་སྤྱོད་རིམ་པ་གལ་ཆེ་ཤོས་དེ་བེད་སྤྱོད་ཐོངས། </string>
+  <string name="foreground_service_summary">ཡིས་ང་ཚོའི་དྲ་འབྲེལ་ཞབས་ཞུ་བསྐྱར་དུ་འགོ་འཛུགས་བྱེད་པའི་གོ་སྐབས་ཉུང་དུ་ཐོངས། འདི་ཡིས་བརྡ་གཏོང་ཁོར་ཡུག་ཏུ་བརྡ་འཇོག་གི་རེད། </string>
   <string name="heartbeat_interval_title">སྙིང་གི་འཕར་ལྡིང་གི་བར་གླགས། </string>
-  <string name="heartbeat_interval_summary">གློག་རྫས་གསོག་པ་ལ་རིམ་པ་མཐོ་བ་(སྐར་མའི་གྲངས)ཞིག་འདེམས། རིམ་པ་མཐོ་བ་དེས་མཁོ་སྤྲོད་པ་ལ་ཁྱེད་ཀྱི་འབྲེལ་ལམ་འགོག་སྲིད། </string>
+  <string name="heartbeat_interval_summary">གློག་རྫས་གསོག་པ་ལ་རིམ་པ་མཐོ་བ་(སྐར་མའི་གྲངས)ཞིག་འདེམས། རིམ་པ་མཐོ་བ་དེས་མཁོ་སྤྲོད་པ་ལ་ཁྱེད་ཀྱི་འབྲེལ་ལམ་འགོག་ཏུ་འཇུག་སྲིད། </string>
   <!--Actions: Settings: General: Notifications-->
   <string name="notification_group_title">བརྡ་གཏོང་སྒྲིག་བཟོ།</string>
   <string name="notification_enabled_title">འཕྲིན་ཐུང་འབྱོར་བརྡ།</string>
@@ -169,38 +175,37 @@
   <string name="prompt_create_new_account_">ཐོ་བྱང་གསར་བ་ཞིག་བཟོ་གི་ཡིན་ནམ། </string>
   <string name="allow_s_to_create_a_new_chat_account_for_s_">%1$s\'་ཡི་མིང་ཐོག་ལ་གླེང་མོལ་ཐོ་བྱང་གསར་བ་ཞིག་བཟོ་གི་ཡིན་ནམ། </string>
   <!--Alerts: Notifications-->
-  <string name="subscription_notify_text"><xliff:g id="user">%s</xliff:g> ནས་གྲོགས་པའི་མགྲོན་འབོད་ཞིག </string>
-  <string name="file_notify_text"><xliff:g id="user">%1$s</xliff:g>ནས་  <xliff:g id="filename">%2$s</xliff:g>   ཡིག་ཆ་གསར་བ་ཞིག </string>
-  <string name="notify_groupchat_label">མཉམ་འདུས་གླེང་མོལ་མགྲོན་འབོད་།</string>
-  <string name="group_chat_invite_notify_text"><xliff:g id="user">%s</xliff:g>ནས་གླེང་མོལ་གྱི་ཚོམས་གསར་བའི་མགྲོན་ཤོག་ཞིག </string>
+  <string name="subscription_notify_text">&lt;xliff:g id="user"&gt;%s&lt;/xliff:g&gt; ནས་གྲོགས་པའི་མགྲོན་འབོད་ཞིག </string>
+  <string name="file_notify_text">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt;ནས་  &lt;xliff:g id="filename"&gt;%2$s&lt;/xliff:g&gt;   ཡིག་ཆ་གསར་བ་ཞིག </string>
+  <string name="notify_groupchat_label">མཉམ་འདུས་གླེང་མོལ་མགྲོན་འབོད།</string>
+  <string name="group_chat_invite_notify_text">&lt;xliff:g id="user"&gt;%s&lt;/xliff:g&gt;ནས་གླེང་མོལ་གྱི་ཚོམས་གསར་བའི་མགྲོན་ཤོག་ཞིག </string>
   <string name="new_messages_notify">ནས་འཕྲིན་ཐུང་(རྣམས)གསར་པ། </string>
-  <string name="starting_the_chatsecure_service_">ཉེན་སྲུང་གླེང་མོལ་གྱི་ཞབས་ཞུ་འགོ་ཚུགས། </string>
   <string name="app_unlocked">&amp; ནུས་ཅན་བཟོས་ཚར། སྒོ་ཕྱེས་ཡོད། </string>
   <!--Alerts: Exceptions-->
   <string name="error">དོ་སྣང་བྱོས། </string>
   <string name="error_prefix">ནོར་འཁྲུལ།</string>
-  <string name="general_error">ཨང་ཚབ་ནོར་བ། <xliff:g id="code">%1$d</xliff:g></string>
-  <string name="login_service_failed"> <xliff:g id="service">%1$s</xliff:g> འདི་ལ་འཛུལ་ཐུབ་ཀྱི་མི་འདུག རྗེས་སུ་བསྐྱར་དུ་ཚོད་ལྟ་བྱེད་རོགས།(ཞིབ་ཕྲ། <xliff:g id="description">%2$s</xliff:g>)</string>
+  <string name="general_error">ཨང་ཚབ་ནོར་བ། &lt;xliff:g id="code"&gt;%1$d&lt;/xliff:g&gt;</string>
+  <string name="login_service_failed"> &lt;xliff:g id="service"&gt;%1$s&lt;/xliff:g&gt; འདི་ལ་འཛུལ་ཐུབ་ཀྱི་མི་འདུག རྗེས་སུ་བསྐྱར་དུ་ཚོད་ལྟ་བྱེད་རོགས།(ཞིབ་ཕྲ། &lt;xliff:g id="description"&gt;%2$s&lt;/xliff:g&gt;)</string>
   <string name="add_list_failed">ཐོ་གཞུང་དེ་བསྣན་མི་འདུག</string>
   <string name="block_contact_failed">འབྲེལ་མིང་དེ་བཀག་མེད།</string>
   <string name="unblock_contact_failed">བཀག་ཟིན་པའི་འབྲེལ་མིང་དེ་མུ་མཐུད་དུ་བཀག་ཡོད། </string>
   <string name="load_contact_list_failed">འབྲེལ་མིང་ཐོ་གཞུང་དེ་སྣོན་འཇུག་བྱས་མི་འདུག</string>
   <string name="cant_connect_to_server">དྲ་ཐོག་ཞབས་ཞུར་མཐུད་ཐུབ་ཀྱི་མི་འདུག དྲ་འབྲེལ་ལ་བལྟ་རོགས།</string>
-  <string name="contact_already_exist">"<xliff:g id="user">%1$s</xliff:g>" ཁྱོད་ཀྱི་འབྲེལ་ཐོའི་ནང་ཡོད་བཞིན་པ་རེད་འདུག</string>
-  <string name="contact_blocked">འབྲེལ་མིང་ "<xliff:g id="user">%1$s</xliff:g>" བཀག་ཟིན་འདུག</string>
+  <string name="contact_already_exist">"&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt;" ཁྱོད་ཀྱི་འབྲེལ་ཐོའི་ནང་ཡོད་བཞིན་པ་རེད་འདུག</string>
+  <string name="contact_blocked">འབྲེལ་མིང་ "&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt;" བཀག་ཟིན་འདུག</string>
   <string name="contact_not_loaded">ཁྱེད་ཀྱི་འབྲེལ་གཏུགས་ཐོ་གཞུང་ལ་ཁ་སྣོན་བྱེད་བཞིན་ཡིན། སྒུག་རོགས།</string>
-  <string name="network_error">དྲ་ལམ་གྱི་སྐྱོན་ཞིག་བྱུང་སོང་།</string>
+  <string name="network_error">དྲ་ལམ་ལ་སྐྱོན་ཞིག་བྱུང་སོང་།</string>
   <string name="wifi_not_connected_error">དྲ་འབྲེལ་འདི་ལ་ WiFi དགོས་ངེས་རེད། </string>
   <string name="service_not_support">དྲ་ལམ་ཞབས་ཞུ་ཡིས་བྱེད་ལས་འདིར་རྒྱབ་སྐྱོར་བྱེད་ཀྱི་མི་འདུག</string>
   <string name="invalid_password">ཁྱེད་ཀྱིས་ནང་འཇུག་བྱས་བའི་གསང་ཚིག་དེ་ཚད་ལྡན་རེད་མི་འདུག </string>
   <string name="internal_server_error">དྲ་ལམ་ཞབས་ཞུར་དཀའ་ངལ་ཞིག་འཕྲད་སོང་།</string>
   <string name="not_implemented">དྲ་ལམ་ཞབས་ཞུས་ད་ལྟ་བྱེད་ལས་འདིར་རྒྱབ་སྐྱོར་བྱེད་ཀྱི་མི་འདུག</string>
-  <string name="service_unavaiable">གནས་སྐབས་རིང་དྲ་ལམ་ཞབས་ཞུ་དེ་ཡོང་གི་མི་འདུག</string>
+  <string name="service_unavaiable">གནས་སྐབས་རིང་དྲ་ལམ་ཞབས་ཞུ་དེ་མི་འདུག</string>
   <string name="timeout">དྲ་ལམ་ཞབས་ཞུ་ཡི་དུས་ཚོད་རྫོགས་འདུག</string>
   <string name="version_not_supported">དྲ་ལམ་ཞབས་ཞུ་ཡིས་ད་ཡོད་པར་གཞི་འདིར་རྒྱབ་སྐྱོར་བྱེད་ཀྱི་མི་འདུག</string>
-  <string name="message_queue_full">འཕྲིན་ཐུང་གི་རུ་སྟར་ཁེངས་འདུག</string>
+  <string name="message_queue_full">འཕྲིན་ཐུང་གི་རུ་བསྟར་ཁེངས་འདུག</string>
   <string name="domain_not_supported">དྲ་ཐོག་ཞབས་ཞུ་ཡིས་དམིགས་བཀར་ཁྱབ་ཁོངས་སུ་གཏད་པར་རྒྱབ་སྐྱོར་བྱེད་ཀྱི་མི་འདུག</string>
-  <string name="unknown_user">ཁྱེད་ཀྱིས་ད་ལྟ་མིང་ནང་འཇུག་བྱསཔ་བ་དེ་ངོས་འཛིན་བྱས་མ་སོང་།</string>
+  <string name="unknown_user">ཁྱེད་ཀྱིས་ད་ལྟ་མིང་ནང་འཇུག་བྱས་པ་དེ་ངོས་འཛིན་བྱས་མ་སོང་།</string>
   <string name="recipient_blocked_the_user">དགོངས་དག ཁྱེད་རང་དོ་བདག་དེ་ཡིས་བཀག་འདུག</string>
   <string name="session_expired">གཏམ་གླེང་གི་དུས་ཡུན་རྫོགས་སོང་། ཡང་བསྐྱར་ནང་ཞུགས་བྱེད་རོགས།</string>
   <string name="forced_logout">ཁྱེད་ཀྱིས་བཀོལ་ཆས་གཞན་ཞིག་ནས་ནང་འཛུལ་བྱས་འདུག </string>
@@ -208,20 +213,32 @@
   <string name="msisdn_error">དགོངས་དག ཁྱེད་ཀྱི་བྱང་བུ་ནས་ཁ་པར་ཨང་གྲངས་ཀློག་ཐུབ་ཀྱི་མི་འདུག ཁྱེད་ཀྱི་ཁ་པར་ཚོང་ལས་ཁང་ནས་རོགས་རམ་ལེན་རོགས།</string>
   <string name="not_signed_in">གནས་སྐབས་སུ་ཁྱེད་རང་ནང་འཛུལ་བྱས་མི་འདུག </string>
   <string name="account_setup_error_server">གླེང་མོལ་ཞབས་ཞུ་དང་འབྲེལ་མཐུད་བྱེད་སྐབས་ཉེན་སྲུང་གླེང་མོལ་ལ་དཀའ་ངལ་འཕྲད་སོང་།  ཁྱེད་ཀྱི་སྡེབ་སྒྲིག་མ་ལག་ལ་བལྟ་ཞིབ་བྱས་ནས་བསྐྱར་དུ་ཐབས་ཤེས་བྱེད་རོགས།</string>
-  <string name="error_suspended_connection">ཉེན་སྲུང་གླེང་མོལ་གྱིས་དྲ་རྒྱ་དང་མཐུད་མིན་འདུག</string>
+  <string name="error_suspended_connection">ཉེན་སྲུང་གླེང་མོལ་གྱིས་དྲ་རྒྱ་དང་མཐུད་མི་འདུག</string>
   <string name="unable_to_create_or_join_group_chat">མཉམ་འདུས་གླེང་མོལ་ནང་འཛུལ་བའམ་ཡང་ན་གླེང་མོལ་གསར་བ་བཟོ་ཐུབ་ཀྱི་མི་འདུག</string>
   <string name="unsupported_incoming_data">རྒྱབ་སྐྱོར་མེད་པའི་ཡིག་ཆའི་རིགས་བགོ་འགྲེམས་བྱེད་མི་ཐུབ། </string>
-  <string name="swipe_alert">ཉེན་སྲུང་གླེང་མོལ་གྱིས་བྱེད་བཞིན་པའི་ལས་ཀ་ཚང་མ་མེད་པ་བཟོ་དགོས་པའི་རེ་བ་སྟོན་པ་ཤེས་བྱུང་། དེར་རྟེན་ཉེན་སྲུང་གླེང་མོལ་ལ་སྐྱོན་ཤོར་སྲིད། ཕྱིར་ཐོན་གྱི་ཐོ་མཛོད་བེད་སྤྱད་ནས་ཚང་མ་ནས་ཐོན་དགོས།</string>
   <string name="there_is_no_viewer_available_for_this_file_format">ཡིག་ཆ་འདིའི་རིགས་ལ་བལྟ་མཁན་མི་འདུག</string>
   <string name="otr_keysync_warning_message">ཀམ་པུ་ཊར་གྱི་མདུན་ངོས་ཀྱི་ OtrFileConverter tool ནས་ཡིག་ཆ་\'otr_keystore.ofcaes དེ་ཕབ་ཞུས་བྱས་ནས་ཁྱོད་ཀྱི་ཀམ་པུ་ཊར་གྱི་ལམ་སྟོན་མཛོད་ཁང་ངོ་མ་དེའི་ནང་ཉོར།</string>
-  <string name="msg_sent_failed">འཕྲིན་ཐུང་འདི་བཏང་མི་ཐུབ།</string>
+  <string name="msg_sent_failed">འཕྲིན་ཐུང་འདི་གཏོང་ཐུབ་ཀྱི་མི་འདུག</string>
   <string name="disconnected_warning">བསྐྱར་མཐུད་བྱུང་མཚམས་འཕྲིན་ཐུང་དེ་གཏོང་གི་རེད། </string>
   <string name="error_account_password_mismatch">ཁྱེད་ཀྱི་ནང་འཇུག་བྱས་པའི་གསང་ཡིག་དེ་མཐུན་གྱི་མི་འདུག</string>
   <string name="error_account_settings_priority">གལ་ཆེ་ཆུང་གི་གོ་རིམ་དེ་གཙོ་བོ་ ༠ ནས་ ༡༢༧ བར་ཡིན། [༠..༡༢༧]</string>
   <string name="error_account_settings_port">གཞོགས་ཀྱི་ཨང་གྲངས་དེ་ངེས་པར་དུ་ཨང་ཀི་ཡིན་དགོས། </string>
-  <string name="error_welcome_database">ནོར་འཁྲུལ་ཆེན་པོ། མཉེན་ཆས་ཀྱི་རེའུ་མིག་སྒོ་ཕྱེས་མི་ཐུབ་པའམ་ཡང་ན་དེའི་ནང་དུ་འཇུག་ཐུབ་ཀྱི་མི་འདུག  མཉེན་ཆས་དེ་བསྐྱར་དུ་ནང་འཇུག་བྱེད་པའམ་ཡང་ན་གཙང་མ་བཟོ་རོགས།</string>
+  <string name="error_welcome_database">ནོར་འཁྲུལ་ཆེན་པོ། མཉེན་ཆས་ཀྱི་རེའུ་མིག་སྒོ་འབྱེད་ཐུབ་ཀྱི་མེད་པའམ་ཡང་ན་དེའི་ནང་དུ་འཇུག་ཐུབ་ཀྱི་མི་འདུག  མཉེན་ཆས་དེ་བསྐྱར་དུ་ནང་འཇུག་བྱེད་པའམ་ཡང་ན་གཙང་མ་བཟོ་རོགས།</string>
   <string name="account_settings_title">ཐོ་བྱང་སྒྲིག་བཟོ།</string>
-
+  <string name="pref_group_protect_data_title">ངའི་ཡིག་ཆ་ཁག་སྲུང་སྐྱོབ་བྱོས།</string>
+  <string name="panic_trigger_app">ཉེན་ཁའི་བརྡ་ལན་གཏོང་བའི་ཉེར་སྤྱོད་མ་ལག</string>
+  <string name="panic_trigger_app_summary">Panic ཉེར་སྤྱོད་མ་ལག་གིས་ཉེན་སྲུང་གླེང་མོལ་ལ་ཁྱེད་ཀྱི་འཕྲིན་ཐུང་གཏོང་བ་དང་།་སྒོ་རྒྱག་པ།ཡིག་ཆ་གཙང་གསུབ་བྱེད་པ་སོགས་བྱེད་དུ་འཇུག</string>
+  <string name="panic_setup">Panic སྒྲིག་བཟོ།</string>
+  <string name="panic_setup_summary">ཉེན་སྲུང་གླེང་མོལ་གྱིས་panic བརྡ་ཁྱབ་ལ་ཡ་ལན་ཇི་ལྟར་བྱེད་མིན་གྱི་སྒྲིག་བཟོ།</string>
+  <string name="panic_app_none">གང་ཡང་མིན།</string>
+  <string name="panic_app_none_summary">ཉེན་ཁའི་བརྡ་ལན་གཏོང་བའི་ཉེར་སྤྱོད་མ་ལག་མེད།་ཉེན་ཁའི་བརྡ་ལན་ཚང་མ་སྣང་མེད་ཞོག</string>
+  <string name="panic_app_default">སྔར་ཡོད།</string>
+  <string name="protect_data">ངའི་ཡིག་ཆ་ཁག་སྲུང་སྐྱོབ་བྱོས།</string>
+  <string name="action_done">བྱས་ཚར།</string>
+  <string name="lock_app">ཉེར་སྤྱོད་མ་ལག་སྒོ་རྒྱོབས།</string>
+  <string name="clear_app_data">ཉེར་སྤྱོད་མ་ལག་ནང་གི་ཡིག་ཆ་ཚང་མ་གསུབ།</string>
+  <string name="uninstall_app">ཉེར་སྤྱོད་མ་ལག་ཕྱིར་འབུད་ཐོངས།</string>
+  <string name="include_location">ང་གར་ཡོད་ཀྱི་ས་གནས་ཁོངས་སུ་བཅུག</string>
   <!--added 2011/09/01-->
   <string name="menu_view_groups"> ཚན་པ་ཁག</string>
   <string name="buddies">གྲོགས་པོ་རྣམས། </string>
@@ -303,7 +320,9 @@
   </string-array>
   <string name="this_is_a_group_chat">འདི་མཉམ་འདུས་གླེང་མོལ་རེད།</string>
   <string name="unable_to_securely_share_this_file">ཡིག་ཆ་འདི་ཉེན་སྲུང་ལྡན་པའི་ཐོག་བསྐུར་ཐུབ་ཀྱི་མི་འདུག</string>
-  <string name="your_keystore_is_corrupted_please_re_install_chatsecure_or_clear_data_for_the_app">ཁྱོད་ཀྱི་ཉར་ཁང་ལྟེ་བ་དེ་འཕྲོ་བརླག་ཕྱིན་འདུག དེར་རྟེན་ཉེན་སྲུང་གླེང་མོལ་ཡང་བསྐྱར་ནང་འཇུག་བྱོས། དེ་མིན་མཉེན་ཆས་མ་ལག་ཆེད་དུ་ལས་གཞི་རིའུ་མིག་ \'clear data\' གཙང་མ་བཟོས།
-</string>
-  <string name="swipe_hint">གདམ་ཁ་མང་པོའི་ཆེད་གཡས་དང་གཡོན་ལ་ཤུགས་ཀྱི་གཞུས།</string>
+  <string name="swipe_hint">གདམ་ཁ་མང་པོའི་ཆེད་གཡས་དང་གཡོན་ལ་མཛུབ་མོས་དེད།</string>
+  <string name="no_convos">ཉེན་སྲུང་གླེང་མོལ་འགོ་ཚུགས།</string>
+  <string name="title_more">གསར་རྙེད།</string>
+  <string name="title_me">ང་།</string>
+  <string name="no_photos">གཏོང་ལེན་བྱས་པའི་འདྲ་པར་ཁག་འདིར་འཆར་ངེས།</string>
 </resources>

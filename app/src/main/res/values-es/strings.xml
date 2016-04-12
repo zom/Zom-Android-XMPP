@@ -105,7 +105,6 @@
   <string name="KEY_PREF_LANGUAGE_TITLE">Idiomas</string>
   <!--Actions: Settings: General: Other Tuning-->
   <string name="pref_group_tuning_title">Otros ajustes</string>
-  <string name="start_on_boot">Conectar al inicio</string>
   <string name="start_on_boot_summary">Iniciar sesión automáticamente </string>
   <string name="hide_offline_contacts">Ocultar desconectados</string>
   <string name="foreground_service_title">Prioridad primer plano</string>

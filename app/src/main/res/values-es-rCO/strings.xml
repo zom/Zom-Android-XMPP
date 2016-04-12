@@ -24,7 +24,6 @@ Permite a las aplicaciones escribir datos en el proveedor de contenidos de mensa
   <string name="no">Cancelar</string>
   <string name="connect">Conectar</string>
   <!--Views-->
-  <string name="title_activity_lock_screen">ChatSecure bloqueado</string>
   <string name="lock_screen_create_passphrase">Establecer contraseña</string>
   <string name="lock_screen_confirm_passphrase">Confirmar contraseña</string>
   <string name="lock_screen_passphrase_hint">Contraseña</string>
@@ -129,7 +128,6 @@ Toque para invitar.</string>
   <string name="KEY_PREF_LANGUAGE_TITLE">Idiomas</string>
   <!--Actions: Settings: General: Other Tuning-->
   <string name="pref_group_tuning_title">Otros ajustes</string>
-  <string name="start_on_boot">Iniciar ChatSecure automáticamente</string>
   <string name="hide_offline_contacts">Ocultar contactos desconectados</string>
   <string name="foreground_service_summary">Reduce la posibilidad de que Android reinicie nuestro servicio de conexión. Esto cargará una notificación en el área de notificaciones.</string>
   <string name="heartbeat_interval_summary">Use un valor más alto (en minutos) para ahorrar batería. Un valor alto puede causar que el proveedor cierre su conexión por inactividad.</string>
@@ -149,7 +147,6 @@ Es necesario tener conexión a la red de datos (incluyendo datos en segundo plan
   <!--Alerts: Notifications-->
   <string name="notify_groupchat_label">Invitación a chat de grupo</string>
   <string name="new_messages_notify">Nuevo mensaje(s) de</string>
-  <string name="starting_the_chatsecure_service_">Arrancando el servicio ChatSecure…</string>
   <!--Alerts: Exceptions-->
   <string name="error">Atención</string>
   <string name="general_error">Código de error &lt;xliff:g id="code"&gt;%1$d&lt;/xliff:g&gt;</string>

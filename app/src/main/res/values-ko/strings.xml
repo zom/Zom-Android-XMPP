@@ -35,12 +35,12 @@
   <!--Views: Contact list-->
   <string name="menu_remove_contact">연락처 삭제</string>
   <string name="menu_view_blocked">차단 목록</string>
-  <string name="confirm_delete_contact">연락처 &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;이(가) 삭제됩니다.</string>
-  <string name="confirm_block_contact">연락처 &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;이(가) 차단됩니다.</string>
-  <string name="add_contact_success">연락처 &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;이(가) 추가되었습니다.</string>
-  <string name="delete_contact_success">연락처 &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;이(가) 삭제되었습니다.</string>
-  <string name="block_contact_success">연락처 &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;이(가) 차단되었습니다.</string>
-  <string name="unblock_contact_success">연락처 &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;이(가) 차단 해제되었습니다.</string>
+  <string name="confirm_delete_contact">연락처 '&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;'이(가) 삭제됩니다.</string>
+  <string name="confirm_block_contact">연락처 '&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;'이(가) 차단됩니다.</string>
+  <string name="add_contact_success">연락처 '&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;'이(가) 추가되었습니다.</string>
+  <string name="delete_contact_success">연락처 '&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;'이(가) 삭제되었습니다.</string>
+  <string name="block_contact_success">연락처 '&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;'이(가) 차단되었습니다.</string>
+  <string name="unblock_contact_success">연락처 '&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;'이(가) 차단 해제되었습니다.</string>
   <string name="empty_conversation_group">대화 내용 없음</string>
   <string name="search_label">연락처</string>
   <string name="search_hint">채팅하시려는 연락처의 이름을 넣어보세요</string>
@@ -98,7 +98,7 @@
   <string name="load_contact_list_failed">연락처 목록을 로드하지 못했습니다.</string>
   <string name="cant_connect_to_server">서버에 연결할 수 없습니다. 연결을 확인하세요.</string>
   <string name="contact_already_exist">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;님이 이미 연락처 목록에 있습니다.</string>
-  <string name="contact_blocked">연락처 &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;은(는) 차단되었습니다.</string>
+  <string name="contact_blocked">연락처 '&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;'은(는) 차단되었습니다.</string>
   <string name="contact_not_loaded">연락처 목록이 로드되는 동안 잠시 기다려 주세요.</string>
   <string name="network_error">네트워크 오류가 발생했습니다.</string>
   <string name="service_not_support">서버에서 이 기능을 지원하지 않습니다.</string>

@@ -22,7 +22,6 @@ Tillader applikationer at skrive data til IM-indholdsleverandøren.</string>
   <string name="no">Annuller</string>
   <string name="connect">Forbind</string>
   <!--Views-->
-  <string name="title_activity_lock_screen">ChatSecure låst</string>
   <string name="lock_screen_create_passphrase">Sæt adgangskode</string>
   <string name="lock_screen_confirm_passphrase">Bekræft adgangskode</string>
   <string name="lock_screen_passphrase_hint">Adgangskode</string>
@@ -136,7 +135,6 @@ Rør skærm for at invitere.</string>
   <string name="button_yes_accept_all">Ja, accepter alle</string>
   <!--Actions: Settings: General: Other Tuning-->
   <string name="pref_group_tuning_title">Anden fintuning</string>
-  <string name="start_on_boot">Start ChatSecure automatiskt</string>
   <string name="start_on_boot_summary">Start altid og log automatisk ind med sidst anvendte konti</string>
   <string name="hide_offline_contacts">Skjul offline kontakter</string>
   <string name="foreground_service_title">Brug forgrundsprioritet</string>
@@ -162,7 +160,6 @@ Rør skærm for at invitere.</string>
   <!--Alerts: Notifications-->
   <string name="notify_groupchat_label">Gruppechatinvitation</string>
   <string name="new_messages_notify">Ny(e) besked(er) fra</string>
-  <string name="starting_the_chatsecure_service_">Starter ChatSecure servicen…</string>
   <string name="app_unlocked">Aktiveret &amp; låst op</string>
   <!--Alerts: Exceptions-->
   <string name="error">Bemærk</string>
@@ -197,7 +194,6 @@ Rør skærm for at invitere.</string>
   <string name="account_setup_error_server">ChatSecure stødte på en fejl under etablering af forbindelse til server - kontoller din konfiguration og prøv igen.</string>
   <string name="error_suspended_connection">ChatSecure har mistet en forbindelse til netværket</string>
   <string name="unable_to_create_or_join_group_chat">Kunne ikke oprette eller deltage i gruppesamtale</string>
-  <string name="swipe_alert">ChatSecure har modtaget en forespørgsel om at fjerne sin operativsystemprocess. ChatSecure vil nu formentlig fejle. Vær venlig at bruge \'Log alle af\' funktionen fra kontilisteskærmen i stedet. </string>
   <string name="there_is_no_viewer_available_for_this_file_format">Der er ingen fremviser tilgængelig for dette filformat</string>
   <string name="otr_keysync_warning_message">Kopier filen \'otr_keystore.ofcaes\' fra computerværktøjet OtrFileConverter til rod-mappen af din enheds lager</string>
   <string name="msg_sent_failed">Beskeden kunne ikke sendes.</string>
