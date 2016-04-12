@@ -78,12 +78,12 @@ Klik hier om er één toe te voegen!</string>
   <string name="menu_contact_nickname">Contact bijnaam</string>
   <string name="menu_view_blocked">Geblokkeerd</string>
   <string name="nickname">Gebruikersnaam</string>
-  <string name="confirm_delete_contact">Contact '&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;' wordt verwijderd.</string>
-  <string name="confirm_block_contact">Contact '&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;' wordt geblokkeerd.</string>
-  <string name="add_contact_success">Contact ' &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;' is toegevoegd.</string>
-  <string name="delete_contact_success">Contact '&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;' is verwijderd.</string>
-  <string name="block_contact_success">Contact '&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;' is geblokkeerd.</string>
-  <string name="unblock_contact_success">Contact '&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;' is gedeblokkeerd.</string>
+  <string name="confirm_delete_contact">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; wordt verwijderd.</string>
+  <string name="confirm_block_contact">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; wordt geblokkeerd.</string>
+  <string name="add_contact_success">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; is toegevoegd.</string>
+  <string name="delete_contact_success">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; is verwijderd.</string>
+  <string name="block_contact_success">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; is geblokkeerd.</string>
+  <string name="unblock_contact_success">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; is gedeblokkeerd.</string>
   <string name="menu_verify">Verifieer sleutel</string>
   <string name="empty_conversation_group">Geen gesprekken</string>
   <string name="search_label">Contact</string>
@@ -184,7 +184,7 @@ Klik hier om uit te nodigen.</string>
   <string name="load_contact_list_failed">De lijst met contacten is niet geladen.</string>
   <string name="cant_connect_to_server">Kan geen verbinding maken met de server. Controleer uw verbinding.</string>
   <string name="contact_already_exist">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; staat al in uw lijst met contacten.</string>
-  <string name="contact_blocked">Contact '&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;' is geblokkeerd.</string>
+  <string name="contact_blocked">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; is geblokkeerd.</string>
   <string name="contact_not_loaded">Uw lijst met contacten wordt geladen.</string>
   <string name="network_error">Er is een netwerkfout opgetreden.</string>
   <string name="wifi_not_connected_error">WiFi is nodig voor deze verbinding.</string>
