@@ -532,18 +532,22 @@ public class ImApp extends Application implements ICacheWordSubscriber {
     public IImConnection getConnection(long providerId,long accountId) {
 
         try {
-            IImConnection im = mImService.getConnection(providerId);
+            if (mImService != null) {
+                IImConnection im = mImService.getConnection(providerId);
 
-            if (im != null) {
+                if (im != null) {
 
-                im.getState();
+                    im.getState();
 
-            } else {
-                im = createConnection(providerId, accountId);
+                } else {
+                    im = createConnection(providerId, accountId);
 
+                }
+
+                return im;
             }
-
-            return im;
+            else
+                return null;
         }
         catch (RemoteException re)
         {
