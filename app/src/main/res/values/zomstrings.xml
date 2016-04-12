@@ -14,7 +14,7 @@
   <string name="friends">Friends</string>
   <string name="add_friends">Add Friends</string>
   <string name="search_by_id">Search by ID</string>
-  <string name="invite_accepted">Your friend said YES to Zom!</string>
+  <string name="invite_accepted">You are now friends on Zom</string>
   <string name="chats">Chats</string>
   <string name="choose_friend">Choose a Friend</string>
   <string name="send_message">Send a message</string>
