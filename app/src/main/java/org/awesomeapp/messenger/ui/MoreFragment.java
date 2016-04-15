@@ -13,6 +13,7 @@ import android.widget.Button;
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.MainActivity;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import im.zom.messenger.R;
 
 public class MoreFragment extends Fragment {
@@ -65,6 +66,30 @@ public class MoreFragment extends Fragment {
             public void onClick(View v) {
 
                 ((MainActivity)getActivity()).showGroupChatDialog();
+
+            }
+        });
+
+        btn = view.findViewById(R.id.btnOpenStickers);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(getActivity(),StickerActivity.class);
+                getActivity().startActivity(intent);
+
+            }
+        });
+
+        btn = view.findViewById(R.id.btnOpenThemes);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                new SweetAlertDialog(getActivity(), SweetAlertDialog.NORMAL_TYPE)
+                        .setTitleText("Awesome Themes!")
+                         .setContentText("Coming soon....")
+                        .show();
 
             }
         });

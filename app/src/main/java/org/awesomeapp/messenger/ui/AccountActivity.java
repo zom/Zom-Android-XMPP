@@ -447,7 +447,7 @@ public class AccountActivity extends AppCompatActivity {
                 }
                 else
                 {
-                    if (isSignedIn) {
+                    if (isSignedIn) {((MainActivity)getActivity()).showGroupChatDialog();
                         signOut();
                         isSignedIn = false;
                     } else {
@@ -501,7 +501,7 @@ public class AccountActivity extends AppCompatActivity {
         {
             mEditPass.setText(i.getExtras().getString("newpass"));
             mEditPass.setVisibility(View.GONE);
-      //     mRememberPass.setChecked(true);
+      //     mRememberPass.setChecked(true);((MainActivity)getActivity()).showGroupChatDialog();
        //     mRememberPass.setVisibility(View.GONE);
         }
 

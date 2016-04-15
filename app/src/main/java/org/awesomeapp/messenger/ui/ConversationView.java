@@ -2669,7 +2669,7 @@ public class ConversationView {
 
     }
 
-    private static StickerManager sStickerManager = null;
+    public static StickerManager sStickerManager = null;
     private ViewPager mStickerPager = null;
     private View mStickerBox = null;
 

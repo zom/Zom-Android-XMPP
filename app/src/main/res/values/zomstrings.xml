@@ -44,4 +44,6 @@
   <string name="action_archived">Archived</string>
   <string name="action_verified">Verified</string>
 
+  <string name="action_theme">Change Theme</string>
+  <string name="action_stickers">Sticker Share</string>
 </resources>

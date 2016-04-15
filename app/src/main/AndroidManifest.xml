@@ -449,6 +449,10 @@
             android:exported="false"
             android:title="@string/photo_gallery" />
         <activity
+            android:name="org.awesomeapp.messenger.ui.StickerActivity"
+            android:exported="false"
+            android:title="@string/action_stickers" />
+        <activity
             android:name="org.awesomeapp.messenger.ui.PanicSetupActivity"
             android:label="@string/panic_trigger_app"
             android:theme="@style/AppThemeNoAction">
