@@ -19,7 +19,6 @@
   <string name="no">Annulla</string>
   <string name="connect">Connetti</string>
   <!--Views-->
-  <string name="title_activity_lock_screen">ChatSecure Bloccato</string>
   <string name="lock_screen_create_passphrase">Imposta Password</string>
   <string name="lock_screen_confirm_passphrase">Conferma Password</string>
   <string name="lock_screen_passphrase_hint">Password</string>
@@ -137,7 +136,6 @@ Tocca per invitare qualcuno.</string>
   <string name="pref_delete_unsecured_media_summary">Quando condividi una foto o un file, questi verranno eliminati automaticamente dalla posizione originale non protetta dopo l\'importazione.</string>
   <!--Actions: Settings: General: Other Tuning-->
   <string name="pref_group_tuning_title">Altre Impostazioni</string>
-  <string name="start_on_boot">Avvia ChatSecure automaticamente</string>
   <string name="start_on_boot_summary">Avvia ed entra automaticamente negli account connessi in precedenza sempre</string>
   <string name="hide_offline_contacts">Nascondi contatti offline</string>
   <string name="foreground_service_title">Usa la priorità  del primo piano</string>
@@ -162,7 +160,6 @@ Tocca per invitare qualcuno.</string>
   <string name="file_notify_text">Nuovo file &lt;xliff:g id="filename"&gt;%1$s&lt;/xliff:g&gt; da &lt;xliff:g id="user"&gt;%2$s&lt;/xliff:g&gt;</string>
   <string name="notify_groupchat_label">Invito a conversazione di gruppo</string>
   <string name="new_messages_notify">Nuovo messaggio(i) da</string>
-  <string name="starting_the_chatsecure_service_">Avviamento servizio ChatSecure…</string>
   <string name="app_unlocked">Attivato &amp; sbloccato</string>
   <!--Alerts: Exceptions-->
   <string name="error">Attenzione</string>

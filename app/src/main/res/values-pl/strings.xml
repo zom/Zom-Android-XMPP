@@ -23,7 +23,6 @@ Zezwala aplikacji na przesyłanie danych do dostawcy zawartości czatu.
   <string name="no">Anuluj</string>
   <string name="connect">Połącz</string>
   <!--Views-->
-  <string name="title_activity_lock_screen">Bezpieczny Komunikator = ChatSecure Zablokowany</string>
   <string name="lock_screen_create_passphrase">Ustaw Hasło</string>
   <string name="lock_screen_confirm_passphrase">Potwierdź hasło</string>
   <string name="lock_screen_passphrase_hint">Hasło</string>
@@ -148,7 +147,6 @@ Kliknij aby zaprosić.</string>
   <string name="pref_delete_unsecured_media_summary">Po udostępnieniu zdjęcia lub pliku, automatycznie usuń je z oryginalnej, niezabezpieczonej pamięci po imporcie</string>
   <!--Actions: Settings: General: Other Tuning-->
   <string name="pref_group_tuning_title">Inne Dostrajanie</string>
-  <string name="start_on_boot">Automatycznie włącz Bezpieczny komunikator = ChatSecure</string>
   <string name="start_on_boot_summary">Zawsze loguj automatycznie do poprzednio używanego konta lub kont</string>
   <string name="hide_offline_contacts">Ukryj kontakty offline</string>
   <string name="foreground_service_title">Użyj wysoki priorytet</string>
@@ -177,7 +175,6 @@ Kliknij aby zaprosić.</string>
   <string name="notify_groupchat_label">Zaproszenie do czatu grupowego</string>
   <string name="group_chat_invite_notify_text">Nowe zaproszenie do grupowego czata od &lt;xliff:g id="user"&gt;%s&lt;/xliff:g&gt;</string>
   <string name="new_messages_notify">Nowa/e wiadomość/i od</string>
-  <string name="starting_the_chatsecure_service_">Uruchamianie serwisu ChatSecure…</string>
   <string name="app_unlocked">Aktywowany &amp; odblokowany</string>
   <!--Alerts: Exceptions-->
   <string name="error">Uwaga</string>
@@ -214,7 +211,6 @@ Kliknij aby zaprosić.</string>
   <string name="error_suspended_connection">ChatSecure utracił połączenie z siecią</string>
   <string name="unable_to_create_or_join_group_chat">Nie zdolny do stworzenia lub dołaćzenia do rozmowy grupowej</string>
   <string name="unsupported_incoming_data">Nieobsługiwane dane przychodzące, nie może się nimi podzielić!</string>
-  <string name="swipe_alert">ChatSecure wykrył prośbę na zakończenie jego działania . Najprawdopodobniej dojdzie to niekontrolowanego zamknięcia ChatSecure. Proszę użyć opcji Wyloguj Całość z menu na Liście Kont.</string>
   <string name="there_is_no_viewer_available_for_this_file_format">Nie ma odpowiedniego programu dla tego typu formatu pliku</string>
   <string name="otr_keysync_warning_message">Prosimy o skopiowanie pliku \'otr_keystore.ofcaes\' z pulpitu narzędzia OtrFileConverter do głównego katalogu na Twoim dysku.</string>
   <string name="msg_sent_failed">Nie można wysłać wiadomości.</string>
@@ -305,7 +301,6 @@ Kliknij aby zaprosić.</string>
   </string-array>
   <string name="this_is_a_group_chat">To jest czat grupowy</string>
   <string name="unable_to_securely_share_this_file">Nie można bezpiecznie podzielić się tym plikiem</string>
-  <string name="your_keystore_is_corrupted_please_re_install_chatsecure_or_clear_data_for_the_app">Twój zbiór kluczy jest uszkodzony. Proszę ponownie zainstaluj ChatSecure lub wyczyść dane aplikacji</string>
   <string name="swipe_hint">&lt; przesuń w lewo i prawo po więcej opcji &gt;</string>
   <string name="title_me">Ja</string>
 </resources>

@@ -23,7 +23,6 @@
   <string name="no">Annuleren</string>
   <string name="connect">Verbind</string>
   <!--Views-->
-  <string name="title_activity_lock_screen">ChatSecure vergrendeld</string>
   <string name="lock_screen_create_passphrase">Wachtwoord instellen</string>
   <string name="lock_screen_confirm_passphrase">Bevestig wachtwoord</string>
   <string name="lock_screen_passphrase_hint">Wachtwoord</string>
@@ -79,12 +78,12 @@ Klik hier om er één toe te voegen!</string>
   <string name="menu_contact_nickname">Contact bijnaam</string>
   <string name="menu_view_blocked">Geblokkeerd</string>
   <string name="nickname">Gebruikersnaam</string>
-  <string name="confirm_delete_contact">Contact \'&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;\' wordt verwijderd.</string>
-  <string name="confirm_block_contact">Contact \'&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;\' wordt geblokkeerd.</string>
-  <string name="add_contact_success">Contact \'&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;\' is toegevoegd.</string>
-  <string name="delete_contact_success">Contact \'&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;\' is verwijderd.</string>
-  <string name="block_contact_success">Contact \'&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;\' is geblokkeerd.</string>
-  <string name="unblock_contact_success">Contact \'&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;\' is gedeblokkeerd.</string>
+  <string name="confirm_delete_contact">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; wordt verwijderd.</string>
+  <string name="confirm_block_contact">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; wordt geblokkeerd.</string>
+  <string name="add_contact_success">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; is toegevoegd.</string>
+  <string name="delete_contact_success">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; is verwijderd.</string>
+  <string name="block_contact_success">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; is geblokkeerd.</string>
+  <string name="unblock_contact_success">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; is gedeblokkeerd.</string>
   <string name="menu_verify">Verifieer sleutel</string>
   <string name="empty_conversation_group">Geen gesprekken</string>
   <string name="search_label">Contact</string>
@@ -145,7 +144,6 @@ Klik hier om uit te nodigen.</string>
   <string name="pref_delete_unsecured_media_summary">Verwijder automatisch een foto of bestand van de originele onveilige opslag na het importeren voor het delen.</string>
   <!--Actions: Settings: General: Other Tuning-->
   <string name="pref_group_tuning_title">Overige Tuning</string>
-  <string name="start_on_boot">Start ChatSecure Automatisch</string>
   <string name="start_on_boot_summary">Altijd starten en automatisch inloggen op eerder ingelogde accounts</string>
   <string name="hide_offline_contacts">Offline contacten verbergen</string>
   <string name="foreground_service_title">Gebruik voorgrond prioriteit</string>
@@ -174,7 +172,6 @@ Klik hier om uit te nodigen.</string>
   <string name="notify_groupchat_label">Uitnodiging voor groepchat</string>
   <string name="group_chat_invite_notify_text">Nieuwe uitnodiging voor groepchat van &lt;xliff:g id="USER"&gt;%s&lt;/xliff:g&gt;</string>
   <string name="new_messages_notify">Nieuw(e) bericht(en) van</string>
-  <string name="starting_the_chatsecure_service_">De ChatSecure service wordt gestart…</string>
   <string name="app_unlocked">Geactiveerd &amp; ontgrendeld</string>
   <!--Alerts: Exceptions-->
   <string name="error">Aandacht vereist</string>
@@ -187,7 +184,7 @@ Klik hier om uit te nodigen.</string>
   <string name="load_contact_list_failed">De lijst met contacten is niet geladen.</string>
   <string name="cant_connect_to_server">Kan geen verbinding maken met de server. Controleer uw verbinding.</string>
   <string name="contact_already_exist">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; staat al in uw lijst met contacten.</string>
-  <string name="contact_blocked">Contact &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; is geblokkeerd.</string>
+  <string name="contact_blocked">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; is geblokkeerd.</string>
   <string name="contact_not_loaded">Uw lijst met contacten wordt geladen.</string>
   <string name="network_error">Er is een netwerkfout opgetreden.</string>
   <string name="wifi_not_connected_error">WiFi is nodig voor deze verbinding.</string>
@@ -210,8 +207,6 @@ Klik hier om uit te nodigen.</string>
   <string name="account_setup_error_server">ChatSecure trof een fout aan tijdens het verbinding maken met de chatserver - controleer alstublieft uw instellingen en probeer opnieuw.</string>
   <string name="error_suspended_connection">ChatSecure heeft de verbinding met het netwerk verloren</string>
   <string name="unable_to_create_or_join_group_chat">Kan geen groepschat starten of toetreden.</string>
-  <string name="swipe_alert">ChatSecure detecteerde een aanzoek om zijn taak te verwijderen.
-ChatSecure zal waarschijnlijk crashen. Gebruik in de plaats a.u.b. het \"Log alle uit\" menu item van het account lijst venster.</string>
   <string name="there_is_no_viewer_available_for_this_file_format">Er is geen viewer beschikbaar voor dit bestandsformaat</string>
   <string name="otr_keysync_warning_message">Kopieer a.u.b. het \'otr_keystore.ofcaes\' bestand van de desktop OtrFileConverter tool naar de root directory van je opslagruimte.</string>
   <string name="msg_sent_failed">Dit bericht kan niet worden verzonden.</string>
@@ -302,6 +297,5 @@ ChatSecure zal waarschijnlijk crashen. Gebruik in de plaats a.u.b. het \"Log all
   </string-array>
   <string name="this_is_a_group_chat">Dit is een groepsgesprek</string>
   <string name="unable_to_securely_share_this_file">Niet mogelijk dit bestand veilig te delen</string>
-  <string name="your_keystore_is_corrupted_please_re_install_chatsecure_or_clear_data_for_the_app">Je sleutelopslag is corrupt. Gelieve ChatSecure opnieuw te installeren of \'wis de data\' van de app.</string>
   <string name="title_me">Ik</string>
 </resources>

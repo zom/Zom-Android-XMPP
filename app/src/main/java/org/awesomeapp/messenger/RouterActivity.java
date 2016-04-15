@@ -153,9 +153,7 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
 
         checkCustomFont();
 
-        getSupportActionBar().hide();
-        
-
+//        getSupportActionBar().hide();
 
         // if we have an incoming contact, send it to the right place
         String scheme = intent.getScheme();
@@ -253,14 +251,15 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
             String action = intent.getAction();
                 Intent imUrlIntent = new Intent(this, ImUrlActivity.class);
                 imUrlIntent.setAction(action);
+                imUrlIntent.setType(intent.getType());
 
                 if (intent.getData() != null)
                     imUrlIntent.setData(intent.getData());
 
               //  imUrlIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 if (intent.getExtras() != null)
-                    imUrlIntent.putExtras(intent.getExtras())
-                            ;
+                    imUrlIntent.putExtras(intent.getExtras());
+
                 startActivityForResult(imUrlIntent, REQUEST_HANDLE_LINK);
 
            // setIntent(null);

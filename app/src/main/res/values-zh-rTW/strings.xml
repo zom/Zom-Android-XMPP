@@ -19,7 +19,6 @@
   <string name="no">取消</string>
   <string name="connect">連線</string>
   <!--Views-->
-  <string name="title_activity_lock_screen">鎖定安全聊天</string>
   <!--Views: Setup-->
   <string name="add_account">新增 &lt;xliff:g id="ACCOUNT"&gt;%1$s&lt;/xliff:g&gt; 帳戶</string>
   <string name="menu_about">關於</string>

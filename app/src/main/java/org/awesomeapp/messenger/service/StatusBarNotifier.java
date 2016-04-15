@@ -129,7 +129,11 @@ public class StatusBarNotifier {
        Intent intent = new Intent(ImServiceConstants.ACTION_MANAGE_SUBSCRIPTION,
                 ContentUris.withAppendedId(Imps.Contacts.CONTENT_URI, -1));
         intent.putExtra(ImServiceConstants.EXTRA_INTENT_PROVIDER_ID, providerId);
+        intent.putExtra(ImServiceConstants.EXTRA_INTENT_ACCOUNT_ID, accountId);
         intent.putExtra(ImServiceConstants.EXTRA_INTENT_FROM_ADDRESS, contact.getAddress().getBareAddress());
+
+        //this should make it start a chat
+     //   intent.putExtra("username", contact.getAddress().getBareAddress());
 
         notify(contact.getAddress().getBareAddress(), title, message, message, providerId, accountId, intent, false, R.drawable.ic_people_white_24dp);
     }

@@ -71,8 +71,6 @@ public class LockScreenActivity extends ThemeableActivity implements ICacheWordS
         mApp = (ImApp)getApplication();
         checkCustomFont ();
 
-        getSupportActionBar().hide();
-
         setContentView(R.layout.activity_lock_screen);
 
         if (getIntent() != null && getIntent().getAction() != null)
@@ -130,6 +128,9 @@ public class LockScreenActivity extends ThemeableActivity implements ICacheWordS
     protected void onResume() {
         super.onResume();
         mCacheWord.reattach();
+
+        getSupportActionBar().hide();
+
     }
 
 

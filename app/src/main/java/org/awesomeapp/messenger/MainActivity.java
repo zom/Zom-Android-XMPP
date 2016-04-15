@@ -27,6 +27,7 @@ import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.RemoteException;
@@ -58,6 +59,7 @@ import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.service.IChatSession;
 import org.awesomeapp.messenger.service.IChatSessionManager;
 import org.awesomeapp.messenger.service.IImConnection;
+import org.awesomeapp.messenger.service.ImServiceConstants;
 import org.awesomeapp.messenger.tasks.AddContactAsyncTask;
 import org.awesomeapp.messenger.tasks.ChatSessionInitTask;
 import org.awesomeapp.messenger.ui.AccountFragment;
@@ -116,15 +118,15 @@ public class MainActivity extends AppCompatActivity {
         mApp = (ImApp)getApplication();
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mViewPager = (ViewPager) findViewById(R.id.viewpager);
+        mTabLayout = (TabLayout) findViewById(R.id.tabs);
+
         setSupportActionBar(mToolbar);
-        applyFontForToolbarTitle(mToolbar);
+        applyStyleForToolbar();
 
         setTitle(getString(R.string.app_name_zom));
 
         final ActionBar ab = getSupportActionBar();
-
-        mViewPager = (ViewPager) findViewById(R.id.viewpager);
-        mTabLayout = (TabLayout) findViewById(R.id.tabs);
 
         mConversationList = new ConversationListFragment();
         mContactList = new ContactsListFragment();
@@ -324,7 +326,13 @@ public class MainActivity extends AppCompatActivity {
                     intentChat.putExtra("id", chatId);
                     startActivity(intentChat);
                 }
-
+                else if (Imps.Contacts.CONTENT_URI.equals(type))
+                {
+                    long providerId = intent.getLongExtra(ImServiceConstants.EXTRA_INTENT_PROVIDER_ID,mApp.getDefaultProviderId());
+                    long accountId = intent.getLongExtra(ImServiceConstants.EXTRA_INTENT_ACCOUNT_ID,mApp.getDefaultAccountId());
+                    String username = intent.getStringExtra(ImServiceConstants.EXTRA_INTENT_FROM_ADDRESS);
+                    startChat(providerId, accountId, username);
+                }
 
             }
             else if (intent.hasExtra("username"))
@@ -873,14 +881,15 @@ public class MainActivity extends AppCompatActivity {
 
     }*/
 
-    public void applyFontForToolbarTitle(Toolbar toolbar) {
+    public void applyStyleForToolbar() {
 
+        //first set font
         checkCustomFont ();
         Typeface typeface = CustomTypefaceManager.getCurrentTypeface(this);
 
         if (typeface != null) {
-            for (int i = 0; i < toolbar.getChildCount(); i++) {
-                View view = toolbar.getChildAt(i);
+            for (int i = 0; i < mToolbar.getChildCount(); i++) {
+                View view = mToolbar.getChildAt(i);
                 if (view instanceof TextView) {
                     TextView tv = (TextView) view;
 
@@ -888,6 +897,20 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 }
             }
+        }
+
+        //not set color
+        final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+        int selColor = settings.getInt("themeColor",-1);
+
+        if (selColor != -1) {
+            if (Build.VERSION.SDK_INT >= 21) {
+                getWindow().setNavigationBarColor(selColor);
+                getWindow().setStatusBarColor(selColor);
+            }
+
+            mToolbar.setBackgroundColor(selColor);
+            mTabLayout.setBackgroundColor(selColor);
         }
 
     }

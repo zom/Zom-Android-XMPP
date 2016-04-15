@@ -9,7 +9,7 @@
     android:horizontalSpacing="8dp"
     android:stretchMode="columnWidth"
     android:gravity="center"
-    android:background="#777777"
+    android:background="?attr/listBackground"
     android:layout_margin="3dp"
     android:padding="3dp"
      />

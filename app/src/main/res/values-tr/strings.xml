@@ -19,7 +19,6 @@
   <string name="no">İptal</string>
   <string name="connect">Bağlan</string>
   <!--Views-->
-  <string name="title_activity_lock_screen">ChatSecure kilitlendi</string>
   <string name="lock_screen_create_passphrase">Parola oluştur</string>
   <string name="lock_screen_confirm_passphrase">Parola Onayla</string>
   <string name="lock_screen_passphrase_hint">Parola</string>
@@ -140,7 +139,6 @@ Davet etmek için buraya basın.</string>
   <string name="pref_delete_unsecured_media_title">Güvensiz Medyaları Sil</string>
   <!--Actions: Settings: General: Other Tuning-->
   <string name="pref_group_tuning_title">Diğer Ayarlar</string>
-  <string name="start_on_boot">CharSecure\'ü otomatik olarak başlat</string>
   <string name="start_on_boot_summary">Önceden girilen hesaplara otomatik olarak bağlan</string>
   <string name="hide_offline_contacts">Çevrimdışı kişileri gizle</string>
   <string name="foreground_service_title">Öncelikli süreçleri kullan</string>
@@ -169,7 +167,6 @@ Davet etmek için buraya basın.</string>
   <string name="notify_groupchat_label">Grup sohbeti davetiyeleri</string>
   <string name="group_chat_invite_notify_text">&lt;xliff:g id="user"&gt;%s&lt;/xliff:g&gt; kullanıcısından gelen yeni grup sohbeti daveti</string>
   <string name="new_messages_notify">Gelen yeni ileti(ler)</string>
-  <string name="starting_the_chatsecure_service_">ChatSecure servisi başlatılıyor…</string>
   <string name="app_unlocked">Etkinleştirildi &amp; kilidi açıldı</string>
   <!--Alerts: Exceptions-->
   <string name="error">Dikkat</string>
@@ -205,7 +202,6 @@ Davet etmek için buraya basın.</string>
   <string name="account_setup_error_server">ChatSecure sohbet sunucusuyla bağlanırken bir sorunla karşılaştı - lütfen ayarlarınızı gözden geçirip tekrar deneyin.</string>
   <string name="error_suspended_connection">ChatSecure ağdaki bir bağlantıyı kaybetti</string>
   <string name="unable_to_create_or_join_group_chat">Grup sohbet oluştur ya da katıl devre dışı bırak</string>
-  <string name="swipe_alert">ChatSecure kendi görevini kaldırmak için yapılmış bir istek algıladı. ChatSecure muhtemelen çökecek. Bunun yerine lütfen hesap listesi ekranından Hepsinden çıkış yap menü öğresini kullanın.</string>
   <string name="there_is_no_viewer_available_for_this_file_format">Bu dosya türü için hiçbir görüntüleyici bulunmuyor</string>
   <string name="otr_keysync_warning_message">Lütfen \'otr_keystore.ofcaes\' dosyasını masaüstü OtrFileConverter aracından cihazınızın kök dizinine kopyalayın </string>
   <string name="msg_sent_failed">Bu ileti gönderilemedi.</string>

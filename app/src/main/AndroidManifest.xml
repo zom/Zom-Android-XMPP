@@ -5,8 +5,8 @@
     android:installLocation="auto"
     android:sharedUserLabel="@string/perm_label"
     android:usesCleartextTraffic="false"
-    android:versionCode="1501700"
-    android:versionName="15.0.1-BETA-2">
+    android:versionCode="1501800"
+    android:versionName="15.0.1-BETA-3">
 
     <supports-screens
         android:anyDensity="true"
@@ -448,6 +448,10 @@
             android:name="org.awesomeapp.messenger.ui.GalleryActivity"
             android:exported="false"
             android:title="@string/photo_gallery" />
+        <activity
+            android:name="org.awesomeapp.messenger.ui.StickerActivity"
+            android:exported="false"
+            android:title="@string/action_stickers" />
         <activity
             android:name="org.awesomeapp.messenger.ui.PanicSetupActivity"
             android:label="@string/panic_trigger_app"

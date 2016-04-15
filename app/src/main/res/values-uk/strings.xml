@@ -13,7 +13,6 @@
   <string name="no">Скасувати</string>
   <string name="connect">Підключити</string>
   <!--Views-->
-  <string name="title_activity_lock_screen">ChatSecure заблоковано</string>
   <string name="lock_screen_create_passphrase">Укажіть пароль</string>
   <string name="lock_screen_confirm_passphrase">Повторіть пароль</string>
   <string name="lock_screen_passphrase_hint">Пароль</string>

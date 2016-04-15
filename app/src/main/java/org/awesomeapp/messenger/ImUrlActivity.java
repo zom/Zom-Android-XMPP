@@ -34,6 +34,7 @@ import android.widget.Toast;
 
 import org.awesomeapp.messenger.crypto.OtrDataHandler;
 import org.awesomeapp.messenger.model.ImConnection;
+import org.awesomeapp.messenger.model.SystemService;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.service.IChatSession;
 import org.awesomeapp.messenger.service.IChatSessionManager;
@@ -582,7 +583,7 @@ public class ImUrlActivity extends Activity {
         if (type != null)
             mSendType = type;
         else
-            mSendType = getContentResolver().getType(data);
+            mSendType = SystemServices.getMimeType(data.toString());
         
         if (mSendType != null ) {
             

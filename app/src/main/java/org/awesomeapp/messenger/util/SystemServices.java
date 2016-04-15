@@ -119,7 +119,7 @@ public class SystemServices {
         if (type == null)
             if (url.endsWith("jpg"))
                 return MIME_TYPE_JPEG;        
-            else if (url.endsWith("jpg"))
+            else if (url.endsWith("png"))
                 return MIME_TYPE_PNG;
         
         return type;

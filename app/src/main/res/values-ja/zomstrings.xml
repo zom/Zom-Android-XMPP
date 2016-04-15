@@ -1,7 +1,41 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
-  <string name="app_name_zom">ChatSecure</string>
+  <string name="app_name_zom">Zom</string>
+  <string name="create_an_account">アカウントを作成</string>
+  <string name="create_id">Zom ID を作成</string>
+  <string name="advanced">詳細</string>
+  <string name="account_congrats">ようこそ、Zom する準備ができました!</string>
+  <string name="invite_friends">友達を Zom に招待しましょう!</string>
+  <string name="invite_sms">SMS</string>
+  <string name="invite_share">共有</string>
+  <string name="invite_scan_qr">スキャン</string>
+  <string name="sign_in_message">既存のアカウントにサインイン</string>
+  <string name="invite_action">招待</string>
+  <string name="friends">友達</string>
+  <string name="add_friends">友達を追加</string>
+  <string name="search_by_id">ID で検索</string>
+  <string name="chats">チャット</string>
+  <string name="choose_friend">友達を選択</string>
   <string name="send_message">メッセージを送信</string>
+  <string name="push_to_talk">プッシュ ツー トーク</string>
+  <string name="recording_release">録音中… 放すと送信します</string>
+  <string name="recording_delete">録音中… 放すと削除します</string>
+  <string name="swipe_up_delete">上にスワイプすると削除します</string>
+  <string name="create_group">グループチャットを作成</string>
+  <string name="members">メンバー</string>
+  <string name="group_name">グループ名</string>
+  <string name="search_history">履歴を検索</string>
+  <string name="photo_gallery">フォトストリーム</string>
   <string name="me_title">自分</string>
+  <string name="accounts">マイアカウント</string>
+  <string name="select_avatar">アバターを選択または作成</string>
+  <string name="delete_account">アカウントを削除</string>
   <string name="add_account_action">アカウントを追加</string>
-  </resources>
+  <string name="choose_photos">写真から選択</string>
+  <string name="save_account_info">ユーザー名と自動のパスワードは、必要とする場合にいつでも \"自分\" タブで見つけることができます。</string>
+  <string name="choose_language">言語の切り替え</string>
+  <string name="welcome_to_zom">ZOM へようこそ</string>
+  <string name="onboarding_generate">ZOM IDを作成するには、ユーザー名を入力してください。あなたのために安全なパスワードを生成します。</string>
+  <string name="grant_perms">Zom がカメラを使用するための権限を付与する必要があります</string>
+  <string name="menu_refresh">セッションを更新</string>
+</resources>

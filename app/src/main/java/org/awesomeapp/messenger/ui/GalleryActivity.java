@@ -18,13 +18,17 @@ package org.awesomeapp.messenger.ui;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.graphics.drawable.ColorDrawable;
 import android.media.MediaRecorder;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.RemoteException;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -84,6 +88,26 @@ public class GalleryActivity extends AppCompatActivity {
             }
         });
 
+        applyStyleForToolbar();
+    }
+
+
+    public void applyStyleForToolbar() {
+
+
+
+        //not set color
+        final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+        int selColor = settings.getInt("themeColor",-1);
+
+        if (selColor != -1) {
+            if (Build.VERSION.SDK_INT >= 21) {
+                getWindow().setNavigationBarColor(selColor);
+                getWindow().setStatusBarColor(selColor);
+            }
+
+            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(selColor));
+        }
 
     }
 

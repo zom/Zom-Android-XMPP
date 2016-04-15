@@ -21,7 +21,6 @@
   <string name="no">Отмена</string>
   <string name="connect">Подключение</string>
   <!--Views-->
-  <string name="title_activity_lock_screen">ChatSecure заблокирован</string>
   <string name="lock_screen_create_passphrase">Установить Пароль</string>
   <string name="lock_screen_confirm_passphrase">Подтверди Пароль</string>
   <string name="lock_screen_passphrase_hint">Пароль</string>
@@ -136,7 +135,6 @@
   <string name="button_yes_accept_all">Да, Подтвердить Все</string>
   <!--Actions: Settings: General: Other Tuning-->
   <string name="pref_group_tuning_title">Другие Hастройки</string>
-  <string name="start_on_boot">Запускать ChatSecure автоматически</string>
   <string name="start_on_boot_summary">Всегда начинайте и автоматически войдите в ранее зарегистрированные счета</string>
   <string name="hide_offline_contacts">Скрыть контакты, отсутствующие в сети</string>
   <string name="foreground_service_title">Выполнять с активным приоритетом.</string>
@@ -162,7 +160,6 @@
   <!--Alerts: Notifications-->
   <string name="notify_groupchat_label">Приглашение в групповой чат</string>
   <string name="new_messages_notify">Новое сообщение(я) от</string>
-  <string name="starting_the_chatsecure_service_">Запуск ChatSecure…</string>
   <string name="app_unlocked">Активировано &amp; Разблокировано</string>
   <!--Alerts: Exceptions-->
   <string name="error">Внимание</string>
@@ -197,7 +194,6 @@
   <string name="account_setup_error_server">Произошла ошибка при подключении к чат-сервера - пожалуйста, проверьте настройки и попробуйте еще раз.</string>
   <string name="error_suspended_connection">Потеряно соединение с сетью</string>
   <string name="unable_to_create_or_join_group_chat">Невозможно создать или присоединиться к групповому чату</string>
-  <string name="swipe_alert">ChatSecure обнаружил, что был сделан запрос, чтобы удалить этот процесс. ChatSecure, скорее всего, упал. Пожалуйста, воспользуйтесь пунктом меню \'Выход\' на экране списка аккаунтов вместо этого.</string>
   <string name="there_is_no_viewer_available_for_this_file_format">Для программы для  открытия этого типа файлов.</string>
   <string name="otr_keysync_warning_message">Скопируйте файл \'otr_keystore.ofcaes\' от настольного инструмента OtrFileConverter в корневую директорию вашего устройства хранения</string>
   <string name="msg_sent_failed">Не удалось отправить сообщение.</string>

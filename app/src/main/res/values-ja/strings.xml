@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <!--General: Names-->
-  <string name="ic_launcher_name">ChatSecure</string>
-  <string name="app_name">ChatSecure</string>
-  <string name="im_label">ChatSecure</string>
+  <string name="ic_launcher_name">Zom</string>
+  <string name="app_name">Zom</string>
+  <string name="im_label">Zom</string>
   <!--General: Permissions-->
   <string name="ro_perm_label">インスタントメッセージを読む</string>
   <string name="ro_perm_desc">
@@ -21,7 +21,7 @@
   <string name="no">キャンセル</string>
   <string name="connect">接続</string>
   <!--Views-->
-  <string name="title_activity_lock_screen">ChatSecure はロックされました</string>
+  <string name="title_activity_lock_screen">Zom はロックされました</string>
   <string name="lock_screen_create_passphrase">パスワードを設定</string>
   <string name="lock_screen_confirm_passphrase">パスワードを確認</string>
   <string name="lock_screen_passphrase_hint">パスワード</string>
@@ -115,6 +115,10 @@
   <string name="decline_subscription_error">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;さんからの登録依頼を拒否できませんでした。しばらくしてからもう一度試してください。</string>
   <!--Security: OTR-->
   <string name="otr_session_status_finished">連絡先が暗号化されたチャットを停止しました。</string>
+  <string name="otr_mode_force">強制 / 必要</string>
+  <string name="otr_mode_auto">自動的に試行する</string>
+  <string name="otr_mode_requested">要求に応じて</string>
+  <string name="otr_mode_disabled">無効 / しない</string>
   <!--Security: OTR: Keyring-->
   <string name="detected_Otr_keystore_import">インポートするOTRキーストアを検出しました。今すぐQRパスワードをスキャンしますか?</string>
   <!--Security: OTR: Verification-->
@@ -144,7 +148,6 @@
   <string name="pref_delete_unsecured_media_summary">写真やファイルを共有した後、インポート後、元の、安全でないストレージから自動的に削除します</string>
   <!--Actions: Settings: General: Other Tuning-->
   <string name="pref_group_tuning_title">その他のチューニング</string>
-  <string name="start_on_boot">ChatSecure を自動的に開始する</string>
   <string name="start_on_boot_summary">常に起動し、以前ログインしたアカウントに自動的にログインします</string>
   <string name="hide_offline_contacts">オフラインの連絡先を表示しない</string>
   <string name="foreground_service_title">フォアグラウンド優先度を使用</string>
@@ -169,11 +172,10 @@
   <string name="allow_s_to_create_a_new_chat_account_for_s_">ユーザー名 \'%1$s\' の新しいチャット アカウントを作成しますか?</string>
   <!--Alerts: Notifications-->
   <string name="subscription_notify_text">&lt;xliff:g id="user"&gt;%s&lt;/xliff:g&gt; から新しい友達の招待</string>
-  <string name="file_notify_text">新しいファイル &lt;xliff:g id="FILENAME"&gt;%1$s&lt;/xliff:g&gt; &lt;xliff:g id="USER"&gt;%2$s&lt;/xliff:g&gt; から</string>
+  <string name="file_notify_text" formatted="false">新しいファイル &lt;xliff:g id="FILENAME"&gt;%s&lt;/xliff:g&gt; &lt;xliff:g id="USER"&gt;%s&lt;/xliff:g&gt; から</string>
   <string name="notify_groupchat_label">グループチャットの招待</string>
   <string name="group_chat_invite_notify_text">&lt;xliff:g id="USER"&gt;%s&lt;/xliff:g&gt; から新しいグループチャットの招待</string>
   <string name="new_messages_notify">新しいメッセージ。送信者</string>
-  <string name="starting_the_chatsecure_service_">ChatSecure サービスを開始しています…</string>
   <string name="app_unlocked">有効化 &amp; ロック解除しました</string>
   <!--Alerts: Exceptions-->
   <string name="error">注意</string>
@@ -210,7 +212,6 @@
   <string name="error_suspended_connection">ネットワークはオフラインです</string>
   <string name="unable_to_create_or_join_group_chat">グループチャットを作成または参加することができません</string>
   <string name="unsupported_incoming_data">取得したデータはサポートされていません、共有できません!</string>
-  <string name="swipe_alert">ChatSecureは、そのタスクを削除する要求が行われたことを検出しました。 ChatSecureはおそらくクラッシュします。代わりに、アカウント一覧画面からすべてサインアウトのメニュー項目をご利用下さい。</string>
   <string name="there_is_no_viewer_available_for_this_file_format">このファイル形式に使用可能なビューアーがありません</string>
   <string name="otr_keysync_warning_message">デスクトップ OtrFileConverter ツールから、お使いのデバイスのストレージのルートディレクトリに、\'otr_keystore.ofcaes\' ファイルをコピーしてください</string>
   <string name="msg_sent_failed">メッセージを送信できませんでした。</string>
@@ -220,6 +221,20 @@
   <string name="error_account_settings_port">ポート番号は数字でなければなりません</string>
   <string name="error_welcome_database">メジャーエラー: ロック解除やアプリのデータベースをロードすることができません。アプリを再インストールするかデータをクリアデータしてください。</string>
   <string name="account_settings_title">アカウント設定</string>
+  <string name="pref_group_protect_data_title">私のデータを保護する</string>
+  <string name="panic_trigger_app">パニック トリガー アプリ</string>
+  <string name="panic_trigger_app_summary">パニックアプリは、ロック、データの削除、メッセージの送信などを Zom に起動させることができます。</string>
+  <string name="panic_setup">パニックの設定</string>
+  <string name="panic_setup_summary">Zom がパニック通知に反応する方法を設定します。</string>
+  <string name="panic_app_none">なし</string>
+  <string name="panic_app_none_summary">パニック トリガー アプリはありません。受信するすべてのパニックトリガーを無視します。</string>
+  <string name="panic_app_default">デフォルト</string>
+  <string name="protect_data">私のデータを保護する</string>
+  <string name="action_done">完了</string>
+  <string name="lock_app">アプリをロック</string>
+  <string name="clear_app_data">アプリの中のデータをすべてクリア</string>
+  <string name="uninstall_app">アプリをアンインストール</string>
+  <string name="include_location">私の場所を含める</string>
   <!--added 2011/09/01-->
   <string name="menu_view_groups">グループ</string>
   <string name="buddies">仲間</string>
@@ -301,7 +316,9 @@
   </string-array>
   <string name="this_is_a_group_chat">これはグループチャットです</string>
   <string name="unable_to_securely_share_this_file">このファイルを安全に共有することができません</string>
-  <string name="your_keystore_is_corrupted_please_re_install_chatsecure_or_clear_data_for_the_app">キーストアが破損しています。ChatSecureを再インストールするか、アプリの \'データをクリア\' してください</string>
   <string name="swipe_hint">&lt; 左や右にスワイプで追加のオプション &gt;</string>
+  <string name="no_convos">Zom を始めましょう!</string>
+  <string name="title_more">探索</string>
   <string name="title_me">自分</string>
+  <string name="no_photos">共有と、受信した写真がここに表示されます</string>
 </resources>
