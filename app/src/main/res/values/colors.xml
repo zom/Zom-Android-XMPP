@@ -63,5 +63,19 @@
      -->
      
     <color name="zom_primary">#E7275A</color>
+
+    <array name="zom_colors">
+        <item>@color/zom_primary</item>
+        <item>@color/holo_grey_light</item>
+        <item>@color/holo_blue_bright</item>
+        <item>@color/holo_green_dark</item>
+        <item>@color/holo_green_light</item>
+        <item>@color/holo_red_dark</item>
+        <item>@color/holo_orange_light</item>
+        <item>@android:color/holo_purple</item>
+        <item>@color/material_blue_grey_80</item>
+        <item>@color/background_dark</item>
+
+    </array>
     
     </resources>

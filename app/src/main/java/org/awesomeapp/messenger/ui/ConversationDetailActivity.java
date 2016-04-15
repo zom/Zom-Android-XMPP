@@ -22,15 +22,19 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
+import android.graphics.Typeface;
 import android.media.MediaRecorder;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
 import android.os.RemoteException;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -46,6 +50,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 //import com.bumptech.glide.Glide;
@@ -71,6 +76,7 @@ import org.awesomeapp.messenger.util.SecureMediaStore;
 
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.util.SystemServices;
+import org.ironrabbit.type.CustomTypefaceManager;
 
 public class ConversationDetailActivity extends AppCompatActivity {
 
@@ -121,6 +127,7 @@ public class ConversationDetailActivity extends AppCompatActivity {
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        applyStyleForToolbar();
 
         CollapsingToolbarLayout collapsingToolbar =
                 (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
@@ -140,6 +147,40 @@ public class ConversationDetailActivity extends AppCompatActivity {
 
         collapseToolbar();
 
+
+    }
+
+    public void applyStyleForToolbar() {
+
+        Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        //first set font
+        Typeface typeface = CustomTypefaceManager.getCurrentTypeface(this);
+
+        if (typeface != null) {
+            for (int i = 0; i < mToolbar.getChildCount(); i++) {
+                View view = mToolbar.getChildAt(i);
+                if (view instanceof TextView) {
+                    TextView tv = (TextView) view;
+
+                    tv.setTypeface(typeface);
+                    break;
+                }
+            }
+        }
+
+        //not set color
+        final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+        int selColor = settings.getInt("themeColor",-1);
+
+        if (selColor != -1) {
+            if (Build.VERSION.SDK_INT >= 21) {
+                getWindow().setNavigationBarColor(selColor);
+                getWindow().setStatusBarColor(selColor);
+            }
+
+            mToolbar.setBackgroundColor(selColor);
+        }
 
     }
 

@@ -160,6 +160,9 @@ public class ImApp extends Application implements ICacheWordSubscriber {
 
     public static boolean mUsingCacheword = true;
 
+    public static Executor sThreadPoolExecutor = null;
+
+    private boolean mThemeDark = false;
 
     public static final int EVENT_SERVICE_CONNECTED = 100;
     public static final int EVENT_CONNECTION_CREATED = 150;
@@ -237,11 +240,6 @@ public class ImApp extends Application implements ICacheWordSubscriber {
         }
 
     }
-
-
-    public static Executor sThreadPoolExecutor = null;
-
-    private boolean mThemeDark = false;
 
     public boolean isThemeDark ()
     {

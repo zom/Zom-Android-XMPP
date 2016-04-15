@@ -18,11 +18,16 @@ package org.awesomeapp.messenger.ui;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
+import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -30,10 +35,12 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.apache.commons.io.IOUtils;
@@ -46,6 +53,7 @@ import org.awesomeapp.messenger.ui.stickers.StickerPagerAdapter;
 import org.awesomeapp.messenger.ui.stickers.StickerSelectListener;
 import org.awesomeapp.messenger.util.SecureMediaStore;
 import org.awesomeapp.messenger.util.SystemServices;
+import org.ironrabbit.type.CustomTypefaceManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -75,8 +83,29 @@ public class StickerActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mStickerPager = (ViewPager)findViewById(R.id.stickerPager);
 
+        applyStyleForToolbar();
 
         initStickers();
+    }
+
+
+    public void applyStyleForToolbar() {
+
+
+
+        //not set color
+        final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+        int selColor = settings.getInt("themeColor",-1);
+
+        if (selColor != -1) {
+            if (Build.VERSION.SDK_INT >= 21) {
+                getWindow().setNavigationBarColor(selColor);
+                getWindow().setStatusBarColor(selColor);
+            }
+
+            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(selColor));
+        }
+
     }
 
     private void initStickers ()
