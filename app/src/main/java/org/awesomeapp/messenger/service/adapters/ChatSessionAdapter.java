@@ -351,9 +351,9 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
     }
 
     public void leaveIfInactive() {
-        if (mChatSession.getHistoryMessages().isEmpty()) {
+    //    if (mChatSession.getHistoryMessages().isEmpty()) {
             leave();
-        }
+      //  }
     }
 
     public void sendMessage(String text, boolean isResend) {
@@ -543,7 +543,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         mConvertingToGroupChat = false;
     }
 
-
+    /**
     private void copyHistoryMessages(Contact oldParticipant) {
         List<org.awesomeapp.messenger.model.Message> historyMessages = mChatSession.getHistoryMessages();
         int total = historyMessages.size();
@@ -556,7 +556,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             insertMessageInDb(contact, msg.getBody(), time, incoming ? Imps.MessageType.INCOMING
                                                                     : Imps.MessageType.OUTGOING);
         }
-    }
+    }*/
 
     void insertOrUpdateChat(String message) {
 
