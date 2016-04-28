@@ -590,14 +590,18 @@ public class MessageListItem extends FrameLayout {
         if(SecureMediaStore.isVfsUri(mediaUri))
         {
             try {
-                Glide.with(context)
-                        .load(new info.guardianproject.iocipher.FileInputStream(new File(mediaUri.getPath()).getPath()))
-                        .diskCacheStrategy(DiskCacheStrategy.NONE)
-                        .into(aHolder.mMediaThumbnail);
+                info.guardianproject.iocipher.File fileImage = new info.guardianproject.iocipher.File(mediaUri.getPath());
+                if (fileImage.exists())
+                {
+                    Glide.with(context)
+                            .load(new info.guardianproject.iocipher.FileInputStream(fileImage))
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
+                            .into(aHolder.mMediaThumbnail);
+                }
             }
             catch (Exception e)
             {
-                Log.e(ImApp.LOG_TAG,"unable to load thumbnail",e);
+                Log.w(ImApp.LOG_TAG,"unable to load thumbnail: " + mediaUri.toString());
             }
         }
         else if (mediaUri.getScheme().equals("asset"))

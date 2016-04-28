@@ -220,8 +220,8 @@ public class ConversationView {
     private static final int VIEW_TYPE_INVITATION = 2;
     private static final int VIEW_TYPE_SUBSCRIPTION = 3;
 
-    private static final long SHOW_TIME_STAMP_INTERVAL = 30 * 1000; // 15 seconds
-    private static final long SHOW_DELIVERY_INTERVAL = 5 * 1000; // 5 seconds
+//    private static final long SHOW_TIME_STAMP_INTERVAL = 30 * 1000; // 15 seconds
+    private static final long SHOW_DELIVERY_INTERVAL = 10 * 1000; // 5 seconds
     private static final long SHOW_MEDIA_DELIVERY_INTERVAL = 120 * 1000; // 2 minutes
     private static final long DEFAULT_QUERY_INTERVAL = 2000;
     private static final long FAST_QUERY_INTERVAL = 200;
@@ -360,13 +360,13 @@ public class ConversationView {
                 if (otrChatSession != null)
                 {
 
-                    if (otrEnabled) {
+                    if (otrEnabled && (otrChatSession.getChatStatus() != SessionStatus.ENCRYPTED.ordinal())) {
 
                         otrChatSession.startChatEncryption();
                         mIsStartingOtr = true;
 
                     }
-                    else
+                    else if ((!otrEnabled) && otrChatSession.getChatStatus() == SessionStatus.ENCRYPTED.ordinal())
                     {
                         otrChatSession.stopChatEncryption();
 
@@ -1255,6 +1255,8 @@ public class ConversationView {
                 else
                     mRemoteNickname = name;
 
+            mRemoteNickname = mRemoteNickname.split("@")[0].split("\\.")[0];
+
         }
 
     }
@@ -1501,9 +1503,12 @@ public class ConversationView {
     public void showVerifyDialog() {
 
         Intent intent = new Intent(mContext, ContactDisplayActivity.class);
-        intent.putExtra("contact", mRemoteAddress);
+        intent.putExtra("nickname", mRemoteNickname);
+        intent.putExtra("address", mRemoteAddress);
         intent.putExtra("provider", mProviderId);
         intent.putExtra("account", mAccountId);
+        intent.putExtra("chat", mLastChatId);
+
         mContext.startActivity(intent);
 
     }
@@ -2530,9 +2535,6 @@ public class ConversationView {
             default:
                 messageView.bindPresenceMessage(viewHolder, nickname, messageType, date, isGroupChat(), false);
             }
-
-           // updateWarningView();
-
 
             if (!mExpectingDelivery && isDelivered) {
 

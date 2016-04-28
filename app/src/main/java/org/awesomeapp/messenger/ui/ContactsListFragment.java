@@ -33,6 +33,7 @@ import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -245,6 +246,18 @@ public class ContactsListFragment extends Fragment {
         public void onBindViewHolder(final ContactViewHolder viewHolder, Cursor cursor) {
 
            viewHolder.mAddress =  cursor.getString(ContactListItem.COLUMN_CONTACT_USERNAME);
+            String nickname =  cursor.getString(ContactListItem.COLUMN_CONTACT_NICKNAME);
+
+            if (TextUtils.isEmpty(nickname))
+            {
+                nickname = viewHolder.mAddress.split("@")[0].split("\\.")[0];
+            }
+            else
+            {
+                nickname = nickname.split("@")[0].split("\\.")[0];
+            }
+
+            viewHolder.mNickname = nickname;
 
             viewHolder.mProviderId = cursor.getLong(ContactListItem.COLUMN_CONTACT_PROVIDER);
             viewHolder.mAccountId = cursor.getLong(ContactListItem.COLUMN_CONTACT_ACCOUNT);
@@ -263,7 +276,8 @@ public class ContactsListFragment extends Fragment {
                         */
 
                     Intent intent = new Intent(mContext,ContactDisplayActivity.class);
-                    intent.putExtra("contact", viewHolder.mAddress);
+                    intent.putExtra("address", viewHolder.mAddress);
+                    intent.putExtra("nickname", viewHolder.mNickname);
                     intent.putExtra("provider", viewHolder.mProviderId);
                     intent.putExtra("account", viewHolder.mAccountId);
 
@@ -279,7 +293,8 @@ public class ContactsListFragment extends Fragment {
                 public boolean onLongClick(View view) {
 
                     if (mContext instanceof MainActivity) {
-                        String message = mContext.getString(R.string.confirm_delete_contact,viewHolder.mAddress);
+
+                        String message = mContext.getString(R.string.confirm_delete_contact,viewHolder.mNickname);
 
                         Snackbar.make(mRecView, message, Snackbar.LENGTH_LONG)
                                 .setAction(mContext.getString(R.string.yes), new View.OnClickListener() {

@@ -34,6 +34,7 @@ import org.awesomeapp.messenger.ui.widgets.RoundedAvatarDrawable;
 import org.awesomeapp.messenger.util.SystemServices;
 import org.awesomeapp.messenger.util.SystemServices.FileInfo;
 import org.ocpsoft.prettytime.PrettyTime;
+import org.w3c.dom.Text;
 
 import net.java.otr4j.session.SessionStatus;
 import android.app.Activity;
@@ -114,7 +115,7 @@ public class ContactListItem extends FrameLayout {
         final long providerId = cursor.getLong(COLUMN_CONTACT_PROVIDER);
         final String address = cursor.getString(COLUMN_CONTACT_USERNAME);
 
-        final String displayName = cursor.getString(COLUMN_CONTACT_NICKNAME);
+        String nickname = cursor.getString(COLUMN_CONTACT_NICKNAME);
 
         final int type = cursor.getInt(COLUMN_CONTACT_TYPE);
         final String lastMsg = cursor.getString(COLUMN_LAST_MESSAGE);
@@ -127,15 +128,13 @@ public class ContactListItem extends FrameLayout {
 
         String statusText = cursor.getString(COLUMN_CONTACT_CUSTOM_STATUS);
 
-        String nickname = displayName;
-
-        if (nickname == null)
+        if (TextUtils.isEmpty(nickname))
         {
-            nickname = address.split("@")[0];
+            nickname = address.split("@")[0].split("\\.")[0];
         }
-        else if (nickname.indexOf('@')!=-1)
+        else
         {
-            nickname = nickname.split("@")[0];
+            nickname = nickname.split("@")[0].split("\\.")[0];
         }
 
 
