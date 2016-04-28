@@ -356,7 +356,19 @@ public class XmppConnection extends ImConnection {
                 VCardManager vCardManager = VCardManager.getInstanceFor(mConnection);
                 VCard vCard = vCardManager.loadVCard(jid);
 
-                // If VCard is loaded, then save the avatar to the personal folder.
+                Contact contact = mContactListManager.getContact(jid);
+
+                if (!TextUtils.isEmpty(vCard.getNickName()))
+                {
+                    contact.setName(vCard.getNickName());
+                }
+                else if (!TextUtils.isEmpty(vCard.getFirstName()))
+                {
+                    contact.setName(vCard.getFirstName());
+                }
+
+
+                    // If VCard is loaded, then save the avatar to the personal folder.
                 String avatarHash = vCard.getAvatarHash();
 
                 if (avatarHash != null)
@@ -3305,30 +3317,26 @@ public class XmppConnection extends ImConnection {
         if (presence == null || presence.getFrom() == null) //our presence isn't really valid
             return null;
 
-        String from = presence.getFrom();
-        
         if (presence.getType() == org.jivesoftware.smack.packet.Presence.Type.error)
         {            
             if (mRoster == null)
                 return null;
 
-            if (from == null)
+            if (presence.getFrom() == null)
                 return null;
             
-            presence = mRoster.getPresence(from);
+            presence = mRoster.getPresence(presence.getFrom());
         }
         
-        if (TextUtils.isEmpty(from))
-            return null;
-        
-        XmppAddress xaddress = new XmppAddress(from);
-
-        if (mUser.getAddress().getBareAddress().equals(xaddress.getBareAddress())) //ignore presence from yourself
+        if (TextUtils.isEmpty(presence.getFrom()))
             return null;
 
-        String status = presence.getStatus();
+        if (presence.getFrom().startsWith(mUser.getAddress().getBareAddress())) //ignore presence from yourself
+            return null;
 
-        Presence p = new Presence(parsePresence(presence), status, null, null,
+        XmppAddress xaddress = new XmppAddress(presence.getFrom());
+
+        Presence p = new Presence(parsePresence(presence), presence.getStatus(), null, null,
                 Presence.CLIENT_TYPE_DEFAULT);
 
         //this is only persisted in memory
@@ -3471,7 +3479,7 @@ public class XmppConnection extends ImConnection {
             {
                 //if offline, let's check for another online presence
                 presence = mRoster.getPresence(presence.getFrom());
-                p = new Presence(parsePresence(presence), status, null, null,
+                p = new Presence(parsePresence(presence), presence.getStatus(), null, null,
                         Presence.CLIENT_TYPE_DEFAULT);
 
                 if (p.getStatus() == Imps.Presence.AVAILABLE) {
@@ -3518,10 +3526,9 @@ public class XmppConnection extends ImConnection {
     {
         mTimerPresence = new Timer();
 
-        mTimerPresence.scheduleAtFixedRate(new TimerTask() {
+        mTimerPresence.schedule(new TimerTask() {
 
             public void run() {
-
 
                 if (qPresence.size() > 0)
                 {
@@ -3547,16 +3554,17 @@ public class XmppConnection extends ImConnection {
 
                     }
                     
-                    //Log.d(TAG,"XMPP processed presence q=" + alUpdate.size());                    
+                    loadVCardsAsync();
+
+                    //Log.d(TAG,"XMPP processed presence q=" + alUpdate.size());
                     mContactListManager.notifyContactsPresenceUpdated(alUpdate.toArray(new Contact[alUpdate.size()]));
 
-                    loadVCardsAsync();
 
                 }
                 
              }
 
-          }, 1000, 5000);
+          }, 1000, 1000);
     }
     
     Timer mTimerPackets = null;
