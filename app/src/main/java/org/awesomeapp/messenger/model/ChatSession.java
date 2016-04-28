@@ -41,7 +41,7 @@ public class ChatSession {
     private ChatSessionManager mManager;
 
     private MessageListener mListener = null;
-    private Vector<Message> mHistoryMessages;
+   // private Vector<Message> mHistoryMessages;
     
 
     /**
@@ -53,7 +53,7 @@ public class ChatSession {
     ChatSession(ImEntity participant, ChatSessionManager manager) {
         mParticipant = participant;
         mManager = manager;
-        mHistoryMessages = new Vector<Message>();
+   //     mHistoryMessages = new Vector<Message>();
     }
 
     public ImEntity getParticipant() {
@@ -160,7 +160,7 @@ public class ChatSession {
                 message.setType(Imps.MessageType.OUTGOING);
             }*/
 
-            mHistoryMessages.add(message);
+           // mHistoryMessages.add(message);
             boolean canSend = cm.transformSending(message);
 
             if (canSend) {
@@ -177,7 +177,7 @@ public class ChatSession {
 
             message.setTo(mParticipant.getAddress());
             message.setType(Imps.MessageType.OUTGOING);
-            mHistoryMessages.add(message);
+          //  mHistoryMessages.add(message);
             mManager.sendMessageAsync(this, message);
 
 
@@ -236,7 +236,7 @@ public class ChatSession {
      *   otherwise (e.g. decryption error)
      */
     public boolean onReceiveMessage(Message message) {
-        mHistoryMessages.add(message);
+//        mHistoryMessages.add(message);
 
         OtrChatManager cm = OtrChatManager.getInstance();
 
@@ -299,13 +299,14 @@ public class ChatSession {
     }
 
     public void onSendMessageError(String messageId, ImErrorInfo error) {
+        /**
         for (Message message : mHistoryMessages) {
             if (messageId.equals(message.getID())) {
                 onSendMessageError(message, error);
                 return;
             }
-        }
-        Log.i("ChatSession", "Message has been removed when we get delivery error:" + error);
+        }**/
+     //   Log.i("ChatSession", "Message has been removed when we get delivery error:" + error);
     }
 
     /**
@@ -313,9 +314,10 @@ public class ChatSession {
      *
      * @return a unmodifiable list of the history messages in this session.
      */
+    /**
     public List<Message> getHistoryMessages() {
         return Collections.unmodifiableList(mHistoryMessages);
-    }
+    }*/
 
     public void sendPushWhitelistTokenAsync(@NonNull Message message,
                                             @NonNull String[] whitelistTokens) {
