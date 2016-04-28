@@ -184,10 +184,10 @@ public class StatusBarNotifier {
 
     public void notifyFile(long providerId, long accountId, long id, String username,
             String nickname, String path, Uri uri, String type, boolean b) {
-        String title = nickname;
+     
         String message = mContext.getString(R.string.file_notify_text);
         Intent intent = SystemServices.Viewer.getViewIntent(uri, type);
-        notify(message, title, message, message, providerId, accountId, intent, false, R.drawable.ic_stat_status);
+        notify(message, nickname, message, message, providerId, accountId, intent, false, R.drawable.ic_stat_status);
     }
 
     public void dismissNotifications(long providerId) {
