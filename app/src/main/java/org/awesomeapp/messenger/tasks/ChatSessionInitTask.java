@@ -56,7 +56,8 @@ public class ChatSessionInitTask extends AsyncTask<String, Long, Long> {
                             else
                                 session = conn.getChatSessionManager().createChatSession(address, false);
 
-                        if (session != null) {
+                        if (session != null && mContactType == Imps.Contacts.TYPE_NORMAL)
+                        {
                             int sessionCount = session.getOtrChatSessionCount();
 
                             for (int i = 0; i < sessionCount; i++) {
