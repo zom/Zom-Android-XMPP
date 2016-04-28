@@ -396,9 +396,12 @@ public class MainActivity extends AppCompatActivity {
                 {
 
                     try {
+
+                        String address = null;
+
                         if (resultScan.startsWith("xmpp:"))
                         {
-                            String address = XmppUriHelper.parse(Uri.parse(resultScan)).get(XmppUriHelper.KEY_ADDRESS);
+                            address = XmppUriHelper.parse(Uri.parse(resultScan)).get(XmppUriHelper.KEY_ADDRESS);
                             String fingerprint =  XmppUriHelper.getOtrFingerprint(resultScan);
 
                             new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).execute(address, fingerprint);
@@ -407,9 +410,12 @@ public class MainActivity extends AppCompatActivity {
                         else {
                             //parse each string and if they are for a new user then add the user
                             String[] parts = OnboardingManager.decodeInviteLink(resultScan);
-
+                            address = parts[0];
                             new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).execute(parts[0], parts[1]);
                         }
+
+                        if (address != null)
+                            startChat(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), address);
 
                         //if they are for a group chat, then add the group
                     }
