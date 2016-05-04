@@ -103,7 +103,7 @@ public class OtrEngineImpl implements OtrEngine {
     }
 
     public void startSession(SessionID sessionID) throws OtrException {
-        this.getSession(sessionID).refreshSession();
+        this.getSession(sessionID).startSession();
     }
 
     private void setHost(OtrEngineHost host) {
