@@ -285,21 +285,35 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
 
     @Override
     public void onCacheWordLocked() {
+
+        /**
         synchronized (mDbHelperLock) {
             if (mDbHelper != null) {
                 mDbHelper.close();
                 mDbHelper = null;
                 mDbHelperLock.notify();
             }
+        }*/
+
+        if (tempKey != null)
+        {
+            try {
+                initDBHelper(tempKey, false);
+            } catch (Exception e) {
+                LogCleaner.error(ImApp.LOG_TAG, e.getMessage(), e);
+            }
         }
     }
+
+    private byte[] tempKey = null;
 
     @Override
     public void onCacheWordOpened() {
 
 
         try {
-            initDBHelper(mCacheword.getEncryptionKey(), false);
+            tempKey = mCacheword.getEncryptionKey();
+            initDBHelper(tempKey, false);
         } catch (Exception e) {
             LogCleaner.error(ImApp.LOG_TAG, e.getMessage(), e);
         }
