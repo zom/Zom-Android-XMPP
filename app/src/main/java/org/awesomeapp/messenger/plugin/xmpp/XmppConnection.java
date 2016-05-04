@@ -1272,6 +1272,7 @@ public class XmppConnection extends ImConnection {
     public void initConnection(XMPPTCPConnection connection, Contact user, int state) {
         mConnection = connection;
         mRoster = Roster.getInstanceFor(mConnection);
+        mRoster.setRosterLoadedAtLogin(true);
         mUser = user;
         setState(state, null);
     }
@@ -1563,7 +1564,7 @@ public class XmppConnection extends ImConnection {
             // Enable TLS1.2 and TLS1.1 on supported versions of android
             // http://stackoverflow.com/questions/16531807/android-client-server-on-tls-v1-2
 
-           //mConfig.setEnabledProtocols(new String[] { "TLSv1.2", "TLSv1.1", "TLSv1" });
+            mConfig.setEnabledSSLProtocols(new String[] { "TLSv1.2", "TLSv1.1", "TLSv1" });
             sslContext.getDefaultSSLParameters().setProtocols(new String[] { "TLSv1.2", "TLSv1.1", "TLSv1" });
 
         }
@@ -1575,15 +1576,12 @@ public class XmppConnection extends ImConnection {
 
         mConfig.setCustomSSLContext(sslContext);
         mConfig.setSecurityMode(ConnectionConfiguration.SecurityMode.required);
-
         mConfig.setHostnameVerifier(
                 mMemTrust.wrapHostnameVerifier(new org.apache.http.conn.ssl.StrictHostnameVerifier()));
 
         mConfig.setSendPresence(true);
 
         XMPPTCPConnection.setUseStreamManagementDefault(true);
-
-        //mConfig.setRosterLoadedAtLogin(true);
 
         mConnection = new XMPPTCPConnection(mConfig.build());
 
@@ -2333,6 +2331,7 @@ public class XmppConnection extends ImConnection {
             if (mConnection != null) {
 
                 mRoster = Roster.getInstanceFor(mConnection);
+                mRoster.setRosterLoadedAtLogin(true);
 
                 for (RosterEntry rEntry : mRoster.getEntries()) {
                     String address = rEntry.getUser();
