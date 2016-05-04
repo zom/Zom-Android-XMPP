@@ -2491,6 +2491,27 @@ public class ConversationView {
                 deliveryState = DeliveryState.DELIVERED;
             }
 
+
+            if (!mExpectingDelivery && isDelivered) {
+                mExpectingDelivery = true;
+            } else if (cursor.getPosition() == cursor.getCount() - 1) {
+                /*
+                // if showTimeStamp is false for the latest message, then set a timer to query the
+                // cursor again in a minute, so we can update the last message timestamp if no new
+                // message is received
+                if (Log.isLoggable(ImApp.LOG_TAG, Log.DEBUG)) {
+                    log("delta = " + delta + ", showTs=" + showTimeStamp);
+                }
+                *//*
+                if (!showDelivery) {
+                    scheduleRequery(SHOW_DELIVERY_INTERVAL);
+                } else if (!showTimeStamp) {
+                    scheduleRequery(SHOW_TIME_STAMP_INTERVAL);
+                } else {
+                    cancelRequery();
+                }*/
+            }
+
             EncryptionState encState = EncryptionState.NONE;
             if (messageType == Imps.MessageType.INCOMING_ENCRYPTED)
             {
@@ -2536,26 +2557,6 @@ public class ConversationView {
                 messageView.bindPresenceMessage(viewHolder, nickname, messageType, date, isGroupChat(), false);
             }
 
-            if (!mExpectingDelivery && isDelivered) {
-
-                mExpectingDelivery = true;
-            } else if (cursor.getPosition() == cursor.getCount() - 1) {
-                /*
-                // if showTimeStamp is false for the latest message, then set a timer to query the
-                // cursor again in a minute, so we can update the last message timestamp if no new
-                // message is received
-                if (Log.isLoggable(ImApp.LOG_TAG, Log.DEBUG)) {
-                    log("delta = " + delta + ", showTs=" + showTimeStamp);
-                }
-                *//*
-                if (!showDelivery) {
-                    scheduleRequery(SHOW_DELIVERY_INTERVAL);
-                } else if (!showTimeStamp) {
-                    scheduleRequery(SHOW_TIME_STAMP_INTERVAL);
-                } else {
-                    cancelRequery();
-                }*/
-            }
         }
 
         public void onScrollStateChanged(AbsListView view, int scrollState) {
