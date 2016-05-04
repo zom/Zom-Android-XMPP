@@ -772,7 +772,7 @@ public class SessionImpl implements Session {
      * @see net.java.otr4j.session.ISession#refreshSession()
      */
     public void refreshSession() throws OtrException {
-        
+
         long now = System.currentTimeMillis();
         if (now - lastStart < MIN_SESSION_START_INTERVAL)
             return;
