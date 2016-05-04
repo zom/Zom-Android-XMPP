@@ -282,19 +282,22 @@ public class SessionImpl implements Session {
         return host;
     }
 
-    private SessionKeys[][] getSessionKeys() {
+    private synchronized SessionKeys[][] getSessionKeys() {
         if (sessionKeys == null)
             sessionKeys = new SessionKeys[2][2];
         return sessionKeys;
     }
 
-    private AuthContext getAuthContext(boolean refresh) {
-        if (authContext == null || refresh)
+    private synchronized AuthContext getAuthContext(boolean refresh) {
+
+//        if (authContext == null || refresh)
+        if (authContext == null)
             authContext = new AuthContextImpl(this);
+
         return authContext;
     }
 
-    private Vector<byte[]> getOldMacKeys() {
+    private synchronized Vector<byte[]> getOldMacKeys() {
         if (oldMacKeys == null)
             oldMacKeys = new Vector<byte[]>();
         return oldMacKeys;
@@ -769,6 +772,11 @@ public class SessionImpl implements Session {
      * @see net.java.otr4j.session.ISession#refreshSession()
      */
     public void refreshSession() throws OtrException {
+        
+        long now = System.currentTimeMillis();
+        if (now - lastStart < MIN_SESSION_START_INTERVAL)
+            return;
+
         this.endSession();
         this.startSession();
     }
