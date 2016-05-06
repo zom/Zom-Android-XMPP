@@ -3404,6 +3404,11 @@ public class XmppConnection extends ImConnection {
                 reqSubscribed.setTo(contact.getAddress().getBareAddress());
                 sendPacket(reqSubscribed);
 
+                org.jivesoftware.smack.packet.Presence reqSubscribe = new org.jivesoftware.smack.packet.Presence(
+                        org.jivesoftware.smack.packet.Presence.Type.subscribe);
+                reqSubscribe.setTo(contact.getAddress().getBareAddress());
+                sendPacket(reqSubscribe);
+
                 mContactListManager.getSubscriptionRequestListener().onSubScriptionRequest(contact, mProviderId, mAccountId);
 
                 contact = mContactListManager.getContact(xaddress.getBareAddress());
@@ -3418,7 +3423,7 @@ public class XmppConnection extends ImConnection {
         }
         else if (presence.getType() == org.jivesoftware.smack.packet.Presence.Type.subscribed) {
 
-            debug(TAG, "got subscribed confirmation request: " + presence.getFrom());
+            debug(TAG, "got subscribed confirmation: " + presence.getFrom());
             try
             {
                 if (contact == null) {
@@ -3428,6 +3433,7 @@ public class XmppConnection extends ImConnection {
 
            //     mContactListManager.doAddContactToListAsync(contact,getContactListManager().getDefaultContactList());
                 mContactListManager.getSubscriptionRequestListener().onSubscriptionApproved(contact, mProviderId, mAccountId);
+
             }
             catch (Exception e)
             {
