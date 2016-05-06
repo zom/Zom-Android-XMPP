@@ -33,6 +33,7 @@ import org.awesomeapp.messenger.provider.ImpsErrorInfo;
 import org.awesomeapp.messenger.service.adapters.ChatSessionAdapter;
 import org.awesomeapp.messenger.ui.legacy.DatabaseUtils;
 import org.awesomeapp.messenger.util.Debug;
+import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.PresenceListener;
@@ -516,7 +517,6 @@ public class XmppConnection extends ImConnection {
                         //muc.join(muc.getNickname());
                         muc.join(muc.getNickname());
                     } catch (Exception e) {
-                        // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
                 }
@@ -1285,14 +1285,14 @@ public class XmppConnection extends ImConnection {
 
         initConnection(providerSettings, userName);
 
-        mResource = providerSettings.getXmppResource();
-
         //disable compression based on statement by Ge0rg
-         mConfig.setCompressionEnabled(false);
+        // mConfig.setCompressionEnabled(false);
 
-        if (mConnection.isConnected())
+        if (mConnection.isConnected() && mConnection.isSecureConnection())
         {
-            
+
+            mResource = providerSettings.getXmppResource();
+
             mConnection.login(mUsername, mPassword, mResource);
             
             String fullJid = mConnection.getUser();
@@ -1352,6 +1352,12 @@ public class XmppConnection extends ImConnection {
             });
 
         }
+        else
+        {
+            //throw some meaningful error message here
+            throw new SmackException("Unable to securely conenct to server");
+        }
+
         
 
     }
@@ -1405,21 +1411,19 @@ public class XmppConnection extends ImConnection {
     }
 
     // Runs in executor thread
-    private boolean initConnection(Imps.ProviderSettings.QueryMap providerSettings, String userName) throws NoSuchAlgorithmException, KeyManagementException, XMPPException  {
+    private void initConnection(Imps.ProviderSettings.QueryMap providerSettings, String userName) throws NoSuchAlgorithmException, KeyManagementException, XMPPException, SmackException, IOException  {
 
-
-        boolean allowPlainAuth = providerSettings.getAllowPlainAuth();
-        boolean requireTls = providerSettings.getRequireTls();
+        boolean allowPlainAuth = false;//never! // providerSettings.getAllowPlainAuth();
+        boolean requireTls = true;// providerSettings.getRequireTls(); //always!
         boolean doDnsSrv = providerSettings.getDoDnsSrv();
-        boolean tlsCertVerify = providerSettings.getTlsCertVerify();
+       // boolean tlsCertVerify = providerSettings.getTlsCertVerify();
 
-        boolean useSASL = true;//!allowPlainAuth;
+       // boolean useSASL = true;//!allowPlainAuth;
         boolean useTor = providerSettings.getUseTor();
         String domain = providerSettings.getDomain();
 
         mPriority = providerSettings.getXmppResourcePrio();
         int serverPort = providerSettings.getPort();
-
         String server = providerSettings.getServer();
         if ("".equals(server))
             server = null;
@@ -1438,7 +1442,6 @@ public class XmppConnection extends ImConnection {
         }*/
 
         debug(TAG, "TLS required? " + requireTls);
-        debug(TAG, "cert verification? " + tlsCertVerify);
 
         if (useTor) {
             setProxy(TorProxyInfo.PROXY_TYPE, TorProxyInfo.PROXY_HOST,
@@ -1518,7 +1521,9 @@ public class XmppConnection extends ImConnection {
             SASLAuthentication.unsupportSASLMechanism( GTalkOAuth2.NAME);
             */
 
-        SASLAuthentication.unBlacklistSASLMechanism("PLAIN");
+        if (allowPlainAuth)
+            SASLAuthentication.unBlacklistSASLMechanism("PLAIN");
+
         SASLAuthentication.unBlacklistSASLMechanism("DIGEST-MD5");
 
         if (mMemTrust == null)
@@ -1571,7 +1576,6 @@ public class XmppConnection extends ImConnection {
 
         if (currentapiVersion >= android.os.Build.VERSION_CODES.ICE_CREAM_SANDWICH){
             mConfig.setEnabledSSLCiphers(XMPPCertPins.SSL_IDEAL_CIPHER_SUITES);
-
         }
 
         mConfig.setCustomSSLContext(sslContext);
@@ -1579,11 +1583,13 @@ public class XmppConnection extends ImConnection {
         mConfig.setHostnameVerifier(
                 mMemTrust.wrapHostnameVerifier(new org.apache.http.conn.ssl.StrictHostnameVerifier()));
 
+
         mConfig.setSendPresence(true);
 
         XMPPTCPConnection.setUseStreamManagementDefault(true);
 
         mConnection = new XMPPTCPConnection(mConfig.build());
+
 
         //debug(TAG,"is secure connection? " + mConnection.isSecureConnection());
         //debug(TAG,"is using TLS? " + mConnection.isUsingTLS());
@@ -1754,24 +1760,9 @@ public class XmppConnection extends ImConnection {
 
         mConnection.addConnectionListener(connectionListener);
         mStreamHandler = new XmppStreamHandler(mConnection, connectionListener);
+        Exception xmppConnectException = null;
+        AbstractXMPPConnection conn = mConnection.connect();
 
-        for (int i = 0; i < 3; i++)
-        {
-            try
-            {
-                mConnection.connect();
-                return true;
-            }
-            catch (Exception uhe)
-            {
-                //sometimes DNS fails.. let's wait and try again a few times
-                try { Thread.sleep(500);} catch (Exception e){}
-
-            }
-
-        }
-
-        return false;
     }
 
     private void handleMessage (org.jivesoftware.smack.packet.Message smackMessage)
@@ -2869,12 +2860,12 @@ public class XmppConnection extends ImConnection {
         execute(new Runnable() {
             @Override
             public void run() {
-                if (mState == SUSPENDED || mState == SUSPENDING) {
+               // if (mState == SUSPENDED || mState == SUSPENDING) {
                     debug(TAG, "network type changed");
                     mNeedReconnect = false;
                     setState(LOGGING_IN, null);
                     reconnect();
-                }
+                //}
             }
         });
 
@@ -3294,9 +3285,9 @@ public class XmppConnection extends ImConnection {
     public boolean registerAccount (Imps.ProviderSettings.QueryMap providerSettings, String username, String password, Map<String,String> params) throws Exception
     {
 
-        boolean success = initConnection(providerSettings, username);
+        initConnection(providerSettings, username);
 
-        if (success && mConnection.isConnected()) {
+        if (mConnection.isConnected() && mConnection.isSecureConnection()) {
             org.jivesoftware.smackx.iqregister.AccountManager aMgr = org.jivesoftware.smackx.iqregister.AccountManager.getInstance(mConnection);
 
             if (aMgr.supportsAccountCreation()) {
