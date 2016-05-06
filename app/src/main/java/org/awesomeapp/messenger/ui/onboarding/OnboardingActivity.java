@@ -719,7 +719,8 @@ public class OnboardingActivity extends ThemeableActivity {
                 mCropImageView = new CropImageView(OnboardingActivity.this);// (CropImageView)view.findViewById(R.id.CropImageView);
                 mCropImageView.setAspectRatio(1, 1);
                 mCropImageView.setFixedAspectRatio(true);
-                mCropImageView.setGuidelines(1);
+                mCropImageView.setCropShape(CropImageView.CropShape.OVAL);
+              //  mCropImageView.setGuidelines(1);
 
                 try {
                     Bitmap bmpThumbnail = SecureMediaStore.getThumbnailFile(OnboardingActivity.this, imageUri, 512);
@@ -871,7 +872,7 @@ public class OnboardingActivity extends ThemeableActivity {
         return isCamera ? getCaptureImageOutputUri() : data.getData();
     }
 
-    private final static int MY_PERMISSIONS_REQUEST_CAMERA = 707070;
+    private final static int MY_PERMISSIONS_REQUEST_CAMERA = 1;
 
     void startAvatarTaker() {
         int permissionCheck = ContextCompat.checkSelfPermission(this,

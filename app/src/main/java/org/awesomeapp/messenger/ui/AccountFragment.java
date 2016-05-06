@@ -296,7 +296,9 @@ public class AccountFragment extends Fragment {
             mCropImageView = new CropImageView(getActivity());// (CropImageView)view.findViewById(R.id.CropImageView);
             mCropImageView.setAspectRatio(1, 1);
             mCropImageView.setFixedAspectRatio(true);
-            mCropImageView.setGuidelines(1);
+            mCropImageView.setCropShape(CropImageView.CropShape.OVAL);
+
+            //  mCropImageView.setGuidelines(1);
 
             try {
                 Bitmap bmpThumbnail = SecureMediaStore.getThumbnailFile(getActivity(), imageUri, 512);
