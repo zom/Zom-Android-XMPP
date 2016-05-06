@@ -45,7 +45,6 @@ public class OtrChatListener implements MessageListener {
         SessionID sessionID = mOtrChatManager.getSessionId(localAddress, remoteAddress);
         SessionStatus otrStatus = mOtrChatManager.getSessionStatus(sessionID);
 
-
         List<TLV> tlvs = new ArrayList<TLV>();
 
         try {
@@ -88,6 +87,7 @@ public class OtrChatListener implements MessageListener {
             // mOtrChatManager.injectMessage(sessionID, "[error please stop/start encryption]");
 
         }
+
 
         SessionStatus newStatus = mOtrChatManager.getSessionStatus(sessionID.getLocalUserId(),sessionID.getRemoteUserId());
         if (newStatus != otrStatus) {

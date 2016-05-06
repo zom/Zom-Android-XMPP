@@ -209,7 +209,6 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
         if (sessionId == null)
             return null;
 
-
         return mOtrEngine.getSessionStatus(sessionId);
 
     }

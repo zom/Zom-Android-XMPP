@@ -913,6 +913,8 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
         //this method does nothing!
        // Log.d(TAG,"OTR session status changed: " + sessionID.getRemoteUserId());
+
+
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)

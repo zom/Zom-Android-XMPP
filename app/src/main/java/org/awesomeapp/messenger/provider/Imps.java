@@ -2398,12 +2398,13 @@ public class Imps {
         return resolver.update(builder.build(), values, null, null);
     }
 
-    public static int updateConfirmInDb(ContentResolver resolver, String id, boolean isDelivered) {
+    public static int updateConfirmInDb(ContentResolver resolver, long threadId, String msgId, boolean isDelivered) {
         Uri.Builder builder = Imps.Messages.OTR_MESSAGES_CONTENT_URI_BY_PACKET_ID.buildUpon();
-        builder.appendPath(id);
+        builder.appendPath(msgId);
 
         ContentValues values = new ContentValues(1);
         values.put(Imps.Messages.IS_DELIVERED, isDelivered);
+        values.put(Messages.THREAD_ID,threadId);
         return resolver.update(builder.build(), values, null, null);
     }
 

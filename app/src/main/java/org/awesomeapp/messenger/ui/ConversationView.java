@@ -619,6 +619,10 @@ public class ConversationView {
                     {
                         mPresenceStatus = c.getPresence().getStatus();
                         updatePresenceDisplay();
+                        try {
+                            mCurrentChatSession.presenceChanged(mPresenceStatus);
+                        }
+                        catch (RemoteException re){}
                     }
 
                     mHandler.post(mUpdateChatCallback);
@@ -1813,7 +1817,7 @@ public class ConversationView {
             IOtrChatSession otrChatSession = null;
 
             try {
-                otrChatSession = mCurrentChatSession.getOtrChatSession(0);
+                otrChatSession = mCurrentChatSession.getDefaultOtrChatSession();
 
                 //check if the chat is otr or not
                 if (otrChatSession != null) {

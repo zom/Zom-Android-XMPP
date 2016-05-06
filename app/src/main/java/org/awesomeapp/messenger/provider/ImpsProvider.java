@@ -3782,7 +3782,8 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
             tableToChange = TABLE_IN_MEMORY_MESSAGES; // FIXME these should be going to memory but they do not
             appendWhere(whereClause, Imps.Messages.PACKET_ID, "=", packetId);
             notifyMessagesContentUri = true;
-
+            notifyMessagesByThreadIdContentUri = true;
+            threadId = values.getAsLong(Imps.Messages.THREAD_ID);
             // Try updating OTR message
         //    count += db.update(TABLE_IN_MEMORY_MESSAGES, values, whereClause.toString(), whereArgs);
             break;

@@ -58,13 +58,16 @@ public class ChatSessionInitTask extends AsyncTask<String, Long, Long> {
 
                         if (session != null && mContactType == Imps.Contacts.TYPE_NORMAL)
                         {
+                            /**
                             int sessionCount = session.getOtrChatSessionCount();
 
                             for (int i = 0; i < sessionCount; i++) {
                                 IOtrChatSession otrChatSession = session.getOtrChatSession(i);
                                 if (otrChatSession != null)
                                     otrChatSession.startChatEncryption();
-                            }
+                            }*/
+
+                            session.getDefaultOtrChatSession().startChatEncryption();
                         }
 
                     }

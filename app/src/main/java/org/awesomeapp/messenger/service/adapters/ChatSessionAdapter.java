@@ -25,8 +25,10 @@ import org.awesomeapp.messenger.crypto.OtrDataHandler;
 import org.awesomeapp.messenger.crypto.OtrDataHandler.Transfer;
 import org.awesomeapp.messenger.crypto.OtrDebugLogger;
 import org.awesomeapp.messenger.model.Address;
+import org.awesomeapp.messenger.model.ContactListListener;
 import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
 import  org.awesomeapp.messenger.service.IChatListener;
+import org.awesomeapp.messenger.service.IChatSession;
 import org.awesomeapp.messenger.service.IDataListener;
 import im.zom.messenger.R;
 
@@ -47,10 +49,15 @@ import org.awesomeapp.messenger.util.SystemServices;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.UUID;
 
+import net.java.otr4j.OtrEngineListener;
+import net.java.otr4j.session.SessionID;
 import net.java.otr4j.session.SessionStatus;
 
 import org.awesomeapp.messenger.service.RemoteImService;
@@ -103,7 +110,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
     private RemoteImService service = null;
 
-    private ArrayList<OtrChatSessionAdapter> mOtrChatSessions;
+    private HashMap<String, OtrChatSessionAdapter> mOtrChatSessions;
     private OtrDataHandler mDataHandler;
 
     private IDataListener mDataListener;
@@ -129,7 +136,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
         mListenerAdapter = new ListenerAdapter();
 
-        mOtrChatSessions = new ArrayList<OtrChatSessionAdapter>();
+        mOtrChatSessions = new HashMap<String, OtrChatSessionAdapter>();
 
         ImEntity participant = mChatSession.getParticipant();
 
@@ -154,25 +161,33 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                 mDataHandler.setDataListener(mDataHandlerListener);
 
                 OtrChatManager cm = service.getOtrChatManager();
+                cm.addOtrEngineListener(mListenerAdapter);
+                mChatSession.setMessageListener(new OtrChatListener(cm, mListenerAdapter));
 
-                if (participant instanceof Contact)
-                    mOtrChatSessions.add(new OtrChatSessionAdapter(mConnection.getLoginUser().getAddress().getAddress(), participant, cm));
+                if (participant instanceof Contact) {
+                    String key = participant.getAddress().getAddress();
+                    if (!mOtrChatSessions.containsKey(key)) {
+                        OtrChatSessionAdapter adapter = new OtrChatSessionAdapter(mConnection.getLoginUser().getAddress().getAddress(), participant, cm);
+                        mOtrChatSessions.put(key, adapter);
+                    }
+                }
                 else if (participant instanceof ChatGroup)
                 {
                     ChatGroup group = (ChatGroup)mChatSession.getParticipant();
 
                     for (Contact contact : group.getMembers())
                     {
-                        mOtrChatSessions.add(new OtrChatSessionAdapter(mConnection.getLoginUser().getAddress().getAddress(), contact, cm));
+                        String key = contact.getAddress().getAddress();
+                        if (!mOtrChatSessions.containsKey(key)) {
+                            OtrChatSessionAdapter adapter = new OtrChatSessionAdapter(mConnection.getLoginUser().getAddress().getAddress(), contact, cm);
+                            mOtrChatSessions.put(key, adapter);
+                        }
                     }
 
                 }
 
-
                 mDataHandler.setChatId(getId());
 
-                // add OtrChatListener as the intermediary to mListenerAdapter so it can filter OTR msgs
-                mChatSession.setMessageListener(new OtrChatListener(cm, mListenerAdapter));
             }
         }
         catch (NullPointerException npe)
@@ -184,25 +199,17 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
     public synchronized IOtrChatSession getDefaultOtrChatSession () {
 
         if (mOtrChatSessions.size() > 0)
-            return mOtrChatSessions.get(0);
+            return mOtrChatSessions.entrySet().iterator().next().getValue();
         else
             return null;
     }
 
-    public IOtrChatSession getOtrChatSession(int idx) {
-
-        if (mOtrChatSessions.size() > idx)
-            return mOtrChatSessions.get(idx);
-        else
-            return null;
-    }
-
-    public int getOtrChatSessionCount ()
+    public void presenceChanged (int newPresence)
     {
-        if (mOtrChatSessions != null)
-            return mOtrChatSessions.size();
-        else
-            return 0;
+        if (newPresence == Presence.AVAILABLE)
+        {
+            sendPostponedMessages();
+        }
     }
 
     private void init(ChatGroup group, boolean isNewSession) {
@@ -371,13 +378,14 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         msg.setFrom(mConnection.getLoginUser().getAddress());
         msg.setType(Imps.MessageType.OUTGOING);
 
+        /**
         try {
             SessionStatus otrSessionStatus = SessionStatus.values()[getDefaultOtrChatSession().getChatStatus()];
 
             if (otrSessionStatus == SessionStatus.ENCRYPTED)
                 msg.setType(Imps.MessageType.OUTGOING_ENCRYPTED);
 
-        }catch(RemoteException re){}
+        }catch(RemoteException re){}*/
 
         if (!isResend) {
             insertMessageInDb(null, text, System.currentTimeMillis(), msg.getType(), 0, msg.getID());
@@ -710,7 +718,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
     Uri insertMessageInDb(String contact, String body, long time, int type, int errCode, String id) {
         boolean isEncrypted = true;
         try {
-            isEncrypted = getOtrChatSession(0).isChatEncrypted();
+            isEncrypted = getDefaultOtrChatSession().isChatEncrypted();
         } catch (RemoteException e) {
             // Leave it as encrypted so it gets stored in memory
             // FIXME(miron)
@@ -723,9 +731,9 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         Uri.Builder builder = Imps.Messages.OTR_MESSAGES_CONTENT_URI_BY_PACKET_ID.buildUpon();
         builder.appendPath(id);
 
-        ContentValues values = new ContentValues(1);
+        ContentValues values = new ContentValues(2);
         values.put(Imps.Messages.TYPE, type);
-        
+        values.put(Imps.Messages.THREAD_ID, mContactId);
         if (time != -1)
             values.put(Imps.Messages.DATE, time);
         
@@ -734,7 +742,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
 
 
-    class ListenerAdapter implements MessageListener, GroupMemberListener {
+    class ListenerAdapter implements MessageListener, GroupMemberListener, OtrEngineListener {
 
         public synchronized boolean onIncomingMessage(ChatSession ses, final org.awesomeapp.messenger.model.Message msg) {
             String body = msg.getBody();
@@ -884,7 +892,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
         @Override
         public void onIncomingReceipt(ChatSession ses, String id) {
-            Imps.updateConfirmInDb(mContentResolver, id, true);
+            Imps.updateConfirmInDb(mContentResolver, mContactId, id, true);
 
             synchronized (mRemoteListeners) {
                 int N = mRemoteListeners.beginBroadcast();
@@ -909,6 +917,15 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         @Override
         public void onReceiptsExpected(ChatSession ses, boolean isExpected) {
             // TODO
+
+        }
+
+        @Override
+        public void sessionStatusChanged(SessionID sessionID) {
+
+            if (sessionID.getRemoteUserId().equals(mChatSession.getParticipant().getAddress().getAddress()))
+                onStatusChanged(mChatSession, OtrChatManager.getInstance().getSessionStatus(sessionID));
+
 
         }
 
@@ -1039,12 +1056,12 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
 
                 if (outgoing) {
-                    Imps.updateConfirmInDb(service.getContentResolver(), offerId, true);
+                    Imps.updateConfirmInDb(service.getContentResolver(), mContactId, offerId, true);
                 } else {
 
                     try
                     {
-                        boolean isVerified = getOtrChatSession(0).isKeyVerified(from);
+                        boolean isVerified = getDefaultOtrChatSession().isKeyVerified(from);
 
                         int type = isVerified ? Imps.MessageType.INCOMING_ENCRYPTED_VERIFIED : Imps.MessageType.INCOMING_ENCRYPTED;
 
