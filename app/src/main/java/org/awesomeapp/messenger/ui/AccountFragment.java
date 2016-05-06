@@ -492,6 +492,10 @@ public class AccountFragment extends Fragment {
 
         helper.signIn(getAccountPassword(mProviderId), mProviderId, mAccountId,true);
 
+        //keep signed in please!
+        ContentValues values = new ContentValues();
+        values.put(Imps.AccountColumns.KEEP_SIGNED_IN, 1);
+        getActivity().getContentResolver().update(ContentUris.withAppendedId(Imps.Account.CONTENT_URI, mAccountId), values, null, null);
     }
 
     void signOut() {
