@@ -1,5 +1,8 @@
 buildscript {
     repositories {
+        maven {
+            url 'https://oss.sonatype.org/content/repositories/snapshots'
+        }
         mavenCentral()
         jcenter()
         maven { url "https://jitpack.io" }
@@ -97,6 +100,7 @@ android {
                 'info.guardianproject.panic:panic:a7ed9439826db2e9901649892cf9afbe76f00991b768d8f4c26332d7c9406cb2',
                 'net.hockeyapp.android:HockeySDK:6e73ad1188af47e7c0e054ed21da66b1b9ae227db7e9401d4de4e6b2b437d194',
                 'net.zetetic:android-database-sqlcipher:e7594bd98cf77e93579c084cbf08d99b742b71a8d2063169ffc1858f8de21aa8',
+                /**
                 'org.igniterealtime.smack:smack-android-extensions:4c1732d09e460107f1d3e0c25a3ac6c2f8a1b8cba2e9dfa726a866aa55c13bc8',
                 'org.igniterealtime.smack:smack-android:2b6ea0e762ecdbf03ce20bc35c564f0727d7f10ca7cb7d9c309b72b2fa3229cc',
                 'org.igniterealtime.smack:smack-core:31b058b51fa59ffe623622f2348783a876b6c5db9e93e7d8e51525e09eda7389',
@@ -105,6 +109,7 @@ android {
                 'org.igniterealtime.smack:smack-resolver-minidns:3e708fb9dc6ad954dc3844f2a5ad51367d49ab8f79120c455bdff34f08f63efe',
                 'org.igniterealtime.smack:smack-sasl-provided:b2e7246efded60fcd21f846f789a6b97f8ac65851434c778c95455286b686379',
                 'org.igniterealtime.smack:smack-tcp:ae9a1bbeffdaa2fbb6ebffb253fbafff549015cd852c9443dfd034ab3ce80623',
+                 */
                 'org.jsoup:jsoup:ea201bf133aa542291ce9c5a8c52386f8f856a3bec2fd84e217e1ca9f6f5fe4e',
                 'org.jxmpp:jxmpp-core:8087e88d11065f812f9873ed82575c423f84b928e9c4010759183e47807279ce',
                 'org.jxmpp:jxmpp-util-cache:dff12030c01c951ca350837fd3b5e277711c2fc704e24abd90de5bbdc62d0852',
@@ -134,9 +139,9 @@ dependencies {
     compile 'info.guardianproject.netcipher:netcipher:1.2'
     compile 'info.guardianproject.panic:panic:0.5'
     compile 'net.hockeyapp.android:HockeySDK:3.5.0'
-    compile 'org.igniterealtime.smack:smack-android:4.1.4'
-    compile 'org.igniterealtime.smack:smack-android-extensions:4.1.4'
-    compile 'org.igniterealtime.smack:smack-tcp:4.1.4'
+   // compile 'org.igniterealtime.smack:smack-android:4.1.7'
+    compile "org.igniterealtime.smack:smack-android-extensions:4.1.7"
+    compile "org.igniterealtime.smack:smack-tcp:4.1.7"
     compile 'org.jsoup:jsoup:1.5.2'
     compile 'org.ocpsoft.prettytime:prettytime:4.0.0.Final'
     compile 'org.thoughtcrime.ssl.pinning:AndroidPinning:1.0.0'
