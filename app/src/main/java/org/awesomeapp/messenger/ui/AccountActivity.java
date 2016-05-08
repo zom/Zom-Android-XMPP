@@ -67,7 +67,7 @@ import java.util.Locale;
 
 import im.zom.messenger.R;
 
-public class AccountActivity extends AppCompatActivity {
+public class AccountActivity extends BaseActivity {
 
     public static final String TAG = "AccountActivity";
     private static final String ACCOUNT_URI_KEY = "accountUri";

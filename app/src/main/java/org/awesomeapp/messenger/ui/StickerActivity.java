@@ -66,7 +66,7 @@ import java.util.UUID;
 import im.zom.messenger.R;
 import info.guardianproject.iocipher.FileInputStream;
 
-public class StickerActivity extends AppCompatActivity {
+public class StickerActivity extends BaseActivity {
 
 
     private ImApp mApp;

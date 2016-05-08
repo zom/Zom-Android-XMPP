@@ -49,6 +49,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -65,6 +66,7 @@ import org.awesomeapp.messenger.tasks.ChatSessionInitTask;
 import org.awesomeapp.messenger.ui.AccountFragment;
 import org.awesomeapp.messenger.ui.AccountsActivity;
 import org.awesomeapp.messenger.ui.AddContactActivity;
+import org.awesomeapp.messenger.ui.BaseActivity;
 import org.awesomeapp.messenger.ui.ContactsListFragment;
 import org.awesomeapp.messenger.ui.ContactsPickerActivity;
 import org.awesomeapp.messenger.ui.ConversationDetailActivity;
@@ -94,7 +96,7 @@ import info.guardianproject.iocipher.VirtualFileSystem;
 /**
  * TODO
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     private ViewPager mViewPager;
     private TabLayout mTabLayout;
@@ -113,6 +115,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
+                WindowManager.LayoutParams.FLAG_SECURE);
+
         setContentView(R.layout.awesome_activity_main);
 
         mApp = (ImApp)getApplication();

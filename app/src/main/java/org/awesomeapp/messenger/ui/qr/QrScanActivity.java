@@ -30,12 +30,13 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
 
 import org.awesomeapp.messenger.ImApp;
+import org.awesomeapp.messenger.ui.BaseActivity;
 import org.awesomeapp.messenger.ui.onboarding.OnboardingManager;
 
 import java.util.ArrayList;
 
 @SuppressWarnings("deprecation")
-public class QrScanActivity extends AppCompatActivity
+public class QrScanActivity extends BaseActivity
 implements QrCodeDecoder.ResultCallback {
 
 	private static String TAG = QrScanActivity.class.getPackage().getName();

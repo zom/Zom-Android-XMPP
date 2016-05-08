@@ -36,7 +36,7 @@ import org.ironrabbit.type.CustomTypefaceManager;
 
 import java.util.List;
 
-public class LockScreenActivity extends ThemeableActivity implements ICacheWordSubscriber {
+public class LockScreenActivity extends BaseActivity implements ICacheWordSubscriber {
     private static final String TAG = "LockScreenActivity";
 
     private final static int MIN_PASS_LENGTH = 4;

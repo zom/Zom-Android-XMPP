@@ -45,7 +45,7 @@ import java.io.IOException;
 import im.zom.messenger.R;
 
 
-public class ContactDisplayActivity extends AppCompatActivity {
+public class ContactDisplayActivity extends BaseActivity {
 
     private String mNickname = null;
     private String mUsername = null;

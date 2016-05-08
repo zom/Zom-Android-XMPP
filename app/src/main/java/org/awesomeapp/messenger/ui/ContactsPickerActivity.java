@@ -58,7 +58,7 @@ import java.util.Set;
 import im.zom.messenger.R;
 
 /** Activity used to pick a contact. */
-public class ContactsPickerActivity extends AppCompatActivity {
+public class ContactsPickerActivity extends BaseActivity {
 
     public final static String EXTRA_EXCLUDED_CONTACTS = "excludes";
 

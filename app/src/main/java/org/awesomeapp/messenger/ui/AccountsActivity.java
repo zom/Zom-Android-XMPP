@@ -12,7 +12,7 @@ import org.awesomeapp.messenger.ui.onboarding.OnboardingActivity;
 
 import im.zom.messenger.R;
 
-public class AccountsActivity extends AppCompatActivity {
+public class AccountsActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

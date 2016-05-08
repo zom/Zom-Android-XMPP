@@ -64,7 +64,7 @@ import java.util.UUID;
 
 import im.zom.messenger.R;
 
-public class GalleryActivity extends AppCompatActivity {
+public class GalleryActivity extends BaseActivity {
 
 
     private ImApp mApp;

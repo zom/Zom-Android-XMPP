@@ -48,6 +48,7 @@ import org.awesomeapp.messenger.Preferences;
 import org.awesomeapp.messenger.crypto.OtrAndroidKeyManagerImpl;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.tasks.AddContactAsyncTask;
+import org.awesomeapp.messenger.ui.BaseActivity;
 import org.awesomeapp.messenger.ui.legacy.DatabaseUtils;
 import org.awesomeapp.messenger.ui.legacy.SignInHelper;
 import org.awesomeapp.messenger.ui.legacy.SimpleAlertHandler;
@@ -69,7 +70,7 @@ import im.zom.messenger.R;
 import org.awesomeapp.messenger.util.Languages;
 import org.ironrabbit.type.CustomTypefaceManager;
 
-public class OnboardingActivity extends ThemeableActivity {
+public class OnboardingActivity extends BaseActivity {
 
     private ViewFlipper mViewFlipper;
     private EditText mEditUsername;

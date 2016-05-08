@@ -78,7 +78,7 @@ import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.util.SystemServices;
 import org.ironrabbit.type.CustomTypefaceManager;
 
-public class ConversationDetailActivity extends AppCompatActivity {
+public class ConversationDetailActivity extends BaseActivity {
 
     private long mChatId = -1;
     private String mAddress = null;
