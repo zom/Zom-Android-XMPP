@@ -19,6 +19,8 @@ import net.java.otr4j.io.messages.SignatureX;
 
 public class OtrInputStream extends FilterInputStream implements SerializationConstants {
 
+    public final int MAX_DATA_LEN = 10 * 1024 * 1024; //10MB
+
     public OtrInputStream(InputStream in) {
         super(in);
     }
@@ -67,6 +69,10 @@ public class OtrInputStream extends FilterInputStream implements SerializationCo
 
     public byte[] readData() throws IOException {
         int dataLen = readNumber(DATA_LEN);
+
+        if (dataLen > MAX_DATA_LEN)
+            throw new IOException ("data length larger than max: " + dataLen);
+
         byte[] b = new byte[dataLen];
         read(b);
         return b;
