@@ -736,8 +736,17 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         values.put(Imps.Messages.THREAD_ID, mContactId);
         if (time != -1)
             values.put(Imps.Messages.DATE, time);
-        
-        return mContentResolver.update(builder.build(), values, null, null);
+
+        int result = mContentResolver.update(builder.build(), values, null, null);
+
+        if (result == 0)
+        {
+            builder = Imps.Messages.CONTENT_URI_MESSAGES_BY_PACKET_ID.buildUpon();
+            builder.appendPath(id);
+            result = mContentResolver.update(builder.build(), values, null, null);
+        }
+
+        return result;
     }
 
 

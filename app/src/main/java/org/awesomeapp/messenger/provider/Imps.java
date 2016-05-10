@@ -935,6 +935,10 @@ public class Imps {
         public static final Uri CONTENT_URI_MESSAGES_BY_THREAD_ID = Uri
                 .parse("content://org.awesomeapp.messenger.provider.Imps/messagesByThreadId");
 
+        /** The content:// style URL for messages by thread id */
+        public static final Uri CONTENT_URI_MESSAGES_BY_PACKET_ID = Uri
+                .parse("content://org.awesomeapp.messenger.provider.Imps/messagesByPacketId");
+
         /** The content:// style URL for messages by account and contact */
         public static final Uri CONTENT_URI_MESSAGES_BY_ACCOUNT_AND_CONTACT = Uri
                 .parse("content://org.awesomeapp.messenger.provider.Imps/messagesByAcctAndContact");
@@ -2405,7 +2409,16 @@ public class Imps {
         ContentValues values = new ContentValues(1);
         values.put(Imps.Messages.IS_DELIVERED, isDelivered);
         values.put(Messages.THREAD_ID,threadId);
-        return resolver.update(builder.build(), values, null, null);
+        int result = resolver.update(builder.build(), values, null, null);
+
+        if (result == 0)
+        {
+            builder = Messages.CONTENT_URI_MESSAGES_BY_PACKET_ID.buildUpon();
+            builder.appendPath(msgId);
+            result = resolver.update(builder.build(), values, null, null);
+        }
+
+        return result;
     }
 
     public static boolean messageExists (ContentResolver resolver, String id)

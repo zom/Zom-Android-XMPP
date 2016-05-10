@@ -109,7 +109,9 @@ public class ChatSession {
             message.setTo(new XmppAddress(sId.getRemoteUserId()));
             message.setType(Imps.MessageType.OUTGOING);
 
-            if (((Contact) mParticipant).getPresence().getStatus() == Presence.OFFLINE) {
+            boolean isOffline = ((Contact) mParticipant).getPresence().getStatus() == Presence.OFFLINE;
+
+            if (isOffline || otrStatus != SessionStatus.ENCRYPTED) {
 
                 if (OtrChatManager.getInstance().canDoKnockPushMessage(sId)) {
 

@@ -136,6 +136,8 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
     protected static final int MATCH_MESSAGES = 50;
     protected static final int MATCH_MESSAGES_BY_CONTACT = 51;
     protected static final int MATCH_MESSAGES_BY_THREAD_ID = 52;
+    protected static final int MATCH_MESSAGES_BY_PACKET_ID = 502;
+
     protected static final int MATCH_MESSAGES_BY_PROVIDER = 53;
     protected static final int MATCH_MESSAGES_BY_ACCOUNT = 54;
     protected static final int MATCH_MESSAGE = 55;
@@ -1166,6 +1168,7 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
         mUrlMatcher.addURI(authority, "messagesByAcctAndContact/#/*", MATCH_MESSAGES_BY_CONTACT);
         mUrlMatcher.addURI(authority, "messagesBySearch", MATCH_MESSAGES_BY_SEARCH);
         mUrlMatcher.addURI(authority, "messagesByThreadId/#", MATCH_MESSAGES_BY_THREAD_ID);
+        mUrlMatcher.addURI(authority, "messagesByPacketId/*", MATCH_MESSAGES_BY_PACKET_ID);
         mUrlMatcher.addURI(authority, "messagesByProvider/#", MATCH_MESSAGES_BY_PROVIDER);
         mUrlMatcher.addURI(authority, "messagesByAccount/#", MATCH_MESSAGES_BY_ACCOUNT);
         mUrlMatcher.addURI(authority, "messages/#", MATCH_MESSAGE);
@@ -1606,6 +1609,7 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
             }
             return c;
 
+            case MATCH_MESSAGES_BY_PACKET_ID:
             case MATCH_OTR_MESSAGES_BY_PACKET_ID:
                 appendWhere(whereClause, Imps.Messages.PACKET_ID, "=", url.getPathSegments().get(1));
                 qb.setTables(TABLE_MESSAGES);
@@ -1986,6 +1990,7 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
         case MATCH_MESSAGES_BY_CONTACT:
         case MATCH_MESSAGES_BY_SEARCH:
         case MATCH_MESSAGES_BY_THREAD_ID:
+        case MATCH_MESSAGES_BY_PACKET_ID:
         case MATCH_MESSAGES_BY_PROVIDER:
         case MATCH_MESSAGES_BY_ACCOUNT:
         case MATCH_OTR_MESSAGES:
@@ -3775,6 +3780,17 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
             appendWhere(whereClause, Imps.Messages.THREAD_ID, "=", threadId);
 
             notifyMessagesByThreadIdContentUri = true;
+            break;
+
+        case MATCH_MESSAGES_BY_PACKET_ID:
+            packetId = decodeURLSegment(url.getPathSegments().get(1));
+            tableToChange = TABLE_MESSAGES; // FIXME these should be going to memory but they do not
+            appendWhere(whereClause, Imps.Messages.PACKET_ID, "=", packetId);
+            notifyMessagesContentUri = true;
+            notifyMessagesByThreadIdContentUri = true;
+            threadId = values.getAsLong(Imps.Messages.THREAD_ID);
+            // Try updating OTR message
+            //    count += db.update(TABLE_IN_MEMORY_MESSAGES, values, whereClause.toString(), whereArgs);
             break;
 
         case MATCH_OTR_MESSAGES_BY_PACKET_ID:
