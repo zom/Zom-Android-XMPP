@@ -45,26 +45,28 @@ public class ChatSessionInitTask extends AsyncTask<String, Long, Long> {
                     if (mContactType == Imps.Contacts.TYPE_GROUP)
                         session = conn.getChatSessionManager().createMultiUserChatSession(address, null, null, false);
 
-                    if (session != null && session.getDefaultOtrChatSession() != null && session.getDefaultOtrChatSession().isChatEncrypted()) {
-                            //then do nothing
+                    if (session != null)
+                    {
+
+                            if (session.getDefaultOtrChatSession() != null
+                                && (!session.getDefaultOtrChatSession().isChatEncrypted()))
+                            {
+
+                                session.getDefaultOtrChatSession().startChatEncryption();
+                            }
 
                     } else {
 
-                        if (session == null)
+                        if (session == null) {
                             if (mContactType == Imps.Contacts.TYPE_GROUP)
                                 session = conn.getChatSessionManager().createMultiUserChatSession(address, null, null, false);
-                            else
+                            else {
                                 session = conn.getChatSessionManager().createChatSession(address, false);
-
-                        if (session != null) {
-                            int sessionCount = session.getOtrChatSessionCount();
-
-                            for (int i = 0; i < sessionCount; i++) {
-                                IOtrChatSession otrChatSession = session.getOtrChatSession(i);
-                                if (otrChatSession != null)
-                                    otrChatSession.startChatEncryption();
+                                session.getDefaultOtrChatSession().startChatEncryption();
                             }
+
                         }
+
 
                     }
 

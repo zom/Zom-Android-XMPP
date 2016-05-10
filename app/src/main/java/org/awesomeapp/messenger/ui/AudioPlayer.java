@@ -1,6 +1,8 @@
 package org.awesomeapp.messenger.ui;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -9,6 +11,7 @@ import android.media.MediaPlayer.OnPreparedListener;
 import android.media.audiofx.Visualizer;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -52,11 +55,16 @@ public class AudioPlayer {
 
         if (mPrepared) {
 
-            if (mVisualizer == null)
-                setupVisualizerFxAndUI();
+            int permissionCheck = ContextCompat.checkSelfPermission(mContext,
+                    Manifest.permission.RECORD_AUDIO);
 
-            if (!mVisualizer.getEnabled())
-                mVisualizer.setEnabled(true);
+            if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
+                if (mVisualizer == null)
+                    setupVisualizerFxAndUI();
+
+                if (!mVisualizer.getEnabled())
+                    mVisualizer.setEnabled(true);
+            }
 
             mediaPlayer.start();
         }
@@ -176,7 +184,9 @@ public class AudioPlayer {
             @Override
             public void onCompletion(MediaPlayer mp) {
                 //killPlayer();
-                mVisualizer.setEnabled(false);
+
+                if (mVisualizer != null)
+                 mVisualizer.setEnabled(false);
 
 
 

@@ -12,6 +12,7 @@ import android.os.RemoteException;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -44,8 +45,9 @@ import java.io.IOException;
 import im.zom.messenger.R;
 
 
-public class ContactDisplayActivity extends AppCompatActivity {
+public class ContactDisplayActivity extends BaseActivity {
 
+    private String mNickname = null;
     private String mUsername = null;
     private long mProviderId = -1;
     private long mAccountId = -1;
@@ -62,33 +64,38 @@ public class ContactDisplayActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mUsername = getIntent().getStringExtra("contact");
+        mNickname = getIntent().getStringExtra("nickname");
+        mUsername = getIntent().getStringExtra("address");
         mProviderId = getIntent().getLongExtra("provider", -1);
         mAccountId = getIntent().getLongExtra("account", -1);
 
         mConn = ((ImApp)getApplication()).getConnection(mProviderId,mAccountId);
 
-        String nickname = mUsername.split("@")[0];
+        if (TextUtils.isEmpty(mNickname))
+            mNickname = mUsername;
+
+        mNickname = mNickname.split("@")[0].split("\\.")[0];
         setTitle("");
 
         TextView tv = (TextView)findViewById(R.id.tvNickname);
         tv = (TextView)findViewById(R.id.tvNickname);
-        tv.setText(nickname);
+        tv.setText(mNickname);
 
         tv = (TextView)findViewById(R.id.tvUsername);
         tv.setText(mUsername);
 
-        try {
-            Drawable avatar = DatabaseUtils.getAvatarFromAddress(getContentResolver(), mUsername, ImApp.DEFAULT_AVATAR_WIDTH, ImApp.DEFAULT_AVATAR_HEIGHT, false);
-            if (avatar != null)
-            {
-                ImageView iv = (ImageView)findViewById(R.id.imageAvatar);
-                iv.setImageDrawable(avatar);
+        if (!TextUtils.isEmpty(mUsername)) {
+            try {
+                Drawable avatar = DatabaseUtils.getAvatarFromAddress(getContentResolver(), mUsername, ImApp.DEFAULT_AVATAR_WIDTH, ImApp.DEFAULT_AVATAR_HEIGHT, false);
+                if (avatar != null) {
+                    ImageView iv = (ImageView) findViewById(R.id.imageAvatar);
+                    iv.setImageDrawable(avatar);
+                }
+            } catch (Exception e) {
             }
         }
-        catch (Exception e){}
 
-
+        ImageView btnQrShare = (ImageView) findViewById(R.id.qrshare);
         ImageView iv = (ImageView)findViewById(R.id.qrcode);
         tv = (TextView)findViewById(R.id.tvFingerprint);
 
@@ -96,62 +103,64 @@ public class ContactDisplayActivity extends AppCompatActivity {
             IChatSessionManager manager = mConn.getChatSessionManager();
             IChatSession session = manager.getChatSession(mUsername);
 
-            mRemoteFingerprint = session.getOtrChatSession(0).getRemoteFingerprint();
+            if (session != null) {
+                mRemoteFingerprint = session.getDefaultOtrChatSession().getRemoteFingerprint();
 
-            //String remoteFingerprint = OtrAndroidKeyManagerImpl.getInstance(this).getRemoteFingerprint(jabberId);
+                //   mRemoteFingerprint = OtrAndroidKeyManagerImpl.getInstance(this).getRemoteFingerprint( session.getOtrChatSession(0).getRemoteUserId());
 
-            if (mRemoteFingerprint != null) {
-                tv.setText(prettyPrintFingerprint(mRemoteFingerprint));
+                if (!TextUtils.isEmpty(mRemoteFingerprint)) {
+                    tv.setText(prettyPrintFingerprint(mRemoteFingerprint));
 
-                /**
-                try {
-                    String inviteLink = OnboardingManager.generateInviteLink(this, mUsername, mRemoteFingerprint);
-                    new QrGenAsyncTask(this, iv, 256).execute(inviteLink);
-                } catch (IOException ioe) {
-                    Log.e(ImApp.LOG_TAG, "couldn't generate QR code", ioe);
-                }*/
+                    iv.setOnClickListener(new View.OnClickListener() {
 
-                iv.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
 
-                    @Override
-                    public void onClick(View v) {
+                            String inviteString;
+                            try {
+                                inviteString = OnboardingManager.generateInviteLink(ContactDisplayActivity.this, mUsername, mRemoteFingerprint);
 
-                        String inviteString;
-                        try {
-                            inviteString = OnboardingManager.generateInviteLink(ContactDisplayActivity.this, mUsername, mRemoteFingerprint);
+                                Intent intent = new Intent(ContactDisplayActivity.this, QrDisplayActivity.class);
+                                intent.putExtra(Intent.EXTRA_TEXT, inviteString);
+                                intent.setType("text/plain");
+                                startActivity(intent);
 
-                            Intent intent = new Intent(ContactDisplayActivity.this, QrDisplayActivity.class);
-                            intent.putExtra(Intent.EXTRA_TEXT,inviteString);
-                            intent.setType("text/plain");
-                            startActivity(intent);
+                            } catch (IOException e) {
+                                // TODO Auto-generated catch block
+                                e.printStackTrace();
+                            }
 
-                        } catch (IOException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
                         }
 
-                    }
+                    });
 
-                });
+                    btnQrShare.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
 
-                ImageView btnQrShare = (ImageView) findViewById(R.id.qrshare);
-                btnQrShare.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        try {
-                            String inviteLink = OnboardingManager.generateInviteLink(ContactDisplayActivity.this, mUsername, mRemoteFingerprint);
-                            new QrShareAsyncTask(ContactDisplayActivity.this).execute(inviteLink);
-                        } catch (IOException ioe) {
-                            Log.e(ImApp.LOG_TAG, "couldn't generate QR code", ioe);
+                            try {
+                                String inviteLink = OnboardingManager.generateInviteLink(ContactDisplayActivity.this, mUsername, mRemoteFingerprint);
+                                new QrShareAsyncTask(ContactDisplayActivity.this).execute(inviteLink);
+                            } catch (IOException ioe) {
+                                Log.e(ImApp.LOG_TAG, "couldn't generate QR code", ioe);
+                            }
                         }
-                    }
-                });
+                    });
+                } else {
+                    iv.setVisibility(View.GONE);
+                    tv.setVisibility(View.GONE);
+                    btnQrShare.setVisibility(View.GONE);
+                }
+            }
+            else {
+                iv.setVisibility(View.GONE);
+                tv.setVisibility(View.GONE);
+                btnQrShare.setVisibility(View.GONE);
             }
         }
         catch (Exception e)
         {
-
+            Log.e(ImApp.LOG_TAG,"error displaying contact",e);
         }
 
         View btn = findViewById(R.id.btnStartChat);

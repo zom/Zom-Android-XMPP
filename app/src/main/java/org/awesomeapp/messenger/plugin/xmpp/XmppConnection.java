@@ -33,6 +33,7 @@ import org.awesomeapp.messenger.provider.ImpsErrorInfo;
 import org.awesomeapp.messenger.service.adapters.ChatSessionAdapter;
 import org.awesomeapp.messenger.ui.legacy.DatabaseUtils;
 import org.awesomeapp.messenger.util.Debug;
+import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.PresenceListener;
@@ -356,7 +357,19 @@ public class XmppConnection extends ImConnection {
                 VCardManager vCardManager = VCardManager.getInstanceFor(mConnection);
                 VCard vCard = vCardManager.loadVCard(jid);
 
-                // If VCard is loaded, then save the avatar to the personal folder.
+                Contact contact = mContactListManager.getContact(jid);
+
+                if (!TextUtils.isEmpty(vCard.getNickName()))
+                {
+                    contact.setName(vCard.getNickName());
+                }
+                else if (!TextUtils.isEmpty(vCard.getFirstName()))
+                {
+                    contact.setName(vCard.getFirstName());
+                }
+
+
+                    // If VCard is loaded, then save the avatar to the personal folder.
                 String avatarHash = vCard.getAvatarHash();
 
                 if (avatarHash != null)
@@ -504,7 +517,6 @@ public class XmppConnection extends ImConnection {
                         //muc.join(muc.getNickname());
                         muc.join(muc.getNickname());
                     } catch (Exception e) {
-                        // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
                 }
@@ -1260,6 +1272,7 @@ public class XmppConnection extends ImConnection {
     public void initConnection(XMPPTCPConnection connection, Contact user, int state) {
         mConnection = connection;
         mRoster = Roster.getInstanceFor(mConnection);
+        mRoster.setRosterLoadedAtLogin(true);
         mUser = user;
         setState(state, null);
     }
@@ -1272,14 +1285,14 @@ public class XmppConnection extends ImConnection {
 
         initConnection(providerSettings, userName);
 
-        mResource = providerSettings.getXmppResource();
-
         //disable compression based on statement by Ge0rg
-         mConfig.setCompressionEnabled(false);
+        // mConfig.setCompressionEnabled(false);
 
-        if (mConnection.isConnected())
+        if (mConnection.isConnected() && mConnection.isSecureConnection())
         {
-            
+
+            mResource = providerSettings.getXmppResource();
+
             mConnection.login(mUsername, mPassword, mResource);
             
             String fullJid = mConnection.getUser();
@@ -1339,6 +1352,12 @@ public class XmppConnection extends ImConnection {
             });
 
         }
+        else
+        {
+            //throw some meaningful error message here
+            throw new SmackException("Unable to securely conenct to server");
+        }
+
         
 
     }
@@ -1392,21 +1411,19 @@ public class XmppConnection extends ImConnection {
     }
 
     // Runs in executor thread
-    private boolean initConnection(Imps.ProviderSettings.QueryMap providerSettings, String userName) throws NoSuchAlgorithmException, KeyManagementException, XMPPException  {
+    private void initConnection(Imps.ProviderSettings.QueryMap providerSettings, String userName) throws NoSuchAlgorithmException, KeyManagementException, XMPPException, SmackException, IOException  {
 
-
-        boolean allowPlainAuth = providerSettings.getAllowPlainAuth();
-        boolean requireTls = providerSettings.getRequireTls();
+        boolean allowPlainAuth = false;//never! // providerSettings.getAllowPlainAuth();
+        boolean requireTls = true;// providerSettings.getRequireTls(); //always!
         boolean doDnsSrv = providerSettings.getDoDnsSrv();
-        boolean tlsCertVerify = providerSettings.getTlsCertVerify();
+       // boolean tlsCertVerify = providerSettings.getTlsCertVerify();
 
-        boolean useSASL = true;//!allowPlainAuth;
+       // boolean useSASL = true;//!allowPlainAuth;
         boolean useTor = providerSettings.getUseTor();
         String domain = providerSettings.getDomain();
 
         mPriority = providerSettings.getXmppResourcePrio();
         int serverPort = providerSettings.getPort();
-
         String server = providerSettings.getServer();
         if ("".equals(server))
             server = null;
@@ -1425,7 +1442,6 @@ public class XmppConnection extends ImConnection {
         }*/
 
         debug(TAG, "TLS required? " + requireTls);
-        debug(TAG, "cert verification? " + tlsCertVerify);
 
         if (useTor) {
             setProxy(TorProxyInfo.PROXY_TYPE, TorProxyInfo.PROXY_HOST,
@@ -1505,7 +1521,9 @@ public class XmppConnection extends ImConnection {
             SASLAuthentication.unsupportSASLMechanism( GTalkOAuth2.NAME);
             */
 
-        SASLAuthentication.unBlacklistSASLMechanism("PLAIN");
+        if (allowPlainAuth)
+            SASLAuthentication.unBlacklistSASLMechanism("PLAIN");
+
         SASLAuthentication.unBlacklistSASLMechanism("DIGEST-MD5");
 
         if (mMemTrust == null)
@@ -1551,29 +1569,27 @@ public class XmppConnection extends ImConnection {
             // Enable TLS1.2 and TLS1.1 on supported versions of android
             // http://stackoverflow.com/questions/16531807/android-client-server-on-tls-v1-2
 
-           //mConfig.setEnabledProtocols(new String[] { "TLSv1.2", "TLSv1.1", "TLSv1" });
+            mConfig.setEnabledSSLProtocols(new String[] { "TLSv1.2", "TLSv1.1", "TLSv1" });
             sslContext.getDefaultSSLParameters().setProtocols(new String[] { "TLSv1.2", "TLSv1.1", "TLSv1" });
 
         }
 
         if (currentapiVersion >= android.os.Build.VERSION_CODES.ICE_CREAM_SANDWICH){
             mConfig.setEnabledSSLCiphers(XMPPCertPins.SSL_IDEAL_CIPHER_SUITES);
-
         }
 
         mConfig.setCustomSSLContext(sslContext);
         mConfig.setSecurityMode(ConnectionConfiguration.SecurityMode.required);
-
         mConfig.setHostnameVerifier(
                 mMemTrust.wrapHostnameVerifier(new org.apache.http.conn.ssl.StrictHostnameVerifier()));
+
 
         mConfig.setSendPresence(true);
 
         XMPPTCPConnection.setUseStreamManagementDefault(true);
 
-        //mConfig.setRosterLoadedAtLogin(true);
-
         mConnection = new XMPPTCPConnection(mConfig.build());
+
 
         //debug(TAG,"is secure connection? " + mConnection.isSecureConnection());
         //debug(TAG,"is using TLS? " + mConnection.isUsingTLS());
@@ -1744,24 +1760,9 @@ public class XmppConnection extends ImConnection {
 
         mConnection.addConnectionListener(connectionListener);
         mStreamHandler = new XmppStreamHandler(mConnection, connectionListener);
+        Exception xmppConnectException = null;
+        AbstractXMPPConnection conn = mConnection.connect();
 
-        for (int i = 0; i < 3; i++)
-        {
-            try
-            {
-                mConnection.connect();
-                return true;
-            }
-            catch (Exception uhe)
-            {
-                //sometimes DNS fails.. let's wait and try again a few times
-                try { Thread.sleep(500);} catch (Exception e){}
-
-            }
-
-        }
-
-        return false;
     }
 
     private void handleMessage (org.jivesoftware.smack.packet.Message smackMessage)
@@ -2321,6 +2322,7 @@ public class XmppConnection extends ImConnection {
             if (mConnection != null) {
 
                 mRoster = Roster.getInstanceFor(mConnection);
+                mRoster.setRosterLoadedAtLogin(true);
 
                 for (RosterEntry rEntry : mRoster.getEntries()) {
                     String address = rEntry.getUser();
@@ -2858,12 +2860,12 @@ public class XmppConnection extends ImConnection {
         execute(new Runnable() {
             @Override
             public void run() {
-                if (mState == SUSPENDED || mState == SUSPENDING) {
+               // if (mState == SUSPENDED || mState == SUSPENDING) {
                     debug(TAG, "network type changed");
                     mNeedReconnect = false;
                     setState(LOGGING_IN, null);
                     reconnect();
-                }
+                //}
             }
         });
 
@@ -3283,9 +3285,9 @@ public class XmppConnection extends ImConnection {
     public boolean registerAccount (Imps.ProviderSettings.QueryMap providerSettings, String username, String password, Map<String,String> params) throws Exception
     {
 
-        boolean success = initConnection(providerSettings, username);
+        initConnection(providerSettings, username);
 
-        if (success && mConnection.isConnected()) {
+        if (mConnection.isConnected() && mConnection.isSecureConnection()) {
             org.jivesoftware.smackx.iqregister.AccountManager aMgr = org.jivesoftware.smackx.iqregister.AccountManager.getInstance(mConnection);
 
             if (aMgr.supportsAccountCreation()) {
@@ -3305,30 +3307,26 @@ public class XmppConnection extends ImConnection {
         if (presence == null || presence.getFrom() == null) //our presence isn't really valid
             return null;
 
-        String from = presence.getFrom();
-        
         if (presence.getType() == org.jivesoftware.smack.packet.Presence.Type.error)
         {            
             if (mRoster == null)
                 return null;
 
-            if (from == null)
+            if (presence.getFrom() == null)
                 return null;
             
-            presence = mRoster.getPresence(from);
+            presence = mRoster.getPresence(presence.getFrom());
         }
         
-        if (TextUtils.isEmpty(from))
-            return null;
-        
-        XmppAddress xaddress = new XmppAddress(from);
-
-        if (mUser.getAddress().getBareAddress().equals(xaddress.getBareAddress())) //ignore presence from yourself
+        if (TextUtils.isEmpty(presence.getFrom()))
             return null;
 
-        String status = presence.getStatus();
+        if (presence.getFrom().startsWith(mUser.getAddress().getBareAddress())) //ignore presence from yourself
+            return null;
 
-        Presence p = new Presence(parsePresence(presence), status, null, null,
+        XmppAddress xaddress = new XmppAddress(presence.getFrom());
+
+        Presence p = new Presence(parsePresence(presence), presence.getStatus(), null, null,
                 Presence.CLIENT_TYPE_DEFAULT);
 
         //this is only persisted in memory
@@ -3397,6 +3395,11 @@ public class XmppConnection extends ImConnection {
                 reqSubscribed.setTo(contact.getAddress().getBareAddress());
                 sendPacket(reqSubscribed);
 
+                org.jivesoftware.smack.packet.Presence reqSubscribe = new org.jivesoftware.smack.packet.Presence(
+                        org.jivesoftware.smack.packet.Presence.Type.subscribe);
+                reqSubscribe.setTo(contact.getAddress().getBareAddress());
+                sendPacket(reqSubscribe);
+
                 mContactListManager.getSubscriptionRequestListener().onSubScriptionRequest(contact, mProviderId, mAccountId);
 
                 contact = mContactListManager.getContact(xaddress.getBareAddress());
@@ -3411,7 +3414,7 @@ public class XmppConnection extends ImConnection {
         }
         else if (presence.getType() == org.jivesoftware.smack.packet.Presence.Type.subscribed) {
 
-            debug(TAG, "got subscribed confirmation request: " + presence.getFrom());
+            debug(TAG, "got subscribed confirmation: " + presence.getFrom());
             try
             {
                 if (contact == null) {
@@ -3421,6 +3424,7 @@ public class XmppConnection extends ImConnection {
 
            //     mContactListManager.doAddContactToListAsync(contact,getContactListManager().getDefaultContactList());
                 mContactListManager.getSubscriptionRequestListener().onSubscriptionApproved(contact, mProviderId, mAccountId);
+
             }
             catch (Exception e)
             {
@@ -3471,7 +3475,7 @@ public class XmppConnection extends ImConnection {
             {
                 //if offline, let's check for another online presence
                 presence = mRoster.getPresence(presence.getFrom());
-                p = new Presence(parsePresence(presence), status, null, null,
+                p = new Presence(parsePresence(presence), presence.getStatus(), null, null,
                         Presence.CLIENT_TYPE_DEFAULT);
 
                 if (p.getStatus() == Imps.Presence.AVAILABLE) {
@@ -3518,10 +3522,9 @@ public class XmppConnection extends ImConnection {
     {
         mTimerPresence = new Timer();
 
-        mTimerPresence.scheduleAtFixedRate(new TimerTask() {
+        mTimerPresence.schedule(new TimerTask() {
 
             public void run() {
-
 
                 if (qPresence.size() > 0)
                 {
@@ -3547,16 +3550,17 @@ public class XmppConnection extends ImConnection {
 
                     }
                     
-                    //Log.d(TAG,"XMPP processed presence q=" + alUpdate.size());                    
+                    loadVCardsAsync();
+
+                    //Log.d(TAG,"XMPP processed presence q=" + alUpdate.size());
                     mContactListManager.notifyContactsPresenceUpdated(alUpdate.toArray(new Contact[alUpdate.size()]));
 
-                    loadVCardsAsync();
 
                 }
                 
              }
 
-          }, 1000, 5000);
+          }, 1000, 1000);
     }
     
     Timer mTimerPackets = null;

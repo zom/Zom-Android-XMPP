@@ -100,16 +100,10 @@ interface IChatSession {
     IOtrChatSession getDefaultOtrChatSession();
 
     /**
-    * Get OTR Session Manager
-    */
-    IOtrChatSession getOtrChatSession(int idx);
+    *  notify presence updated
+    * */
+    void presenceChanged (int newPresence);
 
-    /**
-        * Get OTR Session Manager
-        */
-    int getOtrChatSessionCount();
-
-    
      /**
     * set class for handling incoming data transfers
     */

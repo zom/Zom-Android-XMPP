@@ -220,8 +220,8 @@ public class ConversationView {
     private static final int VIEW_TYPE_INVITATION = 2;
     private static final int VIEW_TYPE_SUBSCRIPTION = 3;
 
-    private static final long SHOW_TIME_STAMP_INTERVAL = 30 * 1000; // 15 seconds
-    private static final long SHOW_DELIVERY_INTERVAL = 5 * 1000; // 5 seconds
+//    private static final long SHOW_TIME_STAMP_INTERVAL = 30 * 1000; // 15 seconds
+    private static final long SHOW_DELIVERY_INTERVAL = 10 * 1000; // 5 seconds
     private static final long SHOW_MEDIA_DELIVERY_INTERVAL = 120 * 1000; // 2 minutes
     private static final long DEFAULT_QUERY_INTERVAL = 2000;
     private static final long FAST_QUERY_INTERVAL = 200;
@@ -360,13 +360,13 @@ public class ConversationView {
                 if (otrChatSession != null)
                 {
 
-                    if (otrEnabled) {
+                    if (otrEnabled && (otrChatSession.getChatStatus() != SessionStatus.ENCRYPTED.ordinal())) {
 
                         otrChatSession.startChatEncryption();
                         mIsStartingOtr = true;
 
                     }
-                    else
+                    else if ((!otrEnabled) && otrChatSession.getChatStatus() == SessionStatus.ENCRYPTED.ordinal())
                     {
                         otrChatSession.stopChatEncryption();
 
@@ -619,6 +619,10 @@ public class ConversationView {
                     {
                         mPresenceStatus = c.getPresence().getStatus();
                         updatePresenceDisplay();
+                        try {
+                            mCurrentChatSession.presenceChanged(mPresenceStatus);
+                        }
+                        catch (RemoteException re){}
                     }
 
                     mHandler.post(mUpdateChatCallback);
@@ -1255,6 +1259,8 @@ public class ConversationView {
                 else
                     mRemoteNickname = name;
 
+            mRemoteNickname = mRemoteNickname.split("@")[0].split("\\.")[0];
+
         }
 
     }
@@ -1501,9 +1507,12 @@ public class ConversationView {
     public void showVerifyDialog() {
 
         Intent intent = new Intent(mContext, ContactDisplayActivity.class);
-        intent.putExtra("contact", mRemoteAddress);
+        intent.putExtra("nickname", mRemoteNickname);
+        intent.putExtra("address", mRemoteAddress);
         intent.putExtra("provider", mProviderId);
         intent.putExtra("account", mAccountId);
+        intent.putExtra("chat", mLastChatId);
+
         mContext.startActivity(intent);
 
     }
@@ -1808,7 +1817,7 @@ public class ConversationView {
             IOtrChatSession otrChatSession = null;
 
             try {
-                otrChatSession = mCurrentChatSession.getOtrChatSession(0);
+                otrChatSession = mCurrentChatSession.getDefaultOtrChatSession();
 
                 //check if the chat is otr or not
                 if (otrChatSession != null) {
@@ -2486,6 +2495,27 @@ public class ConversationView {
                 deliveryState = DeliveryState.DELIVERED;
             }
 
+
+            if (!mExpectingDelivery && isDelivered) {
+                mExpectingDelivery = true;
+            } else if (cursor.getPosition() == cursor.getCount() - 1) {
+                /*
+                // if showTimeStamp is false for the latest message, then set a timer to query the
+                // cursor again in a minute, so we can update the last message timestamp if no new
+                // message is received
+                if (Log.isLoggable(ImApp.LOG_TAG, Log.DEBUG)) {
+                    log("delta = " + delta + ", showTs=" + showTimeStamp);
+                }
+                *//*
+                if (!showDelivery) {
+                    scheduleRequery(SHOW_DELIVERY_INTERVAL);
+                } else if (!showTimeStamp) {
+                    scheduleRequery(SHOW_TIME_STAMP_INTERVAL);
+                } else {
+                    cancelRequery();
+                }*/
+            }
+
             EncryptionState encState = EncryptionState.NONE;
             if (messageType == Imps.MessageType.INCOMING_ENCRYPTED)
             {
@@ -2531,29 +2561,6 @@ public class ConversationView {
                 messageView.bindPresenceMessage(viewHolder, nickname, messageType, date, isGroupChat(), false);
             }
 
-           // updateWarningView();
-
-
-            if (!mExpectingDelivery && isDelivered) {
-
-                mExpectingDelivery = true;
-            } else if (cursor.getPosition() == cursor.getCount() - 1) {
-                /*
-                // if showTimeStamp is false for the latest message, then set a timer to query the
-                // cursor again in a minute, so we can update the last message timestamp if no new
-                // message is received
-                if (Log.isLoggable(ImApp.LOG_TAG, Log.DEBUG)) {
-                    log("delta = " + delta + ", showTs=" + showTimeStamp);
-                }
-                *//*
-                if (!showDelivery) {
-                    scheduleRequery(SHOW_DELIVERY_INTERVAL);
-                } else if (!showTimeStamp) {
-                    scheduleRequery(SHOW_TIME_STAMP_INTERVAL);
-                } else {
-                    cancelRequery();
-                }*/
-            }
         }
 
         public void onScrollStateChanged(AbsListView view, int scrollState) {

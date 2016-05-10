@@ -114,11 +114,11 @@ public class ConversationListItem extends FrameLayout {
 
         if (nickname == null)
         {
-            nickname = address.split("@")[0];
+            nickname = address.split("@")[0].split("\\.")[0];
         }
-        else if (nickname.indexOf('@')!=-1)
+        else
         {
-            nickname = nickname.split("@")[0];
+            nickname = nickname.split("@")[0].split("\\.")[0];
         }
 
         if (Imps.Contacts.TYPE_GROUP == contactType) {
@@ -328,7 +328,7 @@ public class ConversationListItem extends FrameLayout {
 
             if (chatSession != null)
             {
-                IOtrChatSession otrChatSession = chatSession.getOtrChatSession(0);
+                IOtrChatSession otrChatSession = chatSession.getDefaultOtrChatSession();
                 if (otrChatSession != null)
                 {
                     SessionStatus chatStatus = SessionStatus.values()[otrChatSession.getChatStatus()];

@@ -31,7 +31,7 @@ import java.io.IOException;
 
 import im.zom.messenger.R;
 
-public class GroupDisplayActivity extends Activity {
+public class GroupDisplayActivity extends BaseActivity {
 
     private String mName = null;
     private String mAddress = null;

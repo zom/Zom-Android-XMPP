@@ -257,33 +257,31 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
         mStatusBarNotifier = new StatusBarNotifier(this);
         mServiceHandler = new ServiceHandler();
 
-        //mSettingsMonitor = new SettingsMonitor();
-
-        /*
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(ConnectivityManager.ACTION_BACKGROUND_DATA_SETTING_CHANGED);
-        registerReceiver(mSettingsMonitor, intentFilter);
-        */
-
-      //  setBackgroundData(ImApp.getApplication().isNetworkAvailableAndConnected());
-
         mPluginHelper = ImPluginHelper.getInstance(this);
         mPluginHelper.loadAvailablePlugins();
 
         // Have the heartbeat start autoLogin, unless onStart turns this off
         mNeedCheckAutoLogin = true;
 
-       // ((ImApp)getApplication()).startImServiceIfNeed();
-
         HeartbeatService.startBeating(getApplicationContext());
 
-        startForeground(notifyId, getForegroundNotification());
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+
+        if (settings.getBoolean("pref_foreground_enable",true))
+            startForeground(notifyId, getForegroundNotification());
+
     }
     
     private void connectToCacheWord ()
     {
         if (mCacheWord == null) {
             mCacheWord = new CacheWordHandler(this, (ICacheWordSubscriber) this);
+
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+
+          //  if (!settings.contains(ImApp.PREFERENCE_KEY_TEMP_PASS))
+            //    mCacheWord.setNotification(getForegroundNotification());
+
             mCacheWord.connectToService();
         }
 
@@ -915,6 +913,8 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
         //this method does nothing!
        // Log.d(TAG,"OTR session status changed: " + sessionID.getRemoteUserId());
+
+
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -930,6 +930,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
     
     @Override
     public void onCacheWordLocked() {
+
         //do nothing here?
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 
@@ -942,27 +943,38 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
                 Log.d(ImApp.LOG_TAG, "couldn't open cacheword with temp password", e);
             }
         }
+        else if (tempKey != null)
+        {
+            openEncryptedStores(tempKey, true);
+
+            ((ImApp)getApplication()).initAccountInfo();
+
+            // Check and login accounts if network is ready, otherwise it's checked
+            // when the network becomes available.
+            if (mNeedCheckAutoLogin && mNetworkState != NetworkConnectivityListener.State.NOT_CONNECTED) {
+                mNeedCheckAutoLogin = !autoLogin();;
+            }
+        }
 
     }
+
+    private byte[] tempKey = null;
 
     @Override
     public void onCacheWordOpened() {
 
         mCacheWord.setTimeout(0);
 
-       byte[] encryptionKey = mCacheWord.getEncryptionKey();
-       openEncryptedStores(encryptionKey, true);
+       tempKey = mCacheWord.getEncryptionKey();
+       openEncryptedStores(tempKey, true);
 
         ((ImApp)getApplication()).initAccountInfo();
-
 
         // Check and login accounts if network is ready, otherwise it's checked
         // when the network becomes available.
         if (mNeedCheckAutoLogin && mNetworkState != NetworkConnectivityListener.State.NOT_CONNECTED) {
             mNeedCheckAutoLogin = !autoLogin();;
-
         }
-
 
     }
 

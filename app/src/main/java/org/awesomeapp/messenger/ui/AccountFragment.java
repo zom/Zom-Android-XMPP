@@ -296,7 +296,9 @@ public class AccountFragment extends Fragment {
             mCropImageView = new CropImageView(getActivity());// (CropImageView)view.findViewById(R.id.CropImageView);
             mCropImageView.setAspectRatio(1, 1);
             mCropImageView.setFixedAspectRatio(true);
-            mCropImageView.setGuidelines(1);
+            mCropImageView.setCropShape(CropImageView.CropShape.OVAL);
+
+            //  mCropImageView.setGuidelines(1);
 
             try {
                 Bitmap bmpThumbnail = SecureMediaStore.getThumbnailFile(getActivity(), imageUri, 512);
@@ -490,6 +492,10 @@ public class AccountFragment extends Fragment {
 
         helper.signIn(getAccountPassword(mProviderId), mProviderId, mAccountId,true);
 
+        //keep signed in please!
+        ContentValues values = new ContentValues();
+        values.put(Imps.AccountColumns.KEEP_SIGNED_IN, 1);
+        getActivity().getContentResolver().update(ContentUris.withAppendedId(Imps.Account.CONTENT_URI, mAccountId), values, null, null);
     }
 
     void signOut() {

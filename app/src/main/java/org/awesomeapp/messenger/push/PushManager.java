@@ -18,6 +18,7 @@ import org.awesomeapp.messenger.push.model.PersistedDevice;
 import org.awesomeapp.messenger.push.model.PersistedPushToken;
 import org.awesomeapp.messenger.push.model.PushDatabase;
 import org.awesomeapp.messenger.util.AbortableCountDownLatch;
+import org.awesomeapp.messenger.util.Debug;
 import org.chatsecure.pushsecure.PushSecureClient;
 import org.chatsecure.pushsecure.response.Account;
 import org.chatsecure.pushsecure.response.Device;
@@ -118,7 +119,9 @@ public class PushManager {
 
      //   if (!assertAuthenticated()) return;
 
-        Timber.d("createWhitelistTokenExchangeTlv recipient %s issuer %s", recipientIdentifier, issuerIdentifier);
+        if (Debug.DEBUG_ENABLED)
+            Timber.d("createWhitelistTokenExchangeTlv recipient %s issuer %s", recipientIdentifier, issuerIdentifier);
+
         // Note that an outgoing Whitelist token must have the host identifier as it's "recipient"
         final Cursor persistedTokens = getPersistedTokenCursor(issuerIdentifier, recipientIdentifier, false);
 
@@ -135,7 +138,8 @@ public class PushManager {
             return;
         } else if (persistedTokens != null) persistedTokens.close();
 
-        Timber.d("Got no token for recipient %s issuer %s. Creating new", recipientIdentifier, issuerIdentifier);
+        if (Debug.DEBUG_ENABLED)
+            Timber.d("Got no token for recipient %s issuer %s. Creating new", recipientIdentifier, issuerIdentifier);
 
         createReceivingWhitelistTokenForPeer(issuerIdentifier, recipientIdentifier, new PushSecureClient.RequestCallback<PersistedPushToken>() {
             @Override
@@ -227,7 +231,8 @@ public class PushManager {
                         new PushSecureClient.RequestCallback<Account>() {
                             @Override
                             public void onSuccess(@NonNull Account response) {
-                                Timber.d("Got Account");
+                                if (Debug.DEBUG_ENABLED)
+                                    Timber.d("Got Account");
                                 account[0] = response;
                                 client.setAccount(response);
                                 setPersistedAccount(response, password, providerUrl);
@@ -236,7 +241,8 @@ public class PushManager {
 
                             @Override
                             public void onFailure(@NonNull Throwable throwable) {
-                                Timber.e("Failed to get Account", throwable);
+                                if (Debug.DEBUG_ENABLED)
+                                    Timber.e("Failed to get Account", throwable);
                                 taskThrowable = throwable;
                                 preRequisiteLatch.abort();
                             }
@@ -265,7 +271,8 @@ public class PushManager {
                     // (1) ChatSecure-Push Account registration
                     // (2) GCM registration.
                     preRequisiteLatch.await();
-                    Timber.d("Latch - Got GCM and CSP");
+                    if (Debug.DEBUG_ENABLED)
+                        Timber.d("Latch - Got GCM and CSP");
 
                     final AbortableCountDownLatch deviceRegistrationLatch = new AbortableCountDownLatch(1);
 
@@ -364,8 +371,10 @@ public class PushManager {
                 tokenValues.put(PushDatabase.Tokens.CREATED_DATE, PushDatabase.DATE_FORMATTER.format(new Date()));
 
                 Uri persistedTokenUri = context.getContentResolver().insert(PushDatabase.Tokens.CONTENT_URI, tokenValues);
-                Timber.d("Inserted token %s for recipient %s issuer %s. Uri %s", response.token, recipientIdentifier, issuerIdentifier, persistedTokenUri);
+                if (Debug.DEBUG_ENABLED)
+                    Timber.d("Inserted token %s for recipient %s issuer %s. Uri %s", response.token, recipientIdentifier, issuerIdentifier, persistedTokenUri);
                 logAllTokens();
+
                 String persistedTokenId = persistedTokenUri.getLastPathSegment();
                 Cursor persistedTokenCursor = context.getContentResolver().query(Uri.withAppendedPath(PushDatabase.Tokens.CONTENT_URI, persistedTokenId), null, null, null, null);
                 if (persistedTokenCursor != null && persistedTokenCursor.moveToFirst()) {
@@ -409,7 +418,8 @@ public class PushManager {
             tokenValues.put(PushDatabase.Tokens.CREATED_DATE, PushDatabase.DATE_FORMATTER.format(new Date()));
             try {
                 Uri uri = context.getContentResolver().insert(PushDatabase.Tokens.CONTENT_URI, tokenValues);
-                Timber.d("Inserted token %s for recipient %s issuer %s. Uri %s", tlv.tokens[idx], recipientIdentifier, issuerIdentifier, uri);
+                if (Debug.DEBUG_ENABLED)
+                    Timber.d("Inserted token %s for recipient %s issuer %s. Uri %s", tlv.tokens[idx], recipientIdentifier, issuerIdentifier, uri);
                 logAllTokens();
             } catch (SQLiteConstraintException e) {
                 // This token is already stored, ignore.
@@ -435,7 +445,8 @@ public class PushManager {
                                            @NonNull final String pushSenderIdentifier,
                                            @NonNull final PushSecureClient.RequestCallback<PushToken> callback) {
 
-        Timber.d("Lookup push token issued by %s received by %s", pushRecipientIdentifier, pushSenderIdentifier);
+        if (Debug.DEBUG_ENABLED)
+            Timber.d("Lookup push token issued by %s received by %s", pushRecipientIdentifier, pushSenderIdentifier);
         Cursor persistedTokens = getPersistedTokenCursor(pushRecipientIdentifier, pushSenderIdentifier, true);
         if (persistedTokens != null && persistedTokens.getCount() > 0) {
             callback.onSuccess(new PersistedPushToken(persistedTokens));
@@ -464,7 +475,8 @@ public class PushManager {
 
         boolean response = false;
 
-        Timber.d("Lookup push token issued by %s received by %s", pushRecipientIdentifier, pushSenderIdentifier);
+        if (Debug.DEBUG_ENABLED)
+            Timber.d("Lookup push token issued by %s received by %s", pushRecipientIdentifier, pushSenderIdentifier);
         Cursor persistedTokens = getPersistedTokenCursor(pushRecipientIdentifier, pushSenderIdentifier, true);
         response = (persistedTokens != null && persistedTokens.getCount() > 0);
 
@@ -489,7 +501,8 @@ public class PushManager {
                 new String[]{String.valueOf(tokenLocalId)});
         if (result != 1) Timber.e("Failed to mark token %d as issued", tokenLocalId);
         else {
-            Timber.d("Marked token %d issued", tokenLocalId);
+            if (Debug.DEBUG_ENABLED)
+                Timber.d("Marked token %d issued", tokenLocalId);
             logAllTokens();
         }
     }
@@ -598,7 +611,8 @@ public class PushManager {
 
       //  if (!assertAuthenticated()) return;
 
-        Timber.d("Send push to %s from %s", recipientIdentifier, issuerIdentifier);
+        if (Debug.DEBUG_ENABLED)
+            Timber.d("Send push to %s from %s", recipientIdentifier, issuerIdentifier);
         getPersistedWhitelistToken(recipientIdentifier, issuerIdentifier, new PushSecureClient.RequestCallback<PushToken>() {
             @Override
             public void onSuccess(@NonNull PushToken response) {
@@ -644,7 +658,8 @@ public class PushManager {
                 where,
                 whereArgs,
                 PushDatabase.Tokens.CREATED_DATE + " DESC");  // Most recent tokens first
-        Timber.d("Query token for recipient %s issuer %s isued %b. result: %d", recipientIdentifier, issuerIdentifier, issuedFilter, (result != null ? result.getCount() : 0));
+        if (Debug.DEBUG_ENABLED)
+            Timber.d("Query token for recipient %s issuer %s isued %b. result: %d", recipientIdentifier, issuerIdentifier, issuedFilter, (result != null ? result.getCount() : 0));
         if (result != null) result.moveToFirst();
         return result;
     }
@@ -783,7 +798,8 @@ public class PushManager {
     private boolean assertAuthenticated() {
         boolean authenticated = state == State.AUTHENTICATED;
         if (!authenticated) {
-            Timber.e("Not authenticated. Cannot request whitelist token. Did you await the result of #authenticateAccount()");
+            if (Debug.DEBUG_ENABLED)
+                Timber.w("Not authenticated. Cannot request whitelist token. Did you await the result of #authenticateAccount()");
         }
         return authenticated;
     }
@@ -832,32 +848,35 @@ public class PushManager {
 
         if (nonIssuedTokens != null) nonIssuedTokens.close();
 
-        Timber.d(log.toString());
+        if (Debug.DEBUG_ENABLED)
+            Timber.d(log.toString());
     }
 
     private void logAllTokens() {
 
-        StringBuilder log = new StringBuilder("All Whitelist Tokens:\nId\tRecipient\tIssuer\tIssued\tToken\n");
+        if (Debug.DEBUG_ENABLED) {
+            StringBuilder log = new StringBuilder("All Whitelist Tokens:\nId\tRecipient\tIssuer\tIssued\tToken\n");
 
-        Cursor allTokens = context.getContentResolver().query(PushDatabase.Tokens.CONTENT_URI, null, null, null, PushDatabase.Tokens.CREATED_DATE + " DESC");
+            Cursor allTokens = context.getContentResolver().query(PushDatabase.Tokens.CONTENT_URI, null, null, null, PushDatabase.Tokens.CREATED_DATE + " DESC");
 
-        if (allTokens != null && allTokens.moveToFirst()) {
-            do {
-                log.append(allTokens.getInt(allTokens.getColumnIndex(PushDatabase.Tokens._ID)));
-                log.append('\t');
-                log.append(allTokens.getString(allTokens.getColumnIndex(PushDatabase.Tokens.RECIPIENT)));
-                log.append('\t');
-                log.append(allTokens.getString(allTokens.getColumnIndex(PushDatabase.Tokens.ISSUER)));
-                log.append('\t');
-                log.append(allTokens.getInt(allTokens.getColumnIndex(PushDatabase.Tokens.ISSUED)));
-                log.append('\t');
-                log.append(allTokens.getString(allTokens.getColumnIndex(PushDatabase.Tokens.TOKEN)));
-                log.append('\n');
+            if (allTokens != null && allTokens.moveToFirst()) {
+                do {
+                    log.append(allTokens.getInt(allTokens.getColumnIndex(PushDatabase.Tokens._ID)));
+                    log.append('\t');
+                    log.append(allTokens.getString(allTokens.getColumnIndex(PushDatabase.Tokens.RECIPIENT)));
+                    log.append('\t');
+                    log.append(allTokens.getString(allTokens.getColumnIndex(PushDatabase.Tokens.ISSUER)));
+                    log.append('\t');
+                    log.append(allTokens.getInt(allTokens.getColumnIndex(PushDatabase.Tokens.ISSUED)));
+                    log.append('\t');
+                    log.append(allTokens.getString(allTokens.getColumnIndex(PushDatabase.Tokens.TOKEN)));
+                    log.append('\n');
 
-            } while (allTokens.moveToNext());
+                } while (allTokens.moveToNext());
+            }
+            if (allTokens != null) allTokens.close();
+            Timber.d(log.toString());
         }
-        if (allTokens != null) allTokens.close();
-        Timber.d(log.toString());
     }
 
     /**

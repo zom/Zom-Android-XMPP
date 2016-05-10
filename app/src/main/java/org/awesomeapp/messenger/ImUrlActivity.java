@@ -653,7 +653,7 @@ public class ImUrlActivity extends Activity {
 
             if (mSendText != null)
                 session.sendMessage(mSendText,false);
-            else if (mSendUri != null && session.getOtrChatSession(0) != null)
+            else if (mSendUri != null && session.getDefaultOtrChatSession() != null)
             {
 
                 try {

@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import im.zom.messenger.R;
 import info.guardianproject.panic.PanicResponder;
 
-public class PanicSetupActivity extends AppCompatActivity {
+public class PanicSetupActivity extends BaseActivity {
 
     private final static int REQUEST_CHOOSE_CONTACT = 9782;
 

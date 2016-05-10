@@ -78,7 +78,7 @@ import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.util.SystemServices;
 import org.ironrabbit.type.CustomTypefaceManager;
 
-public class ConversationDetailActivity extends AppCompatActivity {
+public class ConversationDetailActivity extends BaseActivity {
 
     private long mChatId = -1;
     private String mAddress = null;
@@ -112,6 +112,7 @@ public class ConversationDetailActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
        // getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
         setContentView(R.layout.awesome_activity_detail);
 

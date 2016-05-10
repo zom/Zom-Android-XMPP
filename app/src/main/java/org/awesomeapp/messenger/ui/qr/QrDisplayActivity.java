@@ -14,6 +14,7 @@ import android.widget.LinearLayout.LayoutParams;
 import com.google.zxing.Result;
 
 import org.awesomeapp.messenger.ImApp;
+import org.awesomeapp.messenger.ui.BaseActivity;
 import org.awesomeapp.messenger.ui.onboarding.OnboardingManager;
 
 import java.util.ArrayList;
@@ -31,7 +32,7 @@ import static android.widget.LinearLayout.HORIZONTAL;
 import static android.widget.LinearLayout.VERTICAL;
 
 @SuppressWarnings("deprecation")
-public class QrDisplayActivity extends AppCompatActivity {
+public class QrDisplayActivity extends BaseActivity {
 
 	private static String TAG = QrDisplayActivity.class.getPackage().getName();
 

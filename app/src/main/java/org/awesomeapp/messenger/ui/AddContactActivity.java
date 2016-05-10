@@ -69,7 +69,7 @@ import java.util.Map;
 import im.zom.messenger.R;
 
 
-public class AddContactActivity extends AppCompatActivity {
+public class AddContactActivity extends BaseActivity {
     private static final String TAG = "AddContactActivity";
 
     private static final String[] CONTACT_LIST_PROJECTION = { Imps.ContactList._ID,

@@ -110,8 +110,8 @@ public class ImApp extends Application implements ICacheWordSubscriber {
     public static final int SMALL_AVATAR_WIDTH = 48;
     public static final int SMALL_AVATAR_HEIGHT = 48;
 
-    public static final int DEFAULT_AVATAR_WIDTH = 256;
-    public static final int DEFAULT_AVATAR_HEIGHT = 256;
+    public static final int DEFAULT_AVATAR_WIDTH = 196;
+    public static final int DEFAULT_AVATAR_HEIGHT = 196;
 
     public static final String HOCKEY_APP_ID = "3cd4c5ff8b666e25466d3b8b66f31766";
 
@@ -157,8 +157,6 @@ public class ImApp extends Application implements ICacheWordSubscriber {
     boolean mSupportPushReceive = false;
 
     private CacheWordHandler mCacheWord;
-
-    public static boolean mUsingCacheword = true;
 
     public static Executor sThreadPoolExecutor = null;
 
@@ -234,7 +232,7 @@ public class ImApp extends Application implements ICacheWordSubscriber {
         if (sThreadPoolExecutor == null) {
             int corePoolSize = 20;
             int maximumPoolSize = 40;
-            int keepAliveTime = 20;
+            int keepAliveTime = 60;
             BlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<Runnable>(maximumPoolSize);
             sThreadPoolExecutor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, TimeUnit.SECONDS, workQueue);
         }
@@ -1027,8 +1025,8 @@ public class ImApp extends Application implements ICacheWordSubscriber {
         // unused
     }
 
-    @Override
     public void onCacheWordOpened() {
+
         new Thread(new Runnable() {
             @Override
             public void run() {

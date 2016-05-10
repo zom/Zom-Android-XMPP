@@ -48,6 +48,7 @@ import org.awesomeapp.messenger.Preferences;
 import org.awesomeapp.messenger.crypto.OtrAndroidKeyManagerImpl;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.tasks.AddContactAsyncTask;
+import org.awesomeapp.messenger.ui.BaseActivity;
 import org.awesomeapp.messenger.ui.legacy.DatabaseUtils;
 import org.awesomeapp.messenger.ui.legacy.SignInHelper;
 import org.awesomeapp.messenger.ui.legacy.SimpleAlertHandler;
@@ -69,7 +70,7 @@ import im.zom.messenger.R;
 import org.awesomeapp.messenger.util.Languages;
 import org.ironrabbit.type.CustomTypefaceManager;
 
-public class OnboardingActivity extends ThemeableActivity {
+public class OnboardingActivity extends BaseActivity {
 
     private ViewFlipper mViewFlipper;
     private EditText mEditUsername;
@@ -719,7 +720,8 @@ public class OnboardingActivity extends ThemeableActivity {
                 mCropImageView = new CropImageView(OnboardingActivity.this);// (CropImageView)view.findViewById(R.id.CropImageView);
                 mCropImageView.setAspectRatio(1, 1);
                 mCropImageView.setFixedAspectRatio(true);
-                mCropImageView.setGuidelines(1);
+                mCropImageView.setCropShape(CropImageView.CropShape.OVAL);
+              //  mCropImageView.setGuidelines(1);
 
                 try {
                     Bitmap bmpThumbnail = SecureMediaStore.getThumbnailFile(OnboardingActivity.this, imageUri, 512);
@@ -871,7 +873,7 @@ public class OnboardingActivity extends ThemeableActivity {
         return isCamera ? getCaptureImageOutputUri() : data.getData();
     }
 
-    private final static int MY_PERMISSIONS_REQUEST_CAMERA = 707070;
+    private final static int MY_PERMISSIONS_REQUEST_CAMERA = 1;
 
     void startAvatarTaker() {
         int permissionCheck = ContextCompat.checkSelfPermission(this,

@@ -14,8 +14,9 @@ import android.os.RemoteException;
 import android.widget.EditText;
 
 import org.awesomeapp.messenger.ImApp;
+import org.awesomeapp.messenger.ui.BaseActivity;
 
-public class SmpResponseActivity extends Activity {
+public class SmpResponseActivity extends BaseActivity {
 
     private EditText mInputSMP;
     private String mSessionId;
