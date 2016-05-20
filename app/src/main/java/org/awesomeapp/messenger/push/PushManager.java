@@ -872,6 +872,9 @@ public class PushManager {
                     log.append(allTokens.getInt(allTokens.getColumnIndex(PushDatabase.Tokens.ISSUED)));
                     log.append('\t');
                     log.append(allTokens.getString(allTokens.getColumnIndex(PushDatabase.Tokens.TOKEN)));
+                    log.append('\t');
+                    log.append(allTokens.getString(allTokens.getColumnIndex(PushDatabase.Tokens.SERVER_ID)));
+                    log.append('\t');
                     log.append('\n');
 
                 } while (allTokens.moveToNext());
