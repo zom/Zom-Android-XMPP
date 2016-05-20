@@ -24,6 +24,7 @@ import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -75,8 +76,10 @@ public class OnboardingActivity extends BaseActivity {
     private ViewFlipper mViewFlipper;
     private EditText mEditUsername;
     private View mSetupProgress;
-    private View mSetupButton;
+    //private View mSetupButton;
     private ImageView mImageAvatar;
+
+    private MenuItem mItemSkip = null;
 
     private InstantAutoCompleteTextView mSpinnerDomains;
 
@@ -137,15 +140,6 @@ public class OnboardingActivity extends BaseActivity {
 
         ImageView imageLogo = (ImageView)viewSplash.findViewById(R.id.imageLogo);
         imageLogo.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setAnimLeft();
-                showOnboarding();
-            }
-        });
-
-        View btnStartOnboarding = viewSplash.findViewById(R.id.buttonStartOnboarding);
-        btnStartOnboarding.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 setAnimLeft();
@@ -309,18 +303,6 @@ public class OnboardingActivity extends BaseActivity {
 
         });
 
-        mSetupButton = viewCreate.findViewById(R.id.btnRegister);
-        mSetupButton.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-
-                showInviteScreen();
-
-            }
-
-        });
-
         View btnSignIn = viewLogin.findViewById(R.id.btnSignIn);
         btnSignIn.setOnClickListener(new OnClickListener() {
 
@@ -354,8 +336,18 @@ public class OnboardingActivity extends BaseActivity {
         Animation animOut = AnimationUtils.loadAnimation(OnboardingActivity.this, R.anim.push_right_out);
         mViewFlipper.setInAnimation(animIn);
         mViewFlipper.setOutAnimation(animOut);
-    }    
-    
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        getMenuInflater().inflate(R.menu.menu_onboarding, menu);
+
+        mItemSkip = menu.findItem(R.id.menu_skip);
+
+        return true;
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
@@ -549,19 +541,23 @@ public class OnboardingActivity extends BaseActivity {
                 mFullUserName = account.username + '@' + account.domain;
                 mNewAccount = account;
 
-                StringBuffer sb = new StringBuffer();
-                sb.append(getString(R.string.account_congrats)).append("\n\n");
-                sb.append(getString(R.string.save_account_info));
-                TextView statusSuccess = (TextView)viewCreate.findViewById(R.id.statusSuccess);
-                statusSuccess.setText(sb.toString());
-
                 viewCreate.findViewById(R.id.viewProgress).setVisibility(View.GONE);
-
                 viewCreate.findViewById(R.id.viewSuccess).setVisibility(View.VISIBLE);
 
                 SignInHelper signInHelper = new SignInHelper(OnboardingActivity.this, mHandler);
                 signInHelper.activateAccount(account.providerId, account.accountId);
                 signInHelper.signIn(account.password, account.providerId, account.accountId, true);
+
+                mItemSkip.setVisible(true);
+                mItemSkip.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+
+                        showInviteScreen();
+                        mItemSkip.setVisible(false);
+                        return false;
+                    }
+                });
             }
             else
             {

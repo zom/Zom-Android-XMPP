@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal|center_vertical"
+    android:orientation="vertical"
+    android:id="@+id/viewProgress"
+    android:visibility="gone"
+    >
+
+    <ProgressBar
+        android:id="@+id/progressNewUser"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:textColor="?colorPrimary"
+
+        />
+
+
+    <ImageView
+        android:id="@+id/progressImage"
+        android:layout_width="196dp"
+        android:layout_height="196dp"
+        android:src="@drawable/olo_welcome"
+
+        />
+
+    <org.ironrabbit.type.CustomTypefaceTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="@string/registering_new_account_"
+        android:textSize="16dp"
+        android:textColor="?colorPrimary"
+        />
+
+
+</LinearLayout>

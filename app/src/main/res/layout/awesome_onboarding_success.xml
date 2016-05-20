@@ -1,0 +1,72 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:layout_gravity="center"
+    android:padding="24dp"
+    android:id="@+id/viewSuccess"
+    android:visibility="gone"
+    >
+
+
+    <org.ironrabbit.type.CustomTypefaceTextView
+        android:id="@+id/statusSuccess"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/account_congrats"
+        android:textColor="?colorPrimary"
+        android:layout_marginTop="10dp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:gravity="center"
+
+        />
+    <ImageView
+        android:layout_width="128dp"
+        android:layout_height="128dp"
+        android:src="@drawable/onboarding_congrats"
+        />
+
+    <org.ironrabbit.type.CustomTypefaceTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/account_congrats_details"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:gravity="center"
+
+        />
+    <ImageView
+        android:layout_width="196dp"
+        android:layout_height="96dp"
+        android:src="@drawable/zomme"
+        />
+
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:layout_width="96dp"
+        android:layout_height="96dp"
+        android:src="@drawable/onboarding_avatar"
+        android:id="@+id/imageAvatar"
+        android:layout_margin="12dp"
+        />
+    <org.ironrabbit.type.CustomTypefaceTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/select_avatar"
+        android:textSize="16dp"
+        />
+
+
+<!--
+    <org.ironrabbit.type.CustomTypefaceButton android:id="@+id/btnRegister"
+        android:text="@string/lock_screen_skip"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:layout_width="match_parent"
+        android:layout_gravity="bottom"
+        android:background="@drawable/ab_transparent_chatsecure"
+        style="@android:style/Widget.Button"
+
+        />-->
+</LinearLayout>
