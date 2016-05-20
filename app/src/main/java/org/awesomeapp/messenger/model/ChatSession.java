@@ -142,6 +142,10 @@ public class ChatSession {
 
             } else if (otrStatus == SessionStatus.FINISHED) {
 
+                if (OtrChatManager.getInstance().canDoKnockPushMessage(sId)) {
+                    // ChatSecure-Push: If the remote peer is offline, send them a push
+                    OtrChatManager.getInstance().sendKnockPushMessage(sId);
+                }
                 // ChatSecure-Push : If no session is available when sending peer message,
                 // attempt to send a "Knock" push message to the peer asking them to come online
                 //cm.sendKnockPushMessage(sId);
