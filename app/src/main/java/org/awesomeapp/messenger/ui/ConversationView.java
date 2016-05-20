@@ -366,7 +366,8 @@ public class ConversationView {
                         mIsStartingOtr = true;
 
                     }
-                    else if ((!otrEnabled) && otrChatSession.getChatStatus() == SessionStatus.ENCRYPTED.ordinal())
+                   // else if ((!otrEnabled) && otrChatSession.getChatStatus() == SessionStatus.ENCRYPTED.ordinal())
+                    else
                     {
                         otrChatSession.stopChatEncryption();
 
@@ -1469,9 +1470,7 @@ public class ConversationView {
         if (getChatSession() != null) {
             try {
 
-                if (doDelete)
-                    setOTRState(false);
-
+                setOTRState(false);
                 updateWarningView();
                 getChatSession().leave();
 
