@@ -95,6 +95,8 @@ public class PushManager {
 
         client = new PushSecureClient(providerUrl);
 
+        logAllTokens();
+
     }
 
     /**
