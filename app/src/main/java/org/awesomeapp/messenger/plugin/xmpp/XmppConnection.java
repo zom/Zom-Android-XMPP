@@ -57,6 +57,7 @@ import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 import org.jivesoftware.smack.util.DNSUtil;
 import org.jivesoftware.smack.util.dns.HostAddress;
+import org.jivesoftware.smack.util.stringencoder.Base64;
 import org.jivesoftware.smackx.address.provider.MultipleAddressesProvider;
 import org.jivesoftware.smackx.bytestreams.socks5.provider.BytestreamsProvider;
 import org.jivesoftware.smackx.chatstates.packet.ChatStateExtension;
@@ -108,6 +109,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
@@ -509,8 +511,10 @@ public class XmppConnection extends ImConnection {
         
         public void reconnectAll ()
         {
-            for (MultiUserChat muc : mMUCs.values())
+            Enumeration<MultiUserChat> eMuc = mMUCs.elements();
+            while (eMuc.hasMoreElements())
             {
+                MultiUserChat muc = eMuc.nextElement();
                 if (!muc.isJoined())
                 {
                     try {
