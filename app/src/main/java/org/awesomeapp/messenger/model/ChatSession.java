@@ -146,24 +146,8 @@ public class ChatSession {
                     // ChatSecure-Push: If the remote peer is offline, send them a push
                     OtrChatManager.getInstance().sendKnockPushMessage(sId);
                 }
-                // ChatSecure-Push : If no session is available when sending peer message,
-                // attempt to send a "Knock" push message to the peer asking them to come online
-                //cm.sendKnockPushMessage(sId);
-                message.setType(Imps.MessageType.POSTPONED);
-                //  onSendMessageError(message, new ImErrorInfo(ImErrorInfo.INVALID_SESSION_CONTEXT,"error - session finished"));
-                return message.getType();
+
             }
-            /**
-            else {
-
-                // ChatSecure-Push : If no session is available when sending peer message,
-                // attempt to send a "Knock" push message to the peer asking them to come online
-                cm.sendKnockPushMessage(sId);
-
-                //not encrypted, send to all
-                message.setTo(new XmppAddress(XmppAddress.stripResource(sId.getRemoteUserId())));
-                message.setType(Imps.MessageType.OUTGOING);
-            }*/
 
            // mHistoryMessages.add(message);
             boolean canSend = cm.transformSending(message);
