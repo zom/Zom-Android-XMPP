@@ -722,6 +722,7 @@ public class ConversationView {
 
         });
 
+
         mActivity.findViewById(R.id.btnAttachPicture).setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -753,10 +754,12 @@ public class ConversationView {
 
             @Override
             public void onClick(View v) {
-               showStickers();
+                showStickers();
             }
 
         });
+
+
 
         mMicButton.setOnClickListener(new View.OnClickListener() {
 
@@ -1063,6 +1066,21 @@ public class ConversationView {
         //mComposeMessage.setText("");
 
         updateWarningView();
+
+        if (isGroupChat())
+        {
+            mActivity.findViewById(R.id.btnAttachPicture).setEnabled(false);
+            mActivity.findViewById(R.id.btnTakePicture).setEnabled(false);
+            mActivity.findViewById(R.id.btnAttachFile).setEnabled(false);
+            mMicButton.setEnabled(false);;
+        }
+        else
+        {
+            mActivity.findViewById(R.id.btnAttachPicture).setEnabled(true);
+            mActivity.findViewById(R.id.btnTakePicture).setEnabled(true);
+            mActivity.findViewById(R.id.btnAttachFile).setEnabled(true);
+            mMicButton.setEnabled(true);
+        }
     }
 
     int mContactType = -1;
