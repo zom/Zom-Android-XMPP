@@ -32,7 +32,6 @@
   <string name="delete_account">删除帐户</string>
   <string name="add_account_action">添加帐户</string>
   <string name="choose_photos">从照片库中选择</string>
-  <string name="save_account_info">，在“我”选项中你可以找到你的用户名和自动密码，随时可以使用。</string>
   <string name="choose_language">切换语言</string>
   <string name="welcome_to_zom">欢迎使用 zom</string>
   <string name="onboarding_generate">要创建一个新的帐户，需要添你的用户名。 我们会给你创建一个安全的密码。</string>
