@@ -400,7 +400,8 @@ public class LockScreenActivity extends BaseActivity implements ICacheWordSubscr
     private void checkCustomFont ()
     {
 
-        if (Preferences.getLanguage().equalsIgnoreCase("bo"))
+        if (Preferences.getLanguage() != null
+                && Preferences.getLanguage().equalsIgnoreCase("bo"))
         {
             CustomTypefaceManager.loadFromAssets(this);
 
