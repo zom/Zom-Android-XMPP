@@ -53,6 +53,7 @@ public class ChatSession {
     ChatSession(ImEntity participant, ChatSessionManager manager) {
         mParticipant = participant;
         mManager = manager;
+
    //     mHistoryMessages = new Vector<Message>();
     }
 
@@ -60,9 +61,10 @@ public class ChatSession {
         return mParticipant;
     }
 
+    /**
     public void setParticipant(ImEntity participant) {
         mParticipant = participant;
-    }
+    }*/
 
     /**
      * Adds a MessageListener so that it can be notified of any new message in
@@ -109,7 +111,7 @@ public class ChatSession {
             message.setTo(new XmppAddress(sId.getRemoteUserId()));
             message.setType(Imps.MessageType.OUTGOING);
 
-            boolean isOffline = ((Contact) mParticipant).getPresence().getStatus() == Presence.OFFLINE;
+            boolean isOffline = !((Contact) mParticipant).getPresence().isOnline();
 
             if (isOffline || otrStatus != SessionStatus.ENCRYPTED) {
 

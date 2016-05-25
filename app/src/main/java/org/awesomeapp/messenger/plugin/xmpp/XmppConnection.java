@@ -1276,7 +1276,7 @@ public class XmppConnection extends ImConnection {
     public void initConnection(XMPPTCPConnection connection, Contact user, int state) {
         mConnection = connection;
         mRoster = Roster.getInstanceFor(mConnection);
-        mRoster.setRosterLoadedAtLogin(true);
+        mRoster.setRosterLoadedAtLogin(false);
         mUser = user;
         setState(state, null);
     }
@@ -2005,7 +2005,7 @@ public class XmppConnection extends ImConnection {
         return session;
     }
 
-    ImEntity findOrCreateParticipant(String address, boolean isGroupChat) {
+    synchronized ImEntity findOrCreateParticipant(String address, boolean isGroupChat) {
         ImEntity participant = null;
 
         if (isGroupChat) {
@@ -2118,7 +2118,7 @@ public class XmppConnection extends ImConnection {
         @Override
         public ChatSession createChatSession(ImEntity participant, boolean isNewSession) {
 
-            requestPresenceRefresh(participant.getAddress().getAddress());
+          //  requestPresenceRefresh(participant.getAddress().getAddress());
             
             ChatSession session = super.createChatSession(participant,isNewSession);
 
@@ -2326,7 +2326,7 @@ public class XmppConnection extends ImConnection {
             if (mConnection != null) {
 
                 mRoster = Roster.getInstanceFor(mConnection);
-                mRoster.setRosterLoadedAtLogin(true);
+                mRoster.setRosterLoadedAtLogin(false);
 
                 for (RosterEntry rEntry : mRoster.getEntries()) {
                     String address = rEntry.getUser();
@@ -3544,12 +3544,13 @@ public class XmppConnection extends ImConnection {
                         if (contact != null)
                         {
                             alUpdate.add(contact);
+                            /**
                             ChatSession session = mSessionManager.findSession(contact.getAddress().getBareAddress());
                             if (session != null)
                             {
                                 session.setParticipant(contact); //we need to update the session participant
                             }
-
+                            */
                         }
 
                     }

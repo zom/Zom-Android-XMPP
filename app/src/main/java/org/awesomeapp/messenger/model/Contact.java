@@ -30,7 +30,6 @@ public class Contact extends ImEntity implements Parcelable {
     public Contact(Address address, String name) {
         mAddress = address;
         mName = name;
-
         mPresence = new Presence();
     }
 

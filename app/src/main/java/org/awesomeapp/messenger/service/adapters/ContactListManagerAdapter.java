@@ -17,6 +17,7 @@
 
 package org.awesomeapp.messenger.service.adapters;
 
+import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.service.IContactList;
 import org.awesomeapp.messenger.service.IContactListListener;
 import org.awesomeapp.messenger.service.ISubscriptionListener;
@@ -56,6 +57,7 @@ import android.net.Uri;
 import android.net.Uri.Builder;
 import android.os.RemoteCallbackList;
 import android.os.RemoteException;
+import android.util.Log;
 import android.widget.Toast;
 
 public class ContactListManagerAdapter extends
@@ -523,6 +525,32 @@ public class ContactListManagerAdapter extends
             // updateAvatarsContent(contacts);
             updatePresenceContent(contacts);
 
+            ChatSessionManagerAdapter chatSessionManager = (ChatSessionManagerAdapter) mConn
+                    .getChatSessionManager();
+
+            for (Contact contact : contacts)
+            {
+
+                ChatSessionAdapter session = (ChatSessionAdapter) chatSessionManager
+                        .getChatSession(contact.getAddress().getBareAddress());
+
+                if (session != null && (!session.isGroupChatSession()))
+                {
+                    session.presenceChanged(contact.getPresence().getStatus());
+
+                    if (contact.getPresence().isOnline()) {
+                        try {
+                            session.getDefaultOtrChatSession().startChatEncryption();
+                        }
+                        catch (Exception e)
+                        {
+                            Log.d(ImApp.LOG_TAG,"error starting otr session on status changed to online",e);
+                        }
+                    }
+                }
+
+            }
+
             broadcast(new ContactListBroadcaster() {
                 public void broadcast(IContactListListener listener) throws RemoteException {
                     listener.onContactsPresenceUpdate(contacts);
@@ -961,7 +989,7 @@ public class ContactListManagerAdapter extends
         ArrayList<String> clientTypeArray = new ArrayList<String>();
 
         for (Contact c : contacts) {
-            String username = mAdaptee.normalizeAddress(c.getAddress().getAddress());            
+            String username = mAdaptee.normalizeAddress(c.getAddress().getAddress());
             Presence p = c.getPresence();
             int status = convertPresenceStatus(p);
             String customStatus = p.getStatusText();
@@ -972,6 +1000,8 @@ public class ContactListManagerAdapter extends
             statusArray.add(String.valueOf(status));
             customStatusArray.add(customStatus);
             clientTypeArray.add(String.valueOf(clientType));
+
+
         }
 
         ContentValues values = new ContentValues();
