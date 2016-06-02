@@ -2831,7 +2831,8 @@ public class ConversationView {
 
                             if (isGroupChat())
                             {
-                                sendMessageAsync("/sticker:" + s.assetUri);
+                                sendStickerCode(s.assetUri);
+
                             }
                             else
                             {
@@ -2849,6 +2850,21 @@ public class ConversationView {
         }
 
 
+    }
+
+    //generate a :pack-sticker: code
+    private void sendStickerCode (Uri assetUri)
+    {
+        StringBuffer stickerCode = new StringBuffer();
+        stickerCode.append(":");
+
+        stickerCode.append(assetUri.getPathSegments().get(assetUri.getPathSegments().size()-2));
+        stickerCode.append("-");
+        stickerCode.append(assetUri.getLastPathSegment().split("\\.")[0]);
+
+        stickerCode.append(":");
+
+        sendMessageAsync(stickerCode.toString());
     }
 
 }
