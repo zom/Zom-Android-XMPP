@@ -148,6 +148,9 @@ public class ConversationDetailActivity extends BaseActivity {
 
         collapseToolbar();
 
+        getWindow().setSoftInputMode(
+                WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
+        );
 
     }
 

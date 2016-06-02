@@ -97,6 +97,8 @@ public class OnboardingActivity extends BaseActivity {
     private boolean mShowSplash = true;
     private ListPopupWindow mDomainList;
 
+    private FindServerTask mCurrentFindServerTask;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,8 +109,15 @@ public class OnboardingActivity extends BaseActivity {
 
         setContentView(R.layout.awesome_onboarding);
 
-        if (mShowSplash)
+        if (mShowSplash) {
             getSupportActionBar().hide();
+
+        }
+        else
+        {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeButtonEnabled(true);
+        }
 
         getSupportActionBar().setTitle("");
 
@@ -284,6 +293,9 @@ public class OnboardingActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
 
+                View viewEdit = findViewById(R.id.edtNameAdvanced);
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(viewEdit.getWindowToken(), 0);
                 startAdvancedSetup();
             }
         });
@@ -326,17 +338,6 @@ public class OnboardingActivity extends BaseActivity {
             
         });
 
-        View btnInviteSkip = viewInvite.findViewById(R.id.btnInviteSkip);
-        btnInviteSkip.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-
-                showMainScreen();
-
-            }
-
-        });
 
         View btnSignIn = viewLogin.findViewById(R.id.btnSignIn);
         btnSignIn.setOnClickListener(new OnClickListener() {
@@ -410,6 +411,9 @@ public class OnboardingActivity extends BaseActivity {
     {
         setAnimRight();
         getSupportActionBar().setTitle("");
+
+        if (mCurrentFindServerTask != null)
+            mCurrentFindServerTask.cancel(true);
 
         if (mViewFlipper.getCurrentView().getId()==R.id.flipViewMain)
         {
@@ -502,7 +506,11 @@ public class OnboardingActivity extends BaseActivity {
 
         showSetupProgress();
 
-        new FindServerTask ().execute(mRequestedUserName, jabberUserId, domain, password);
+        if (mCurrentFindServerTask != null)
+            mCurrentFindServerTask.cancel(true);
+
+        mCurrentFindServerTask = new FindServerTask ();
+        mCurrentFindServerTask.execute(mRequestedUserName, jabberUserId, domain, password);
 
     }
     
@@ -514,7 +522,20 @@ public class OnboardingActivity extends BaseActivity {
 
         String jabberUserId = mRequestedUserName.replaceAll(USERNAME_ONLY_ALPHANUM, "").toLowerCase();
 
-        new FindServerTask ().execute(mRequestedUserName,jabberUserId);
+        if (mCurrentFindServerTask != null)
+            mCurrentFindServerTask.cancel(true);
+
+        mCurrentFindServerTask = new FindServerTask ();
+        mCurrentFindServerTask.execute(mRequestedUserName,jabberUserId);
+    }
+
+    private void showSetupForm ()
+    {
+        View viewCreate = findViewById(R.id.flipViewCreateNew);
+        viewCreate.findViewById(R.id.viewProgress).setVisibility(View.GONE);
+        viewCreate.findViewById(R.id.viewCreate).setVisibility(View.VISIBLE);
+        viewCreate.findViewById(R.id.btnAdvanced).setVisibility(View.VISIBLE);
+
     }
 
     private void showSetupProgress ()
@@ -565,6 +586,20 @@ public class OnboardingActivity extends BaseActivity {
         }
 
         @Override
+        protected void onCancelled(OnboardingAccount onboardingAccount) {
+            super.onCancelled(onboardingAccount);
+
+            showSetupForm ();
+        }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+
+            showSetupForm ();
+        }
+
+        @Override
         protected void onPostExecute(OnboardingAccount account) {
 
             View viewCreate = findViewById(R.id.flipViewCreateNew);
@@ -587,7 +622,6 @@ public class OnboardingActivity extends BaseActivity {
                     public boolean onMenuItemClick(MenuItem item) {
 
                         showInviteScreen();
-                        mItemSkip.setVisible(false);
                         return false;
                     }
                 });
@@ -612,10 +646,23 @@ public class OnboardingActivity extends BaseActivity {
     private void showInviteScreen ()
     {
         mViewFlipper.setDisplayedChild(5);
-        getSupportActionBar().setTitle(R.string.invite_action);
 
+        getSupportActionBar().setTitle("");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        getSupportActionBar().setHomeButtonEnabled(false);
         TextView tv = (TextView)findViewById(R.id.statusInviteFriends);
         tv.setText(R.string.invite_friends);
+
+        mItemSkip.setVisible(true);
+        mItemSkip.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+
+                showMainScreen();
+                mItemSkip.setVisible(false);
+                return false;
+            }
+        });
     }
 
     private void doInviteSMS()

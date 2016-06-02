@@ -111,7 +111,7 @@
 
         <item name="actionModeStyle">@style/LStyled.ActionMode</item>
 
-        <item name="actionMenuTextColor">@android:color/black</item>
+        <item name="actionMenuTextColor">@android:color/white</item>
 
         <item name="windowActionModeOverlay">true</item>
 

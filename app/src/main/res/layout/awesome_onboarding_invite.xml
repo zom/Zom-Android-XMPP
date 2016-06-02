@@ -80,6 +80,7 @@ android:background="?colorPrimary"
         />
 
 </LinearLayout>
+    <!--
 <org.ironrabbit.type.CustomTypefaceButton
     android:id="@+id/btnInviteSkip"
     android:layout_width="wrap_content"
@@ -91,5 +92,5 @@ android:background="?colorPrimary"
 
     android:background="@android:color/transparent"
     android:textColor="@android:color/white"
-    />
+    />-->
 </LinearLayout>
