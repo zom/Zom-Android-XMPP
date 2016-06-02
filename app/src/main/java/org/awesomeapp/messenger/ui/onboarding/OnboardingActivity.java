@@ -21,6 +21,7 @@ import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.ListPopupWindow;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -33,6 +34,7 @@ import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -81,7 +83,7 @@ public class OnboardingActivity extends BaseActivity {
 
     private MenuItem mItemSkip = null;
 
-    private InstantAutoCompleteTextView mSpinnerDomains;
+    private EditText mSpinnerDomains;
 
     private String mRequestedUserName;
     private String mFullUserName;
@@ -93,6 +95,7 @@ public class OnboardingActivity extends BaseActivity {
     private static final String USERNAME_ONLY_ALPHANUM = "[^A-Za-z0-9]";
 
     private boolean mShowSplash = true;
+    private ListPopupWindow mDomainList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,11 +121,34 @@ public class OnboardingActivity extends BaseActivity {
         mViewFlipper = (ViewFlipper) findViewById(R.id.viewFlipper1);
 
         mEditUsername = (EditText)viewCreate.findViewById(R.id.edtNewName);
-        mSpinnerDomains = (InstantAutoCompleteTextView)viewAdvanced.findViewById(R.id.spinnerDomains);
+        mSpinnerDomains = (EditText)viewAdvanced.findViewById(R.id.spinnerDomains);
+     //   ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+       //         android.R.layout.simple_dropdown_item_1line, OnboardingManager.getServers(this));
+        // mSpinnerDomains.setAdapter(adapter);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_dropdown_item_1line, OnboardingManager.getServers(this));
-        mSpinnerDomains.setAdapter(adapter);
+        mDomainList = new ListPopupWindow(this);
+        mDomainList.setAdapter(new ArrayAdapter(
+                this,
+                android.R.layout.simple_dropdown_item_1line, OnboardingManager.getServers(this)));
+        mDomainList.setAnchorView(mSpinnerDomains);
+        mDomainList.setWidth(300);
+        mDomainList.setHeight(400);
+
+        mDomainList.setModal(false);
+        mDomainList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                mSpinnerDomains.setText(OnboardingManager.getServers(OnboardingActivity.this)[position]);
+                mDomainList.dismiss();
+            }
+        });
+
+        mSpinnerDomains.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                mDomainList.show();
+            }
+        });
+
 
         mImageAvatar = (ImageView) viewCreate.findViewById(R.id.imageAvatar);
         mImageAvatar.setOnClickListener(new View.OnClickListener() {
@@ -363,34 +389,19 @@ public class OnboardingActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        // Back button should bring us to the previous screen, unless we're on the first screen
-        if (mViewFlipper.getCurrentView().getId()==R.id.flipViewMain)
-        {
-            super.onBackPressed();
-        } else {
-            showPrevious();
-        }
+
+        showPrevious();
     }
 
+    // Back button should bring us to the previous screen, unless we're on the first screen
     private void showPrevious()
     {
-        if (mViewFlipper.getCurrentView().getId()==R.id.flipView2)
+        setAnimRight();
+        getSupportActionBar().setTitle("");
+
+        if (mViewFlipper.getCurrentView().getId()==R.id.flipViewMain)
         {
-            setAnimRight();
-            showSplashScreen();
-        }
-        else if (mViewFlipper.getCurrentView().getId()==R.id.flipViewCreateNew)
-        {
-            setAnimRight();
-            mViewFlipper.showPrevious();
-            getSupportActionBar().setTitle("");
-        }
-        else if (mViewFlipper.getCurrentView().getId()==R.id.flipViewLogin)
-        {
-            if (mShowSplash)
-                showSplashScreen();
-            else
-                finish();
+            finish();
         }
         else if (mViewFlipper.getCurrentView().getId()==R.id.flipViewRegister)
         {
@@ -399,10 +410,19 @@ public class OnboardingActivity extends BaseActivity {
             else
                 finish();
         }
+        else if (mViewFlipper.getCurrentView().getId()==R.id.flipViewCreateNew)
+        {
+            showOnboarding();
+        }
+        else if (mViewFlipper.getCurrentView().getId()==R.id.flipViewLogin)
+        {
+            showOnboarding();
+        }
         else if (mViewFlipper.getCurrentView().getId()==R.id.flipViewAdvanced)
         {
-            setAnimRight();
-            showLoginScreen();
+
+            showOnboarding();
+
         }
     }
 
@@ -416,15 +436,16 @@ public class OnboardingActivity extends BaseActivity {
 
     private void showOnboarding ()
     {
-        mViewFlipper.showNext();
+
+        mViewFlipper.setDisplayedChild(1);
+
     }
 
 
     private void showSetupScreen ()
     {
-        
-        mViewFlipper.showNext();
 
+        mViewFlipper.setDisplayedChild(2);
         getSupportActionBar().show();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
@@ -461,7 +482,7 @@ public class OnboardingActivity extends BaseActivity {
 
         mEditUsername.setText(jabberUserId);
 
-        String domain = ((InstantAutoCompleteTextView)findViewById(R.id.spinnerDomains)).getText().toString();
+        String domain = ((EditText)findViewById(R.id.spinnerDomains)).getText().toString();
 
         String password = ((EditText)findViewById(R.id.edtNewPass)).getText().toString();
 
