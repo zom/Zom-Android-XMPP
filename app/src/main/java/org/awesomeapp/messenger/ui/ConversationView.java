@@ -1069,10 +1069,16 @@ public class ConversationView {
 
         if (isGroupChat())
         {
+            //disable unsupported features for now
             mActivity.findViewById(R.id.btnAttachPicture).setEnabled(false);
             mActivity.findViewById(R.id.btnTakePicture).setEnabled(false);
             mActivity.findViewById(R.id.btnAttachFile).setEnabled(false);
             mMicButton.setEnabled(false);;
+
+            mActivity.findViewById(R.id.btnAttachPicture).setAlpha(0.2f);
+            mActivity.findViewById(R.id.btnTakePicture).setAlpha(0.2f);
+            mActivity.findViewById(R.id.btnAttachFile).setAlpha(0.2f);
+            mMicButton.setAlpha(0.5f);
         }
         else
         {

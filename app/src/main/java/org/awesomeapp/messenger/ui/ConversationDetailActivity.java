@@ -176,8 +176,8 @@ public class ConversationDetailActivity extends BaseActivity {
 
         if (selColor != -1) {
             if (Build.VERSION.SDK_INT >= 21) {
-                getWindow().setNavigationBarColor(selColor);
-                getWindow().setStatusBarColor(selColor);
+               // getWindow().setNavigationBarColor(selColor);
+               // getWindow().setStatusBarColor(selColor);
             }
 
             mToolbar.setBackgroundColor(selColor);

@@ -41,4 +41,11 @@ public class CircleColorImageView extends ImageView {
 
         setBackgroundDrawable(circle);
     }
+
+    public void setColor (int circleColor)
+    {
+        Drawable circle = getContext().getResources().getDrawable(R.drawable.circle_tintable);
+        circle.setColorFilter(circleColor, PorterDuff.Mode.SRC_IN);
+        setBackgroundDrawable(circle);
+    }
 }

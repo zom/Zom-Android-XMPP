@@ -105,8 +105,11 @@ public class OnboardingActivity extends BaseActivity {
 
         checkCustomFont();
 
-        setContentView(R.layout.awesome_onboarding);        
-        getSupportActionBar().hide();
+        setContentView(R.layout.awesome_onboarding);
+
+        if (mShowSplash)
+            getSupportActionBar().hide();
+
         getSupportActionBar().setTitle("");
 
         mHandler = new SimpleAlertHandler(this);
@@ -131,7 +134,7 @@ public class OnboardingActivity extends BaseActivity {
                 this,
                 android.R.layout.simple_dropdown_item_1line, OnboardingManager.getServers(this)));
         mDomainList.setAnchorView(mSpinnerDomains);
-        mDomainList.setWidth(300);
+        mDomainList.setWidth(600);
         mDomainList.setHeight(400);
 
         mDomainList.setModal(false);
@@ -148,7 +151,13 @@ public class OnboardingActivity extends BaseActivity {
                 mDomainList.show();
             }
         });
-
+        mSpinnerDomains.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus)
+                    mDomainList.show();
+            }
+        });
 
         mImageAvatar = (ImageView) viewCreate.findViewById(R.id.imageAvatar);
         mImageAvatar.setOnClickListener(new View.OnClickListener() {
@@ -390,7 +399,10 @@ public class OnboardingActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
 
-        showPrevious();
+        if (mDomainList != null && mDomainList.isShowing())
+            mDomainList.dismiss();
+        else
+            showPrevious();
     }
 
     // Back button should bring us to the previous screen, unless we're on the first screen
