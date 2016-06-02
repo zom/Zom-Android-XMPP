@@ -110,6 +110,7 @@
         <item name="actionBarTheme">@style/AppBaseTheme.Toolbar</item>
 
         <item name="actionModeStyle">@style/LStyled.ActionMode</item>
+
         <item name="actionMenuTextColor">@android:color/white</item>
 
         <item name="windowActionModeOverlay">true</item>

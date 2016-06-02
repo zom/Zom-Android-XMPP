@@ -25,6 +25,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
+import android.net.Network;
 import android.net.NetworkInfo;
 import android.os.Handler;
 import android.os.Message;
@@ -44,8 +45,6 @@ public class NetworkConnectivityListener extends BroadcastReceiver {
     private static HashMap<Handler, Integer> mHandlers = new HashMap<Handler, Integer>();
     private State mState;
     private boolean mListening;
-    private String mReason;
-    private boolean mIsFailover;
 
     /** Network connectivity information */
     private NetworkInfo mNetworkInfo;
@@ -61,47 +60,21 @@ public class NetworkConnectivityListener extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
 
-        /*
-        if (!action.equals(ConnectivityManager.CONNECTIVITY_ACTION) || mListening == false) {
-            Log.w(TAG, "onReceived() called with " + mState.toString() + " and " + intent);
-            return;
-        }*/
+        ConnectivityManager manager = (ConnectivityManager) context
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
 
-        boolean noConnectivity = intent.getBooleanExtra(
-                ConnectivityManager.EXTRA_NO_CONNECTIVITY, false);
+        mState = State.NOT_CONNECTED;
 
-        if (noConnectivity)
+        NetworkInfo[] nInfos = manager.getAllNetworkInfo();
+        for (NetworkInfo nInfo : nInfos)
         {
-            mState = State.NOT_CONNECTED;
-        }
-        else
-        {
-            ConnectivityManager manager = (ConnectivityManager) context
-                    .getSystemService(Context.CONNECTIVITY_SERVICE);
-            // Getting from intent is deprecated - get from manager
-            mNetworkInfo = manager.getActiveNetworkInfo();
-         //   mOtherNetworkInfo = (NetworkInfo) intent
-           //         .getParcelableExtra(ConnectivityManager.EXTRA_OTHER_NETWORK_INFO);
-    
-            mReason = intent.getStringExtra(ConnectivityManager.EXTRA_REASON);
-            mIsFailover = intent.getBooleanExtra(ConnectivityManager.EXTRA_IS_FAILOVER, false);
-    
-            if (mNetworkInfo != null && mNetworkInfo.isConnected())
+            if (nInfo.isConnectedOrConnecting())
             {
-                    mState = State.CONNECTED;
-                
-            }
-            else {
-                mState = State.NOT_CONNECTED;
+                mNetworkInfo = nInfo;
+                mState = State.CONNECTED;
+                break;
             }
         }
-        
-        /*
-        Log.d(TAG, "onReceive(): mNetworkInfo="
-     utoConnect              + mNetworkInfo
-                   + " mOtherNetworkInfo = "
-                   + (mOtherNetworkInfo == null ? "[none]" : mOtherNetworkInfo + " noConn="
-                                                             + noConnectivity) + " mState=" + mState);*/
 
         if (mHandlers != null)
         {
@@ -160,8 +133,6 @@ public class NetworkConnectivityListener extends BroadcastReceiver {
             mContext = null;
             mNetworkInfo = null;
          //   mOtherNetworkInfo = null;
-            mIsFailover = false;
-            mReason = null;
             mListening = false;
         }
     }
@@ -224,7 +195,7 @@ public class NetworkConnectivityListener extends BroadcastReceiver {
      *         otherwise.
      */
     public boolean isFailover() {
-        return mIsFailover;
+        return mNetworkInfo.isFailover();
     }
 
     /**
@@ -235,7 +206,7 @@ public class NetworkConnectivityListener extends BroadcastReceiver {
      *         otherwise.
      */
     public String getReason() {
-        return mReason;
+        return mNetworkInfo.getReason();
     }
 
 }

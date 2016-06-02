@@ -148,6 +148,9 @@ public class ConversationDetailActivity extends BaseActivity {
 
         collapseToolbar();
 
+        getWindow().setSoftInputMode(
+                WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
+        );
 
     }
 
@@ -176,8 +179,8 @@ public class ConversationDetailActivity extends BaseActivity {
 
         if (selColor != -1) {
             if (Build.VERSION.SDK_INT >= 21) {
-                getWindow().setNavigationBarColor(selColor);
-                getWindow().setStatusBarColor(selColor);
+               // getWindow().setNavigationBarColor(selColor);
+               // getWindow().setStatusBarColor(selColor);
             }
 
             mToolbar.setBackgroundColor(selColor);

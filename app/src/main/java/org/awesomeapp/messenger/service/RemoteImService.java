@@ -682,7 +682,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
     boolean isNetworkAvailable ()
     {
-        return mNetworkState == NetworkConnectivityListener.State.CONNECTED;
+        return mNetworkState == State.CONNECTED;
     }
 
     void networkStateChanged(NetworkInfo networkInfo, NetworkConnectivityListener.State networkState) {
