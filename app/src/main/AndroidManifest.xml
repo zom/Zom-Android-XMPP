@@ -5,8 +5,8 @@
     android:installLocation="auto"
     android:sharedUserLabel="@string/perm_label"
     android:usesCleartextTraffic="false"
-    android:versionCode="1501906"
-    android:versionName="15.0.1-BETA-6">
+    android:versionCode="1501907"
+    android:versionName="15.0.1-BETA-7">
 
     <supports-screens
         android:anyDensity="true"
@@ -440,7 +440,7 @@
             android:exported="false"
             android:launchMode="singleTask"
             android:theme="@style/AppThemeNoAction"
-            android:windowSoftInputMode="adjustPan|stateHidden" />
+            android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name="org.awesomeapp.messenger.ui.ContactListActivity"
             android:exported="false" />

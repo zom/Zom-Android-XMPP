@@ -64,95 +64,10 @@ android:orientation="vertical"
         />
 </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center_horizontal|center_vertical"
-        android:orientation="vertical"
-        android:visibility="gone"
-        android:id="@+id/viewProgress"
-        >
+    <include layout="@layout/awesome_onboarding_progress"/>
 
-    <ProgressBar
-        android:id="@+id/progressNewUser"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:textColor="?colorPrimary"
+    <include layout="@layout/awesome_onboarding_success"/>
 
-        />
-        <org.ironrabbit.type.CustomTypefaceTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:text="@string/registering_new_account_"
-            android:textSize="16dp"
-            android:textColor="?colorPrimary"
-            />
-
-
-    <ImageView
-        android:id="@+id/progressImage"
-        android:layout_width="256dp"
-        android:layout_height="wrap_content"
-        android:src="@drawable/onboarding_congrats"
-
-        />
-
-
-
-</LinearLayout>
-
-
-    <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center_horizontal"
-        android:orientation="vertical"
-        android:id="@+id/viewSuccess"
-        android:visibility="gone"
-        >
-
-
-        <org.ironrabbit.type.CustomTypefaceTextView
-            android:id="@+id/statusSuccess"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="asdasdasdasdasdasd"
-            android:textColor="?colorPrimary"
-            android:layout_marginTop="40dp"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            />
-
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:layout_width="128dp"
-            android:layout_height="128dp"
-            android:src="@drawable/onboarding_avatar"
-            android:id="@+id/imageAvatar"
-            android:layout_margin="12dp"
-            />
-        <org.ironrabbit.type.CustomTypefaceTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/select_avatar"
-            android:textSize="16dp"
-            />
-
-
-
-        <org.ironrabbit.type.CustomTypefaceButton android:id="@+id/btnRegister"
-            android:text="@string/lock_screen_skip"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:layout_width="match_parent"
-            android:layout_gravity="bottom"
-            android:background="@drawable/ab_transparent_chatsecure"
-            style="@android:style/Widget.Button"
-
-            />
-    </LinearLayout>
 
     <org.ironrabbit.type.CustomTypefaceButton android:id="@+id/btnAdvanced"
         android:text="@string/advanced"

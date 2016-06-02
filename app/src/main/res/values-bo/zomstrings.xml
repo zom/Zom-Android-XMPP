@@ -32,7 +32,6 @@
   <string name="delete_account">ཁ་བྱང་གསུབ།</string>
   <string name="add_account_action">ཁ་བྱང་གསར་བཟོ་བྱོས།</string>
   <string name="choose_photos">པར་མཛོད་ནས་འདེམས།</string>
-  <string name="save_account_info">ཁྱེད་ཀྱིས་སོ་སོའི་མིང་ཐོ་དང་གསང་ཚིག་གཉིས་ག་དུས་ཡིན་ཡང་༼ང༽གདམ་གའི་ནང་རྙེད་ཐུབ།</string>
   <string name="choose_language">སྐད་ཡིག་བརྗེ་བསྒྱུར།</string>
   <string name="welcome_to_zom">འཛོམས་ནང་སླེབས་པར་དགའ་བསུ་ཞུ།</string>
   <string name="onboarding_generate">འཛོམས་ཀྱི་ཁ་བྱང་ཞིག་བཟོ་བར། སོ་སོའི་མིང་ཐོ་ནང་འཇུག་བྱོས་དང་། ང་ཚོས་ཁྱེད་ལ་གསང་ཚིག་བརྟན་པོ་ཞིག་བཟོ་ངེས།</string>

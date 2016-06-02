@@ -16,6 +16,7 @@ import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.ui.widgets.VisualizerView;
 import org.awesomeapp.messenger.util.HttpMediaStreamer;
 
@@ -201,21 +202,30 @@ public class AudioPlayer {
 
     private void setupVisualizerFxAndUI() {
 
-        // Create the Visualizer object and attach it to our media player.
-        mVisualizer = new Visualizer(mediaPlayer.getAudioSessionId());
-        mVisualizer.setCaptureSize(Visualizer.getCaptureSizeRange()[1]);
-        mVisualizer.setDataCaptureListener(
-                new Visualizer.OnDataCaptureListener() {
-                    public void onWaveFormDataCapture(Visualizer visualizer,
-                                                      byte[] bytes, int samplingRate) {
-                        mVisualizerView.updateVisualizer(bytes);
-                    }
+        try {
 
-                    public void onFftDataCapture(Visualizer visualizer,
-                                                 byte[] bytes, int samplingRate) {
-                    }
-                }, Visualizer.getMaxCaptureRate() / 2, true, false);
+            // Create the Visualizer object and attach it to our media player.
+            mVisualizer = new Visualizer(mediaPlayer.getAudioSessionId());
+            mVisualizer.setCaptureSize(Visualizer.getCaptureSizeRange()[1]);
+            mVisualizer.setDataCaptureListener(
+                    new Visualizer.OnDataCaptureListener() {
+                        public void onWaveFormDataCapture(Visualizer visualizer,
+                                                          byte[] bytes, int samplingRate) {
+                            mVisualizerView.updateVisualizer(bytes);
+                        }
+
+                        public void onFftDataCapture(Visualizer visualizer,
+                                                     byte[] bytes, int samplingRate) {
+                        }
+                    }, Visualizer.getMaxCaptureRate() / 2, true, false);
+
+        }
+        catch (RuntimeException re)
+        {
+            Log.w(ImApp.LOG_TAG, "unable to init audio player visualizaer",re);
+        }
     }
+
 
 
 }

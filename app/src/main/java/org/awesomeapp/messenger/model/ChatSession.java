@@ -53,6 +53,7 @@ public class ChatSession {
     ChatSession(ImEntity participant, ChatSessionManager manager) {
         mParticipant = participant;
         mManager = manager;
+
    //     mHistoryMessages = new Vector<Message>();
     }
 
@@ -60,9 +61,10 @@ public class ChatSession {
         return mParticipant;
     }
 
+    /**
     public void setParticipant(ImEntity participant) {
         mParticipant = participant;
-    }
+    }*/
 
     /**
      * Adds a MessageListener so that it can be notified of any new message in
@@ -109,11 +111,16 @@ public class ChatSession {
             message.setTo(new XmppAddress(sId.getRemoteUserId()));
             message.setType(Imps.MessageType.OUTGOING);
 
-            boolean isOffline = ((Contact) mParticipant).getPresence().getStatus() == Presence.OFFLINE;
+            boolean isOffline = !((Contact) mParticipant).getPresence().isOnline();
 
             if (isOffline || otrStatus != SessionStatus.ENCRYPTED) {
 
                 if (OtrChatManager.getInstance().canDoKnockPushMessage(sId)) {
+
+                    if (otrStatus == SessionStatus.ENCRYPTED)
+                    {
+                        cm.endSession(sId);
+                    }
 
                     // ChatSecure-Push: If the remote peer is offline, send them a push
                     OtrChatManager.getInstance().sendKnockPushMessage(sId);
@@ -142,24 +149,12 @@ public class ChatSession {
 
             } else if (otrStatus == SessionStatus.FINISHED) {
 
-                // ChatSecure-Push : If no session is available when sending peer message,
-                // attempt to send a "Knock" push message to the peer asking them to come online
-                //cm.sendKnockPushMessage(sId);
-                message.setType(Imps.MessageType.POSTPONED);
-                //  onSendMessageError(message, new ImErrorInfo(ImErrorInfo.INVALID_SESSION_CONTEXT,"error - session finished"));
-                return message.getType();
+                if (OtrChatManager.getInstance().canDoKnockPushMessage(sId)) {
+                    // ChatSecure-Push: If the remote peer is offline, send them a push
+                    OtrChatManager.getInstance().sendKnockPushMessage(sId);
+                }
+
             }
-            /**
-            else {
-
-                // ChatSecure-Push : If no session is available when sending peer message,
-                // attempt to send a "Knock" push message to the peer asking them to come online
-                cm.sendKnockPushMessage(sId);
-
-                //not encrypted, send to all
-                message.setTo(new XmppAddress(XmppAddress.stripResource(sId.getRemoteUserId())));
-                message.setType(Imps.MessageType.OUTGOING);
-            }*/
 
            // mHistoryMessages.add(message);
             boolean canSend = cm.transformSending(message);

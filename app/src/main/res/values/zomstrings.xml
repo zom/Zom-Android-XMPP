@@ -5,6 +5,7 @@
   <string name="create_id">Create a Zom ID</string>
   <string name="advanced">Advanced</string>
   <string name="account_congrats">Congratulations, you are ready to Zom!</string>
+  <string name="account_congrats_details">Your Zom ID has been created! You can find your password and account details on your profile page.</string>
   <string name="invite_friends">Invite your friends to Zom!</string>
   <string name="invite_sms">SMS</string> 
   <string name="invite_share">Share</string>
@@ -33,10 +34,9 @@
   <string name="delete_account">Delete Account</string>
   <string name="add_account_action">Add Account</string>
   <string name="choose_photos">Choose from Photos</string>
-  <string name="save_account_info">You can find your username and automatic password in the \"Me\" tab anytime you need it.</string>
   <string name="choose_language">Switch Language</string>
   <string name="welcome_to_zom">WELCOME TO ZOM</string>
-  <string name="onboarding_generate">To create a ZOM id, enter a username, and we will generate a secure password for you.</string>
+  <string name="onboarding_generate">Your Zom ID can be anything you want, and is how you will be known by others on Zom.</string>
   <string name="grant_perms">You must grant permission for Zom to user the camera</string>
 
   <string name="menu_refresh">Refresh Session</string>

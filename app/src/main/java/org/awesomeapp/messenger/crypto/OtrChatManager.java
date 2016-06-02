@@ -448,6 +448,8 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
 
                 // Ensure we have a ChatSecure-Push Whitelist Token available
                 // to send to this Session's participant when the first message is sent
+                /**
+                 * /// we don't use tokens yet since we don't receive pushes
                 mPushManager.createReceivingWhitelistTokenForPeer(
                         PushManager.stripJabberIdResource(sessionID.getLocalUserId()),
                         PushManager.stripJabberIdResource(sessionID.getRemoteUserId()),
@@ -466,6 +468,7 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
                                     Log.e(TAG, "Failed to prepare push whitelist token for " + sessionID.getRemoteUserId(), t);
                             }
                         });
+                 */
             }
 
 

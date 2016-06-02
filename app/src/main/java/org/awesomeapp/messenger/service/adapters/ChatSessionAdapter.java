@@ -206,10 +206,17 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
     public void presenceChanged (int newPresence)
     {
+
+        if (mChatSession.getParticipant() instanceof Contact)
+        {
+            ((Contact) mChatSession.getParticipant()).getPresence().setStatus(newPresence);
+        }
+
         if (newPresence == Presence.AVAILABLE)
         {
             sendPostponedMessages();
         }
+
     }
 
     private void init(ChatGroup group, boolean isNewSession) {
@@ -536,7 +543,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
     void onConvertToGroupChatSuccess(ChatGroup group) {
         Contact oldParticipant = (Contact) mChatSession.getParticipant();
         String oldAddress = getAddress();
-        mChatSession.setParticipant(group);
+    //    mChatSession.setParticipant(group);
         mChatSessionManager.updateChatSession(oldAddress, this);
 
         Uri oldChatUri = mChatURI;

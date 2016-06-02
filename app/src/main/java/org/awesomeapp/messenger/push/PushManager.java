@@ -95,6 +95,8 @@ public class PushManager {
 
         client = new PushSecureClient(providerUrl);
 
+        logAllTokens();
+
     }
 
     /**
@@ -467,8 +469,6 @@ public class PushManager {
      *                                the push message. This identifier will be used to query
      * @param pushSenderIdentifier    a String uniquely identifying the local user which the push message
      *                                should be sent on behalf of.
-     * @param callback                a callback which will receive the {@link PersistedPushToken}
-     *                                or a {@link NoSuchElementException}
      */
     public boolean hasPersistedWhitelistToken(@NonNull final String pushRecipientIdentifier,
                                            @NonNull final String pushSenderIdentifier) {
@@ -616,7 +616,8 @@ public class PushManager {
         getPersistedWhitelistToken(recipientIdentifier, issuerIdentifier, new PushSecureClient.RequestCallback<PushToken>() {
             @Override
             public void onSuccess(@NonNull PushToken response) {
-                sendPushMessageToToken(response.token, callback);
+                PersistedPushToken ppt = (PersistedPushToken)response;
+                sendPushMessageToToken(response.token, ppt.providerUrl, callback);
             }
 
             @Override
@@ -810,12 +811,12 @@ public class PushManager {
      * @param recipientWhitelistToken a raw ChatSecure-Push Whitelist Token string.
      * @param callback                a callback indicating success or failure
      */
-    private void sendPushMessageToToken(@NonNull String recipientWhitelistToken,
+    private void sendPushMessageToToken(@NonNull String recipientWhitelistToken,@NonNull String recipientProviderUrl,
                                         @NonNull PushSecureClient.RequestCallback<org.chatsecure.pushsecure.response.Message> callback) {
 
     //    if (!assertAuthenticated()) return;
-
-        client.sendMessage(recipientWhitelistToken, "" /* push payload */, callback);
+   //     client = new PushSecureClient(providerUrl);
+        client.sendMessage(recipientWhitelistToken, "" /* push payload */, recipientProviderUrl, callback);
     }
 
     // </editor-fold desc="Private API">
@@ -870,6 +871,9 @@ public class PushManager {
                     log.append(allTokens.getInt(allTokens.getColumnIndex(PushDatabase.Tokens.ISSUED)));
                     log.append('\t');
                     log.append(allTokens.getString(allTokens.getColumnIndex(PushDatabase.Tokens.TOKEN)));
+                    log.append('\t');
+                    log.append(allTokens.getString(allTokens.getColumnIndex(PushDatabase.Tokens.PROVIDER)));
+                    log.append('\t');
                     log.append('\n');
 
                 } while (allTokens.moveToNext());

@@ -96,26 +96,20 @@ public class ContactList extends ImEntity {
             }
         }
 
-        new Thread ()
+        Contact contact = getContact(address);
+
+        if (contact == null)
         {
-            
-            public void run ()
-            {
-                Contact contact = getContact(address);
-        
-                if (contact == null)
-                {
-                    contact = new Contact (new XmppAddress(address),address);
-                }
-        
-                try {
-                    mManager.addContactToListAsync(contact, ContactList.this);
-                } catch (ImException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-            }
-        }.start();
+            contact = new Contact (new XmppAddress(address),address);
+        }
+
+        try {
+            mManager.addContactToListAsync(contact, ContactList.this);
+        } catch (ImException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
     }
 
     /**
@@ -213,6 +207,7 @@ public class ContactList extends ImEntity {
     }
 
     protected void insertToCache(Contact contact) {
+
         mContactsCache.put(mManager.normalizeAddress(contact.getAddress().getAddress()), contact);
     }
 
