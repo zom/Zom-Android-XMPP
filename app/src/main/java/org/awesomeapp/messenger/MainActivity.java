@@ -321,25 +321,21 @@ public class MainActivity extends BaseActivity {
         if (intent != null)
         {
             Uri data = intent.getData();
+            String type = intent.getType();
+          if (data != null && Imps.Chats.CONTENT_ITEM_TYPE.equals(type)) {
 
-            if (data != null) {
-                String type = getContentResolver().getType(data);
-                if (Imps.Chats.CONTENT_ITEM_TYPE.equals(type)) {
+                long chatId = ContentUris.parseId(data);
 
-                    long chatId = ContentUris.parseId(data);
-
-                    Intent intentChat = new Intent(this, ConversationDetailActivity.class);
-                    intentChat.putExtra("id", chatId);
-                    startActivity(intentChat);
-                }
-                else if (Imps.Contacts.CONTENT_URI.equals(type))
-                {
-                    long providerId = intent.getLongExtra(ImServiceConstants.EXTRA_INTENT_PROVIDER_ID,mApp.getDefaultProviderId());
-                    long accountId = intent.getLongExtra(ImServiceConstants.EXTRA_INTENT_ACCOUNT_ID,mApp.getDefaultAccountId());
-                    String username = intent.getStringExtra(ImServiceConstants.EXTRA_INTENT_FROM_ADDRESS);
-                    startChat(providerId, accountId, username);
-                }
-
+                Intent intentChat = new Intent(this, ConversationDetailActivity.class);
+                intentChat.putExtra("id", chatId);
+                startActivity(intentChat);
+            }
+            else if (Imps.Contacts.CONTENT_ITEM_TYPE.equals(type))
+            {
+                long providerId = intent.getLongExtra(ImServiceConstants.EXTRA_INTENT_PROVIDER_ID,mApp.getDefaultProviderId());
+                long accountId = intent.getLongExtra(ImServiceConstants.EXTRA_INTENT_ACCOUNT_ID,mApp.getDefaultAccountId());
+                String username = intent.getStringExtra(ImServiceConstants.EXTRA_INTENT_FROM_ADDRESS);
+                startChat(providerId, accountId, username);
             }
             else if (intent.hasExtra("username"))
             {

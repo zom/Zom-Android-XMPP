@@ -90,7 +90,8 @@ public class StatusBarNotifier {
 
         String title = nickname;
         String snippet = mContext.getString(R.string.new_messages_notify) + ' ' + nickname;// + ": " + msg;
-        Intent intent = new Intent(Intent.ACTION_VIEW);
+        Intent intent = getDefaultIntent(accountId, providerId);//new Intent(Intent.ACTION_VIEW);
+        intent.setAction(Intent.ACTION_VIEW);
         intent.setDataAndType(ContentUris.withAppendedId(Imps.Chats.CONTENT_URI, chatId),Imps.Chats.CONTENT_ITEM_TYPE);
         intent.addCategory(ImApp.IMPS_CATEGORY);
         notify(username, title, snippet, msg, providerId, accountId, intent, lightWeightNotify, R.drawable.ic_discuss, avatar);
@@ -98,7 +99,7 @@ public class StatusBarNotifier {
 
     public void notifyError(String username, String error) {
 
-        Intent intent = new Intent(mContext, MainActivity.class);
+        Intent intent = getDefaultIntent(-1,-1);
         notify(username, error, error, error, -1, -1, intent, true, R.drawable.alerts_and_states_error);
     }
 
@@ -111,9 +112,7 @@ public class StatusBarNotifier {
         }
         String title = nickname;
         String message = mContext.getString(R.string.subscription_notify_text, nickname);
-        Intent intent = new Intent(ImServiceConstants.ACTION_MANAGE_SUBSCRIPTION,
-                ContentUris.withAppendedId(Imps.Contacts.CONTENT_URI, contactId));
-        intent.putExtra(ImServiceConstants.EXTRA_INTENT_PROVIDER_ID, providerId);
+        Intent intent = getDefaultIntent(accountId, providerId);
         intent.putExtra(ImServiceConstants.EXTRA_INTENT_FROM_ADDRESS, username);
         notify(username, title, message, message, providerId, accountId, intent, false, R.drawable.ic_people_white_24dp);
     }
@@ -126,14 +125,17 @@ public class StatusBarNotifier {
         }
         String title = contact.getName();
         String message = mContext.getString(R.string.invite_accepted);
-       Intent intent = new Intent(ImServiceConstants.ACTION_MANAGE_SUBSCRIPTION,
-                ContentUris.withAppendedId(Imps.Contacts.CONTENT_URI, -1));
-        intent.putExtra(ImServiceConstants.EXTRA_INTENT_PROVIDER_ID, providerId);
-        intent.putExtra(ImServiceConstants.EXTRA_INTENT_ACCOUNT_ID, accountId);
-        intent.putExtra(ImServiceConstants.EXTRA_INTENT_FROM_ADDRESS, contact.getAddress().getBareAddress());
+       //Intent intent = new Intent(ImServiceConstants.ACTION_MANAGE_SUBSCRIPTION,
+         //       ContentUris.withAppendedId(Imps.Contacts.CONTENT_URI, -1));
+        //intent.putExtra(ImServiceConstants.EXTRA_INTENT_PROVIDER_ID, providerId);
+        //intent.putExtra(ImServiceConstants.EXTRA_INTENT_ACCOUNT_ID, accountId);
+      //  Intent intent = getDefaultIntent(accountId, providerId);
 
-        //this should make it start a chat
-     //   intent.putExtra("username", contact.getAddress().getBareAddress());
+        Intent intent = getDefaultIntent(accountId, providerId);//new Intent(Intent.ACTION_VIEW);
+        intent.setAction(Intent.ACTION_VIEW);
+        intent.putExtra(ImServiceConstants.EXTRA_INTENT_FROM_ADDRESS, contact.getAddress().getBareAddress());
+        intent.setType(Imps.Contacts.CONTENT_ITEM_TYPE);
+        intent.addCategory(ImApp.IMPS_CATEGORY);
 
         notify(contact.getAddress().getBareAddress(), title, message, message, providerId, accountId, intent, false, R.drawable.ic_people_white_24dp);
     }
@@ -250,11 +252,23 @@ public class StatusBarNotifier {
         }
 
         mNotificationManager.notify(info.computeNotificationId(),
-                info.createNotification(tickerText, lightWeightNotify, iconSmall, iconLarge));
+                info.createNotification(tickerText, lightWeightNotify, iconSmall, iconLarge, intent));
+
 
 
 
     }
+
+    private Intent getDefaultIntent(long accountId, long providerId) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setType(Imps.Contacts.CONTENT_TYPE);
+        intent.setClass(mContext, MainActivity.class);
+        intent.putExtra(ImServiceConstants.EXTRA_INTENT_ACCOUNT_ID, accountId);
+        intent.putExtra(ImServiceConstants.EXTRA_INTENT_PROVIDER_ID, providerId);
+
+        return intent;
+    }
+
 
 
     private void setRinger(long providerId, NotificationCompat.Builder builder) {
@@ -329,11 +343,11 @@ public class StatusBarNotifier {
             return true;
         }
 
-        public Notification createNotification(String tickerText, boolean lightWeightNotify, int icon, Bitmap largeIcon) {
+        public Notification createNotification(String tickerText, boolean lightWeightNotify, int icon, Bitmap largeIcon, Intent intent) {
             NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext);
 
-            Intent intent = getDefaultIntent();
-
+         //   Intent intent = getDefaultIntent();
+/**
             if (lastItem.mIntent != null)
             {
                 intent.setAction(lastItem.mIntent.getAction());
@@ -344,7 +358,8 @@ public class StatusBarNotifier {
 
                 intent.setFlags(lastItem.mIntent.getFlags());
 
-            }
+            }*/
+
 
             builder
                 .setSmallIcon(icon)
@@ -366,15 +381,6 @@ public class StatusBarNotifier {
             return builder.build();
         }
 
-        private Intent getDefaultIntent() {
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setType(Imps.Contacts.CONTENT_TYPE);
-            intent.setClass(mContext, MainActivity.class);
-            intent.putExtra(ImServiceConstants.EXTRA_INTENT_ACCOUNT_ID, mAccountId);
-            intent.putExtra(ImServiceConstants.EXTRA_INTENT_PROVIDER_ID, mProviderId);
-
-            return intent;
-        }
 
         private Intent getMultipleNotificationIntent() {
             Intent intent = new Intent(Intent.ACTION_VIEW);
