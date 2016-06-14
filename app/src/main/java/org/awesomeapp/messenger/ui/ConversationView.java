@@ -49,8 +49,10 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.style.StyleSpan;
@@ -64,6 +66,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -83,6 +86,7 @@ import net.java.otr4j.session.SessionStatus;
 
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.Preferences;
+import org.awesomeapp.messenger.bho.DictionarySearch;
 import org.awesomeapp.messenger.crypto.IOtrChatSession;
 import org.awesomeapp.messenger.crypto.OtrAndroidKeyManagerImpl;
 import org.awesomeapp.messenger.model.Address;
@@ -90,6 +94,7 @@ import org.awesomeapp.messenger.model.Contact;
 import org.awesomeapp.messenger.model.ImConnection;
 import org.awesomeapp.messenger.model.ImErrorInfo;
 import org.awesomeapp.messenger.model.Presence;
+import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.provider.ImpsAddressUtils;
 import org.awesomeapp.messenger.service.IChatListener;
@@ -118,6 +123,8 @@ import org.awesomeapp.messenger.util.Debug;
 import org.awesomeapp.messenger.util.GiphyAPI;
 import org.awesomeapp.messenger.util.LogCleaner;
 import org.awesomeapp.messenger.util.SystemServices;
+import org.ironrabbit.type.CustomTypefaceManager;
+import org.ironrabbit.type.CustomTypefaceSpan;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -906,6 +913,8 @@ public class ConversationView {
                             }
                     }
 
+
+
                 }
 
                 return false;
@@ -938,10 +947,11 @@ public class ConversationView {
             public void onTextChanged(CharSequence s, int start, int before, int after) {
                 //log("TextWatcher: " + s);
                 userActionDetected();
+
             }
 
             public void afterTextChanged(Editable s) {
-
+                doWordSearch ();
 
             }
         });
@@ -968,6 +978,7 @@ public class ConversationView {
             }
         });
 
+        /**
         View btnApproveSubscription = mActivity.findViewById(R.id.btnApproveSubscription);
         btnApproveSubscription.setOnClickListener(new View.OnClickListener()
         {
@@ -975,9 +986,13 @@ public class ConversationView {
             @Override
             public void onClick(View v) {
 
-               // mNewChatActivity.approveSubscription(mProviderId, mRemoteAddress);
+                approveSubscription();
 
-                mHandler.postDelayed(new Runnable () { public void run () {bindChat(mLastChatId, null, null); } }, 2000);
+                mHandler.postDelayed(new Runnable () { public void run () {
+
+                    bindChat(mLastChatId, null, null);
+
+                } }, 1000);
 
 
             }
@@ -991,24 +1006,120 @@ public class ConversationView {
 
             public void onClick(View v) {
 
+                declineSubscription();
+
                 mHandler.postDelayed(new Runnable() {
                     public void run() {
-                        //    mNewChatActivity.declineSubscription(mProviderId, mRemoteAddress);
+                        bindChat(mLastChatId, null, null);
 
                     }
-                }, 500);
+                }, 1000);
 
 
             }
 
-        });
+        });**/
 
         mMessageAdapter = new ConversationRecyclerViewAdapter(mActivity, null);
         mHistory.setAdapter(mMessageAdapter);
 
     }
 
+    DictionarySearch ds = null;
+    PopupMenu mPopupWords = null;
+    SearchWordTask taskSearch = null;
 
+    private class SearchWordTask extends AsyncTask<String, Long, ArrayList<String>> {
+
+        private String mLastSearchTerm = null;
+
+        protected ArrayList<String> doInBackground(String... searchTerm) {
+
+            String[] searchTerms = searchTerm[0].split("་");
+
+            if (searchTerms.length > 0) {
+                mLastSearchTerm = searchTerms[searchTerms.length - 1];
+
+                ArrayList<String> result = ds.getMatchingWords(mLastSearchTerm);
+
+                return result;
+            }
+            else
+                return null;
+        }
+
+        protected void onProgressUpdate(Long... progress) {
+
+        }
+
+        protected void onPostExecute(ArrayList<String> result) {
+            if (result != null && result.size() > 0) {
+
+                if (mPopupWords == null) {
+
+                    mPopupWords = new PopupMenu(mActivity, mComposeMessage);
+
+                    mPopupWords.setOnMenuItemClickListener(new
+                           PopupMenu.OnMenuItemClickListener() {
+                               @Override
+                               public boolean onMenuItemClick(MenuItem item) {
+
+                                   String[] currentText = mComposeMessage.getText().toString().split("་");
+
+                                   currentText[currentText.length-1] = item.toString();
+
+                                   mComposeMessage.setText("");
+
+                                   for (int i = 0; i < currentText.length; i++)
+                                   {
+                                       mComposeMessage.append(currentText[i]);
+
+                                       if ((i+1)!=currentText.length)
+                                        mComposeMessage.append("་");
+                                   }
+
+                                   mComposeMessage.setSelection(mComposeMessage.getText().length());
+
+                                   return true;
+                               }
+                           });
+
+                }
+
+                mPopupWords.getMenu().clear();
+
+                for (String item : result) {
+                    if (!TextUtils.isEmpty(item)) {
+                        SpannableStringBuilder sb = new SpannableStringBuilder(item);
+                        sb.setSpan(new CustomTypefaceSpan("", mActivity), 0, item.length(), 0);
+                        mPopupWords.getMenu().addSubMenu(sb);
+
+                    }
+
+
+                }
+
+                mPopupWords.show();
+
+            }
+        }
+    }
+
+    private void doWordSearch ()
+    {
+
+        if (ds == null)
+            ds = new DictionarySearch(mActivity);
+
+        if (taskSearch == null || taskSearch.getStatus() == AsyncTask.Status.FINISHED)
+        {
+            taskSearch = new SearchWordTask();
+            taskSearch.execute(mComposeMessage.getText().toString());
+
+        }
+
+
+    }
 
     private boolean inViewInBounds(View view, int x, int y){
         Rect outRect = new Rect();
@@ -1108,7 +1219,7 @@ public class ConversationView {
             mSubscriptionStatus = c.getInt(SUBSCRIPTION_STATUS_COLUMN);
             if ((mSubscriptionType == Imps.Contacts.SUBSCRIPTION_TYPE_FROM)
                 && (mSubscriptionStatus == Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING)) {
-                bindSubscription(mProviderId, mRemoteAddress);
+              //  bindSubscription(mProviderId, mRemoteAddress);
             }
 
         }
@@ -1222,6 +1333,8 @@ public class ConversationView {
 
         mLastChatId = chatId;
 
+        setViewType(VIEW_TYPE_CHAT);
+
         Uri contactUri = ContentUris.withAppendedId(Imps.Contacts.CONTENT_URI, chatId);
         Cursor c = mActivity.getContentResolver().query(contactUri, CHAT_PROJECTION, null, null, null);
 
@@ -1320,6 +1433,7 @@ public class ConversationView {
     }
 
 
+    /**
     public void bindSubscription(long providerId, String from) {
         mProviderId = providerId;
 
@@ -1327,31 +1441,30 @@ public class ConversationView {
 
         setViewType(VIEW_TYPE_SUBSCRIPTION);
 
-        //TextView text = (TextView) mActivity.findViewById(R.id.txtSubscription);
-        //String displayableAddr = ImpsAddressUtils.getDisplayableAddress(from);
-        //text.setText(mContext.getString(R.string.subscription_prompt, displayableAddr));
+        TextView text = (TextView) mActivity.findViewById(R.id.txtSubscription);
+        String displayableAddr = ImpsAddressUtils.getDisplayableAddress(from);
+        text.setText(mContext.getString(R.string.subscription_prompt, displayableAddr));
     //.displayableAdd    mNewChatActivity.setTitle(mContext.getString(R.string.chat_with, displayableAddr));
 
         mApp.dismissChatNotification(providerId, from);
-    }
+    }*/
 
 
     private void setViewType(int type) {
         mViewType = type;
         if (type == VIEW_TYPE_CHAT) {
             mActivity.findViewById(R.id.invitationPanel).setVisibility(View.GONE);
-            mActivity.findViewById(R.id.subscription).setVisibility(View.GONE);
+       //     mActivity.findViewById(R.id.subscription).setVisibility(View.GONE);
             setChatViewEnabled(true);
         } else if (type == VIEW_TYPE_INVITATION) {
             //setChatViewEnabled(false);
-
-           // mActivity.findViewById(R.id.invitationPanel).setVisibility(View.VISIBLE);
+            mActivity.findViewById(R.id.invitationPanel).setVisibility(View.VISIBLE);
             mActivity.findViewById(R.id.btnAccept).requestFocus();
         } else if (type == VIEW_TYPE_SUBSCRIPTION) {
             //setChatViewEnabled(false);
-           // mActivity.findViewById(R.id.subscription).setVisibility(View.VISIBLE);
+         //   mActivity.findViewById(R.id.subscription).setVisibility(View.VISIBLE);
 
-            mActivity.findViewById(R.id.btnApproveSubscription).requestFocus();
+           // mActivity.findViewById(R.id.btnApproveSubscription).requestFocus();
         }
     }
 
@@ -1669,6 +1782,12 @@ public class ConversationView {
         String msg = mComposeMessage.getText().toString();
         //new SendMessageAsyncTask().execute(msg);
         sendMessageAsync(msg);
+
+        /**
+        if (ds != null)
+        {
+            ds.close();
+        }*/
     }
 
     void sendMessageAsync(final String msg) {
@@ -1860,7 +1979,7 @@ public class ConversationView {
                 message = "";
             }
             else if ((mSubscriptionType == Imps.Contacts.SUBSCRIPTION_TYPE_FROM)) {
-                bindSubscription(mProviderId, mRemoteAddress);
+              //  bindSubscription(mProviderId, mRemoteAddress);
                 visibility = View.VISIBLE;
 
             } else {
@@ -2866,5 +2985,35 @@ public class ConversationView {
 
         sendMessageAsync(stickerCode.toString());
     }
+
+    void approveSubscription() {
+
+        if (mConn != null)
+        {
+            try {
+                IContactListManager manager = mConn.getContactListManager();
+                manager.approveSubscription(new Contact(new XmppAddress(mRemoteAddress),mRemoteNickname));
+            } catch (RemoteException e) {
+
+                // mHandler.showServiceErrorAlert(e.getLocalizedMessage());
+                LogCleaner.error(ImApp.LOG_TAG, "approve sub error",e);
+            }
+        }
+    }
+
+    void declineSubscription() {
+
+        if (mConn != null)
+        {
+            try {
+                IContactListManager manager = mConn.getContactListManager();
+                manager.declineSubscription(new Contact(new XmppAddress(mRemoteAddress),mRemoteNickname));
+            } catch (RemoteException e) {
+                // mHandler.showServiceErrorAlert(e.getLocalizedMessage());
+                LogCleaner.error(ImApp.LOG_TAG, "decline sub error",e);
+            }
+        }
+    }
+
 
 }

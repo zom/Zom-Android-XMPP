@@ -1,13 +1,21 @@
     package org.awesomeapp.messenger.bho;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Environment;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 
 import java.io.File;
 import java.util.ArrayList;
 
-/**
+import im.zom.messenger.R;
+
+    /**
  * Created by n8fr8 on 6/2/16.
  */
 public class DictionarySearch {
@@ -27,11 +35,48 @@ public class DictionarySearch {
     private final static String DB_FOLDER_NAME = "monlam";
     private DictionaryAdapter database;
 
-    public DictionarySearch (Context context) {
+        private int MY_PERMISSIONS_REQUEST_FILE = 1;
+
+    public DictionarySearch (Activity context) {
+
+
+        int permissionCheck = ContextCompat.checkSelfPermission(context,
+                Manifest.permission.READ_EXTERNAL_STORAGE);
+
+        if (permissionCheck == PackageManager.PERMISSION_DENIED) {
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(context,
+                    Manifest.permission.READ_EXTERNAL_STORAGE)) {
+
+
+            } else {
+
+                // No explanation needed, we can request the permission.
+
+                ActivityCompat.requestPermissions(context,
+                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                        MY_PERMISSIONS_REQUEST_FILE);
+
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+
+            return;
+        }
+
         File dbPath = new File(Environment.getExternalStorageDirectory(), DB_FOLDER_NAME);
 
         if (dbPath.exists())
             database = new DictionaryAdapter(context, dbPath, "tbtotb","tbtotb");
+    }
+
+    public void close ()
+    {
+        if (database != null) {
+            database.close();
+            database = null;
+        }
     }
 
     public boolean exists ()
@@ -50,13 +95,15 @@ public class DictionarySearch {
         Cursor cursor = database.getAllEntries(new String[] {COLUMN_WORD}, queryText, null, null, null, COLUMN_WORD, " ASC LIMIT " + QUERY_LIMIT);
 
         if (cursor != null) {
+            if (cursor.getCount() > 0) {
 
-            results = new ArrayList<String>();
+                results = new ArrayList<String>();
 
-            while (!cursor.isLast())
-            {
-                results.add(cursor.getString(0));
-                cursor.moveToNext();
+                while (cursor.moveToNext()) {
+                    results.add(cursor.getString(0));
+
+                }
+
             }
 
             cursor.close();
