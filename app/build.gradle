@@ -42,6 +42,7 @@ android {
         applicationId 'im.zom.messenger'
         versionCode 1501908
         versionName getVersionName()
+        archivesBaseName = "Zom-$versionName"
         minSdkVersion project.ext.minSdkVersion
         targetSdkVersion project.ext.targetSdkVersion
         testApplicationId 'im.zom.messenger.test'
