@@ -17,13 +17,13 @@
 
 package org.awesomeapp.messenger.ui;
 
-import org.awesomeapp.messenger.crypto.IOtrChatSession;
-import org.awesomeapp.messenger.service.IChatSession;
-import org.awesomeapp.messenger.service.IImConnection;
 
 import im.zom.messenger.R;
 
-import org.awesomeapp.messenger.util.SecureMediaStore;
+import org.awesomeapp.messenger.model.Contact;
+import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
+import org.awesomeapp.messenger.service.IContactListManager;
+import org.awesomeapp.messenger.service.IImConnection;
 import org.awesomeapp.messenger.ui.legacy.DatabaseUtils;
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.model.Presence;
@@ -31,24 +31,16 @@ import org.awesomeapp.messenger.provider.Imps;
 
 import org.awesomeapp.messenger.ui.widgets.LetterAvatar;
 import org.awesomeapp.messenger.ui.widgets.RoundedAvatarDrawable;
-import org.awesomeapp.messenger.util.SystemServices;
-import org.awesomeapp.messenger.util.SystemServices.FileInfo;
+import org.awesomeapp.messenger.util.LogCleaner;
 import org.ocpsoft.prettytime.PrettyTime;
-import org.w3c.dom.Text;
 
-import net.java.otr4j.session.SessionStatus;
 import android.app.Activity;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.support.v4.util.LruCache;
-import android.support.v7.widget.RecyclerView;
+import android.os.RemoteException;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -57,12 +49,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.TextView;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class ContactListItem extends FrameLayout {
     public static final String[] CONTACT_PROJECTION = { Imps.Contacts._ID, Imps.Contacts.PROVIDER,
@@ -98,11 +84,14 @@ public class ContactListItem extends FrameLayout {
     static Drawable AVATAR_DEFAULT_GROUP = null;
     private final static PrettyTime sPrettyTime = new PrettyTime();
 
+    private String address;
+    private String nickname;
+
+    private ContactViewHolder mHolder;
+
     public ContactListItem(Context context, AttributeSet attrs) {
         super(context, attrs);
-
     }
-
 
     public void bind(ContactViewHolder holder, Cursor cursor, String underLineText, boolean scrolling) {
         bind(holder, cursor, underLineText, true, scrolling);
@@ -111,11 +100,10 @@ public class ContactListItem extends FrameLayout {
     public void bind(ContactViewHolder holder, Cursor cursor, String underLineText, boolean showChatMsg, boolean scrolling) {
 
 
+        mHolder = holder;
 
-        final long providerId = cursor.getLong(COLUMN_CONTACT_PROVIDER);
-        final String address = cursor.getString(COLUMN_CONTACT_USERNAME);
-
-        String nickname = cursor.getString(COLUMN_CONTACT_NICKNAME);
+        address = cursor.getString(COLUMN_CONTACT_USERNAME);
+        nickname = cursor.getString(COLUMN_CONTACT_NICKNAME);
 
         final int type = cursor.getInt(COLUMN_CONTACT_TYPE);
         final String lastMsg = cursor.getString(COLUMN_LAST_MESSAGE);
@@ -138,7 +126,6 @@ public class ContactListItem extends FrameLayout {
         }
 
 
-
         if (!TextUtils.isEmpty(underLineText)) {
             // highlight/underline the word being searched 
             String lowercase = nickname.toLowerCase();
@@ -158,7 +145,7 @@ public class ContactListItem extends FrameLayout {
         else
             holder.mLine1.setText(nickname);
 
-        holder.mStatusIcon.setVisibility(View.GONE);
+        //holder.mStatusIcon.setVisibility(View.GONE);
 
         if (holder.mAvatar != null)
         {
@@ -227,16 +214,35 @@ public class ContactListItem extends FrameLayout {
             }
         }
 
-        holder.mStatusText.setText("");
+     //   holder.mStatusText.setText("");
 
         statusText = address;
         holder.mLine2.setText(statusText);
 
-
-        if (subType == Imps.ContactsColumns.SUBSCRIPTION_TYPE_INVITATIONS)
+        if (subType == Imps.ContactsColumns.SUBSCRIPTION_TYPE_FROM &&
+                subStatus == Imps.ContactsColumns.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING)
         {
-        //    if (holder.mLine2 != null)
-          //      holder.mLine2.setText("Contact List Request");
+            holder.mSubBox.setVisibility(View.VISIBLE);
+
+            holder.mButtonSubApprove.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    approveSubscription();
+                }
+
+            });
+
+            holder.mButtonSubDecline.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    declineSubscription();
+                }
+            });
+
+        }
+        else {
+            holder.mSubBox.setVisibility(View.GONE);
+
         }
 
         holder.mLine1.setVisibility(View.VISIBLE);
@@ -316,6 +322,43 @@ public class ContactListItem extends FrameLayout {
 
         return buf.toString();
     }*/
+
+    void approveSubscription() {
+
+        ImApp app = ((ImApp)((Activity)getContext()).getApplication());
+        IImConnection mConn = app.getConnection(mHolder.mProviderId, mHolder.mAccountId);
+
+
+        if (mConn != null)
+        {
+            try {
+                IContactListManager manager = mConn.getContactListManager();
+                manager.approveSubscription(new Contact(new XmppAddress(address),nickname));
+            } catch (RemoteException e) {
+
+                // mHandler.showServiceErrorAlert(e.getLocalizedMessage());
+                LogCleaner.error(ImApp.LOG_TAG, "approve sub error",e);
+            }
+        }
+    }
+
+    void declineSubscription() {
+
+
+        ImApp app = ((ImApp)((Activity)getContext()).getApplication());
+        IImConnection mConn = app.getConnection(mHolder.mProviderId, mHolder.mAccountId);
+
+        if (mConn != null)
+        {
+            try {
+                IContactListManager manager = mConn.getContactListManager();
+                manager.declineSubscription(new Contact(new XmppAddress(address),nickname));
+            } catch (RemoteException e) {
+                // mHandler.showServiceErrorAlert(e.getLocalizedMessage());
+                LogCleaner.error(ImApp.LOG_TAG, "decline sub error",e);
+            }
+        }
+    }
 
 
 }

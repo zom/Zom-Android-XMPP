@@ -53,6 +53,7 @@ import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.roster.RosterGroup;
 import org.jivesoftware.smack.roster.RosterListener;
+import org.jivesoftware.smack.roster.packet.RosterPacket;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 import org.jivesoftware.smack.util.DNSUtil;
@@ -1283,7 +1284,7 @@ public class XmppConnection extends ImConnection {
 
     private void initConnectionAndLogin (Imps.ProviderSettings.QueryMap providerSettings,String userName) throws IOException, SmackException, XMPPException, KeyManagementException, NoSuchAlgorithmException, IllegalStateException, RuntimeException
     {
-        Roster.SubscriptionMode subMode = Roster.SubscriptionMode.accept_all;//load this from a preference
+        Roster.SubscriptionMode subMode = Roster.SubscriptionMode.manual;//Roster.SubscriptionMode.accept_all;//load this from a preference
 
         Debug.onConnectionStart(); //only activates if Debug TRUE is set, so you can leave this in!
 
@@ -1769,8 +1770,7 @@ public class XmppConnection extends ImConnection {
 
     }
 
-    private void handleMessage (org.jivesoftware.smack.packet.Message smackMessage)
-    {
+    private void handleMessage (org.jivesoftware.smack.packet.Message smackMessage) {
 
         String body = smackMessage.getBody();
         boolean isGroupMessage = smackMessage.getType() == org.jivesoftware.smack.packet.Message.Type.groupchat;
@@ -1795,62 +1795,57 @@ public class XmppConnection extends ImConnection {
 
         }
 
+        ChatSession session = findOrCreateSession(smackMessage.getFrom(), isGroupMessage);
+
         DeliveryReceipt drIncoming = (DeliveryReceipt) smackMessage.getExtension("received", DeliveryReceipt.NAMESPACE);
 
         if (drIncoming != null) {
 
             debug(TAG, "got delivery receipt for " + drIncoming.getId());
-            ChatSession session = findOrCreateSession(smackMessage.getFrom(), isGroupMessage);
 
             if (session != null)
                 session.onMessageReceipt(drIncoming.getId());
 
         }
 
-        if (body != null) {
-            XmppAddress aFrom = new XmppAddress(smackMessage.getFrom());
-            XmppAddress aTo = new XmppAddress(smackMessage.getTo());
+        if (body != null && session != null) {
 
-            ChatSession session = findOrCreateSession(smackMessage.getFrom(), isGroupMessage);
+            Message rec = new Message(body);
 
-            if (session != null) {
+            rec.setTo(new XmppAddress(smackMessage.getTo()));
+            rec.setFrom( new XmppAddress(smackMessage.getFrom()));
+            rec.setDateTime(new Date());
 
-                Message rec = new Message(body);
+            rec.setID(smackMessage.getStanzaId());
 
-                rec.setTo(aTo);
-                rec.setFrom(aFrom);
-                rec.setDateTime(new Date());
+            rec.setType(Imps.MessageType.INCOMING);
 
-                rec.setID(smackMessage.getStanzaId());
-
-                rec.setType(Imps.MessageType.INCOMING);
-
-                // Detect if this was said by us, and mark message as outgoing
-                if (isGroupMessage && rec.getFrom().getResource().equals(rec.getTo().getUser())) {
-                    //rec.setType(Imps.MessageType.OUTGOING);
-                    Occupant oc = mChatGroupManager.getMultiUserChat(rec.getFrom().getBareAddress()).getOccupant(rec.getFrom().getAddress());
-                    if (oc != null && oc.getJid().equals(mUser.getAddress().getAddress()))
-                        return; //do nothing if it is from us
-                }
-
-                boolean good = session.onReceiveMessage(rec);
-
-                if (smackMessage.getExtension("request", DeliveryReceipt.NAMESPACE) != null) {
-                    if (good) {
-                        debug(TAG, "sending delivery receipt");
-                        // got XEP-0184 request, send receipt
-                        sendReceipt(smackMessage);
-                        session.onReceiptsExpected(true);
-                    } else {
-                        debug(TAG, "not sending delivery receipt due to processing error");
-                    }
-
-                } else {
-                    //no request for delivery receipt
-
-                    session.onReceiptsExpected(false);
-                }
+            // Detect if this was said by us, and mark message as outgoing
+            if (isGroupMessage && rec.getFrom().getResource().equals(rec.getTo().getUser())) {
+                //rec.setType(Imps.MessageType.OUTGOING);
+                Occupant oc = mChatGroupManager.getMultiUserChat(rec.getFrom().getBareAddress()).getOccupant(rec.getFrom().getAddress());
+                if (oc != null && oc.getJid().equals(mUser.getAddress().getAddress()))
+                    return; //do nothing if it is from us
             }
+
+            boolean good = session.onReceiveMessage(rec);
+
+            if (smackMessage.getExtension("request", DeliveryReceipt.NAMESPACE) != null) {
+                if (good) {
+                    debug(TAG, "sending delivery receipt");
+                    // got XEP-0184 request, send receipt
+                    sendReceipt(smackMessage);
+                    session.onReceiptsExpected(true);
+                } else {
+                    debug(TAG, "not sending delivery receipt due to processing error");
+                }
+
+            } else {
+                //no request for delivery receipt
+
+                session.onReceiptsExpected(false);
+            }
+
         }
     }
 
@@ -2000,6 +1995,11 @@ public class XmppConnection extends ImConnection {
             if (participant != null)
                 session = mSessionManager.createChatSession(participant,false);
 
+            if (session != null) {
+                RosterEntry entry = mRoster.getEntry(address);
+                if (entry != null && entry.getType() == RosterPacket.ItemType.both)
+                    session.setSubscribed(true);
+            }
         }
 
         return session;
@@ -2641,10 +2641,11 @@ public class XmppConnection extends ImConnection {
 
             if (mConnection.isConnected())
             {
+                RosterEntry rEntry;
 
                 String[] groups = new String[] { list.getName() };
                 try {
-                    RosterEntry rEntry = mRoster.getEntry(contact.getAddress().getBareAddress());
+                    rEntry = mRoster.getEntry(contact.getAddress().getBareAddress());
                     RosterGroup rGroup = mRoster.getGroup(list.getName());
 
                     if (rGroup == null)
@@ -2672,19 +2673,19 @@ public class XmppConnection extends ImConnection {
                     throw new ImException(msg);
                 }
 
+                //i approve you having my presence!
+                org.jivesoftware.smack.packet.Presence reqSubscribed = new org.jivesoftware.smack.packet.Presence(
+                        org.jivesoftware.smack.packet.Presence.Type.subscribed);
+                reqSubscribed.setTo(contact.getAddress().getBareAddress());
+                sendPacket(reqSubscribed);
+
                 //i want your presence
                 org.jivesoftware.smack.packet.Presence reqSubscribe = new org.jivesoftware.smack.packet.Presence(
                         org.jivesoftware.smack.packet.Presence.Type.subscribe);
                 reqSubscribe.setTo(contact.getAddress().getBareAddress());
                 sendPacket(reqSubscribe);
 
-                /**
-                //i approve you having my presence!
-                org.jivesoftware.smack.packet.Presence reqSubscribed = new org.jivesoftware.smack.packet.Presence(
-                        org.jivesoftware.smack.packet.Presence.Type.subscribed);
-                reqSubscribe.setTo(contact.getAddress().getBareAddress());
-                sendPacket(reqSubscribe);
-                 **/
+
 
                 do_loadContactLists();
                 notifyContactListUpdated(list, ContactListListener.LIST_CONTACT_ADDED, contact);
@@ -2709,32 +2710,24 @@ public class XmppConnection extends ImConnection {
 
         @Override
         public void approveSubscriptionRequest(final Contact contact) {
-            
-            
-            new Thread(new Runnable()
+
+            org.jivesoftware.smack.packet.Presence response = new org.jivesoftware.smack.packet.Presence(
+                    org.jivesoftware.smack.packet.Presence.Type.subscribed);
+            response.setTo(contact.getAddress().getBareAddress());
+            sendPacket(response);
+
+            try
             {
-                
-                public void run ()
-                {
-                    debug(TAG, "approve subscription: " + contact.getAddress().getAddress());
-                    
-                    try
-                    {
-     
-                        doAddContactToListAsync(contact, getContactListManager().getDefaultContactList());
-                        mContactListManager.getSubscriptionRequestListener().onSubscriptionApproved(contact, mProviderId, mAccountId);
-       
-                        
-                    } catch (ImException e) {
-                        debug (TAG, "error responding to subscription approval: " + e.getLocalizedMessage());
-        
-                    }
-                    catch (RemoteException e) {
-                        debug (TAG, "error responding to subscription approval: " + e.getLocalizedMessage());
-        
-                    }
-                }
-            }).start();
+
+            //    doAddContactToListAsync(contact, getContactListManager().getDefaultContactList());
+                mContactListManager.getSubscriptionRequestListener().onSubscriptionApproved(contact, mProviderId, mAccountId);
+
+
+            }
+            catch (RemoteException e) {
+                debug (TAG, "error responding to subscription approval: " + e.getLocalizedMessage());
+
+            }
                 
         }
 
@@ -3340,7 +3333,7 @@ public class XmppConnection extends ImConnection {
         // TODO: this causes bad network and performance issues
         //   if (presence.getType() == Type.available) //get the latest presence for the highest priority
         Contact contact = mContactListManager.getContact(xaddress.getBareAddress());
-        
+
         String[] presenceParts = presence.getFrom().split("/");
         if (presenceParts.length > 1)
             p.setResource(presenceParts[1]);
@@ -3394,6 +3387,7 @@ public class XmppConnection extends ImConnection {
 
                 mContactListManager.doAddContactToListAsync(contact, getContactListManager().getDefaultContactList());
 
+                /**
                 org.jivesoftware.smack.packet.Presence reqSubscribed = new org.jivesoftware.smack.packet.Presence(
                         org.jivesoftware.smack.packet.Presence.Type.subscribed);
                 reqSubscribed.setTo(contact.getAddress().getBareAddress());
@@ -3403,11 +3397,14 @@ public class XmppConnection extends ImConnection {
                         org.jivesoftware.smack.packet.Presence.Type.subscribe);
                 reqSubscribe.setTo(contact.getAddress().getBareAddress());
                 sendPacket(reqSubscribe);
+                 **/
 
                 mContactListManager.getSubscriptionRequestListener().onSubScriptionRequest(contact, mProviderId, mAccountId);
 
-                contact = mContactListManager.getContact(xaddress.getBareAddress());
+                //requestPresenceRefresh(presence.getFrom());
 
+                //contact = mContactListManager.getContact(xaddress.getBareAddress());
+                //contact.setPresence(p);
             }
             catch (Exception e)
             {
@@ -3427,8 +3424,10 @@ public class XmppConnection extends ImConnection {
                 }
 
            //     mContactListManager.doAddContactToListAsync(contact,getContactListManager().getDefaultContactList());
-                mContactListManager.getSubscriptionRequestListener().onSubscriptionApproved(contact, mProviderId, mAccountId);
+              //  mContactListManager.getSubscriptionRequestListener().onSubscriptionApproved(contact, mProviderId, mAccountId);
 
+                requestPresenceRefresh(presence.getFrom());
+                contact.setPresence(p);
             }
             catch (Exception e)
             {

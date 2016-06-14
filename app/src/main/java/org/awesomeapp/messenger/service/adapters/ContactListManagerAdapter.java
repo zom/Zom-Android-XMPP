@@ -740,8 +740,8 @@ public class ContactListManagerAdapter extends
 
             if (!hadListener)
             {
-               // mContext.getStatusBarNotifier().notifySubscriptionRequest( mConn.getProviderId(), mConn.getAccountId(),
-                 //       ContentUris.parseId(uri), username, nickname);
+                mContext.getStatusBarNotifier().notifySubscriptionRequest( mConn.getProviderId(), mConn.getAccountId(),
+                        ContentUris.parseId(uri), username, nickname);
             }
         }
 
@@ -775,7 +775,7 @@ public class ContactListManagerAdapter extends
         }
 
         public void onSubscriptionApproved(final Contact contact, long providerId, long accountId) {
-            insertOrUpdateSubscription(contact.getAddress().getBareAddress(), null, Imps.Contacts.SUBSCRIPTION_TYPE_NONE,
+            insertOrUpdateSubscription(contact.getAddress().getBareAddress(), null, Imps.Contacts.SUBSCRIPTION_TYPE_BOTH,
                     Imps.Contacts.SUBSCRIPTION_STATUS_NONE);
 
             broadcast(new SubscriptionBroadcaster() {

@@ -42,6 +42,7 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -521,8 +522,13 @@ public class ContactsPickerActivity extends BaseActivity {
                 holder.mLine2 = (TextView) view.findViewById(R.id.line2);
 
                 holder.mAvatar = (ImageView)view.findViewById(R.id.avatar);
-                holder.mStatusIcon = (ImageView)view.findViewById(R.id.statusIcon);
-                holder.mStatusText = (TextView)view.findViewById(R.id.statusText);
+
+                holder.mSubBox = view.findViewById(R.id.subscriptionBox);
+                holder.mButtonSubApprove = (Button)view.findViewById(R.id.btnApproveSubscription);
+                holder.mButtonSubDecline = (Button)view.findViewById(R.id.btnDeclineSubscription);
+
+                //holder.mStatusIcon = (ImageView)view.findViewById(R.id.statusIcon);
+                //holder.mStatusText = (TextView)view.findViewById(R.id.statusText);
                 //holder.mEncryptionIcon = (ImageView)view.findViewById(R.id.encryptionIcon);
 
                 holder.mContainer = view.findViewById(R.id.message_container);

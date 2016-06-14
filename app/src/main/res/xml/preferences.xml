@@ -133,6 +133,15 @@
           android:key="prefDebug"
           android:title="@string/pref_debug_title"
           android:summary="@string/pref_debug_summary" />
- 
-  
+
+
+    <CheckBoxPreference
+        android:key="prefBlockScreenshots"
+        android:title="@string/pref_block_screenshots_title"
+        android:summary="@string/pref_block_screenshots_summary"
+        android:defaultValue="true"
+        />
+
+
+
 </PreferenceScreen>

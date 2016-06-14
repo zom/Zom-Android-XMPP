@@ -320,33 +320,41 @@
                 android:text="@string/decline_invitation" />
         </LinearLayout>
     </LinearLayout>
-
-    <LinearLayout android:id="@+id/subscription"
+<!--
+    <RelativeLayout android:id="@+id/subscription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:orientation="horizontal"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <TextView android:id="@+id/txtSubscription"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="10dip"
-            android:text="@string/subscription_prompt" />
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:text="@string/subscription_prompt"
+            android:layout_above="@+id/btnDeclineSubscription"
+            />
 
-            <org.ironrabbit.type.CustomTypefaceTextView android:id="@+id/btnApproveSubscription"
+            <org.ironrabbit.type.CustomTypefaceButton android:id="@+id/btnApproveSubscription"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/approve_subscription" />
+                android:text="@string/approve_subscription"
+                android:layout_alignParentTop="true"
+                android:layout_toLeftOf="@+id/btnDeclineSubscription"
+                android:layout_toStartOf="@+id/btnDeclineSubscription" />
 
-            <org.ironrabbit.type.CustomTypefaceTextView android:id="@+id/btnDeclineSubscription"
+            <org.ironrabbit.type.CustomTypefaceButton android:id="@+id/btnDeclineSubscription"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="10dip"
-                android:text="@string/decline_subscription" />
 
-    </LinearLayout>
+                android:text="@string/decline_subscription"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true" />
 
+    </RelativeLayout>
+-->
 
 
     <LinearLayout android:id="@+id/warning"

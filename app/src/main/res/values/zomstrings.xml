@@ -36,7 +36,7 @@
   <string name="choose_photos">Choose from Photos</string>
   <string name="choose_language">Switch Language</string>
   <string name="welcome_to_zom">WELCOME TO ZOM</string>
-  <string name="onboarding_generate">Your Zom ID can be anything you want, and is how you will be known by others on Zom.</string>
+  <string name="onboarding_generate">Create a Zom ID and we will generate a secure password for you.</string>
   <string name="grant_perms">You must grant permission for Zom to user the camera</string>
 
   <string name="menu_refresh">Refresh Session</string>
@@ -46,4 +46,7 @@
 
   <string name="action_theme">Change Theme</string>
   <string name="action_stickers">Sticker Share</string>
+
+  <string name="pref_block_screenshots_title">Block Screenshots</string>
+  <string name="pref_block_screenshots_summary">Block attempts for other apps to take screenshots of this app</string>
 </resources>

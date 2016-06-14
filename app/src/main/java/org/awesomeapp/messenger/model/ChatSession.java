@@ -42,7 +42,10 @@ public class ChatSession {
 
     private MessageListener mListener = null;
    // private Vector<Message> mHistoryMessages;
-    
+
+    private boolean mIsSubscribed = false;
+
+
 
     /**
      * Creates a new ChatSession with a particular participant.
@@ -340,4 +343,14 @@ public class ChatSession {
 
         }
     }
+
+    public boolean isSubscribed() {
+        return mIsSubscribed;
+    }
+
+    public void setSubscribed(boolean mIsSubscribed) {
+        this.mIsSubscribed = mIsSubscribed;
+    }
+
+
 }

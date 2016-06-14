@@ -73,6 +73,7 @@ public class ContactsListFragment extends Fragment {
     private View mEmptyView;
     String mSearchString = null;
 
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -178,12 +179,14 @@ public class ContactsListFragment extends Fragment {
 
     private static void deleteContact (Activity activity, long itemId, String address, long providerId, long accountId)
     {
-        ImApp app = ((ImApp)activity.getApplication());
-
-        IImConnection conn = app.getConnection(providerId, accountId);
 
         try {
-            IContactListManager manager = conn.getContactListManager();
+
+            IImConnection mConn;
+            ImApp app = ((ImApp)activity.getApplication());
+            mConn = app.getConnection(providerId, accountId);
+
+            IContactListManager manager = mConn.getContactListManager();
 
             int res = manager.removeContact(address);
             if (res != ImErrorInfo.NO_ERROR) {
@@ -212,10 +215,14 @@ public class ContactsListFragment extends Fragment {
             context.getTheme().resolveAttribute(R.attr.selectableItemBackground, mTypedValue, true);
             mBackground = mTypedValue.resourceId;
             mContext = context;
+
+
         }
 
         @Override
         public ContactViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+
+
             ContactListItem view = (ContactListItem)LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.contact_view, parent, false);
             view.setBackgroundResource(mBackground);
@@ -228,9 +235,13 @@ public class ContactsListFragment extends Fragment {
                 holder.mLine2 = (TextView) view.findViewById(R.id.line2);
 
                 holder.mAvatar = (ImageView)view.findViewById(R.id.avatar);
-                holder.mStatusIcon = (ImageView)view.findViewById(R.id.statusIcon);
-                holder.mStatusText = (TextView)view.findViewById(R.id.statusText);
+               // holder.mStatusIcon = (ImageView)view.findViewById(R.id.statusIcon);
+               // holder.mStatusText = (TextView)view.findViewById(R.id.statusText);
                 //holder.mEncryptionIcon = (ImageView)view.findViewById(R.id.encryptionIcon);
+
+                holder.mSubBox = view.findViewById(R.id.subscriptionBox);
+                holder.mButtonSubApprove = (Button)view.findViewById(R.id.btnApproveSubscription);
+                holder.mButtonSubDecline = (Button)view.findViewById(R.id.btnDeclineSubscription);
 
                 holder.mContainer = view.findViewById(R.id.message_container);
 
@@ -341,7 +352,7 @@ public class ContactsListFragment extends Fragment {
             buf.append(Imps.Contacts.TYPE).append('=').append(Imps.Contacts.TYPE_NORMAL);
 
             CursorLoader loader = new CursorLoader(getActivity(), mUri, CHAT_PROJECTION,
-                    buf == null ? null : buf.toString(), null, Imps.Contacts.ALPHA_SORT_ORDER);
+                    buf == null ? null : buf.toString(), null, Imps.Contacts.SUB_AND_ALPHA_SORT_ORDER);
 
             return loader;
         }

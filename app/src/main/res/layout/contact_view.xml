@@ -46,7 +46,7 @@
                     android:textAppearance="?android:attr/textAppearanceLarge"                    
                     android:singleLine="true"
                     android:textColor="?contactTextPrimary"
-                    
+                    android:text="line 1 text here"
                      />
        
                   <org.ironrabbit.type.CustomTypefaceTextView
@@ -56,47 +56,57 @@
                 
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="?contactTextSecondary"
-                />
+                      android:text="line 2 text here"
 
+                      />
+
+<!--
         <org.ironrabbit.type.CustomTypefaceTextView
             android:id="@+id/line3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="?contactTextSecondary"
-            />
+            android:text="line 3 text here"
 
+            />
+-->
         
           	</LinearLayout>
 
 
-    <FrameLayout
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:padding="0dp"
-        android:orientation="vertical"
-        android:gravity="right"
+        android:orientation="horizontal"
+        android:layout_gravity="right"
+        android:visibility="gone"
+        android:id="@+id/subscriptionBox"
+
         >
 
-        <TextView
-            android:id="@+id/statusText"
-            android:layout_width="wrap_content"
+        <Button android:id="@+id/btnApproveSubscription"
+            android:layout_width="60dp"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="?contactTextSecondary"
-            android:gravity="right|top"
-            android:layout_marginTop="6dp"
-            />
-        <ImageView
-            android:id="@+id/statusIcon"
-            android:layout_width="12dp"
-            android:layout_height="12dp"
-            android:scaleType="centerCrop"
-            android:gravity="right|bottom"
-            android:src="@drawable/tj12"
-            />
+            android:text="✓"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/holo_green_dark"
+            android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@+id/btnDeclineSubscription"
+            android:layout_toStartOf="@+id/btnDeclineSubscription" />
 
-    </FrameLayout>
+        <Button android:id="@+id/btnDeclineSubscription"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:text="X"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/holo_red_dark"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
+
+    </LinearLayout>
 
 
     <ImageView
@@ -105,8 +115,9 @@
             android:layout_height="48dp"
             android:scaleType="centerCrop" 
             android:layout_margin="3dp"
-            android:visibility="gone"            
             android:layout_gravity="left|top"
+            android:src="@drawable/avatar_unknown"
+
             />
 
 

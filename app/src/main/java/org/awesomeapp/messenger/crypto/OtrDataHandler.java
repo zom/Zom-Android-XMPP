@@ -75,10 +75,10 @@ public class OtrDataHandler implements DataHandler {
 
     public static final String URI_PREFIX_OTR_IN_BAND = "otr-in-band:/storage/";
 
-    private static final int MAX_OUTSTANDING = 5;
+    private static final int MAX_OUTSTANDING = 3;
 
     private static final int MAX_CHUNK_LENGTH = 32768;
-    private static final int MAX_REQUEST_LENGTH = 32768/4;
+    private static final int REQUEST_CHUNK_LENGTH = 1024*8;
 
     private static final int MAX_TRANSFER_LENGTH = 1024*1024*10; //10MB max file size
 
@@ -586,8 +586,21 @@ public class OtrDataHandler implements DataHandler {
         if (headers == null)
             headers = new HashMap<>();
 
+        headers.put("File-Name", fileLocal.getName());
         headers.put("File-Length", String.valueOf(length));
         headers.put("File-Hash-SHA1", hash);
+
+        if (!headers.containsKey("Mime-Type")) {
+            String mimeType = SystemServices.getMimeType(localUri);
+            headers.put("Mime-Type", mimeType);
+        }
+
+        /**
+         * 0 = {BufferedHeader@7083} "File-Name: B3C1B9F7-81EB-454A-AB5B-2B3B645453C6.m4a"
+         1 = {BufferedHeader@7084} "Mime-Type: audio/x-m4a"
+         2 = {BufferedHeader@7085} "File-Length: 0"
+         3 = {BufferedHeader@7086} "Request-Id: 92C2FF9A-7C1E-42BA-A5DA-F2D445BCF1A5"
+         */
 
         String[] paths = localUri.split("/");
         String url = URI_PREFIX_OTR_IN_BAND + SystemServices.sanitize(paths[paths.length - 1]);
@@ -700,7 +713,7 @@ public class OtrDataHandler implements DataHandler {
             if (length > MAX_TRANSFER_LENGTH || length <= 0) {
                 throw new RuntimeException("Invalid transfer size " + length);
             }
-            chunks = ((length - 1) / MAX_REQUEST_LENGTH) + 1;
+            chunks = ((length - 1) / REQUEST_CHUNK_LENGTH) + 1;
             buffer = new byte[length];
             outstanding = new HashSet<Request>();
         }
@@ -717,24 +730,8 @@ public class OtrDataHandler implements DataHandler {
 
             while (current < length && outstanding.size() < MAX_OUTSTANDING) {
 
-
-               // debug("perform: " + performIdx++);
-                /**
-                if (current >= length) {
-                    if (outstanding.size() > 0)
-                    {
-                        //resend any existing
-                        for (Request request : outstanding)
-                        {
-                            debug("resending request that starts:" + request.start);
-                            sendRequest(request);
-                        }
-                    }
-                    return false;
-                }*/
-
                 Map<String, String> headers = new HashMap<>();
-                int end = Math.min(length, current + MAX_REQUEST_LENGTH)-1;
+                int end = Math.min(length, current + REQUEST_CHUNK_LENGTH)-1;
 
                 Request request= performGetData(us, them, url, headers, current, end);
                 outstanding.add(request);

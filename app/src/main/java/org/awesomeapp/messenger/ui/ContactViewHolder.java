@@ -2,6 +2,7 @@ package org.awesomeapp.messenger.ui;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -24,8 +25,12 @@ public class ContactViewHolder extends RecyclerView.ViewHolder
     public View mContainer;
     public TextView mLine1;
     public TextView mLine2;
-    public TextView mStatusText;
+    //public TextView mStatusText;
     public ImageView mAvatar;
-    public ImageView mStatusIcon;
+    //public ImageView mStatusIcon;
     public ImageView mMediaThumb;
+
+    public View mSubBox;
+    public Button mButtonSubApprove;
+    public Button mButtonSubDecline;
 }

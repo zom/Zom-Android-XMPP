@@ -55,6 +55,8 @@ import android.widget.Toast;
 
 //import com.bumptech.glide.Glide;
 
+import org.awesomeapp.messenger.model.Contact;
+import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
 import org.awesomeapp.messenger.provider.Imps;
 
 import java.io.File;
@@ -72,6 +74,9 @@ import org.awesomeapp.messenger.service.IChatSession;
 import im.zom.messenger.R;
 
 import org.awesomeapp.messenger.service.IChatSessionManager;
+import org.awesomeapp.messenger.service.IContactListManager;
+import org.awesomeapp.messenger.service.IImConnection;
+import org.awesomeapp.messenger.util.LogCleaner;
 import org.awesomeapp.messenger.util.SecureMediaStore;
 
 import org.awesomeapp.messenger.ImApp;
@@ -179,8 +184,8 @@ public class ConversationDetailActivity extends BaseActivity {
 
         if (selColor != -1) {
             if (Build.VERSION.SDK_INT >= 21) {
-               // getWindow().setNavigationBarColor(selColor);
-               // getWindow().setStatusBarColor(selColor);
+               getWindow().setNavigationBarColor(selColor);
+               getWindow().setStatusBarColor(selColor);
             }
 
             mToolbar.setBackgroundColor(selColor);
@@ -769,6 +774,8 @@ public class ConversationDetailActivity extends BaseActivity {
         if (lastPhotoPath != null)
             mLastPhoto = Uri.parse(lastPhotoPath);
     }
+
+
 
     public static final int REQUEST_PICK_CONTACTS = RESULT_FIRST_USER + 1;
     public static final int REQUEST_SEND_IMAGE = REQUEST_PICK_CONTACTS + 1;

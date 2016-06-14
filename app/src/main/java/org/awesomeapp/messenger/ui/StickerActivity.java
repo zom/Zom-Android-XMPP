@@ -233,29 +233,71 @@ public class StickerActivity extends BaseActivity {
 
     }
 
+    private final static int MY_PERMISSIONS_REQUEST_FILE = 1;
+
+    private boolean checkPermissions ()
+    {
+        int permissionCheck = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+        if (permissionCheck ==PackageManager.PERMISSION_DENIED)
+        {
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.READ_EXTERNAL_STORAGE)) {
+
+
+                // Show an expanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+                Snackbar.make(mStickerPager, R.string.grant_perms, Snackbar.LENGTH_LONG).show();
+            } else {
+
+                // No explanation needed, we can request the permission.
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        MY_PERMISSIONS_REQUEST_FILE);
+
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+
+            return false;
+
+        }
+        else {
+
+            return true;
+        }
+    }
+
     private void exportAsset (Uri mediaUri, String name)
     {
-        try {
+        if (checkPermissions()) {
+            try {
 
-            String mimeType = "image/png";
-            java.io.File exportPath = new File(Environment.getExternalStorageDirectory(),name + ".png");
+                String mimeType = "image/png";
+                java.io.File exportPath = new File(Environment.getExternalStorageDirectory(), name + ".png");
 
-            java.io.InputStream fis = getResources().getAssets().open(mediaUri.getPath());
-            java.io.FileOutputStream fos = new java.io.FileOutputStream(exportPath, false);
+                java.io.InputStream fis = getResources().getAssets().open(mediaUri.getPath());
+                java.io.FileOutputStream fos = new java.io.FileOutputStream(exportPath, false);
 
-            IOUtils.copyLarge(fis, fos);
+                IOUtils.copyLarge(fis, fos);
 
-            fos.close();
-            fis.close();
+                fos.close();
+                fis.close();
 
-            Intent shareIntent = new Intent();
-            shareIntent.setAction(Intent.ACTION_SEND);
-            shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(exportPath));
-            shareIntent.setType(mimeType);
-            startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.export_media)));
-        } catch (IOException e) {
-            Toast.makeText(this, "Export Failed " + e.getMessage(), Toast.LENGTH_LONG).show();
-            e.printStackTrace();
+                Intent shareIntent = new Intent();
+                shareIntent.setAction(Intent.ACTION_SEND);
+                shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(exportPath));
+                shareIntent.setType(mimeType);
+                startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.export_media)));
+            } catch (IOException e) {
+                Toast.makeText(this, "Export Failed " + e.getMessage(), Toast.LENGTH_LONG).show();
+                e.printStackTrace();
+            }
         }
     }
 
