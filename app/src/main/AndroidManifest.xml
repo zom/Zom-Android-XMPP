@@ -4,9 +4,7 @@
     package="im.zom.messenger"
     android:installLocation="auto"
     android:sharedUserLabel="@string/perm_label"
-    android:usesCleartextTraffic="false"
-    android:versionCode="1501908"
-    android:versionName="15.0.1-BETA-8">
+    android:usesCleartextTraffic="false">
 
     <supports-screens
         android:anyDensity="true"
