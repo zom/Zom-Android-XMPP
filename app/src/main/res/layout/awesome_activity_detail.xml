@@ -231,7 +231,7 @@
                 android:layout_height="28dip"
                 android:scaleType="centerInside"
                 android:background="@android:color/transparent"
-                android:src="@drawable/ic_attach_file_black_36dp"
+                android:src="@drawable/ic_add_circle_outline_black_36dp"
                 android:layout_margin="6dp"
                 />
 

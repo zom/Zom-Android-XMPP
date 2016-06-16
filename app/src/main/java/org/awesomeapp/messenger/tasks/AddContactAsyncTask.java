@@ -9,6 +9,8 @@ import android.util.Log;
 import java.util.List;
 
 import org.awesomeapp.messenger.crypto.OtrAndroidKeyManagerImpl;
+import org.awesomeapp.messenger.model.Contact;
+import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
 import org.awesomeapp.messenger.service.IContactList;
 import org.awesomeapp.messenger.service.IContactListManager;
 import org.awesomeapp.messenger.service.IImConnection;
@@ -67,6 +69,10 @@ public class AddContactAsyncTask extends AsyncTask<String, Void, Integer> {
                 if (!TextUtils.isEmpty(otrFingperint)) {
                     OtrAndroidKeyManagerImpl.getInstance(mApp).verifyUser(address, otrFingperint);
                 }
+
+                //Contact contact = new Contact(new XmppAddress(address),address);
+                //IContactListManager contactListMgr = conn.getContactListManager();
+                //contactListMgr.approveSubscription(contact);
             }
 
         } catch (RemoteException re) {
@@ -83,7 +89,7 @@ public class AddContactAsyncTask extends AsyncTask<String, Void, Integer> {
 
         try {
             IContactListManager contactListMgr = conn.getContactListManager();
-            
+
             // Use the default list
             List<IBinder> lists = contactListMgr.getContactLists();
             for (IBinder binder : lists) {

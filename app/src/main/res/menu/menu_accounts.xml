@@ -4,6 +4,7 @@
     <item
         android:id="@+id/menu_add_account"
         android:title="@string/add_account_action"
-        app:showAsAction="never" />
+        android:icon="@drawable/ic_add_white_24dp"
+        app:showAsAction="always" />
 
 </menu>

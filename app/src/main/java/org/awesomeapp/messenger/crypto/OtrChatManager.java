@@ -219,13 +219,14 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
 
     }
 
+    /**
     public void refreshSession(String localUserId, String remoteUserId) {
         try {
             mOtrEngine.refreshSession(getSessionId(localUserId, remoteUserId));
         } catch (OtrException e) {
             OtrDebugLogger.log("refreshSession", e);
         }
-    }
+    }*/
 
     /**
      * Start a new OTR encryption session for the chat session represented by a

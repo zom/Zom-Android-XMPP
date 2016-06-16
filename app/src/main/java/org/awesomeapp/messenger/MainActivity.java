@@ -116,8 +116,12 @@ public class MainActivity extends BaseActivity {
 
         super.onCreate(savedInstanceState);
 
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
-                WindowManager.LayoutParams.FLAG_SECURE);
+        final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+
+        if (settings.getBoolean("prefBlockScreenshots",true))
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
+                    WindowManager.LayoutParams.FLAG_SECURE);
+
 
         setContentView(R.layout.awesome_activity_main);
 

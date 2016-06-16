@@ -122,39 +122,43 @@ public class ImUrlActivity extends Activity {
 
         Collection<IImConnection> listConns = ((ImApp)getApplication()).getActiveConnections();
 
-        //look for active connections that match the host we need
-        for (IImConnection conn : listConns)
+        if (TextUtils.isEmpty(mHost))
         {
+            mConn = listConns.iterator().next();
+        }
+        else {
+            //look for active connections that match the host we need
+            for (IImConnection conn : listConns) {
 
-
-            try {
-                long connProviderId = conn.getProviderId();
-
-                Cursor cursor = cr.query(Imps.ProviderSettings.CONTENT_URI,new String[] {Imps.ProviderSettings.NAME, Imps.ProviderSettings.VALUE},Imps.ProviderSettings.PROVIDER + "=?",new String[] { Long.toString(connProviderId)},null);
-
-                Imps.ProviderSettings.QueryMap settings = new Imps.ProviderSettings.QueryMap(
-                        cursor, cr, connProviderId, false /* don't keep updated */, null /* no handler */);
 
                 try {
-                    String domainToCheck = settings.getDomain();
+                    long connProviderId = conn.getProviderId();
 
-                    if (domainToCheck != null && domainToCheck.length() > 0 && mHost.contains(domainToCheck))
-                    {
-                        mConn = conn;
-                        providerId = connProviderId;
-                        accountId = conn.getAccountId();
+                    Cursor cursor = cr.query(Imps.ProviderSettings.CONTENT_URI, new String[]{Imps.ProviderSettings.NAME, Imps.ProviderSettings.VALUE}, Imps.ProviderSettings.PROVIDER + "=?", new String[]{Long.toString(connProviderId)}, null);
 
-                        break;
+                    Imps.ProviderSettings.QueryMap settings = new Imps.ProviderSettings.QueryMap(
+                            cursor, cr, connProviderId, false /* don't keep updated */, null /* no handler */);
+
+                    try {
+                        String domainToCheck = settings.getDomain();
+
+                        if (domainToCheck != null && domainToCheck.length() > 0 && mHost.contains(domainToCheck)) {
+                            mConn = conn;
+                            providerId = connProviderId;
+                            accountId = conn.getAccountId();
+
+                            break;
+                        }
+                    } finally {
+                        settings.close();
                     }
-                } finally {
-                    settings.close();
+
+                } catch (RemoteException e) {
+                    e.printStackTrace();
                 }
 
-            } catch (RemoteException e) {
-                e.printStackTrace();
+
             }
-
-
         }
 
         //nothing active, let's see if non-active connections match
@@ -406,8 +410,7 @@ public class ImUrlActivity extends Activity {
             }
 
         }
-
-        if (data.getScheme().equals("immu")) {
+        else if (data.getScheme().equals("immu")) {
             mFromAddress = data.getUserInfo();
 
             //remove username non-letters
@@ -432,11 +435,41 @@ public class ImUrlActivity extends Activity {
             return false;
 
         }
-
-        if (data.getScheme().equals("otr-in-band")) {
+        else if (data.getScheme().equals("otr-in-band")) {
             this.openOtrInBand(data, intent.getType());
 
             return true;
+        }
+        else if (data.getScheme().equals("xmpp")) {
+            mToAddress = data.getSchemeSpecificPart();
+
+            try {
+                //parse each string and if they are for a new user then add the user
+                String[] parts =  mToAddress.split("\\?subscribe&otr-fingerprint=");
+
+                ImApp app = (ImApp)getApplication();
+                app.initAccountInfo();
+
+                String username =parts[0];
+                String fingerprint = null;
+                if (parts.length > 1)
+                    fingerprint = parts[1];
+
+                new AddContactAsyncTask(app.getDefaultProviderId(), app.getDefaultAccountId(), (ImApp)getApplication()).executeOnExecutor(ImApp.sThreadPoolExecutor,username, fingerprint);
+
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra("newcontact",username);
+                setResult(RESULT_OK,resultIntent);
+
+                //if they are for a group chat, then add the group
+                return false; //the work is done so we will finish!
+            }
+            catch (Exception e)
+            {
+                Log.w(ImApp.LOG_TAG, "error parsing QR invite link", e);
+            }
+
+
         }
 
         if (Log.isLoggable(ImApp.LOG_TAG, Log.DEBUG)) {

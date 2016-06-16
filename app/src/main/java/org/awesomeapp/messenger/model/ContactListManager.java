@@ -379,10 +379,10 @@ public abstract class ContactListManager {
         doBlockContactAsync(address, false);
     }
 
-    protected void addContactToListAsync(Contact address, ContactList list) throws ImException {
+    protected void addContactToListAsync(Contact address, ContactList list, boolean autoSubscribePresence) throws ImException {
         checkState();
 
-        doAddContactToListAsync(address, list);
+        doAddContactToListAsync(address, list, autoSubscribePresence);
     }
 
     protected void removeContactFromListAsync(Contact contact, ContactList list) throws ImException {
@@ -656,7 +656,7 @@ public abstract class ContactListManager {
         }
     }
 
-    protected abstract void doAddContactToListAsync(Contact contact, ContactList list)
+    protected abstract void doAddContactToListAsync(Contact contact, ContactList list, boolean autoPresenceSubscribe)
             throws ImException;
 
     protected abstract void doRemoveContactFromListAsync(Contact contact, ContactList list);

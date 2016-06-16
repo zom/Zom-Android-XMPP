@@ -220,7 +220,7 @@ public class LoopbackConnection extends ImConnection {
         }
 
         @Override
-        protected void doAddContactToListAsync(Contact contact, ContactList list) throws ImException {
+        protected void doAddContactToListAsync(Contact contact, ContactList list, boolean autoSubscribe) throws ImException {
             contact.setPresence(new Presence(Presence.AVAILABLE, "available", null, null,
                     Presence.CLIENT_TYPE_DEFAULT));
             notifyContactListUpdated(list, ContactListListener.LIST_CONTACT_ADDED, contact);

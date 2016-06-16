@@ -5,7 +5,7 @@
   <string name="create_id">Create a Zom ID</string>
   <string name="advanced">Advanced</string>
   <string name="account_congrats">Congratulations, you are ready to Zom!</string>
-  <string name="account_congrats_details">Your Zom ID has been created! You can find your password and account details on your profile page.</string>
+  <string name="account_congrats_details">You can find your password and account details on your profile page.</string>
   <string name="invite_friends">Invite your friends to Zom!</string>
   <string name="invite_sms">SMS</string> 
   <string name="invite_share">Share</string>
@@ -49,4 +49,7 @@
 
   <string name="pref_block_screenshots_title">Block Screenshots</string>
   <string name="pref_block_screenshots_summary">Block attempts for other apps to take screenshots of this app</string>
+
+  <string name="pref_enable_tibetan_dictionary_title">Enable Tibetan Dictionary</string>
+  <string name="pref_enable_tibetan_dictionary_summary">If present, suggest Tibetan matching words from the Monlam Tibetan Dictionary app</string>
 </resources>

@@ -113,7 +113,10 @@ public class StatusBarNotifier {
         String title = nickname;
         String message = mContext.getString(R.string.subscription_notify_text, nickname);
         Intent intent = getDefaultIntent(accountId, providerId);
+        intent.setAction(Intent.ACTION_VIEW);
         intent.putExtra(ImServiceConstants.EXTRA_INTENT_FROM_ADDRESS, username);
+        intent.setType(Imps.Contacts.CONTENT_ITEM_TYPE);
+        intent.addCategory(ImApp.IMPS_CATEGORY);
         notify(username, title, message, message, providerId, accountId, intent, false, R.drawable.ic_people_white_24dp);
     }
 

@@ -5,7 +5,7 @@
     android:gravity="center_horizontal"
     android:orientation="vertical"
     android:layout_gravity="center"
-    android:padding="24dp"
+    android:padding="12dp"
     android:id="@+id/viewSuccess"
     android:visibility="gone"
     >
@@ -17,7 +17,7 @@
         android:layout_height="wrap_content"
         android:text="@string/account_congrats"
         android:textColor="?colorPrimary"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:gravity="center"
 
@@ -29,7 +29,7 @@
         />
 
     <org.ironrabbit.type.CustomTypefaceTextView
-        android:layout_width="match_parent"
+        android:layout_width="280dp"
         android:layout_height="wrap_content"
         android:text="@string/account_congrats_details"
         android:textAppearance="?android:attr/textAppearanceSmall"

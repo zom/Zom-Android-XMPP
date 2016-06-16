@@ -141,6 +141,12 @@
         android:summary="@string/pref_block_screenshots_summary"
         android:defaultValue="true"
         />
+    <CheckBoxPreference
+        android:key="prefEnableTibetanDictionary"
+        android:title="@string/pref_enable_tibetan_dictionary_title"
+        android:summary="@string/pref_enable_tibetan_dictionary_summary"
+        android:defaultValue="true"
+        />
 
 
 

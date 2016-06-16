@@ -131,6 +131,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import im.zom.messenger.R;
 
 public class ConversationView {
@@ -1108,16 +1109,16 @@ public class ConversationView {
     private void doWordSearch ()
     {
 
-        if (ds == null)
-            ds = new DictionarySearch(mActivity);
+        if (Preferences.getUseTibetanDictionary()) {
+            if (ds == null)
+                ds = new DictionarySearch(mActivity);
 
-        if (taskSearch == null || taskSearch.getStatus() == AsyncTask.Status.FINISHED)
-        {
-            taskSearch = new SearchWordTask();
-            taskSearch.execute(mComposeMessage.getText().toString());
+            if (taskSearch == null || taskSearch.getStatus() == AsyncTask.Status.FINISHED) {
+                taskSearch = new SearchWordTask();
+                taskSearch.execute(mComposeMessage.getText().toString());
 
+            }
         }
-
 
     }
 
@@ -1217,9 +1218,22 @@ public class ConversationView {
             mSubscriptionType = c.getInt(SUBSCRIPTION_TYPE_COLUMN);
 
             mSubscriptionStatus = c.getInt(SUBSCRIPTION_STATUS_COLUMN);
-            if ((mSubscriptionType == Imps.Contacts.SUBSCRIPTION_TYPE_FROM)
-                && (mSubscriptionStatus == Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING)) {
+            if (mSubscriptionStatus == Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING) {
               //  bindSubscription(mProviderId, mRemoteAddress);
+
+
+                new SweetAlertDialog(mActivity, SweetAlertDialog.WARNING_TYPE)
+                        .setTitleText(mActivity.getString(R.string.add_friends))
+                        .setContentText(mContext.getString(R.string.subscription_notify_text, mRemoteAddress))
+                        .setConfirmText(mActivity.getString(R.string.accept_invitation))
+                        .setCancelText(mActivity.getString(R.string.decline_subscription))
+                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sDialog) {
+                                approveSubscription();
+                            }
+                        })
+                        .show();
             }
 
         }
@@ -2948,6 +2962,8 @@ public class ConversationView {
                         @Override
                         public void onStickerSelected(Sticker s) {
 
+                            sendStickerCode(s.assetUri);
+                            /**
                             if (isGroupChat())
                             {
                                 sendStickerCode(s.assetUri);
@@ -2956,7 +2972,7 @@ public class ConversationView {
                             else
                             {
                                 mActivity.handleSendDelete(s.assetUri,"image/png", false, false, true);
-                            }
+                            }*/
                          //   mActivity.handleSendData(Uri.parse(s.assetPath),"image/png");
 
                             mViewAttach.setVisibility(View.GONE);

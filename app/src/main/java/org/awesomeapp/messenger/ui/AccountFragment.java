@@ -50,6 +50,7 @@ import org.awesomeapp.messenger.service.IImConnection;
 import org.awesomeapp.messenger.ui.legacy.DatabaseUtils;
 import org.awesomeapp.messenger.ui.legacy.SignInHelper;
 import org.awesomeapp.messenger.ui.onboarding.OnboardingManager;
+import org.awesomeapp.messenger.ui.qr.QrDisplayActivity;
 import org.awesomeapp.messenger.ui.qr.QrGenAsyncTask;
 import org.awesomeapp.messenger.ui.qr.QrShareAsyncTask;
 import org.awesomeapp.messenger.ui.widgets.ImageViewActivity;
@@ -162,7 +163,13 @@ public class AccountFragment extends Fragment {
                     String inviteString;
                     try {
                         inviteString = OnboardingManager.generateInviteLink(getActivity(), mUserAddress, mUserKey);
-                        OnboardingManager.inviteScan(getActivity(), inviteString);
+
+                        Intent intent = new Intent(getActivity(), QrDisplayActivity.class);
+                        intent.putExtra(Intent.EXTRA_TEXT, inviteString);
+                        intent.setType("text/plain");
+                        startActivity(intent);
+
+                     //   OnboardingManager.inviteScan(getActivity(), inviteString);
                     } catch (IOException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();

@@ -10,6 +10,8 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 
+import net.sqlcipher.DatabaseUtils;
+
 import java.io.File;
 import java.util.ArrayList;
 
@@ -86,9 +88,12 @@ public class DictionarySearch {
 
     public ArrayList<String> getMatchingWords (String queryString)
     {
+        if (database == null)
+            return null;
+
         ArrayList<String> results = null;
 
-        String queryText = COLUMN_WORD + " LIKE '" + queryString + "%'";
+        String queryText = COLUMN_WORD + " LIKE " + DatabaseUtils.sqlEscapeString(queryString + "%");
 
         //OR " + COLUMN_MEANING + " LIKE '%" + queryString + "%'";
 

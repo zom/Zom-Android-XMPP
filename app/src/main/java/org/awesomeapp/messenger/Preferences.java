@@ -68,6 +68,7 @@ public class Preferences {
     private static final String LOCK_APP = "lock_app";
     private static final String CLEAR_APP_DATA = "clear_app_data";
     private static final String UNINSTALL_APP = "uninstall_app";
+    private static final String USE_TIBETAN_DICTIONARY = "prefEnableTibetanDictionary";
 
     private static Context context;
     private static SharedPreferences preferences;
@@ -254,5 +255,9 @@ public class Preferences {
         names[2] = context.getString(R.string.otr_mode_requested);
         names[3] = context.getString(R.string.otr_mode_disabled);
         return names;
+    }
+
+    public static boolean getUseTibetanDictionary() {
+        return preferences.getBoolean(USE_TIBETAN_DICTIONARY, true);
     }
 }

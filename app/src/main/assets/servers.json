@@ -7,9 +7,19 @@
       "address": "23.21.227.59",
       "port": 5222,
       "certificate": "",
-      "logoUrl": "https://s3....",
+      "logoUrl": "",
       "country": "US",
       "muc": "conference.dukgo.com"
+    },
+    {
+      "domain": "home.zom.im",
+      "server": "home.zom.im",
+      "address": "162.247.72.41",
+      "port": 5222,
+      "certificate": "",
+      "logoUrl": "https://s3....",
+      "country": "BO",
+      "muc": "conference.zom.im"
     },
     {
       "domain": "blah.im",

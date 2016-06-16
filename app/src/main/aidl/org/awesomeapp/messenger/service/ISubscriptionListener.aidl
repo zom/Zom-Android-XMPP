@@ -20,6 +20,18 @@ package org.awesomeapp.messenger.service;
 import org.awesomeapp.messenger.model.Contact;
 
 oneway interface ISubscriptionListener {
+
+/**
+     * Called when:
+     *  <ul>
+     *  <li> the request a contact has sent to client
+     *  </ul>
+     *
+     * @see org.awesomeapp.messenger.engine.SubscriptionRequestListener#onSubScriptionRequest(Contact from)
+     */
+    void onSubScriptionChanged(in Contact from, long providerId, long accountId, int subType, int subStatus);
+
+
     /**
      * Called when:
      *  <ul>

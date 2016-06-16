@@ -46,6 +46,7 @@ import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.DefaultExtensionElement;
 import org.jivesoftware.smack.packet.ExtensionElement;
+import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smack.proxy.ProxyInfo;
@@ -81,6 +82,8 @@ import org.jivesoftware.smackx.muc.provider.MUCUserProvider;
 import org.jivesoftware.smackx.offline.packet.OfflineMessageInfo;
 import org.jivesoftware.smackx.offline.packet.OfflineMessageRequest;
 import org.jivesoftware.smackx.ping.PingManager;
+import org.jivesoftware.smackx.privacy.PrivacyListManager;
+import org.jivesoftware.smackx.privacy.packet.PrivacyItem;
 import org.jivesoftware.smackx.privacy.provider.PrivacyProvider;
 import org.jivesoftware.smackx.receipts.DeliveryReceipt;
 import org.jivesoftware.smackx.receipts.DeliveryReceiptManager;
@@ -112,6 +115,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.InputMismatchException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -184,7 +188,7 @@ public class XmppConnection extends ImConnection {
     private int mGlobalId;
     private static int mGlobalCount;
 
-    private final Random rndForTorCircuits = new Random();
+    private SecureRandom rndForTorCircuits = null;
 
     // Maintains a sequence counting up to the user configured heartbeat interval
     private int heartbeatSequence = 0;
@@ -194,7 +198,9 @@ public class XmppConnection extends ImConnection {
     private LinkedList<org.jivesoftware.smack.packet.Presence> qPresence = new LinkedList<org.jivesoftware.smack.packet.Presence>();
     private LinkedList<org.jivesoftware.smack.packet.Stanza> qPacket = new LinkedList<org.jivesoftware.smack.packet.Stanza>();
 
-    private final static String DEFAULT_CONFERENCE_SERVER = "conference.rows.io";
+    private final static String DEFAULT_CONFERENCE_SERVER = "conference.zom.im";
+
+    private final static String PRIVACY_LIST_DEFAULT = "defaultprivacylist";
 
     public XmppConnection(Context context) throws IOException, KeyStoreException, NoSuchAlgorithmException, CertificateException {
         super(context);
@@ -1264,6 +1270,9 @@ public class XmppConnection extends ImConnection {
                     && port == TorProxyInfo.PROXY_PORT) //9050
             {
                 //if the proxy is for Orbot/Tor then generate random usr/pwd to isolate Tor streams
+                if (rndForTorCircuits == null)
+                    rndForTorCircuits = new SecureRandom();
+
                 username = rndForTorCircuits.nextInt(100000)+"";
                 password = rndForTorCircuits.nextInt(100000)+"";
 
@@ -1797,55 +1806,59 @@ public class XmppConnection extends ImConnection {
 
         ChatSession session = findOrCreateSession(smackMessage.getFrom(), isGroupMessage);
 
-        DeliveryReceipt drIncoming = (DeliveryReceipt) smackMessage.getExtension("received", DeliveryReceipt.NAMESPACE);
+        if (session != null && session.isSubscribed()) //not subscribed so don't do anything
+        {
 
-        if (drIncoming != null) {
+            DeliveryReceipt drIncoming = (DeliveryReceipt) smackMessage.getExtension("received", DeliveryReceipt.NAMESPACE);
 
-            debug(TAG, "got delivery receipt for " + drIncoming.getId());
+            if (drIncoming != null) {
 
-            if (session != null)
-                session.onMessageReceipt(drIncoming.getId());
+                debug(TAG, "got delivery receipt for " + drIncoming.getId());
 
-        }
+                if (session != null)
+                    session.onMessageReceipt(drIncoming.getId());
 
-        if (body != null && session != null) {
-
-            Message rec = new Message(body);
-
-            rec.setTo(new XmppAddress(smackMessage.getTo()));
-            rec.setFrom( new XmppAddress(smackMessage.getFrom()));
-            rec.setDateTime(new Date());
-
-            rec.setID(smackMessage.getStanzaId());
-
-            rec.setType(Imps.MessageType.INCOMING);
-
-            // Detect if this was said by us, and mark message as outgoing
-            if (isGroupMessage && rec.getFrom().getResource().equals(rec.getTo().getUser())) {
-                //rec.setType(Imps.MessageType.OUTGOING);
-                Occupant oc = mChatGroupManager.getMultiUserChat(rec.getFrom().getBareAddress()).getOccupant(rec.getFrom().getAddress());
-                if (oc != null && oc.getJid().equals(mUser.getAddress().getAddress()))
-                    return; //do nothing if it is from us
             }
 
-            boolean good = session.onReceiveMessage(rec);
+            if (body != null && session != null) {
 
-            if (smackMessage.getExtension("request", DeliveryReceipt.NAMESPACE) != null) {
-                if (good) {
-                    debug(TAG, "sending delivery receipt");
-                    // got XEP-0184 request, send receipt
-                    sendReceipt(smackMessage);
-                    session.onReceiptsExpected(true);
-                } else {
-                    debug(TAG, "not sending delivery receipt due to processing error");
+                Message rec = new Message(body);
+
+                rec.setTo(new XmppAddress(smackMessage.getTo()));
+                rec.setFrom(new XmppAddress(smackMessage.getFrom()));
+                rec.setDateTime(new Date());
+
+                rec.setID(smackMessage.getStanzaId());
+
+                rec.setType(Imps.MessageType.INCOMING);
+
+                // Detect if this was said by us, and mark message as outgoing
+                if (isGroupMessage && rec.getFrom().getResource().equals(rec.getTo().getUser())) {
+                    //rec.setType(Imps.MessageType.OUTGOING);
+                    Occupant oc = mChatGroupManager.getMultiUserChat(rec.getFrom().getBareAddress()).getOccupant(rec.getFrom().getAddress());
+                    if (oc != null && oc.getJid().equals(mUser.getAddress().getAddress()))
+                        return; //do nothing if it is from us
                 }
 
-            } else {
-                //no request for delivery receipt
+                boolean good = session.onReceiveMessage(rec);
 
-                session.onReceiptsExpected(false);
+                if (smackMessage.getExtension("request", DeliveryReceipt.NAMESPACE) != null) {
+                    if (good) {
+                        debug(TAG, "sending delivery receipt");
+                        // got XEP-0184 request, send receipt
+                        sendReceipt(smackMessage);
+                        session.onReceiptsExpected(true);
+                    } else {
+                        debug(TAG, "not sending delivery receipt due to processing error");
+                    }
+
+                } else {
+                    //no request for delivery receipt
+
+                    session.onReceiptsExpected(false);
+                }
+
             }
-
         }
     }
 
@@ -1995,12 +2008,17 @@ public class XmppConnection extends ImConnection {
             if (participant != null)
                 session = mSessionManager.createChatSession(participant,false);
 
-            if (session != null) {
-                RosterEntry entry = mRoster.getEntry(address);
-                if (entry != null && entry.getType() == RosterPacket.ItemType.both)
-                    session.setSubscribed(true);
-            }
         }
+
+        /**
+        try {
+            if (session != null)
+                session.setSubscribed(!mContactListManager.isBlocked(address));
+        }
+        catch (ImException ime)
+        {
+            ime.printStackTrace();
+        }*/
 
         return session;
     }
@@ -2347,8 +2365,6 @@ public class XmppConnection extends ImConnection {
 
                     }
 
-                    requestPresenceRefresh(address);
-
                     if (!cl.containsContact(contact)) {
                         try {
                             cl.addExistingContact(contact);
@@ -2356,6 +2372,40 @@ public class XmppConnection extends ImConnection {
                             debug(TAG, "could not add contact to list: " + e.getLocalizedMessage());
                         }
                     }
+
+
+                    int subStatus = subStatus = Imps.ContactsColumns.SUBSCRIPTION_STATUS_NONE;
+                    if (rEntry.getStatus() == RosterPacket.ItemStatus.SUBSCRIPTION_PENDING)
+                        subStatus = Imps.ContactsColumns.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING;
+
+                    int subType = 0;
+                    if (rEntry.getType() == RosterPacket.ItemType.both)
+                        subType = Imps.ContactsColumns.SUBSCRIPTION_TYPE_BOTH;
+                    else if (rEntry.getType() == RosterPacket.ItemType.none)
+                        subType = Imps.ContactsColumns.SUBSCRIPTION_TYPE_NONE;
+                    else if (rEntry.getType() == RosterPacket.ItemType.to) {
+                        subType = Imps.ContactsColumns.SUBSCRIPTION_TYPE_TO;
+                    }
+                    else if (rEntry.getType() == RosterPacket.ItemType.from) {
+                        subType = Imps.ContactsColumns.SUBSCRIPTION_TYPE_FROM;
+                    }
+                    else if (rEntry.getType() == RosterPacket.ItemType.remove)
+                        subType = Imps.ContactsColumns.SUBSCRIPTION_TYPE_REMOVE;
+
+
+                    try {
+
+                        mContactListManager.getSubscriptionRequestListener().onSubScriptionChanged(contact, mProviderId, mAccountId, subStatus, subType);
+                    }
+                    catch (RemoteException re)
+                    {
+
+                    }
+
+                    // mContactListManager.getSubscriptionRequestListener().onSubscriptionChanged(contact, mProviderId, mAccountId, )
+
+
+//                    requestPresenceRefresh(address);
 
 
                 }
@@ -2620,47 +2670,66 @@ public class XmppConnection extends ImConnection {
         protected void doDeleteContactListAsync(ContactList list) {
             // TODO delete contact list
             debug(TAG, "delete contact list " + list.getName());
+
         }
 
         @Override
         protected void doCreateContactListAsync(String name, Collection<Contact> contacts,
                 boolean isDefault) {
-            // TODO create contact list
             debug(TAG, "create contact list " + name + " default " + isDefault);
         }
 
         @Override
         protected void doBlockContactAsync(String address, boolean block) {
-            // TODO block contact
 
+            blockContact(address, block);
         }
 
         @Override
-        protected void doAddContactToListAsync(Contact contact, ContactList list) throws ImException {
+        protected void doAddContactToListAsync(Contact contact, ContactList list, boolean autoSubscribedPresence) throws ImException {
             debug(TAG, "add contact to " + list.getName());
+
+            if (!list.containsContact(contact)) {
+                try {
+                    list.addExistingContact(contact);
+                } catch (ImException e) {
+                    debug(TAG, "could not add contact to list: " + e.getLocalizedMessage());
+                }
+            }
 
             if (mConnection.isConnected())
             {
                 RosterEntry rEntry;
 
                 String[] groups = new String[] { list.getName() };
+
+                RosterPacket.ItemStatus status = null;
+                RosterPacket.ItemType type = RosterPacket.ItemType.none;
+
+                if (autoSubscribedPresence)
+                {
+                    status = RosterPacket.ItemStatus.subscribe;
+                    type = RosterPacket.ItemType.both;
+                }
+
                 try {
                     rEntry = mRoster.getEntry(contact.getAddress().getBareAddress());
                     RosterGroup rGroup = mRoster.getGroup(list.getName());
 
                     if (rGroup == null)
                     {
-                        if (rEntry == null)
-                            mRoster.createEntry (contact.getAddress().getBareAddress(), contact.getName(), null);
+                        if (rEntry == null) {
+
+                            addRosterEntry(contact.getAddress().getBareAddress(), contact.getName(), null, status, type);
+                            rEntry = mRoster.getEntry(contact.getAddress().getBareAddress());
+                        }
 
                     }
                     else if (rEntry == null)
                     {
-                        mRoster.createEntry(contact.getAddress().getBareAddress(), contact.getName(), groups);
-
+                        addRosterEntry(contact.getAddress().getBareAddress(), contact.getName(), groups, status, type);
+                        rEntry = mRoster.getEntry(contact.getAddress().getBareAddress());
                     }
-
-//                    rEntry = mRoster.getEntry(contact.getAddress().getBareAddress());
 
 
                 } catch (XMPPException e) {
@@ -2673,24 +2742,74 @@ public class XmppConnection extends ImConnection {
                     throw new ImException(msg);
                 }
 
-                //i approve you having my presence!
-                org.jivesoftware.smack.packet.Presence reqSubscribed = new org.jivesoftware.smack.packet.Presence(
-                        org.jivesoftware.smack.packet.Presence.Type.subscribed);
-                reqSubscribed.setTo(contact.getAddress().getBareAddress());
-                sendPacket(reqSubscribed);
-
-                //i want your presence
-                org.jivesoftware.smack.packet.Presence reqSubscribe = new org.jivesoftware.smack.packet.Presence(
-                        org.jivesoftware.smack.packet.Presence.Type.subscribe);
-                reqSubscribe.setTo(contact.getAddress().getBareAddress());
-                sendPacket(reqSubscribe);
+                if (autoSubscribedPresence) {
 
 
+                    //i want your presence
+                    org.jivesoftware.smack.packet.Presence reqSubscribe = new org.jivesoftware.smack.packet.Presence(
+                            org.jivesoftware.smack.packet.Presence.Type.subscribe);
+                    reqSubscribe.setTo(contact.getAddress().getBareAddress());
+                    sendPacket(reqSubscribe);
+
+                    findOrCreateSession(contact.getAddress().getBareAddress(), false).setSubscribed(true);
+
+                }
 
                 do_loadContactLists();
-                notifyContactListUpdated(list, ContactListListener.LIST_CONTACT_ADDED, contact);
-
             }
+
+            notifyContactListUpdated(list, ContactListListener.LIST_CONTACT_ADDED, contact);
+
+
+        }
+
+        private void addRosterEntry (String user, String name, String[] groups, RosterPacket.ItemStatus status, RosterPacket.ItemType type) throws SmackException, XMPPException.XMPPErrorException
+        {
+            // Create and send roster entry creation packet.
+            RosterPacket rosterPacket = new RosterPacket();
+            rosterPacket.setType(IQ.Type.set);
+            RosterPacket.Item item = new RosterPacket.Item(user, name);
+            item.setItemStatus(status);
+            item.setItemType(type);
+            if (groups != null) {
+                for (String group : groups) {
+                    if (group != null && group.trim().length() > 0) {
+                        item.addGroupName(group);
+                    }
+                }
+            }
+            rosterPacket.addRosterItem(item);
+            mConnection.createPacketCollectorAndSend(rosterPacket).nextResultOrThrow();
+
+            /**
+            // Create a presence subscription packet and send.
+            org.jivesoftware.smack.packet.Presence presencePacket = new org.jivesoftware.smack.packet.Presence(org.jivesoftware.smack.packet.Presence.Type.subscribe);
+            presencePacket.setTo(user);
+            mConnection.sendStanza(presencePacket);
+             */
+        }
+
+        public boolean blockContact(String blockContact, boolean doBlock) {
+
+
+            PrivacyItem item=new PrivacyItem(PrivacyItem.Type.jid,blockContact, false, 7);
+            PrivacyListManager privacyManager = PrivacyListManager.getInstanceFor(mConnection);
+
+            if (privacyManager != null) {
+                List<PrivacyItem> list = new ArrayList<PrivacyItem>();
+                list.add(item);
+
+                try {
+                    privacyManager.updatePrivacyList(PRIVACY_LIST_DEFAULT, list);
+                    privacyManager.setActiveListName(PRIVACY_LIST_DEFAULT);
+                    return true;
+                } catch (SmackException.NoResponseException | XMPPException.XMPPErrorException | SmackException.NotConnectedException e) {
+                    e.printStackTrace();
+                    return false;
+                }
+            }
+
+            return false;
         }
 
         @Override
@@ -2700,26 +2819,40 @@ public class XmppConnection extends ImConnection {
                     org.jivesoftware.smack.packet.Presence.Type.unsubscribed);
             response.setTo(contact.getAddress().getBareAddress());
             sendPacket(response);
+
+            try { mRoster.reload(); }
+            catch (Exception e){}
+
             try {
                 mContactListManager.getSubscriptionRequestListener().onSubscriptionDeclined(contact, mProviderId, mAccountId);
             } catch (RemoteException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
+
+            findOrCreateSession(contact.getAddress().getBareAddress(), false).setSubscribed(false);
+
         }
 
         @Override
         public void approveSubscriptionRequest(final Contact contact) {
 
             org.jivesoftware.smack.packet.Presence response = new org.jivesoftware.smack.packet.Presence(
+                    org.jivesoftware.smack.packet.Presence.Type.subscribe);
+            response.setTo(contact.getAddress().getBareAddress());
+            sendPacket(response);
+
+            response = new org.jivesoftware.smack.packet.Presence(
                     org.jivesoftware.smack.packet.Presence.Type.subscribed);
             response.setTo(contact.getAddress().getBareAddress());
             sendPacket(response);
 
+            try { mRoster.reload(); }
+            catch (Exception e){}
+
             try
             {
-
-            //    doAddContactToListAsync(contact, getContactListManager().getDefaultContactList());
+                //doAddContactToListAsync(contact, getContactListManager().getDefaultContactList());
                 mContactListManager.getSubscriptionRequestListener().onSubscriptionApproved(contact, mProviderId, mAccountId);
 
 
@@ -2728,7 +2861,12 @@ public class XmppConnection extends ImConnection {
                 debug (TAG, "error responding to subscription approval: " + e.getLocalizedMessage());
 
             }
-                
+
+            findOrCreateSession(contact.getAddress().getBareAddress(), false).setSubscribed(true);
+
+            requestPresenceRefresh(contact.getAddress().getBareAddress());
+
+
         }
 
         @Override
@@ -3375,7 +3513,8 @@ public class XmppConnection extends ImConnection {
             return null; //do nothing if we don't have a contact
         }*/
 
-        if (presence.getType() == org.jivesoftware.smack.packet.Presence.Type.subscribe) {
+        if (presence.getType() == org.jivesoftware.smack.packet.Presence.Type.subscribe
+                ) {
             debug(TAG, "got subscribe request: " + presence.getFrom());
 
             try
@@ -3385,26 +3524,9 @@ public class XmppConnection extends ImConnection {
                     contact = new Contact(xAddr, xAddr.getUser());
                 }
 
-                mContactListManager.doAddContactToListAsync(contact, getContactListManager().getDefaultContactList());
-
-                /**
-                org.jivesoftware.smack.packet.Presence reqSubscribed = new org.jivesoftware.smack.packet.Presence(
-                        org.jivesoftware.smack.packet.Presence.Type.subscribed);
-                reqSubscribed.setTo(contact.getAddress().getBareAddress());
-                sendPacket(reqSubscribed);
-
-                org.jivesoftware.smack.packet.Presence reqSubscribe = new org.jivesoftware.smack.packet.Presence(
-                        org.jivesoftware.smack.packet.Presence.Type.subscribe);
-                reqSubscribe.setTo(contact.getAddress().getBareAddress());
-                sendPacket(reqSubscribe);
-                 **/
-
+                mContactListManager.doAddContactToListAsync(contact, getContactListManager().getDefaultContactList(), false);
                 mContactListManager.getSubscriptionRequestListener().onSubScriptionRequest(contact, mProviderId, mAccountId);
 
-                //requestPresenceRefresh(presence.getFrom());
-
-                //contact = mContactListManager.getContact(xaddress.getBareAddress());
-                //contact.setPresence(p);
             }
             catch (Exception e)
             {
@@ -3418,16 +3540,21 @@ public class XmppConnection extends ImConnection {
             debug(TAG, "got subscribed confirmation: " + presence.getFrom());
             try
             {
+                //i want your presence
+                org.jivesoftware.smack.packet.Presence reqSubscribe = new org.jivesoftware.smack.packet.Presence(
+                        org.jivesoftware.smack.packet.Presence.Type.subscribed);
+                reqSubscribe.setTo(contact.getAddress().getBareAddress());
+                sendPacket(reqSubscribe);
+
                 if (contact == null) {
                     XmppAddress xAddr = new XmppAddress(presence.getFrom());
                     contact = new Contact(xAddr, xAddr.getUser());
+                    mContactListManager.doAddContactToListAsync(contact,getContactListManager().getDefaultContactList(),true);
                 }
 
-           //     mContactListManager.doAddContactToListAsync(contact,getContactListManager().getDefaultContactList());
-              //  mContactListManager.getSubscriptionRequestListener().onSubscriptionApproved(contact, mProviderId, mAccountId);
+                mContactListManager.getSubscriptionRequestListener().onSubscriptionApproved(contact, mProviderId, mAccountId);
 
                 requestPresenceRefresh(presence.getFrom());
-                contact.setPresence(p);
             }
             catch (Exception e)
             {

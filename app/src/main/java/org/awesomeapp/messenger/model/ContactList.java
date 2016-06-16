@@ -104,7 +104,7 @@ public class ContactList extends ImEntity {
         }
 
         try {
-            mManager.addContactToListAsync(contact, ContactList.this);
+            mManager.addContactToListAsync(contact, ContactList.this, true);
         } catch (ImException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

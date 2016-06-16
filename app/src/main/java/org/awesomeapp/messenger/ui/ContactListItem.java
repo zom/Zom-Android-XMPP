@@ -21,6 +21,7 @@ package org.awesomeapp.messenger.ui;
 import im.zom.messenger.R;
 
 import org.awesomeapp.messenger.model.Contact;
+import org.awesomeapp.messenger.model.ImErrorInfo;
 import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
 import org.awesomeapp.messenger.service.IContactListManager;
 import org.awesomeapp.messenger.service.IImConnection;
@@ -217,10 +218,9 @@ public class ContactListItem extends FrameLayout {
      //   holder.mStatusText.setText("");
 
         statusText = address;
-        holder.mLine2.setText(statusText);
+        holder.mLine2.setText(statusText + " t:" + subType + "s:" + subStatus);
 
-        if (subType == Imps.ContactsColumns.SUBSCRIPTION_TYPE_FROM &&
-                subStatus == Imps.ContactsColumns.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING)
+        if (subType == Imps.ContactsColumns.SUBSCRIPTION_TYPE_INVITATIONS)
         {
             holder.mSubBox.setVisibility(View.VISIBLE);
 
@@ -357,6 +357,29 @@ public class ContactListItem extends FrameLayout {
                 // mHandler.showServiceErrorAlert(e.getLocalizedMessage());
                 LogCleaner.error(ImApp.LOG_TAG, "decline sub error",e);
             }
+        }
+    }
+
+    void deleteContact ()
+    {
+        try {
+
+            IImConnection mConn;
+            ImApp app = ((ImApp)((Activity)getContext()).getApplication());
+            mConn = app.getConnection(mHolder.mProviderId, mHolder.mAccountId);
+
+            IContactListManager manager = mConn.getContactListManager();
+
+            int res = manager.removeContact(address);
+            if (res != ImErrorInfo.NO_ERROR) {
+                //mHandler.showAlert(R.string.error,
+                //      ErrorResUtils.getErrorRes(getResources(), res, address));
+            }
+
+        }
+        catch (RemoteException re)
+        {
+
         }
     }
 

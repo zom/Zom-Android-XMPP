@@ -538,6 +538,7 @@ public class ContactListManagerAdapter extends
                 {
                     session.presenceChanged(contact.getPresence().getStatus());
 
+                    /**
                     if (contact.getPresence().isOnline()) {
                         try {
                             session.getDefaultOtrChatSession().startChatEncryption();
@@ -546,7 +547,7 @@ public class ContactListManagerAdapter extends
                         {
                             Log.d(ImApp.LOG_TAG,"error starting otr session on status changed to online",e);
                         }
-                    }
+                    }*/
                 }
 
             }
@@ -723,13 +724,23 @@ public class ContactListManagerAdapter extends
 
     final class SubscriptionRequestListenerAdapter extends ISubscriptionListener.Stub {
 
+
+        public void onSubScriptionChanged (final Contact from, long providerId, long accountId, int subStatus, int subType)
+        {
+            String username = mAdaptee.normalizeAddress(from.getAddress().getAddress());
+            String nickname = from.getName();
+            Uri uri = insertOrUpdateSubscription(username, nickname,
+                    subType,
+                    subStatus);
+        }
+
         public void onSubScriptionRequest(final Contact from, long providerId, long accountId) {
                         
             String username = mAdaptee.normalizeAddress(from.getAddress().getAddress());
             String nickname = from.getName();
             queryOrInsertContact(from); // FIXME Miron
             Uri uri = insertOrUpdateSubscription(username, nickname,
-                    Imps.Contacts.SUBSCRIPTION_TYPE_FROM,
+                    Imps.Contacts.SUBSCRIPTION_TYPE_INVITATIONS,
                     Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING);
 
             boolean hadListener = broadcast(new SubscriptionBroadcaster() {
@@ -749,7 +760,11 @@ public class ContactListManagerAdapter extends
             String username = mAdaptee.normalizeAddress(from.getAddress().getAddress());
             String nickname = from.getName();
 
-            //to be implemented - should prompt user to approve unsubscribe?
+            queryOrInsertContact(from); // FIXME Miron
+            Uri uri = insertOrUpdateSubscription(username, nickname,
+                    Imps.Contacts.SUBSCRIPTION_TYPE_NONE,
+                    Imps.Contacts.SUBSCRIPTION_STATUS_NONE);
+
         }
 
 
@@ -778,17 +793,18 @@ public class ContactListManagerAdapter extends
             insertOrUpdateSubscription(contact.getAddress().getBareAddress(), null, Imps.Contacts.SUBSCRIPTION_TYPE_BOTH,
                     Imps.Contacts.SUBSCRIPTION_STATUS_NONE);
 
-            broadcast(new SubscriptionBroadcaster() {
+            boolean hadListener = broadcast(new SubscriptionBroadcaster() {
                 public void broadcast(ISubscriptionListener listener) throws RemoteException {
                     listener.onSubscriptionApproved(contact,  mConn.getProviderId(), mConn.getAccountId());
                 }
             });
 
-            mContext.getStatusBarNotifier().notifySubscriptionApproved(contact, providerId, accountId);
+            if (!hadListener)
+                mContext.getStatusBarNotifier().notifySubscriptionApproved(contact, providerId, accountId);
         }
 
         public void onSubscriptionDeclined(final Contact contact, long providerId, long accountId) {
-            insertOrUpdateSubscription(contact.getAddress().getBareAddress(), null, Imps.Contacts.SUBSCRIPTION_TYPE_NONE,
+            insertOrUpdateSubscription(contact.getAddress().getBareAddress(), null, Imps.Contacts.SUBSCRIPTION_STATUS_NONE,
                     Imps.Contacts.SUBSCRIPTION_STATUS_NONE);
 
             broadcast(new SubscriptionBroadcaster() {
@@ -1371,4 +1387,7 @@ public class ContactListManagerAdapter extends
         ContentUris.appendId(builder, mConn.getAccountId());
         mResolver.insert(builder.build(), new ContentValues(0));
     }
+
+
+
 }
