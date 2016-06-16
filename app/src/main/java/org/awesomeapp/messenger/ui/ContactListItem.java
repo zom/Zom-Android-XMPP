@@ -218,7 +218,7 @@ public class ContactListItem extends FrameLayout {
      //   holder.mStatusText.setText("");
 
         statusText = address;
-        holder.mLine2.setText(statusText + " t:" + subType + "s:" + subStatus);
+        holder.mLine2.setText(statusText);
 
         if (subType == Imps.ContactsColumns.SUBSCRIPTION_TYPE_INVITATIONS)
         {
