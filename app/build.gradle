@@ -16,6 +16,16 @@ buildscript {
 apply plugin: 'com.android.application'
 apply plugin: 'witness'
 
+/* gets the version name from the latest Git tag, stripping the leading v off */
+def getVersionName = { ->
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'describe', '--tags', '--always'
+        standardOutput = stdout
+    }
+    return stdout.toString().trim()
+}
+
 android {
 
     compileSdkVersion project.ext.compileSdkVersion
@@ -30,6 +40,9 @@ android {
 
     defaultConfig {
         applicationId 'im.zom.messenger'
+        versionCode 1501908
+        versionName getVersionName()
+        archivesBaseName = "Zom-$versionName"
         minSdkVersion project.ext.minSdkVersion
         targetSdkVersion project.ext.targetSdkVersion
         testApplicationId 'im.zom.messenger.test'
