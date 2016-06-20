@@ -61,6 +61,7 @@ import org.awesomeapp.messenger.provider.Imps;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
@@ -135,9 +136,6 @@ public class ConversationDetailActivity extends BaseActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         applyStyleForToolbar();
 
-        CollapsingToolbarLayout collapsingToolbar =
-                (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
-        collapsingToolbar.setTitle(mConvoView.getTitle());
 
         appBarLayout = (AppBarLayout)findViewById(R.id.appbar);
         mRootLayout = (CoordinatorLayout)findViewById(R.id.main_content);
@@ -162,9 +160,17 @@ public class ConversationDetailActivity extends BaseActivity {
     public void applyStyleForToolbar() {
 
         Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        CollapsingToolbarLayout collapsingToolbar =
+                (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+        collapsingToolbar.setTitle(mConvoView.getTitle());
 
         //first set font
         Typeface typeface = CustomTypefaceManager.getCurrentTypeface(this);
+
+
+        collapsingToolbar.setCollapsedTitleTypeface(typeface);
+        collapsingToolbar.setExpandedTitleTypeface(typeface);
+
 
         if (typeface != null) {
             for (int i = 0; i < mToolbar.getChildCount(); i++) {
@@ -188,7 +194,8 @@ public class ConversationDetailActivity extends BaseActivity {
                getWindow().setStatusBarColor(selColor);
             }
 
-            mToolbar.setBackgroundColor(selColor);
+            //mToolbar.setBackgroundColor(selColor);
+            collapsingToolbar.setBackgroundColor(selColor);
         }
 
     }
@@ -775,6 +782,18 @@ public class ConversationDetailActivity extends BaseActivity {
             mLastPhoto = Uri.parse(lastPhotoPath);
     }
 
+    private TextView getActionBarTextView(Toolbar toolbar) {
+        TextView titleTextView = null;
+
+        try {
+            Field f = toolbar.getClass().getDeclaredField("mTitleTextView");
+            f.setAccessible(true);
+            titleTextView = (TextView) f.get(toolbar);
+        } catch (NoSuchFieldException e) {
+        } catch (IllegalAccessException e) {
+        }
+        return titleTextView;
+    }
 
 
     public static final int REQUEST_PICK_CONTACTS = RESULT_FIRST_USER + 1;

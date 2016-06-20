@@ -5,10 +5,14 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.RemoteException;
+import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -39,6 +43,7 @@ import org.awesomeapp.messenger.ui.qr.QrGenAsyncTask;
 import org.awesomeapp.messenger.ui.qr.QrScanActivity;
 import org.awesomeapp.messenger.ui.qr.QrShareAsyncTask;
 import org.awesomeapp.messenger.util.LogCleaner;
+import org.ironrabbit.type.CustomTypefaceManager;
 
 import java.io.IOException;
 
@@ -63,6 +68,8 @@ public class ContactDisplayActivity extends BaseActivity {
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        applyStyleForToolbar();
 
         mNickname = getIntent().getStringExtra("nickname");
         mUsername = getIntent().getStringExtra("address");
@@ -174,6 +181,42 @@ public class ContactDisplayActivity extends BaseActivity {
         });
 
     }
+
+
+    public void applyStyleForToolbar() {
+
+        Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        //first set font
+        Typeface typeface = CustomTypefaceManager.getCurrentTypeface(this);
+
+        if (typeface != null) {
+            for (int i = 0; i < mToolbar.getChildCount(); i++) {
+                View view = mToolbar.getChildAt(i);
+                if (view instanceof TextView) {
+                    TextView tv = (TextView) view;
+
+                    tv.setTypeface(typeface);
+                    break;
+                }
+            }
+        }
+
+        //not set color
+        final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+        int selColor = settings.getInt("themeColor",-1);
+
+        if (selColor != -1) {
+            if (Build.VERSION.SDK_INT >= 21) {
+                getWindow().setNavigationBarColor(selColor);
+                getWindow().setStatusBarColor(selColor);
+            }
+
+            mToolbar.setBackgroundColor(selColor);
+        }
+
+    }
+
 
 
     @Override

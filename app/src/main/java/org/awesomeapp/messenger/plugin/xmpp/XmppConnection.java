@@ -371,12 +371,15 @@ public class XmppConnection extends ImConnection {
 
                 if (!TextUtils.isEmpty(vCard.getNickName()))
                 {
-                    contact.setName(vCard.getNickName());
+                    if (!vCard.getNickName().equals(contact.getName()))
+                    {
+                        contact.setName(vCard.getNickName());
+                      //  mContactListManager.doSetContactName(contact.getAddress().getBareAddress(), contact.getName());
+                        mContactListManager.doAddContactToListAsync(contact, getContactListManager().getDefaultContactList(), false);
+                    }
+
                 }
-                else if (!TextUtils.isEmpty(vCard.getFirstName()))
-                {
-                    contact.setName(vCard.getFirstName());
-                }
+
 
 
                     // If VCard is loaded, then save the avatar to the personal folder.
@@ -787,7 +790,7 @@ public class XmppConnection extends ImConnection {
             String[] parts = chatRoomJid.split("@");
             String room = parts[0];
             String server = parts[1];
-            String nickname = mUser.getName().split("@")[0];
+            String nickname = mUser.getName();//.split("@")[0];
 
             try {
 
@@ -1115,7 +1118,8 @@ public class XmppConnection extends ImConnection {
         Imps.ProviderSettings.QueryMap providerSettings = new Imps.ProviderSettings.QueryMap(
                 cursor, contentResolver, mProviderId, false, null);
 
-        mUser = makeUser(providerSettings, contentResolver);
+        if (mUser == null)
+            mUser = makeUser(providerSettings, contentResolver);
 
         providerSettings.close();
 
@@ -1312,8 +1316,9 @@ public class XmppConnection extends ImConnection {
             
             String fullJid = mConnection.getUser();
             XmppAddress xa = new XmppAddress(fullJid);
-            mUser = new Contact(xa, xa.getUser());
 
+            if (mUser == null)
+                mUser = makeUser(providerSettings,mContext.getContentResolver());
 
             mStreamHandler.notifyInitialLogin();
             initServiceDiscovery();
@@ -1399,7 +1404,6 @@ public class XmppConnection extends ImConnection {
             if (vCard == null) {
                 vCard = new VCard();
                 vCard.setJabberId(jid);
-                vCard.setNickName(mUser.getName());
                 setAvatar = true;
             }
             else if (vCard.getAvatarHash() != null)
@@ -1407,6 +1411,8 @@ public class XmppConnection extends ImConnection {
                 setAvatar = !DatabaseUtils.doesAvatarHashExist(mContext.getContentResolver(),  Imps.Avatars.CONTENT_URI, mUser.getAddress().getBareAddress(), vCard.getAvatarHash());
 
             }
+
+            vCard.setNickName(mUser.getName());
 
             if (setAvatar) {
                 byte[] avatar = DatabaseUtils.getAvatarBytesFromAddress(mContext.getContentResolver(), mUser.getAddress().getBareAddress(), ImApp.DEFAULT_AVATAR_WIDTH, ImApp.DEFAULT_AVATAR_HEIGHT);
