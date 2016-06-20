@@ -132,13 +132,12 @@ public class ConversationDetailActivity extends BaseActivity {
         mConvoView = new ConversationView(this);
 
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        appBarLayout = (AppBarLayout)findViewById(R.id.appbar);
+        mRootLayout = (CoordinatorLayout)findViewById(R.id.main_content);
+
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         applyStyleForToolbar();
-
-
-        appBarLayout = (AppBarLayout)findViewById(R.id.appbar);
-        mRootLayout = (CoordinatorLayout)findViewById(R.id.main_content);
 
         appBarLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -159,7 +158,7 @@ public class ConversationDetailActivity extends BaseActivity {
 
     public void applyStyleForToolbar() {
 
-        Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         CollapsingToolbarLayout collapsingToolbar =
                 (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         collapsingToolbar.setTitle(mConvoView.getTitle());
@@ -173,8 +172,8 @@ public class ConversationDetailActivity extends BaseActivity {
 
 
         if (typeface != null) {
-            for (int i = 0; i < mToolbar.getChildCount(); i++) {
-                View view = mToolbar.getChildAt(i);
+            for (int i = 0; i < toolbar.getChildCount(); i++) {
+                View view = toolbar.getChildAt(i);
                 if (view instanceof TextView) {
                     TextView tv = (TextView) view;
 
@@ -194,8 +193,9 @@ public class ConversationDetailActivity extends BaseActivity {
                getWindow().setStatusBarColor(selColor);
             }
 
-            //mToolbar.setBackgroundColor(selColor);
+            appBarLayout.setBackgroundColor(selColor);
             collapsingToolbar.setBackgroundColor(selColor);
+            toolbar.setBackgroundColor(selColor);
         }
 
     }

@@ -374,7 +374,7 @@ public class XmppConnection extends ImConnection {
                     if (!vCard.getNickName().equals(contact.getName()))
                     {
                         contact.setName(vCard.getNickName());
-                      //  mContactListManager.doSetContactName(contact.getAddress().getBareAddress(), contact.getName());
+                        mContactListManager.doSetContactName(contact.getAddress().getBareAddress(), contact.getName());
                         mContactListManager.doAddContactToListAsync(contact, getContactListManager().getDefaultContactList(), false);
                     }
 

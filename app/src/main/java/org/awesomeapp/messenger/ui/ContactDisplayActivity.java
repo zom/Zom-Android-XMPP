@@ -212,7 +212,6 @@ public class ContactDisplayActivity extends BaseActivity {
                 getWindow().setStatusBarColor(selColor);
             }
 
-            mToolbar.setBackgroundColor(selColor);
         }
 
     }
