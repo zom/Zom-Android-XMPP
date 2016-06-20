@@ -20,18 +20,11 @@
 <org.awesomeapp.messenger.ui.AccountListItem
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
-    android:layout_width="fill_parent"
-    android:layout_height="?android:attr/listPreferredItemHeight"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/underBubble"
+    android:padding="6dp"
     >
-    <LinearLayout
-        android:id="@+id/underBubble"
-        android:orientation="horizontal"
-        android:layout_weight="1"
-        android:layout_width="0dip"
-        android:layout_height="fill_parent"
-            android:layout_margin="6sp"
-        
-        >    
 
         <LinearLayout
             android:orientation="vertical"
@@ -42,18 +35,18 @@
 
             <LinearLayout
                 android:orientation="horizontal"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <TextView android:id="@+id/providerName"
+                <org.ironrabbit.type.CustomTypefaceTextView android:id="@+id/providerName"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textStyle="bold"
                     android:singleLine="true"
                     android:layout_weight="1.0"
                     android:ellipsize="marquee"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content" 
-                    android:fontFamily="sans-serif-light"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Account nickname goes here"
                     />
             </LinearLayout>
 
@@ -61,9 +54,10 @@
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:ellipsize="marquee"
                 android:singleLine="true"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                android:layout_height="wrap_content"
                android:fontFamily="sans-serif-light"
+                android:text="foo@domain.com"
                />
         </LinearLayout>
            <Switch
@@ -73,6 +67,5 @@
             
             />
            
-      
-    </LinearLayout>
+
 </org.awesomeapp.messenger.ui.AccountListItem>

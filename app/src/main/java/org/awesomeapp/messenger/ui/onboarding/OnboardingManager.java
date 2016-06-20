@@ -262,6 +262,7 @@ public class OnboardingManager {
                         result.password = password;
                         result.providerId = providerId;
                         result.accountId = accountId;
+                        result.nickname = nickname;
 
                         //now keep this account signed-in
                         ContentValues values = new ContentValues();
@@ -312,6 +313,7 @@ public class OnboardingManager {
                     result.password = password;
                     result.providerId = providerId;
                     result.accountId = accountId;
+                    result.nickname = nickname;
 
                     //now keep this account signed-in
                     ContentValues values = new ContentValues();

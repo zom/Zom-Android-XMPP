@@ -979,6 +979,8 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
                 "accounts._id AS account_id");
         sProviderAccountsProjectionMap.put(Imps.Provider.ACTIVE_ACCOUNT_USERNAME,
                 "accounts.username AS account_username");
+        sProviderAccountsProjectionMap.put(Imps.Provider.ACTIVE_ACCOUNT_NICKNAME,
+                "accounts.name AS account_name");
         sProviderAccountsProjectionMap.put(Imps.Provider.ACTIVE_ACCOUNT_PW,
                 "accounts.pw AS account_pw");
         sProviderAccountsProjectionMap.put(Imps.Provider.ACTIVE_ACCOUNT_LOCKED,

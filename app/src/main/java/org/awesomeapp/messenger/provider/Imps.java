@@ -125,6 +125,7 @@ public class Imps {
         private static final String[] PROVIDER_PROJECTION = new String[] { _ID, NAME };
 
         public static final String ACTIVE_ACCOUNT_ID = "account_id";
+        public static final String ACTIVE_ACCOUNT_NICKNAME = "account_name";
         public static final String ACTIVE_ACCOUNT_USERNAME = "account_username";
         public static final String ACTIVE_ACCOUNT_PW = "account_pw";
         public static final String ACTIVE_ACCOUNT_LOCKED = "account_locked";
@@ -222,6 +223,21 @@ public class Imps {
             try {
                 if (cursor.moveToFirst()) {
                     ret = cursor.getString(cursor.getColumnIndexOrThrow(USERNAME));
+                }
+            } finally {
+                cursor.close();
+            }
+
+            return ret;
+        }
+
+        public static final String getNickname(ContentResolver cr, long accountId) {
+            Cursor cursor = cr.query(CONTENT_URI, new String[] { NAME }, _ID + "=" + accountId,
+                    null /* selection args */, null /* sort order */);
+            String ret = null;
+            try {
+                if (cursor.moveToFirst()) {
+                    ret = cursor.getString(cursor.getColumnIndexOrThrow(NAME));
                 }
             } finally {
                 cursor.close();

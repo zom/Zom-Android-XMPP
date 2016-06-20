@@ -143,8 +143,11 @@ public class AccountsFragment extends ListFragment {
                                                              Imps.Provider.ACTIVE_ACCOUNT_LOCKED,
                                                              Imps.Provider.ACTIVE_ACCOUNT_KEEP_SIGNED_IN,
                                                              Imps.Provider.ACCOUNT_PRESENCE_STATUS,
-                                                             Imps.Provider.ACCOUNT_CONNECTION_STATUS
-                                                            };
+                                                                Imps.Provider.ACCOUNT_CONNECTION_STATUS,
+                                                        Imps.Provider.ACTIVE_ACCOUNT_NICKNAME
+
+
+        };
 
         static final int PROVIDER_ID_COLUMN = 0;
         static final int PROVIDER_NAME_COLUMN = 1;
@@ -157,6 +160,7 @@ public class AccountsFragment extends ListFragment {
         static final int ACTIVE_ACCOUNT_KEEP_SIGNED_IN = 8;
         static final int ACCOUNT_PRESENCE_STATUS = 9;
         static final int ACCOUNT_CONNECTION_STATUS = 10;
+        static final int ACCOUNT_NAME = 11;
 
         private static final int ACCOUNT_LOADER_ID = 1000;
 

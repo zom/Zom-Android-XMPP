@@ -5,6 +5,7 @@ package org.awesomeapp.messenger.ui.onboarding;
  */
 public class OnboardingAccount {
 
+    String nickname;
     String username;
     String domain;
     String password;

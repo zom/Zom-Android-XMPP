@@ -496,6 +496,9 @@ public class OnboardingActivity extends BaseActivity {
         mRequestedUserName = ((EditText)findViewById(R.id.edtNameAdvanced)).getText().toString();
         String jabberUserId = mRequestedUserName.replaceAll(USERNAME_ONLY_ALPHANUM, "").toLowerCase();
 
+        if (TextUtils.isEmpty(jabberUserId))
+            jabberUserId = "zomuser"; //if there are no alphanum then just use "zomuser"
+
         mEditUsername.setText(jabberUserId);
 
         String domain = ((EditText)findViewById(R.id.spinnerDomains)).getText().toString();
@@ -521,6 +524,9 @@ public class OnboardingActivity extends BaseActivity {
         showSetupProgress ();
 
         String jabberUserId = mRequestedUserName.replaceAll(USERNAME_ONLY_ALPHANUM, "").toLowerCase();
+
+        if (TextUtils.isEmpty(jabberUserId))
+            jabberUserId = "zomuser"; //if there are no alphanum then just use "zomuser"
 
         if (mCurrentFindServerTask != null)
             mCurrentFindServerTask.cancel(true);

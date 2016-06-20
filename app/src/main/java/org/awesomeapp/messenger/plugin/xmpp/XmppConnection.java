@@ -249,10 +249,11 @@ public class XmppConnection extends ImConnection {
 
         Contact contactUser = null;
 
+        String nickname = Imps.Account.getNickname(contentResolver, mAccountId);
         String userName = Imps.Account.getUserName(contentResolver, mAccountId);
         String domain = providerSettings.getDomain();
         String xmppName = userName + '@' + domain + '/' + providerSettings.getXmppResource();
-        contactUser = new Contact(new XmppAddress(xmppName), userName);
+        contactUser = new Contact(new XmppAddress(xmppName), nickname);
 
         return contactUser;
     }

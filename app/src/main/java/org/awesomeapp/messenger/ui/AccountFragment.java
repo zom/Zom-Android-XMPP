@@ -88,6 +88,7 @@ public class AccountFragment extends Fragment {
     long mProviderId;
     long mAccountId;
     String mUserAddress;
+    String mNickname;
     String mUserKey;
 
     /**
@@ -132,10 +133,13 @@ public class AccountFragment extends Fragment {
         mAccountId = mApp.getDefaultAccountId();
         mUserAddress = mApp.getDefaultUsername();
         mUserKey = mApp.getDefaultOtrKey();
+        mNickname = Imps.Account.getNickname(getContext().getContentResolver(), mAccountId);
 
        mView = inflater.inflate(R.layout.awesome_fragment_account, container, false);
 
         if (!TextUtils.isEmpty(mUserAddress)) {
+
+
             XmppAddress xAddress = new XmppAddress(mUserAddress);
 
             TextView tvNickname = (TextView) mView.findViewById(R.id.tvNickname);
@@ -230,7 +234,7 @@ public class AccountFragment extends Fragment {
             }
 
             tvUsername.setText(mUserAddress);
-            tvNickname.setText(xAddress.getUser());
+            tvNickname.setText(mNickname);
 
             if (mUserKey != null) {
                 tvFingerprint.setText(prettyPrintFingerprint(mUserKey));

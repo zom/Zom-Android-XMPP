@@ -65,6 +65,7 @@ public class AccountListItem extends LinearLayout {
     private int mActiveAccountUserNameColumn;
     private int mAccountPresenceStatusColumn;
     private int mAccountConnectionStatusColumn;
+    private int mActiveAccountNickNameColumn;
 
     private long mAccountId;
     private long mProviderId;
@@ -109,6 +110,8 @@ public class AccountListItem extends LinearLayout {
                 .getColumnIndexOrThrow(Imps.Provider.ACCOUNT_PRESENCE_STATUS);
         mAccountConnectionStatusColumn = c
                 .getColumnIndexOrThrow(Imps.Provider.ACCOUNT_CONNECTION_STATUS);
+        mActiveAccountNickNameColumn= c
+                .getColumnIndexOrThrow(Imps.Provider.ACTIVE_ACCOUNT_NICKNAME);
 
         setOnClickListener(new OnClickListener ()
         {
@@ -180,6 +183,8 @@ public class AccountListItem extends LinearLayout {
 
         if (!cursor.isNull(mActiveAccountIdColumn)) {
 
+            final String nickname = cursor.getString(mActiveAccountNickNameColumn);
+
             final String activeUserName = cursor.getString(mActiveAccountUserNameColumn);
 
             final int connectionStatus = cursor.getInt(mAccountConnectionStatusColumn);
@@ -188,7 +193,7 @@ public class AccountListItem extends LinearLayout {
             mHandler.postDelayed(new Runnable () {
                 public void run ()
                 {
-                    runBindTask(r, (int)mProviderId, activeUserName, connectionStatus, presenceString);
+                    runBindTask(r, (int)mProviderId, nickname, activeUserName, connectionStatus, presenceString);
                 }
             }
                     , 200l);
@@ -202,7 +207,7 @@ public class AccountListItem extends LinearLayout {
         super.onDetachedFromWindow();
     }
 
-    private void runBindTask(final Resources r, final int providerId, final String activeUserName,
+    private void runBindTask(final Resources r, final int providerId, final String nickname, final String activeUserName,
             final int dbConnectionStatus, final String presenceString) {
 
             String mProviderNameText;
@@ -236,7 +241,7 @@ public class AccountListItem extends LinearLayout {
                     if (mShowLongName)
                         mProviderNameText = activeUserName + '@' + userDomain;
                     else
-                        mProviderNameText = activeUserName;
+                        mProviderNameText = nickname;
 
                     switch (connectionStatus) {
 

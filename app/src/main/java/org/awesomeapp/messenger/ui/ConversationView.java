@@ -1231,6 +1231,7 @@ public class ConversationView {
                             @Override
                             public void onClick(SweetAlertDialog sDialog) {
                                 approveSubscription();
+                                sDialog.dismiss();
                             }
                         })
                         .show();
