@@ -202,7 +202,7 @@ public class MessageListItem extends FrameLayout {
             }
 
         }
-        else if (lastMessage.length() > 1 && lastMessage.charAt(0) == '/')
+        else if ((!TextUtils.isEmpty(lastMessage)) && (lastMessage.charAt(0) == '/'||lastMessage.charAt(0) == ':'))
         {
             boolean cmdSuccess = false;
 
@@ -214,7 +214,7 @@ public class MessageListItem extends FrameLayout {
 
                 try {
 
-                    String assetPath = cmds[1].split(" ")[0];//just get up to any whitespace;
+                    String assetPath = cmds[1].split(" ")[0].toLowerCase();//just get up to any whitespace;
 
                     //make sure sticker exists
                     AssetFileDescriptor afd = getContext().getAssets().openFd(assetPath);
@@ -241,7 +241,7 @@ public class MessageListItem extends FrameLayout {
                 String mimeTypeSticker = "image/png";
                 try {
                     String[] stickerParts = cmds[1].split("-");
-                    String stickerPath = "stickers/" + stickerParts[0] + "/" + stickerParts[1] + ".png";
+                    String stickerPath = "stickers/" + stickerParts[0].toLowerCase() + "/" + stickerParts[1].toLowerCase() + ".png";
 
                     //make sure sticker exists
                     AssetFileDescriptor afd = getContext().getAssets().openFd(stickerPath);
@@ -701,7 +701,7 @@ public class MessageListItem extends FrameLayout {
             }
 
         }
-        else if ((!TextUtils.isEmpty(lastMessage)) && (lastMessage.charAt(0) == '/'||lastMessage.charAt(0) == ':') && lastMessage.length()>1) {
+        else if ((!TextUtils.isEmpty(lastMessage)) && (lastMessage.charAt(0) == '/'||lastMessage.charAt(0) == ':')) {
 //            String cmd = lastMessage.toString().substring(1);
             boolean cmdSuccess = false;
 
@@ -716,7 +716,7 @@ public class MessageListItem extends FrameLayout {
                     afd.close();
 
                     //now setup the new URI for loading local sticker asset
-                    Uri mediaUri = Uri.parse("asset://localhost/" + cmds[1]);
+                    Uri mediaUri = Uri.parse("asset://localhost/" + cmds[1].toLowerCase());
 
                     //now load the thumbnail
                     cmdSuccess = showMediaThumbnail(mimeTypeSticker, mediaUri, id, mHolder);
@@ -732,7 +732,7 @@ public class MessageListItem extends FrameLayout {
                 String mimeTypeSticker = "image/png";
                 try {
                     String[] stickerParts = cmds[1].split("-");
-                    String stickerPath = "stickers/" + stickerParts[0] + "/" + stickerParts[1] + ".png";
+                    String stickerPath = "stickers/" + stickerParts[0].toLowerCase() + "/" + stickerParts[1].toLowerCase() + ".png";
 
                     //make sure sticker exists
                     AssetFileDescriptor afd = getContext().getAssets().openFd(stickerPath);

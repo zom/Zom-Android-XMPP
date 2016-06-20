@@ -21,6 +21,7 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -254,7 +255,7 @@ public class ConversationListItem extends FrameLayout {
                     }
 
                 }
-                else if (message.length()>1 && message.charAt(0) == '/')
+                else if ((!TextUtils.isEmpty(message)) && message.startsWith("/"))
                 {
                     String cmd = message.toString().substring(1);
 
@@ -270,6 +271,27 @@ public class ConversationListItem extends FrameLayout {
 
                     }
 
+                }
+                else if ((!TextUtils.isEmpty(message)) && message.startsWith(":"))
+                {
+                    String[] cmds = message.split(":");
+
+                    try {
+                        String[] stickerParts = cmds[1].split("-");
+                        String stickerPath = "stickers/" + stickerParts[0].toLowerCase() + "/" + stickerParts[1].toLowerCase() + ".png";
+
+                        //make sure sticker exists
+                        AssetFileDescriptor afd = getContext().getAssets().openFd(stickerPath);
+                        afd.getLength();
+                        afd.close();
+
+                        //now setup the new URI for loading local sticker asset
+                        Uri mediaUri = Uri.parse("asset://localhost/" + stickerPath);
+                        setThumbnail(getContext().getContentResolver(), holder, mediaUri);
+                        holder.mLine2.setVisibility(View.GONE);
+                    } catch (Exception e) {
+
+                    }
                 }
                 else
                 {
