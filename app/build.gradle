@@ -152,8 +152,8 @@ dependencies {
     compile 'info.guardianproject.netcipher:netcipher:1.2'
     compile 'info.guardianproject.panic:panic:0.5'
     compile 'net.hockeyapp.android:HockeySDK:3.5.0'
-    compile "org.igniterealtime.smack:smack-android-extensions:4.1.7"
-    compile "org.igniterealtime.smack:smack-tcp:4.1.7"
+    compile 'org.igniterealtime.smack:smack-android-extensions:4.1.7'
+    compile 'org.igniterealtime.smack:smack-tcp:4.1.7'
     compile 'org.jsoup:jsoup:1.5.2'
     compile 'org.ocpsoft.prettytime:prettytime:4.0.0.Final'
     compile 'org.thoughtcrime.ssl.pinning:AndroidPinning:1.0.0'
