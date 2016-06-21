@@ -88,7 +88,7 @@ public class ConversationDetailActivity extends BaseActivity {
 
     private long mChatId = -1;
     private String mAddress = null;
-    private String mName = null;
+    private String mNickname = null;
 
     private ConversationView mConvoView = null;
 
@@ -127,7 +127,7 @@ public class ConversationDetailActivity extends BaseActivity {
 
         mChatId = intent.getLongExtra("id", -1);
         mAddress = intent.getStringExtra("address");
-        mName = intent.getStringExtra("nickname");
+        mNickname = intent.getStringExtra("nickname");
 
         mConvoView = new ConversationView(this);
 
@@ -208,9 +208,9 @@ public class ConversationDetailActivity extends BaseActivity {
 
         mChatId = intent.getLongExtra("id", -1);
         mAddress = intent.getStringExtra("address");
-        mName = intent.getStringExtra("nickname");
+        mNickname = intent.getStringExtra("nickname");
 
-        mConvoView.bindChat(mChatId, mAddress, mName);
+        mConvoView.bindChat(mChatId, mAddress, mNickname);
 
         loadBackdrop();
 

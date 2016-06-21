@@ -78,10 +78,11 @@ public class ContactDisplayActivity extends BaseActivity {
 
         mConn = ((ImApp)getApplication()).getConnection(mProviderId,mAccountId);
 
-        if (TextUtils.isEmpty(mNickname))
+        if (TextUtils.isEmpty(mNickname)) {
             mNickname = mUsername;
+            mNickname = mNickname.split("@")[0].split("\\.")[0];
+        }
 
-        mNickname = mNickname.split("@")[0].split("\\.")[0];
         setTitle("");
 
         TextView tv = (TextView)findViewById(R.id.tvNickname);

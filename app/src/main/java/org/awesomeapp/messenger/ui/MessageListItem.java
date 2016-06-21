@@ -820,10 +820,13 @@ public class MessageListItem extends FrameLayout {
             {
                 int color = getAvatarBorder(presenceStatus);
                 int padding = 16;
-                LetterAvatar lavatar = new LetterAvatar(getContext(), color, nickname.substring(0,1).toUpperCase(), padding);
 
-                mHolder.mAvatar.setVisibility(View.VISIBLE);
-                mHolder.mAvatar.setImageDrawable(lavatar);
+                if (nickname.length() > 0) {
+                    LetterAvatar lavatar = new LetterAvatar(getContext(), color, nickname.substring(0, 1).toUpperCase(), padding);
+
+                    mHolder.mAvatar.setVisibility(View.VISIBLE);
+                    mHolder.mAvatar.setImageDrawable(lavatar);
+                }
             }
         }
     }

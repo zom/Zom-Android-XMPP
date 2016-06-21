@@ -1412,8 +1412,12 @@ public class ConversationView {
                 else
                     mRemoteNickname = name;
 
-            mRemoteNickname = mRemoteNickname.split("@")[0].split("\\.")[0];
-
+            try {
+                mRemoteNickname = mRemoteNickname.split("@")[0].split("\\.")[0];
+            }
+            catch (Exception e) {
+                //handle glitches in unicode nicknames
+            }
         }
 
     }
