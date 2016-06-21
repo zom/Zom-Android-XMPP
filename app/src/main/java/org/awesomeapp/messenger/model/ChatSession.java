@@ -44,6 +44,7 @@ public class ChatSession {
 
     private boolean mIsSubscribed = true;
 
+    private boolean mPushSent = false;
     /**
      * Creates a new ChatSession with a particular participant.
      *
@@ -117,21 +118,26 @@ public class ChatSession {
 
                 if (OtrChatManager.getInstance().canDoKnockPushMessage(sId)) {
 
-                    if (otrStatus == SessionStatus.ENCRYPTED)
-                    {
-                        cm.endSession(sId);
-                    }
-
-                    // ChatSecure-Push: If the remote peer is offline, send them a push
-                    OtrChatManager.getInstance().sendKnockPushMessage(sId);
-
                     // ChatSecure-Push : If no session is available when sending peer message,
                     // attempt to send a "Knock" push message to the peer asking them to come online
                     //cm.sendKnockPushMessage(sId);
+                    if (!mPushSent) {
+                        if (otrStatus == SessionStatus.ENCRYPTED) {
+                            cm.endSession(sId);
+                        }
+
+                        // ChatSecure-Push: If the remote peer is offline, send them a push
+                        OtrChatManager.getInstance().sendKnockPushMessage(sId);
+                        mPushSent = true;
+
+                    }
+
                      message.setType(Imps.MessageType.POSTPONED);
                      return message.getType();
                 }
             }
+
+            mPushSent = false;
 
             if (otrStatus == SessionStatus.ENCRYPTED) {
 
@@ -149,10 +155,11 @@ public class ChatSession {
 
             } else if (otrStatus == SessionStatus.FINISHED) {
 
+                /**
                 if (OtrChatManager.getInstance().canDoKnockPushMessage(sId)) {
                     // ChatSecure-Push: If the remote peer is offline, send them a push
                     OtrChatManager.getInstance().sendKnockPushMessage(sId);
-                }
+                }*/
 
             }
 
