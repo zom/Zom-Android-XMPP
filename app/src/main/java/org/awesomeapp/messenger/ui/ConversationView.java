@@ -1113,10 +1113,14 @@ public class ConversationView {
             if (ds == null)
                 ds = new DictionarySearch(mActivity);
 
-            if (taskSearch == null || taskSearch.getStatus() == AsyncTask.Status.FINISHED) {
-                taskSearch = new SearchWordTask();
-                taskSearch.execute(mComposeMessage.getText().toString());
+            String searchText = mComposeMessage.getText().toString();
 
+            if (!TextUtils.isEmpty(searchText)) {
+                if (taskSearch == null || taskSearch.getStatus() == AsyncTask.Status.FINISHED) {
+                    taskSearch = new SearchWordTask();
+                    taskSearch.execute(mComposeMessage.getText().toString());
+
+                }
             }
         }
 
