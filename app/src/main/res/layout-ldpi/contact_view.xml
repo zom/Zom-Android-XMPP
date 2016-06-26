@@ -38,7 +38,7 @@
                 <org.ironrabbit.type.CustomTypefaceTextView
                     android:id="@+id/line1"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="25dp"
                     android:fontFamily="sans-serif-light"
                     android:layout_gravity="left"
               		android:gravity="left"
@@ -49,7 +49,7 @@
                   <org.ironrabbit.type.CustomTypefaceTextView
                 android:id="@+id/line2"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"         
+                android:layout_height="20dp"
                 
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="#999999"

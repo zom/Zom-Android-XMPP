@@ -20,7 +20,12 @@ public class CustomTypefaceManager {
 	{
 		return mTypeface;
 	}
-	
+
+	public static boolean hasCustomTypeface ()
+	{
+		return mTypeface != null;
+	}
+
 	public static void loadFromKeyboard (Context context)
 	{
 		PackageManager packageManager = context.getPackageManager();
