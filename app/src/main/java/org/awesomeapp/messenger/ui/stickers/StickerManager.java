@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,7 +28,7 @@ public class StickerManager {
 	private static StickerManager mInstance = null;
 
 	private Map<Pattern, Sticker> emoticons = new HashMap<Pattern, Sticker>();
-	private Map<String, StickerGroup> categories = new HashMap<String, StickerGroup>();
+	private TreeMap<String, StickerGroup> categories = new TreeMap<String, StickerGroup>();
 	
 	private Context mContext;
 	
