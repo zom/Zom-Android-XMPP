@@ -2,6 +2,17 @@
 Track the source commits here:
 https://github.com/zom/Zom-Android/commits/master#
 
+15.0.1-RC-2 / 27 June 2016
+
+a458da9 if the contact is null, don't set the name on it
+c6ceead more tweaks to letter avatar
+65c96cc List stickers in alpha order
+bb33571 updated tiboji stickers
+506e903 last fixes to letter avatar and sticker display
+ddccf5c add support for sending nicknames in invite links, qr codes
+ed93334 use customfont for avatar and enforce line height of row
+36dea01 only suggest word if there is a letter!
+
 15.0.1-RC / 12 June 2016 / 950ec7cc824d90a600d0786dada557082c8b8e35
 (this is an initial massive dump into a new changelog for the v15 Zom work)
 
