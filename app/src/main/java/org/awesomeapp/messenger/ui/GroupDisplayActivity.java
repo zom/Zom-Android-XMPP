@@ -106,7 +106,7 @@ public class GroupDisplayActivity extends BaseActivity {
 
                     String inviteString;
                     try {
-                        inviteString = OnboardingManager.generateInviteLink(GroupDisplayActivity.this, mAddress, "");
+                        inviteString = OnboardingManager.generateInviteLink(GroupDisplayActivity.this, mAddress, "", mName);
                         OnboardingManager.inviteScan(GroupDisplayActivity.this, inviteString);
                     } catch (IOException e) {
                         // TODO Auto-generated catch block
@@ -123,7 +123,7 @@ public class GroupDisplayActivity extends BaseActivity {
                 public void onClick(View v) {
 
                     try {
-                        String inviteLink = OnboardingManager.generateInviteLink(GroupDisplayActivity.this, mAddress, "");
+                        String inviteLink = OnboardingManager.generateInviteLink(GroupDisplayActivity.this, mAddress, "", mName);
                         new QrShareAsyncTask(GroupDisplayActivity.this).execute(inviteLink);
                     } catch (IOException ioe) {
                         Log.e(ImApp.LOG_TAG, "couldn't generate QR code", ioe);

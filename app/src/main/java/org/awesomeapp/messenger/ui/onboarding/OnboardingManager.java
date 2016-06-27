@@ -96,7 +96,7 @@ public class OnboardingManager {
 
             resp.append(nickname).append(" is inviting you to Zom: ");
             
-            resp.append(generateInviteLink(context,username,fingerprint));
+            resp.append(generateInviteLink(context,username,fingerprint,nickname));
             
             return resp.toString();
         } catch (Exception e)
@@ -116,15 +116,32 @@ public class OnboardingManager {
             try {
                 String out = new String(Base64.decode(code[1], Base64.URL_SAFE | Base64.NO_WRAP | Base64.NO_PADDING));
 
-                String[] parts = out.split("\\?otr=");
+//                String[] parts = out.split("\\?otr=");
+                String[] partsTemp = out.split("\\?otr=");
 
-                if (parts == null)
+                if (partsTemp == null)
                 {
-                    parts = new String[1];
-                    parts[0] = out;
+                    partsTemp = new String[1];
+                    partsTemp[0] = out;
+                    return partsTemp;
                 }
+                else {
 
-                return parts;
+                    if (partsTemp.length > 1 && partsTemp[1].contains("&nickname="))
+                    {
+                        String[] parts = new String[3];
+                        parts[0] = partsTemp[0];
+                        parts[1] = partsTemp[1].substring(0,partsTemp[1].indexOf("&"));
+                        parts[2] = partsTemp[1].substring(partsTemp[1].indexOf("=")+1);
+
+                        return parts;
+
+                    }
+                    else
+                    {
+                        return partsTemp;
+                    }
+                }
 
             }
             catch (IllegalArgumentException iae)
@@ -137,7 +154,7 @@ public class OnboardingManager {
 
     }
 
-    public static String generateInviteLink (Context context, String username, String fingerprint) throws IOException
+    public static String generateInviteLink (Context context, String username, String fingerprint, String nickname) throws IOException
     {
         StringBuffer inviteUrl = new StringBuffer();
         inviteUrl.append(BASE_INVITE_URL);
@@ -145,6 +162,9 @@ public class OnboardingManager {
         StringBuffer code = new StringBuffer();        
         code.append(username);
         code.append("?otr=").append(fingerprint);
+
+        if (nickname != null)
+            code.append("&nickname=").append(nickname);
         
         inviteUrl.append(Base64.encodeToString(code.toString().getBytes(), Base64.URL_SAFE|Base64.NO_WRAP|Base64.NO_PADDING));
         return inviteUrl.toString();

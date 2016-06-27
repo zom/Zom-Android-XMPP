@@ -195,7 +195,7 @@ public class ConversationListItem extends FrameLayout {
                         String letterString = null;
                                 
                         if (nickname.length() > 0)
-                            letterString = nickname.substring(0,1).toUpperCase();
+                            letterString = nickname.substring(0,1);
                         else
                             letterString = "?"; //the unknown name!
                          

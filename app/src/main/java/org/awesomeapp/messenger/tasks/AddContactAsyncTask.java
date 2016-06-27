@@ -38,7 +38,7 @@ public class AddContactAsyncTask extends AsyncTask<String, Void, Integer> {
     @Override
     public Integer doInBackground(String... strings) {
 
-        return addToContactList(strings[0], strings[1]);
+        return addToContactList(strings[0], strings[1], strings[2]);
     }
 
     @Override
@@ -47,7 +47,7 @@ public class AddContactAsyncTask extends AsyncTask<String, Void, Integer> {
 
     }
 
-    private int addToContactList (String address, String otrFingperint)
+    private int addToContactList (String address, String otrFingperint, String nickname)
     {
         int res = -1;
 
@@ -60,7 +60,7 @@ public class AddContactAsyncTask extends AsyncTask<String, Void, Integer> {
 
             if (list != null) {
 
-                    res = list.addContact(address);
+                    res = list.addContact(address, nickname);
                     if (res != ImErrorInfo.NO_ERROR) {
 
                         //what to do here?

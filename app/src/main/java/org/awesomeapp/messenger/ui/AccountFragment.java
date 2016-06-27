@@ -166,7 +166,7 @@ public class AccountFragment extends Fragment {
 
                     String inviteString;
                     try {
-                        inviteString = OnboardingManager.generateInviteLink(getActivity(), mUserAddress, mUserKey);
+                        inviteString = OnboardingManager.generateInviteLink(getActivity(), mUserAddress, mUserKey, mNickname);
 
                         Intent intent = new Intent(getActivity(), QrDisplayActivity.class);
                         intent.putExtra(Intent.EXTRA_TEXT, inviteString);
@@ -200,7 +200,7 @@ public class AccountFragment extends Fragment {
                 public void onClick(View v) {
 
                     try {
-                        String inviteLink = OnboardingManager.generateInviteLink(getActivity(), mUserAddress, mUserKey);
+                        String inviteLink = OnboardingManager.generateInviteLink(getActivity(), mUserAddress, mUserKey, mNickname);
                         new QrShareAsyncTask(getActivity()).execute(inviteLink);
                     } catch (IOException ioe) {
                         Log.e(ImApp.LOG_TAG, "couldn't generate QR code", ioe);

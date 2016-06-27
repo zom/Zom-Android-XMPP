@@ -42,14 +42,14 @@ public class ContactListAdapter extends org.awesomeapp.messenger.service.IContac
         return mAdaptee.getAddress();
     }
 
-    public int addContact(String address) {
+    public int addContact(String address, String nickname) {
         if (address == null) {
             RemoteImService.debug("Address can't be null!");
             return ImErrorInfo.ILLEGAL_CONTACT_ADDRESS;
         }
 
         try {
-            mAdaptee.addContact(address);
+            mAdaptee.addContact(address, nickname);
         } catch (IllegalArgumentException e) {
             return ImErrorInfo.ILLEGAL_CONTACT_ADDRESS;
         } catch (ImException e) {

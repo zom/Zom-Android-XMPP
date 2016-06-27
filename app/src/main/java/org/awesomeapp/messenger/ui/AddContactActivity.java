@@ -143,7 +143,11 @@ public class AddContactActivity extends BaseActivity {
             public void onClick(View v) {
 
                 ImApp app = ((ImApp)getApplication());
-                String nickname = new XmppAddress(app.getDefaultUsername()).getUser();
+
+                String nickname = app.getDefaultNickname();
+                if (nickname == null)
+                    nickname = new XmppAddress(app.getDefaultUsername()).getUser();
+
                 String inviteString = OnboardingManager.generateInviteMessage(AddContactActivity.this, nickname, app.getDefaultUsername(), app.getDefaultOtrKey());
                 OnboardingManager.inviteSMSContact(AddContactActivity.this, null, inviteString);
             }
@@ -159,7 +163,9 @@ public class AddContactActivity extends BaseActivity {
 
                 ImApp app = ((ImApp)getApplication());
 
-                String nickname = new XmppAddress(app.getDefaultUsername()).getUser();
+                String nickname = app.getDefaultNickname();
+                if (nickname == null)
+                    nickname = new XmppAddress(app.getDefaultUsername()).getUser();
 
                 String inviteString = OnboardingManager.generateInviteMessage(AddContactActivity.this,  nickname, app.getDefaultUsername(), app.getDefaultOtrKey());
                 OnboardingManager.inviteShare(AddContactActivity.this, inviteString);
@@ -177,9 +183,13 @@ public class AddContactActivity extends BaseActivity {
                 if (hasCameraPermission()) {
                     ImApp app = ((ImApp) getApplication());
 
+                    String nickname = app.getDefaultNickname();
+                    if (nickname == null)
+                        nickname = new XmppAddress(app.getDefaultUsername()).getUser();
+
                     String inviteString;
                     try {
-                        inviteString = OnboardingManager.generateInviteLink(AddContactActivity.this, app.getDefaultUsername(), app.getDefaultOtrKey());
+                        inviteString = OnboardingManager.generateInviteLink(AddContactActivity.this, app.getDefaultUsername(), app.getDefaultOtrKey(), nickname);
                         OnboardingManager.inviteScan(AddContactActivity.this, inviteString);
                     } catch (IOException e) {
                         // TODO Auto-generated catch block
@@ -321,7 +331,7 @@ public class AddContactActivity extends BaseActivity {
         Rfc822Token[] recipients = Rfc822Tokenizer.tokenize(mAddressList.getText());
 
         for (Rfc822Token recipient : recipients) {
-            new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).execute(recipient.getAddress(), null);
+            new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).execute(recipient.getAddress(), null, null);
         }
 
         if (recipients.length > 0) {
@@ -437,11 +447,13 @@ public class AddContactActivity extends BaseActivity {
                             //parse each string and if they are for a new user then add the user
                             String[] parts = OnboardingManager.decodeInviteLink(resultScan);
                             String address = parts[0];
-                            String fingerprint = null;
+                            String fingerprint = null, nickname = null;
                             if (parts.length > 1)
                                 fingerprint = parts[1];
+                            if (parts.length > 2)
+                                nickname = parts[2];
 
-                            new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).execute(address, fingerprint);
+                            new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).execute(address, fingerprint, nickname);
 
                             Intent intent=new Intent();
                             intent.putExtra(ContactsPickerActivity.EXTRA_RESULT_USERNAME, address);

@@ -811,7 +811,9 @@ public class ImApp extends Application implements ICacheWordSubscriber {
         String[] PROVIDER_PROJECTION = {
                 Imps.Provider._ID,
                 Imps.Provider.ACTIVE_ACCOUNT_ID,
-                Imps.Provider.ACTIVE_ACCOUNT_USERNAME
+                Imps.Provider.ACTIVE_ACCOUNT_USERNAME,
+                Imps.Provider.ACTIVE_ACCOUNT_NICKNAME
+
         };
 
         final Cursor cursorProviders = getContentResolver().query(uri, PROVIDER_PROJECTION,
@@ -826,6 +828,7 @@ public class ImApp extends Application implements ICacheWordSubscriber {
             mDefaultProviderId = cursorProviders.getLong(0);
             mDefaultAccountId = cursorProviders.getLong(1);
             mDefaultUsername = cursorProviders.getString(2);
+            mDefaultNickname = cursorProviders.getString(3);
 
             Cursor pCursor = getContentResolver().query(Imps.ProviderSettings.CONTENT_URI, new String[]{Imps.ProviderSettings.NAME, Imps.ProviderSettings.VALUE}, Imps.ProviderSettings.PROVIDER + "=?", new String[]{Long.toString(mDefaultProviderId)}, null);
 
@@ -856,7 +859,9 @@ public class ImApp extends Application implements ICacheWordSubscriber {
             String[] PROVIDER_PROJECTION = {
                     Imps.Provider._ID,
                     Imps.Provider.ACTIVE_ACCOUNT_ID,
-                    Imps.Provider.ACTIVE_ACCOUNT_USERNAME
+                    Imps.Provider.ACTIVE_ACCOUNT_USERNAME,
+                    Imps.Provider.ACTIVE_ACCOUNT_NICKNAME
+
             };
 
             final Cursor cursorProviders = getContentResolver().query(uri, PROVIDER_PROJECTION,
@@ -869,6 +874,7 @@ public class ImApp extends Application implements ICacheWordSubscriber {
                 mDefaultProviderId = cursorProviders.getLong(0);
                 mDefaultAccountId = cursorProviders.getLong(1);
                 mDefaultUsername = cursorProviders.getString(2);
+                mDefaultNickname = cursorProviders.getString(3);
 
                 Cursor pCursor = getContentResolver().query(Imps.ProviderSettings.CONTENT_URI, new String[]{Imps.ProviderSettings.NAME, Imps.ProviderSettings.VALUE}, Imps.ProviderSettings.PROVIDER + "=?", new String[]{Long.toString(mDefaultProviderId)}, null);
 
@@ -897,10 +903,16 @@ public class ImApp extends Application implements ICacheWordSubscriber {
     private long mDefaultAccountId = -1;
     private String mDefaultUsername = null;
     private String mDefaultOtrFingerprint = null;
+    private String mDefaultNickname = null;
 
     public String getDefaultUsername ()
     {
         return mDefaultUsername;
+    }
+
+    public String getDefaultNickname ()
+    {
+        return mDefaultNickname;
     }
 
     public String getDefaultOtrKey ()

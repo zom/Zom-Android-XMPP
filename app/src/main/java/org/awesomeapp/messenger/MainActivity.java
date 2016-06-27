@@ -409,7 +409,6 @@ public class MainActivity extends BaseActivity {
                         {
                             address = XmppUriHelper.parse(Uri.parse(resultScan)).get(XmppUriHelper.KEY_ADDRESS);
                             String fingerprint =  XmppUriHelper.getOtrFingerprint(resultScan);
-
                             new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).execute(address, fingerprint);
 
                         }
@@ -417,7 +416,12 @@ public class MainActivity extends BaseActivity {
                             //parse each string and if they are for a new user then add the user
                             String[] parts = OnboardingManager.decodeInviteLink(resultScan);
                             address = parts[0];
-                            new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).execute(parts[0], parts[1]);
+                            String fingerprint = null, nickname = null;
+                            if (parts.length > 1)
+                                fingerprint = parts[1];
+                            if (parts.length > 2)
+                                nickname = parts[2];
+                            new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).execute(address, fingerprint, nickname);
                         }
 
                         if (address != null)

@@ -392,8 +392,13 @@ public class ImUrlActivity extends Activity {
 
                 String username = parts[0];
                 String fingerprint = null;
+                String nickname = null;
+
                 if (parts.length > 1)
                     fingerprint = parts[1];
+
+                if (parts.length > 2)
+                    nickname = parts[2];
 
                 new AddContactAsyncTask(app.getDefaultProviderId(), app.getDefaultAccountId(), (ImApp)getApplication()).executeOnExecutor(ImApp.sThreadPoolExecutor,username, fingerprint);
 
@@ -452,8 +457,12 @@ public class ImUrlActivity extends Activity {
 
                 String username =parts[0];
                 String fingerprint = null;
+                String nickname = null;
+
                 if (parts.length > 1)
                     fingerprint = parts[1];
+                if (parts.length > 2)
+                    nickname = parts[2];
 
                 new AddContactAsyncTask(app.getDefaultProviderId(), app.getDefaultAccountId(), (ImApp)getApplication()).executeOnExecutor(ImApp.sThreadPoolExecutor,username, fingerprint);
 

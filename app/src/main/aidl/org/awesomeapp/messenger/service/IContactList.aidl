@@ -33,7 +33,7 @@ interface IContactList {
     /**
      * Adds a new contact to the list.
      */
-    int addContact(String address);
+    int addContact(String address, String nickname);
 
     /**
      * Removes a contact in the list.

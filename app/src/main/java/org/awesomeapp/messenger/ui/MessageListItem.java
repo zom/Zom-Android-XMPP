@@ -819,10 +819,10 @@ public class MessageListItem extends FrameLayout {
             else
             {
                 int color = getAvatarBorder(presenceStatus);
-                int padding = 16;
+                int padding = 24;
 
                 if (nickname.length() > 0) {
-                    LetterAvatar lavatar = new LetterAvatar(getContext(), color, nickname.substring(0, 1).toUpperCase(), padding);
+                    LetterAvatar lavatar = new LetterAvatar(getContext(), color, nickname.substring(0, 1), padding);
 
                     mHolder.mAvatar.setVisibility(View.VISIBLE);
                     mHolder.mAvatar.setImageDrawable(lavatar);

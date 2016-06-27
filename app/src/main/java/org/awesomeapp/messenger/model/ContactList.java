@@ -83,7 +83,7 @@ public class ContactList extends ImEntity {
      * @throws NullPointerException if the address string is null
      * @throws ImException if the contact is not allowed to be added
      */
-    public void addContact(final String address) throws ImException {
+    public void addContact(final String address, final String nickname) throws ImException {
 
         if (null == address) {
             throw new NullPointerException();
@@ -98,9 +98,12 @@ public class ContactList extends ImEntity {
 
         Contact contact = getContact(address);
 
+        if (nickname != null)
+            contact.setName(nickname);
+
         if (contact == null)
         {
-            contact = new Contact (new XmppAddress(address),address);
+            contact = new Contact (new XmppAddress(address),nickname);
         }
 
         try {

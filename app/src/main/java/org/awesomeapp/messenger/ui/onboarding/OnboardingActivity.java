@@ -85,8 +85,8 @@ public class OnboardingActivity extends BaseActivity {
 
     private EditText mSpinnerDomains;
 
-    private String mRequestedUserName;
-    private String mFullUserName;
+    private String mNickname;
+    private String mUsername;
     private String mFingerprint;
     private OnboardingAccount mNewAccount;
 
@@ -272,9 +272,9 @@ public class OnboardingActivity extends BaseActivity {
                         protected void onReceiveResult(int resultCode, Bundle resultData) {
                             super.onReceiveResult(resultCode, resultData);
 
-                            mRequestedUserName = mEditUsername.getText().toString();
+                            mNickname = mEditUsername.getText().toString();
 
-                            if (mRequestedUserName.length() > 0) {
+                            if (mNickname.length() > 0) {
                                 startAccountSetup();
                             }
 
@@ -493,13 +493,13 @@ public class OnboardingActivity extends BaseActivity {
         mSetupProgress = findViewById(R.id.progressNewUser);
         mSetupProgress.setVisibility(View.VISIBLE);
 
-        mRequestedUserName = ((EditText)findViewById(R.id.edtNameAdvanced)).getText().toString();
-        String jabberUserId = mRequestedUserName.replaceAll(USERNAME_ONLY_ALPHANUM, "").toLowerCase();
+        mNickname = ((EditText)findViewById(R.id.edtNameAdvanced)).getText().toString();
+        String username = mNickname.replaceAll(USERNAME_ONLY_ALPHANUM, "").toLowerCase();
 
-        if (TextUtils.isEmpty(jabberUserId))
-            jabberUserId = "zomuser"; //if there are no alphanum then just use "zomuser"
+        if (TextUtils.isEmpty(username))
+            username = "zomuser"; //if there are no alphanum then just use "zomuser"
 
-        mEditUsername.setText(jabberUserId);
+      //  mEditUsername.setText(username);
 
         String domain = ((EditText)findViewById(R.id.spinnerDomains)).getText().toString();
 
@@ -513,7 +513,7 @@ public class OnboardingActivity extends BaseActivity {
             mCurrentFindServerTask.cancel(true);
 
         mCurrentFindServerTask = new FindServerTask ();
-        mCurrentFindServerTask.execute(mRequestedUserName, jabberUserId, domain, password);
+        mCurrentFindServerTask.execute(mNickname, username, domain, password);
 
     }
     
@@ -523,16 +523,16 @@ public class OnboardingActivity extends BaseActivity {
 
         showSetupProgress ();
 
-        String jabberUserId = mRequestedUserName.replaceAll(USERNAME_ONLY_ALPHANUM, "").toLowerCase();
+        String username = mNickname.replaceAll(USERNAME_ONLY_ALPHANUM, "").toLowerCase();
 
-        if (TextUtils.isEmpty(jabberUserId))
-            jabberUserId = "zomuser"; //if there are no alphanum then just use "zomuser"
+        if (TextUtils.isEmpty(username))
+            username = "zomuser"; //if there are no alphanum then just use "zomuser"
 
         if (mCurrentFindServerTask != null)
             mCurrentFindServerTask.cancel(true);
 
         mCurrentFindServerTask = new FindServerTask ();
-        mCurrentFindServerTask.execute(mRequestedUserName,jabberUserId);
+        mCurrentFindServerTask.execute(mNickname,username);
     }
 
     private void showSetupForm ()
@@ -612,7 +612,7 @@ public class OnboardingActivity extends BaseActivity {
             viewCreate.findViewById(R.id.progressImage).setVisibility(View.GONE);
 
             if (account != null) {
-                mFullUserName = account.username + '@' + account.domain;
+                mUsername = account.username + '@' + account.domain;
                 mNewAccount = account;
 
                 viewCreate.findViewById(R.id.viewProgress).setVisibility(View.GONE);
@@ -673,14 +673,14 @@ public class OnboardingActivity extends BaseActivity {
 
     private void doInviteSMS()
     {
-        String inviteString = OnboardingManager.generateInviteMessage(this, mRequestedUserName,mFullUserName, mFingerprint);
+        String inviteString = OnboardingManager.generateInviteMessage(this, mNickname,mUsername, mFingerprint);
         OnboardingManager.inviteSMSContact(this, null, inviteString);
     }
 
     private void doInviteShare()
     {
 
-        String inviteString = OnboardingManager.generateInviteMessage(this, mRequestedUserName,mFullUserName, mFingerprint);
+        String inviteString = OnboardingManager.generateInviteMessage(this, mNickname,mUsername, mFingerprint);
         OnboardingManager.inviteShare(this, inviteString);
     }
  
@@ -688,7 +688,7 @@ public class OnboardingActivity extends BaseActivity {
     {
         String inviteString;
         try {
-            inviteString = OnboardingManager.generateInviteLink(this, mFullUserName, mFingerprint);
+            inviteString = OnboardingManager.generateInviteLink(this, mUsername, mFingerprint, mNickname);
             OnboardingManager.inviteScan(this, inviteString);
         } catch (IOException e) {
             // TODO Auto-generated catch block
@@ -746,7 +746,7 @@ public class OnboardingActivity extends BaseActivity {
         @Override
         protected void onPostExecute(OnboardingAccount account) {
 
-            mFullUserName = account.username + '@' + account.domain;
+            mUsername = account.username + '@' + account.domain;
 
             SignInHelper signInHelper = new SignInHelper(OnboardingActivity.this, mHandler);
             signInHelper.activateAccount(account.providerId,account.accountId);
@@ -776,8 +776,14 @@ public class OnboardingActivity extends BaseActivity {
                     try {
                         //parse each string and if they are for a new user then add the user
                         String[] parts = OnboardingManager.decodeInviteLink(resultScan);
+                        String address = parts[0];
+                        String fingerprint = null, nickname = null;
+                        if (parts.length > 1)
+                            fingerprint = parts[1];
+                        if (parts.length > 2)
+                            nickname = parts[2];
 
-                        new AddContactAsyncTask(mNewAccount.providerId, mNewAccount.accountId, mApp).execute(parts[0],parts[1]);
+                        new AddContactAsyncTask(mNewAccount.providerId, mNewAccount.accountId, mApp).execute(address, fingerprint, nickname);
 
                         //if they are for a group chat, then add the group
                     }
