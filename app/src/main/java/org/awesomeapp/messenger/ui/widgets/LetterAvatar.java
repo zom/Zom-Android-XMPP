@@ -57,8 +57,9 @@ public class LetterAvatar extends ColorDrawable {
                 paint.setTypeface(CustomTypefaceManager.getCurrentTypeface(context));
             else {
                 paint.setTypeface(Typeface.SANS_SERIF);
-                pLetters = pLetters.toUpperCase();
             }
+
+            pLetters = pLetters.toUpperCase();
 
             do {
                 paint.setTextSize(++pSize);

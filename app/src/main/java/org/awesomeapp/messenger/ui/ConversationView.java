@@ -947,13 +947,13 @@ public class ConversationView {
 
             public void onTextChanged(CharSequence s, int start, int before, int after) {
                 //log("TextWatcher: " + s);
-                userActionDetected();
+                //userActionDetected();
 
             }
 
             public void afterTextChanged(Editable s) {
                 doWordSearch ();
-
+                userActionDetected();
             }
         });
 
@@ -2865,7 +2865,7 @@ public class ConversationView {
 
             try {
 
-                String basePath = "stickers/olo_and_shimi_1";
+                String basePath = "stickers/olo and shimi";
                 AssetManager aMan = mActivity.getAssets();
                 String[] filelist = aMan.list(basePath);
 
@@ -2938,6 +2938,23 @@ public class ConversationView {
                 filelist = aMan.list(basePath);
 
                 category = "Losar";
+
+                for (int i = 0; i < filelist.length; i++) {
+                    Sticker sticker = new Sticker();
+                    sticker.name = filelist[i];
+                    sticker.category = category;
+                    sticker.assetUri = Uri.parse(basePath + '/' +  filelist[i]);
+                    sticker.res = mActivity.getResources();
+                    sticker.emoticon =  filelist[i];
+
+                    sStickerManager.addPattern(sticker.emoticon, sticker);
+                    sStickerManager.addEmojiToCategory(category, sticker);
+                }
+
+                basePath = "stickers/tiboji";
+                filelist = aMan.list(basePath);
+
+                category = "Tiboji";
 
                 for (int i = 0; i < filelist.length; i++) {
                     Sticker sticker = new Sticker();
