@@ -98,13 +98,13 @@ public class ContactList extends ImEntity {
 
         Contact contact = getContact(address);
 
-        if (nickname != null)
-            contact.setName(nickname);
 
         if (contact == null)
         {
             contact = new Contact (new XmppAddress(address),nickname);
         }
+        else if (nickname != null)
+            contact.setName(nickname);
 
         try {
             mManager.addContactToListAsync(contact, ContactList.this, true);
