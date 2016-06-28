@@ -114,6 +114,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.InputMismatchException;
 import java.util.LinkedList;
@@ -349,7 +350,7 @@ public class XmppConnection extends ImConnection {
                 while (qAvatar.size()>0)
                 {
 
-                    loadVCard (resolver, qAvatar.pop());
+                    loadVCard (resolver, qAvatar.poll());
 
                 }
             }
@@ -711,6 +712,11 @@ public class XmppConnection extends ImConnection {
                                 boolean hasMatches = DatabaseUtils.doesAvatarHashExist(mContext.getContentResolver(), Imps.Avatars.CONTENT_URI, chatGroup.getAddress().getAddress(), hash);
                                 if (!hasMatches) //we must reload
                                     qAvatar.push(chatGroup.getAddress().getAddress());
+                            }
+                            else
+                            {
+                                //no avatar, so update it since it will be small!
+                                qAvatar.push(chatGroup.getAddress().getAddress());
                             }
                         }
                     }
@@ -2854,8 +2860,8 @@ public class XmppConnection extends ImConnection {
             response.setTo(contact.getAddress().getBareAddress());
             sendPacket(response);
 
-            try { mRoster.reload(); }
-            catch (Exception e){}
+//            try { mRoster.reload(); }
+//            catch (Exception e){}
 
             try
             {
@@ -2871,9 +2877,9 @@ public class XmppConnection extends ImConnection {
 
             findOrCreateSession(contact.getAddress().getBareAddress(), false).setSubscribed(true);
 
+            sendPresencePacket();
             requestPresenceRefresh(contact.getAddress().getBareAddress());
-
-
+            qAvatar.push(contact.getAddress().getAddress());
         }
 
         @Override
@@ -3638,6 +3644,10 @@ public class XmppConnection extends ImConnection {
                             qAvatar.push(contact.getAddress().getBareAddress());
 
 
+                    }else
+                    {
+                        //no avatar so push
+                        qAvatar.push(contact.getAddress().getAddress());
                     }
                 }
 
@@ -3665,18 +3675,18 @@ public class XmppConnection extends ImConnection {
 
                 if (qPresence.size() > 0)
                 {
-                    ArrayList<Contact> alUpdate = new ArrayList<Contact>();
+                    Map<String, Contact> alUpdate = new HashMap<String, Contact>();
                     
                     org.jivesoftware.smack.packet.Presence p = null;
                     Contact contact = null;
 
                     while (qPresence.peek() != null)
                     {
-                        p = qPresence.pop();
+                        p = qPresence.poll();
                         contact = handlePresenceChanged(p);
                         if (contact != null)
                         {
-                            alUpdate.add(contact);
+                            alUpdate.put(contact.getAddress().getBareAddress(),contact);
                             /**
                             ChatSession session = mSessionManager.findSession(contact.getAddress().getBareAddress());
                             if (session != null)
@@ -3691,7 +3701,10 @@ public class XmppConnection extends ImConnection {
                     loadVCardsAsync();
 
                     //Log.d(TAG,"XMPP processed presence q=" + alUpdate.size());
-                    mContactListManager.notifyContactsPresenceUpdated(alUpdate.toArray(new Contact[alUpdate.size()]));
+
+                    Collection<Contact> contactsUpdate = alUpdate.values();
+
+                    mContactListManager.notifyContactsPresenceUpdated(contactsUpdate.toArray(new Contact[contactsUpdate.size()]));
 
 
                 }
