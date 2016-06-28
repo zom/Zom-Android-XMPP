@@ -2,6 +2,15 @@
 Track the source commits here:
 https://github.com/zom/Zom-Android/commits/master#
 
+15.0.1-RC-3 / 28 June 2016
+
+02e5b93 improve and update presence handling code
+1df1437 improve handling of sending presence
+c3f0dbc don't fix the height of the line
+6131b1d update to Gradle 2.1
+1a889d2 handle adding contact when there is no nickname in the link
+7e41283 update strings from transifex
+
 15.0.1-RC-2 / 27 June 2016
 
 a458da9 if the contact is null, don't set the name on it
