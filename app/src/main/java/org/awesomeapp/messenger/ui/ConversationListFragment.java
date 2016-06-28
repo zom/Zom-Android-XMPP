@@ -303,10 +303,6 @@ public class ConversationListFragment extends Fragment {
                         buf == null ? null : buf.toString(), null, Imps.Contacts.TIME_ORDER);
             }
 
-
-
-          //  loader.setUpdateThrottle(1000L);
-
             return loader;
         }
 

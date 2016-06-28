@@ -2415,11 +2415,6 @@ public class XmppConnection extends ImConnection {
 
                     }
 
-                    // mContactListManager.getSubscriptionRequestListener().onSubscriptionChanged(contact, mProviderId, mAccountId, )
-
-
-//                    requestPresenceRefresh(address);
-
 
                 }
             }
@@ -3687,13 +3682,7 @@ public class XmppConnection extends ImConnection {
                         if (contact != null)
                         {
                             alUpdate.put(contact.getAddress().getBareAddress(),contact);
-                            /**
-                            ChatSession session = mSessionManager.findSession(contact.getAddress().getBareAddress());
-                            if (session != null)
-                            {
-                                session.setParticipant(contact); //we need to update the session participant
-                            }
-                            */
+
                         }
 
                     }

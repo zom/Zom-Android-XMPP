@@ -2176,11 +2176,22 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
                 
                 Cursor c = db.query(TABLE_CONTACTS,  columns, whereClause.toString(), whereArgs, null,null,null,null);
                 boolean contactExists = (c != null && c.getCount() > 0);
-                if (c != null) c.close();
-                
+
                 if (contactExists) 
                 {
                     int rowsUpdated = db.update(TABLE_CONTACTS, contactValues, whereClause.toString(), whereArgs);
+
+                    // seed the presence for the new contact
+                    c.moveToFirst();
+                    rowId = c.getLong(0);
+                    presenceValues.put(Imps.Presence.CONTACT_ID, rowId);
+
+                    try {
+                        db.update(TABLE_PRESENCE, presenceValues, null, null);
+
+                    } catch (android.database.sqlite.SQLiteConstraintException ex) {
+                        LogCleaner.warn(LOG_TAG, "insertBulkContacts: seeding presence caught " + ex);
+                    }
                 }
                 else
                 {
@@ -2200,7 +2211,10 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
                         }
                     }
                 }
-                
+
+                if (c != null) c.close();
+
+
                 // yield the lock if anyone else is trying to
                 // perform a db operation here.
                 db.yieldIfContended();

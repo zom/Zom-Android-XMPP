@@ -628,10 +628,11 @@ public class ConversationView {
                     {
                         mPresenceStatus = c.getPresence().getStatus();
                         updatePresenceDisplay();
+                        /**
                         try {
                             mCurrentChatSession.presenceChanged(mPresenceStatus);
                         }
-                        catch (RemoteException re){}
+                        catch (RemoteException re){}*/
                     }
 
                     mHandler.post(mUpdateChatCallback);

@@ -89,22 +89,6 @@ public class ContactsListFragment extends Fragment {
                 ((MainActivity)getActivity()).inviteContact();
             }
         });
-        /*
-        VerticalRecyclerViewFastScroller fastScroller =
-                (VerticalRecyclerViewFastScroller) view.findViewById(R.id.fast_scroller);
-        SectionTitleIndicator sectionTitleIndicator =
-                (SectionTitleIndicator) view.findViewById(R.id.fast_scroller_section_title_indicator);
-
-
-        // Connect the recycler to the scroller (to let the scroller scroll the list)
-        fastScroller.setRecyclerView(mRecView);
-
-        // Connect the scroller to the recycler (to let the recycler scroll the scroller's handle)
-        mRecView.setOnScrollListener(fastScroller.getOnScrollListener());
-
-        // Connect the section indicator to the scroller
-        fastScroller.setSectionIndicator(sectionTitleIndicator);
-        */
 
         setupRecyclerView(mRecView);
 
