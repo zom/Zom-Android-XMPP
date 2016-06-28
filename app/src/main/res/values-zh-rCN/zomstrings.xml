@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
-  <string name="app_name_zom">宗</string>
+  <string name="app_name_zom">众</string>
   <string name="create_an_account">创建一个帐户</string>
   <string name="create_id">创建一个用户名</string>
   <string name="advanced">先进</string>
@@ -14,6 +14,7 @@
   <string name="friends">朋友</string>
   <string name="add_friends">添加朋友</string>
   <string name="search_by_id">用帐号搜索</string>
+  <string name="invite_accepted">您已经成为众朋友</string>
   <string name="chats">通讯录</string>
   <string name="choose_friend">选择朋友</string>
   <string name="send_message">发送信息</string>
@@ -33,8 +34,11 @@
   <string name="add_account_action">添加帐户</string>
   <string name="choose_photos">从照片库中选择</string>
   <string name="choose_language">切换语言</string>
-  <string name="welcome_to_zom">欢迎使用 zom</string>
-  <string name="onboarding_generate">要创建一个新的帐户，需要添你的用户名。 我们会给你创建一个安全的密码。</string>
+  <string name="welcome_to_zom">欢迎使用 众</string>
   <string name="grant_perms">您必须授权才能在众上面使用相机</string>
   <string name="menu_refresh">重新整理工作阶段</string>
+  <string name="action_archived">存档</string>
+  <string name="action_verified">验证</string>
+  <string name="action_theme">更改主题</string>
+  <string name="action_stickers">贴图分享</string>
 </resources>

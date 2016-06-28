@@ -148,6 +148,7 @@
   <string name="pref_delete_unsecured_media_summary">写真やファイルを共有した後、インポート後、元の、安全でないストレージから自動的に削除します</string>
   <!--Actions: Settings: General: Other Tuning-->
   <string name="pref_group_tuning_title">その他のチューニング</string>
+  <string name="start_on_boot">Zom を自動的に開始</string>
   <string name="start_on_boot_summary">常に起動し、以前ログインしたアカウントに自動的にログインします</string>
   <string name="hide_offline_contacts">オフラインの連絡先を表示しない</string>
   <string name="foreground_service_title">フォアグラウンド優先度を使用</string>
@@ -176,6 +177,7 @@
   <string name="notify_groupchat_label">グループチャットの招待</string>
   <string name="group_chat_invite_notify_text">&lt;xliff:g id="USER"&gt;%s&lt;/xliff:g&gt; から新しいグループチャットの招待</string>
   <string name="new_messages_notify">新しいメッセージ。送信者</string>
+  <string name="starting_the_chatsecure_service_">Zom サービスを開始しています…</string>
   <string name="app_unlocked">有効化 &amp; ロック解除しました</string>
   <!--Alerts: Exceptions-->
   <string name="error">注意</string>
@@ -212,6 +214,7 @@
   <string name="error_suspended_connection">ネットワークはオフラインです</string>
   <string name="unable_to_create_or_join_group_chat">グループチャットを作成または参加することができません</string>
   <string name="unsupported_incoming_data">取得したデータはサポートされていません、共有できません!</string>
+  <string name="swipe_alert">Zom がタスクを削除する要求が行われたことを検出しました。 Zom はおそらくクラッシュします。代わりに、アカウント一覧画面からすべてサインアウトのメニュー項目をご利用下さい。</string>
   <string name="there_is_no_viewer_available_for_this_file_format">このファイル形式に使用可能なビューアーがありません</string>
   <string name="otr_keysync_warning_message">デスクトップ OtrFileConverter ツールから、お使いのデバイスのストレージのルートディレクトリに、\'otr_keystore.ofcaes\' ファイルをコピーしてください</string>
   <string name="msg_sent_failed">メッセージを送信できませんでした。</string>
@@ -316,6 +319,7 @@
   </string-array>
   <string name="this_is_a_group_chat">これはグループチャットです</string>
   <string name="unable_to_securely_share_this_file">このファイルを安全に共有することができません</string>
+  <string name="your_keystore_is_corrupted_please_re_install_chatsecure_or_clear_data_for_the_app">キーストアが破損しています。Zom を再インストールするか、アプリの \'データをクリア\' してください</string>
   <string name="swipe_hint">&lt; 左や右にスワイプで追加のオプション &gt;</string>
   <string name="no_convos">Zom を始めましょう!</string>
   <string name="title_more">探索</string>

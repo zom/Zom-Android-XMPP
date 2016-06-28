@@ -11,7 +11,6 @@
   <string name="yes">ठीक</string>
   <string name="no">रद्द करें </string>
   <!--Views-->
-  <string name="title_activity_lock_screen">चैटसिक्योर लॉक किया गया है </string>
   <string name="lock_screen_passphrase_hint">कूटशब्द </string>
   <!--Views: Setup-->
   <string name="add_account">&lt;xliff:g id="account"&gt;%1$s&lt;/xliff:g&gt; खाता जोड़ें </string>
@@ -111,4 +110,4 @@
     <item>हँसी</item>
     <item>Confused</item>
   </string-array>
-  </resources>
+</resources>

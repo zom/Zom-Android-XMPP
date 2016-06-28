@@ -19,7 +19,6 @@
   <string name="no">Адмена</string>
   <string name="connect">Падлучыцца</string>
   <!--Views-->
-  <string name="title_activity_lock_screen">ChatSecure заблакаваны</string>
   <string name="lock_screen_create_passphrase">Задаць пароль</string>
   <string name="lock_screen_confirm_passphrase">Пацвердзіць пароль</string>
   <string name="lock_screen_passphrase_hint">Пароль</string>
@@ -70,4 +69,4 @@
   <!--Other: Presence States-->
   <!--Other: Smileys-->
   <!--[Do not localize!]-->
-  </resources>
+</resources>
