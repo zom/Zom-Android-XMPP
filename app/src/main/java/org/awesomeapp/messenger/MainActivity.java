@@ -55,6 +55,10 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.github.javiersantos.appupdater.AppUpdater;
+import com.github.javiersantos.appupdater.enums.Display;
+import com.github.javiersantos.appupdater.enums.UpdateFrom;
+
 import org.awesomeapp.messenger.model.ImConnection;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.service.IChatSession;
@@ -872,7 +876,21 @@ public class MainActivity extends BaseActivity {
     private void checkForUpdates() {
         // Remove this for store builds!
      //   UpdateManager.register(this, ImApp.HOCKEY_APP_ID);
+
+        try {
+            AppUpdater appUpdater = new AppUpdater(this);
+            appUpdater.setDisplay(Display.DIALOG);
+            appUpdater.setUpdateFrom(UpdateFrom.XML);
+            appUpdater.setUpdateXML(ImApp.URL_UPDATER);
+            //  appUpdater.showAppUpdated(true);
+            appUpdater.start();
+        }
+        catch (Exception e)
+        {
+            Log.d("AppUpdater","error checking app updates",e);
+        }
     }
+
 
     Uri mLastPhoto = null;
 

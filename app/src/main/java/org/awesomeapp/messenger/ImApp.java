@@ -129,6 +129,9 @@ public class ImApp extends Application implements ICacheWordSubscriber {
     public static final int DEFAULT_XMPP_PRIORITY = 20;
     public static final String DEFAULT_XMPP_OTR_MODE = "auto";
 
+    public final static String URL_UPDATER = "https://raw.githubusercontent.com/zom/Zom-Android/master/appupdater.xml";
+
+
     private Locale locale = null;
 
     public static ImApp sImApp;

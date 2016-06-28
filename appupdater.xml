@@ -1,0 +1,9 @@
+<AppUpdater>
+  <update>
+    <latestVersion>15.0.0</latestVersion>
+    <url>https://github.com/zom/Zom-Android/releases/download/test.apk</url>
+    <releaseNotes>
+      A major update to the whole app!
+    </releaseNotes>
+  </update>
+</AppUpdater>

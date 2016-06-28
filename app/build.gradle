@@ -163,5 +163,6 @@ dependencies {
     compile 'cn.pedant.sweetalert:library:1.3'
     compile 'com.thebluealliance:spectrum:0.2.1'
     compile 'com.android.support:multidex:1.0.1'
+    compile 'com.github.javiersantos:AppUpdater:2.1.1'
     compile project.ext.appcompat
 }
