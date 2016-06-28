@@ -38,7 +38,14 @@ public class AddContactAsyncTask extends AsyncTask<String, Void, Integer> {
     @Override
     public Integer doInBackground(String... strings) {
 
-        return addToContactList(strings[0], strings[1], strings[2]);
+        String address = strings[0];
+        String fingerprint = strings[1];
+        String nickname = null;
+
+        if (strings.length > 2)
+            nickname = strings[2];
+
+        return addToContactList(address, fingerprint, nickname);
     }
 
     @Override
