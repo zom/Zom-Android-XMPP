@@ -883,13 +883,24 @@ public class MainActivity extends BaseActivity {
 
             //if this is a full release, without -beta -rc etc, then check the appupdater!
             if (version.indexOf("-")==-1) {
-                AppUpdater appUpdater = new AppUpdater(this);
-                appUpdater.setDisplay(Display.DIALOG);
-                appUpdater.setUpdateFrom(UpdateFrom.XML);
-                appUpdater.setUpdateXML(ImApp.URL_UPDATER);
 
-                //  appUpdater.showAppUpdated(true);
-                appUpdater.start();
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+                long timeNow = new Date().getTime();
+                long timeSinceLastCheck = prefs.getLong("updatetime",-1);
+
+                //only check for updates once per day
+                if (timeSinceLastCheck == -1 || (timeNow-timeSinceLastCheck) > 86400) {
+
+                    AppUpdater appUpdater = new AppUpdater(this);
+                    appUpdater.setDisplay(Display.DIALOG);
+                    appUpdater.setUpdateFrom(UpdateFrom.XML);
+                    appUpdater.setUpdateXML(ImApp.URL_UPDATER);
+
+                    //  appUpdater.showAppUpdated(true);
+                    appUpdater.start();
+
+                    prefs.edit().putLong("updatetime", timeNow).commit();
+                }
             }
         }
         catch (Exception e)
