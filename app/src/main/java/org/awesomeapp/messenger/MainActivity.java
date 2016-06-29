@@ -878,12 +878,19 @@ public class MainActivity extends BaseActivity {
      //   UpdateManager.register(this, ImApp.HOCKEY_APP_ID);
 
         try {
-            AppUpdater appUpdater = new AppUpdater(this);
-            appUpdater.setDisplay(Display.DIALOG);
-            appUpdater.setUpdateFrom(UpdateFrom.XML);
-            appUpdater.setUpdateXML(ImApp.URL_UPDATER);
-            //  appUpdater.showAppUpdated(true);
-            appUpdater.start();
+
+            String version = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+
+            //if this is a full release, without -beta -rc etc, then check the appupdater!
+            if (version.indexOf("-")==-1) {
+                AppUpdater appUpdater = new AppUpdater(this);
+                appUpdater.setDisplay(Display.DIALOG);
+                appUpdater.setUpdateFrom(UpdateFrom.XML);
+                appUpdater.setUpdateXML(ImApp.URL_UPDATER);
+
+                //  appUpdater.showAppUpdated(true);
+                appUpdater.start();
+            }
         }
         catch (Exception e)
         {
