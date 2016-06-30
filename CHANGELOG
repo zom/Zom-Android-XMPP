@@ -2,6 +2,12 @@
 Track the source commits here:
 https://github.com/zom/Zom-Android/commits/master#
 
+15.0.1.925 (1501925) / 30 June 2016
+dfa5703 only check updates for number updates
+f34765e change appupdater check logic to only check once per day
+a1bda2e only check when version does not include a - (only when it is numbers)
+27ad14e add github-based app updater support
+
 15.0.1-RC-3 / 28 June 2016
 
 02e5b93 improve and update presence handling code
