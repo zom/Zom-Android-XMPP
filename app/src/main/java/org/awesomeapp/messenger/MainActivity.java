@@ -24,6 +24,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -877,36 +878,48 @@ public class MainActivity extends BaseActivity {
         // Remove this for store builds!
      //   UpdateManager.register(this, ImApp.HOCKEY_APP_ID);
 
-        try {
+        //only check github for updates if there is no Google Play
+        if (!hasGooglePlay()) {
+            try {
 
-            String version = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+                String version = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
 
-            //if this is a full release, without -beta -rc etc, then check the appupdater!
-            if (version.indexOf("-")==-1) {
+                //if this is a full release, without -beta -rc etc, then check the appupdater!
+                if (version.indexOf("-") == -1) {
 
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-                long timeNow = new Date().getTime();
-                long timeSinceLastCheck = prefs.getLong("updatetime",-1);
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+                    long timeNow = new Date().getTime();
+                    long timeSinceLastCheck = prefs.getLong("updatetime", -1);
 
-                //only check for updates once per day
-                if (timeSinceLastCheck == -1 || (timeNow-timeSinceLastCheck) > 86400) {
+                    //only check for updates once per day
+                    if (timeSinceLastCheck == -1 || (timeNow - timeSinceLastCheck) > 86400) {
 
-                    AppUpdater appUpdater = new AppUpdater(this);
-                    appUpdater.setDisplay(Display.DIALOG);
-                    appUpdater.setUpdateFrom(UpdateFrom.XML);
-                    appUpdater.setUpdateXML(ImApp.URL_UPDATER);
+                        AppUpdater appUpdater = new AppUpdater(this);
+                        appUpdater.setDisplay(Display.DIALOG);
+                        appUpdater.setUpdateFrom(UpdateFrom.XML);
+                        appUpdater.setUpdateXML(ImApp.URL_UPDATER);
 
-                    //  appUpdater.showAppUpdated(true);
-                    appUpdater.start();
+                        //  appUpdater.showAppUpdated(true);
+                        appUpdater.start();
 
-                    prefs.edit().putLong("updatetime", timeNow).commit();
+                        prefs.edit().putLong("updatetime", timeNow).commit();
+                    }
                 }
+            } catch (Exception e) {
+                Log.d("AppUpdater", "error checking app updates", e);
             }
         }
-        catch (Exception e)
-        {
-            Log.d("AppUpdater","error checking app updates",e);
+    }
+
+    boolean hasGooglePlay() {
+        try {
+            getApplication().getPackageManager().getPackageInfo("com.android.vending", 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
         }
+        return true;
+
+
     }
 
 
