@@ -15,27 +15,4 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
--dontobfuscate
-
--keepattributes Signature,RuntimeVisibleAnnotations,AnnotationDefault,*Annotation*
-
--dontwarn java.lang.reflect.Method
--dontwarn java.lang.invoke**
--dontwarn javax.annotation.**
--dontwarn sun.misc.Unsafe
--dontwarn java.nio.file.Files
--dontwarn java.nio.file.Path
--dontwarn java.nio.file.OpenOption
--dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
-
--keepclasseswithmembernames class * {
-    native <methods>;
-}
-
--keep class org.jivesoftware.smack.** { *; }
--keep class org.jivesoftware.smackx.** { *; }
--keep class info.guardianproject.libcore.** { *; }
--keep class info.guardianproject.iocipher.** { *; }
--keep class net.sqlcipher.** { *; }
--keep class net.sqlcipher.database.* { *; }
 
