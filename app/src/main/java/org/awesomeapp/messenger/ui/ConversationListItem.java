@@ -269,6 +269,9 @@ public class ConversationListItem extends FrameLayout {
                         setThumbnail(getContext().getContentResolver(), holder, mediaUri);
                         holder.mLine2.setVisibility(View.GONE);
 
+                        holder.mMediaThumb.setScaleType(ImageView.ScaleType.FIT_CENTER);
+
+
                     }
 
                 }
@@ -289,6 +292,8 @@ public class ConversationListItem extends FrameLayout {
                         Uri mediaUri = Uri.parse("asset://localhost/" + stickerPath);
                         setThumbnail(getContext().getContentResolver(), holder, mediaUri);
                         holder.mLine2.setVisibility(View.GONE);
+                        holder.mMediaThumb.setScaleType(ImageView.ScaleType.FIT_CENTER);
+
                     } catch (Exception e) {
 
                     }
