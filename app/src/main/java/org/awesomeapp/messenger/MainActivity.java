@@ -991,11 +991,11 @@ public class MainActivity extends BaseActivity {
             if (Build.VERSION.SDK_INT >= 21) {
                 getWindow().setNavigationBarColor(themeColorHeader);
                 getWindow().setStatusBarColor(themeColorHeader);
-                getWindow().setTitleColor(themeColorText);
+                getWindow().setTitleColor(getContrastColor(themeColorHeader));
             }
 
             mToolbar.setBackgroundColor(themeColorHeader);
-            mToolbar.setTitleTextColor(themeColorText);
+            mToolbar.setTitleTextColor(getContrastColor(themeColorHeader));
 
             mTabLayout.setBackgroundColor(themeColorHeader);
             mTabLayout.setTabTextColors(themeColorText, themeColorText);
