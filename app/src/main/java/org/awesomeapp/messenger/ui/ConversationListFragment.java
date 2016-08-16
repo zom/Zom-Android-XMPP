@@ -189,6 +189,7 @@ public class ConversationListFragment extends Fragment {
             if (viewHolder == null) {
                 viewHolder = new ConversationViewHolder(view);
                 view.setTag(viewHolder);
+                view.applyStyleColors(viewHolder);
             }
 
             return viewHolder;

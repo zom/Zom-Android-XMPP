@@ -116,7 +116,7 @@ public class MoreFragment extends Fragment {
                         if(positiveResult) {
                             MainActivity activity = (MainActivity)getActivity();
                             settings.edit().putInt("themeColor",color).commit();
-                            activity.applyStyleForToolbar();
+                            activity.applyStyle();
                         }
                     }
                 }).build().show(getFragmentManager(), "dialog_theme_1");

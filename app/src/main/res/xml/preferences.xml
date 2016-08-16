@@ -18,7 +18,8 @@
  */
 -->
 
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <ListPreference
         android:key="pref_language"
@@ -60,8 +61,35 @@
 
     </PreferenceCategory>
 
-      <PreferenceCategory android:title="@string/pref_group_tuning_title">
-   
+      <PreferenceCategory android:title="Theme Colors">
+
+
+              <com.thebluealliance.spectrum.SpectrumPreference
+                  android:key="themeColor"
+                  android:title="Header Color"
+                  android:summary="Color of the header and toolbars"
+                  app:spectrum_colors="@array/zom_colors"
+                  app:spectrum_outlineWidth="2dp"/>
+
+              <com.thebluealliance.spectrum.SpectrumPreference
+                  android:key="themeColorText"
+                  android:title="Text Color"
+                  android:summary="Color of the app text"
+                  app:spectrum_colors="@array/zom_colors"
+                  app:spectrum_outlineWidth="2dp"
+                  />
+
+              <com.thebluealliance.spectrum.SpectrumPreference
+                  android:key="themeColorBg"
+                  android:title="Background Color"
+                  android:summary="Color of the list and chat backgrounds"
+                  app:spectrum_colors="@array/zom_colors"
+                  app:spectrum_outlineWidth="2dp"
+                  />
+</PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_group_tuning_title">
+
+
   <CheckBoxPreference
           android:key="pref_start_on_boot"
           android:title="@string/start_on_boot"

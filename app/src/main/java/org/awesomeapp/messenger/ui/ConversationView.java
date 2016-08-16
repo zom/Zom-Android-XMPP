@@ -2629,6 +2629,8 @@ public class ConversationView {
             return new MessageViewHolder(view);
         }
 
+
+
         @Override
         public void onBindViewHolder(MessageViewHolder viewHolder, Cursor cursor) {
 
@@ -2726,6 +2728,9 @@ public class ConversationView {
             default:
                 messageView.bindPresenceMessage(viewHolder, nickname, messageType, date, isGroupChat(), false);
             }
+
+            messageView.applyStyleColors();
+
 
         }
 
