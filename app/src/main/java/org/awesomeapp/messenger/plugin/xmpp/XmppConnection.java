@@ -380,7 +380,7 @@ public class XmppConnection extends ImConnection {
                     {
                         contact.setName(vCard.getNickName());
                         mContactListManager.doSetContactName(contact.getAddress().getBareAddress(), contact.getName());
-                        mContactListManager.doAddContactToListAsync(contact, getContactListManager().getDefaultContactList(), false);
+                       // mContactListManager.doAddContactToListAsync(contact, getContactListManager().getDefaultContactList(), false);
                     }
 
                 }
@@ -2760,6 +2760,11 @@ public class XmppConnection extends ImConnection {
                     status = RosterPacket.ItemStatus.subscribe;
                     type = RosterPacket.ItemType.both;
                 }
+                else
+                {
+                    status = RosterPacket.ItemStatus.SUBSCRIPTION_PENDING;
+                    type = RosterPacket.ItemType.to;
+                }
 
                 try {
                     rEntry = mRoster.getEntry(contact.getAddress().getBareAddress());
@@ -3562,42 +3567,6 @@ public class XmppConnection extends ImConnection {
         if (presenceParts.length > 1)
             p.setResource(presenceParts[1]);
 
-        /**
-        if (contact == null && presence.getType() == Type.subscribe) {
-
-            XmppAddress xAddr = new XmppAddress(presence.getFrom());
-
-            if (mRoster == null)
-                return null;
-            
-            RosterEntry rEntry = mRoster.getEntry(xAddr.getBareAddress());
-
-            String name = null;
-
-            if (rEntry != null)
-                name = rEntry.getName();
-
-            if (name == null || name.length() == 0)
-                name = xAddr.getUser();
-
-            contact = new Contact(xAddr,name);
-
-            try {
-                if (!mContactListManager.getDefaultContactList().containsContact(contact.getAddress()))
-                {
-                    mContactListManager.getDefaultContactList().addExistingContact(contact);
-
-                }
-            } catch (ImException e) {
-
-                debug(TAG,"unable to add new contact to default list: " + e.getLocalizedMessage());
-
-            }
-        }
-        else if (contact == null)
-        {
-            return null; //do nothing if we don't have a contact
-        }*/
 
         if (presence.getType() == org.jivesoftware.smack.packet.Presence.Type.subscribe
                 ) {
@@ -3609,6 +3578,8 @@ public class XmppConnection extends ImConnection {
                     XmppAddress xAddr = new XmppAddress(presence.getFrom());
                     contact = new Contact(xAddr, xAddr.getUser());
                 }
+
+                contact.setPresence(p);
 
                 mContactListManager.doAddContactToListAsync(contact, getContactListManager().getDefaultContactList(), false);
                 mContactListManager.getSubscriptionRequestListener().onSubScriptionRequest(contact, mProviderId, mAccountId);
@@ -3638,9 +3609,9 @@ public class XmppConnection extends ImConnection {
                     mContactListManager.doAddContactToListAsync(contact,getContactListManager().getDefaultContactList(),true);
                 }
 
+                p.setPriority(1000);//max this out to ensure the user shows as online
+                contact.setPresence(p);
                 mContactListManager.getSubscriptionRequestListener().onSubscriptionApproved(contact, mProviderId, mAccountId);
-
-                requestPresenceRefresh(presence.getFrom());
             }
             catch (Exception e)
             {
@@ -3670,22 +3641,24 @@ public class XmppConnection extends ImConnection {
         //this is typical presence, let's get the latest/highest priority
         debug(TAG,"got presence: " + presence.getFrom() + "=" + presence.getType());
 
-        if (contact != null && contact.getPresence() != null)
+        if (contact != null)
         {
-            Presence pOld = contact.getPresence();
 
-            if (pOld == null || pOld.getResource() == null)
-            {
-                contact.setPresence(p);
+            if (contact.getPresence() != null) {
+                Presence pOld = contact.getPresence();
+
+                if (pOld == null || pOld.getResource() == null) {
+                    contact.setPresence(p);
+                } else if (pOld.getResource() != null && pOld.getResource().equals(p.getResource())) //if the same resource as the existing one, then update it
+                {
+                    contact.setPresence(p);
+                } else if (p.getPriority() >= pOld.getPriority()) //if priority is higher, then override
+                {
+                    contact.setPresence(p);
+                }
             }
-            else if (pOld.getResource() != null && pOld.getResource().equals(p.getResource())) //if the same resource as the existing one, then update it
-            {
+            else
                 contact.setPresence(p);
-            }
-            else if (p.getPriority() >= pOld.getPriority()) //if priority is higher, then override
-            {
-                contact.setPresence(p);
-            }
 
             ExtensionElement packetExtension=presence.getExtension("x","vcard-temp:x:update");
             if (packetExtension != null) {
@@ -3707,14 +3680,6 @@ public class XmppConnection extends ImConnection {
                     qAvatar.push(contact.getAddress().getAddress());
                 }
             }
-
-
-
-
-        }
-        else if (contact != null)
-        {
-             contact.setPresence(p);
 
         }
 

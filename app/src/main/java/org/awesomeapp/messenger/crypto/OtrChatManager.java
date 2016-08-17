@@ -713,6 +713,15 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
                             Log.d(TAG, "Failed to send push message to " + sessionID.getRemoteUserId());
                     }
                 });
+
+        try {
+            mOtrEngine.clearSession(sessionID);
+            mOtrEngineHost.removeSessionResource(sessionID);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
     /**

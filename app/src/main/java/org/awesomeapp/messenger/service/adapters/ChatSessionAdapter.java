@@ -112,6 +112,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
     private RemoteImService service = null;
 
     private HashMap<String, OtrChatSessionAdapter> mOtrChatSessions;
+    private SessionStatus mLastSessionStatus = null;
     private OtrDataHandler mDataHandler;
 
     private IDataListener mDataListener;
@@ -212,7 +213,8 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             ((Contact) mChatSession.getParticipant()).getPresence().setStatus(newPresence);
 
             if (newPresence == Presence.AVAILABLE) {
-                sendPostponedMessages();
+
+                //sendPostponedMessages();
             }
         }
 
@@ -962,6 +964,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
         }
 
+
         @Override
         public void onStatusChanged(ChatSession session, SessionStatus status) {
             final int N = mRemoteListeners.beginBroadcast();
@@ -981,6 +984,8 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             {
                 sendPostponedMessages ();
             }
+
+            mLastSessionStatus = status;
             
         }
 
