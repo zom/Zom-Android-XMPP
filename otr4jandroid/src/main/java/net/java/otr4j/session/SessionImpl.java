@@ -45,7 +45,7 @@ import android.util.Log;
 /** @author George Politis */
 public class SessionImpl implements Session {
 
-    private static final int MIN_SESSION_START_INTERVAL = 10000;
+    private static final int MIN_SESSION_START_INTERVAL = 15000;
     private SessionID sessionID;
     private OtrEngineHost host;
     private SessionStatus sessionStatus;
@@ -535,6 +535,7 @@ public class SessionImpl implements Session {
         case PLAINTEXT:
             showError("Unreadable encrypted message was received.");
 
+            refreshSession();
             //just swallow these since i am in plaintext and/or in finished mode
       //      injectMessage(new ErrorMessage(AbstractMessage.MESSAGE_ERROR,
         //            "You sent me an unreadable encrypted message"));
