@@ -374,7 +374,7 @@ public class SessionImpl implements Session {
                       + getSessionID().getRemoteUserId() + " throught "
                       + getSessionID().getProtocolName() + ".");
 
-        setSessionStatus(SessionStatus.PLAINTEXT);
+     //   setSessionStatus(SessionStatus.PLAINTEXT);
 
         OtrPolicy policy = getSessionPolicy();
         if (queryMessage.versions.contains(2) && policy.getAllowV2()) {
@@ -535,8 +535,9 @@ public class SessionImpl implements Session {
         case PLAINTEXT:
             showError("Unreadable encrypted message was received.");
 
-            injectMessage(new ErrorMessage(AbstractMessage.MESSAGE_ERROR,
-                    "You sent me an unreadable encrypted message"));
+            //just swallow these since i am in plaintext and/or in finished mode
+      //      injectMessage(new ErrorMessage(AbstractMessage.MESSAGE_ERROR,
+        //            "You sent me an unreadable encrypted message"));
             throw new OtrException("Unreadable encrypted message received");
         }
 
