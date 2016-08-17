@@ -212,9 +212,15 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         if (mChatSession.getParticipant() instanceof Contact) {
             ((Contact) mChatSession.getParticipant()).getPresence().setStatus(newPresence);
 
-            if (newPresence == Presence.AVAILABLE) {
+            try {
+                if (newPresence == Presence.AVAILABLE && getDefaultOtrChatSession().isChatEncrypted()) {
 
-                //sendPostponedMessages();
+                    sendPostponedMessages();
+                }
+            }
+            catch (RemoteException re)
+            {
+                //nothing to see here
             }
         }
 

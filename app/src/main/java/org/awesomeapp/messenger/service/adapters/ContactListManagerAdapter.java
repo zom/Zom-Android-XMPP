@@ -537,17 +537,6 @@ public class ContactListManagerAdapter extends
                 if (session != null && (!session.isGroupChatSession()))
                 {
                     session.presenceChanged(contact.getPresence().getStatus());
-
-                    /**
-                    if (contact.getPresence().isOnline()) {
-                        try {
-                            session.getDefaultOtrChatSession().startChatEncryption();
-                        }
-                        catch (Exception e)
-                        {
-                            Log.d(ImApp.LOG_TAG,"error starting otr session on status changed to online",e);
-                        }
-                    }*/
                 }
 
             }
@@ -1016,7 +1005,6 @@ public class ContactListManagerAdapter extends
             statusArray.add(String.valueOf(status));
             customStatusArray.add(customStatus);
             clientTypeArray.add(String.valueOf(clientType));
-
 
         }
 
