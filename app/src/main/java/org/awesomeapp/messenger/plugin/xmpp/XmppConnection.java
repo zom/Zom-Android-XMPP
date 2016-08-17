@@ -43,6 +43,8 @@ import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.chat.Chat;
+import org.jivesoftware.smack.chat.ChatManager;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.DefaultExtensionElement;
 import org.jivesoftware.smack.packet.ExtensionElement;
@@ -62,6 +64,8 @@ import org.jivesoftware.smack.util.dns.HostAddress;
 import org.jivesoftware.smack.util.stringencoder.Base64;
 import org.jivesoftware.smackx.address.provider.MultipleAddressesProvider;
 import org.jivesoftware.smackx.bytestreams.socks5.provider.BytestreamsProvider;
+import org.jivesoftware.smackx.chatstates.ChatState;
+import org.jivesoftware.smackx.chatstates.ChatStateListener;
 import org.jivesoftware.smackx.chatstates.packet.ChatStateExtension;
 import org.jivesoftware.smackx.commands.provider.AdHocCommandDataProvider;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
@@ -376,7 +380,7 @@ public class XmppConnection extends ImConnection {
                     {
                         contact.setName(vCard.getNickName());
                         mContactListManager.doSetContactName(contact.getAddress().getBareAddress(), contact.getName());
-                        mContactListManager.doAddContactToListAsync(contact, getContactListManager().getDefaultContactList(), false);
+                       // mContactListManager.doAddContactToListAsync(contact, getContactListManager().getDefaultContactList(), false);
                     }
 
                 }
@@ -1632,6 +1636,8 @@ public class XmppConnection extends ImConnection {
 
                 handleMessage(smackMessage);
 
+                String msg_xml = smackMessage.toXML().toString();
+                handleChatState(smackMessage.getFrom(),msg_xml);
 
             }
         }, new StanzaTypeFilter(org.jivesoftware.smack.packet.Message.class));
@@ -1819,7 +1825,7 @@ public class XmppConnection extends ImConnection {
 
         ChatSession session = findOrCreateSession(smackMessage.getFrom(), isGroupMessage);
 
-        if (session != null && session.isSubscribed()) //not subscribed so don't do anything
+        if (session != null) //not subscribed so don't do anything
         {
 
             DeliveryReceipt drIncoming = (DeliveryReceipt) smackMessage.getExtension("received", DeliveryReceipt.NAMESPACE);
@@ -1872,6 +1878,8 @@ public class XmppConnection extends ImConnection {
                 }
 
             }
+
+
         }
     }
 
@@ -1914,6 +1922,7 @@ public class XmppConnection extends ImConnection {
 
 
     protected int parsePresence(org.jivesoftware.smack.packet.Presence presence) {
+
         int type = Imps.Presence.AVAILABLE;
         org.jivesoftware.smack.packet.Presence.Mode rmode = presence.getMode();
         org.jivesoftware.smack.packet.Presence.Type rtype = presence.getType();
@@ -2018,8 +2027,40 @@ public class XmppConnection extends ImConnection {
         if (session == null && (!groupChat)) {
             ImEntity participant = findOrCreateParticipant(address, groupChat);
 
-            if (participant != null)
-                session = mSessionManager.createChatSession(participant,false);
+            if (participant != null) {
+                session = mSessionManager.createChatSession(participant, false);
+
+                /**
+                ChatManager chatManager = ChatManager.getInstanceFor(mConnection);
+                Chat chat= chatManager.createChat(participant.getAddress().getAddress(), new ChatStateListener() {
+                    @Override
+                    public void stateChanged(Chat chat, ChatState state) {
+                        switch (state){
+                            case active:
+                                Log.d("state","active");
+                                break;
+                            case composing:
+                                Log.d("state","composing");
+                                break;
+                            case paused:
+                                Log.d("state","paused");
+                                break;
+                            case inactive:
+                                Log.d("state","inactive");
+                                break;
+                            case gone:
+                                Log.d("state","gone");
+                                break;
+                        }
+                    }
+
+                    @Override
+                    public void processMessage(Chat chat, org.jivesoftware.smack.packet.Message message) {
+                        Log.d("processMessage","processMessage");
+                    }
+                });**/
+
+            }
 
         }
 
@@ -2718,6 +2759,11 @@ public class XmppConnection extends ImConnection {
                 {
                     status = RosterPacket.ItemStatus.subscribe;
                     type = RosterPacket.ItemType.both;
+                }
+                else
+                {
+                    status = RosterPacket.ItemStatus.SUBSCRIPTION_PENDING;
+                    type = RosterPacket.ItemType.to;
                 }
 
                 try {
@@ -3445,6 +3491,43 @@ public class XmppConnection extends ImConnection {
 
     }
 
+    private void handleChatState (String from, String chatStateXml) {
+
+        Presence p = null;
+        Contact contact = mContactListManager.getContact(XmppAddress.stripResource(from));
+        if (contact == null)
+            return;
+
+        //handle is-typing, probably some indication on screen
+        if (chatStateXml.contains(ChatState.active.toString()) || chatStateXml.contains(ChatState.composing.toString())) {
+            p = new Presence(Presence.AVAILABLE, "", null, null,
+                    Presence.CLIENT_TYPE_DEFAULT);
+        }
+        else if (chatStateXml.contains(ChatState.inactive.toString())||chatStateXml.contains(ChatState.paused.toString())) {
+      //      p = new Presence(Presence.AWAY, "", null, null,
+        //            Presence.CLIENT_TYPE_DEFAULT);
+        }
+        else if (chatStateXml.contains(ChatState.gone.toString())) {
+
+            p = new Presence(Presence.OFFLINE, "", null, null,
+                    Presence.CLIENT_TYPE_DEFAULT);
+        }
+
+        if (p != null) {
+            String[] presenceParts = from.split("/");
+            if (presenceParts.length > 1)
+                p.setResource(presenceParts[1]);
+
+            contact.setPresence(p);
+            Collection<Contact> contactsUpdate = new ArrayList<Contact>();
+            contactsUpdate.add(contact);
+            mContactListManager.notifyContactsPresenceUpdated(contactsUpdate.toArray(new Contact[contactsUpdate.size()]));
+
+        }
+
+
+    }
+
     private Contact handlePresenceChanged(org.jivesoftware.smack.packet.Presence presence) {
 
         if (presence == null || presence.getFrom() == null) //our presence isn't really valid
@@ -3484,42 +3567,6 @@ public class XmppConnection extends ImConnection {
         if (presenceParts.length > 1)
             p.setResource(presenceParts[1]);
 
-        /**
-        if (contact == null && presence.getType() == Type.subscribe) {
-
-            XmppAddress xAddr = new XmppAddress(presence.getFrom());
-
-            if (mRoster == null)
-                return null;
-            
-            RosterEntry rEntry = mRoster.getEntry(xAddr.getBareAddress());
-
-            String name = null;
-
-            if (rEntry != null)
-                name = rEntry.getName();
-
-            if (name == null || name.length() == 0)
-                name = xAddr.getUser();
-
-            contact = new Contact(xAddr,name);
-
-            try {
-                if (!mContactListManager.getDefaultContactList().containsContact(contact.getAddress()))
-                {
-                    mContactListManager.getDefaultContactList().addExistingContact(contact);
-
-                }
-            } catch (ImException e) {
-
-                debug(TAG,"unable to add new contact to default list: " + e.getLocalizedMessage());
-
-            }
-        }
-        else if (contact == null)
-        {
-            return null; //do nothing if we don't have a contact
-        }*/
 
         if (presence.getType() == org.jivesoftware.smack.packet.Presence.Type.subscribe
                 ) {
@@ -3531,6 +3578,8 @@ public class XmppConnection extends ImConnection {
                     XmppAddress xAddr = new XmppAddress(presence.getFrom());
                     contact = new Contact(xAddr, xAddr.getUser());
                 }
+
+                contact.setPresence(p);
 
                 mContactListManager.doAddContactToListAsync(contact, getContactListManager().getDefaultContactList(), false);
                 mContactListManager.getSubscriptionRequestListener().onSubScriptionRequest(contact, mProviderId, mAccountId);
@@ -3560,9 +3609,9 @@ public class XmppConnection extends ImConnection {
                     mContactListManager.doAddContactToListAsync(contact,getContactListManager().getDefaultContactList(),true);
                 }
 
+                p.setPriority(1000);//max this out to ensure the user shows as online
+                contact.setPresence(p);
                 mContactListManager.getSubscriptionRequestListener().onSubscriptionApproved(contact, mProviderId, mAccountId);
-
-                requestPresenceRefresh(presence.getFrom());
             }
             catch (Exception e)
             {
@@ -3592,67 +3641,45 @@ public class XmppConnection extends ImConnection {
         //this is typical presence, let's get the latest/highest priority
         debug(TAG,"got presence: " + presence.getFrom() + "=" + presence.getType());
 
-        if (contact != null && contact.getPresence() != null)
+        if (contact != null)
         {
-            Presence pOld = contact.getPresence();
 
-            if (pOld == null || pOld.getResource() == null)
-            {
-                contact.setPresence(p);
-            }
-            else if (pOld.getResource() != null && pOld.getResource().equals(p.getResource())) //if the same resource as the existing one, then update it
-            {
-                contact.setPresence(p);
-            }
-            else if (p.getPriority() >= pOld.getPriority()) //if priority is higher, then override
-            {
-                contact.setPresence(p);
-            }
+            if (contact.getPresence() != null) {
+                Presence pOld = contact.getPresence();
 
-            if (p.getStatus() != Imps.Presence.AVAILABLE)
-            {
-                //if offline, let's check for another online presence
-                presence = mRoster.getPresence(presence.getFrom());
-                p = new Presence(parsePresence(presence), presence.getStatus(), null, null,
-                        Presence.CLIENT_TYPE_DEFAULT);
-
-                if (p.getStatus() == Imps.Presence.AVAILABLE) {
-                    //this is only persisted in memory
-                    p.setPriority(presence.getPriority());
+                if (pOld == null || pOld.getResource() == null) {
+                    contact.setPresence(p);
+                } else if (pOld.getResource() != null && pOld.getResource().equals(p.getResource())) //if the same resource as the existing one, then update it
+                {
+                    contact.setPresence(p);
+                } else if (p.getPriority() >= pOld.getPriority()) //if priority is higher, then override
+                {
                     contact.setPresence(p);
                 }
-
             }
             else
-            {
-                ExtensionElement packetExtension=presence.getExtension("x","vcard-temp:x:update");
-                if (packetExtension != null) {
+                contact.setPresence(p);
 
-                    DefaultExtensionElement o=(DefaultExtensionElement)packetExtension;
-                    String hash=o.getValue("photo");
-                    if (hash != null) {
+            ExtensionElement packetExtension=presence.getExtension("x","vcard-temp:x:update");
+            if (packetExtension != null) {
 
-
-                        boolean hasMatches = DatabaseUtils.doesAvatarHashExist(mContext.getContentResolver(),  Imps.Avatars.CONTENT_URI, contact.getAddress().getBareAddress(), hash);
-
-                        if (!hasMatches) //we must reload
-                            qAvatar.push(contact.getAddress().getBareAddress());
+                DefaultExtensionElement o=(DefaultExtensionElement)packetExtension;
+                String hash=o.getValue("photo");
+                if (hash != null) {
 
 
-                    }else
-                    {
-                        //no avatar so push
-                        qAvatar.push(contact.getAddress().getAddress());
-                    }
+                    boolean hasMatches = DatabaseUtils.doesAvatarHashExist(mContext.getContentResolver(),  Imps.Avatars.CONTENT_URI, contact.getAddress().getBareAddress(), hash);
+
+                    if (!hasMatches) //we must reload
+                        qAvatar.push(contact.getAddress().getBareAddress());
+
+
+                }else
+                {
+                    //no avatar so push
+                    qAvatar.push(contact.getAddress().getAddress());
                 }
-
             }
-
-
-        }
-        else if (contact != null)
-        {
-             contact.setPresence(p);
 
         }
 

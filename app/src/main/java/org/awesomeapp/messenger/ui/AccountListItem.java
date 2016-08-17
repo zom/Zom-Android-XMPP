@@ -193,7 +193,7 @@ public class AccountListItem extends LinearLayout {
             mHandler.postDelayed(new Runnable () {
                 public void run ()
                 {
-                    runBindTask(r, (int)mProviderId, nickname, activeUserName, connectionStatus, presenceString);
+                    runBindTask(r, (int)mProviderId, (int)mAccountId, nickname, activeUserName, connectionStatus, presenceString);
                 }
             }
                     , 200l);
@@ -207,7 +207,7 @@ public class AccountListItem extends LinearLayout {
         super.onDetachedFromWindow();
     }
 
-    private void runBindTask(final Resources r, final int providerId, final String nickname, final String activeUserName,
+    private void runBindTask(final Resources r, final int providerId, final int accountId, final String nickname, final String activeUserName,
             final int dbConnectionStatus, final String presenceString) {
 
             String mProviderNameText;
@@ -223,7 +223,7 @@ public class AccountListItem extends LinearLayout {
                     String userDomain = settings.getDomain();
                     int connectionStatus = dbConnectionStatus;
 
-                    IImConnection conn = ((ImApp)mActivity.getApplication()).getConnection(providerId,-1);
+                    IImConnection conn = ((ImApp)mActivity.getApplication()).getConnection(providerId,accountId);
                     if (conn == null)
                     {
                         connectionStatus = ImConnection.DISCONNECTED;

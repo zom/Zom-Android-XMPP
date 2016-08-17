@@ -40,7 +40,7 @@ android {
 
     defaultConfig {
         applicationId 'im.zom.messenger'
-        versionCode 1501925
+        versionCode 1501926
         versionName getVersionName()
         archivesBaseName = "Zom-$versionName"
         minSdkVersion project.ext.minSdkVersion
@@ -139,30 +139,45 @@ dependencies {
     compile project(':otr4jandroid')
     compile project(':tibetanTextLibrary')
     compile project(':chatsecure-push:sdk')
+
     compile 'com.google.zxing:core:3.0.0'
+
     compile 'commons-codec:commons-codec:1.9'
     compile 'commons-io:commons-io:2.4'
+
+    compile 'org.thoughtcrime.ssl.pinning:AndroidPinning:1.0.0'
+    compile 'com.android.support:multidex:1.0.1'
     compile 'com.android.support:design:23.3.0'
     compile 'com.android.support:recyclerview-v7:23.3.0'
     compile 'com.android.support:support-v4:23.3.0'
-    compile 'com.theartofdev.edmodo:android-image-cropper:2.0.0'
-    compile 'de.hdodenhof:circleimageview:2.0.0'
+    compile project.ext.appcompat
+
+
     compile 'info.guardianproject.cacheword:cachewordlib:0.1'
     compile 'info.guardianproject.iocipher:IOCipher:0.3'
     compile 'info.guardianproject.netcipher:netcipher:1.2'
     compile 'info.guardianproject.panic:panic:0.5'
-    compile 'net.hockeyapp.android:HockeySDK:3.5.0'
-    compile 'org.igniterealtime.smack:smack-android-extensions:4.1.7'
-    compile 'org.igniterealtime.smack:smack-tcp:4.1.7'
-    compile 'org.jsoup:jsoup:1.5.2'
-    compile 'org.ocpsoft.prettytime:prettytime:4.0.0.Final'
-    compile 'org.thoughtcrime.ssl.pinning:AndroidPinning:1.0.0'
+
+    compile "org.igniterealtime.smack:smack-android-extensions:4.1.7"
+    compile "org.igniterealtime.smack:smack-experimental:4.1.7"
+    compile "org.igniterealtime.smack:smack-tcp:4.1.7"
+
     compile 'com.github.ge0rg:MemorizingTrustManager:9e30ffdf7d'
+
+    compile 'org.jsoup:jsoup:1.5.2'
+
+    compile 'org.ocpsoft.prettytime:prettytime:4.0.0.Final'
+    compile 'com.theartofdev.edmodo:android-image-cropper:2.0.0'
+    compile 'de.hdodenhof:circleimageview:2.0.0'
     compile 'xyz.danoz:recyclerviewfastscroller:0.1.3'
     compile 'com.github.bumptech.glide:glide:3.5.2'
     compile 'cn.pedant.sweetalert:library:1.3'
-    compile 'com.thebluealliance:spectrum:0.2.1'
-    compile 'com.android.support:multidex:1.0.1'
+    compile 'com.thebluealliance:spectrum:0.5.0'
+
     compile 'com.github.javiersantos:AppUpdater:2.1.1'
-    compile project.ext.appcompat
+    compile 'net.hockeyapp.android:HockeySDK:3.5.0'
+
+    compile 'com.github.QuadFlask:colorpicker:0.0.10'
+
+
 }

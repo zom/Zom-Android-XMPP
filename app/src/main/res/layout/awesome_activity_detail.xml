@@ -126,7 +126,6 @@
             android:measureAllChildren="false"
             android:scrollbars="none"
             android:visibility="gone"
-            android:background="@android:color/white"
             android:layout_gravity="center_vertical"
             android:gravity="center_vertical"
             >

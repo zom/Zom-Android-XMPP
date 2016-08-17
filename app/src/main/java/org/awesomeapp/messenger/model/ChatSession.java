@@ -122,9 +122,10 @@ public class ChatSession {
                     // attempt to send a "Knock" push message to the peer asking them to come online
                     //cm.sendKnockPushMessage(sId);
                     if (!mPushSent) {
-                        if (otrStatus == SessionStatus.ENCRYPTED) {
-                            cm.endSession(sId);
-                        }
+
+                       // if (otrStatus == SessionStatus.ENCRYPTED) {
+                        //    cm.endSession(sId);
+                       // }
 
                         // ChatSecure-Push: If the remote peer is offline, send them a push
                         OtrChatManager.getInstance().sendKnockPushMessage(sId);
@@ -137,13 +138,16 @@ public class ChatSession {
                 }
             }
 
+            //reset the chance to do a push/knock
             mPushSent = false;
 
             if (otrStatus == SessionStatus.ENCRYPTED) {
 
-                // ChatSecure-Push : If OTR session is available when sending peer message,
-                // ensure we have exchanged Push Whitelist tokens with that peer
-                cm.maybeBeginPushWhitelistTokenExchange(sId);
+                if (!OtrChatManager.getInstance().canDoKnockPushMessage(sId)) {
+                    // ChatSecure-Push : If OTR session is available when sending peer message,
+                    // ensure we have exchanged Push Whitelist tokens with that peer
+                    cm.maybeBeginPushWhitelistTokenExchange(sId);
+                }
 
                 boolean verified = cm.getKeyManager().isVerified(sId);
 
@@ -161,9 +165,12 @@ public class ChatSession {
                     OtrChatManager.getInstance().sendKnockPushMessage(sId);
                 }*/
 
+                //queue up messages until session restarts
+                message.setType(Imps.MessageType.POSTPONED);
+                return message.getType();
+
             }
 
-           // mHistoryMessages.add(message);
             boolean canSend = cm.transformSending(message);
 
             if (canSend) {
@@ -171,6 +178,7 @@ public class ChatSession {
             } else {
                 //can't be sent due to OTR state
                 message.setType(Imps.MessageType.POSTPONED);
+                return message.getType();
 
             }
 
@@ -180,7 +188,6 @@ public class ChatSession {
 
             message.setTo(mParticipant.getAddress());
             message.setType(Imps.MessageType.OUTGOING);
-          //  mHistoryMessages.add(message);
             mManager.sendMessageAsync(this, message);
 
 

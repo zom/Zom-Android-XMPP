@@ -18,7 +18,8 @@
  */
 -->
 
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <ListPreference
         android:key="pref_language"
@@ -60,8 +61,33 @@
 
     </PreferenceCategory>
 
-      <PreferenceCategory android:title="@string/pref_group_tuning_title">
-   
+      <PreferenceCategory android:title="Theme Colors">
+
+
+              <com.flask.colorpicker.ColorPickerPreference
+                  android:key="themeColor"
+                  android:title="Header Color"
+                  android:summary="Color of the header and toolbars"
+                  app:lightnessSlider="true"
+                  />
+
+              <com.flask.colorpicker.ColorPickerPreference
+                  android:key="themeColorText"
+                  android:title="Text Color"
+                  android:summary="Color of the app text"
+                  app:lightnessSlider="true"
+                  />
+
+              <com.flask.colorpicker.ColorPickerPreference
+                  android:key="themeColorBg"
+                  android:title="Background Color"
+                  android:summary="Color of the list and chat backgrounds"
+                  app:lightnessSlider="true"
+                  />
+</PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_group_tuning_title">
+
+
   <CheckBoxPreference
           android:key="pref_start_on_boot"
           android:title="@string/start_on_boot"

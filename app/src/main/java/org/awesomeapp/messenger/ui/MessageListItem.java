@@ -43,6 +43,7 @@ import java.util.List;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.AssetFileDescriptor;
@@ -55,6 +56,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import android.provider.Browser;
 import android.provider.MediaStore;
 import android.support.v4.util.LruCache;
@@ -70,6 +72,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -163,7 +166,7 @@ public class MessageListItem extends FrameLayout {
         mHolder.mTextViewForMessages.setVisibility(View.VISIBLE);
         mHolder.mAudioContainer.setVisibility(View.GONE);
         mHolder.mMediaContainer.setVisibility(View.GONE);
-        mHolder.mContainer.setBackgroundResource(R.drawable.message_view_rounded_light);
+    //    mHolder.mContainer.setBackgroundResource(R.drawable.message_view_rounded_light);
 
         if (nickname == null)
             nickname = address;
@@ -262,7 +265,7 @@ public class MessageListItem extends FrameLayout {
             {
                 SpannableString spannablecontent=new SpannableString(lastMessage);
                 mHolder.mTextViewForMessages.setText(spannablecontent);
-                mHolder.mContainer.setBackgroundResource(R.drawable.message_view_rounded_light);
+             //   mHolder.mContainer.setBackgroundResource(R.drawable.message_view_rounded_light);
             }
             else
             {
@@ -273,12 +276,12 @@ public class MessageListItem extends FrameLayout {
         }
         else {
 
-            mHolder.mContainer.setBackgroundResource(R.drawable.message_view_rounded_light);
+         //   mHolder.mContainer.setBackgroundResource(R.drawable.message_view_rounded_light);
 
         }
 
-        if (isSelected())
-            mHolder.mContainer.setBackgroundColor(getResources().getColor(R.color.holo_blue_bright));
+      //  if (isSelected())
+        //    mHolder.mContainer.setBackgroundColor(getResources().getColor(R.color.holo_blue_bright));
 
         if (lastMessage.length() > 0)
         {
@@ -345,6 +348,7 @@ public class MessageListItem extends FrameLayout {
         if( mimeType.startsWith("image/") ) {
             setImageThumbnail( getContext().getContentResolver(), id, holder, mediaUri );
             holder.mMediaThumbnail.setBackgroundColor(Color.TRANSPARENT);
+
         }
         else
         {
@@ -667,7 +671,7 @@ public class MessageListItem extends FrameLayout {
         mHolder.mTextViewForMessages.setVisibility(View.VISIBLE);
         mHolder.mAudioContainer.setVisibility(View.GONE);
         mHolder.mMediaContainer.setVisibility(View.GONE);
-        mHolder.mContainer.setBackgroundResource(R.drawable.message_view_rounded_light);
+       // mHolder.mContainer.setBackgroundResource(R.drawable.message_view_rounded_light);
         mHolder.mAudioButton.setImageResource(R.drawable.media_audio_play);
 
         mHolder.resetOnClickListenerMediaThumbnail();
@@ -753,7 +757,7 @@ public class MessageListItem extends FrameLayout {
             {
                 SpannableString spannablecontent=new SpannableString(lastMessage);
                 mHolder.mTextViewForMessages.setText(spannablecontent);
-                mHolder.mContainer.setBackgroundResource(R.drawable.message_view_rounded_light);
+              //  mHolder.mContainer.setBackgroundResource(R.drawable.message_view_rounded_light);
             }
             else
             {
@@ -766,7 +770,7 @@ public class MessageListItem extends FrameLayout {
 
              SpannableString spannablecontent=new SpannableString(lastMessage);
             mHolder.mTextViewForMessages.setText(spannablecontent);
-            mHolder.mContainer.setBackgroundResource(R.drawable.message_view_rounded_light);
+           // mHolder.mContainer.setBackgroundResource(R.drawable.message_view_rounded_light);
 
         }
 
@@ -1067,6 +1071,38 @@ public class MessageListItem extends FrameLayout {
 
         default:
         }
+    }
+
+    public void applyStyleColors ()
+    {
+        //not set color
+        final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
+        int themeColorHeader = settings.getInt("themeColor",-1);
+        int themeColorText = settings.getInt("themeColorText",-1);
+        int themeColorBg = settings.getInt("themeColorBg",-1);
+
+
+        if (themeColorText != -1 && mHolder != null)
+        {
+            if (mHolder.mTextViewForMessages != null)
+                mHolder.mTextViewForMessages.setTextColor(themeColorText);
+
+            if (mHolder.mTextViewForTimestamp != null)
+                mHolder.mTextViewForTimestamp.setTextColor(themeColorText);
+
+            int textBubbleBg = getContrastColor(themeColorText);
+            if (textBubbleBg == Color.BLACK)
+                mHolder.mContainer.setBackgroundResource(R.drawable.message_view_rounded_dark);
+            else
+                mHolder.mContainer.setBackgroundResource(R.drawable.message_view_rounded_light);
+
+        }
+
+    }
+
+    public static int getContrastColor(int colorIn) {
+        double y = (299 * Color.red(colorIn) + 587 * Color.green(colorIn) + 114 * Color.blue(colorIn)) / 1000;
+        return y >= 128 ? Color.BLACK : Color.WHITE;
     }
 
 }

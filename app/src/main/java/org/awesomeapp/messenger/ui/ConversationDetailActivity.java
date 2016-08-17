@@ -26,6 +26,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.media.MediaRecorder;
 import android.net.Uri;
@@ -185,19 +186,45 @@ public class ConversationDetailActivity extends BaseActivity {
 
         //not set color
         final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-        int selColor = settings.getInt("themeColor",-1);
+        int themeColorHeader = settings.getInt("themeColor",-1);
+        int themeColorText = settings.getInt("themeColorText",-1);
+        int themeColorBg = settings.getInt("themeColorBg",-1);
 
-        if (selColor != -1) {
+        if (themeColorHeader != -1) {
+
+            if (themeColorText == -1)
+                themeColorText = getContrastColor(themeColorHeader);
+
             if (Build.VERSION.SDK_INT >= 21) {
-               getWindow().setNavigationBarColor(selColor);
-               getWindow().setStatusBarColor(selColor);
+                getWindow().setNavigationBarColor(themeColorHeader);
+                getWindow().setStatusBarColor(themeColorHeader);
+                getWindow().setTitleColor(themeColorText);
             }
 
-            appBarLayout.setBackgroundColor(selColor);
-            collapsingToolbar.setBackgroundColor(selColor);
-            toolbar.setBackgroundColor(selColor);
+            appBarLayout.setBackgroundColor(themeColorHeader);
+            collapsingToolbar.setBackgroundColor(themeColorHeader);
+            toolbar.setBackgroundColor(themeColorHeader);
+            toolbar.setTitleTextColor(themeColorText);
+
         }
 
+        if (themeColorBg != -1)
+        {
+            if (mRootLayout != null)
+                mRootLayout.setBackgroundColor(themeColorBg);
+
+            View viewInput = findViewById(R.id.inputLayout);
+            viewInput.setBackgroundColor(themeColorBg);
+
+            if (themeColorText != -1)
+                mConvoView.mComposeMessage.setTextColor(themeColorText);
+        }
+
+    }
+
+    public static int getContrastColor(int colorIn) {
+        double y = (299 * Color.red(colorIn) + 587 * Color.green(colorIn) + 114 * Color.blue(colorIn)) / 1000;
+        return y >= 128 ? Color.BLACK : Color.WHITE;
     }
 
 

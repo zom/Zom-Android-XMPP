@@ -2629,6 +2629,8 @@ public class ConversationView {
             return new MessageViewHolder(view);
         }
 
+
+
         @Override
         public void onBindViewHolder(MessageViewHolder viewHolder, Cursor cursor) {
 
@@ -2726,6 +2728,9 @@ public class ConversationView {
             default:
                 messageView.bindPresenceMessage(viewHolder, nickname, messageType, date, isGroupChat(), false);
             }
+
+            messageView.applyStyleColors();
+
 
         }
 
@@ -2884,6 +2889,23 @@ public class ConversationView {
                     sStickerManager.addEmojiToCategory(category, sticker);
                 }
 
+                basePath = "stickers/pema";
+                filelist = aMan.list(basePath);
+
+                category = "Pema";
+
+                for (int i = 0; i < filelist.length; i++) {
+                    Sticker sticker = new Sticker();
+                    sticker.name = filelist[i];
+                    sticker.category = category;
+                    sticker.assetUri = Uri.parse(basePath + '/' +  filelist[i]);
+                    sticker.res = mActivity.getResources();
+                    sticker.emoticon =  filelist[i];
+
+                    sStickerManager.addPattern(sticker.emoticon, sticker);
+                    sStickerManager.addEmojiToCategory(category, sticker);
+                }
+
                 basePath = "stickers/zomkyi";
                 filelist = aMan.list(basePath);
 
@@ -2968,6 +2990,8 @@ public class ConversationView {
                     sStickerManager.addPattern(sticker.emoticon, sticker);
                     sStickerManager.addEmojiToCategory(category, sticker);
                 }
+
+
 
             }
             catch (Exception fe)

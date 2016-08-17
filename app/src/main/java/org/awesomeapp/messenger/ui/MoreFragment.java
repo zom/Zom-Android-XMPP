@@ -1,8 +1,10 @@
 package org.awesomeapp.messenger.ui;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,6 +18,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.flask.colorpicker.ColorPickerView;
+import com.flask.colorpicker.OnColorSelectedListener;
+import com.flask.colorpicker.builder.ColorPickerClickListener;
+import com.flask.colorpicker.builder.ColorPickerDialogBuilder;
 import com.thebluealliance.spectrum.SpectrumDialog;
 
 import org.awesomeapp.messenger.ImApp;
@@ -107,6 +113,7 @@ public class MoreFragment extends Fragment {
 
         int selColor = settings.getInt("themeColor",-1);
 
+        /**
         new SpectrumDialog.Builder(getContext())
                 .setColors(R.array.zom_colors)
                 .setDismissOnColorSelected(false)
@@ -116,11 +123,55 @@ public class MoreFragment extends Fragment {
                         if(positiveResult) {
                             MainActivity activity = (MainActivity)getActivity();
                             settings.edit().putInt("themeColor",color).commit();
-                            activity.applyStyleForToolbar();
+                            activity.applyStyle();
                         }
                     }
-                }).build().show(getFragmentManager(), "dialog_theme_1");
+                }).build().show(getFragmentManager(), "dialog_theme_1");**/
+        ColorPickerDialogBuilder
+                .with(getContext())
+                .setTitle("Choose color")
+                .initialColor(selColor)
+                .wheelType(ColorPickerView.WHEEL_TYPE.FLOWER)
+                .density(12)
+                .lightnessSliderOnly()
+                .setOnColorSelectedListener(new OnColorSelectedListener() {
+                    @Override
+                    public void onColorSelected(int selectedColor) {
 
+                    }
+                })
+                .setPositiveButton(getString(R.string.ok), new ColorPickerClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int selectedColor, Integer[] allColors) {
+
+                        settings.edit().putInt("themeColor",selectedColor).commit();
+
+                        /**
+                        int textColor = getContrastColor(selectedColor);
+                        int bgColor = getContrastColor(textColor);
+
+                        settings.edit().putInt("themeColorBg",bgColor).commit();
+                        settings.edit().putInt("themeColorText",textColor).commit();
+                         */
+
+                        MainActivity activity = (MainActivity)getActivity();
+                        activity.applyStyle();
+
+                    }
+                })
+                .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                })
+                .build()
+                .show();
+
+    }
+
+    public static int getContrastColor(int colorIn) {
+        double y = (299 * Color.red(colorIn) + 587 * Color.green(colorIn) + 114 * Color.blue(colorIn)) / 1000;
+        return y >= 128 ? Color.BLACK : Color.WHITE;
     }
 
     @Override

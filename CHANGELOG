@@ -2,6 +2,24 @@
 Track the source commits here:
 https://github.com/zom/Zom-Android/commits/master#
 
+15.0.1.92 (1501926) / 16 August 2016
+
+d90dbd7 improve handling of subscription requests and presence
+8fd4a54 use the new color picker and show the lightness slider
+6818e25 don't inject unnecessary error messages
+53580f2 make the actionbar transparent for displaying images
+771455f support flower color picker
+c0640d4 a few more tweaks to style and sticker support
+4de40e2 add initial multi-color theme modifications - now you can set text, background and header colors
+5f23a6c tweak handling of sessions, presence, and postponed messages - handle chatstate messages in a very minimal way (iOS is not sen
+0a87856 tweak image sizing
+4179f18 don't optimize anything yet in proguard
+e674ed4 update dependencies
+3e467a6 adding new pema stickers
+21d634e always pass accountId when you are creating a connection
+71bca4f update changelog
+dfa5703 only check updates for number updates
+
 15.0.1.925 (1501925) / 30 June 2016
 dfa5703 only check updates for number updates
 f34765e change appupdater check logic to only check once per day

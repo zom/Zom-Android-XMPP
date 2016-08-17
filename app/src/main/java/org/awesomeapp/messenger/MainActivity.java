@@ -25,6 +25,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -115,6 +116,8 @@ public class MainActivity extends BaseActivity {
 
     private ConversationListFragment mConversationList;
     private ContactsListFragment mContactList;
+    private MoreFragment mMoreFragment;
+    private AccountFragment mAccountFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,7 +140,6 @@ public class MainActivity extends BaseActivity {
         mTabLayout = (TabLayout) findViewById(R.id.tabs);
 
         setSupportActionBar(mToolbar);
-        applyStyleForToolbar();
 
         setTitle(getString(R.string.app_name_zom));
 
@@ -145,16 +147,18 @@ public class MainActivity extends BaseActivity {
 
         mConversationList = new ConversationListFragment();
         mContactList = new ContactsListFragment();
+        mMoreFragment = new MoreFragment();
+        mAccountFragment = new AccountFragment();
 
         Adapter adapter = new Adapter(getSupportFragmentManager());
         adapter.addFragment(mConversationList, getString(R.string.title_chats), R.drawable.ic_message_white_36dp);
         adapter.addFragment(mContactList, getString(R.string.contacts), R.drawable.ic_people_white_36dp);
-        adapter.addFragment(new MoreFragment(), getString(R.string.title_more), R.drawable.ic_more_horiz_white_36dp);
+        adapter.addFragment(mMoreFragment, getString(R.string.title_more), R.drawable.ic_more_horiz_white_36dp);
 
-        AccountFragment fragAccount = new AccountFragment();
+        mAccountFragment = new AccountFragment();
       //  fragAccount.setArguments();
 
-        adapter.addFragment(fragAccount, getString(R.string.title_me), R.drawable.ic_face_white_24dp);
+        adapter.addFragment(mAccountFragment, getString(R.string.title_me), R.drawable.ic_face_white_24dp);
 
         mViewPager.setAdapter(adapter);
 
@@ -183,7 +187,7 @@ public class MainActivity extends BaseActivity {
                 mViewPager.setCurrentItem(tab.getPosition());
 
                 setToolbarTitle(tab.getPosition());
-
+                applyStyleColors ();
             }
 
             @Override
@@ -193,7 +197,8 @@ public class MainActivity extends BaseActivity {
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-
+                setToolbarTitle(tab.getPosition());
+                applyStyleColors ();
             }
         });
 
@@ -233,6 +238,7 @@ public class MainActivity extends BaseActivity {
 
         installRingtones ();
 
+        applyStyle();
     }
 
     private void installRingtones ()
@@ -311,6 +317,8 @@ public class MainActivity extends BaseActivity {
         }
 
         handleIntent();
+
+
     }
 
     @Override
@@ -946,10 +954,10 @@ public class MainActivity extends BaseActivity {
 
     }*/
 
-    public void applyStyleForToolbar() {
+    public void applyStyle() {
 
         //first set font
-        checkCustomFont ();
+        checkCustomFont();
         Typeface typeface = CustomTypefaceManager.getCurrentTypeface(this);
 
         if (typeface != null) {
@@ -964,20 +972,58 @@ public class MainActivity extends BaseActivity {
             }
         }
 
+        applyStyleColors ();
+    }
+
+    private void applyStyleColors ()
+    {
         //not set color
         final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-        int selColor = settings.getInt("themeColor",-1);
+        int themeColorHeader = settings.getInt("themeColor",-1);
+        int themeColorText = settings.getInt("themeColorText",-1);
+        int themeColorBg = settings.getInt("themeColorBg",-1);
 
-        if (selColor != -1) {
+        if (themeColorHeader != -1) {
+
+            if (themeColorText == -1)
+                themeColorText = getContrastColor(themeColorHeader);
+
             if (Build.VERSION.SDK_INT >= 21) {
-                getWindow().setNavigationBarColor(selColor);
-                getWindow().setStatusBarColor(selColor);
+                getWindow().setNavigationBarColor(themeColorHeader);
+                getWindow().setStatusBarColor(themeColorHeader);
+                getWindow().setTitleColor(getContrastColor(themeColorHeader));
             }
 
-            mToolbar.setBackgroundColor(selColor);
-            mTabLayout.setBackgroundColor(selColor);
+            mToolbar.setBackgroundColor(themeColorHeader);
+            mToolbar.setTitleTextColor(getContrastColor(themeColorHeader));
+
+            mTabLayout.setBackgroundColor(themeColorHeader);
+            mTabLayout.setTabTextColors(themeColorText, themeColorText);
+
         }
 
+        if (themeColorBg != -1)
+        {
+            if (mConversationList != null && mConversationList.getView() != null)
+                mConversationList.getView().setBackgroundColor(themeColorBg);
+
+            if (mContactList != null &&  mContactList.getView() != null)
+                mContactList.getView().setBackgroundColor(themeColorBg);
+
+            if (mMoreFragment != null && mMoreFragment.getView() != null)
+                mMoreFragment.getView().setBackgroundColor(themeColorBg);
+
+            if (mAccountFragment != null && mAccountFragment.getView() != null)
+                mAccountFragment.getView().setBackgroundColor(themeColorBg);
+
+
+        }
+
+    }
+
+    public static int getContrastColor(int colorIn) {
+        double y = (299 * Color.red(colorIn) + 587 * Color.green(colorIn) + 114 * Color.blue(colorIn)) / 1000;
+        return y >= 128 ? Color.BLACK : Color.WHITE;
     }
 
     private void checkCustomFont ()

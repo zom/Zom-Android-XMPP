@@ -115,6 +115,18 @@ public class LockScreenActivity extends BaseActivity implements ICacheWordSubscr
             {
                 changePassphrase();
             }
+
+        //not set color
+        final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+        int themeColorHeader = settings.getInt("themeColor",-1);
+        int themeColorText = settings.getInt("themeColorText",-1);
+        int themeColorBg = settings.getInt("themeColorBg",-1);
+
+        if (themeColorBg != -1)
+            findViewById(R.id.llRoot).setBackgroundColor(themeColorBg);
+
+        if (themeColorText != -1)
+            mEnterPassphrase.setTextColor(themeColorText);
     }
 
     @Override

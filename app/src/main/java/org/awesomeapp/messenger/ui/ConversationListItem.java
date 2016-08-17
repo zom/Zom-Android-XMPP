@@ -21,6 +21,7 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
 import android.database.Cursor;
@@ -30,6 +31,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.support.v4.util.LruCache;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -112,6 +114,8 @@ public class ConversationListItem extends FrameLayout {
 
     public void bind(ConversationViewHolder holder, long contactId, long providerId, long accountId, String address, String nickname, int contactType, String message, long messageDate, int presence, String underLineText, boolean showChatMsg, boolean scrolling) {
 
+
+        applyStyleColors(holder);
 
         if (nickname == null)
         {
@@ -269,6 +273,9 @@ public class ConversationListItem extends FrameLayout {
                         setThumbnail(getContext().getContentResolver(), holder, mediaUri);
                         holder.mLine2.setVisibility(View.GONE);
 
+                        holder.mMediaThumb.setScaleType(ImageView.ScaleType.FIT_CENTER);
+
+
                     }
 
                 }
@@ -289,6 +296,8 @@ public class ConversationListItem extends FrameLayout {
                         Uri mediaUri = Uri.parse("asset://localhost/" + stickerPath);
                         setThumbnail(getContext().getContentResolver(), holder, mediaUri);
                         holder.mLine2.setVisibility(View.GONE);
+                        holder.mMediaThumb.setScaleType(ImageView.ScaleType.FIT_CENTER);
+
                     } catch (Exception e) {
 
                     }
@@ -492,6 +501,44 @@ public class ConversationListItem extends FrameLayout {
         }
 
         return buf.toString();
+    }
+
+    public void applyStyleColors (ConversationViewHolder holder)
+    {
+        //not set color
+        final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
+        int themeColorHeader = settings.getInt("themeColor",-1);
+        int themeColorText = settings.getInt("themeColorText",-1);
+        int themeColorBg = settings.getInt("themeColorBg",-1);
+
+
+        if (themeColorText != -1)
+        {
+            if (holder.mLine1 != null)
+                holder.mLine1.setTextColor(themeColorText);
+
+            if (holder.mLine2 != null)
+                holder.mLine2.setTextColor(themeColorText);
+
+            //holder.mLine2.setTextColor(darker(themeColorText,2.0f));
+
+        }
+
+    }
+
+    /**
+     * Returns darker version of specified <code>color</code>.
+     */
+    public static int darker (int color, float factor) {
+        int a = Color.alpha( color );
+        int r = Color.red( color );
+        int g = Color.green( color );
+        int b = Color.blue( color );
+
+        return Color.argb( a,
+                Math.max( (int)(r * factor), 0 ),
+                Math.max( (int)(g * factor), 0 ),
+                Math.max( (int)(b * factor), 0 ) );
     }
 
 }
