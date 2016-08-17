@@ -133,6 +133,7 @@ public class MoreFragment extends Fragment {
                 .initialColor(selColor)
                 .wheelType(ColorPickerView.WHEEL_TYPE.FLOWER)
                 .density(12)
+                .lightnessSliderOnly()
                 .setOnColorSelectedListener(new OnColorSelectedListener() {
                     @Override
                     public void onColorSelected(int selectedColor) {

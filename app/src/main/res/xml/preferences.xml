@@ -64,27 +64,25 @@
       <PreferenceCategory android:title="Theme Colors">
 
 
-              <com.thebluealliance.spectrum.SpectrumPreference
+              <com.flask.colorpicker.ColorPickerPreference
                   android:key="themeColor"
                   android:title="Header Color"
                   android:summary="Color of the header and toolbars"
-                  app:spectrum_colors="@array/zom_colors"
-                  app:spectrum_outlineWidth="2dp"/>
+                  app:lightnessSlider="true"
+                  />
 
-              <com.thebluealliance.spectrum.SpectrumPreference
+              <com.flask.colorpicker.ColorPickerPreference
                   android:key="themeColorText"
                   android:title="Text Color"
                   android:summary="Color of the app text"
-                  app:spectrum_colors="@array/zom_colors"
-                  app:spectrum_outlineWidth="2dp"
+                  app:lightnessSlider="true"
                   />
 
-              <com.thebluealliance.spectrum.SpectrumPreference
+              <com.flask.colorpicker.ColorPickerPreference
                   android:key="themeColorBg"
                   android:title="Background Color"
                   android:summary="Color of the list and chat backgrounds"
-                  app:spectrum_colors="@array/zom_colors"
-                  app:spectrum_outlineWidth="2dp"
+                  app:lightnessSlider="true"
                   />
 </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_group_tuning_title">
