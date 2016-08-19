@@ -2,6 +2,12 @@
 Track the source commits here:
 https://github.com/zom/Zom-Android/commits/master#
 
+15.0.1.928 (1501928) / 19 August 2016
+
+c62de46 tweaks to session init, refresh
+d86cdc4 small improvements to UI for themeing and stickers
+b9ecf44 Merge branch 'master' of github.com:zom/Zom-Android
+
 15.0.1.927 (1501927) / 17 August 2016
 
 ebbbdf9 send postponed messages when the user comes online
