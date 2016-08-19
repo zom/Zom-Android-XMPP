@@ -213,10 +213,19 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             ((Contact) mChatSession.getParticipant()).getPresence().setStatus(newPresence);
 
             try {
-                if (newPresence == Presence.AVAILABLE && getDefaultOtrChatSession().isChatEncrypted()) {
+                if (newPresence == Presence.AVAILABLE) {
 
-                    sendPostponedMessages();
+                    if (hasPostponedMessages())
+                    {
+                        if (getDefaultOtrChatSession().isChatEncrypted())
+                            sendPostponedMessages();
+                        else {
+                           // getDefaultOtrChatSession().stopChatEncryption();
+                            getDefaultOtrChatSession().startChatEncryption();
+                        }
+                    }
                 }
+
             }
             catch (RemoteException re)
             {
@@ -377,6 +386,11 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
       //  }
     }
 
+    public boolean sendKnock () {
+
+        return mChatSession.sendKnock(mConnection.getLoginUser().getAddress().getAddress());
+    }
+
     public void sendMessage(String text, boolean isResend) {
 
         if (mConnection.getState() != ImConnection.LOGGED_IN) {
@@ -470,6 +484,8 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                 Imps.Messages.DATE, Imps.Messages.TYPE, Imps.Messages.IS_DELIVERED };
         String selection = Imps.Messages.TYPE + "=?";
 
+        boolean result = false;
+
         Cursor c = mContentResolver.query(mMessageURI, projection, selection,
                 new String[] { Integer.toString(Imps.MessageType.POSTPONED) }, null);
         if (c == null) {
@@ -478,11 +494,11 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         }
         else if (c.getCount() > 0)
         {
-            c.close();
-            return true;
+            result = true;
         }
 
-        return false;
+        c.close();
+        return true;
 
     }
 

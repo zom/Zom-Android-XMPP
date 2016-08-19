@@ -977,8 +977,10 @@ public class MainActivity extends BaseActivity {
 
     private void applyStyleColors ()
     {
-        //not set color
         final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+
+        //not set color
+
         int themeColorHeader = settings.getInt("themeColor",-1);
         int themeColorText = settings.getInt("themeColorText",-1);
         int themeColorBg = settings.getInt("themeColorBg",-1);

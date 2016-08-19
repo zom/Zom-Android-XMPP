@@ -96,6 +96,19 @@ public class ChatSession {
         sendMessageAsync(message);
     }*/
 
+    public boolean sendKnock (String from) {
+        if (mParticipant instanceof Contact) {
+            OtrChatManager cm = OtrChatManager.getInstance();
+            SessionID sId = cm.getSessionId(from, mParticipant.getAddress().getAddress());
+            SessionStatus otrStatus = cm.getSessionStatus(sId);
+            if (OtrChatManager.getInstance().canDoKnockPushMessage(sId)) {
+                OtrChatManager.getInstance().sendKnockPushMessage(sId);
+                return true;
+            }
+        }
+
+        return false;
+    }
     /**
      * Sends a message to other participant(s) in this session asynchronously
      * and adds the message to the history. TODO: more docs on async callbacks.
