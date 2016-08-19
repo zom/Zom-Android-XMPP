@@ -61,29 +61,35 @@
 
     </PreferenceCategory>
 
-      <PreferenceCategory android:title="Theme Colors">
+      <PreferenceCategory android:title="@string/color_category_title">
 
 
               <com.flask.colorpicker.ColorPickerPreference
                   android:key="themeColor"
-                  android:title="Header Color"
-                  android:summary="Color of the header and toolbars"
+                  android:title="@string/color_header_title"
+                  android:summary="@string/color_header_summary"
                   app:lightnessSlider="true"
                   />
 
               <com.flask.colorpicker.ColorPickerPreference
                   android:key="themeColorText"
-                  android:title="Text Color"
-                  android:summary="Color of the app text"
+                  android:title="@string/color_text_title"
+                  android:summary="@string/color_text_summary"
                   app:lightnessSlider="true"
                   />
 
               <com.flask.colorpicker.ColorPickerPreference
                   android:key="themeColorBg"
-                  android:title="Background Color"
-                  android:summary="Color of the list and chat backgrounds"
+                  android:title="@string/color_bg_title"
+                  android:summary="@string/color_bg_summary"
                   app:lightnessSlider="true"
                   />
+
+
+          <Preference
+              android:key="pref_color_reset"
+              android:summary="@string/color_reset_summary"
+              android:title="@string/color_reset_title" />
 </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_group_tuning_title">
 

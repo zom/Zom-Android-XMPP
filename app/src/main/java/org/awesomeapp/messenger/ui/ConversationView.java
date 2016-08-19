@@ -2847,7 +2847,6 @@ public class ConversationView {
 
     }
 
-    public static StickerManager sStickerManager = null;
     private ViewPager mStickerPager = null;
     private View mStickerBox = null;
 
@@ -2863,151 +2862,15 @@ public class ConversationView {
         mStickerBox.setVisibility(mStickerBox.getVisibility() == View.GONE ? View.VISIBLE : View.GONE);
     }
 
-    private synchronized void initStickers ()
-    {
-        if (sStickerManager == null)
-        {
-            sStickerManager = StickerManager.getInstance(mContext);
 
-            try {
-
-                String basePath = "stickers/olo and shimi";
-                AssetManager aMan = mActivity.getAssets();
-                String[] filelist = aMan.list(basePath);
-
-                String category = "Olo & Shimi";
-
-                for (int i = 0; i < filelist.length; i++) {
-                    Sticker sticker = new Sticker();
-                    sticker.name = filelist[i];
-                    sticker.category = category;
-                    sticker.assetUri = Uri.parse(basePath + '/' +  filelist[i]);
-                    sticker.res = mActivity.getResources();
-                    sticker.emoticon =  filelist[i];
-
-                    sStickerManager.addPattern(sticker.emoticon, sticker);
-                    sStickerManager.addEmojiToCategory(category, sticker);
-                }
-
-                basePath = "stickers/pema";
-                filelist = aMan.list(basePath);
-
-                category = "Pema";
-
-                for (int i = 0; i < filelist.length; i++) {
-                    Sticker sticker = new Sticker();
-                    sticker.name = filelist[i];
-                    sticker.category = category;
-                    sticker.assetUri = Uri.parse(basePath + '/' +  filelist[i]);
-                    sticker.res = mActivity.getResources();
-                    sticker.emoticon =  filelist[i];
-
-                    sStickerManager.addPattern(sticker.emoticon, sticker);
-                    sStickerManager.addEmojiToCategory(category, sticker);
-                }
-
-                basePath = "stickers/zomkyi";
-                filelist = aMan.list(basePath);
-
-                category = "Zomkyi";
-
-                for (int i = 0; i < filelist.length; i++) {
-                    Sticker sticker = new Sticker();
-                    sticker.name = filelist[i];
-                    sticker.category = category;
-                    sticker.assetUri = Uri.parse(basePath + '/' +  filelist[i]);
-                    sticker.res = mActivity.getResources();
-                    sticker.emoticon =  filelist[i];
-
-                    sStickerManager.addPattern(sticker.emoticon, sticker);
-                    sStickerManager.addEmojiToCategory(category, sticker);
-                }
-
-                basePath = "stickers/topgyal";
-                filelist = aMan.list(basePath);
-
-                category = "Topgyal";
-
-                for (int i = 0; i < filelist.length; i++) {
-                    Sticker sticker = new Sticker();
-                    sticker.name = filelist[i];
-                    sticker.category = category;
-                    sticker.assetUri = Uri.parse(basePath + '/' +  filelist[i]);
-                    sticker.res = mActivity.getResources();
-                    sticker.emoticon =  filelist[i];
-
-                    sStickerManager.addPattern(sticker.emoticon, sticker);
-                    sStickerManager.addEmojiToCategory(category, sticker);
-                }
-
-                basePath = "stickers/sindu";
-                filelist = aMan.list(basePath);
-
-                category = "Sindu";
-
-                for (int i = 0; i < filelist.length; i++) {
-                    Sticker sticker = new Sticker();
-                    sticker.name = filelist[i];
-                    sticker.category = category;
-                    sticker.assetUri = Uri.parse(basePath + '/' +  filelist[i]);
-                    sticker.res = mActivity.getResources();
-                    sticker.emoticon =  filelist[i];
-
-                    sStickerManager.addPattern(sticker.emoticon, sticker);
-                    sStickerManager.addEmojiToCategory(category, sticker);
-                }
-
-                basePath = "stickers/losar";
-                filelist = aMan.list(basePath);
-
-                category = "Losar";
-
-                for (int i = 0; i < filelist.length; i++) {
-                    Sticker sticker = new Sticker();
-                    sticker.name = filelist[i];
-                    sticker.category = category;
-                    sticker.assetUri = Uri.parse(basePath + '/' +  filelist[i]);
-                    sticker.res = mActivity.getResources();
-                    sticker.emoticon =  filelist[i];
-
-                    sStickerManager.addPattern(sticker.emoticon, sticker);
-                    sStickerManager.addEmojiToCategory(category, sticker);
-                }
-
-                basePath = "stickers/tiboji";
-                filelist = aMan.list(basePath);
-
-                category = "Tiboji";
-
-                for (int i = 0; i < filelist.length; i++) {
-                    Sticker sticker = new Sticker();
-                    sticker.name = filelist[i];
-                    sticker.category = category;
-                    sticker.assetUri = Uri.parse(basePath + '/' +  filelist[i]);
-                    sticker.res = mActivity.getResources();
-                    sticker.emoticon =  filelist[i];
-
-                    sStickerManager.addPattern(sticker.emoticon, sticker);
-                    sStickerManager.addEmojiToCategory(category, sticker);
-                }
+    private synchronized void initStickers () {
 
 
+        mStickerPager = (ViewPager) mActivity.findViewById(R.id.stickerPager);
 
-            }
-            catch (Exception fe)
-            {
-                Log.e(ImApp.LOG_TAG,"could not load emoji definition",fe);
-            }
+        Collection<StickerGroup> emojiGroups = StickerManager.getInstance(mActivity).getEmojiGroups();
 
-        }
-
-
-        mStickerPager = (ViewPager)mActivity.findViewById(R.id.stickerPager);
-
-        Collection<StickerGroup> emojiGroups = sStickerManager.getEmojiGroups();
-
-        if (emojiGroups.size() > 0)
-        {
+        if (emojiGroups.size() > 0) {
             StickerPagerAdapter emojiPagerAdapter = new StickerPagerAdapter(mActivity, new ArrayList<StickerGroup>(emojiGroups),
                     new StickerSelectListener() {
                         @Override
@@ -3015,16 +2878,16 @@ public class ConversationView {
 
                             sendStickerCode(s.assetUri);
                             /**
-                            if (isGroupChat())
-                            {
-                                sendStickerCode(s.assetUri);
+                             if (isGroupChat())
+                             {
+                             sendStickerCode(s.assetUri);
 
-                            }
-                            else
-                            {
-                                mActivity.handleSendDelete(s.assetUri,"image/png", false, false, true);
-                            }*/
-                         //   mActivity.handleSendData(Uri.parse(s.assetPath),"image/png");
+                             }
+                             else
+                             {
+                             mActivity.handleSendDelete(s.assetUri,"image/png", false, false, true);
+                             }*/
+                            //   mActivity.handleSendData(Uri.parse(s.assetPath),"image/png");
 
                             mViewAttach.setVisibility(View.GONE);
                             showStickers();

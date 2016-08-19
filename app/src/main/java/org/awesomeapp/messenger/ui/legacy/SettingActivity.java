@@ -19,8 +19,10 @@ package org.awesomeapp.messenger.ui.legacy;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -30,6 +32,7 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceManager;
 
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.Preferences;
@@ -149,6 +152,22 @@ public class SettingActivity extends PreferenceActivity {
             public boolean onPreferenceClick(Preference preference) {
                 Intent intent = new Intent(SettingActivity.this, PanicSetupActivity.class);
                 startActivity(intent);
+                return true;
+            }
+        });
+
+        findPreference("pref_color_reset").setOnPreferenceClickListener(new OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(SettingActivity.this);
+
+                SharedPreferences.Editor pEdit = settings.edit();
+                pEdit.remove("themeColorBg");
+                pEdit.remove("themeColorText");
+                pEdit.remove("themeColor");
+                pEdit.commit();
+
+                finish();
                 return true;
             }
         });
