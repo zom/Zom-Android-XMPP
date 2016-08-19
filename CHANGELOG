@@ -2,7 +2,7 @@
 Track the source commits here:
 https://github.com/zom/Zom-Android/commits/master#
 
-15.0.1.928 (1501928) / 19 August 2016
+15.0.1.928 (1501928) / 19 August 2016 / a40645cd76396ed15a577bd666ffadbf99915698
 
 c62de46 tweaks to session init, refresh
 d86cdc4 small improvements to UI for themeing and stickers
