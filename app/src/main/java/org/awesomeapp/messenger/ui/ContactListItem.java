@@ -30,6 +30,7 @@ import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.model.Presence;
 import org.awesomeapp.messenger.provider.Imps;
 
+import org.awesomeapp.messenger.ui.widgets.ConversationViewHolder;
 import org.awesomeapp.messenger.ui.widgets.LetterAvatar;
 import org.awesomeapp.messenger.ui.widgets.RoundedAvatarDrawable;
 import org.awesomeapp.messenger.util.LogCleaner;
@@ -37,11 +38,13 @@ import org.ocpsoft.prettytime.PrettyTime;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.RemoteException;
+import android.preference.PreferenceManager;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -382,6 +385,30 @@ public class ContactListItem extends FrameLayout {
 
         }
     }
+
+    public void applyStyleColors (ContactViewHolder holder)
+    {
+        //not set color
+        final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
+        int themeColorHeader = settings.getInt("themeColor",-1);
+        int themeColorText = settings.getInt("themeColorText",-1);
+        int themeColorBg = settings.getInt("themeColorBg",-1);
+
+
+        if (themeColorText != -1)
+        {
+            if (holder.mLine1 != null)
+                holder.mLine1.setTextColor(themeColorText);
+
+            if (holder.mLine2 != null)
+                holder.mLine2.setTextColor(themeColorText);
+
+            //holder.mLine2.setTextColor(darker(themeColorText,2.0f));
+
+        }
+
+    }
+
 
 
 }

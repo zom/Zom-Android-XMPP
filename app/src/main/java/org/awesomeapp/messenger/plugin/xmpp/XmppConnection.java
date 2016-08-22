@@ -71,6 +71,7 @@ import org.jivesoftware.smackx.commands.provider.AdHocCommandDataProvider;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.disco.provider.DiscoverInfoProvider;
 import org.jivesoftware.smackx.disco.provider.DiscoverItemsProvider;
+import org.jivesoftware.smackx.hoxt.packet.AbstractHttpOverXmpp;
 import org.jivesoftware.smackx.iqlast.packet.LastActivity;
 import org.jivesoftware.smackx.muc.DiscussionHistory;
 import org.jivesoftware.smackx.muc.InvitationListener;
@@ -1852,11 +1853,21 @@ public class XmppConnection extends ImConnection {
                 rec.setType(Imps.MessageType.INCOMING);
 
                 // Detect if this was said by us, and mark message as outgoing
-                if (isGroupMessage && rec.getFrom().getResource().equals(rec.getTo().getUser())) {
-                    //rec.setType(Imps.MessageType.OUTGOING);
-                    Occupant oc = mChatGroupManager.getMultiUserChat(rec.getFrom().getBareAddress()).getOccupant(rec.getFrom().getAddress());
-                    if (oc != null && oc.getJid().equals(mUser.getAddress().getAddress()))
-                        return; //do nothing if it is from us
+                if (isGroupMessage) {
+
+                    if (TextUtils.isEmpty(rec.getFrom().getResource()))
+                    {
+                        return; //do nothing if there is no resource since that is a system message
+                    }
+                    else if (rec.getFrom().getResource().equals(rec.getTo().getUser())) {
+                        //rec.setType(Imps.MessageType.OUTGOING);
+                        Occupant oc = mChatGroupManager.getMultiUserChat(rec.getFrom().getBareAddress()).getOccupant(rec.getFrom().getAddress());
+                        if (oc != null && oc.getJid().equals(mUser.getAddress().getAddress()))
+                            return; //do nothing if it is from us
+                    }
+
+
+
                 }
 
                 boolean good = session.onReceiveMessage(rec);

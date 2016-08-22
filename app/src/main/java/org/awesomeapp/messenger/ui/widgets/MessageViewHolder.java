@@ -39,7 +39,7 @@ public class MessageViewHolder extends MediaViewHolder
 
         // disable built-in autoLink so we can add custom ones
         mTextViewForMessages.setAutoLinkMask(0);
-
+        mContainer.setBackgroundResource(R.drawable.message_view_rounded_light);
     }
 
 

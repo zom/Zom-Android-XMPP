@@ -228,6 +228,7 @@ public class ContactsListFragment extends Fragment {
                 holder.mButtonSubDecline = (Button)view.findViewById(R.id.btnDeclineSubscription);
 
                 holder.mContainer = view.findViewById(R.id.message_container);
+                view.applyStyleColors(holder);
 
                 // holder.mMediaThumb = (ImageView)findViewById(R.id.media_thumbnail);
                 view.setTag(holder);

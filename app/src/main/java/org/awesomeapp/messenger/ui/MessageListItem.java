@@ -374,7 +374,7 @@ public class MessageListItem extends FrameLayout {
         holder.mMediaContainer.setVisibility(View.VISIBLE);
 
 
-        holder.mContainer.setBackgroundColor(getResources().getColor(android.R.color.transparent));
+      //  holder.mContainer.setBackgroundColor(getResources().getColor(android.R.color.transparent));
 
         return true;
 
@@ -396,7 +396,7 @@ public class MessageListItem extends FrameLayout {
         holder.setOnClickListenerMediaThumbnail(mimeType, mediaUri);
         mHolder.mTextViewForMessages.setText("");
         mAudioPlayer = new AudioPlayer(getContext(), mediaUri.getPath(), mimeType, mHolder.mVisualizerView,mHolder.mTextViewForMessages);
-        holder.mContainer.setBackgroundColor(getResources().getColor(android.R.color.transparent));
+      //  holder.mContainer.setBackgroundColor(getResources().getColor(android.R.color.transparent));
 
     }
 
@@ -1081,21 +1081,25 @@ public class MessageListItem extends FrameLayout {
         int themeColorText = settings.getInt("themeColorText",-1);
         int themeColorBg = settings.getInt("themeColorBg",-1);
 
+        if (mHolder != null) {
+            if (themeColorText != -1) {
+                if (mHolder.mTextViewForMessages != null)
+                    mHolder.mTextViewForMessages.setTextColor(themeColorText);
 
-        if (themeColorText != -1 && mHolder != null)
-        {
-            if (mHolder.mTextViewForMessages != null)
-                mHolder.mTextViewForMessages.setTextColor(themeColorText);
+                if (mHolder.mTextViewForTimestamp != null)
+                    mHolder.mTextViewForTimestamp.setTextColor(themeColorText);
 
-            if (mHolder.mTextViewForTimestamp != null)
-                mHolder.mTextViewForTimestamp.setTextColor(themeColorText);
+                int textBubbleBg = getContrastColor(themeColorText);
 
-            int textBubbleBg = getContrastColor(themeColorText);
-            if (textBubbleBg == Color.BLACK)
-                mHolder.mContainer.setBackgroundResource(R.drawable.message_view_rounded_dark);
-            else
+                if (textBubbleBg == Color.BLACK)
+                    mHolder.mContainer.setBackgroundResource(R.drawable.message_view_rounded_dark);
+                else
+                    mHolder.mContainer.setBackgroundResource(R.drawable.message_view_rounded_light);
+
+            } else {
                 mHolder.mContainer.setBackgroundResource(R.drawable.message_view_rounded_light);
 
+            }
         }
 
     }

@@ -64,6 +64,7 @@ public class MoreFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_more, container, false);
 
+
         View btn = view.findViewById(R.id.btnOpenGalllery);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override

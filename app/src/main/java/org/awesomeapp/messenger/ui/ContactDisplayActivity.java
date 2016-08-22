@@ -65,11 +65,20 @@ public class ContactDisplayActivity extends BaseActivity {
 
         setContentView(R.layout.awesome_activity_contact);
 
+        //not set color
+        final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+        int themeColorHeader = settings.getInt("themeColor",-1);
+        int themeColorText = settings.getInt("themeColorText",-1);
+        int themeColorBg = settings.getInt("themeColorBg",-1);
+
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         applyStyleForToolbar();
+
+        if (themeColorBg != -1)
+            findViewById(R.id.main_content).setBackgroundColor(themeColorBg);
 
         mNickname = getIntent().getStringExtra("nickname");
         mUsername = getIntent().getStringExtra("address");
@@ -89,8 +98,13 @@ public class ContactDisplayActivity extends BaseActivity {
         tv = (TextView)findViewById(R.id.tvNickname);
         tv.setText(mNickname);
 
+        if (themeColorText != -1)
+            tv.setTextColor(themeColorText);
+
         tv = (TextView)findViewById(R.id.tvUsername);
         tv.setText(mUsername);
+        if (themeColorText != -1)
+            tv.setTextColor(themeColorText);
 
         if (!TextUtils.isEmpty(mUsername)) {
             try {
@@ -118,6 +132,9 @@ public class ContactDisplayActivity extends BaseActivity {
 
                 if (!TextUtils.isEmpty(mRemoteFingerprint)) {
                     tv.setText(prettyPrintFingerprint(mRemoteFingerprint));
+                    if (themeColorText != -1)
+                        tv.setTextColor(themeColorText);
+
 
                     iv.setOnClickListener(new View.OnClickListener() {
 

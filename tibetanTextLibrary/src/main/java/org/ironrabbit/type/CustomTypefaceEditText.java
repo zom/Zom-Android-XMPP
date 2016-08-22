@@ -2,7 +2,9 @@ package org.ironrabbit.type;
 
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
+import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.widget.EditText;
 
@@ -40,7 +42,16 @@ public class CustomTypefaceEditText extends EditText {
 		
 		if (t != null)
 			setTypeface(t);
-    	 
+
+
+		final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
+
+		//not set color
+
+
+		int themeColorText = settings.getInt("themeColorText",-1);
+		if (themeColorText != -1)
+			setTextColor(themeColorText);
     	
         if (CustomTypefaceManager.precomposeRequired())
     	{
