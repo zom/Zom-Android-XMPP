@@ -13,7 +13,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -52,6 +55,7 @@ import im.zom.messenger.R;
 
 public class ContactDisplayActivity extends BaseActivity {
 
+    private int mContactId = -1;
     private String mNickname = null;
     private String mUsername = null;
     private long mProviderId = -1;
@@ -79,6 +83,8 @@ public class ContactDisplayActivity extends BaseActivity {
 
         if (themeColorBg != -1)
             findViewById(R.id.main_content).setBackgroundColor(themeColorBg);
+
+        mContactId = (int)getIntent().getLongExtra("contactId",-1);
 
         mNickname = getIntent().getStringExtra("nickname");
         mUsername = getIntent().getStringExtra("address");
@@ -198,8 +204,22 @@ public class ContactDisplayActivity extends BaseActivity {
             }
         });
 
+        if (mContactId != -1)
+            showGallery (mContactId);
+
     }
 
+    private void showGallery (int contactId)
+    {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        GalleryListFragment fragment = new GalleryListFragment();
+        Bundle args = new Bundle();
+        args.putInt("contactId", contactId);
+        fragment.setArguments(args);
+        fragmentTransaction.add(R.id.fragment_container, fragment, "MyActivity");
+        fragmentTransaction.commit();
+    }
 
     public void applyStyleForToolbar() {
 

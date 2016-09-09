@@ -302,6 +302,8 @@ public class MainActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
 
+        applyStyleColors ();
+
         //if VFS is not mounted, then send to WelcomeActivity
         if (!VirtualFileSystem.get().isMounted()) {
             finish();

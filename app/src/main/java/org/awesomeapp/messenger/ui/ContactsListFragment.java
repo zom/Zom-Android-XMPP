@@ -241,6 +241,7 @@ public class ContactsListFragment extends Fragment {
         @Override
         public void onBindViewHolder(final ContactViewHolder viewHolder, Cursor cursor) {
 
+            viewHolder.mContactId =  cursor.getInt(ContactListItem.COLUMN_CONTACT_ID);
            viewHolder.mAddress =  cursor.getString(ContactListItem.COLUMN_CONTACT_USERNAME);
             String nickname =  cursor.getString(ContactListItem.COLUMN_CONTACT_NICKNAME);
 
@@ -250,15 +251,15 @@ public class ContactsListFragment extends Fragment {
             }
             else
             {
-                nickname = nickname.split("@")[0].split("\\.")[0];
-            }
-
-            viewHolder.mNickname = nickname;
-
             viewHolder.mProviderId = cursor.getLong(ContactListItem.COLUMN_CONTACT_PROVIDER);
             viewHolder.mAccountId = cursor.getLong(ContactListItem.COLUMN_CONTACT_ACCOUNT);
+            nickname = nickname.split("@")[0].split("\\.")[0];
+        }
 
-            viewHolder.mView.bind(viewHolder, cursor,"", false, false);
+        viewHolder.mNickname = nickname;
+
+
+        viewHolder.mView.bind(viewHolder, cursor,"", false, false);
 
             viewHolder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -276,6 +277,7 @@ public class ContactsListFragment extends Fragment {
                     intent.putExtra("nickname", viewHolder.mNickname);
                     intent.putExtra("provider", viewHolder.mProviderId);
                     intent.putExtra("account", viewHolder.mAccountId);
+                    intent.putExtra("contactId", viewHolder.mContactId);
 
                     mContext.startActivity(intent);
 

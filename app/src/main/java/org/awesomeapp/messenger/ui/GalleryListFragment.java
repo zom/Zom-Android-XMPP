@@ -57,11 +57,16 @@ public class GalleryListFragment extends Fragment {
     private View mEmptyView;
     private View mEmptyViewImage;
 
+    private int mByContactId = -1;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(
                 R.layout.awesome_fragment_gallery_list, container, false);
+
+        if (getArguments() != null)
+            mByContactId = getArguments().getInt("contactId",-1);
 
         mRecView =  (RecyclerView)view.findViewById(R.id.recyclerview);
         mEmptyView = view.findViewById(R.id.empty_view);
@@ -75,6 +80,10 @@ public class GalleryListFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
 
         Uri baseUri = Imps.Messages.CONTENT_URI;
+
+        if (mByContactId != -1)
+            baseUri =  Imps.Messages.getContentUriByThreadId(mByContactId);
+
         Uri.Builder builder = baseUri.buildUpon();
         mUri = builder.build();
 
@@ -158,8 +167,6 @@ public class GalleryListFragment extends Fragment {
         }
 
     }
-
-    String mSearchString = null;
 
     class MyLoaderCallbacks implements LoaderManager.LoaderCallbacks<Cursor> {
         @Override

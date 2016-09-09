@@ -1671,7 +1671,7 @@ public class ConversationView {
         intent.putExtra("address", mRemoteAddress);
         intent.putExtra("provider", mProviderId);
         intent.putExtra("account", mAccountId);
-        intent.putExtra("chat", mLastChatId);
+        intent.putExtra("contactId", mLastChatId);
 
         mContext.startActivity(intent);
 
