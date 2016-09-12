@@ -3,7 +3,9 @@ package org.ironrabbit.type;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
+import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.widget.Button;
 import android.widget.TextView;
@@ -41,7 +43,17 @@ public class CustomTypefaceButton extends Button {
 			
 			if (t != null)
 				setTypeface(t);
-	    	 
+
+			final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
+			int themeColorText = settings.getInt("themeColorText",-1);
+			int themeColorHeader = settings.getInt("themeColor",-1);
+
+			if (themeColorText != -1)
+				setTextColor(themeColorText);
+
+			if (themeColorHeader != -1)
+				setBackgroundColor(themeColorHeader);
+
 			mInit = true;
         }
 

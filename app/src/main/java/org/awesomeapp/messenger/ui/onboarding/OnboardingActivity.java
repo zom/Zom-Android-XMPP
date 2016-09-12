@@ -7,6 +7,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
@@ -17,6 +18,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Parcelable;
 import android.os.ResultReceiver;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -129,6 +131,15 @@ public class OnboardingActivity extends BaseActivity {
         View viewLogin = findViewById(R.id.flipViewLogin);
         View viewInvite = findViewById(R.id.flipViewInviteFriends);
         View viewAdvanced  = findViewById(R.id.flipViewAdvanced);
+
+
+        final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+        int themeColorHeader = settings.getInt("themeColor",-1);
+        int themeColorText = settings.getInt("themeColorText",-1);
+        int themeColorBg = settings.getInt("themeColorBg",-1);
+
+        if (themeColorHeader != -1)
+            viewInvite.setBackgroundColor(themeColorHeader);
 
         mViewFlipper = (ViewFlipper) findViewById(R.id.viewFlipper1);
 

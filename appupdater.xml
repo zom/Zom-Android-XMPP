@@ -1,9 +1,11 @@
 <AppUpdater>
   <update>
-    <latestVersion>15.0.0</latestVersion>
-    <url>https://github.com/zom/Zom-Android/releases/download/test.apk</url>
+    <latestVersion>15.0.1.928</latestVersion>
+    <url>https://github.com/zom/Zom-Android/releases/download/15.0.1.928/Zom-15.0.1.928-zomrelease-release.apk</url>
     <releaseNotes>
-      A major update to the whole app!
+	- new "Pema" stickers
+        - full app color theme controls in settings menu
+        - improved add friend functionality 
     </releaseNotes>
   </update>
 </AppUpdater>

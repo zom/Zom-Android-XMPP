@@ -7,7 +7,6 @@ android:layout_height="match_parent"
 android:orientation="vertical"
 android:padding="10dp"
 android:paddingTop="40dp"
-    android:background="#cccccc"
     android:fillViewport="true"
 
     >
@@ -26,7 +25,6 @@ android:paddingTop="40dp"
             android:layout_margin="20dp"
             android:text="@string/create_id"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="?colorPrimary"
 
             />
         <org.ironrabbit.type.CustomTypefaceEditText android:id="@+id/edtNameAdvanced"

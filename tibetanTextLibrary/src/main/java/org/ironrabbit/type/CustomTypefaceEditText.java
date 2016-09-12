@@ -45,10 +45,6 @@ public class CustomTypefaceEditText extends EditText {
 
 
 		final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
-
-		//not set color
-
-
 		int themeColorText = settings.getInt("themeColorText",-1);
 		if (themeColorText != -1)
 			setTextColor(themeColorText);

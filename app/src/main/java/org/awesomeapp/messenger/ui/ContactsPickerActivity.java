@@ -499,11 +499,11 @@ public class ContactsPickerActivity extends BaseActivity {
         public View getView(int position, View convertView, ViewGroup parent) {
 
             View v = super.getView(position, convertView, parent);//let the adapter handle setting up the row views
-           // v.setBackgroundColor(getResources().getColor(R.color.background_light));
+            v.setBackgroundColor(getResources().getColor(android.R.color.transparent));
 
-         //   if (mSelection.get(position) != null) {
-           //     v.setBackgroundColor(getResources().getColor(R.color.holo_blue_light));
-           // }
+            if (mSelection.get(position) != null) {
+                v.setBackgroundColor(getResources().getColor(R.color.holo_blue_light));
+            }
 
             return super.getView(position, convertView, parent);
 

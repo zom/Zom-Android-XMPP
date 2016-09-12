@@ -1004,6 +1004,8 @@ public class MainActivity extends BaseActivity {
             mTabLayout.setBackgroundColor(themeColorHeader);
             mTabLayout.setTabTextColors(themeColorText, themeColorText);
 
+            mFab.setBackgroundColor(themeColorHeader);
+
         }
 
         if (themeColorBg != -1)
