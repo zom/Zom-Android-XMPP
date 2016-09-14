@@ -34,9 +34,11 @@ import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.crypto.IOtrChatSession;
 import org.awesomeapp.messenger.crypto.OtrAndroidKeyManagerImpl;
 import org.awesomeapp.messenger.model.Contact;
+import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.service.IChatSession;
 import org.awesomeapp.messenger.service.IChatSessionManager;
+import org.awesomeapp.messenger.service.IContactListManager;
 import org.awesomeapp.messenger.service.IImConnection;
 import org.awesomeapp.messenger.tasks.ChatSessionInitTask;
 import org.awesomeapp.messenger.ui.legacy.DatabaseUtils;
@@ -333,8 +335,12 @@ public class ContactDisplayActivity extends BaseActivity {
 
 
         try {
+            IContactListManager listManager = mConn.getContactListManager();
+            listManager.approveSubscription(new Contact(new XmppAddress(mUsername),mNickname));
+
             IChatSessionManager manager = mConn.getChatSessionManager();
             IChatSession session = manager.getChatSession(mUsername);
+
             IOtrChatSession otrChatSession = session.getDefaultOtrChatSession();
             otrChatSession.verifyKey(otrChatSession.getRemoteUserId());
 
@@ -346,6 +352,20 @@ public class ContactDisplayActivity extends BaseActivity {
 
         }
 
+    }
+
+    void approveSubscription() {
+
+        if (mConn != null)
+        {
+            try {
+                IContactListManager manager = mConn.getContactListManager();
+            } catch (RemoteException e) {
+
+                // mHandler.showServiceErrorAlert(e.getLocalizedMessage());
+                LogCleaner.error(ImApp.LOG_TAG, "approve sub error",e);
+            }
+        }
     }
 
     private void initSmpUI() {

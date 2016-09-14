@@ -67,4 +67,5 @@
   <string name="color_bg_title">Background Color</string>
   <string name="color_bg_summary">Color of chat backgrounds and lists</string>
 
+  <string name="menu_approve_friend">Approve Friend?</string>
 </resources>

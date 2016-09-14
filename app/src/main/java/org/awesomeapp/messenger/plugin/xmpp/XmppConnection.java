@@ -2902,15 +2902,17 @@ public class XmppConnection extends ImConnection {
         @Override
         public void approveSubscriptionRequest(final Contact contact) {
 
+
             org.jivesoftware.smack.packet.Presence response = new org.jivesoftware.smack.packet.Presence(
-                    org.jivesoftware.smack.packet.Presence.Type.subscribe);
+                    org.jivesoftware.smack.packet.Presence.Type.subscribed);
             response.setTo(contact.getAddress().getBareAddress());
             sendPacket(response);
 
             response = new org.jivesoftware.smack.packet.Presence(
-                    org.jivesoftware.smack.packet.Presence.Type.subscribed);
+                    org.jivesoftware.smack.packet.Presence.Type.subscribe);
             response.setTo(contact.getAddress().getBareAddress());
             sendPacket(response);
+
 
 //            try { mRoster.reload(); }
 //            catch (Exception e){}
@@ -3592,8 +3594,21 @@ public class XmppConnection extends ImConnection {
 
                 contact.setPresence(p);
 
-                mContactListManager.doAddContactToListAsync(contact, getContactListManager().getDefaultContactList(), false);
-                mContactListManager.getSubscriptionRequestListener().onSubScriptionRequest(contact, mProviderId, mAccountId);
+                ContactList cList = null;
+
+                while (cList == null) {
+                    try {
+
+                        cList = getContactListManager().getDefaultContactList();
+                        mContactListManager.doAddContactToListAsync(contact, cList, false);
+                        mContactListManager.getSubscriptionRequestListener().onSubScriptionRequest(contact, mProviderId, mAccountId);
+
+                    } catch (ImException ime) {
+
+                        debug (TAG, "Contact List not yet ready... let's sleep!");
+                        Thread.sleep (1000);
+                    }
+                }
 
             }
             catch (Exception e)
