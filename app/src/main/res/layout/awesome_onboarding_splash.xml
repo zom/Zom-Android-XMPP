@@ -6,6 +6,7 @@ android:layout_height="match_parent"
 android:layout_margin="0dp"
 android:gravity="center_horizontal"
 android:orientation="vertical"
+    android:background="?colorPrimary"
     >
 <ImageView
     android:id="@+id/imageLogo"
