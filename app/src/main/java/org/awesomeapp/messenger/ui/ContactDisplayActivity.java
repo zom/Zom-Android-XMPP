@@ -31,6 +31,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.awesomeapp.messenger.ImApp;
+import org.awesomeapp.messenger.MainActivity;
 import org.awesomeapp.messenger.crypto.IOtrChatSession;
 import org.awesomeapp.messenger.crypto.OtrAndroidKeyManagerImpl;
 import org.awesomeapp.messenger.model.Contact;
@@ -261,6 +262,8 @@ public class ContactDisplayActivity extends BaseActivity {
                     public void onClick(SweetAlertDialog sDialog) {
                         doDeleteContact();
                         sDialog.dismiss();
+                        finish();
+                        startActivity(new Intent(ContactDisplayActivity.this, MainActivity.class));
                     }
                 })
                 .show();
