@@ -18,6 +18,8 @@
  */
 -->
 <view xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
     class="org.awesomeapp.messenger.ui.ContactListItem"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
