@@ -440,6 +440,7 @@ public class ImConnectionAdapter extends org.awesomeapp.messenger.service.IImCon
                 if (state == ImConnection.LOGGED_IN)
                 {
                     //we need to reinit all group chat sessions here
+                    Cursor c = null;
 
                     try {
                         Uri baseUri = Imps.Contacts.CONTENT_URI_CHAT_CONTACTS_BY;
@@ -453,7 +454,7 @@ public class ImConnectionAdapter extends org.awesomeapp.messenger.service.IImCon
                         builder.appendQueryParameter(Imps.Contacts.ACCOUNT,mAccountId+"");
 
                         Uri uriChats = builder.build();
-                        Cursor c = getContext().getContentResolver().query(uriChats, CHAT_PROJECTION, null, null, Imps.Contacts.TIME_ORDER);
+                        c = getContext().getContentResolver().query(uriChats, CHAT_PROJECTION, null, null, Imps.Contacts.TIME_ORDER);
 
                         if (c != null) {
                             if (c.getCount() > 0) {
@@ -471,7 +472,9 @@ public class ImConnectionAdapter extends org.awesomeapp.messenger.service.IImCon
                     }
                     catch (Exception e)
                     {
-                        e.printStackTrace();
+                        Log.e(ImApp.LOG_TAG,"exception init chatsession",e);
+                        if (c != null && (!c.isClosed()))
+                            c.close();
                     }
                 }
 
