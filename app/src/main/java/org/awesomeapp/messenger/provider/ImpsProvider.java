@@ -3995,12 +3995,25 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
     private static void appendWhere(StringBuilder where, String columnName, String condition,
             Object value) {
         if (where.length() > 0) {
-            where.append(" AND ");
+
+            StringBuilder newCond = new StringBuilder();
+            newCond.append(columnName).append(condition);
+            if (value != null) {
+                DatabaseUtils.appendValueToSql(newCond, value);
+            }
+            newCond.append(" AND ");
+
+            where.insert(0,newCond.toString());
+
         }
-        where.append(columnName).append(condition);
-        if (value != null) {
-            DatabaseUtils.appendValueToSql(where, value);
+        else {
+            where.append(columnName).append(condition);
+            if (value != null) {
+                DatabaseUtils.appendValueToSql(where, value);
+            }
         }
+
+
     }
 
     private static void appendWhere(StringBuilder where, String clause) {
