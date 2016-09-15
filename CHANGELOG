@@ -2,6 +2,20 @@
 Track the source commits here:
 https://github.com/zom/Zom-Android/commits/master#
 
+15.0.1.929 (1501929) / 15 Sept 2016
+
+b2d6d73 make the toolbar styling work for all
+14b32a7 make sure all textviews are org.ironrabbit.type.CustomTypefaceTextView
+4eb112b ensure the proper delete contact flow
+5ab5327 improve contact detail display - add delete contact menu option - add photos sent/from contact displayed - improve layout
+1ddb8c5 make sure to close cursor in case of exception
+cade2b1 don't log username
+04b48c6 fix construction of multi condition where statements
+c49ba9b improve handling of subscription reply and add manual reapprove
+08b6da7 more fixes for color theme management
+79565fa more updates for themeing support
+b29817d more updates for app color themeing
+
 15.0.1.928 (1501928) / 19 August 2016 / a40645cd76396ed15a577bd666ffadbf99915698
 
 c62de46 tweaks to session init, refresh
