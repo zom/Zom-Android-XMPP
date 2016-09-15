@@ -82,7 +82,7 @@ public class GalleryListFragment extends Fragment {
         Uri baseUri = Imps.Messages.CONTENT_URI;
 
         if (mByContactId != -1)
-            baseUri =  Imps.Messages.getContentUriByThreadId(mByContactId);
+           baseUri =  Imps.Messages.getContentUriByThreadId(mByContactId);
 
         Uri.Builder builder = baseUri.buildUpon();
         mUri = builder.build();
@@ -96,8 +96,16 @@ public class GalleryListFragment extends Fragment {
 
         if (mAdapter.getItemCount() == 0) {
             mRecView.setVisibility(View.GONE);
-            mEmptyView.setVisibility(View.VISIBLE);
-            mEmptyViewImage.setVisibility(View.VISIBLE);
+
+            if (mByContactId == -1) {
+                mEmptyView.setVisibility(View.VISIBLE);
+                mEmptyViewImage.setVisibility(View.VISIBLE);
+            }
+            else
+            {
+                mEmptyView.setVisibility(View.GONE);
+                mEmptyViewImage.setVisibility(View.GONE);
+            }
 
         }
         else {
@@ -197,9 +205,16 @@ public class GalleryListFragment extends Fragment {
 
             if (mAdapter.getItemCount() == 0) {
                 mRecView.setVisibility(View.GONE);
-                mEmptyView.setVisibility(View.VISIBLE);
-                mEmptyViewImage.setVisibility(View.VISIBLE);
 
+                if (mByContactId == -1) {
+                    mEmptyView.setVisibility(View.VISIBLE);
+                    mEmptyViewImage.setVisibility(View.VISIBLE);
+                }
+                else
+                {
+                    mEmptyView.setVisibility(View.GONE);
+                    mEmptyViewImage.setVisibility(View.GONE);
+                }
             }
             else if (mRecView.getVisibility() == View.GONE) {
                 mRecView.setVisibility(View.VISIBLE);

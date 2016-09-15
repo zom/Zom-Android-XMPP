@@ -32,4 +32,10 @@
         app:showAsAction="never"
         />
 
+
+    <item android:id="@+id/menu_remove_contact"
+        android:title="@string/menu_remove_contact"
+        app:showAsAction="never"
+        />
+
 </menu>

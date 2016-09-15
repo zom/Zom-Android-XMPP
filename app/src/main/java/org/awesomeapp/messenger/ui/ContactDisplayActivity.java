@@ -34,6 +34,7 @@ import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.crypto.IOtrChatSession;
 import org.awesomeapp.messenger.crypto.OtrAndroidKeyManagerImpl;
 import org.awesomeapp.messenger.model.Contact;
+import org.awesomeapp.messenger.model.ImErrorInfo;
 import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.service.IChatSession;
@@ -52,6 +53,7 @@ import org.ironrabbit.type.CustomTypefaceManager;
 
 import java.io.IOException;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import im.zom.messenger.R;
 
 
@@ -71,20 +73,12 @@ public class ContactDisplayActivity extends BaseActivity {
 
         setContentView(R.layout.awesome_activity_contact);
 
-        //not set color
-        final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-        int themeColorHeader = settings.getInt("themeColor",-1);
-        int themeColorText = settings.getInt("themeColorText",-1);
-        int themeColorBg = settings.getInt("themeColorBg",-1);
 
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         applyStyleForToolbar();
-
-        if (themeColorBg != -1)
-            findViewById(R.id.main_content).setBackgroundColor(themeColorBg);
 
         mContactId = (int)getIntent().getLongExtra("contactId",-1);
 
@@ -106,13 +100,8 @@ public class ContactDisplayActivity extends BaseActivity {
         tv = (TextView)findViewById(R.id.tvNickname);
         tv.setText(mNickname);
 
-        if (themeColorText != -1)
-            tv.setTextColor(themeColorText);
-
         tv = (TextView)findViewById(R.id.tvUsername);
         tv.setText(mUsername);
-        if (themeColorText != -1)
-            tv.setTextColor(themeColorText);
 
         if (!TextUtils.isEmpty(mUsername)) {
             try {
@@ -120,6 +109,7 @@ public class ContactDisplayActivity extends BaseActivity {
                 if (avatar != null) {
                     ImageView iv = (ImageView) findViewById(R.id.imageAvatar);
                     iv.setImageDrawable(avatar);
+                    iv.setVisibility(View.VISIBLE);
                 }
             } catch (Exception e) {
             }
@@ -140,9 +130,6 @@ public class ContactDisplayActivity extends BaseActivity {
 
                 if (!TextUtils.isEmpty(mRemoteFingerprint)) {
                     tv.setText(prettyPrintFingerprint(mRemoteFingerprint));
-                    if (themeColorText != -1)
-                        tv.setTextColor(themeColorText);
-
 
                     iv.setOnClickListener(new View.OnClickListener() {
 
@@ -223,41 +210,6 @@ public class ContactDisplayActivity extends BaseActivity {
         fragmentTransaction.commit();
     }
 
-    public void applyStyleForToolbar() {
-
-        Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
-
-        //first set font
-        Typeface typeface = CustomTypefaceManager.getCurrentTypeface(this);
-
-        if (typeface != null) {
-            for (int i = 0; i < mToolbar.getChildCount(); i++) {
-                View view = mToolbar.getChildAt(i);
-                if (view instanceof TextView) {
-                    TextView tv = (TextView) view;
-
-                    tv.setTypeface(typeface);
-                    break;
-                }
-            }
-        }
-
-        //not set color
-        final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-        int selColor = settings.getInt("themeColor",-1);
-
-        if (selColor != -1) {
-            if (Build.VERSION.SDK_INT >= 21) {
-                getWindow().setNavigationBarColor(selColor);
-                getWindow().setStatusBarColor(selColor);
-            }
-
-        }
-
-    }
-
-
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
@@ -278,6 +230,9 @@ public class ContactDisplayActivity extends BaseActivity {
             case R.id.menu_verify_question:
                 initSmpUI();
                 return true;
+            case R.id.menu_remove_contact:
+                deleteContact();
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -291,6 +246,46 @@ public class ContactDisplayActivity extends BaseActivity {
         }
 
         return spacedFingerprint.toString();
+    }
+
+    void deleteContact ()
+    {
+
+        new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE)
+                .setTitleText(getString(R.string.menu_remove_contact))
+                .setContentText(getString(R.string.confirm_delete_contact, mNickname))
+                .setConfirmText(getString(R.string.ok))
+                .setCancelText(getString(R.string.cancel))
+                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sDialog) {
+                        doDeleteContact();
+                        sDialog.dismiss();
+                    }
+                })
+                .show();
+    }
+
+    void doDeleteContact ()
+    {
+        try {
+
+            IImConnection mConn;
+            mConn = ((ImApp)getApplication()).getConnection(mProviderId, mAccountId);
+
+            IContactListManager manager = mConn.getContactListManager();
+
+            int res = manager.removeContact(mUsername);
+            if (res != ImErrorInfo.NO_ERROR) {
+                //mHandler.showAlert(R.string.error,
+                //      ErrorResUtils.getErrorRes(getResources(), res, address));
+            }
+
+        }
+        catch (RemoteException re)
+        {
+
+        }
     }
 
     public void startChat ()
@@ -344,7 +339,7 @@ public class ContactDisplayActivity extends BaseActivity {
             IOtrChatSession otrChatSession = session.getDefaultOtrChatSession();
             otrChatSession.verifyKey(otrChatSession.getRemoteUserId());
 
-            Snackbar.make(findViewById(R.id.contactmain), getString(R.string.action_verified), Snackbar.LENGTH_LONG).show();
+            Snackbar.make(findViewById(R.id.main_content), getString(R.string.action_verified), Snackbar.LENGTH_LONG).show();
 
 
         } catch (RemoteException e) {
