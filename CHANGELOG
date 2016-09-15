@@ -2,6 +2,10 @@
 Track the source commits here:
 https://github.com/zom/Zom-Android/commits/master#
 
+15.0.1.930 (1501930) / 15 Sept 2016 / a76305d0a9439a3838475ee75ce6c1eb1da56069
+a76305d update build to 1501930
+f99ad52 fix onboarding background color
+
 15.0.1.929 (1501929) / 15 Sept 2016
 
 b2d6d73 make the toolbar styling work for all
