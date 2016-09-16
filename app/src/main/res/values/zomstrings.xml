@@ -68,4 +68,12 @@
   <string name="color_bg_summary">Color of chat backgrounds and lists</string>
 
   <string name="menu_approve_friend">Approve Friend?</string>
+
+  <string name="header_got_invited">GOT INVITED?</string>
+  <string name="action_tap_invite">Tap the ZOM.IM link in the app your friend sent it to or scan their QR Code now</string>
+
+  <string name="header_invite_new_friend">INVITE NEW FRIEND</string>
+  <string name="action_share_invite">SMS or share an invite link anyway you want</string>
+  <string name="header_manual_entry">ADVANCED</string>
+
 </resources>

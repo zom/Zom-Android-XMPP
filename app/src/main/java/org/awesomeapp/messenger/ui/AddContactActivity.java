@@ -92,15 +92,15 @@ public class AddContactActivity extends BaseActivity {
 
         super.onCreate(savedInstanceState);
 
+        setTitle("");
+
         mApp = (ImApp)getApplication();
      //   mApp.setAppTheme(this);
         mHandler = new SimpleAlertHandler(this);
 
         setContentView(R.layout.add_contact_activity);
-//        setTitle(R.string.add_contact_title);
 
         TextView label = (TextView) findViewById(R.id.input_contact_label);
-        label.setText(R.string.input_contact_label);
 
         mAddressList = (MultiAutoCompleteTextView) findViewById(R.id.email);
         mAddressList.setTokenizer(new Rfc822Tokenizer());
@@ -116,11 +116,6 @@ public class AddContactActivity extends BaseActivity {
                 return false;
             }
         });
-
-  //      mListSpinner = (Spinner) findViewById(R.id.choose_list);
-
-//        setupAccountSpinner();
-
 
         Intent intent = getIntent();
         String scheme = intent.getScheme();

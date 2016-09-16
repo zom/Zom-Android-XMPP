@@ -333,37 +333,34 @@ public class ContactDisplayActivity extends BaseActivity {
 
 
         try {
-            IContactListManager listManager = mConn.getContactListManager();
-            listManager.approveSubscription(new Contact(new XmppAddress(mUsername),mNickname));
+            if (mConn != null) {
+                IContactListManager listManager = mConn.getContactListManager();
 
-            IChatSessionManager manager = mConn.getChatSessionManager();
-            IChatSession session = manager.getChatSession(mUsername);
+                if (listManager != null)
+                    listManager.approveSubscription(new Contact(new XmppAddress(mUsername), mNickname));
 
-            IOtrChatSession otrChatSession = session.getDefaultOtrChatSession();
-            otrChatSession.verifyKey(otrChatSession.getRemoteUserId());
+                IChatSessionManager manager = mConn.getChatSessionManager();
 
-            Snackbar.make(findViewById(R.id.main_content), getString(R.string.action_verified), Snackbar.LENGTH_LONG).show();
+                if (manager != null) {
+                    IChatSession session = manager.getChatSession(mUsername);
 
+                    if (session != null) {
+                        IOtrChatSession otrChatSession = session.getDefaultOtrChatSession();
+
+                        if (otrChatSession != null) {
+                            otrChatSession.verifyKey(otrChatSession.getRemoteUserId());
+                            Snackbar.make(findViewById(R.id.main_content), getString(R.string.action_verified), Snackbar.LENGTH_LONG).show();
+                        }
+                    }
+                }
+
+            }
 
         } catch (RemoteException e) {
             Log.e(ImApp.LOG_TAG, "error init otr", e);
 
         }
 
-    }
-
-    void approveSubscription() {
-
-        if (mConn != null)
-        {
-            try {
-                IContactListManager manager = mConn.getContactListManager();
-            } catch (RemoteException e) {
-
-                // mHandler.showServiceErrorAlert(e.getLocalizedMessage());
-                LogCleaner.error(ImApp.LOG_TAG, "approve sub error",e);
-            }
-        }
     }
 
     private void initSmpUI() {

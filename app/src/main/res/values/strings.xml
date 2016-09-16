@@ -112,7 +112,7 @@
 
     <string name="search_label">Contact</string>
     <string name="search_hint">type the name of a contact to chat with</string>
-    <string name="input_contact_label">Username or JabberID of person to add:</string>
+    <string name="input_contact_label">Enter the full Jabber ID (name@theirchatserver.org) of the friend you want to add</string>
     <!-- Views: Chat: Single -->
     <string name="contact_online"><xliff:g id="user">%1$s</xliff:g> is online</string>
     <string name="contact_away"><xliff:g id="user">%1$s</xliff:g> is away</string>
@@ -401,5 +401,6 @@
     <string name="title_more">Discover</string>
     <string name="title_me">Me</string>
     <string name="no_photos">Shared and received photos will appear here</string>
+
 
 </resources>
