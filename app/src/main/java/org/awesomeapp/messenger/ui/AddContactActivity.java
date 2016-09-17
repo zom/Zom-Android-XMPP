@@ -65,6 +65,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import im.zom.messenger.R;
 
@@ -84,6 +85,10 @@ public class AddContactActivity extends BaseActivity {
 
     private Cursor mCursorProviders;
     private long mProviderId, mAccountId;
+
+    private static final String EMAIL_PATTERN =
+            "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+                    + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -325,18 +330,28 @@ public class AddContactActivity extends BaseActivity {
     void inviteBuddies() {
         Rfc822Token[] recipients = Rfc822Tokenizer.tokenize(mAddressList.getText());
 
+        Pattern pattern = Pattern.compile(EMAIL_PATTERN);
+
+        boolean foundOne = false;
+
         for (Rfc822Token recipient : recipients) {
-            new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).execute(recipient.getAddress(), null, null);
+
+            String address = recipient.getAddress();
+            if (pattern.matcher(address).matches()) {
+                new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).execute(address, null, null);
+                foundOne = true;
+            }
         }
 
-        if (recipients.length > 0) {
+        if (foundOne) {
             Intent intent = new Intent();
             intent.putExtra(ContactsPickerActivity.EXTRA_RESULT_USERNAME, recipients[0].getAddress());
             intent.putExtra(ContactsPickerActivity.EXTRA_RESULT_PROVIDER, mApp.getDefaultProviderId());
             setResult(RESULT_OK, intent);
+            finish();
         }
 
-        finish();
+
 
     }
 
