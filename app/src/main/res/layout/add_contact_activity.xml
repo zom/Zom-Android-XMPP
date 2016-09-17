@@ -77,7 +77,7 @@
     <org.ironrabbit.type.CustomTypefaceTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/action_share_invite"
+        android:text="@string/invite_friends"
         android:textAppearance="?android:attr/textAppearanceSmall"
         />
     <LinearLayout
