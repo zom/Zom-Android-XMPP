@@ -859,8 +859,11 @@ public class OtrAndroidKeyManagerImpl extends IOtrKeyManager.Stub implements Otr
         if (this.isVerifiedUser(userId))
             return;
 
-        this.store
-                .setProperty(buildPublicKeyVerifiedId(userId, getRemoteFingerprint(userId)), true);
+        String verifiedKeyId = buildPublicKeyVerifiedId(userId, getRemoteFingerprint(userId));
+
+        if (verifiedKeyId != null)
+            this.store
+                    .setProperty(verifiedKeyId, true);
 
     }
 
