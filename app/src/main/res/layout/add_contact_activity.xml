@@ -71,13 +71,14 @@
         android:layout_marginTop="20dip"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/header_invite_new_friend"
+        android:text="@string/invite_friends"
         android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textAllCaps="true"
         />
     <org.ironrabbit.type.CustomTypefaceTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/invite_friends"
+        android:text="@string/action_invite_new_friends"
         android:textAppearance="?android:attr/textAppearanceSmall"
         />
     <LinearLayout
@@ -128,8 +129,10 @@
         android:layout_marginTop="20dip"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/header_manual_entry"
+        android:text="@string/advanced"
         android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textAllCaps="true"
+
         />
 
     <org.ironrabbit.type.CustomTypefaceTextView android:id="@+id/input_contact_label"
