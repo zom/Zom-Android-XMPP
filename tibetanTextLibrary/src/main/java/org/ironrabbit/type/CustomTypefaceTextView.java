@@ -83,7 +83,7 @@ public class CustomTypefaceTextView extends TextView {
 		super.setText(text, type);
         final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
         int themeColorText = settings.getInt("themeColorText",-1);
-        if (themeColorText != -1)
+        if (themeColorText> 0)
             setTextColor(themeColorText);
 
     }

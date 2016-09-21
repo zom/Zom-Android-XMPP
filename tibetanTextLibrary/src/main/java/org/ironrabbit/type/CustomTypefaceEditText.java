@@ -51,6 +51,7 @@ public class CustomTypefaceEditText extends EditText {
             if (t != null)
                 setTypeface(t);
 
+            /**
             if (CustomTypefaceManager.precomposeRequired()) {
                 //	addTextChangedListener(mTibetanTextWatcher);
             }
@@ -62,11 +63,13 @@ public class CustomTypefaceEditText extends EditText {
                     if (themeColorText != -1)
                         setTextColor(themeColorText);
                 }
-            });
+            });*/
+
+            mInit = true;
         }
 
 
-		if (themeColorText != -1)
+		if (themeColorText > 0)
 			setTextColor(themeColorText);
     	
 
@@ -78,7 +81,7 @@ public class CustomTypefaceEditText extends EditText {
 
 		super.setText(text, type);
 
-		if (themeColorText != -1)
+		if (themeColorText > 0)
 			setTextColor(themeColorText);
 
 	}

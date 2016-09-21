@@ -135,8 +135,6 @@ public class OnboardingActivity extends BaseActivity {
 
         final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         int themeColorHeader = settings.getInt("themeColor",-1);
-        int themeColorText = settings.getInt("themeColorText",-1);
-        int themeColorBg = settings.getInt("themeColorBg",-1);
 
         if (themeColorHeader != -1)
             viewInvite.setBackgroundColor(themeColorHeader);

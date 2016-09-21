@@ -33,7 +33,6 @@ public class BaseActivity extends AppCompatActivity {
 
         //not set color
         int themeColorHeader = settings.getInt("themeColor",-1);
-        int themeColorText = settings.getInt("themeColorText",-1);
         int themeColorBg = settings.getInt("themeColorBg",-1);
 
         if (themeColorHeader != -1) {
@@ -59,7 +58,6 @@ public class BaseActivity extends AppCompatActivity {
         final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         int themeColorHeader = settings.getInt("themeColor",-1);
         int themeColorText = settings.getInt("themeColorText",-1);
-        int themeColorBg = settings.getInt("themeColorBg",-1);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
