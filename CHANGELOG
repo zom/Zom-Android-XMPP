@@ -2,6 +2,23 @@
 Track the source commits here:
 https://github.com/zom/Zom-Android/commits/master#
 
+15.0.1.931 (1501921) / 21 Sept 2016 / f772bda
+
+3af5cf8 update tibetan translations
+101bcb3 more fixes to layout and themeing
+488984a we should load the roster by default
+635f063 tweak default colors and layout
+572c50f fix theme support in textview and edittext
+58cef29 improve add contact dialog
+556dde4 update strings
+4c61f75 update the strings with new translations
+dbe9217 finalize strings for add contact dialog
+3afdcaf update strings
+bfe2b21 don't accept manual JID unless it verifies
+17d0767 use the theme background
+9a48df1 don't crash if fingerprint is null
+da33657 addresses #138 improve layout and display of add friend dialog
+
 15.0.1.930 (1501930) / 15 Sept 2016 / a76305d0a9439a3838475ee75ce6c1eb1da56069
 a76305d update build to 1501930
 f99ad52 fix onboarding background color
