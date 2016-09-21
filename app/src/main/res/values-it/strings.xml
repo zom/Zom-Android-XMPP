@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <!--General: Names-->
-  <string name="ic_launcher_name">ChatSecure</string>
-  <string name="app_name">ChatSecure</string>
-  <string name="im_label">ChatSecure</string>
+  <string name="ic_launcher_name">Zom</string>
+  <string name="app_name">Zom</string>
+  <string name="im_label">Zom</string>
   <!--General: Permissions-->
   <string name="ro_perm_label">leggere i messaggi istantanei</string>
   <string name="ro_perm_desc">Consente alle applicazioni di leggere i dati dal fornitore di contenuti IM.</string>
@@ -82,7 +82,6 @@ Tocca qui per aggiungerne uno!</string>
   <string name="empty_conversation_group">Nessuna conversazione</string>
   <string name="search_label">Contatti</string>
   <string name="search_hint">inserisci il nome del contatto con cui chattare</string>
-  <string name="input_contact_label">Indirizzo email della persona da invitare:</string>
   <!--Views: Chat: Single-->
   <string name="contact_online">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; è online</string>
   <string name="contact_away">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; non è al computer</string>
@@ -150,7 +149,7 @@ Tocca per invitare qualcuno.</string>
   <string name="notification_vibrate_summary">Vibra anche all\'arrivo di msg chat</string>
   <string name="notification_sound_title">Allarme</string>
   <string name="notification_sound_summary">Usa anche suoneria all\'arrivo di msg chat</string>
-  <string name="notification_ringtone_title">Usa suoneria personalizzata ChatSecure</string>
+  <string name="notification_ringtone_title">Usa suoneria personalizzata Zom</string>
   <!--Actions: Settings: General: Developer-->
   <string name="pref_debug_title">Attiva Registri di Debug</string>
   <!--Alerts: Dialogs-->
@@ -192,8 +191,8 @@ Tocca per invitare qualcuno.</string>
   <string name="already_logged_in">accesso effettuato da un altro client</string>
   <string name="msisdn_error">Spiacenti. Impossibile leggere il numero di telefono sulla scheda SIM. Contattare l\'operatore.</string>
   <string name="not_signed_in">Accesso non effettuato.</string>
-  <string name="account_setup_error_server">ChatSecure è verificato un errore durante la connessione al server di chat - si prega di controllare la configurazione e riprovare.</string>
-  <string name="error_suspended_connection">ChatSecure ha perso una connessione alla rete</string>
+  <string name="account_setup_error_server">Zom è verificato un errore durante la connessione al server di chat - si prega di controllare la configurazione e riprovare.</string>
+  <string name="error_suspended_connection">Zom ha perso una connessione alla rete</string>
   <string name="unable_to_create_or_join_group_chat">Impossibile creare o unirsi alla chat di gruppo</string>
   <string name="there_is_no_viewer_available_for_this_file_format">Nessun visualizzatore disponibile per questo formato</string>
   <string name="msg_sent_failed">Impossibile inviare il messaggio.</string>

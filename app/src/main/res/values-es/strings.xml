@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <!--General: Names-->
-  <string name="ic_launcher_name">ChatSecure</string>
-  <string name="app_name">ChatSecure</string>
-  <string name="im_label">ChatSecure</string>
+  <string name="ic_launcher_name">Zom</string>
+  <string name="app_name">Zom</string>
+  <string name="im_label">Zom</string>
   <!--General: Permissions-->
   <string name="ro_perm_label">leer mensajes </string>
   <string name="ro_perm_desc">\nPermitir a las aplicaciones leer del proveedor de contenido de mensajería instantánea.\n    </string>
@@ -158,8 +158,8 @@
   <string name="already_logged_in">ha iniciado sesión desde otro cliente.</string>
   <string name="msisdn_error">No se puede leer el número de teléfono de la tarjeta SIM. Póngase en contacto con su operador para obtener ayuda.</string>
   <string name="not_signed_in">No ha iniciado sesión.</string>
-  <string name="account_setup_error_server">ChatSecure ha detectado un error al conectar con el servidor - por favor revise su configuración y vuelva a intentarlo.</string>
-  <string name="error_suspended_connection">ChatSecure ha perdido la conexión a la red</string>
+  <string name="account_setup_error_server">Zom ha detectado un error al conectar con el servidor - por favor revise su configuración y vuelva a intentarlo.</string>
+  <string name="error_suspended_connection">Zom ha perdido la conexión a la red</string>
   <string name="msg_sent_failed">No se ha podido enviar el mensaje.</string>
   <string name="disconnected_warning">Se ha perdido la conexión con el servidor. Los mensajes se enviarán cuando se restablezca la conexión.</string>
   <string name="account_settings_title">Configuración de la cuenta</string>

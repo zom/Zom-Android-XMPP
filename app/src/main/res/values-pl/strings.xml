@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <!--General: Names-->
-  <string name="ic_launcher_name">ChatSecure</string>
-  <string name="app_name">ChatSecure</string>
-  <string name="im_label">ChatSecure</string>
+  <string name="ic_launcher_name">Zom</string>
+  <string name="app_name">Zom</string>
+  <string name="im_label">Zom</string>
   <!--General: Permissions-->
   <string name="ro_perm_label">czytaj wiadomości</string>
   <string name="ro_perm_desc">
@@ -32,7 +32,7 @@ Zezwala aplikacji na przesyłanie danych do dostawcy zawartości czatu.
   <string name="lock_screen_skip">Jestem leniwy (Bez hasła!)</string>
   <!--Views: Setup-->
   <string name="add_account">Dodaj konto &lt;xliff:g id="ACCOUNT"&gt;%1$s&lt;/xliff:g&gt;</string>
-  <string name="menu_about">O ChatSecure</string>
+  <string name="menu_about">O Zom</string>
   <string name="signed_out_prompt_with_error">Zostałeś wylogowany z &lt;xliff:g id="account"&gt;%1$s&lt;/xliff:g&gt; ponieważ &lt;xliff:g id="reason"&gt;%2$s&lt;/xliff:g&gt;</string>
   <string name="pass_err_length">Twoje wyrażenie hasłowe nie jest wystarczająco długie (minimum 6 znaków)</string>
   <!--Views: About: Welcome-->
@@ -88,7 +88,6 @@ Kliknij aby dodać konto.</string>
   <string name="empty_conversation_group">Brak rozmów</string>
   <string name="search_label">Kontakt</string>
   <string name="search_hint">Wpisz osobę z którą chcesz rozpocząć rozmowę</string>
-  <string name="input_contact_label">Adres e-mail zapraszanej osoby:</string>
   <!--Views: Chat: Single-->
   <string name="contact_online">Użytkownik &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; jest dostępny</string>
   <string name="contact_away">Użytkownik &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; jest niedostępny</string>
@@ -161,7 +160,7 @@ Kliknij aby zaprosić.</string>
   <string name="notification_vibrate_summary">Sygnalizuj wiadomość czatu wibracją</string>
   <string name="notification_sound_title">Dźwięk</string>
   <string name="notification_sound_summary">Sygnalizuj wiadomość czatu dzwonkiem</string>
-  <string name="notification_ringtone_title">Używaj domyślnego dzwonka ChatSecure</string>
+  <string name="notification_ringtone_title">Używaj domyślnego dzwonka Zom</string>
   <!--Actions: Settings: General: Developer-->
   <string name="pref_debug_title">Włącz Logi Debugowania</string>
   <string name="pref_debug_summary">Dane wyjściowe logu aplikacji na standardowe wyjście / LogCat do debugowania</string>
@@ -207,8 +206,8 @@ Kliknij aby zaprosić.</string>
   <string name="already_logged_in">użytkownik już jest zalogowany z innego klienta.</string>
   <string name="msisdn_error">Niestety, nie można odczytać numeru telefonu z karty SIM. Skontaktuj się z operatorem, aby uzyskać pomoc.</string>
   <string name="not_signed_in">Użytkownik nie jest aktualnie zalogowany.</string>
-  <string name="account_setup_error_server">ChatSecure napotkał błąd w trakcie łączenia się z serwerem czatu - sprawdź ustawienia i spróbuj ponownie.</string>
-  <string name="error_suspended_connection">ChatSecure utracił połączenie z siecią</string>
+  <string name="account_setup_error_server">Zom napotkał błąd w trakcie łączenia się z serwerem czatu - sprawdź ustawienia i spróbuj ponownie.</string>
+  <string name="error_suspended_connection">Zom utracił połączenie z siecią</string>
   <string name="unable_to_create_or_join_group_chat">Nie zdolny do stworzenia lub dołaćzenia do rozmowy grupowej</string>
   <string name="unsupported_incoming_data">Nieobsługiwane dane przychodzące, nie może się nimi podzielić!</string>
   <string name="there_is_no_viewer_available_for_this_file_format">Nie ma odpowiedniego programu dla tego typu formatu pliku</string>

@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <!--General: Names-->
-  <string name="ic_launcher_name">ChatSecure</string>
-  <string name="app_name">ChatSecure</string>
-  <string name="im_label">ChatSecure</string>
+  <string name="ic_launcher_name">Zom</string>
+  <string name="app_name">Zom</string>
+  <string name="im_label">Zom</string>
   <!--General: Permissions-->
   <string name="ro_perm_label">leer mensajes instantáneos</string>
   <string name="ro_perm_desc">
@@ -139,7 +139,7 @@ Toque para invitar.</string>
   <string name="notification_vibrate_summary">También vibrar cuando llega un mensaje instantáneo</string>
   <string name="notification_sound_title">Sonido</string>
   <string name="notification_sound_summary">También reproducir tono de timbre cuando llega un mensaje instantáneo</string>
-  <string name="notification_ringtone_title">Utilice el tono de llamada personalizado de ChatSecure</string>
+  <string name="notification_ringtone_title">Utilice el tono de llamada personalizado de Zom</string>
   <!--Actions: Settings: General: Developer-->
   <!--Alerts: Dialogs-->
   <string name="bg_data_prompt_message">
@@ -176,8 +176,8 @@ Es necesario tener conexión a la red de datos (incluyendo datos en segundo plan
   <string name="already_logged_in">usted ha iniciado sesión desde otro cliente.</string>
   <string name="msisdn_error">Lo sentimos, el número telefónico no puede ser leído desde su tarjeta SIM. Por favor contacte a su operador para que le ayude.</string>
   <string name="not_signed_in">Usted no ha iniciado sesión.</string>
-  <string name="account_setup_error_server">ChatSecure encontró un error mientras se conectaba al servidor de chat - por favor revise su configuración e intente de nuevo.</string>
-  <string name="error_suspended_connection">ChatSecure ha perdido la conexión a la red</string>
+  <string name="account_setup_error_server">Zom encontró un error mientras se conectaba al servidor de chat - por favor revise su configuración e intente de nuevo.</string>
+  <string name="error_suspended_connection">Zom ha perdido la conexión a la red</string>
   <string name="unable_to_create_or_join_group_chat">No es posible crear o unirse a un chat en grupo</string>
   <string name="otr_keysync_warning_message">Por favor copie el archivo \'otr_keystore.ofcaes\' desde la herramienta de escritorio OtrFileConverter al directorio raíz del almacenamiento de su dispositivo</string>
   <string name="msg_sent_failed">Este mensaje no pudo ser enviado.</string>

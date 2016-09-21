@@ -47,4 +47,19 @@
   <string name="pref_block_screenshots_summary">他のアプリがこのアプリのスクリーンショットを撮ろうとするのをブロックします</string>
   <string name="pref_enable_tibetan_dictionary_title">チベット語辞書を有効にする</string>
   <string name="pref_enable_tibetan_dictionary_summary">存在する場合、Monlam チベット辞書アプリからチベット語の一致する単語を提案します</string>
+  <string name="color_category_title">カスタムの色</string>
+  <string name="color_reset_title">色をリセット</string>
+  <string name="color_reset_summary">デフォルト値に色をリセットします</string>
+  <string name="color_header_title">見出しの色</string>
+  <string name="color_header_summary">見出し、アクションバー、ツールバーの色</string>
+  <string name="color_text_title">文字の色</string>
+  <string name="color_text_summary">メッセージやリスト中の文字の色</string>
+  <string name="color_bg_title">背景の色</string>
+  <string name="color_bg_summary">チャットやリストの背景の色</string>
+  <string name="menu_approve_friend">友達を承認しますか?</string>
+  <string name="header_got_invited">招待を受けましたか?</string>
+  <string name="action_tap_invite">アプリで、友達が送信した ZOM.IM のリンクをタップするか、QR コードをスキャンしてください</string>
+  <string name="header_invite_new_friend">新しい友達を招待</string>
+  <string name="action_share_invite">招待のリンクを SMS または共有</string>
+  <string name="header_manual_entry">詳細</string>
 </resources>

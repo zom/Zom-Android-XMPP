@@ -81,7 +81,6 @@
   <string name="empty_conversation_group">Нема преписки\n\nДодирните да почнете ћаскати!</string>
   <string name="search_label">Контакт</string>
   <string name="search_hint">укуцајте име контакта за ћаскање</string>
-  <string name="input_contact_label">Корисничко име или Џабер ИД особе за додавање:</string>
   <!--Views: Chat: Single-->
   <string name="contact_online">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt; је на вези</string>
   <string name="contact_away">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt; је одсутан/а</string>

@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <!--General: Names-->
-  <string name="ic_launcher_name">ChatSecure</string>
-  <string name="app_name">ChatSecure</string>
-  <string name="im_label">ChatSecure</string>
+  <string name="ic_launcher_name">Zom</string>
+  <string name="app_name">Zom</string>
+  <string name="im_label">Zom</string>
   <!--General: Permissions-->
   <string name="ro_perm_label">lire les messages instantanés</string>
   <string name="ro_perm_desc">Permet aux applications de lire les données du fournisseur de contenu de messagerie instantanée.</string>
@@ -83,7 +83,6 @@ Appuyez ici pour en ajouter un !</string>
   <string name="empty_conversation_group">Aucune conversation</string>
   <string name="search_label">Contact</string>
   <string name="search_hint">Tappez le nom d\'un contact avec qui discuter</string>
-  <string name="input_contact_label">Adresse e-mail de la personne que vous souhaitez inviter :</string>
   <!--Views: Chat: Single-->
   <string name="contact_online">&lt;xliff:g id=\"USER\"&gt;%1$s&lt;/xliff:g&gt; est en ligne</string>
   <string name="contact_away">&lt;xliff:g id=\"USER\"&gt;%1$s&lt;/xliff:g&gt; est absent</string>
@@ -192,7 +191,7 @@ Appuyez pour inviter.</string>
   <string name="msisdn_error">Impossible de lire le numéro de téléphone de votre carte SIM. Veuillez contacter votre opérateur pour obtenir de l\'aide.</string>
   <string name="not_signed_in">Vous n\'êtes actuellement pas connecté.</string>
   <string name="account_setup_error_server">Erreur lors de la connexion au serveur de messages - veuillez valider votre configuration et essayer à nouveau.</string>
-  <string name="error_suspended_connection">ChatSecure a perdu la connexion au réseau</string>
+  <string name="error_suspended_connection">Zom a perdu la connexion au réseau</string>
   <string name="unable_to_create_or_join_group_chat">Impossible de créer ou de rejoindre une discussion de groupe</string>
   <string name="there_is_no_viewer_available_for_this_file_format">Aucune visionneuse disponible pour ce format de fichier</string>
   <string name="otr_keysync_warning_message">Veuillez copier le fichier \'otr_keystore.ofcases\' de l\'outil OtrFileConverter dans le répertoire racine de votre terminal </string>

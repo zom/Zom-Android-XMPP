@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <!--General: Names-->
-  <string name="ic_launcher_name">ChatSecure</string>
-  <string name="app_name">ChatSecure</string>
-  <string name="im_label">ChatSecure</string>
+  <string name="ic_launcher_name">Zom</string>
+  <string name="app_name">Zom</string>
+  <string name="im_label">Zom</string>
   <!--General: Permissions-->
   <string name="ro_perm_label">llegiu missatges instantanis</string>
   <string name="ro_perm_desc">Permet als programes llegir dades del proveïdor de contingut de missatgeria instantània.</string>
@@ -22,7 +22,7 @@
   <string name="lock_screen_create_passphrase">Estableix una contrasenya</string>
   <string name="lock_screen_confirm_passphrase">Confirmeu la contrasenya</string>
   <string name="lock_screen_passphrase_hint">Contrasenya</string>
-  <string name="lock_screen_passphrase_not_set_enter">Opcionalment, podeu definir una contrasenya mestra pel ChatSecure per prevenir l\'accés als vostres contactes i missatges sense contrasenya:</string>
+  <string name="lock_screen_passphrase_not_set_enter">Opcionalment, podeu definir una contrasenya mestra pel Zom per prevenir l\'accés als vostres contactes i missatges sense contrasenya:</string>
   <string name="lock_screen_passphrase_not_set_confirm">Confirmeu la nova contrasenya</string>
   <string name="lock_screen_passphrases_not_matching">Les contrasenyes no coincideixen. Torneu-ho a provar</string>
   <string name="lock_screen_skip">Omet &gt;&gt;</string>
@@ -168,7 +168,7 @@
   <string name="already_logged_in">heu entrat des d\'un altre client.</string>
   <string name="msisdn_error">No es pot llegir el número de telèfon de la vostra targeta SIM. Contacteu amb la vostra operadora per suport.</string>
   <string name="not_signed_in">No us heu autentificat.</string>
-  <string name="account_setup_error_server">S\'ha produït un error al ChatSecure mentre connectava amb el servidor de xat - repasseu la configuració i torneu-ho a provar.</string>
+  <string name="account_setup_error_server">S\'ha produït un error al Zom mentre connectava amb el servidor de xat - repasseu la configuració i torneu-ho a provar.</string>
   <string name="unable_to_create_or_join_group_chat">No ha estat possible crear o afegir-se al xat de grup</string>
   <string name="msg_sent_failed">No s\'ha pogut enviar el missatge</string>
   <string name="account_settings_title">Paràmetres del compte</string>

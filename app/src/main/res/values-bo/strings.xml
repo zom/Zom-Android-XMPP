@@ -82,7 +82,6 @@
   <string name="empty_conversation_group">གླེང་མོལ་སྒོ་ཕྱེ་མེད། གླེང་མོལ་བྱེད་འགོ་བཙུགས།</string>
   <string name="search_label">འབྲེལ་མིང་། </string>
   <string name="search_hint">གླེང་མོལ་བྱེད་འདོད་ཡོད་ས་ཞིག་གི་མིང་ཕྲིས།</string>
-  <string name="input_contact_label">ཁྱེད་ཀྱིས་མགྲོན་འབོད་བྱེད་འདོད་ཡོད་པའི་གང་ཟག་དེའི་དྲ་རྒྱའི་ཁ་བྱང་། </string>
   <!--Views: Chat: Single-->
   <string name="contact_online">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt; དྲ་ཐོག་ཏུ་ཡོད།</string>
   <string name="contact_away">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt; ད་ལྟ་འདིར་མེད།</string>
@@ -148,6 +147,7 @@
   <string name="pref_delete_unsecured_media_summary">ཡིག་ཆའམ་ཡང་ན་འདྲ་པར་ཞིག་བགོ་འགྲེམས་བྱས་པའི་རྗེས་སུ། དེ་ཁོངས་ཨ་མ་ནས་རང་བཞིན་གྱིས་གསུབ་འགྲོ་གི་རེད། </string>
   <!--Actions: Settings: General: Other Tuning-->
   <string name="pref_group_tuning_title">ཉར་གསོག་གཞན་པ། </string>
+  <string name="start_on_boot">འཛོམས་རང་བཞིན་གྱིས་འགོ་ཚུགས།</string>
   <string name="start_on_boot_summary">རྟག་དུ་འགོ་འཛུགས་དུས་རང་བཞིན་གྱིས་དེ་སྔོན་ནང་འཛུལ་བྱས་བའི་ཐོ་མཛོད་དེ་ལ་ཐོ་འགོད་བྱོས། </string>
   <string name="hide_offline_contacts">དྲ་ལམ་ན་མེད་པའི་འབྲེལ་གཏུགས་ཁག་སྦས།</string>
   <string name="foreground_service_title">སྔོན་སྤྱོད་རིམ་པ་གལ་ཆེ་ཤོས་དེ་བེད་སྤྱོད་ཐོངས། </string>
@@ -180,6 +180,7 @@
   <string name="notify_groupchat_label">མཉམ་འདུས་གླེང་མོལ་མགྲོན་འབོད།</string>
   <string name="group_chat_invite_notify_text">&lt;xliff:g id="user"&gt;%s&lt;/xliff:g&gt;ནས་གླེང་མོལ་གྱི་ཚོམས་གསར་བའི་མགྲོན་ཤོག་ཞིག </string>
   <string name="new_messages_notify">ནས་འཕྲིན་ཐུང་(རྣམས)གསར་པ། </string>
+  <string name="starting_the_chatsecure_service_">འཛོམས་ཀྱི་ཞབས་ཞུ་འགོ་འཛུགས་བཞིན་པ།</string>
   <string name="app_unlocked">&amp; ནུས་ཅན་བཟོས་ཚར། སྒོ་ཕྱེས་ཡོད། </string>
   <!--Alerts: Exceptions-->
   <string name="error">དོ་སྣང་བྱོས། </string>
