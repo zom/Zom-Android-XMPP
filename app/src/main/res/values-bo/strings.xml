@@ -19,6 +19,7 @@
   <string name="no">ཕྱིར་འཐེན།</string>
   <string name="connect">མཐུད། </string>
   <!--Views-->
+  <string name="title_activity_lock_screen">འཛོམས་སྒོ་བརྒྱབ་འདུག</string>
   <string name="lock_screen_create_passphrase">གསང་ཚིག་བཟོས། </string>
   <string name="lock_screen_confirm_passphrase">གསང་ཚིག་ངེས་གཏན་བཟོས། </string>
   <string name="lock_screen_passphrase_hint">གསང་ཚིག </string>
@@ -82,6 +83,7 @@
   <string name="empty_conversation_group">གླེང་མོལ་སྒོ་ཕྱེ་མེད། གླེང་མོལ་བྱེད་འགོ་བཙུགས།</string>
   <string name="search_label">འབྲེལ་མིང་། </string>
   <string name="search_hint">གླེང་མོལ་བྱེད་འདོད་ཡོད་ས་ཞིག་གི་མིང་ཕྲིས།</string>
+  <string name="input_contact_label">ཁྱེད་ཀྱིས་མཐུད་འདོད་པའི་གྲོགས་པོ་དེའི་ Jabber ཁ་བྱང་(name@theirchatserver.org)བླུགས། </string>
   <!--Views: Chat: Single-->
   <string name="contact_online">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt; དྲ་ཐོག་ཏུ་ཡོད།</string>
   <string name="contact_away">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt; ད་ལྟ་འདིར་མེད།</string>
@@ -321,6 +323,8 @@
   </string-array>
   <string name="this_is_a_group_chat">འདི་མཉམ་འདུས་གླེང་མོལ་རེད།</string>
   <string name="unable_to_securely_share_this_file">ཡིག་ཆ་འདི་ཉེན་སྲུང་ལྡན་པའི་ཐོག་བསྐུར་ཐུབ་ཀྱི་མི་འདུག</string>
+  <string name="your_keystore_is_corrupted_please_re_install_chatsecure_or_clear_data_for_the_app">ཁྱེད་ཀྱི་གསང་བའི་ལྡེ་མིག་ཉར་སྣོད་དེ་འཕྲོ་བརླགས་ལ་ཕྱིན་འདུག སྐུ་མཁྱེན། འཛོམས་བསྐྱར་འཇུག་བྱེད་པའམ་ཡང་ན་བཀོལ་ཆས་ཀྱི་མ་ལག་གཙང་བཟོ་བྱོས། 
+</string>
   <string name="swipe_hint">གདམ་ཁ་མང་པོའི་ཆེད་གཡས་དང་གཡོན་ལ་མཛུབ་མོས་དེད།</string>
   <string name="no_convos">ཉེན་སྲུང་གླེང་མོལ་འགོ་ཚུགས།</string>
   <string name="title_more">གསར་རྙེད།</string>

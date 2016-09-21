@@ -14,6 +14,7 @@
   <string name="friends">གྲོགས་པོ།</string>
   <string name="add_friends">གྲོགས་སྣོན།</string>
   <string name="search_by_id">མིང་བྱང་བརྒྱུད་ནས་འཚོལ།</string>
+  <string name="invite_accepted">ཁྱེད་གཉིས་འཛོམས་ཀྱི་སྒང་ན་གྲོགས་པོ་རེད། </string>
   <string name="chats">གླེང་མོལ།</string>
   <string name="choose_friend">གྲོགས་ཞིག་འདེམས།</string>
   <string name="send_message">འཕྲིན་ཞིག་ཐོངས།</string>
@@ -34,6 +35,22 @@
   <string name="choose_photos">པར་མཛོད་ནས་འདེམས།</string>
   <string name="choose_language">སྐད་ཡིག་བརྗེ་བསྒྱུར།</string>
   <string name="welcome_to_zom">འཛོམས་ནང་སླེབས་པར་དགའ་བསུ་ཞུ།</string>
-  <string name="grant_perms">འཛོམས་ལ་པར་ཆས་བེད་སྤྱོད་གཏོང་རྒྱུའི་ཆོག་མཆན་སྤྲོད།</string>
+  <string name="onboarding_generate">འཛོམས་ཀྱི་ཁ་བྱང་ཞིག་བཟོས་དང་ང་ཚོས་ཁྱེད་ལ་ཉེན་སྲུང་ལྡན་པའི་གསང་གྲངས་ཤིག་སྤྲད་ཆོག</string>
   <string name="menu_refresh">གླེང་མོལ་བསྐྱར་གསོ།</string>
+  <string name="action_archived">ཉར་ཚགས་ཟིན།</string>
+  <string name="action_verified">བརྟག་དཔྱད་ཟིན།</string>
+  <string name="action_theme">པར་ངོས་བརྗེས།</string>
+  <string name="action_stickers">སྦྱར་ཤོག་བཀྲམས།</string>
+  <string name="pref_block_screenshots_title">མདུན་ངོས་པར་འདེབས་དེ་ཁོག</string>
+  <string name="pref_block_screenshots_summary">བཀོལ་ཆས་འདིའི་འདྲ་རིས་ལེན་པར་བརྩོན་པའི་བཀོལ་ཆས་གཞན་དག་ཁོག</string>
+  <string name="pref_enable_tibetan_dictionary_title">བོད་ཡིག་གི་ཚིག་མཛོད་དེ་བྱེད་ལས་ཅན་ཏུ་བསྒྱུར།</string>
+  <string name="pref_enable_tibetan_dictionary_summary">སྨོན་ལམ་ཚིག་མཛོད་ཀྱི་བཀོལ་ཆས་ནས་བོད་ཡིག་གི་ཐ་སྙད་འདྲ་བ་རྣམས་ལོངས།</string>
+  <string name="color_reset_title">ཁ་དོག་བསྐྱར་དུ་བརྗེས།</string>
+  <string name="color_text_title">ཡི་གེའི་ཁ་དོག</string>
+  <string name="color_bg_title">རྒྱབ་ལྗོངས་ཀྱི་ཁ་དོག</string>
+  <string name="menu_approve_friend">གྲོགས་པོ་ངོས་ལེན་བྱས་སམ།</string>
+  <string name="header_got_invited">མགྲོན་འབོད་བྱས་སོང་ངམ།</string>
+  <string name="header_invite_new_friend">གྲོགས་པོ་གསར་བ་མགྲོན་འབོད་བྱོས།</string>
+  <string name="action_share_invite">སོ་སོས་གྲོགས་སྒྲིག་འདོད་པ་དེར་འཕྲིན་ཐུང་གཏོང་བའམ་ཡང་ན་མགྲོན་འབོད་ཀྱི་འབྲེལ་ཐག་དེ་བསྐུར།</string>
+  <string name="header_manual_entry">རྒྱ་བསྐྱེད།</string>
 </resources>
