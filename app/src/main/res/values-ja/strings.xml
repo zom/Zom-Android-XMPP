@@ -167,7 +167,7 @@
   <!--Actions: Settings: General: Developer-->
   <string name="pref_debug_title">デバッグログを有効にする</string>
   <string name="pref_debug_summary">デバッグのために標準出力 / logcat にアプリ ログ データを出力します</string>
-  <!--Alerts: Dialogs--> 
+  <!--Alerts: Dialogs-->
   <string name="bg_data_prompt_message">&lt;xliff:g id="PROVIDER"&gt;%1$s&lt;/xliff:g&gt;ではバックグラウンドデータを有効にする必要があります。</string>
   <string name="prompt_create_new_account_">新しいアカウントを作成しますか?</string>
   <string name="allow_s_to_create_a_new_chat_account_for_s_">ユーザー名 \'%1$s\' の新しいチャット アカウントを作成しますか?</string>
