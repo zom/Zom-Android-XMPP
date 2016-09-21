@@ -24,48 +24,6 @@
     android:padding="12dp"
     >
 
-    <org.ironrabbit.type.CustomTypefaceTextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/header_got_invited"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        />
-
-    <org.ironrabbit.type.CustomTypefaceTextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/action_tap_invite"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        />
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="0dp"
-        android:layout_gravity="center_horizontal"
-        android:gravity="center_horizontal"
-        android:orientation="horizontal"
-
-
-        >
-
-        <org.ironrabbit.type.CustomTypefaceTextView
-            android:id="@+id/btnInviteScan"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="6dp"
-            style="@android:style/Widget.Button"
-
-            android:textSize="10dp"
-            android:text="@string/invite_scan_qr"
-            android:drawableLeft="@android:drawable/ic_menu_camera"
-            android:background="@android:color/transparent"
-            android:textColor="@android:color/white"
-
-            />
-
-    </LinearLayout>
 
     <org.ironrabbit.type.CustomTypefaceTextView
         android:layout_marginTop="20dip"
@@ -120,17 +78,58 @@
 
         />
 
+        <org.ironrabbit.type.CustomTypefaceTextView
+            android:id="@+id/btnInviteScan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="6dp"
+            style="@android:style/Widget.Button"
+
+            android:textSize="10dp"
+            android:text="@string/invite_scan_qr"
+            android:drawableLeft="@android:drawable/ic_menu_camera"
+            android:background="@android:color/transparent"
+            android:textColor="@android:color/white"
+
+            />
+
 
     </LinearLayout>
 
 
+    <org.ironrabbit.type.CustomTypefaceTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/header_got_invited"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        />
 
     <org.ironrabbit.type.CustomTypefaceTextView
-        android:layout_marginTop="20dip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/action_tap_invite"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="15dp"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        android:background="?colorPrimary"
+
+        >
+        </LinearLayout>
+
+    <org.ironrabbit.type.CustomTypefaceTextView
+        android:layout_marginTop="5dip"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/advanced"
-        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textAppearance="?android:attr/textAppearanceSmall"
         android:textAllCaps="true"
 
         />
@@ -140,14 +139,12 @@
         android:layout_height="wrap_content"
         android:text="@string/input_contact_label" />
 
-    <MultiAutoCompleteTextView
+    <org.ironrabbit.type.CustomTypefaceEditText
         android:id="@+id/email"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:inputType="textEmailAddress"
         android:imeOptions="actionSend"
-        android:textColor="@android:color/white"
-
         />
 
 
