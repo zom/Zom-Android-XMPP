@@ -42,6 +42,8 @@ android:paddingTop="40dp"
             android:textSize="24dp"
             android:padding="6dp"
             android:background="@drawable/rounded_rect"
+            android:textColor="?messageTextPrimary"
+
             />
         <org.ironrabbit.type.CustomTypefaceTextView
             android:layout_width="wrap_content"
@@ -78,6 +80,8 @@ android:paddingTop="40dp"
     android:gravity="center"
     android:background="@drawable/rounded_rect"
     android:layout_margin="3dp"
+    android:textColor="?messageTextPrimary"
+
     />
 
 <org.ironrabbit.type.CustomTypefaceEditText android:id="@+id/edtNewPassConfirm"
@@ -90,6 +94,7 @@ android:paddingTop="40dp"
     android:background="@drawable/rounded_rect"
     android:layout_margin="3dp"
     android:padding="6dp"
+    android:textColor="?messageTextPrimary"
 
     />
 
@@ -103,6 +108,8 @@ android:paddingTop="40dp"
             android:layout_marginLeft="3dp"
             android:layout_marginRight="3dp"
             android:layout_marginTop="20dp"
+            android:textColor="?messageTextPrimary"
+
             />
         <org.ironrabbit.type.CustomTypefaceTextView
             android:id="@+id/statusError"

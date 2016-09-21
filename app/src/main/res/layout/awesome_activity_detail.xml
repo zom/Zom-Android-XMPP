@@ -245,6 +245,8 @@
                 android:fontFamily="sans-serif-light"
                 android:background="@android:color/transparent"
                 android:padding="2dp"
+                android:textColor="?messageTextPrimary"
+
                 />
 
             <org.ironrabbit.type.CustomTypefaceTextView

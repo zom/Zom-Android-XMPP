@@ -60,6 +60,8 @@
                         android:hint="@string/lock_screen_passphrase_hint"
                         android:inputType="textPassword"
                         android:gravity="center_horizontal"
+                        android:textColor="?messageTextPrimary"
+
                         />
                 </LinearLayout>
 
@@ -81,6 +83,8 @@
                         android:hint="@string/lock_screen_passphrase_not_set_confirm"
                         android:inputType="textPassword"
                         android:gravity="center_horizontal"
+                        android:textColor="?messageTextPrimary"
+
                         />
                 </LinearLayout>
             </ViewFlipper>
@@ -128,6 +132,8 @@
                     android:imeOptions="actionGo"
                     android:inputType="textPassword"
                     android:gravity="center_horizontal"
+                    android:textColor="?messageTextPrimary"
+
                     >
 
                     <requestFocus />

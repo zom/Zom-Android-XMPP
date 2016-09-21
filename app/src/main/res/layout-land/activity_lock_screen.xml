@@ -67,7 +67,9 @@
                             android:layout_weight="1"
                             android:ems="10"
                             android:hint="@string/lock_screen_passphrase_hint"
-                        android:inputType="textPassword" />
+                            android:textColor="?messageTextPrimary"
+
+                            android:inputType="textPassword" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -83,6 +85,8 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:ems="10"
+                            android:textColor="?messageTextPrimary"
+
                             android:hint="@string/lock_screen_passphrase_not_set_confirm"
                             android:inputType="textPassword" />
                          </LinearLayout>
@@ -125,6 +129,8 @@
                         android:ems="10"
                         android:hint="@string/lock_screen_passphrase_hint"
                         android:imeOptions="actionGo"
+                        android:textColor="?messageTextPrimary"
+
                         android:inputType="textPassword" >
 
                         <requestFocus />

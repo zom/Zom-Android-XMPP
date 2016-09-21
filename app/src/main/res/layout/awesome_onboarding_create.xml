@@ -42,6 +42,8 @@ android:orientation="vertical"
         android:textSize="24dp"
         android:padding="6dp"
         android:background="@drawable/rounded_rect"
+        android:textColor="?messageTextPrimary"
+
         />
     <org.ironrabbit.type.CustomTypefaceTextView
         android:layout_width="wrap_content"

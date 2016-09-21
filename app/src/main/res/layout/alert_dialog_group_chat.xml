@@ -40,7 +40,10 @@
         android:layout_marginRight="20dip"
         android:scrollHorizontally="true"
         android:gravity="fill_horizontal"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="?messageTextPrimary"
+
+        />
 
     <!--
     <EditText
