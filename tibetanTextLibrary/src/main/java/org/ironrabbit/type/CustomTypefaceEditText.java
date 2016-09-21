@@ -6,9 +6,13 @@ import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.preference.PreferenceManager;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.EditText;
 
 public class CustomTypefaceEditText extends EditText {
+
+    boolean mInit = false;
+    int themeColorText = -1;
 
     public CustomTypefaceEditText(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -37,23 +41,50 @@ public class CustomTypefaceEditText extends EditText {
 
 
 	private void init() {
-        
-		Typeface t = CustomTypefaceManager.getCurrentTypeface(getContext());
-		
-		if (t != null)
-			setTypeface(t);
+
+        if (!mInit) {
+            final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
+            themeColorText = settings.getInt("themeColorText",-1);
+
+            Typeface t = CustomTypefaceManager.getCurrentTypeface(getContext());
+
+            if (t != null)
+                setTypeface(t);
+
+            if (CustomTypefaceManager.precomposeRequired()) {
+                //	addTextChangedListener(mTibetanTextWatcher);
+            }
+
+            addOnLayoutChangeListener(new OnLayoutChangeListener() {
+                @Override
+                public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+
+                    if (themeColorText != -1)
+                        setTextColor(themeColorText);
+                }
+            });
+        }
 
 
-		final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
-		int themeColorText = settings.getInt("themeColorText",-1);
 		if (themeColorText != -1)
 			setTextColor(themeColorText);
     	
-        if (CustomTypefaceManager.precomposeRequired())
-    	{
-    	//	addTextChangedListener(mTibetanTextWatcher);
-    	}
+
     }
+
+
+	@Override
+	public void setText(CharSequence text, BufferType type) {
+
+		super.setText(text, type);
+
+		if (themeColorText != -1)
+			setTextColor(themeColorText);
+
+	}
+
+
+
     
 	/*
     TextWatcher mTibetanTextWatcher = new TextWatcher()

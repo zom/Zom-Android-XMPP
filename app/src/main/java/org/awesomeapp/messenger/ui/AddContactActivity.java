@@ -45,6 +45,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -77,7 +78,7 @@ public class AddContactActivity extends BaseActivity {
                                                              Imps.ContactList.NAME, };
     private static final int CONTACT_LIST_NAME_COLUMN = 1;
 
-    private MultiAutoCompleteTextView mAddressList;
+    private EditText mNewAddress;
     //private Spinner mListSpinner;
   //  Button mInviteButton;
     ImApp mApp;
@@ -107,11 +108,10 @@ public class AddContactActivity extends BaseActivity {
 
         TextView label = (TextView) findViewById(R.id.input_contact_label);
 
-        mAddressList = (MultiAutoCompleteTextView) findViewById(R.id.email);
-        mAddressList.setTokenizer(new Rfc822Tokenizer());
-        mAddressList.addTextChangedListener(mTextWatcher);
+        mNewAddress = (EditText) findViewById(R.id.email);
+        mNewAddress.addTextChangedListener(mTextWatcher);
 
-        mAddressList.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        mNewAddress.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
                 if (actionId == EditorInfo.IME_ACTION_SEND) {
@@ -328,7 +328,7 @@ public class AddContactActivity extends BaseActivity {
     }
 
     void inviteBuddies() {
-        Rfc822Token[] recipients = Rfc822Tokenizer.tokenize(mAddressList.getText());
+        Rfc822Token[] recipients = Rfc822Tokenizer.tokenize(mNewAddress.getText());
 
         Pattern pattern = Pattern.compile(EMAIL_PATTERN);
 
@@ -479,9 +479,11 @@ public class AddContactActivity extends BaseActivity {
                     }
                 }
             }
+
+            finish();
+
         }
 
-        finish();
 
     }
 
@@ -497,7 +499,7 @@ public class AddContactActivity extends BaseActivity {
             return;
         }
         String address = parsedUri.get(XmppUriHelper.KEY_ADDRESS);
-        this.mAddressList.setText(address);
+        mNewAddress.setText(address);
       //  this.mInviteButton.setBackgroundColor(R.drawable.btn_green);
 
         //store this for future use... ideally the user comes up as verified the first time!

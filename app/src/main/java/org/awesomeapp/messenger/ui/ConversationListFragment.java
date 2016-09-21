@@ -90,10 +90,11 @@ public class ConversationListFragment extends Fragment {
         setupRecyclerView(mRecView);
 
         //not set color
+        /**
         final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
         int themeColorBg = settings.getInt("themeColorBg",-1);
         view.setBackgroundColor(themeColorBg);
-
+            */
 
         return view;
     }
@@ -198,7 +199,7 @@ public class ConversationListFragment extends Fragment {
             if (viewHolder == null) {
                 viewHolder = new ConversationViewHolder(view);
                 view.setTag(viewHolder);
-                view.applyStyleColors(viewHolder);
+          //      view.applyStyleColors(viewHolder);
             }
 
             return viewHolder;

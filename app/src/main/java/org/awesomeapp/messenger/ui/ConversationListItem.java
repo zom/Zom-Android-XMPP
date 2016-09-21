@@ -115,7 +115,7 @@ public class ConversationListItem extends FrameLayout {
     public void bind(ConversationViewHolder holder, long contactId, long providerId, long accountId, String address, String nickname, int contactType, String message, long messageDate, int presence, String underLineText, boolean showChatMsg, boolean scrolling) {
 
 
-        applyStyleColors(holder);
+        //applyStyleColors(holder);
 
         if (nickname == null)
         {
@@ -503,6 +503,7 @@ public class ConversationListItem extends FrameLayout {
         return buf.toString();
     }
 
+    /**
     public void applyStyleColors (ConversationViewHolder holder)
     {
         //not set color
@@ -524,7 +525,7 @@ public class ConversationListItem extends FrameLayout {
 
         }
 
-    }
+    }*/
 
     /**
      * Returns darker version of specified <code>color</code>.

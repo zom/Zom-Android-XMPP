@@ -46,15 +46,17 @@
               		android:gravity="left"
                     android:textAppearance="?android:attr/textAppearanceLarge"                    
                     android:singleLine="true"
-                     />
+                    android:textColor="?contactTextPrimary"
+
+                    />
        
                   <org.ironrabbit.type.CustomTypefaceTextView
                 android:id="@+id/line2"
                 android:layout_width="wrap_content"
                 android:layout_height="20dp"
-                
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="#999999"
+                      android:textColor="?contactTextSecondary"
+
+                      android:textAppearance="?android:attr/textAppearanceSmall"
                 />
 
         
