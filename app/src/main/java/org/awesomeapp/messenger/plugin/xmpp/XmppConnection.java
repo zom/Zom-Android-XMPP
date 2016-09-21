@@ -1299,13 +1299,14 @@ public class XmppConnection extends ImConnection {
         }
     }
 
+    /**
     public void initConnection(XMPPTCPConnection connection, Contact user, int state) {
         mConnection = connection;
         mRoster = Roster.getInstanceFor(mConnection);
-        mRoster.setRosterLoadedAtLogin(false);
+        mRoster.setRosterLoadedAtLogin(true);
         mUser = user;
         setState(state, null);
-    }
+    }*/
 
     private void initConnectionAndLogin (Imps.ProviderSettings.QueryMap providerSettings,String userName) throws IOException, SmackException, XMPPException, KeyManagementException, NoSuchAlgorithmException, IllegalStateException, RuntimeException
     {
@@ -1323,6 +1324,12 @@ public class XmppConnection extends ImConnection {
 
             mResource = providerSettings.getXmppResource();
 
+            mRoster = Roster.getInstanceFor(mConnection);
+            mRoster.setRosterLoadedAtLogin(true);
+            mRoster.setSubscriptionMode(subMode);
+
+            mPingManager = PingManager.getInstanceFor(mConnection) ;
+
             mConnection.login(mUsername, mPassword, mResource);
             
             String fullJid = mConnection.getUser();
@@ -1335,11 +1342,6 @@ public class XmppConnection extends ImConnection {
             initServiceDiscovery();
 
             sendPresencePacket();
-
-            mRoster = Roster.getInstanceFor(mConnection);
-            mPingManager = PingManager.getInstanceFor(mConnection) ;
-
-            mRoster.setSubscriptionMode(subMode);
 
             getContactListManager().listenToRoster(mRoster);
 
@@ -2407,9 +2409,6 @@ public class XmppConnection extends ImConnection {
             }
 
             if (mConnection != null) {
-
-                mRoster = Roster.getInstanceFor(mConnection);
-                mRoster.setRosterLoadedAtLogin(false);
 
                 for (RosterEntry rEntry : mRoster.getEntries()) {
                     String address = rEntry.getUser();
