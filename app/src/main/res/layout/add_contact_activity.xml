@@ -33,12 +33,14 @@
         android:textAllCaps="true"
         android:textColor="?colorPrimary"
         />
+    <!--
     <org.ironrabbit.type.CustomTypefaceTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/action_invite_new_friends"
         android:textAppearance="?android:attr/textAppearanceSmall"
         />
+        -->
     <LinearLayout
         android:id="@+id/inviteOptions"
         android:layout_width="match_parent"
@@ -55,8 +57,10 @@
             android:id="@+id/btnInviteSMS"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:scaleX="1.6"
+            android:scaleY="1.6"
             android:textSize="10dp"
-            android:layout_margin="6dp"
+            android:layout_margin="16dp"
             style="@android:style/Widget.Button"
             android:text="@string/invite_sms"
             android:drawableLeft="@android:drawable/ic_menu_send"
@@ -66,8 +70,11 @@
         android:id="@+id/btnInviteShare"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:scaleX="1.6"
+        android:scaleY="1.6"
         android:textSize="10dp"
-        android:layout_margin="6dp"
+        android:layout_margin="16dp"
+        android:paddingLeft="10dp"
         style="@android:style/Widget.Button"
 
         android:text="@string/invite_share"
@@ -81,7 +88,11 @@
             android:id="@+id/btnInviteScan"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="6dp"
+            android:layout_margin="16dp"
+            android:paddingLeft="10dp"
+
+            android:scaleX="1.6"
+            android:scaleY="1.6"
             style="@android:style/Widget.Button"
 
             android:textSize="10dp"
