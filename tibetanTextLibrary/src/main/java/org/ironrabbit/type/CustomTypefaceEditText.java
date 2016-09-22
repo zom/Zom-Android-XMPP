@@ -51,25 +51,11 @@ public class CustomTypefaceEditText extends EditText {
             if (t != null)
                 setTypeface(t);
 
-            /**
-            if (CustomTypefaceManager.precomposeRequired()) {
-                //	addTextChangedListener(mTibetanTextWatcher);
-            }
-
-            addOnLayoutChangeListener(new OnLayoutChangeListener() {
-                @Override
-                public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-
-                    if (themeColorText != -1)
-                        setTextColor(themeColorText);
-                }
-            });*/
-
             mInit = true;
         }
 
 
-		if (themeColorText > 0)
+		if (themeColorText > 0 || themeColorText < -1)
 			setTextColor(themeColorText);
     	
 
@@ -81,7 +67,7 @@ public class CustomTypefaceEditText extends EditText {
 
 		super.setText(text, type);
 
-		if (themeColorText > 0)
+		if (themeColorText > 0 || themeColorText < -1)
 			setTextColor(themeColorText);
 
 	}
@@ -89,45 +75,5 @@ public class CustomTypefaceEditText extends EditText {
 
 
     
-	/*
-    TextWatcher mTibetanTextWatcher = new TextWatcher()
-	{
-    	
-    	
-		@Override
-		public void afterTextChanged(Editable s) {
-			
-			String newText = s.toString();
-			
-			if (CustomTypefaceManager.precomposeRequired() && newText.endsWith("\u0f0b"))
-			{
-				newText = CustomTypefaceManager.handlePrecompose(newText).trim();
-			
-				//now remove our watcher, set the value, then re-add our watcher
-				removeTextChangedListener(mTibetanTextWatcher);
-				setText(newText);
-				addTextChangedListener(mTibetanTextWatcher);
-			
-				//move the cursor to the end
-				setSelection(newText.length());
-			}
-		}
-
-		@Override
-		public void beforeTextChanged(CharSequence s, int start,
-				int count, int after) {
-			
-			
-		}
-
-		@Override
-		public void onTextChanged(CharSequence s, int start,
-				int before, int count) {
-			
-			
-		}
-		
-	};
-    */
 
 }
