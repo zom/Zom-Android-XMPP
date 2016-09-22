@@ -31,7 +31,6 @@ public class ConversationViewHolder extends RecyclerView.ViewHolder
         mAvatar = (ImageView)view.findViewById(R.id.avatar);
         mStatusIcon = (ImageView)view.findViewById(R.id.statusIcon);
         mStatusText = (TextView)view.findViewById(R.id.statusText);
-        //holder.mEncryptionIcon = (ImageView)view.findViewById(R.id.encryptionIcon);
 
         mContainer = view.findViewById(R.id.message_container);
 

@@ -70,7 +70,7 @@
   <string name="menu_approve_friend">Approve Friend?</string>
 
   <string name="header_got_invited">GOT INVITED?</string>
-  <string name="action_tap_invite">Tap the ZOM.IM link in the app your friend sent it to or scan their QR Code now</string>
+  <string name="action_tap_invite">Tap the Zom invite link from your friend or scan their QR code now</string>
 
   <string name="action_invite_new_friends">Send an invite link to your friends via SMS or SHARE through any app</string>
 

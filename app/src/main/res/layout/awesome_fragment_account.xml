@@ -111,7 +111,7 @@
 			                               android:layout_height="wrap_content"
 			                               android:orientation="horizontal"
 			                               android:padding="6dp">
-			                       <TextView android:id="@+id/edtPass"
+			                       <org.ironrabbit.type.CustomTypefaceTextView android:id="@+id/edtPass"
 			                               android:layout_width="wrap_content"
 			                               android:layout_height="wrap_content"
 			                               android:selectAllOnFocus="true"
@@ -156,7 +156,7 @@
 				android:layout_alignParentLeft="true"
 				/>
 
-		<TextView android:id="@+id/tvFingerprint"
+		<org.ironrabbit.type.CustomTypefaceTextView android:id="@+id/tvFingerprint"
 		                       android:selectAllOnFocus="true"
 		                       android:layout_width="200dp"
 		                       android:layout_height="wrap_content"

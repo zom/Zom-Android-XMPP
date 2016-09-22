@@ -71,8 +71,6 @@
     <style name="InviteDialog" parent="Base.Theme.AppCompat.Dialog">
         <item name="android:windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
-        <item name="android:textColor">#ffffff</item>
-        <item name="android:textColorSecondary">#dddddd</item>
 
     </style>
 

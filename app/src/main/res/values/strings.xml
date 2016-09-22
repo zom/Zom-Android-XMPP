@@ -112,7 +112,7 @@
 
     <string name="search_label">Contact</string>
     <string name="search_hint">type the name of a contact to chat with</string>
-    <string name="input_contact_label">Enter your friend\'s full username (name@chatserver.org) to add them</string>
+    <string name="input_contact_label">Enter your friend\'s full username (ie. zomisfun.4x3f5g@zom.im) here:</string>
     <!-- Views: Chat: Single -->
     <string name="contact_online"><xliff:g id="user">%1$s</xliff:g> is online</string>
     <string name="contact_away"><xliff:g id="user">%1$s</xliff:g> is away</string>
