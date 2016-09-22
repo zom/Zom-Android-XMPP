@@ -831,16 +831,23 @@ public class OnboardingActivity extends BaseActivity {
                                 public void onClick(DialogInterface dialog, int id) {
                                     setAvatar(mCropImageView.getCroppedImage(), mNewAccount);
                                     showInviteScreen();
+
+                                    delete(mOutputFileUri);
                                 }
                             })
                             .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
                                     // User cancelled the dialog
+
+                                    delete(mOutputFileUri);
+
                                 }
                             });
                     // Create the AlertDialog object and return it
                     android.support.v7.app.AlertDialog dialog = builder.create();
                     dialog.show();
+
+
                     ;
                 } catch (IOException ioe) {
                     Log.e(ImApp.LOG_TAG, "couldn't load avatar", ioe);
@@ -942,16 +949,34 @@ public class OnboardingActivity extends BaseActivity {
         return chooserIntent;
     }
 
+    Uri mOutputFileUri = null;
+
     /**
      * Get URI to image received from capture by camera.
      */
-    private Uri getCaptureImageOutputUri() {
-        Uri outputFileUri = null;
-        File getImage = getExternalCacheDir();
-        if (getImage != null) {
-            outputFileUri = Uri.fromFile(new File(getImage.getPath(), "pickImageResult.jpg"));
+    private synchronized Uri getCaptureImageOutputUri() {
+
+        if (mOutputFileUri == null) {
+            File photo = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), "zomavatar.jpg");
+            mOutputFileUri = Uri.fromFile(photo);
         }
-        return outputFileUri;
+
+        return mOutputFileUri;
+    }
+
+
+    private boolean delete(Uri uri) {
+        if (uri.getScheme().equals("content")) {
+            int deleted = getContentResolver().delete(uri,null,null);
+            return deleted == 1;
+        }
+        if (uri.getScheme().equals("file")) {
+            java.io.File file = new java.io.File(uri.toString().substring(5));
+
+            if (file.exists())
+                return file.delete();
+        }
+        return false;
     }
 
 
