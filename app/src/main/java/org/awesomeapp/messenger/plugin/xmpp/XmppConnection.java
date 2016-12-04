@@ -30,6 +30,7 @@ import org.awesomeapp.messenger.model.Message;
 import org.awesomeapp.messenger.model.Presence;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.provider.ImpsErrorInfo;
+import org.awesomeapp.messenger.service.IChatSession;
 import org.awesomeapp.messenger.service.adapters.ChatSessionAdapter;
 import org.awesomeapp.messenger.ui.legacy.DatabaseUtils;
 import org.awesomeapp.messenger.util.Debug;
@@ -1343,7 +1344,7 @@ public class XmppConnection extends ImConnection {
 
             sendPresencePacket();
 
-            getContactListManager().listenToRoster(mRoster);
+//            getContactListManager().listenToRoster(mRoster);
 
             MultiUserChatManager.getInstanceFor(mConnection).addInvitationListener(new InvitationListener() {
                 @Override
@@ -1640,8 +1641,14 @@ public class XmppConnection extends ImConnection {
                 handleMessage(smackMessage);
 
                 String msg_xml = smackMessage.toXML().toString();
-                handleChatState(smackMessage.getFrom(),msg_xml);
 
+                try {
+                    handleChatState(smackMessage.getFrom(), msg_xml);
+                }
+                catch (RemoteException re)
+                {
+                    //no worries
+                }
             }
         }, new StanzaTypeFilter(org.jivesoftware.smack.packet.Message.class));
 
@@ -1868,9 +1875,9 @@ public class XmppConnection extends ImConnection {
                             return; //do nothing if it is from us
                     }
 
-
-
                 }
+
+                setPresence(smackMessage.getFrom(),Presence.AVAILABLE);
 
                 boolean good = session.onReceiveMessage(rec);
 
@@ -2572,6 +2579,7 @@ public class XmppConnection extends ImConnection {
         	}
         }*/
 
+        /**
         public void listenToRoster(final Roster roster) {
 
             roster.addRosterListener(rListener);
@@ -2667,9 +2675,7 @@ public class XmppConnection extends ImConnection {
                     Log.d(TAG,"error adding contacts",e);
                 }
             }
-        };
-
-
+        };**/
 
 
         @Override
@@ -3503,27 +3509,37 @@ public class XmppConnection extends ImConnection {
 
     }
 
-    private void handleChatState (String from, String chatStateXml) {
+    private void handleChatState (String from, String chatStateXml) throws RemoteException {
 
         Presence p = null;
         Contact contact = mContactListManager.getContact(XmppAddress.stripResource(from));
         if (contact == null)
             return;
 
+        boolean isTyping = false;
+
         //handle is-typing, probably some indication on screen
-        if (chatStateXml.contains(ChatState.active.toString()) || chatStateXml.contains(ChatState.composing.toString())) {
+        if (chatStateXml.contains(ChatState.active.toString())) {
             p = new Presence(Presence.AVAILABLE, "", null, null,
-                    Presence.CLIENT_TYPE_DEFAULT);
+                    Presence.CLIENT_TYPE_MOBILE);
+
+        }
+        else if (chatStateXml.contains(ChatState.composing.toString())) {
+            p = new Presence(Presence.AVAILABLE, "", null, null,
+                    Presence.CLIENT_TYPE_MOBILE);
+
+            isTyping = true;
+
         }
         else if (chatStateXml.contains(ChatState.inactive.toString())||chatStateXml.contains(ChatState.paused.toString())) {
-      //      p = new Presence(Presence.AWAY, "", null, null,
-        //            Presence.CLIENT_TYPE_DEFAULT);
+
         }
         else if (chatStateXml.contains(ChatState.gone.toString())) {
 
-            p = new Presence(Presence.OFFLINE, "", null, null,
-                    Presence.CLIENT_TYPE_DEFAULT);
         }
+
+        IChatSession csa = mSessionManager.getAdapter().getChatSession(from);
+        csa.setContactTyping(contact, isTyping);
 
         if (p != null) {
             String[] presenceParts = from.split("/");
@@ -3536,6 +3552,29 @@ public class XmppConnection extends ImConnection {
             mContactListManager.notifyContactsPresenceUpdated(contactsUpdate.toArray(new Contact[contactsUpdate.size()]));
 
         }
+
+
+    }
+
+    private void setPresence (String from, int presenceType) {
+
+        Presence p = null;
+        Contact contact = mContactListManager.getContact(XmppAddress.stripResource(from));
+        if (contact == null)
+            return;
+
+        p = new Presence(presenceType, "", null, null,
+                Presence.CLIENT_TYPE_MOBILE);
+
+        String[] presenceParts = from.split("/");
+        if (presenceParts.length > 1)
+            p.setResource(presenceParts[1]);
+
+        contact.setPresence(p);
+        Collection<Contact> contactsUpdate = new ArrayList<Contact>();
+        contactsUpdate.add(contact);
+        mContactListManager.notifyContactsPresenceUpdated(contactsUpdate.toArray(new Contact[contactsUpdate.size()]));
+
 
 
     }
@@ -3565,7 +3604,7 @@ public class XmppConnection extends ImConnection {
         XmppAddress xaddress = new XmppAddress(presence.getFrom());
 
         Presence p = new Presence(parsePresence(presence), presence.getStatus(), null, null,
-                Presence.CLIENT_TYPE_DEFAULT);
+                Presence.CLIENT_TYPE_MOBILE);
 
         //this is only persisted in memory
         p.setPriority(presence.getPriority());
@@ -3739,7 +3778,7 @@ public class XmppConnection extends ImConnection {
 
                     }
                     
-                    loadVCardsAsync();
+                    //loadVCardsAsync();
 
                     //Log.d(TAG,"XMPP processed presence q=" + alUpdate.size());
 
@@ -3752,7 +3791,7 @@ public class XmppConnection extends ImConnection {
                 
              }
 
-          }, 1000, 1000);
+          }, 500, 500);
     }
     
     Timer mTimerPackets = null;

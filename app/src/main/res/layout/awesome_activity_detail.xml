@@ -115,7 +115,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_gravity="bottom"
-        android:background="@android:color/white"
         >
 
         <HorizontalScrollView
@@ -209,6 +208,17 @@
 
         </RelativeLayout>
 
+        <org.ironrabbit.type.CustomTypefaceTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Typing..."
+            android:layout_marginLeft="12dp"
+            android:id="@+id/tvTyping"
+            android:layout_below="@+id/history"
+            android:background="@android:color/transparent"
+            android:textColor="?messageTextPrimary"
+
+            />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -219,7 +229,7 @@
             android:layout_alignParentBottom="true"
             android:background="@android:color/white"
             android:id="@+id/inputLayout"
-            android:layout_below="@+id/history"
+            android:layout_below="@+id/tvTyping"
             android:layout_weight="2"
 
             >

@@ -441,6 +441,7 @@ public class ConversationView {
     private final static int PROMPT_FOR_DATA_TRANSFER = 9999;
     private final static int SHOW_DATA_PROGRESS = 9998;
     private final static int SHOW_DATA_ERROR = 9997;
+    private final static int SHOW_TYPING = 9996;
 
 
     private IChatListener mChatListener = new ChatListenerAdapter() {
@@ -527,7 +528,17 @@ public class ConversationView {
 
         }
 
+        @Override
+        public void onContactTyping(IChatSession ses, Contact contact, boolean isTyping) throws RemoteException {
+            super.onContactTyping(ses, contact, isTyping);
 
+            android.os.Message message = android.os.Message.obtain(null, SHOW_TYPING, (int) (mProviderId >> 32),
+                    (int) mProviderId, -1);
+
+            message.getData().putBoolean("typing", isTyping);
+
+            mHandler.sendMessage(message);
+        }
     };
 
     private void showPromptForData (final String transferFrom, String filePath)
@@ -2188,6 +2199,11 @@ public class ConversationView {
 
 
                 break;
+            case SHOW_TYPING:
+
+                boolean isTyping = msg.getData().getBoolean("typing");
+                mActivity.findViewById(R.id.tvTyping).setVisibility(isTyping ? View.VISIBLE : View.GONE);
+
              default:
                  updateWarningView();
             }

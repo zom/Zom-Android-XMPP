@@ -78,5 +78,8 @@ interface IChatListener {
 	
 	/** this is called when there is a incoming file transfer request **/
 	void onIncomingFileTransferError (String file, String message);
+
+    /** this is called when the contact is typing on the other end **/
+	void onContactTyping (IChatSession ses, in Contact contact, in boolean isActive);
 	
 }

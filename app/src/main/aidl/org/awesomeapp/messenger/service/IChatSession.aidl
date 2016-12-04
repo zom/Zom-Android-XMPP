@@ -20,6 +20,7 @@ package org.awesomeapp.messenger.service;
 import org.awesomeapp.messenger.service.IChatListener;
 import org.awesomeapp.messenger.service.IDataListener;
 import org.awesomeapp.messenger.model.Message;
+import org.awesomeapp.messenger.model.Contact;
 import org.awesomeapp.messenger.crypto.IOtrChatSession;
 
 
@@ -128,5 +129,11 @@ interface IChatSession {
          * Sends a ChatSecure-Push Whitelist token to all participants in this ChatSession.
      */
      boolean sendPushWhitelistToken(String token);
+
+     /**
+     * set typing active indicator for contact
+     **/
+     void setContactTyping (in Contact contact, boolean isTyping);
+
 }
 
