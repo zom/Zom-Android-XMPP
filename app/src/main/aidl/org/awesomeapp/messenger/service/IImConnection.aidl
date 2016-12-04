@@ -73,4 +73,7 @@ interface IImConnection {
     void sendHeartbeat();
     
     void setProxy(String type, String host, int port);
+
+    void sendTypingStatus (in String to, boolean isTyping);
+
 }

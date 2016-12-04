@@ -315,4 +315,12 @@ public class LoopbackConnection extends ImConnection {
     @Override
     public void logout() {
     }
+
+
+    @Override
+    public void sendTypingStatus (String to, boolean isTyping)
+    {
+
+        //sendChatState (session, isTyping ? ChatSTate.paused : ChatState.composing);
+    }
 }

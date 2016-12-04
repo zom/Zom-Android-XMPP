@@ -217,7 +217,7 @@
             android:layout_below="@+id/history"
             android:background="@android:color/transparent"
             android:textColor="?messageTextPrimary"
-
+            android:visibility="gone"
             />
 
         <LinearLayout

@@ -1349,6 +1349,11 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         mRemoteListeners.finishBroadcast();
     }
 
+    public void sendTypingStatus (boolean isTyping)
+    {
+       // mConnection.sendTypingStatus("fpp", isTyping);
+    }
+
 
 
 }

@@ -67,6 +67,7 @@ import org.jivesoftware.smackx.address.provider.MultipleAddressesProvider;
 import org.jivesoftware.smackx.bytestreams.socks5.provider.BytestreamsProvider;
 import org.jivesoftware.smackx.chatstates.ChatState;
 import org.jivesoftware.smackx.chatstates.ChatStateListener;
+import org.jivesoftware.smackx.chatstates.ChatStateManager;
 import org.jivesoftware.smackx.chatstates.packet.ChatStateExtension;
 import org.jivesoftware.smackx.commands.provider.AdHocCommandDataProvider;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
@@ -157,6 +158,7 @@ public class XmppConnection extends ImConnection {
     // Synchronized by executor thread
     private XMPPTCPConnection mConnection;
     private XmppStreamHandler mStreamHandler;
+    private ChatManager mChatManager;
 
     private Roster mRoster;
 
@@ -795,6 +797,7 @@ public class XmppConnection extends ImConnection {
             }
         }
 
+
         @Override
         public void joinChatGroupAsync(Address address, String subject) {
 
@@ -1328,6 +1331,8 @@ public class XmppConnection extends ImConnection {
             mRoster = Roster.getInstanceFor(mConnection);
             mRoster.setRosterLoadedAtLogin(true);
             mRoster.setSubscriptionMode(subMode);
+
+            mChatManager = ChatManager.getInstanceFor(mConnection);
 
             mPingManager = PingManager.getInstanceFor(mConnection) ;
 
@@ -3554,6 +3559,32 @@ public class XmppConnection extends ImConnection {
         }
 
 
+    }
+
+    @Override
+    public void sendTypingStatus (final String to, final boolean isTyping)
+    {
+        mExecutor.execute(new Runnable() {
+            public void run() {
+                sendChatState(to, isTyping ? ChatState.inactive : ChatState.composing);
+            }
+        });
+    }
+
+    private void sendChatState (String to, ChatState currentChatState)
+    {
+        try {
+
+            if (mConnection.isConnected())
+            {
+                Chat thisChat = mChatManager.createChat(to);
+                ChatStateManager.getInstance(mConnection).setCurrentState(currentChatState, thisChat);
+            }
+        }
+        catch (Exception e)
+        {
+            Log.e(ImApp.LOG_TAG,"error sending chat state",e);
+        }
     }
 
     private void setPresence (String from, int presenceType) {

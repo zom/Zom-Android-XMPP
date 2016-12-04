@@ -257,4 +257,7 @@ public abstract class ImConnection {
     public abstract void sendHeartbeat(long heartbeatInterval);
 
     public abstract void setProxy(String type, String host, int port);
+
+    public abstract void sendTypingStatus (String to, boolean isTyping);
+
 }

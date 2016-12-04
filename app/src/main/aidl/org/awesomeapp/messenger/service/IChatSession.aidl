@@ -135,5 +135,9 @@ interface IChatSession {
      **/
      void setContactTyping (in Contact contact, boolean isTyping);
 
+   /**
+     * set typing active indicator for contact
+     **/
+     void sendTypingStatus (boolean isTyping);
 }
 

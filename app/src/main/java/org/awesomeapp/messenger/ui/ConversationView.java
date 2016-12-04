@@ -539,6 +539,8 @@ public class ConversationView {
 
             mHandler.sendMessage(message);
         }
+
+
     };
 
     private void showPromptForData (final String transferFrom, String filePath)
@@ -910,6 +912,13 @@ public class ConversationView {
             }
         });
 
+        mComposeMessage.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                sendTypingStatus(hasFocus);
+            }
+        });
+
         mComposeMessage.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -926,9 +935,8 @@ public class ConversationView {
                             }
                     }
 
-
-
                 }
+
 
                 return false;
             }
@@ -960,12 +968,15 @@ public class ConversationView {
             public void onTextChanged(CharSequence s, int start, int before, int after) {
                 //log("TextWatcher: " + s);
                 //userActionDetected();
+                sendTypingStatus (true);
 
             }
 
             public void afterTextChanged(Editable s) {
                 doWordSearch ();
                 userActionDetected();
+                sendTypingStatus (false);
+
             }
         });
 
@@ -1035,6 +1046,23 @@ public class ConversationView {
 
         mMessageAdapter = new ConversationRecyclerViewAdapter(mActivity, null);
         mHistory.setAdapter(mMessageAdapter);
+
+    }
+
+    private boolean mLastIsTyping = false;
+
+    private void sendTypingStatus (boolean isTyping) {
+
+        if (mLastIsTyping != isTyping) {
+            try {
+                mConn.sendTypingStatus(mRemoteAddress, isTyping);
+
+            } catch (Exception ie) {
+                Log.e(ImApp.LOG_TAG, "error sending typing status", ie);
+            }
+
+            mLastIsTyping = isTyping;
+        }
 
     }
 

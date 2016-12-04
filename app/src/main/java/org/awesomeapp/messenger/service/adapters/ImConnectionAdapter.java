@@ -615,4 +615,11 @@ public class ImConnectionAdapter extends org.awesomeapp.messenger.service.IImCon
                     sender);
         }
     }
+
+    public void sendTypingStatus (String to, boolean isTyping)
+    {
+        if (mConnection != null)
+            mConnection.sendTypingStatus(to,isTyping);
+
+    }
 }
