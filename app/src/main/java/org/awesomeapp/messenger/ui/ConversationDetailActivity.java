@@ -56,6 +56,8 @@ import android.widget.Toast;
 
 //import com.bumptech.glide.Glide;
 
+import net.java.otr4j.session.SessionStatus;
+
 import org.awesomeapp.messenger.model.Contact;
 import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
 import org.awesomeapp.messenger.provider.Imps;
@@ -266,6 +268,26 @@ public class ConversationDetailActivity extends BaseActivity {
         regFilter .addAction(Intent.ACTION_SCREEN_OFF);
         regFilter .addAction(Intent.ACTION_SCREEN_ON);
         registerReceiver(receiver, regFilter);
+
+
+        if (mConvoView.getOtrSessionStatus() == SessionStatus.ENCRYPTED
+                && (!mConvoView.isOtrSessionVerified())
+                )
+        {
+
+            Snackbar sb = Snackbar.make(mConvoView.getHistoryView(), R.string.not_verified, Snackbar.LENGTH_LONG);
+
+            sb.setAction(R.string.ok, new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    mConvoView.showVerifyDialog();
+                }
+            });
+
+            sb.show();;
+
+        }
 
 
     }

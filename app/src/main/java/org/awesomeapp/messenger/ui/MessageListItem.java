@@ -822,11 +822,11 @@ public class MessageListItem extends FrameLayout {
             }
             else
             {
-                int color = getAvatarBorder(presenceStatus);
+              //  int color = getAvatarBorder(presenceStatus);
                 int padding = 24;
 
                 if (nickname.length() > 0) {
-                    LetterAvatar lavatar = new LetterAvatar(getContext(), color, nickname.substring(0, 1), padding);
+                    LetterAvatar lavatar = new LetterAvatar(getContext(), nickname, padding);
 
                     mHolder.mAvatar.setVisibility(View.VISIBLE);
                     mHolder.mAvatar.setImageDrawable(lavatar);
@@ -835,6 +835,7 @@ public class MessageListItem extends FrameLayout {
         }
     }
 
+    /**
     public int getAvatarBorder(int status) {
         switch (status) {
         case Presence.AVAILABLE:
@@ -855,7 +856,7 @@ public class MessageListItem extends FrameLayout {
         }
 
         return Color.TRANSPARENT;
-    }
+    }**/
 
     public void bindPresenceMessage(MessageViewHolder holder, String contact, int type, Date date, boolean isGroupChat, boolean scrolling) {
 

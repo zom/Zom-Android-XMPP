@@ -38,7 +38,6 @@ import android.os.PowerManager.WakeLock;
 import android.os.RemoteCallbackList;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
@@ -65,13 +64,10 @@ import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.service.adapters.ImConnectionAdapter;
 import org.awesomeapp.messenger.ui.legacy.DummyActivity;
 import org.awesomeapp.messenger.ui.legacy.ImPluginHelper;
-import org.awesomeapp.messenger.ui.legacy.NetworkConnectivityListener;
-import org.awesomeapp.messenger.ui.legacy.NetworkConnectivityListener.State;
+import org.awesomeapp.messenger.service.NetworkConnectivityReceiver.State;
 import org.awesomeapp.messenger.util.Debug;
 import org.awesomeapp.messenger.util.LogCleaner;
 import org.awesomeapp.messenger.util.SecureMediaStore;
-import org.chatsecure.pushsecure.PushSecureClient;
-import org.chatsecure.pushsecure.response.Account;
 
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
@@ -125,7 +121,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
     final RemoteCallbackList<IConnectionCreationListener> mRemoteListeners = new RemoteCallbackList<IConnectionCreationListener>();
     public long mHeartbeatInterval;
     private WakeLock mWakeLock;
-    private  NetworkConnectivityListener.State mNetworkState;
+    private  NetworkConnectivityReceiver.State mNetworkState;
 
     private CacheWordHandler mCacheWord = null;
 
@@ -313,7 +309,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
     public void sendHeartbeat() {
         Debug.onHeartbeat();
         try {
-            if (mNeedCheckAutoLogin && mNetworkState != NetworkConnectivityListener.State.NOT_CONNECTED) {
+            if (mNeedCheckAutoLogin && mNetworkState != NetworkConnectivityReceiver.State.NOT_CONNECTED) {
                 debug("autoLogin from heartbeat");
                 mNeedCheckAutoLogin = !autoLogin();;
             }
@@ -360,7 +356,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
             if (HeartbeatService.NETWORK_STATE_ACTION.equals(intent.getAction())) {
                 NetworkInfo networkInfo = (NetworkInfo) intent
                         .getParcelableExtra(HeartbeatService.NETWORK_INFO_EXTRA);
-                NetworkConnectivityListener.State networkState = State.values()[intent.getIntExtra(HeartbeatService.NETWORK_STATE_EXTRA, 0)];
+                NetworkConnectivityReceiver.State networkState = State.values()[intent.getIntExtra(HeartbeatService.NETWORK_STATE_EXTRA, 0)];
 
                 if (!mWakeLock.isHeld())
                 {
@@ -392,7 +388,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
         debug("ImService.onStart, checkAutoLogin=" + mNeedCheckAutoLogin + " intent =" + intent
                 + " startId =" + startId);
 
-        if (mNeedCheckAutoLogin && mNetworkState != NetworkConnectivityListener.State.NOT_CONNECTED) {
+        if (mNeedCheckAutoLogin && mNetworkState != NetworkConnectivityReceiver.State.NOT_CONNECTED) {
             debug("autoLogin from heartbeat");
             mNeedCheckAutoLogin = !autoLogin();;
         }
@@ -685,7 +681,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
         return mNetworkState == State.CONNECTED;
     }
 
-    void networkStateChanged(NetworkInfo networkInfo, NetworkConnectivityListener.State networkState) {
+    void networkStateChanged(NetworkInfo networkInfo, NetworkConnectivityReceiver.State networkState) {
 
         mNetworkType = networkInfo != null ? networkInfo.getType() : -1;
 
@@ -951,7 +947,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
             // Check and login accounts if network is ready, otherwise it's checked
             // when the network becomes available.
-            if (mNeedCheckAutoLogin && mNetworkState != NetworkConnectivityListener.State.NOT_CONNECTED) {
+            if (mNeedCheckAutoLogin && mNetworkState != NetworkConnectivityReceiver.State.NOT_CONNECTED) {
                 mNeedCheckAutoLogin = !autoLogin();;
             }
         }
@@ -972,7 +968,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
         // Check and login accounts if network is ready, otherwise it's checked
         // when the network becomes available.
-        if (mNeedCheckAutoLogin && mNetworkState != NetworkConnectivityListener.State.NOT_CONNECTED) {
+        if (mNeedCheckAutoLogin && mNetworkState != NetworkConnectivityReceiver.State.NOT_CONNECTED) {
             mNeedCheckAutoLogin = !autoLogin();;
         }
 

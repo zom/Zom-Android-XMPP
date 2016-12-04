@@ -120,6 +120,15 @@ public class ContactDisplayActivity extends BaseActivity {
         ImageView iv = (ImageView)findViewById(R.id.qrcode);
         tv = (TextView)findViewById(R.id.tvFingerprint);
 
+        Button btnVerify = (Button)findViewById(R.id.btnVerify);
+        btnVerify.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                verifyRemoteFingerprint();
+                findViewById(R.id.btnVerify).setVisibility(View.GONE);
+            }
+        });
+
         try {
             IChatSessionManager manager = mConn.getChatSessionManager();
             IChatSession session = manager.getChatSession(mUsername);
@@ -167,16 +176,26 @@ public class ContactDisplayActivity extends BaseActivity {
                             }
                         }
                     });
+
+                    boolean isVerified = session.getDefaultOtrChatSession().isKeyVerified(mUsername);
+
+                    if (isVerified)
+                        btnVerify.setVisibility(View.GONE);
+
+
                 } else {
                     iv.setVisibility(View.GONE);
                     tv.setVisibility(View.GONE);
                     btnQrShare.setVisibility(View.GONE);
+                    btnVerify.setVisibility(View.GONE);
+
                 }
             }
             else {
                 iv.setVisibility(View.GONE);
                 tv.setVisibility(View.GONE);
                 btnQrShare.setVisibility(View.GONE);
+                btnVerify.setVisibility(View.GONE);
             }
         }
         catch (Exception e)
@@ -194,8 +213,8 @@ public class ContactDisplayActivity extends BaseActivity {
             }
         });
 
-        if (mContactId != -1)
-            showGallery (mContactId);
+//        if (mContactId != -1)
+  //          showGallery (mContactId);
 
     }
 

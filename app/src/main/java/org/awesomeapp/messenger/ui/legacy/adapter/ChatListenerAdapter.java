@@ -111,4 +111,9 @@ public class ChatListenerAdapter extends IChatListener.Stub {
 
     }
 
+    @Override
+    public void onContactTyping(IChatSession ses, Contact contact, boolean isTyping) throws RemoteException {
+
+    }
+
 }

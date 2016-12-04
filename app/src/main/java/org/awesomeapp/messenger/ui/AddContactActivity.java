@@ -130,6 +130,9 @@ public class AddContactActivity extends BaseActivity {
         }
 
         setupActions ();
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
     }
 
 

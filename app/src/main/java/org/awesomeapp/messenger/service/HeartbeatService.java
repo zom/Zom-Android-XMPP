@@ -11,7 +11,6 @@ import android.os.Message;
 import android.os.SystemClock;
 
 import org.awesomeapp.messenger.Preferences;
-import org.awesomeapp.messenger.ui.legacy.NetworkConnectivityListener;
 
 /**
  * This service exists because a foreground service receiving a wakeup alarm from the OS will cause
@@ -30,7 +29,7 @@ public class HeartbeatService extends Service {
     private PendingIntent mPendingIntent;
     private Intent mRelayIntent;
     private ServiceHandler mServiceHandler;
-    private NetworkConnectivityListener mNetworkConnectivityListener;
+    private NetworkConnectivityReceiver mNetworkConnectivityListener;
     private static final int EVENT_NETWORK_STATE_CHANGED = 200;
 
 
@@ -52,8 +51,8 @@ public class HeartbeatService extends Service {
 
         mServiceHandler = new ServiceHandler();
 
-        mNetworkConnectivityListener = new NetworkConnectivityListener();
-        NetworkConnectivityListener.registerHandler(mServiceHandler, EVENT_NETWORK_STATE_CHANGED);
+        mNetworkConnectivityListener = new NetworkConnectivityReceiver();
+        NetworkConnectivityReceiver.registerHandler(mServiceHandler, EVENT_NETWORK_STATE_CHANGED);
         mNetworkConnectivityListener.startListening(this);
     }
 
@@ -70,7 +69,7 @@ public class HeartbeatService extends Service {
     @Override
     public void onDestroy() {
         startHeartbeat(0);
-        NetworkConnectivityListener.unregisterHandler(mServiceHandler);
+        NetworkConnectivityReceiver.unregisterHandler(mServiceHandler);
         mNetworkConnectivityListener.stopListening();
         mNetworkConnectivityListener = null;
         super.onDestroy();

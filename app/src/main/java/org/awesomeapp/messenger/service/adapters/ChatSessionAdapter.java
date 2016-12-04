@@ -1333,6 +1333,22 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         return true;
     }
 
+    public void setContactTyping (Contact contact, boolean isTyping)
+    {
+
+        int N = mRemoteListeners.beginBroadcast();
+        for (int i = 0; i < N; i++) {
+            IChatListener listener = mRemoteListeners.getBroadcastItem(i);
+            try {
+                listener.onContactTyping(ChatSessionAdapter.this,contact, isTyping);
+            } catch (RemoteException e) {
+                // The RemoteCallbackList will take care of removing the
+                // dead listeners.
+            }
+        }
+        mRemoteListeners.finishBroadcast();
+    }
+
 
 
 }

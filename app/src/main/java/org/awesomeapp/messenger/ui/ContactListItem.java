@@ -193,16 +193,9 @@ public class ContactListItem extends FrameLayout {
                     }
                     else
                     {
-                        String letterString = null;
-                                
-                        if (nickname.length() > 0)
-                            letterString = nickname.substring(0,1);
-                        else
-                            letterString = "?"; //the unknown name!
-                         
-                        int color = getAvatarBorder(presence);
+                        //int color = getAvatarBorder(presence);
                         int padding = 24;
-                        LetterAvatar lavatar = new LetterAvatar(getContext(), color, letterString, padding);
+                        LetterAvatar lavatar = new LetterAvatar(getContext(), nickname, padding);
                         
                         holder.mAvatar.setImageDrawable(lavatar);
 

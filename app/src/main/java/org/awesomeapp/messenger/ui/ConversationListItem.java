@@ -189,23 +189,16 @@ public class ConversationListItem extends FrameLayout {
                 {
                     if (avatar != null)
                     {
-                        if (avatar instanceof RoundedAvatarDrawable)
-                            setAvatarBorder(presence,(RoundedAvatarDrawable)avatar);
+                        //if (avatar instanceof RoundedAvatarDrawable)
+                          //  setAvatarBorder(presence,(RoundedAvatarDrawable)avatar);
 
                         holder.mAvatar.setImageDrawable(avatar);
                     }
                     else
                     {
-                        String letterString = null;
-                                
-                        if (nickname.length() > 0)
-                            letterString = nickname.substring(0,1);
-                        else
-                            letterString = "?"; //the unknown name!
-                         
-                        int color = getAvatarBorder(presence);
+                       // int color = getAvatarBorder(presence);
                         int padding = 24;
-                        LetterAvatar lavatar = new LetterAvatar(getContext(), color, letterString, padding);
+                        LetterAvatar lavatar = new LetterAvatar(getContext(), nickname, padding);
                         
                         holder.mAvatar.setImageDrawable(lavatar);
 
@@ -385,6 +378,7 @@ public class ConversationListItem extends FrameLayout {
 
     }
 
+    /**
     public void setAvatarBorder(int status, RoundedAvatarDrawable avatar) {
         switch (status) {
         case Presence.AVAILABLE:
@@ -412,7 +406,7 @@ public class ConversationListItem extends FrameLayout {
 
         default:
         }
-    }
+    }**/
     
     public int getAvatarBorder(int status) {
         switch (status) {
