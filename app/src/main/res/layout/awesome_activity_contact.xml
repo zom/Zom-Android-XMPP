@@ -64,7 +64,6 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:padding="10dp">
 
                 <org.ironrabbit.type.CustomTypefaceTextView android:id="@+id/tvNickname"
@@ -112,15 +111,26 @@
         </RelativeLayout>
 
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp">
+        <org.ironrabbit.type.CustomTypefaceTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:autoLink="none"
+            android:text="@string/security_code"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="?contactTextSecondary"
+            android:layout_gravity="start"
+            />
+</RelativeLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:padding="10dp"
             >
-
-
 
             <ImageView
                 android:layout_width="64dp"
@@ -138,7 +148,7 @@
                 android:layout_marginLeft="6dp"
                 android:autoLink="none"
                 android:text=""
-                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="?contactTextSecondary"
 
                 android:layout_toRightOf="@+id/qrcode"
@@ -153,6 +163,21 @@
                 android:padding="6dp"
                 android:layout_margin="1dp"
                 />
+
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp">
+            <org.ironrabbit.type.CustomTypefaceButton android:id="@+id/btnVerify"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/menu_verify"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="?contactTextSecondary"
+                >
+
+            </org.ironrabbit.type.CustomTypefaceButton>
 
         </RelativeLayout>
         </LinearLayout>
