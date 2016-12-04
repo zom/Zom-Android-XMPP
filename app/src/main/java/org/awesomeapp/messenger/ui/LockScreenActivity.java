@@ -34,7 +34,9 @@ import org.awesomeapp.messenger.Preferences;
 import org.awesomeapp.messenger.ui.legacy.ThemeableActivity;
 import org.ironrabbit.type.CustomTypefaceManager;
 
+import java.security.GeneralSecurityException;
 import java.util.List;
+import java.util.UUID;
 
 public class LockScreenActivity extends BaseActivity implements ICacheWordSubscriber {
     private static final String TAG = "LockScreenActivity";
@@ -58,6 +60,7 @@ public class LockScreenActivity extends BaseActivity implements ICacheWordSubscr
     private TextView mBtnSkip;
 
     public static final String ACTION_CHANGE_PASSPHRASE = "cp";
+    public static final String ACTION_RESET_PASSPHRASE = "reset";
 
     private Handler mHandler = new Handler();
 
@@ -115,6 +118,7 @@ public class LockScreenActivity extends BaseActivity implements ICacheWordSubscr
             {
                 changePassphrase();
             }
+
 
         //not set color
         final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
@@ -208,6 +212,8 @@ public class LockScreenActivity extends BaseActivity implements ICacheWordSubscr
         }
     }
 
+
+
     private void changePassphrase() {
         // Passphrase is not set, so allow the user to create one
 
@@ -222,7 +228,12 @@ public class LockScreenActivity extends BaseActivity implements ICacheWordSubscr
             {
                 if (actionId == EditorInfo.IME_NULL || actionId == EditorInfo.IME_ACTION_DONE)
                 {
-                    if (!isPasswordValid())
+                    if (isPasswordFieldEmpty())
+                    {
+                        resetPassphrase();
+                        finish();
+                    }
+                    else if (!isPasswordValid())
                         showValidationError();
                     else
                         mSlider.showConfirmationField();
@@ -250,7 +261,12 @@ public class LockScreenActivity extends BaseActivity implements ICacheWordSubscr
             @Override
             public void onClick(View v) {
                 // validate
-                if (!isPasswordValid()) {
+                if (isPasswordFieldEmpty())
+                {
+                    resetPassphrase();
+                    finish();
+                }
+                else if (!isPasswordValid()) {
                     showValidationError();
                     mSlider.showNewPasswordField();
                 } else if (isConfirmationFieldEmpty() && !isPasswordFieldEmpty()) {
@@ -406,6 +422,7 @@ public class LockScreenActivity extends BaseActivity implements ICacheWordSubscr
             finish();
         }
 
+
     }
 
     private void checkCustomFont ()
@@ -438,6 +455,27 @@ public class LockScreenActivity extends BaseActivity implements ICacheWordSubscr
 
             }
         }
+
+    }
+
+    void resetPassphrase () {
+
+        //set temporary passphrase
+        try {
+            PassphraseSecrets p = (PassphraseSecrets)mCacheWord.getCachedSecrets();
+
+            if (p != null) {
+                String tempPassphrase = UUID.randomUUID().toString();
+                SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+                settings.edit().putString(ImApp.PREFERENCE_KEY_TEMP_PASS, tempPassphrase).apply();
+                mCacheWord.changePassphrase(p, tempPassphrase.toCharArray());
+            }
+
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
 
     }
 

@@ -575,6 +575,12 @@ public class MainActivity extends BaseActivity {
             });
         }
 
+        MenuItem mItem = menu.findItem(R.id.menu_lock_reset);
+
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+        if (!settings.contains(ImApp.PREFERENCE_KEY_TEMP_PASS))
+            mItem.setVisible(true);
+
         return true;
     }
 
@@ -598,9 +604,27 @@ public class MainActivity extends BaseActivity {
                 Intent i = new Intent(MainActivity.this, AccountsActivity.class);
                 startActivity(i);
                 return true;
+
+            case R.id.menu_lock_reset:
+                resetPassphrase();
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
+
+    public void resetPassphrase ()
+    {
+        /**
+        Intent intent = new Intent(this, LockScreenActivity.class);
+        intent.setAction(LockScreenActivity.ACTION_RESET_PASSPHRASE);
+        startActivity(intent);**/
+
+        //need to setup new user passphrase
+        Intent intent = new Intent(this, LockScreenActivity.class);
+        intent.setAction(LockScreenActivity.ACTION_CHANGE_PASSPHRASE);
+        startActivity(intent);
+    }
+
 
     public void handleLock ()
     {
