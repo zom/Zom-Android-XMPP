@@ -282,8 +282,7 @@
         <activity
             android:name="org.awesomeapp.messenger.ui.AddContactActivity"
             android:exported="false"
-            android:label="@string/add_friends"
-            android:theme="@style/InviteDialog" />
+            android:label="@string/add_friends" />
         <activity
             android:name="org.awesomeapp.messenger.ui.ContactsPickerActivity"
             android:exported="false"
@@ -357,7 +356,7 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
         <receiver
-            android:name="org.awesomeapp.messenger.ui.legacy.NetworkConnectivityListener"
+            android:name="org.awesomeapp.messenger.service.NetworkConnectivityReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
