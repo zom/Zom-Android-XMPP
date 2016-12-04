@@ -27,4 +27,12 @@
         android:title="@string/lock_app"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/menu_lock_reset"
+        android:icon="@drawable/ic_lock_outline_black_18dp"
+        android:title="@string/reset_passphrase"
+        app:showAsAction="never"
+        android:visible="false"
+        />
+
 </menu>
