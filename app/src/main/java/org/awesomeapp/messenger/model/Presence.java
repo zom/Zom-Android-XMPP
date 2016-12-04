@@ -21,6 +21,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -44,7 +45,8 @@ public final class Presence implements Parcelable {
     public static final int AVAILABLE = 5;
     //public static final int NOT_SUBSCRIBED = 5;
     public static final int MAX_PRESENCE = 5;
-    
+
+
     
     /**
      * 
@@ -67,6 +69,7 @@ public final class Presence implements Parcelable {
     private String mResource;
     private int mPriority = 0;
     private Map<String, String> mExtendedInfo;
+    private Date mLastSeen = new Date();
 
     public Presence() {
         this(Presence.OFFLINE, null, null, null, CLIENT_TYPE_DEFAULT, null, null);
@@ -108,6 +111,11 @@ public final class Presence implements Parcelable {
         //this may not exist for older persisted presence data
         if (source.dataAvail() > 0)
             mResource = source.readString();        
+    }
+
+    public Date getLastSeen ()
+    {
+        return mLastSeen;
     }
 
     /**
