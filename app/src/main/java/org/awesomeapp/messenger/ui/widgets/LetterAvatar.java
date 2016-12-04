@@ -9,6 +9,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
+import android.text.TextUtils;
 
 import org.ironrabbit.type.CustomTypefaceManager;
 
@@ -32,16 +33,22 @@ public class LetterAvatar extends ColorDrawable {
 
         RectF rectBounds = new RectF();
         
-        public LetterAvatar (Context context, int color, String letter, int paddingInDp) {
+        public LetterAvatar (Context context, String nickname, int paddingInDp) {
             super(Color.TRANSPARENT);
             this.context = context;
-            this.pLetters = letter;
+
+            if (!TextUtils.isEmpty(nickname))
+                this.pLetters = nickname.substring(0,1);
+            else
+                this.pLetters = "?";
+
             this.pResources = context.getResources();
             ONE_DP = 1 * pResources.getDisplayMetrics().density;
             this.pPadding = Math.round(paddingInDp * ONE_DP);
-            this.backgroundColor = color;
             this.rectBounds = new RectF();
-            
+
+            this.backgroundColor = ColorGenerator.MATERIAL.getColor(nickname);
+
         }
         
         @Override
@@ -86,5 +93,7 @@ public class LetterAvatar extends ColorDrawable {
           rectBounds.set(bounds);
           
         }
+
+
 
     }

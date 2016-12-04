@@ -67,12 +67,13 @@ public class RoundedAvatarDrawable extends Drawable {
       mPaintBorder.setColor(borderColor);
   }
 
+
   @Override
   public void draw(Canvas canvas) {
     canvas.drawOval(mRectF, mPaint);
 
-    float halfWidth = mRectF.width()/2;
-    canvas.drawCircle(halfWidth, halfWidth, halfWidth-mBorderWidth/2, mPaintBorder);
+  //  float halfWidth = mRectF.width()/2;
+  //  canvas.drawCircle(halfWidth, halfWidth, halfWidth-mBorderWidth/2, mPaintBorder);
   }
 
   @Override
