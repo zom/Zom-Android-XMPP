@@ -74,4 +74,9 @@
 
   <string name="action_invite_new_friends">Send an invite link to your friends via SMS or SHARE through any app</string>
 
+  <string name="not_verified">Please verify your friend\'s Secure Identity to be safe!</string>
+
+  <string name="security_code">Secure Identity</string>
+
+  <string name="reset_passphrase">Reset Lock</string>
 </resources>
