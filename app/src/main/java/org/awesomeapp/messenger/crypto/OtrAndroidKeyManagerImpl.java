@@ -792,13 +792,23 @@ public class OtrAndroidKeyManagerImpl extends IOtrKeyManager.Stub implements Otr
         try {
             String fingerprintString = new OtrCryptoEngineImpl().getFingerprint(pubKey);
             String verifiedToken = buildPublicKeyVerifiedId(sessionID.getRemoteUserId(), fingerprintString);
-            if (!this.store.hasProperty(verifiedToken))
-                this.store.setProperty(verifiedToken, false);
+            String fingerprintKey = fullUserId + ".fingerprint";
 
-            this.store.setProperty(fullUserId + ".fingerprint", fingerprintString);
+            //if a fingerprint for this userid exists, then check if the key is verified
+            if (this.store.hasProperty(fingerprintKey)) {
+                if (!this.store.hasProperty(verifiedToken))
+                    this.store.setProperty(verifiedToken, false);
+            }
+            else
+            {
+                //if there is no key, then we can "trust on first use"!
+                this.store.setProperty(fingerprintKey, fingerprintString);
+                this.store.setProperty(verifiedToken, true);
+            }
+
             
         } catch (OtrCryptoException e) {
-            e.printStackTrace();
+            Log.e(ImApp.LOG_TAG,"otr error: " + e.getMessage(),e);
         }
     }
 

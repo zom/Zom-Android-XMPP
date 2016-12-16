@@ -275,7 +275,7 @@ public class ConversationDetailActivity extends BaseActivity {
                 )
         {
 
-            Snackbar sb = Snackbar.make(mConvoView.getHistoryView(), R.string.not_verified, Snackbar.LENGTH_LONG);
+            Snackbar sb = Snackbar.make(mConvoView.getHistoryView(), R.string.not_verified, Snackbar.LENGTH_INDEFINITE);
 
             sb.setAction(R.string.ok, new View.OnClickListener() {
                 @Override
