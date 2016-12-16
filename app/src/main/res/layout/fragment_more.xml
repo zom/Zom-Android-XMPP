@@ -18,27 +18,56 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="6dp"
-        android:id="@+id/btnOpenGalllery"
+        android:id="@+id/btnOpenServices"
         >
 
         <org.awesomeapp.messenger.ui.CircleColorImageView
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:src="@drawable/ic_photo_library_white_36dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_system_update_white_24dp"
             android:layout_margin="6dp"
-            android:padding="12dp"
+            android:padding="6dp"
             android:layout_gravity="center"
-            app:circleColor="@android:color/holo_blue_light"
+            app:circleColor="@color/zom_primary"
             />
         <org.ironrabbit.type.CustomTypefaceTextView
 
             android:layout_width="match_parent"
-            android:layout_height="96dp"
+            android:layout_height="64dp"
+            android:text="@string/action_services"
+            android:layout_gravity="center"
+            android:gravity="center_vertical"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_marginLeft="6dp"
+            />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="6dp"
+        android:id="@+id/btnOpenGalllery"
+        >
+
+        <org.awesomeapp.messenger.ui.CircleColorImageView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_photo_library_white_36dp"
+            android:layout_margin="6dp"
+            android:padding="6dp"
+            android:layout_gravity="center"
+            app:circleColor="@color/material_deep_teal_20"
+            />
+        <org.ironrabbit.type.CustomTypefaceTextView
+
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
             android:text="@string/photo_gallery"
             android:layout_gravity="center"
             android:gravity="center_vertical"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:layout_marginLeft="12dp"
+            android:layout_marginLeft="6dp"
             />
 
 </LinearLayout>
@@ -51,22 +80,22 @@
         >
 
         <org.awesomeapp.messenger.ui.CircleColorImageView
-            android:layout_width="64dp"
-            android:layout_height="64dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:src="@drawable/ic_group_add_white_36dp"
             android:layout_margin="6dp"
-            android:padding="12dp"
+            android:padding="6dp"
             android:layout_gravity="center"
             app:circleColor="@android:color/holo_green_light"
             />
     <org.ironrabbit.type.CustomTypefaceTextView
         android:layout_width="match_parent"
-        android:layout_height="96dp"
+        android:layout_height="64dp"
         android:text="@string/create_group"
         android:layout_gravity="center"
         android:gravity="center_vertical"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:layout_marginLeft="12dp"
+        android:layout_marginLeft="6dp"
 
         />
 </LinearLayout>
@@ -79,22 +108,22 @@
         >
 
         <org.awesomeapp.messenger.ui.CircleColorImageView
-            android:layout_width="64dp"
-            android:layout_height="64dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:src="@drawable/ic_insert_emoticon_white_36dp"
             android:layout_margin="6dp"
-            android:padding="12dp"
+            android:padding="6dp"
             android:layout_gravity="center"
             app:circleColor="@android:color/holo_orange_light"
             />
         <org.ironrabbit.type.CustomTypefaceTextView
             android:layout_width="match_parent"
-            android:layout_height="96dp"
+            android:layout_height="64dp"
             android:text="@string/action_stickers"
             android:layout_gravity="center"
             android:gravity="center_vertical"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:layout_marginLeft="12dp"
+            android:layout_marginLeft="6dp"
 
             />
     </LinearLayout>
@@ -107,22 +136,22 @@
         >
 
         <org.awesomeapp.messenger.ui.CircleColorImageView
-            android:layout_width="64dp"
-            android:layout_height="64dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:src="@drawable/tshirt128px"
             android:layout_margin="6dp"
-            android:padding="12dp"
+            android:padding="6dp"
             android:layout_gravity="center"
             app:circleColor="@android:color/holo_purple"
             />
         <org.ironrabbit.type.CustomTypefaceTextView
             android:layout_width="match_parent"
-            android:layout_height="96dp"
+            android:layout_height="64dp"
             android:text="@string/action_theme"
             android:layout_gravity="center"
             android:gravity="center_vertical"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:layout_marginLeft="12dp"
+            android:layout_marginLeft="6dp"
 
             />
     </LinearLayout>
