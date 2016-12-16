@@ -79,4 +79,9 @@
   <string name="security_code">Secure Identity</string>
 
   <string name="reset_passphrase">Reset Lock</string>
+
+  <string name="action_services">Zom Services</string>
+
+
+
 </resources>
