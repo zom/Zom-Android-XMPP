@@ -1333,7 +1333,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         return true;
     }
 
-    public void setContactTyping (Contact contact, boolean isTyping)
+    public synchronized void setContactTyping (Contact contact, boolean isTyping)
     {
 
         int N = mRemoteListeners.beginBroadcast();

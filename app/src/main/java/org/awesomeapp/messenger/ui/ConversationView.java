@@ -915,7 +915,7 @@ public class ConversationView {
         mComposeMessage.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                sendTypingStatus(hasFocus);
+               // sendTypingStatus(hasFocus);
             }
         });
 
@@ -963,12 +963,11 @@ public class ConversationView {
         // the soft keyboard, we should remove this hack.
         mComposeMessage.addTextChangedListener(new TextWatcher() {
             public void beforeTextChanged(CharSequence s, int start, int before, int after) {
+
+                sendTypingStatus (true);
             }
 
             public void onTextChanged(CharSequence s, int start, int before, int after) {
-                //log("TextWatcher: " + s);
-                //userActionDetected();
-                sendTypingStatus (true);
 
             }
 
