@@ -3566,7 +3566,7 @@ public class XmppConnection extends ImConnection {
     {
         mExecutor.execute(new Runnable() {
             public void run() {
-                sendChatState(to, isTyping ? ChatState.inactive : ChatState.composing);
+                sendChatState(to, isTyping ? ChatState.composing : ChatState.inactive);
             }
         });
     }
