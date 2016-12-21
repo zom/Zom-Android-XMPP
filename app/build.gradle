@@ -142,8 +142,8 @@ dependencies {
     compile project(':otr4jandroid')
     compile project(':tibetanTextLibrary')
     compile project(':chatsecure-push:sdk')
-    compile project(':IOCipher-v0.3-10-g5168844-debug')
-
+    compile project(':IOCipher-v0.4')
+    
     compile 'com.google.zxing:core:3.0.0'
 
     compile 'commons-codec:commons-codec:1.9'

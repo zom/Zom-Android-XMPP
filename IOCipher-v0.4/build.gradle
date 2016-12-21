@@ -1,0 +1,2 @@
+configurations.maybeCreate("default")
+artifacts.add("default", file('IOCipher-v0.3-10-g5168844-debug.aar'))
