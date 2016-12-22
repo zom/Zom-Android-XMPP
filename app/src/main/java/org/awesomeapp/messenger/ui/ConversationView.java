@@ -318,6 +318,7 @@ public class ConversationView {
         else
         {
             stopListening();
+            sendTypingStatus (false);
         }
 
     }
@@ -905,10 +906,24 @@ public class ConversationView {
             }
         });
 
+        mComposeMessage.setOnTouchListener(new View.OnTouchListener()
+        {
+
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+
+                sendTypingStatus (true);
+
+                return false;
+            }
+        });
+
         mComposeMessage.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                sendTypingStatus(hasFocus);
+
+                 sendTypingStatus (hasFocus);
+
             }
         });
 
@@ -959,17 +974,12 @@ public class ConversationView {
             }
 
             public void onTextChanged(CharSequence s, int start, int before, int after) {
-                //log("TextWatcher: " + s);
-                //userActionDetected();
-                sendTypingStatus (true);
 
             }
 
             public void afterTextChanged(Editable s) {
                 doWordSearch ();
                 userActionDetected();
-                sendTypingStatus (false);
-
             }
         });
 
@@ -1838,7 +1848,7 @@ public class ConversationView {
         String msg = mComposeMessage.getText().toString();
         //new SendMessageAsyncTask().execute(msg);
         sendMessageAsync(msg);
-
+        sendTypingStatus (false);
         /**
         if (ds != null)
         {
