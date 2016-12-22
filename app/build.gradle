@@ -40,7 +40,7 @@ android {
 
     defaultConfig {
         applicationId 'im.zom.messenger'
-        versionCode 1501933
+        versionCode 1501934
         versionName getVersionName()
         archivesBaseName = "Zom-$versionName"
         minSdkVersion project.ext.minSdkVersion
@@ -178,6 +178,5 @@ dependencies {
     compile 'net.hockeyapp.android:HockeySDK:3.5.0'
 
     compile 'com.github.QuadFlask:colorpicker:0.0.10'
-
 
 }

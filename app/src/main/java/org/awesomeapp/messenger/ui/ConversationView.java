@@ -17,6 +17,8 @@
 
 package org.awesomeapp.messenger.ui;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -68,6 +70,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.TextureView;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
@@ -726,20 +729,8 @@ public class ConversationView {
             @Override
             public void onClick(View v) {
 
-                if (mViewAttach.getVisibility() == View.GONE) {
-                    mViewAttach.setVisibility(View.VISIBLE);
-                    // Check if no view has focus:
-                    View view = mActivity.getCurrentFocus();
-                    if (view != null) {
-                        InputMethodManager imm = (InputMethodManager)mActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
-                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                    }
-                }
-                else {
-                    mViewAttach.setVisibility(View.GONE);
-                    if (mStickerBox != null)
-                        mStickerBox.setVisibility(View.GONE);
-                }
+
+                toggleAttachMenu ();
             }
 
         });
@@ -763,6 +754,7 @@ public class ConversationView {
 
         });
 
+        /**
         mActivity.findViewById(R.id.btnAttachFile).setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -770,12 +762,13 @@ public class ConversationView {
                 mActivity.startFilePicker();
             }
 
-        });
+        });*/
 
         mActivity.findViewById(R.id.btnAttachSticker).setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
+                toggleAttachMenu();
                 showStickers();
             }
 
@@ -1228,19 +1221,19 @@ public class ConversationView {
             //disable unsupported features for now
             mActivity.findViewById(R.id.btnAttachPicture).setEnabled(false);
             mActivity.findViewById(R.id.btnTakePicture).setEnabled(false);
-            mActivity.findViewById(R.id.btnAttachFile).setEnabled(false);
+            //mActivity.findViewById(R.id.btnAttachFile).setEnabled(false);
             mMicButton.setEnabled(false);;
 
             mActivity.findViewById(R.id.btnAttachPicture).setAlpha(0.2f);
             mActivity.findViewById(R.id.btnTakePicture).setAlpha(0.2f);
-            mActivity.findViewById(R.id.btnAttachFile).setAlpha(0.2f);
+            //mActivity.findViewById(R.id.btnAttachFile).setAlpha(0.2f);
             mMicButton.setAlpha(0.5f);
         }
         else
         {
             mActivity.findViewById(R.id.btnAttachPicture).setEnabled(true);
             mActivity.findViewById(R.id.btnTakePicture).setEnabled(true);
-            mActivity.findViewById(R.id.btnAttachFile).setEnabled(true);
+            //mActivity.findViewById(R.id.btnAttachFile).setEnabled(true);
             mMicButton.setEnabled(true);
         }
     }
@@ -2891,6 +2884,81 @@ public class ConversationView {
 
     }
 
+    private void toggleAttachMenu ()
+    {
+        if (mViewAttach.getVisibility() == View.INVISIBLE) {
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+
+                // get the center for the clipping circle
+                int cx = mViewAttach.getLeft();
+                int cy = mViewAttach.getHeight();
+
+                // get the final radius for the clipping circle
+                float finalRadius = (float) Math.hypot(cx, cy);
+
+                // create the animator for this view (the start radius is zero)
+                Animator anim =
+                        ViewAnimationUtils.createCircularReveal(mViewAttach, cx, cy, 0, finalRadius);
+
+                // make the view visible and start the animation
+
+                mViewAttach.setVisibility(View.VISIBLE);
+                anim.start();
+            }
+            else
+            {
+                mViewAttach.setVisibility(View.VISIBLE);
+
+            }
+
+            // Check if no view has focus:
+            View view = mActivity.getCurrentFocus();
+            if (view != null) {
+                InputMethodManager imm = (InputMethodManager)mActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
+        }
+        else {
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+
+                // get the center for the clipping circle
+                int cx = mViewAttach.getLeft();
+                int cy = mViewAttach.getHeight();
+
+// get the initial radius for the clipping circle
+                float initialRadius = (float) Math.hypot(cx, cy);
+
+// create the animation (the final radius is zero)
+                Animator anim =
+                        ViewAnimationUtils.createCircularReveal(mViewAttach, cx, cy, initialRadius, 0);
+
+// make the view invisible when the animation is done
+                anim.addListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        mViewAttach.setVisibility(View.INVISIBLE);
+                    }
+                });
+
+// start the animation
+                anim.start();
+
+            }
+            else
+            {
+                mViewAttach.setVisibility(View.INVISIBLE);
+            }
+
+        }
+
+
+        if (mStickerBox != null)
+            mStickerBox.setVisibility(View.GONE);
+    }
+
     private ViewPager mStickerPager = null;
     private View mStickerBox = null;
 
@@ -2933,7 +3001,7 @@ public class ConversationView {
                              }*/
                             //   mActivity.handleSendData(Uri.parse(s.assetPath),"image/png");
 
-                            mViewAttach.setVisibility(View.GONE);
+                            mViewAttach.setVisibility(View.INVISIBLE);
                             showStickers();
                         }
                     });

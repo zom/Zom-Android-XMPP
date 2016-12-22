@@ -117,6 +117,7 @@
         android:layout_gravity="bottom"
         >
 
+
         <HorizontalScrollView
             android:id="@+id/attachPanel"
             android:layout_width="match_parent"
@@ -124,9 +125,10 @@
             android:fillViewport="true"
             android:measureAllChildren="false"
             android:scrollbars="none"
-            android:visibility="gone"
+            android:visibility="invisible"
             android:layout_gravity="center_vertical"
             android:gravity="center_vertical"
+            android:background="@color/background_light"
             >
 
             <LinearLayout
@@ -170,7 +172,7 @@
                     android:layout_height="64dp"
                     />
 
-
+<!--
                 <org.awesomeapp.messenger.ui.CircleColorImageView
                     android:id="@+id/btnAttachFile"
                     android:src="@drawable/ic_insert_drive_file_white_36dp"
@@ -179,7 +181,7 @@
                     app:circleColor="@android:color/holo_red_light"
                     android:layout_width="64dp"
                     android:layout_height="64dp"
-                    />
+                    />-->
             </LinearLayout>
         </HorizontalScrollView>
 
