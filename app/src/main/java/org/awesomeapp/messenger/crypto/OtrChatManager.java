@@ -496,9 +496,19 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
 
     }
 
+    public boolean isRemoteKeyVerified (String userId)
+    {
+        return mOtrEngineHost.isRemoteKeyVerified(userId);
+    }
+
+    public String getRemoteKeyFingerprint (String userId)
+    {
+        return mOtrEngineHost.getRemoteKeyFingerprint(userId);
+    }
+
     public boolean hasRemoteKeyFingerprint (String userId)
     {
-        return mOtrEngineHost.hasRemoteKeyFingerprintg(userId);
+        return mOtrEngineHost.hasRemoteKeyFingerprint(userId);
     }
 
     public String getLocalKeyFingerprint(String localUserId) {

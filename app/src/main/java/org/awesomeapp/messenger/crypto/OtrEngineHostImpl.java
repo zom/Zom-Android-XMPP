@@ -81,6 +81,10 @@ public class OtrEngineHostImpl implements OtrEngineHost {
         mOtrKeyManager.savePublicKey(sessionID, remoteKey);
     }
 
+    public boolean isRemoteKeyVerified(String userId) {
+        return mOtrKeyManager.isVerified(userId);
+    }
+
     public boolean isRemoteKeyVerified(SessionID sessionID) {
         return mOtrKeyManager.isVerified(sessionID);
     }
@@ -97,7 +101,11 @@ public class OtrEngineHostImpl implements OtrEngineHost {
         return mOtrKeyManager.getRemoteFingerprint(sessionID);
     }
 
-    public boolean hasRemoteKeyFingerprintg (String userid)
+    public String getRemoteKeyFingerprint(String userId) {
+        return mOtrKeyManager.getRemoteFingerprint(userId);
+    }
+
+    public boolean hasRemoteKeyFingerprint (String userid)
     {
         return mOtrKeyManager.hasRemoteFingerprint(userid);
     }

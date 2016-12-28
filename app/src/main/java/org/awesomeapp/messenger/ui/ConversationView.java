@@ -1786,7 +1786,7 @@ public class ConversationView {
 
                         if (mContactType == Imps.Contacts.TYPE_GROUP)
                         {
-                            new ChatSessionInitTask(((ImApp)mActivity.getApplication()),mProviderId, mAccountId, Imps.Contacts.TYPE_GROUP)
+                            new ChatSessionInitTask(((ImApp)mActivity.getApplication()),mProviderId, mAccountId, Imps.Contacts.TYPE_GROUP, false)
                                     .executeOnExecutor(ImApp.sThreadPoolExecutor,remoteAddress);
 
                         }
@@ -2682,8 +2682,8 @@ public class ConversationView {
         public void onBindViewHolder(MessageViewHolder viewHolder, Cursor cursor) {
 
             MessageListItem messageView = (MessageListItem) viewHolder.itemView;
-
             setLinkifyForMessageView(messageView);
+            messageView.applyStyleColors();
 
             int messageType = cursor.getInt(mTypeColumn);
 
@@ -2776,7 +2776,6 @@ public class ConversationView {
                 messageView.bindPresenceMessage(viewHolder, nickname, messageType, date, isGroupChat(), false);
             }
 
-            messageView.applyStyleColors();
 
 
         }

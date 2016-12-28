@@ -19,13 +19,15 @@ public class ChatSessionInitTask extends AsyncTask<String, Long, Long> {
     long mProviderId;
     long mAccountId;
     int mContactType;
+    boolean mStartCrypto = false;
 
-    public ChatSessionInitTask (ImApp app, long providerId, long accountId, int contactType)
+    public ChatSessionInitTask (ImApp app, long providerId, long accountId, int contactType, boolean startCrypto)
     {
         mApp = app;
         mProviderId = providerId;
         mAccountId = accountId;
         mContactType = contactType;
+        mStartCrypto = startCrypto;
     }
 
     public Long doInBackground (String... remoteAddresses)
@@ -50,7 +52,6 @@ public class ChatSessionInitTask extends AsyncTask<String, Long, Long> {
                             if (session.getDefaultOtrChatSession() != null
                                 && (!session.getDefaultOtrChatSession().isChatEncrypted()))
                             {
-
                                 session.getDefaultOtrChatSession().startChatEncryption();
                             }
 

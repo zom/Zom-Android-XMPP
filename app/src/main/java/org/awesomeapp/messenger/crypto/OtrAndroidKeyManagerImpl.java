@@ -610,16 +610,21 @@ public class OtrAndroidKeyManagerImpl extends IOtrKeyManager.Stub implements Otr
 
     public String getRemoteFingerprint(String fullUserId) {
 
-        /**
-        if (!Address.hasResource(fullUserId)) {
-             return null;
-
-        }*/
-
         String fingerprint = this.store.getProperty(fullUserId + ".fingerprint");
         if (fingerprint != null) {
             // If we have a fingerprint stashed, assume it is correct.
             return fingerprint;
+        }
+
+        //if we can't find an exact match, let's show the first one that matches the id sans resource
+        for (Object fpKey : store.getKeySet())
+        {
+            String fpKeyString = (String)fpKey;
+            if (fpKeyString.startsWith(fullUserId) && fpKeyString.endsWith(".fingerprint")) {
+                fingerprint = store.getProperty(fpKeyString);
+                if (fingerprint != null)
+                    return fingerprint;
+            }
         }
 
         PublicKey remotePublicKey = loadRemotePublicKeyFromStore(fullUserId);
@@ -670,12 +675,18 @@ public class OtrAndroidKeyManagerImpl extends IOtrKeyManager.Stub implements Otr
     public boolean isVerified(SessionID sessionID) {
         if (sessionID == null)
             return false;
+        return isVerified(sessionID.getRemoteUserId());
+    }
 
-        String remoteFingerprint =getRemoteFingerprint(sessionID.getRemoteUserId());
+    public boolean isVerified(String remoteUserId) {
+        if (remoteUserId == null)
+            return false;
+
+        String remoteFingerprint =getRemoteFingerprint(remoteUserId);
 
         if (remoteFingerprint != null)
         {
-            String username = Address.stripResource(sessionID.getRemoteUserId());
+            String username = Address.stripResource(remoteUserId);
             String pubKeyVerifiedToken = buildPublicKeyVerifiedId(username, remoteFingerprint);
             return this.store.getPropertyBoolean(pubKeyVerifiedToken, false);
         }

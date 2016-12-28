@@ -153,8 +153,9 @@ public class GroupDisplayActivity extends BaseActivity {
 
     public void startChat ()
     {
+        boolean startCrypto = false;
 
-        new ChatSessionInitTask(((ImApp)getApplication()),mProviderId, mAccountId, Imps.Contacts.TYPE_GROUP)
+        new ChatSessionInitTask(((ImApp)getApplication()),mProviderId, mAccountId, Imps.Contacts.TYPE_GROUP, startCrypto)
         {
             @Override
             protected void onPostExecute(Long chatId) {

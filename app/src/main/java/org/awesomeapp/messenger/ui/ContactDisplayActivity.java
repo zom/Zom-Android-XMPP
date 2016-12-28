@@ -34,6 +34,7 @@ import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.MainActivity;
 import org.awesomeapp.messenger.crypto.IOtrChatSession;
 import org.awesomeapp.messenger.crypto.OtrAndroidKeyManagerImpl;
+import org.awesomeapp.messenger.crypto.OtrChatManager;
 import org.awesomeapp.messenger.model.Contact;
 import org.awesomeapp.messenger.model.ImErrorInfo;
 import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
@@ -130,13 +131,10 @@ public class ContactDisplayActivity extends BaseActivity {
         });
 
         try {
-            IChatSessionManager manager = mConn.getChatSessionManager();
-            IChatSession session = manager.getChatSession(mUsername);
 
-            if (session != null) {
-                mRemoteFingerprint = session.getDefaultOtrChatSession().getRemoteFingerprint();
+            mRemoteFingerprint = OtrChatManager.getInstance().getRemoteKeyFingerprint(mUsername);
 
-                //   mRemoteFingerprint = OtrAndroidKeyManagerImpl.getInstance(this).getRemoteFingerprint( session.getOtrChatSession(0).getRemoteUserId());
+            if (mRemoteFingerprint != null) {
 
                 if (!TextUtils.isEmpty(mRemoteFingerprint)) {
                     tv.setText(prettyPrintFingerprint(mRemoteFingerprint));
@@ -177,9 +175,7 @@ public class ContactDisplayActivity extends BaseActivity {
                         }
                     });
 
-                    boolean isVerified = session.getDefaultOtrChatSession().isKeyVerified(mUsername);
-
-                    if (isVerified)
+                    if (OtrChatManager.getInstance().isRemoteKeyVerified(mUsername))
                         btnVerify.setVisibility(View.GONE);
 
 
@@ -312,8 +308,9 @@ public class ContactDisplayActivity extends BaseActivity {
 
     public void startChat ()
     {
+        boolean startCrypto = true;
 
-        new ChatSessionInitTask(((ImApp)getApplication()),mProviderId, mAccountId, Imps.Contacts.TYPE_NORMAL)
+        new ChatSessionInitTask(((ImApp)getApplication()),mProviderId, mAccountId, Imps.Contacts.TYPE_NORMAL, startCrypto)
         {
             @Override
             protected void onPostExecute(Long chatId) {
