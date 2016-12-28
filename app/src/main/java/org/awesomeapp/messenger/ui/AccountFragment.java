@@ -83,7 +83,7 @@ public class AccountFragment extends Fragment {
     String mNickname;
     String mUserKey;
 
-    private final static String DEFAULT_PASSWORD_TEST = "*************";
+    private final static String DEFAULT_PASSWORD_TEXT = "*************";
 
     /**
      * Use this factory method to create a new instance of
@@ -130,15 +130,16 @@ public class AccountFragment extends Fragment {
 
             TextView tvUsername = (TextView) mView.findViewById(R.id.edtName);
             mTvPassword = (TextView) mView.findViewById(R.id.edtPass);
+            mTvPassword.setText(DEFAULT_PASSWORD_TEXT);
 
             View btnShowPassword = mView.findViewById(R.id.btnShowPass);
             btnShowPassword.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (mTvPassword.equals(DEFAULT_PASSWORD_TEST))
+                    if (mTvPassword.getText().toString().equals(DEFAULT_PASSWORD_TEXT))
                         mTvPassword.setText(getAccountPassword(mProviderId));
                     else
-                        mTvPassword.setText(DEFAULT_PASSWORD_TEST);
+                        mTvPassword.setText(DEFAULT_PASSWORD_TEXT);
                 }
             });
 
