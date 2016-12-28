@@ -166,7 +166,6 @@ public class MessageListItem extends FrameLayout {
         mHolder.mTextViewForMessages.setVisibility(View.VISIBLE);
         mHolder.mAudioContainer.setVisibility(View.GONE);
         mHolder.mMediaContainer.setVisibility(View.GONE);
-    //    mHolder.mContainer.setBackgroundResource(R.drawable.message_view_rounded_light);
 
         if (nickname == null)
             nickname = address;
@@ -263,20 +262,13 @@ public class MessageListItem extends FrameLayout {
 
             if (!cmdSuccess)
             {
-                SpannableString spannablecontent=new SpannableString(lastMessage);
-                mHolder.mTextViewForMessages.setText(spannablecontent);
-             //   mHolder.mContainer.setBackgroundResource(R.drawable.message_view_rounded_light);
+                mHolder.mTextViewForMessages.setText(new SpannableString(lastMessage));
             }
             else
             {
-
+                mHolder.mContainer.setBackgroundResource(android.R.color.transparent);
                 lastMessage = "";
             }
-
-        }
-        else {
-
-         //   mHolder.mContainer.setBackgroundResource(R.drawable.message_view_rounded_light);
 
         }
 
@@ -285,10 +277,7 @@ public class MessageListItem extends FrameLayout {
 
         if (lastMessage.length() > 0)
         {
-                SpannableString spannablecontent=new SpannableString(lastMessage);
-
-                mHolder.mTextViewForMessages.setText(spannablecontent);
-
+            mHolder.mTextViewForMessages.setText(new SpannableString(lastMessage));
         }
         else
         {
@@ -347,7 +336,7 @@ public class MessageListItem extends FrameLayout {
 
         if( mimeType.startsWith("image/") ) {
             setImageThumbnail( getContext().getContentResolver(), id, holder, mediaUri );
-            holder.mMediaThumbnail.setBackgroundColor(Color.TRANSPARENT);
+            holder.mMediaThumbnail.setBackgroundResource(android.R.color.transparent);
 
         }
         else
@@ -372,9 +361,7 @@ public class MessageListItem extends FrameLayout {
         }
 
         holder.mMediaContainer.setVisibility(View.VISIBLE);
-
-
-      //  holder.mContainer.setBackgroundColor(getResources().getColor(android.R.color.transparent));
+        holder.mContainer.setBackgroundResource(android.R.color.transparent);
 
         return true;
 
@@ -396,8 +383,7 @@ public class MessageListItem extends FrameLayout {
         holder.setOnClickListenerMediaThumbnail(mimeType, mediaUri);
         mHolder.mTextViewForMessages.setText("");
         mAudioPlayer = new AudioPlayer(getContext(), mediaUri.getPath(), mimeType, mHolder.mVisualizerView,mHolder.mTextViewForMessages);
-      //  holder.mContainer.setBackgroundColor(getResources().getColor(android.R.color.transparent));
-
+        holder.mContainer.setBackgroundResource(android.R.color.transparent);
     }
 
     protected String convertMediaUriToPath(Uri uri) {
@@ -671,7 +657,6 @@ public class MessageListItem extends FrameLayout {
         mHolder.mTextViewForMessages.setVisibility(View.VISIBLE);
         mHolder.mAudioContainer.setVisibility(View.GONE);
         mHolder.mMediaContainer.setVisibility(View.GONE);
-       // mHolder.mContainer.setBackgroundResource(R.drawable.message_view_rounded_light);
         mHolder.mAudioButton.setImageResource(R.drawable.media_audio_play);
 
         mHolder.resetOnClickListenerMediaThumbnail();
@@ -755,27 +740,21 @@ public class MessageListItem extends FrameLayout {
 
             if (!cmdSuccess)
             {
-                SpannableString spannablecontent=new SpannableString(lastMessage);
-                mHolder.mTextViewForMessages.setText(spannablecontent);
-              //  mHolder.mContainer.setBackgroundResource(R.drawable.message_view_rounded_light);
+                mHolder.mTextViewForMessages.setText(new SpannableString(lastMessage));
             }
             else
             {
-
+                holder.mContainer.setBackgroundResource(android.R.color.transparent);
                 lastMessage = "";
             }
 
         }
         else {
-
-             SpannableString spannablecontent=new SpannableString(lastMessage);
-            mHolder.mTextViewForMessages.setText(spannablecontent);
-           // mHolder.mContainer.setBackgroundResource(R.drawable.message_view_rounded_light);
-
+            mHolder.mTextViewForMessages.setText(new SpannableString(lastMessage));
         }
 
-        if (isSelected())
-            mHolder.mContainer.setBackgroundColor(getResources().getColor(R.color.holo_blue_bright));
+        //if (isSelected())
+          //  mHolder.mContainer.setBackgroundColor(getResources().getColor(R.color.holo_blue_bright));
 
         if (date != null)
         {
@@ -1088,14 +1067,22 @@ public class MessageListItem extends FrameLayout {
                 if (mHolder.mTextViewForTimestamp != null)
                     mHolder.mTextViewForTimestamp.setTextColor(themeColorText);
 
-                int textBubbleBg = getContrastColor(themeColorText);
+            }
 
-                if (textBubbleBg == Color.BLACK)
+            if (themeColorBg != -1)
+            {
+
+                int textBubbleBg = getContrastColor(themeColorText);
+                 if (textBubbleBg == Color.BLACK)
                     mHolder.mContainer.setBackgroundResource(R.drawable.message_view_rounded_dark);
-                else
+                 else
                     mHolder.mContainer.setBackgroundResource(R.drawable.message_view_rounded_light);
 
-            } else {
+                //mHolder.mContainer.setBackgroundResource(android.R.color.transparent);
+                //mHolder.mContainer.setBackgroundColor(themeColorBg);
+            }
+            else
+            {
                 mHolder.mContainer.setBackgroundResource(R.drawable.message_view_rounded_light);
 
             }

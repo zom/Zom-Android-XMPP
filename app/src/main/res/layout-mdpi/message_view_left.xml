@@ -36,7 +36,6 @@
         android:layout_marginRight="36dp"
         android:paddingLeft="16dp"
         android:orientation="vertical"
-        android:background="@drawable/message_view_rounded_light"
         >
         <LinearLayout
             android:id="@+id/audio_container"

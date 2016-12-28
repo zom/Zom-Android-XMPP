@@ -31,7 +31,6 @@
         android:id="@+id/message_container" 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"        
-       	android:background="@drawable/message_view_rounded_light"
        	android:layout_gravity="right"
     	android:gravity="right"      
     	android:orientation="vertical"             

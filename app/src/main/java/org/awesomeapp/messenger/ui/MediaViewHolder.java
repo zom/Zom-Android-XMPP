@@ -21,9 +21,6 @@ public class MediaViewHolder extends RecyclerView.ViewHolder  {
     // save the media uri while the MediaScanner is creating the thumbnail
     // if the holder was reused, the pair is broken
     public Uri mMediaUri = null;
-    //ImageView mActionFav;
-//    ImageView mActionSend;
- //   ImageView mActionShare;
 
     public MediaViewHolder (View view)
     {
@@ -32,9 +29,6 @@ public class MediaViewHolder extends RecyclerView.ViewHolder  {
         mMediaThumbnail = (ImageView) view.findViewById(R.id.media_thumbnail);
         mContainer = view.findViewById(R.id.message_container);
 
-     //   mActionFav = (ImageView)view.findViewById(R.id.media_thumbnail_fav);
-       // mActionSend = (ImageView)view.findViewById(R.id.media_thumbnail_send);
-       // mActionShare = (ImageView)view.findViewById(R.id.media_thumbnail_share);
     }
 }
 
