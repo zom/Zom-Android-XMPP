@@ -170,7 +170,7 @@ public class ContactDisplayActivity extends BaseActivity {
 
                             try {
                                 String inviteLink = OnboardingManager.generateInviteLink(ContactDisplayActivity.this, mUsername, mRemoteFingerprint, mNickname);
-                                new QrShareAsyncTask(ContactDisplayActivity.this).execute(inviteLink);
+                                new QrShareAsyncTask(ContactDisplayActivity.this).execute(inviteLink, mNickname);
                             } catch (IOException ioe) {
                                 Log.e(ImApp.LOG_TAG, "couldn't generate QR code", ioe);
                             }

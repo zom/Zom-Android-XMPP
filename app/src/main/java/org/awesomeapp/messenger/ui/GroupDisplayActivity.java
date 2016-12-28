@@ -124,7 +124,7 @@ public class GroupDisplayActivity extends BaseActivity {
 
                     try {
                         String inviteLink = OnboardingManager.generateInviteLink(GroupDisplayActivity.this, mAddress, "", mName);
-                        new QrShareAsyncTask(GroupDisplayActivity.this).execute(inviteLink);
+                        new QrShareAsyncTask(GroupDisplayActivity.this).execute(inviteLink, mName);
                     } catch (IOException ioe) {
                         Log.e(ImApp.LOG_TAG, "couldn't generate QR code", ioe);
                     }
