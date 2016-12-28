@@ -39,7 +39,7 @@
   <!--Views: Setup: Account-->
   <string name="sign_in">ནང་དུ་ཞུགས།</string>
   <string name="account_setup_example_email_address">user@domain.com</string>
-  <string name="account_setup_new_username">བེད་སྤྱོད་བྱེད་མཁན་གྱི་མིང་གསར་པ།</string>
+  <string name="account_setup_new_username">ཐོ་འགོད་མིང་གསར་པ།</string>
   <string name="account_setup_password">གསང་ཚིག</string>
   <string name="account_setup_password_confirm">གསང་ཚིག་ངེས་གཏན་བཟོས།</string>
   <string name="btn_create_new_account">ཐོ་བྱང་དེབ་སྐྱེལ་བྱོས། </string>
@@ -52,7 +52,7 @@
   <!--Views: Settings: Account-->
   <string name="do_srv_lookup">SRVལ་ལྟོས། </string>
   <string name="use_dns_srv_to_find_actual_xmpp_server_from_domain_name">དྲ་ཁོངས་ཀྱི་མིང་ནས་སྤྱིར་བཏང་གིXMPP ཞབས་ཞུ་དེ་འཚོལ་བར་། DRV བེད་སྤྱོད་ཐོངས། </string>
-  <string name="allow_the_username_and_password_to_be_sent_as_plain_text_when_using_an_unencrypted_transport">གསང་སྡོམ་མ་བྱས་བའི་འགྲུལ་བཞུད་སྐབས་སུ། མིང་དང་གསང་ཚིག་གཉིས་འཕྲིན་ཐུང་དཀྱུས་མ་ལྟར་ཐོངས། </string>
+  <string name="allow_the_username_and_password_to_be_sent_as_plain_text_when_using_an_unencrypted_transport">གསང་སྡོམ་མ་བྱས་བའི་འགྲུལ་བཞུད་སྐབས་སུ། ཐོ་འགོད་མིང་དང་གསང་ཚིག་གཉིས་འཕྲིན་ཐུང་དཀྱུས་མ་ལྟར་ཐོངས། </string>
   <string name="allow_plain_text_auth">འཕྲིན་ཐུང་དཀྱུས་མ་བེད་སྤྱོད་གཏོང་བའི་ཆོག་མཆན་སྤྲོད། </string>
   <string name="require_tls_ssl_connection">TLS ཡི་འབྲེལ་མཐུད་དགོས།</string>
   <string name="transport_encryption">གསང་སྡོམ་དེ་བསྐུར། </string>
@@ -83,7 +83,7 @@
   <string name="empty_conversation_group">གླེང་མོལ་སྒོ་ཕྱེ་མེད། གླེང་མོལ་བྱེད་འགོ་བཙུགས།</string>
   <string name="search_label">འབྲེལ་མིང་། </string>
   <string name="search_hint">གླེང་མོལ་བྱེད་འདོད་ཡོད་ས་ཞིག་གི་མིང་ཕྲིས།</string>
-  <string name="input_contact_label">ཁྱེད་ཀྱིས་མཐུད་འདོད་པའི་གྲོགས་པོ་དེའི་ Jabber ཁ་བྱང་(name@theirchatserver.org)བླུགས། </string>
+  <string name="input_contact_label">ཁྱེད་ཀྱི་གྲོགས་པོའི་ཐོ་འགོད་མིང་ཆ་ཚང་ཕྲིས། དཔེར་ན། (zomisfun.4x3f5g@zom.im) ལྟ་བུ།</string>
   <!--Views: Chat: Single-->
   <string name="contact_online">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt; དྲ་ཐོག་ཏུ་ཡོད།</string>
   <string name="contact_away">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt; ད་ལྟ་འདིར་མེད།</string>
@@ -175,7 +175,7 @@
 
 </string>
   <string name="prompt_create_new_account_">ཐོ་བྱང་གསར་བ་ཞིག་བཟོ་གི་ཡིན་ནམ། </string>
-  <string name="allow_s_to_create_a_new_chat_account_for_s_">%1$s\'་ཡི་མིང་ཐོག་ལ་གླེང་མོལ་ཐོ་བྱང་གསར་བ་ཞིག་བཟོ་གི་ཡིན་ནམ། </string>
+  <string name="allow_s_to_create_a_new_chat_account_for_s_">%1$s\'་ཡི་ཐོ་འགོད་མིང་ཐོག་ལ་གླེང་མོལ་ཐོ་བྱང་གསར་བ་ཞིག་བཟོ་གི་ཡིན་ནམ། </string>
   <!--Alerts: Notifications-->
   <string name="subscription_notify_text">&lt;xliff:g id="user"&gt;%s&lt;/xliff:g&gt; ནས་གྲོགས་པའི་མགྲོན་འབོད་ཞིག </string>
   <string name="file_notify_text">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt;ནས་  &lt;xliff:g id="filename"&gt;%2$s&lt;/xliff:g&gt;   ཡིག་ཆ་གསར་བ་ཞིག </string>
@@ -208,7 +208,7 @@
   <string name="version_not_supported">དྲ་ལམ་ཞབས་ཞུ་ཡིས་ད་ཡོད་པར་གཞི་འདིར་རྒྱབ་སྐྱོར་བྱེད་ཀྱི་མི་འདུག</string>
   <string name="message_queue_full">འཕྲིན་ཐུང་གི་རུ་བསྟར་ཁེངས་འདུག</string>
   <string name="domain_not_supported">དྲ་ཐོག་ཞབས་ཞུ་ཡིས་དམིགས་བཀར་ཁྱབ་ཁོངས་སུ་གཏད་པར་རྒྱབ་སྐྱོར་བྱེད་ཀྱི་མི་འདུག</string>
-  <string name="unknown_user">ཁྱེད་ཀྱིས་ད་ལྟ་མིང་ནང་འཇུག་བྱས་པ་དེ་ངོས་འཛིན་བྱས་མ་སོང་།</string>
+  <string name="unknown_user">ཁྱེད་ཀྱིས་ད་ལྟ་ཐོ་འགོད་མིང་ནང་འཇུག་བྱས་པ་དེ་ངོས་འཛིན་བྱས་མ་སོང་།</string>
   <string name="recipient_blocked_the_user">དགོངས་དག ཁྱེད་རང་དོ་བདག་དེ་ཡིས་བཀག་འདུག</string>
   <string name="session_expired">གཏམ་གླེང་གི་དུས་ཡུན་རྫོགས་སོང་། ཡང་བསྐྱར་ནང་ཞུགས་བྱེད་རོགས།</string>
   <string name="forced_logout">ཁྱེད་ཀྱིས་བཀོལ་ཆས་གཞན་ཞིག་ནས་ནང་འཛུལ་བྱས་འདུག </string>
@@ -219,6 +219,7 @@
   <string name="error_suspended_connection">ཉེན་སྲུང་གླེང་མོལ་གྱིས་དྲ་རྒྱ་དང་མཐུད་མི་འདུག</string>
   <string name="unable_to_create_or_join_group_chat">མཉམ་འདུས་གླེང་མོལ་ནང་འཛུལ་བའམ་ཡང་ན་གླེང་མོལ་གསར་བ་བཟོ་ཐུབ་ཀྱི་མི་འདུག</string>
   <string name="unsupported_incoming_data">རྒྱབ་སྐྱོར་མེད་པའི་ཡིག་ཆའི་རིགས་བགོ་འགྲེམས་བྱེད་མི་ཐུབ། </string>
+  <string name="swipe_alert">ལས་ཀ་ཞིག་ཕྱིར་འབུད་བྱེད་པའི་རེ་སྐུལ་དེ་འཛོམས་ཀྱིས་ཤེས་རྟོགས་བྱུང་འདུག དེར་བརྟེན། འཛོམས་འཕྲོ་བརླག་ལ་འགྲོ་སྲིད། སྐུ་མཁྱེན། མིང་ཐོའི་པར་ངོས་དེ་ནས་ཐོ་གཞུང་ཆ་ཚང་ཕྱིར་ཐོན་བྱོས།</string>
   <string name="there_is_no_viewer_available_for_this_file_format">ཡིག་ཆ་འདིའི་རིགས་ལ་བལྟ་མཁན་མི་འདུག</string>
   <string name="otr_keysync_warning_message">ཀམ་པུ་ཊར་གྱི་མདུན་ངོས་ཀྱི་ OtrFileConverter tool ནས་ཡིག་ཆ་\'otr_keystore.ofcaes དེ་ཕབ་ཞུས་བྱས་ནས་ཁྱོད་ཀྱི་ཀམ་པུ་ཊར་གྱི་ལམ་སྟོན་མཛོད་ཁང་ངོ་མ་དེའི་ནང་ཉོར།</string>
   <string name="msg_sent_failed">འཕྲིན་ཐུང་འདི་གཏོང་ཐུབ་ཀྱི་མི་འདུག</string>

@@ -2,14 +2,13 @@
 <resources>
   <string name="app_name_zom">众</string>
   <string name="create_an_account">创建一个帐户</string>
-  <string name="create_id">创建一个用户名</string>
+  <string name="create_id">创建一个 Zom ID</string>
   <string name="advanced">先进</string>
   <string name="account_congrats">恭喜你，你可以准备使用zom</string>
   <string name="account_congrats_details">您可以在个人简介页面上找到您的密码和帐户详细信息。</string>
-  <string name="invite_friends">邀请你的朋友</string>
   <string name="invite_sms">短信</string>
   <string name="invite_share">分享</string>
-  <string name="invite_scan_qr">打印</string>
+  <string name="invite_scan_qr">扫描</string>
   <string name="sign_in_message">登录现有帐户</string>
   <string name="invite_action">邀请</string>
   <string name="friends">朋友</string>
@@ -46,7 +45,7 @@
   <string name="pref_block_screenshots_title">阻止截屏</string>
   <string name="pref_block_screenshots_summary">阻止其他应用尝试截取此应用的屏幕</string>
   <string name="pref_enable_tibetan_dictionary_title">启用藏语词典</string>
-  <string name="pref_enable_tibetan_dictionary_summary">如果存在，从传昭大法会藏字典建议与藏语匹配的单词</string>
+  <string name="pref_enable_tibetan_dictionary_summary">如果存在，从传 Monlam Tibetan Dictionary 应用建议与藏语匹配的单词</string>
   <string name="color_category_title">自定义颜色</string>
   <string name="color_reset_title">重置颜色</string>
   <string name="color_reset_summary">将颜色重置为默认值</string>
@@ -58,5 +57,4 @@
   <string name="color_bg_summary">聊天背景和列表的颜色</string>
   <string name="menu_approve_friend">批准好友？</string>
   <string name="header_got_invited">收到邀请？</string>
-  <string name="action_tap_invite">在应用中点击好友发送给您的 ZOM.IM 链接或扫描二维码</string>
 </resources>

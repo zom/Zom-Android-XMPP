@@ -6,7 +6,7 @@
   <string name="advanced">詳細</string>
   <string name="account_congrats">ようこそ、Zom する準備ができました!</string>
   <string name="account_congrats_details">プロフィールページでパスワードやアカウントの詳細を見ることができます。</string>
-  <string name="invite_friends">友達を Zom に招待しましょう!</string>
+  <string name="invite_friends">友達を追加しましょう!</string>
   <string name="invite_sms">SMS</string>
   <string name="invite_share">共有</string>
   <string name="invite_scan_qr">スキャン</string>
@@ -58,8 +58,10 @@
   <string name="color_bg_summary">チャットやリストの背景の色</string>
   <string name="menu_approve_friend">友達を承認しますか?</string>
   <string name="header_got_invited">招待を受けましたか?</string>
-  <string name="action_tap_invite">アプリで、友達が送信した ZOM.IM のリンクをタップするか、QR コードをスキャンしてください</string>
-  <string name="header_invite_new_friend">新しい友達を招待</string>
-  <string name="action_share_invite">招待のリンクを SMS または共有</string>
-  <string name="header_manual_entry">詳細</string>
+  <string name="action_tap_invite">今すぐ、友達からの Zom 招待リンクをタップするか、QR コードをスキャンしてください</string>
+  <string name="action_invite_new_friends">招待リンクを SMS で友達に送信するか、任意のアプリで共有します</string>
+  <string name="not_verified">友達のセキュアIDが安全であることを確認してください!</string>
+  <string name="security_code">セキュアID</string>
+  <string name="reset_passphrase">ロックをリセット</string>
+  <string name="action_services">Zom サービス</string>
 </resources>

@@ -6,7 +6,6 @@
   <string name="advanced">Avanzado</string>
   <string name="account_congrats">Enhorabuena, está preparado para usar Zom.</string>
   <string name="account_congrats_details">Puede encontrar los datos de su cuenta y contraseña en la página de su perfil.</string>
-  <string name="invite_friends">¡Invite a amigos a Zom!</string>
   <string name="invite_sms">SMS</string>
   <string name="invite_share">Compartir</string>
   <string name="invite_scan_qr">Escanear</string>
@@ -58,5 +57,4 @@
   <string name="color_bg_summary">Color de fondo de conversaciones y listas</string>
   <string name="menu_approve_friend">¿Autorizar amigo?</string>
   <string name="header_got_invited">¿LO HAN INVITADO?</string>
-  <string name="action_tap_invite">Pulse en la aplicación el enlace de ZOM.IM que le envió su amigo o escanee ahora el código QR</string>
 </resources>

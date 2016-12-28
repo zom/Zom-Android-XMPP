@@ -5,7 +5,8 @@
   <string name="create_id">འཛོམས་ཀྱི་ཁ་བྱང་ཞིག་བཟོས།</string>
   <string name="advanced">ཚད་མཐོའི་སྒྲིག་བཟོ།</string>
   <string name="account_congrats">བཀྲ་ཤིས་བདེ་ལེགས། ད་ལྟ་ཁྱེད་ཀྱིས་འཛོམས་བེད་སྤྱོད་གཏོང་ཆོག</string>
-  <string name="invite_friends">ཁྱེད་ཀྱི་གྲོགས་པོ་འཛོམས་ལ་སྐད་ཐོངས།</string>
+  <string name="account_congrats_details">ཁྱེད་ཀྱིས་གསང་གྲངས་དང་ཁ་བྱང་གཉིས་སོ་སོའི་པར་ངོས་ནས་རྙེད་གི་རེད།</string>
+  <string name="invite_friends">གྲོགས་པོ་གསར་སྣོན་བྱོས།</string>
   <string name="invite_sms">འཕྲིན་ཐུང་།</string>
   <string name="invite_share">ངོ་སྤྲོད་བྱོས།</string>
   <string name="invite_scan_qr">བཤེར།</string>
@@ -36,6 +37,7 @@
   <string name="choose_language">སྐད་ཡིག་བརྗེ་བསྒྱུར།</string>
   <string name="welcome_to_zom">འཛོམས་ནང་སླེབས་པར་དགའ་བསུ་ཞུ།</string>
   <string name="onboarding_generate">འཛོམས་ཀྱི་ཁ་བྱང་ཞིག་བཟོས་དང་ང་ཚོས་ཁྱེད་ལ་ཉེན་སྲུང་ལྡན་པའི་གསང་གྲངས་ཤིག་སྤྲད་ཆོག</string>
+  <string name="grant_perms">ཁྱེད་ཀྱིས་་འཛོམས་ཀྱི་པར་ཆས་བེད་སྤྱོད་གཏོང་བའི་ཆོག་མཆན་ངེས་པར་དུ་སྤྲོད།</string>
   <string name="menu_refresh">གླེང་མོལ་བསྐྱར་གསོ།</string>
   <string name="action_archived">ཉར་ཚགས་ཟིན།</string>
   <string name="action_verified">བརྟག་དཔྱད་ཟིན།</string>
@@ -45,12 +47,20 @@
   <string name="pref_block_screenshots_summary">བཀོལ་ཆས་འདིའི་འདྲ་རིས་ལེན་པར་བརྩོན་པའི་བཀོལ་ཆས་གཞན་དག་ཁོག</string>
   <string name="pref_enable_tibetan_dictionary_title">བོད་ཡིག་གི་ཚིག་མཛོད་དེ་བྱེད་ལས་ཅན་ཏུ་བསྒྱུར།</string>
   <string name="pref_enable_tibetan_dictionary_summary">སྨོན་ལམ་ཚིག་མཛོད་ཀྱི་བཀོལ་ཆས་ནས་བོད་ཡིག་གི་ཐ་སྙད་འདྲ་བ་རྣམས་ལོངས།</string>
+  <string name="color_category_title">སོ་སོ་དགའ་བའི་ཁ་དོག</string>
   <string name="color_reset_title">ཁ་དོག་བསྐྱར་དུ་བརྗེས།</string>
+  <string name="color_reset_summary">ཐོག་མའི་ཁ་དོག་ལ་ཕར་བསྒྱུར།</string>
+  <string name="color_header_title">འགོ་བརྗོད་ཀྱི་ཚོན།</string>
   <string name="color_text_title">ཡི་གེའི་ཁ་དོག</string>
+  <string name="color_text_summary">འཕྲིན་ཐུང་དང་ཐོ་གཞུང་ནང་གི་ཡི་གེ་ཁ་དོག</string>
   <string name="color_bg_title">རྒྱབ་ལྗོངས་ཀྱི་ཁ་དོག</string>
+  <string name="color_bg_summary">འཕྲིན་ཐུང་དང་ཐོ་གཞུང་གི་རྒྱབ་ལྗོངས་ཀྱི་ཁ་དོག</string>
   <string name="menu_approve_friend">གྲོགས་པོ་ངོས་ལེན་བྱས་སམ།</string>
   <string name="header_got_invited">མགྲོན་འབོད་བྱས་སོང་ངམ།</string>
-  <string name="header_invite_new_friend">གྲོགས་པོ་གསར་བ་མགྲོན་འབོད་བྱོས།</string>
-  <string name="action_share_invite">སོ་སོས་གྲོགས་སྒྲིག་འདོད་པ་དེར་འཕྲིན་ཐུང་གཏོང་བའམ་ཡང་ན་མགྲོན་འབོད་ཀྱི་འབྲེལ་ཐག་དེ་བསྐུར།</string>
-  <string name="header_manual_entry">རྒྱ་བསྐྱེད།</string>
+  <string name="action_tap_invite">ཁྱེད་ཀྱི་གྲོགས་པོས་བསྐུར་བའི་འཛོམས་ZOM.IM འབྲེལ་ཐག་དེ་ལ་བསྣུན་པའམ་ཡང་ན་དེའི་་ཨང་ཚབ་ལ་གཤེར།</string>
+  <string name="action_invite_new_friends">གྲོགས་པོ་གདན་འདྲེན་གྱི་འབྲེལ་ཐག་འཕྲིན་ཐུང་བརྒྱུད་ནས་བསྐུར། བཀོལ་ཆས་བཞན་པ་གང་རུང་བརྒྱུད་ནས་འགོ་འགྲེམས་བྱོས།</string>
+  <string name="not_verified">ཁྱེད་ཀྱི་གྲོགས་པོའི་བདེ་འཇགས་ངོ་བོ་བརྟན་པོ་ཡིན་པ་བདེན་དཔང་བྱོས།</string>
+  <string name="security_code">བདེ་འཇགས་ངོ་བོ།</string>
+  <string name="reset_passphrase">སྒོ་ལྕགས་བསྐྱར་དུ་སྒྲིག་བཟོ།</string>
+  <string name="action_services">འཛོམས་ཞབས་ཞུ།</string>
 </resources>
