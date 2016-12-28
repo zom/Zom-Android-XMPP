@@ -68,14 +68,6 @@ import im.zom.messenger.R;
 
 
 public class AccountFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     ImageView mIvAvatar;
     CropImageView mCropImageView;
@@ -91,6 +83,8 @@ public class AccountFragment extends Fragment {
     String mNickname;
     String mUserKey;
 
+    private final static String DEFAULT_PASSWORD_TEST = "*************";
+
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -103,8 +97,6 @@ public class AccountFragment extends Fragment {
     public static AccountFragment newInstance(String param1, String param2) {
         AccountFragment fragment = new AccountFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -116,11 +108,6 @@ public class AccountFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-
     }
 
     @Override
@@ -139,19 +126,19 @@ public class AccountFragment extends Fragment {
 
         if (!TextUtils.isEmpty(mUserAddress)) {
 
-
-            XmppAddress xAddress = new XmppAddress(mUserAddress);
-
             TextView tvNickname = (TextView) mView.findViewById(R.id.tvNickname);
 
             TextView tvUsername = (TextView) mView.findViewById(R.id.edtName);
             mTvPassword = (TextView) mView.findViewById(R.id.edtPass);
+
             View btnShowPassword = mView.findViewById(R.id.btnShowPass);
             btnShowPassword.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
-                    mTvPassword.setText(getAccountPassword(mProviderId));
+                    if (mTvPassword.equals(DEFAULT_PASSWORD_TEST))
+                        mTvPassword.setText(getAccountPassword(mProviderId));
+                    else
+                        mTvPassword.setText(DEFAULT_PASSWORD_TEST);
                 }
             });
 
@@ -173,7 +160,6 @@ public class AccountFragment extends Fragment {
                         intent.setType("text/plain");
                         startActivity(intent);
 
-                     //   OnboardingManager.inviteScan(getActivity(), inviteString);
                     } catch (IOException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
@@ -238,26 +224,9 @@ public class AccountFragment extends Fragment {
 
             if (mUserKey != null) {
                 tvFingerprint.setText(prettyPrintFingerprint(mUserKey));
-
-                /**
-                 try {
-                 String inviteLink = OnboardingManager.generateInviteLink(getActivity(), fullUserName, mApp.getDefaultOtrKey());
-                 new QrGenAsyncTask(getActivity(), ivScan,ImApp.DEFAULT_AVATAR_WIDTH).execute(inviteLink);
-                 } catch (IOException ioe) {
-                 Log.e(ImApp.LOG_TAG, "couldn't generate QR code", ioe);
-                 }*/
             }
 
-            /**
-            Button btnLock = (Button) mView.findViewById(R.id.btnLock);
-            btnLock.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ((MainActivity) getActivity()).handleLock();
-                    }
-            });*/
         }
-
 
         return mView;
     }
