@@ -113,6 +113,7 @@ public class MainActivity extends BaseActivity {
 
     public final static int REQUEST_ADD_CONTACT = 9999;
     public final static int REQUEST_CHOOSE_CONTACT = REQUEST_ADD_CONTACT+1;
+    public final static int REQUEST_CHANGE_SETTINGS = REQUEST_CHOOSE_CONTACT+1;
 
     private ConversationListFragment mConversationList;
     private ContactsListFragment mContactList;
@@ -371,7 +372,13 @@ public class MainActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == RESULT_OK) {
-            if (requestCode == REQUEST_ADD_CONTACT)
+
+            if (requestCode == REQUEST_CHANGE_SETTINGS)
+            {
+                finish();
+                startActivity(new Intent(this, MainActivity.class));
+            }
+            else if (requestCode == REQUEST_ADD_CONTACT)
             {
                 String username = data.getStringExtra(ContactsPickerActivity.EXTRA_RESULT_USERNAME);
                 long providerId = data.getLongExtra(ContactsPickerActivity.EXTRA_RESULT_PROVIDER, -1);
@@ -593,7 +600,7 @@ public class MainActivity extends BaseActivity {
 
             case R.id.menu_settings:
                 Intent sintent = new Intent(this, SettingActivity.class);
-                startActivity(sintent);
+                startActivityForResult(sintent,  REQUEST_CHANGE_SETTINGS);
                 return true;
 
             case R.id.menu_lock:
@@ -685,8 +692,10 @@ public class MainActivity extends BaseActivity {
     public void startChat (long providerId, long accountId, String username)
     {
 
+        boolean startCrypto = false;
+
         if (username != null)
-            new ChatSessionInitTask(((ImApp)getApplication()),providerId, accountId, Imps.Contacts.TYPE_NORMAL)
+            new ChatSessionInitTask(((ImApp)getApplication()),providerId, accountId, Imps.Contacts.TYPE_NORMAL, startCrypto)
             {
                 @Override
                 protected void onPostExecute(Long chatId) {

@@ -63,6 +63,7 @@ public class SettingActivity extends PreferenceActivity {
     CheckBoxPreference mNotificationVibrate;
     CheckBoxPreference mNotificationSound;
     CheckBoxPreference mForegroundService;
+    CheckBoxPreference mAllowScreenshot;
     EditTextPreference mHeartbeatInterval;
 
     Preference mNotificationRingtone;
@@ -110,6 +111,8 @@ public class SettingActivity extends PreferenceActivity {
         mOtrMode.setEntryValues(Preferences.getOtrModeValues());
         mOtrMode.setDefaultValue(Preferences.DEFAULT_OTR_MODE);
 
+        mAllowScreenshot = (CheckBoxPreference)findPreference("prefBlockScreenshots");
+
         mPanicTriggerApp = (ListPreference) findPreference("pref_panic_trigger_app");
         mPanicConfig = (Preference) findPreference("pref_panic_config");
         mLanguage = (ListPreference) findPreference("pref_language");
@@ -122,6 +125,7 @@ public class SettingActivity extends PreferenceActivity {
 
         mNotificationRingtone = findPreference("pref_notification_ringtone");
 
+
         Languages languages = Languages.get(this);
         currentLanguage = getResources().getConfiguration().locale.getLanguage();
         mLanguage.setDefaultValue(currentLanguage);
@@ -132,6 +136,15 @@ public class SettingActivity extends PreferenceActivity {
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 String language = (String) newValue;
                 ImApp.resetLanguage(SettingActivity.this, language);
+                setResult(RESULT_OK);
+                return true;
+            }
+        });
+
+        mAllowScreenshot.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object o) {
+                setResult(RESULT_OK);
                 return true;
             }
         });
@@ -166,7 +179,7 @@ public class SettingActivity extends PreferenceActivity {
                 pEdit.remove("themeColorText");
                 pEdit.remove("themeColor");
                 pEdit.commit();
-
+                setResult(RESULT_OK);
                 finish();
                 return true;
             }
