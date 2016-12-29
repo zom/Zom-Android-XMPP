@@ -24,7 +24,7 @@
         <org.awesomeapp.messenger.ui.CircleColorImageView
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:src="@drawable/ic_system_update_white_24dp"
+            android:src="@drawable/notify_zom"
             android:layout_margin="6dp"
             android:padding="6dp"
             android:layout_gravity="center"
