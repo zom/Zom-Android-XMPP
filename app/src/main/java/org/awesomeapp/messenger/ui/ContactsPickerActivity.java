@@ -21,6 +21,7 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -77,7 +78,7 @@ public class ContactsPickerActivity extends BaseActivity {
     private MyLoaderCallbacks mLoaderCallbacks;
 
     private ContactListListener mListener = null;
-    private Uri mUri = Imps.Contacts.CONTENT_URI_CONTACTS_BY;
+    private Uri mUri = Imps.Contacts.CONTENT_URI;
 
     private Handler mHandler = new Handler();
 
@@ -95,9 +96,6 @@ public class ContactsPickerActivity extends BaseActivity {
 
     // The callbacks through which we will interact with the LoaderManager.
     private LoaderManager.LoaderCallbacks<Cursor> mCallbacks;
-
-    private boolean mHideOffline = false;
-    private boolean mShowInvitations = false;
 
     private boolean mIsCABDestroyed= true;
 
@@ -243,13 +241,6 @@ public class ContactsPickerActivity extends BaseActivity {
 
         });
 
-        mHideOffline = Preferences.getHideOfflineContacts();
-
-        if (getIntent() != null && getIntent().hasExtra("invitations"))
-        {
-            mShowInvitations = getIntent().getBooleanExtra("invitations", false);
-        }
-
         doFilterAsync("");
     }
 
@@ -275,7 +266,7 @@ public class ContactsPickerActivity extends BaseActivity {
 
         for (int i = 0; i < positions.size(); i++)
         {
-            if (positions.get(i)) {
+            if (positions.valueAt(i)) {
                 Cursor cursor = (Cursor) mAdapter.getItem(i);
 
                 users.add(cursor.getString(ContactListItem.COLUMN_CONTACT_USERNAME));
@@ -287,7 +278,7 @@ public class ContactsPickerActivity extends BaseActivity {
         Intent data = new Intent();
         data.putStringArrayListExtra(EXTRA_RESULT_USERNAMES, users);
         data.putIntegerArrayListExtra(EXTRA_RESULT_PROVIDER, providers);
-        data.putIntegerArrayListExtra(EXTRA_RESULT_PROVIDER, accounts);
+        data.putIntegerArrayListExtra(EXTRA_RESULT_ACCOUNT, accounts);
         setResult(RESULT_OK, data);
         finish();
     }
@@ -441,6 +432,11 @@ public class ContactsPickerActivity extends BaseActivity {
 
         }
 
+        @Override
+        public boolean hasStableIds() {
+            return true;
+        }
+
         public void setNewSelection(int position, boolean value) {
             mSelection.put(position, value);
             notifyDataSetChanged();
@@ -465,35 +461,6 @@ public class ContactsPickerActivity extends BaseActivity {
             notifyDataSetChanged();
 
         }
-
-        /*
-        @Override
-        public View newView(Context context, Cursor cursor, ViewGroup parent) {
-
-            View view = super.newView(context, cursor, parent);
-
-            ContactListItem.ViewHolder holder = null;
-
-            holder = new ContactListItem.ViewHolder();
-
-            holder.mLine1 = (TextView) view.findViewById(R.id.line1);
-            holder.mLine2 = (TextView) view.findViewById(R.id.line2);
-
-            holder.mAvatar = (ImageView)view.findViewById(R.id.avatar);
-            holder.mStatusIcon = (ImageView)view.findViewById(R.id.statusIcon);
-
-            holder.mContainer = view.findViewById(R.id.message_container);
-
-            holder.mMediaThumb = (ImageView)view.findViewById(R.id.media_thumbnail);
-
-            view.setTag(holder);
-
-           return view;
-
-
-
-        }
-*/
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
@@ -548,35 +515,19 @@ public class ContactsPickerActivity extends BaseActivity {
             StringBuilder buf = new StringBuilder();
 
             if (mSearchString != null) {
-
                 buf.append('(');
                 buf.append(Imps.Contacts.NICKNAME);
                 buf.append(" LIKE ");
-                android.database.DatabaseUtils.appendValueToSql(buf, "%" + mSearchString + "%");
+                DatabaseUtils.appendValueToSql(buf, "%" + mSearchString + "%");
                 buf.append(" OR ");
                 buf.append(Imps.Contacts.USERNAME);
                 buf.append(" LIKE ");
-                android.database.DatabaseUtils.appendValueToSql(buf, "%" + mSearchString + "%");
+                DatabaseUtils.appendValueToSql(buf, "%" + mSearchString + "%");
                 buf.append(')');
                 buf.append(" AND ");
             }
 
-//            normal types not temporary
-
             buf.append(Imps.Contacts.TYPE).append('=').append(Imps.Contacts.TYPE_NORMAL);
-
-            if (mShowInvitations)
-            {
-                buf.append(" AND (");                
-                buf.append(Imps.Contacts.SUBSCRIPTION_TYPE).append('=').append(Imps.Contacts.SUBSCRIPTION_TYPE_FROM);
-                buf.append(" )");
-            }
-
-            if(mHideOffline)
-            {
-                buf.append(" AND ");
-                buf.append(Imps.Contacts.PRESENCE_STATUS).append("!=").append(Imps.Presence.OFFLINE);
-            }
 
             CursorLoader loader = new CursorLoader(ContactsPickerActivity.this, mUri, ContactListItem.CONTACT_PROJECTION,
                     buf == null ? null : buf.toString(), null, Imps.Contacts.MODE_AND_ALPHA_SORT_ORDER);

@@ -54,6 +54,7 @@ import org.awesomeapp.messenger.util.SystemServices.FileInfo;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Locale;
@@ -658,11 +659,36 @@ public class ImUrlActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent resultIntent) {
         if (resultCode == RESULT_OK) {
             if (requestCode == REQUEST_PICK_CONTACTS) {
-                String username = resultIntent.getExtras().getString(ContactsPickerActivity.EXTRA_RESULT_USERNAME);
-                long providerId = resultIntent.getExtras().getLong(ContactsPickerActivity.EXTRA_RESULT_PROVIDER);
-                long accountId  = resultIntent.getExtras().getLong(ContactsPickerActivity.EXTRA_RESULT_ACCOUNT);
 
-                sendOtrInBand(username, providerId, accountId);
+                String username = resultIntent.getStringExtra(ContactsPickerActivity.EXTRA_RESULT_USERNAME);
+
+                if (username != null) {
+                    long providerId = resultIntent.getLongExtra(ContactsPickerActivity.EXTRA_RESULT_PROVIDER, -1);
+                    long accountId = resultIntent.getLongExtra(ContactsPickerActivity.EXTRA_RESULT_ACCOUNT, -1);
+
+                    sendOtrInBand(username, providerId, accountId);
+
+                }
+                else {
+
+                    //send to multiple
+                    ArrayList<String> usernames = resultIntent.getStringArrayListExtra(ContactsPickerActivity.EXTRA_RESULT_USERNAMES);
+                    if (usernames != null)
+                    {
+                        ArrayList<Integer> providers = resultIntent.getIntegerArrayListExtra(ContactsPickerActivity.EXTRA_RESULT_PROVIDER);
+                        ArrayList<Integer> accounts = resultIntent.getIntegerArrayListExtra(ContactsPickerActivity.EXTRA_RESULT_ACCOUNT);
+
+                        if (providers != null && accounts != null)
+                            for (int i = 0; i < providers.size(); i++)
+                            {
+                                sendOtrInBand(usernames.get(i), providers.get(i), accounts.get(i));
+                            }
+
+                    }
+
+                }
+
+
                 finish();
             }
             else if (requestCode == REQUEST_SIGNIN_ACCOUNT || requestCode == REQUEST_CREATE_ACCOUNT)
@@ -689,6 +715,10 @@ public class ImUrlActivity extends Activity {
         try
         {
             IImConnection conn = ((ImApp)getApplication()).getConnection(providerId,accountId);
+
+            if (conn == null)
+                return; //can't send without a connection
+
             mChatSessionManager = conn.getChatSessionManager();
 
             IChatSession session = getChatSession(username);
@@ -764,7 +794,7 @@ public class ImUrlActivity extends Activity {
     private void startContactPicker() {
 
         boolean noOnlineConnections = true;
-        Uri.Builder builder = Imps.Contacts.CONTENT_URI_ONLINE_CONTACTS_BY.buildUpon();
+        Uri.Builder builder = Imps.Contacts.CONTENT_URI.buildUpon();
         Collection<IImConnection> listConns = ((ImApp)getApplication()).getActiveConnections();
 
         for (IImConnection conn : listConns)

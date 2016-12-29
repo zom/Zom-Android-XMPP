@@ -1005,48 +1005,6 @@ public class ConversationView {
             }
         });
 
-        /**
-        View btnApproveSubscription = mActivity.findViewById(R.id.btnApproveSubscription);
-        btnApproveSubscription.setOnClickListener(new View.OnClickListener()
-        {
-
-            @Override
-            public void onClick(View v) {
-
-                approveSubscription();
-
-                mHandler.postDelayed(new Runnable () { public void run () {
-
-                    bindChat(mLastChatId, null, null);
-
-                } }, 1000);
-
-
-            }
-
-        });
-
-        View btnDeclineSubscription = mActivity.findViewById(R.id.btnDeclineSubscription);
-        btnDeclineSubscription.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-
-            public void onClick(View v) {
-
-                declineSubscription();
-
-                mHandler.postDelayed(new Runnable() {
-                    public void run() {
-                        bindChat(mLastChatId, null, null);
-
-                    }
-                }, 1000);
-
-
-            }
-
-        });**/
-
         mMessageAdapter = new ConversationRecyclerViewAdapter(mActivity, null);
         mHistory.setAdapter(mMessageAdapter);
 

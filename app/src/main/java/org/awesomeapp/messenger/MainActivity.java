@@ -401,11 +401,7 @@ public class MainActivity extends BaseActivity {
                     ArrayList<String> users = data.getStringArrayListExtra(ContactsPickerActivity.EXTRA_RESULT_USERNAMES);
                     if (users != null)
                     {
-                        //int[] providers = data.getIntArrayExtra(ContactsPickerActivity.EXTRA_RESULT_PROVIDER);
-                        //int[] accounts = data.getIntArrayExtra(ContactsPickerActivity.EXTRA_RESULT_ACCOUNT);
-
                         //start group and do invite here
-
                         startGroupChat(users);
                     }
 
