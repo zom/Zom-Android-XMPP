@@ -210,6 +210,22 @@ public class OnboardingManager {
             return null;
         }
     }
+
+    public static boolean changePassword (Activity context, long providerId, long accountId, String oldPassword, String newPassword)
+    {
+        try {
+            XmppConnection xmppConn = new XmppConnection(context);
+            xmppConn.initUser(providerId, accountId);
+            boolean success = xmppConn.changeServerPassword(providerId, accountId, oldPassword, newPassword);
+
+            return success;
+        }
+        catch (Exception e)
+        {
+            return false;
+        }
+    }
+
     public static OnboardingAccount registerAccount (Activity context, Handler handler, String nickname, String username, String password, String domain, int port) throws JSONException {
 
         if (password == null)

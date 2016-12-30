@@ -51,6 +51,7 @@ import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.MainActivity;
 import org.awesomeapp.messenger.Preferences;
 import org.awesomeapp.messenger.crypto.OtrAndroidKeyManagerImpl;
+import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.tasks.AddContactAsyncTask;
 import org.awesomeapp.messenger.ui.BaseActivity;
@@ -736,7 +737,8 @@ public class OnboardingActivity extends BaseActivity {
                 KeyPair keyPair = keyMan.generateLocalKeyPair();
                 mFingerprint = keyMan.getFingerprint(keyPair.getPublic());
 
-                OnboardingAccount result = OnboardingManager.addExistingAccount(OnboardingActivity.this, mHandler, account[0], account[0], account[1]);
+                String nickname = new XmppAddress(account[0]).getUser();
+                OnboardingAccount result = OnboardingManager.addExistingAccount(OnboardingActivity.this, mHandler, nickname, account[0], account[1]);
 
                 if (result != null) {
                     String jabberId = result.username + '@' + result.domain;

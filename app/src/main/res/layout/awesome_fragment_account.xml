@@ -66,7 +66,9 @@
 				android:padding="6dp">
 			<org.ironrabbit.type.CustomTypefaceTextView android:id="@+id/tvNickname"
 				android:selectAllOnFocus="true"
-				android:layout_width="match_parent"
+				android:layout_width="wrap_content"
+				android:ellipsize="end"
+				android:maxWidth="200dp"
 				android:layout_height="wrap_content"
 				android:hint="@string/account_setup_example_email_address"
 				android:autoLink="none"
@@ -74,14 +76,23 @@
 				android:inputType="textEmailAddress"
 				android:text="user person"
 				android:textAppearance="?android:attr/textAppearanceLarge"
-
 				/>
+				<ImageView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:src="@drawable/ic_mode_edit_black_18dp"
+					android:id="@+id/edit_account_nickname"
+					android:padding="6dp"
+					android:layout_toRightOf="@+id/tvNickname"
+					/>
 				<Switch
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:id="@+id/switchOnline"
 					android:layout_alignParentRight="true"
 					/>
+
+
 </RelativeLayout>
 
 
@@ -127,6 +138,16 @@
 											   android:layout_alignParentRight="true"
 
 											   />
+									   <ImageView
+										   android:layout_width="wrap_content"
+										   android:layout_height="wrap_content"
+										   android:src="@drawable/ic_mode_edit_black_18dp"
+										   android:layout_toStartOf="@+id/btnShowPass"
+										   android:layout_toLeftOf="@+id/btnShowPass"
+										   android:id="@+id/edit_account_password"
+										   android:layout_marginRight="6dp"
+
+										   />
 			                               </RelativeLayout>
 
 

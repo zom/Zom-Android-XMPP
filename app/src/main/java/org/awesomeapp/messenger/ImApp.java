@@ -444,9 +444,16 @@ public class ImApp extends Application implements ICacheWordSubscriber {
 
             ContentValues values = new ContentValues(4);
             values.put(Imps.Account.PROVIDER, providerId);
-            values.put(Imps.Account.NAME, nickname);
-            values.put(Imps.Account.USERNAME, username);
-            values.put(Imps.Account.PASSWORD, pw);
+
+            if (!TextUtils.isEmpty(nickname))
+                values.put(Imps.Account.NAME, nickname);
+
+            if (!TextUtils.isEmpty(username))
+                values.put(Imps.Account.USERNAME, username);
+
+            if (!TextUtils.isEmpty(pw))
+                values.put(Imps.Account.PASSWORD, pw);
+
             Uri accountUri = ContentUris.withAppendedId(Imps.Account.CONTENT_URI, id);
             cr.update(accountUri, values, null, null);
 

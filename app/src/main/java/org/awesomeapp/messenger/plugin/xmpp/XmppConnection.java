@@ -1146,6 +1146,43 @@ public class XmppConnection extends ImConnection {
         });
     }
 
+    private void loginSync(long accountId, String passwordTemp, long providerId, boolean retry) {
+
+        mAccountId = accountId;
+        mPassword = passwordTemp;
+        mProviderId = providerId;
+        mRetryLogin = retry;
+
+        ContentResolver contentResolver = mContext.getContentResolver();
+
+        if (mPassword == null)
+            mPassword = Imps.Account.getPassword(contentResolver, mAccountId);
+
+        mIsGoogleAuth = false;// mPassword.startsWith(GTalkOAuth2.NAME);
+
+        if (mIsGoogleAuth)
+        {
+            mPassword = mPassword.split(":")[1];
+        }
+
+        Cursor cursor = contentResolver.query(Imps.ProviderSettings.CONTENT_URI, new String[]{Imps.ProviderSettings.NAME, Imps.ProviderSettings.VALUE}, Imps.ProviderSettings.PROVIDER + "=?", new String[]{Long.toString(mProviderId)}, null);
+
+        if (cursor == null)
+            return;
+
+        Imps.ProviderSettings.QueryMap providerSettings = new Imps.ProviderSettings.QueryMap(
+                cursor, contentResolver, mProviderId, false, null);
+
+        if (mUser == null)
+            mUser = makeUser(providerSettings, contentResolver);
+
+        providerSettings.close();
+
+        do_login();
+
+
+    }
+
     // Runs in executor thread
     private void do_login() {
 
@@ -1186,7 +1223,6 @@ public class XmppConnection extends ImConnection {
             setState(LOGGED_IN, null);
             debug(TAG, "logged in");
             mNeedReconnect = false;
-
 
 
         } catch (XMPPException e) {
@@ -1440,9 +1476,10 @@ public class XmppConnection extends ImConnection {
                 }
             }
 
-            debug(TAG, "Saving VCard for: " + mUser.getAddress().getAddress());
-            vCardManager.saveVCard(vCard);
-
+            if (mConnection != null && mConnection.isConnected() && mConnection.isAuthenticated()) {
+                debug(TAG, "Saving VCard for: " + mUser.getAddress().getAddress());
+                vCardManager.saveVCard(vCard);
+            }
         }
         catch (Exception e)
         {
@@ -3225,12 +3262,13 @@ public class XmppConnection extends ImConnection {
         {
             //update and send new presence packet out
             mUserPresence = new Presence(Presence.AVAILABLE, "", Presence.CLIENT_TYPE_MOBILE);
-            sendPresencePacket();  
-            
-            //request presence of remote contact for all existing sessions 
-            for (ChatSessionAdapter session : mSessionManager.getAdapter().getActiveChatSessions())
-            {
-                requestPresenceRefresh(session.getAddress());
+            sendPresencePacket();
+
+            if (mSessionManager != null) {
+                //request presence of remote contact for all existing sessions
+                for (ChatSessionAdapter session : mSessionManager.getAdapter().getActiveChatSessions()) {
+                    requestPresenceRefresh(session.getAddress());
+                }
             }
 
             mChatGroupManager.reconnectAll();
@@ -3514,6 +3552,31 @@ public class XmppConnection extends ImConnection {
 
     }
 
+    public boolean changeServerPassword (long providerId, long accountId, String oldPassword, String newPassword) throws Exception
+    {
+
+        boolean result = false;
+
+        try {
+
+            loginSync(accountId, oldPassword, providerId, false);
+
+            if (mConnection.isConnected() && mConnection.isSecureConnection() && mConnection.isAuthenticated()) {
+                org.jivesoftware.smackx.iqregister.AccountManager aMgr = org.jivesoftware.smackx.iqregister.AccountManager.getInstance(mConnection);
+                aMgr.changePassword(newPassword);
+                result = true;
+                do_logout();
+            }
+        }
+        catch (XMPPException xe)
+        {
+            result = false;
+        }
+
+        return result;
+
+    }
+
     private void handleChatState (String from, String chatStateXml) throws RemoteException {
 
         Presence p = null;
@@ -3643,6 +3706,10 @@ public class XmppConnection extends ImConnection {
         // Get presence from the Roster to handle priorities and such
         // TODO: this causes bad network and performance issues
         //   if (presence.getType() == Type.available) //get the latest presence for the highest priority
+
+        if (mContactListManager == null)
+            return null; //we may have logged out
+
         Contact contact = mContactListManager.getContact(xaddress.getBareAddress());
 
         String[] presenceParts = presence.getFrom().split("/");
@@ -3815,8 +3882,8 @@ public class XmppConnection extends ImConnection {
 
                     Collection<Contact> contactsUpdate = alUpdate.values();
 
-                    mContactListManager.notifyContactsPresenceUpdated(contactsUpdate.toArray(new Contact[contactsUpdate.size()]));
-
+                    if (mContactListManager != null)
+                        mContactListManager.notifyContactsPresenceUpdated(contactsUpdate.toArray(new Contact[contactsUpdate.size()]));
 
                 }
                 

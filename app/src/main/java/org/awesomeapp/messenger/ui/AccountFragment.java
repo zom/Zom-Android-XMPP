@@ -14,6 +14,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
@@ -27,10 +28,12 @@ import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -43,12 +46,15 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.MainActivity;
+import org.awesomeapp.messenger.crypto.OtrAndroidKeyManagerImpl;
 import org.awesomeapp.messenger.model.ImConnection;
 import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.service.IImConnection;
 import org.awesomeapp.messenger.ui.legacy.DatabaseUtils;
 import org.awesomeapp.messenger.ui.legacy.SignInHelper;
+import org.awesomeapp.messenger.ui.onboarding.OnboardingAccount;
+import org.awesomeapp.messenger.ui.onboarding.OnboardingActivity;
 import org.awesomeapp.messenger.ui.onboarding.OnboardingManager;
 import org.awesomeapp.messenger.ui.qr.QrDisplayActivity;
 import org.awesomeapp.messenger.ui.qr.QrGenAsyncTask;
@@ -56,11 +62,13 @@ import org.awesomeapp.messenger.ui.qr.QrShareAsyncTask;
 import org.awesomeapp.messenger.ui.widgets.ImageViewActivity;
 import org.awesomeapp.messenger.ui.widgets.RoundedAvatarDrawable;
 import org.awesomeapp.messenger.util.SecureMediaStore;
+import org.w3c.dom.Text;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.KeyPair;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,7 +79,7 @@ public class AccountFragment extends Fragment {
 
     ImageView mIvAvatar;
     CropImageView mCropImageView;
-    TextView mTvPassword;
+    TextView mTvPassword, mTvNickname;
     ImApp mApp;
     Handler mHandler = new Handler();
     ImageView ivScan;
@@ -118,7 +126,7 @@ public class AccountFragment extends Fragment {
         mApp = ((ImApp) getActivity().getApplication());
         mProviderId = mApp.getDefaultProviderId();
         mAccountId = mApp.getDefaultAccountId();
-        mUserAddress = mApp.getDefaultUsername();
+        mUserAddress = mApp.getDefaultUsername().trim();
         mUserKey = mApp.getDefaultOtrKey();
         mNickname = Imps.Account.getNickname(getContext().getContentResolver(), mAccountId);
 
@@ -126,7 +134,7 @@ public class AccountFragment extends Fragment {
 
         if (!TextUtils.isEmpty(mUserAddress)) {
 
-            TextView tvNickname = (TextView) mView.findViewById(R.id.tvNickname);
+            mTvNickname = (TextView) mView.findViewById(R.id.tvNickname);
 
             TextView tvUsername = (TextView) mView.findViewById(R.id.edtName);
             mTvPassword = (TextView) mView.findViewById(R.id.edtPass);
@@ -140,6 +148,22 @@ public class AccountFragment extends Fragment {
                         mTvPassword.setText(getAccountPassword(mProviderId));
                     else
                         mTvPassword.setText(DEFAULT_PASSWORD_TEXT);
+                }
+            });
+
+            View btnEditAccountNickname = mView.findViewById(R.id.edit_account_nickname);
+            btnEditAccountNickname.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    showChangeNickname();
+                }
+            });
+
+            View btnEditAccountPassword = mView.findViewById(R.id.edit_account_password);
+            btnEditAccountPassword.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    showChangePassword();
                 }
             });
 
@@ -221,7 +245,7 @@ public class AccountFragment extends Fragment {
             }
 
             tvUsername.setText(mUserAddress);
-            tvNickname.setText(mNickname);
+            mTvNickname.setText(mNickname);
 
             if (mUserKey != null) {
                 tvFingerprint.setText(prettyPrintFingerprint(mUserKey));
@@ -230,6 +254,67 @@ public class AccountFragment extends Fragment {
         }
 
         return mView;
+    }
+
+    private void showChangeNickname ()
+    {
+        AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
+
+        // Set an EditText view to get user input
+        final EditText input = new EditText(getContext());
+        input.setText(mNickname);
+        alert.setView(input);
+
+        alert.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                String newNickname = input.getText().toString();
+
+                //update just the nickname
+                ImApp.insertOrUpdateAccount(getContext().getContentResolver(), mProviderId, mAccountId, newNickname, "", null);
+
+                mTvNickname.setText(newNickname);
+                // Do something with value!
+            }
+        });
+
+        alert.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                // Canceled.
+            }
+        });
+
+        alert.show();
+    }
+
+    private void showChangePassword ()
+    {
+        AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
+
+        // Set an EditText view to get user input
+        final EditText input = new EditText(getContext());
+        input.setText(getAccountPassword(mProviderId));
+        alert.setView(input);
+
+        alert.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                String newPassword = input.getText().toString();
+
+                if (!TextUtils.isEmpty(newPassword)) {
+                    new ChangePasswordTask().execute(getAccountPassword(mProviderId),newPassword);
+
+
+                    // Do something with value!
+                }
+            }
+        });
+
+        alert.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                // Canceled.
+            }
+        });
+
+        alert.show();
     }
 
     private boolean checkConnection() {
@@ -550,5 +635,39 @@ public class AccountFragment extends Fragment {
         }
     }
 
+    private class ChangePasswordTask extends AsyncTask<String, Void, Boolean> {
+
+        String newPassword = null;
+
+        @Override
+        protected Boolean doInBackground(String... setupValues) {
+            try {
+
+                newPassword = setupValues[1];
+                String oldPassword = setupValues[0];
+
+                boolean result = OnboardingManager.changePassword(getActivity(), mProviderId, mAccountId, oldPassword, newPassword);
+
+                return result;
+            }
+            catch (Exception e)
+            {
+                Log.e(ImApp.LOG_TAG, "auto onboarding fail", e);
+                return false;
+            }
+        }
+
+
+        @Override
+        protected void onPostExecute(Boolean passwordChanged) {
+
+            if (passwordChanged) {
+                //update just the nickname
+                ImApp.insertOrUpdateAccount(getContext().getContentResolver(), mProviderId, mAccountId, "", "", newPassword);
+                mTvPassword.setText(DEFAULT_PASSWORD_TEXT);
+            }
+
+        }
+    }
 
 }
