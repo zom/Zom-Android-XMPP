@@ -33,14 +33,13 @@ android {
 
     dexOptions {
         jumboMode true
-        incremental false
         javaMaxHeapSize "2g"
         preDexLibraries false
     }
 
     defaultConfig {
         applicationId 'im.zom.messenger'
-        versionCode 1501935
+        versionCode 1502001
         versionName getVersionName()
         archivesBaseName = "Zom-$versionName"
         minSdkVersion project.ext.minSdkVersion
