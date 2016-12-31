@@ -213,7 +213,7 @@
         <org.ironrabbit.type.CustomTypefaceTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Typing..."
+            android:text="..."
             android:layout_marginLeft="12dp"
             android:id="@+id/tvTyping"
             android:layout_below="@+id/history"
