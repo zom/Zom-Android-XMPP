@@ -142,7 +142,6 @@ public class MessageListItem extends FrameLayout {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-
     }
 
     public void setLinkify(boolean linkify) {
@@ -162,7 +161,7 @@ public class MessageListItem extends FrameLayout {
             boolean scrolling, EncryptionState encryption, boolean showContact, int presenceStatus) {
 
         mHolder = holder;
-
+        applyStyleColors();
         mHolder.mTextViewForMessages.setVisibility(View.VISIBLE);
         mHolder.mAudioContainer.setVisibility(View.GONE);
         mHolder.mMediaContainer.setVisibility(View.GONE);
@@ -653,6 +652,7 @@ public class MessageListItem extends FrameLayout {
             DeliveryState delivery, EncryptionState encryption) {
 
         mHolder = holder;
+        applyStyleColors();
 
         mHolder.mTextViewForMessages.setVisibility(View.VISIBLE);
         mHolder.mAudioContainer.setVisibility(View.GONE);
@@ -796,7 +796,7 @@ public class MessageListItem extends FrameLayout {
                 mHolder.mAvatar.setVisibility(View.VISIBLE);
                 mHolder.mAvatar.setImageDrawable(avatar);
 
-                setAvatarBorder(presenceStatus, avatar);
+                //setAvatarBorder(presenceStatus, avatar);
 
             }
             else
@@ -1021,6 +1021,7 @@ public class MessageListItem extends FrameLayout {
         }
     }
 
+    /**
     public void setAvatarBorder(int status, RoundedAvatarDrawable avatar) {
         switch (status) {
         case Presence.AVAILABLE:
@@ -1049,7 +1050,7 @@ public class MessageListItem extends FrameLayout {
 
         default:
         }
-    }
+    }**/
 
     public void applyStyleColors ()
     {

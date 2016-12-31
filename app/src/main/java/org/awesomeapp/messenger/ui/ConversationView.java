@@ -2631,10 +2631,10 @@ public class ConversationView {
                 }
             });
 
-            return new MessageViewHolder(view);
+            MessageViewHolder mvh = new MessageViewHolder(view);
+            view.applyStyleColors();
+            return mvh;
         }
-
-
 
         @Override
         public void onBindViewHolder(MessageViewHolder viewHolder, Cursor cursor) {

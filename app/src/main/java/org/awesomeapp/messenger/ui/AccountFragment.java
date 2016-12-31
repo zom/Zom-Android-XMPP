@@ -294,7 +294,6 @@ public class AccountFragment extends Fragment {
         // Set an EditText view to get user input
         final EditText input = new EditText(getContext());
         input.setText(getAccountPassword(mProviderId));
-        input.setPadding(10,10,10,10);
         alert.setView(input);
 
         alert.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
@@ -645,7 +644,6 @@ public class AccountFragment extends Fragment {
         protected Boolean doInBackground(String... setupValues) {
             try {
 
-
                 String oldPassword = setupValues[0];
                 newPassword = setupValues[1];
 
@@ -662,7 +660,6 @@ public class AccountFragment extends Fragment {
                 return false;
             }
         }
-
 
         @Override
         protected void onPostExecute(Boolean passwordChanged) {
