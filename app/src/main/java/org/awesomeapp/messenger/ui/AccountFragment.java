@@ -289,10 +289,12 @@ public class AccountFragment extends Fragment {
     private void showChangePassword ()
     {
         AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
+        alert.setTitle(R.string.lock_screen_create_passphrase);
 
         // Set an EditText view to get user input
         final EditText input = new EditText(getContext());
         input.setText(getAccountPassword(mProviderId));
+        input.setPadding(10,10,10,10);
         alert.setView(input);
 
         alert.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
@@ -643,12 +645,16 @@ public class AccountFragment extends Fragment {
         protected Boolean doInBackground(String... setupValues) {
             try {
 
-                newPassword = setupValues[1];
+
                 String oldPassword = setupValues[0];
+                newPassword = setupValues[1];
 
-                boolean result = OnboardingManager.changePassword(getActivity(), mProviderId, mAccountId, oldPassword, newPassword);
-
-                return result;
+                if (!oldPassword.equals(newPassword)) {
+                    boolean result = OnboardingManager.changePassword(getActivity(), mProviderId, mAccountId, oldPassword, newPassword);
+                    return result;
+                }
+                else
+                    return false;
             }
             catch (Exception e)
             {
