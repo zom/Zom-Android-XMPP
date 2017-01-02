@@ -2,16 +2,6 @@
 {
   "servers":[
     {
-      "domain": "dukgo.com",
-      "server": "xmpp.dukgo.com",
-      "address": "23.21.227.59",
-      "port": 5222,
-      "certificate": "",
-      "logoUrl": "",
-      "country": "US",
-      "muc": "conference.dukgo.com"
-    },
-    {
       "domain": "home.zom.im",
       "server": "home.zom.im",
       "address": "162.247.72.41",
@@ -20,6 +10,16 @@
       "logoUrl": "https://s3....",
       "country": "BO",
       "muc": "conference.zom.im"
+    },
+    {
+      "domain": "dukgo.com",
+      "server": "xmpp.dukgo.com",
+      "address": "23.21.227.59",
+      "port": 5222,
+      "certificate": "",
+      "logoUrl": "",
+      "country": "US",
+      "muc": "conference.dukgo.com"
     },
     {
       "domain": "blah.im",
