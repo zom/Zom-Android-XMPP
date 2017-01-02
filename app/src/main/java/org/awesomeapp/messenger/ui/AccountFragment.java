@@ -126,13 +126,15 @@ public class AccountFragment extends Fragment {
         mApp = ((ImApp) getActivity().getApplication());
         mProviderId = mApp.getDefaultProviderId();
         mAccountId = mApp.getDefaultAccountId();
-        mUserAddress = mApp.getDefaultUsername().trim();
+        mUserAddress = mApp.getDefaultUsername();
         mUserKey = mApp.getDefaultOtrKey();
         mNickname = Imps.Account.getNickname(getContext().getContentResolver(), mAccountId);
 
        mView = inflater.inflate(R.layout.awesome_fragment_account, container, false);
 
         if (!TextUtils.isEmpty(mUserAddress)) {
+
+            mUserAddress = mUserAddress.trim(); //make sure any whitespace is removed
 
             mTvNickname = (TextView) mView.findViewById(R.id.tvNickname);
 

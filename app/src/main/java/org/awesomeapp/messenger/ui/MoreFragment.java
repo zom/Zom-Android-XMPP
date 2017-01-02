@@ -182,11 +182,6 @@ public class MoreFragment extends Fragment {
 
     }
 
-    public static int getContrastColor(int colorIn) {
-        double y = (299 * Color.red(colorIn) + 587 * Color.green(colorIn) + 114 * Color.blue(colorIn)) / 1000;
-        return y >= 128 ? Color.BLACK : Color.WHITE;
-    }
-
     @Override
     public void onResume() {
         super.onResume();
@@ -208,6 +203,6 @@ public class MoreFragment extends Fragment {
     {
         ImApp app = (ImApp)getActivity().getApplication();
         new AddContactAsyncTask(app.getDefaultProviderId(), app.getDefaultAccountId(), app).execute(ImApp.ZOM_SERVICES_ADDRESS, null, getString(R.string.action_services));
-        ((MainActivity)getActivity()).startChat(app.getDefaultProviderId(),app.getDefaultAccountId(),ImApp.ZOM_SERVICES_ADDRESS);
+        ((MainActivity)getActivity()).startChat(app.getDefaultProviderId(),app.getDefaultAccountId(),ImApp.ZOM_SERVICES_ADDRESS, true, true);
     }
 }

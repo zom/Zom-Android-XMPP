@@ -30,6 +30,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -310,7 +311,9 @@ public class ImApp extends Application implements ICacheWordSubscriber {
 
             if (language.equalsIgnoreCase("bo"))
             {
-                CustomTypefaceManager.loadFromAssets(activity);
+                if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+                    CustomTypefaceManager.loadFromAssets(activity);
+                }
             }
             else
             {
