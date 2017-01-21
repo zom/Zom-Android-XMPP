@@ -340,7 +340,7 @@ public class XmppConnection extends ImConnection {
     {
         if (!mLoadingAvatars)
         {
-            execute(new AvatarLoader());
+            executeIfIdle(new AvatarLoader());
         }
     }
 
@@ -3564,7 +3564,7 @@ public class XmppConnection extends ImConnection {
     @Override
     public void sendTypingStatus (final String to, final boolean isTyping)
     {
-        mExecutor.execute(new Runnable() {
+        mExecutor.executeIfIdle(new Runnable() {
             public void run() {
                 sendChatState(to, isTyping ? ChatState.composing : ChatState.inactive);
             }
