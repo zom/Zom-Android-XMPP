@@ -34,15 +34,18 @@ public class CustomTypefaceSpan extends TypefaceSpan {
             oldStyle = old.getStyle();
         }
 
-        int fake = oldStyle & ~tf.getStyle();
-        if ((fake & Typeface.BOLD) != 0) {
-            paint.setFakeBoldText(true);
-        }
+	if (tf != null)
+	{
+        	int fake = oldStyle & tf.getStyle();
+        	if ((fake & Typeface.BOLD) != 0) {
+            		paint.setFakeBoldText(true);
+        	}
 
-        if ((fake & Typeface.ITALIC) != 0) {
-            paint.setTextSkewX(-0.25f);
-        }
+        	if ((fake & Typeface.ITALIC) != 0) {
+            		paint.setTextSkewX(-0.25f);
+        	}
 
-        paint.setTypeface(tf);
+        	paint.setTypeface(tf);
+	}
     }
 }
