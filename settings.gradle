@@ -1,4 +1,4 @@
 include ':otr4jandroid', ':IOCipher-v0.4'
 include ':tibetanTextLibrary'
-include ':chatsecure-push:chatsecure-push-sdk'
+include ':chatsecure-push:sdk'
 include ':app'
