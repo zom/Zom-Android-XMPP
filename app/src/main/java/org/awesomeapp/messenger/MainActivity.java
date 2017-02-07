@@ -1066,7 +1066,7 @@ public class MainActivity extends BaseActivity {
 
         if (Preferences.isLanguageTibetan())
         {
-            CustomTypefaceManager.loadFromAssets(this);
+            CustomTypefaceManager.loadFromAssets(this,true);
 
         }
         else
@@ -1075,7 +1075,7 @@ public class MainActivity extends BaseActivity {
             List<InputMethodInfo> mInputMethodProperties = imm.getEnabledInputMethodList();
 
             final int N = mInputMethodProperties.size();
-
+            boolean loadTibetan = false;
             for (int i = 0; i < N; i++) {
 
                 InputMethodInfo imi = mInputMethodProperties.get(i);
@@ -1083,12 +1083,14 @@ public class MainActivity extends BaseActivity {
                 //imi contains the information about the keyboard you are using
                 if (imi.getPackageName().equals("org.ironrabbit.bhoboard")) {
                     //                    CustomTypefaceManager.loadFromKeyboard(this);
-                    CustomTypefaceManager.loadFromAssets(this);
+                    loadTibetan = true;
 
                     break;
                 }
 
             }
+
+            CustomTypefaceManager.loadFromAssets(this, loadTibetan);
         }
 
     }

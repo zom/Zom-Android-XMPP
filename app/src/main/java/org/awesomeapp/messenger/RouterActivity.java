@@ -17,6 +17,7 @@
 package org.awesomeapp.messenger;
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.ProgressDialog;
 import android.content.ContentUris;
 import android.content.Context;
@@ -148,12 +149,10 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
         mSignInHelper = new SignInHelper(this, mHandler);
         mDoSignIn = intent.getBooleanExtra(EXTRA_DO_SIGNIN, true);
 
+        AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+
         mCacheWord = new CacheWordHandler(this, (ICacheWordSubscriber)this);
         mCacheWord.connectToService();
-
-        checkCustomFont();
-
-//        getSupportActionBar().hide();
 
         // if we have an incoming contact, send it to the right place
         String scheme = intent.getScheme();
@@ -467,8 +466,7 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
 
     @Override
     public void onCacheWordOpened() {
-
-        mCacheWord.setTimeout(0);
+       // mCacheWord.setTimeout(0);
        byte[] encryptionKey = mCacheWord.getEncryptionKey();
        openEncryptedStores(encryptionKey);
 
@@ -512,36 +510,6 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
         }
     }
 
-    private void checkCustomFont ()
-    {
-        if (CustomTypefaceManager.getCurrentTypeface(this)==null)
-        {
-
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            List<InputMethodInfo> mInputMethodProperties = imm.getEnabledInputMethodList();
-
-            final int N = mInputMethodProperties.size();
-
-            for (int i = 0; i < N; i++) {
-
-                InputMethodInfo imi = mInputMethodProperties.get(i);
-
-                //imi contains the information about the keyboard you are using
-                if (imi.getPackageName().equals("org.ironrabbit.bhoboard"))
-                {
-//                    CustomTypefaceManager.loadFromKeyboard(this);
-                    CustomTypefaceManager.loadFromAssets(this);
-
-                    break;
-                }
-
-            }
-
-
-
-        }
-
-    }
 
 
 }

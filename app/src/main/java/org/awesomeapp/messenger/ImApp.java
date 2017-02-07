@@ -309,16 +309,9 @@ public class ImApp extends Application implements ICacheWordSubscriber {
             Preferences.setLanguage(language);
             Languages.forceChangeLanguage(activity);
 
-            if (language.equalsIgnoreCase("bo"))
-            {
-                if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-                    CustomTypefaceManager.loadFromAssets(activity);
-                }
-            }
-            else
-            {
-                CustomTypefaceManager.setTypeface(null);
-            }
+            CustomTypefaceManager.loadFromAssets(activity,language.equals("bo"));
+
+
         }
     }
 

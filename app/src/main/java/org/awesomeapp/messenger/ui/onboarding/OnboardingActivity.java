@@ -108,8 +108,6 @@ public class OnboardingActivity extends BaseActivity {
 
         mShowSplash = getIntent().getBooleanExtra("showSplash",true);
 
-        checkCustomFont();
-
         setContentView(R.layout.awesome_onboarding);
 
         if (mShowSplash) {
@@ -262,7 +260,6 @@ public class OnboardingActivity extends BaseActivity {
                     public void onClick(DialogInterface dialog, int position) {
                         String[] languageCodes = languages.getSupportedLocales();
                         ImApp.resetLanguage(activity, languageCodes[position]);
-                        checkCustomFont ();
                         dialog.dismiss();
                     }
                 });
@@ -1031,38 +1028,9 @@ public class OnboardingActivity extends BaseActivity {
         }
     }
 
-    private void checkCustomFont ()
-    {
-        if (Preferences.isLanguageTibetan())
-        {
-            CustomTypefaceManager.loadFromAssets(this);
-
-        }
-        else
-        {
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            List<InputMethodInfo> mInputMethodProperties = imm.getEnabledInputMethodList();
-
-            final int N = mInputMethodProperties.size();
-
-            for (int i = 0; i < N; i++) {
-
-                InputMethodInfo imi = mInputMethodProperties.get(i);
-
-                //imi contains the information about the keyboard you are using
-                if (imi.getPackageName().equals("org.ironrabbit.bhoboard")) {
-                    //                    CustomTypefaceManager.loadFromKeyboard(this);
-                    CustomTypefaceManager.loadFromAssets(this);
-
-                    break;
-                }
-
-            }
-        }
 
 
 
-    }
 
 
 }

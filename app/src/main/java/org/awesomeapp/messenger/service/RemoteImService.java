@@ -959,7 +959,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
     @Override
     public void onCacheWordOpened() {
 
-        mCacheWord.setTimeout(0);
+      //  mCacheWord.setTimeout(0);
 
        tempKey = mCacheWord.getEncryptionKey();
        openEncryptedStores(tempKey, true);
