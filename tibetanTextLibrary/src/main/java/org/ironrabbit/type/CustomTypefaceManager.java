@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
 
@@ -53,19 +54,24 @@ public class CustomTypefaceManager {
 	
 	}
 
-	public static void loadFromAssets (Context context)
+	public static void loadFromAssets (Context context, boolean loadTibetan)
 	{
-		PackageManager packageManager = context.getPackageManager();
 
-		String fontName = "NotoSansTibetan-Regular.ttf";
+        if (mTypeface == null) {
+            String fontName = "Lato-Medium.ttf";
 
-		try {
-			mTypeface = Typeface.createFromAsset(context.getAssets(),fontName);
+            if (loadTibetan) {
+                if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+                    fontName = "NotoSansTibetan-Regular.ttf";
+                }
+            }
 
-		} catch (Exception e) {
-			Log.e("CustomTypeface","can't find assets",e);
-		}
-
+            try {
+                mTypeface = Typeface.createFromAsset(context.getAssets(), fontName);
+            } catch (Exception e) {
+                Log.e("CustomTypeface", "can't find assets", e);
+            }
+        }
 	}
 
 	public static void setTypeface (Typeface typeface)
