@@ -231,7 +231,6 @@ public class ConversationListFragment extends Fragment {
                         intent.putExtra("id", chatId);
                         intent.putExtra("address", address);
                         intent.putExtra("nickname", nickname);
-
                         context.startActivity(intent);
                     }
                 });

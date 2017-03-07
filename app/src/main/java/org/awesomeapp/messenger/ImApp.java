@@ -30,6 +30,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -131,6 +132,7 @@ public class ImApp extends Application implements ICacheWordSubscriber {
 
     public final static String URL_UPDATER = "https://raw.githubusercontent.com/zom/Zom-Android/master/appupdater.xml";
 
+    public final static String ZOM_SERVICES_ADDRESS = "zombot@home.zom.im";
 
     private Locale locale = null;
 
@@ -307,14 +309,9 @@ public class ImApp extends Application implements ICacheWordSubscriber {
             Preferences.setLanguage(language);
             Languages.forceChangeLanguage(activity);
 
-            if (language.equalsIgnoreCase("bo"))
-            {
-                CustomTypefaceManager.loadFromAssets(activity);
-            }
-            else
-            {
-                CustomTypefaceManager.setTypeface(null);
-            }
+            CustomTypefaceManager.loadFromAssets(activity,language.equals("bo"));
+
+
         }
     }
 
@@ -444,9 +441,16 @@ public class ImApp extends Application implements ICacheWordSubscriber {
 
             ContentValues values = new ContentValues(4);
             values.put(Imps.Account.PROVIDER, providerId);
-            values.put(Imps.Account.NAME, nickname);
-            values.put(Imps.Account.USERNAME, username);
-            values.put(Imps.Account.PASSWORD, pw);
+
+            if (!TextUtils.isEmpty(nickname))
+                values.put(Imps.Account.NAME, nickname);
+
+            if (!TextUtils.isEmpty(username))
+                values.put(Imps.Account.USERNAME, username);
+
+            if (!TextUtils.isEmpty(pw))
+                values.put(Imps.Account.PASSWORD, pw);
+
             Uri accountUri = ContentUris.withAppendedId(Imps.Account.CONTENT_URI, id);
             cr.update(accountUri, values, null, null);
 

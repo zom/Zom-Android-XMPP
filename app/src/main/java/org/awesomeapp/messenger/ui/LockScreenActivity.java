@@ -417,7 +417,7 @@ public class LockScreenActivity extends BaseActivity implements ICacheWordSubscr
     public void onCacheWordOpened() {
 
         if (mAction.equals("unlock")) {
-            mCacheWord.setTimeout(0);
+           // mCacheWord.setTimeout(0);
             setResult(RESULT_OK);
             finish();
         }
@@ -431,7 +431,7 @@ public class LockScreenActivity extends BaseActivity implements ICacheWordSubscr
         if (Preferences.getLanguage() != null
                 && Preferences.getLanguage().equalsIgnoreCase("bo"))
         {
-            CustomTypefaceManager.loadFromAssets(this);
+            CustomTypefaceManager.loadFromAssets(this,true);
 
         }
         else
@@ -440,6 +440,7 @@ public class LockScreenActivity extends BaseActivity implements ICacheWordSubscr
             List<InputMethodInfo> mInputMethodProperties = imm.getEnabledInputMethodList();
 
             final int N = mInputMethodProperties.size();
+            boolean loadTibetan = false;
 
             for (int i = 0; i < N; i++) {
 
@@ -448,12 +449,14 @@ public class LockScreenActivity extends BaseActivity implements ICacheWordSubscr
                 //imi contains the information about the keyboard you are using
                 if (imi.getPackageName().equals("org.ironrabbit.bhoboard")) {
                     //                    CustomTypefaceManager.loadFromKeyboard(this);
-                    CustomTypefaceManager.loadFromAssets(this);
-
+                    loadTibetan = true;
                     break;
                 }
 
             }
+
+            CustomTypefaceManager.loadFromAssets(this,loadTibetan);
+
         }
 
     }

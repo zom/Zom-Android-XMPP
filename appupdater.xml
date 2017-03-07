@@ -1,11 +1,13 @@
 <AppUpdater>
   <update>
-    <latestVersion>15.0.1.932</latestVersion>
-    <url>https://github.com/zom/Zom-Android/releases/download/15.0.1.932/Zom-15.0.1.932-zomrelease-release.apk</url>
+    <latestVersion>15.0.2.002</latestVersion>
+    <url>https://github.com/zom/Zom-Android/releases/download/15.0.2.002/Zom-15.0.2.002-zomrelease-release.apk</url>
     <releaseNotes>
-	- fixes for adding and approving friends
-	- now you can control full app colors in Zom settings!
-	- better support for signing in to existing accounts
+	- "Zom Services" chat bot is now enabled
+	- Default server is now home.zom.im
+	- Adding friend now waits for them to confirm you before starting to chat
+	- Forwarding / sharing QR codes and invite links to friends on Zom works better
+	- new Buddhist sticker pack!
 	- and much much more...
     </releaseNotes>
   </update>

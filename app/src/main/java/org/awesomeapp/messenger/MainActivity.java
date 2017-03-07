@@ -355,12 +355,12 @@ public class MainActivity extends BaseActivity {
                 long providerId = intent.getLongExtra(ImServiceConstants.EXTRA_INTENT_PROVIDER_ID,mApp.getDefaultProviderId());
                 long accountId = intent.getLongExtra(ImServiceConstants.EXTRA_INTENT_ACCOUNT_ID,mApp.getDefaultAccountId());
                 String username = intent.getStringExtra(ImServiceConstants.EXTRA_INTENT_FROM_ADDRESS);
-                startChat(providerId, accountId, username);
+                startChat(providerId, accountId, username, true, true);
             }
             else if (intent.hasExtra("username"))
             {
                 //launch a new chat based on the intent value
-                startChat(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), intent.getStringExtra("username"));
+                startChat(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), intent.getStringExtra("username"), true, true);
             }
 
             setIntent(null);
@@ -380,11 +380,13 @@ public class MainActivity extends BaseActivity {
             }
             else if (requestCode == REQUEST_ADD_CONTACT)
             {
+
                 String username = data.getStringExtra(ContactsPickerActivity.EXTRA_RESULT_USERNAME);
                 long providerId = data.getLongExtra(ContactsPickerActivity.EXTRA_RESULT_PROVIDER, -1);
                 long accountId = data.getLongExtra(ContactsPickerActivity.EXTRA_RESULT_ACCOUNT,-1);
 
-                startChat(providerId, accountId, username);
+                startChat(providerId, accountId, username, false, false);
+
             }
             else if (requestCode == REQUEST_CHOOSE_CONTACT)
             {
@@ -394,7 +396,7 @@ public class MainActivity extends BaseActivity {
                     long providerId = data.getLongExtra(ContactsPickerActivity.EXTRA_RESULT_PROVIDER, -1);
                     long accountId = data.getLongExtra(ContactsPickerActivity.EXTRA_RESULT_ACCOUNT, -1);
 
-                    startChat(providerId, accountId, username);
+                    startChat(providerId, accountId, username, true, true);
                 }
                 else {
 
@@ -443,7 +445,7 @@ public class MainActivity extends BaseActivity {
                         }
 
                         if (address != null)
-                            startChat(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), address);
+                            startChat(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), address, false, false);
 
                         //if they are for a group chat, then add the group
                     }
@@ -685,10 +687,8 @@ public class MainActivity extends BaseActivity {
 
 
 
-    public void startChat (long providerId, long accountId, String username)
+    public void startChat (long providerId, long accountId, String username, boolean startCrypto, final boolean openChat)
     {
-
-        boolean startCrypto = false;
 
         if (username != null)
             new ChatSessionInitTask(((ImApp)getApplication()),providerId, accountId, Imps.Contacts.TYPE_NORMAL, startCrypto)
@@ -696,7 +696,7 @@ public class MainActivity extends BaseActivity {
                 @Override
                 protected void onPostExecute(Long chatId) {
 
-                    if (chatId != -1) {
+                    if (chatId != -1 && openChat) {
                         Intent intent = new Intent(MainActivity.this, ConversationDetailActivity.class);
                         intent.putExtra("id", chatId);
                         startActivity(intent);
@@ -1066,7 +1066,7 @@ public class MainActivity extends BaseActivity {
 
         if (Preferences.isLanguageTibetan())
         {
-            CustomTypefaceManager.loadFromAssets(this);
+            CustomTypefaceManager.loadFromAssets(this,true);
 
         }
         else
@@ -1075,7 +1075,7 @@ public class MainActivity extends BaseActivity {
             List<InputMethodInfo> mInputMethodProperties = imm.getEnabledInputMethodList();
 
             final int N = mInputMethodProperties.size();
-
+            boolean loadTibetan = false;
             for (int i = 0; i < N; i++) {
 
                 InputMethodInfo imi = mInputMethodProperties.get(i);
@@ -1083,12 +1083,14 @@ public class MainActivity extends BaseActivity {
                 //imi contains the information about the keyboard you are using
                 if (imi.getPackageName().equals("org.ironrabbit.bhoboard")) {
                     //                    CustomTypefaceManager.loadFromKeyboard(this);
-                    CustomTypefaceManager.loadFromAssets(this);
+                    loadTibetan = true;
 
                     break;
                 }
 
             }
+
+            CustomTypefaceManager.loadFromAssets(this, loadTibetan);
         }
 
     }

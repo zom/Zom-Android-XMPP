@@ -26,6 +26,7 @@ import com.thebluealliance.spectrum.SpectrumDialog;
 
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.MainActivity;
+import org.awesomeapp.messenger.tasks.AddContactAsyncTask;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import im.zom.messenger.R;
@@ -74,6 +75,17 @@ public class MoreFragment extends Fragment {
                 getActivity().startActivity(intent);
             }
         });
+
+        btn = view.findViewById(R.id.btnOpenServices);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                openZomServices ();
+
+            }
+        });
+
 
         btn = view.findViewById(R.id.btnOpenGroups);
         btn.setOnClickListener(new View.OnClickListener() {
@@ -170,11 +182,6 @@ public class MoreFragment extends Fragment {
 
     }
 
-    public static int getContrastColor(int colorIn) {
-        double y = (299 * Color.red(colorIn) + 587 * Color.green(colorIn) + 114 * Color.blue(colorIn)) / 1000;
-        return y >= 128 ? Color.BLACK : Color.WHITE;
-    }
-
     @Override
     public void onResume() {
         super.onResume();
@@ -192,5 +199,10 @@ public class MoreFragment extends Fragment {
         super.onDetach();
     }
 
-
+    private void openZomServices ()
+    {
+        ImApp app = (ImApp)getActivity().getApplication();
+        new AddContactAsyncTask(app.getDefaultProviderId(), app.getDefaultAccountId(), app).execute(ImApp.ZOM_SERVICES_ADDRESS, null, getString(R.string.action_services));
+        ((MainActivity)getActivity()).startChat(app.getDefaultProviderId(),app.getDefaultAccountId(),ImApp.ZOM_SERVICES_ADDRESS, true, true);
+    }
 }
