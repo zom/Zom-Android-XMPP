@@ -338,6 +338,23 @@ public class StickerManager {
 				addEmojiToCategory(category, sticker);
 			}
 
+			basePath = "stickers/expressions";
+			filelist = aMan.list(basePath);
+
+			category = "Expressions";
+
+			for (int i = 0; i < filelist.length; i++) {
+				Sticker sticker = new Sticker();
+				sticker.name = filelist[i];
+				sticker.category = category;
+				sticker.assetUri = Uri.parse(basePath + '/' + filelist[i]);
+				sticker.res = activity.getResources();
+				sticker.emoticon = filelist[i];
+
+				addPattern(sticker.emoticon, sticker);
+				addEmojiToCategory(category, sticker);
+			}
+
 
 		} catch (Exception fe) {
 			Log.e(ImApp.LOG_TAG, "could not load emoji definition", fe);
