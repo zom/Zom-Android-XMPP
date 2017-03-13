@@ -58,6 +58,7 @@ import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.roster.RosterGroup;
 import org.jivesoftware.smack.roster.RosterListener;
 import org.jivesoftware.smack.roster.packet.RosterPacket;
+import org.jivesoftware.smack.roster.rosterstore.RosterStore;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 import org.jivesoftware.smack.util.DNSUtil;
@@ -1385,7 +1386,7 @@ public class XmppConnection extends ImConnection {
 
             sendPresencePacket();
 
-//            getContactListManager().listenToRoster(mRoster);
+//           getContactListManager().listenToRoster(mRoster);
 
             MultiUserChatManager.getInstanceFor(mConnection).addInvitationListener(new InvitationListener() {
                 @Override
@@ -1956,32 +1957,6 @@ public class XmppConnection extends ImConnection {
         ack.addExtension(new DeliveryReceipt(msg.getStanzaId()));
         sendPacket(ack);
     }
-
-
-
-    public X509TrustManager getDummyTrustManager ()
-    {
-
-        return new X509TrustManager() {
-                @Override
-                public void checkClientTrusted(X509Certificate[] arg0, String arg1)
-                        throws CertificateException {
-                }
-
-                @Override
-                public void checkServerTrusted(X509Certificate[] arg0, String arg1)
-                        throws CertificateException {
-                }
-
-                @Override
-                public X509Certificate[] getAcceptedIssuers() {
-                    return new X509Certificate[0];
-                }
-            };
-
-
-    }
-
 
     protected int parsePresence(org.jivesoftware.smack.packet.Presence presence) {
 
