@@ -3627,7 +3627,7 @@ public class XmppConnection extends ImConnection {
     @Override
     public void sendTypingStatus (final String to, final boolean isTyping)
     {
-        mExecutor.executeIfIdle(new Runnable() {
+        mExecutor.execute(new Runnable() {
             public void run() {
                 sendChatState(to, isTyping ? ChatState.composing : ChatState.inactive);
             }
