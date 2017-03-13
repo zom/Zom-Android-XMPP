@@ -218,8 +218,10 @@ public class ConversationDetailActivity extends BaseActivity {
             View viewInput = findViewById(R.id.inputLayout);
             viewInput.setBackgroundColor(themeColorBg);
 
-            if (themeColorText != -1)
+            if (themeColorText != -1) {
                 mConvoView.mComposeMessage.setTextColor(themeColorText);
+                mConvoView.mComposeMessage.setHintTextColor(themeColorText);
+            }
         }
 
     }
