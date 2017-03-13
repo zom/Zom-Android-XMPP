@@ -128,19 +128,13 @@ public class StatusBarNotifier {
         }
         String title = contact.getName();
         String message = mContext.getString(R.string.invite_accepted);
-       //Intent intent = new Intent(ImServiceConstants.ACTION_MANAGE_SUBSCRIPTION,
-         //       ContentUris.withAppendedId(Imps.Contacts.CONTENT_URI, -1));
-        //intent.putExtra(ImServiceConstants.EXTRA_INTENT_PROVIDER_ID, providerId);
-        //intent.putExtra(ImServiceConstants.EXTRA_INTENT_ACCOUNT_ID, accountId);
-      //  Intent intent = getDefaultIntent(accountId, providerId);
-
         Intent intent = getDefaultIntent(accountId, providerId);//new Intent(Intent.ACTION_VIEW);
         intent.setAction(Intent.ACTION_VIEW);
         intent.putExtra(ImServiceConstants.EXTRA_INTENT_FROM_ADDRESS, contact.getAddress().getBareAddress());
         intent.setType(Imps.Contacts.CONTENT_ITEM_TYPE);
         intent.addCategory(ImApp.IMPS_CATEGORY);
 
-        notify(contact.getAddress().getBareAddress(), title, message, message, providerId, accountId, intent, false, R.drawable.ic_people_white_24dp);
+        notify(contact.getAddress().getAddress(), title, message, message, providerId, accountId, intent, false, R.drawable.ic_people_white_24dp);
     }
 
 
@@ -238,7 +232,7 @@ public class StatusBarNotifier {
         notify(sender,title,tickerText,message,providerId,accountId,intent,lightWeightNotify,iconSmall,null);
     }
 
-        private void notify(String sender, String title, String tickerText, String message,
+    private void notify(String sender, String title, String tickerText, String message,
                         long providerId, long accountId, Intent intent, boolean lightWeightNotify, int iconSmall, Bitmap iconLarge) {
 
         intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP|Intent.FLAG_ACTIVITY_CLEAR_TOP);

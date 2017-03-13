@@ -262,9 +262,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
         HeartbeatService.startBeating(getApplicationContext());
 
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-
-        if (settings.getBoolean("pref_foreground_enable",true))
-            startForeground(notifyId, getForegroundNotification());
+        startForeground(notifyId, getForegroundNotification());
 
     }
     
@@ -274,10 +272,6 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
             mCacheWord = new CacheWordHandler(this, (ICacheWordSubscriber) this);
 
             SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-
-          //  if (!settings.contains(ImApp.PREFERENCE_KEY_TEMP_PASS))
-            //    mCacheWord.setNotification(getForegroundNotification());
-
             mCacheWord.connectToService();
         }
 
@@ -291,7 +285,10 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
             .setContentTitle(getString(R.string.app_name))
             .setSmallIcon(R.drawable.notify_zom);
 
-      //  note.setOnlyAlertOnce(true);
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
+            mNotifyBuilder.setPriority(Notification.PRIORITY_MIN);
+        }
+
         mNotifyBuilder.setOngoing(true);
         mNotifyBuilder.setWhen(System.currentTimeMillis());
         
@@ -299,7 +296,6 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
         PendingIntent launchIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent, 0);
 
         mNotifyBuilder.setContentIntent(launchIntent);
-
         mNotifyBuilder.setContentText(getString(R.string.app_unlocked));
 
         return mNotifyBuilder.build();
