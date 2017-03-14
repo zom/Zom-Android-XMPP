@@ -1186,6 +1186,9 @@ public class XmppConnection extends ImConnection {
     // Runs in executor thread
     private void do_login() {
 
+        if (getState() == LOGGING_IN || getState() == LOGGED_IN)
+            return;
+
         /*
         if (mConnection != null) {
             setState(getState(), new ImErrorInfo(ImErrorInfo.CANT_CONNECT_TO_SERVER,
