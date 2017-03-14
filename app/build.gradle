@@ -31,12 +31,6 @@ android {
     compileSdkVersion project.ext.compileSdkVersion
     buildToolsVersion project.ext.buildToolsVersion
 
-    dexOptions {
-        jumboMode true
-        javaMaxHeapSize "2g"
-        preDexLibraries false
-    }
-
     defaultConfig {
         applicationId 'im.zom.messenger'
         versionCode 1502002
@@ -46,24 +40,23 @@ android {
         targetSdkVersion project.ext.targetSdkVersion
         testApplicationId 'im.zom.messenger.test'
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
-        multiDexEnabled false
     }
 
     buildTypes {
         release {
             minifyEnabled false
             shrinkResources false
-            //proguardFiles getDefaultProguardFile('proguard-android.txt')
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
         }
         debug {
             applicationIdSuffix ".debug"
             minifyEnabled false
             shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
 
         }
     }
-
-    useLibrary  'org.apache.http.legacy'
 
     productFlavors {
         free {
@@ -107,14 +100,12 @@ dependencies {
     compile project(':tibetanTextLibrary')
     compile project(':chatsecure-push:sdk')
 
-
     compile 'com.google.zxing:core:3.0.0'
 
     compile 'commons-codec:commons-codec:1.9'
     compile 'commons-io:commons-io:2.4'
 
     compile 'org.thoughtcrime.ssl.pinning:AndroidPinning:1.0.0'
-    compile 'com.android.support:multidex:1.0.1'
     compile 'com.android.support:design:25.2.0'
     compile 'com.android.support:recyclerview-v7:25.2.0'
     compile 'com.android.support:support-v4:25.2.0'
@@ -122,13 +113,16 @@ dependencies {
 
     compile 'info.guardianproject.cacheword:cachewordlib:0.1.1'
     compile 'info.guardianproject.iocipher:IOCipher:0.4'
-    compile 'info.guardianproject.netcipher:netcipher:1.2'
+
+    compile 'info.guardianproject.netcipher:netcipher:2.0.0-alpha1'
+    compile 'info.guardianproject.netcipher:netcipher-httpclient:2.0.0-alpha1'
+    compile 'cz.msebera.android:httpclient:4.4.1.2'
+
     compile 'info.guardianproject.panic:panic:0.5'
 
     compile "org.igniterealtime.smack:smack-android-extensions:4.1.7"
     compile "org.igniterealtime.smack:smack-experimental:4.1.7"
     compile "org.igniterealtime.smack:smack-tcp:4.1.7"
-
 
     compile 'com.github.ge0rg:MemorizingTrustManager:9e30ffdf7d'
 
