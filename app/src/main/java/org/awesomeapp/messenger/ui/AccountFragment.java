@@ -221,21 +221,6 @@ public class AccountFragment extends Fragment {
                 }
             });
 
-
-            Switch switchOnline = (Switch) mView.findViewById(R.id.switchOnline);
-            switchOnline.setChecked(checkConnection());
-
-            switchOnline.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if (isChecked) {
-                        signIn();
-                    } else {
-                        // The toggle is disabled
-                        signOut();
-                    }
-                }
-            });
-
             try {
 
                 Drawable avatar = DatabaseUtils.getAvatarFromAddress(mApp.getContentResolver(), mUserAddress, ImApp.DEFAULT_AVATAR_WIDTH, ImApp.DEFAULT_AVATAR_HEIGHT, false);

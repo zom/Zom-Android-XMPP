@@ -134,7 +134,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
-import cn.pedant.SweetAlert.SweetAlertDialog;
 import im.zom.messenger.R;
 
 public class ConversationView {
@@ -1226,20 +1225,22 @@ public class ConversationView {
             if (mSubscriptionStatus == Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING) {
               //  bindSubscription(mProviderId, mRemoteAddress);
 
-
-                new SweetAlertDialog(mActivity, SweetAlertDialog.WARNING_TYPE)
-                        .setTitleText(mActivity.getString(R.string.add_friends))
-                        .setContentText(mContext.getString(R.string.subscription_notify_text, mRemoteAddress))
-                        .setConfirmText(mActivity.getString(R.string.accept_invitation))
-                        .setCancelText(mActivity.getString(R.string.decline_subscription))
-                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                            @Override
-                            public void onClick(SweetAlertDialog sDialog) {
+                new android.support.v7.app.AlertDialog.Builder(mActivity)
+                        .setTitle(mActivity.getString(R.string.add_friends))
+                        .setMessage(mContext.getString(R.string.subscription_notify_text, mRemoteAddress))
+                        .setPositiveButton(mActivity.getString(R.string.accept_invitation), new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
                                 approveSubscription();
-                                sDialog.dismiss();
                             }
                         })
+                        .setNegativeButton(mActivity.getString(R.string.decline_subscription), new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // do nothing
+                            }
+                        })
+                        .setIcon(android.R.drawable.ic_dialog_alert)
                         .show();
+
             }
 
         }

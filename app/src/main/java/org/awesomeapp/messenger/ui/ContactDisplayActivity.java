@@ -55,7 +55,6 @@ import org.ironrabbit.type.CustomTypefaceManager;
 
 import java.io.IOException;
 
-import cn.pedant.SweetAlert.SweetAlertDialog;
 import im.zom.messenger.R;
 
 
@@ -266,7 +265,20 @@ public class ContactDisplayActivity extends BaseActivity {
 
     void deleteContact ()
     {
+        new android.support.v7.app.AlertDialog.Builder(this)
+                .setTitle(getString(R.string.menu_remove_contact))
+                .setMessage(getString(R.string.confirm_delete_contact, mNickname))
+                .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        doDeleteContact();
+                        finish();
+                        startActivity(new Intent(ContactDisplayActivity.this, MainActivity.class));
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
 
+        /**
         new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE)
                 .setTitleText(getString(R.string.menu_remove_contact))
                 .setContentText(getString(R.string.confirm_delete_contact, mNickname))
@@ -281,7 +293,9 @@ public class ContactDisplayActivity extends BaseActivity {
                         startActivity(new Intent(ContactDisplayActivity.this, MainActivity.class));
                     }
                 })
-                .show();
+                .show();**/
+
+        //TODO confirm delete dialog
     }
 
     void doDeleteContact ()

@@ -59,7 +59,7 @@
             android:layout_margin="6dp"
             android:padding="6dp"
             android:layout_gravity="center"
-            app:circleColor="@color/material_deep_teal_20"
+            app:circleColor="@color/honeycombish_blue"
             />
         <org.ironrabbit.type.CustomTypefaceTextView
 

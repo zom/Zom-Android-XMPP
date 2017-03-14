@@ -37,6 +37,7 @@ import android.os.Message;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.multidex.MultiDexApplication;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
@@ -91,10 +92,7 @@ import org.chatsecure.pushsecure.PushSecureClient;
 import org.chatsecure.pushsecure.response.Account;
 import org.ironrabbit.type.CustomTypefaceManager;
 
-import android.support.multidex.MultiDex;
-import android.support.multidex.MultiDexApplication;
-
-public class ImApp extends Application implements ICacheWordSubscriber {
+public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
     public static final String LOG_TAG = "Zom";
 

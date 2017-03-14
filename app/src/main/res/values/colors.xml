@@ -74,7 +74,7 @@
         <item>@color/holo_red_dark</item>
         <item>@color/holo_orange_light</item>
         <item>@android:color/holo_purple</item>
-        <item>@color/material_blue_grey_80</item>
+        <item>@color/honeycombish_blue</item>
         <item>@color/background_dark</item>
 
     </array>

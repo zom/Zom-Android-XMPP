@@ -111,7 +111,7 @@ public class GalleryActivity extends BaseActivity {
 
     }
 
-    private final static int MY_PERMISSIONS_REQUEST_CAMERA = 707070;
+    private final static int MY_PERMISSIONS_REQUEST_CAMERA = 707;
 
     void startPhotoTaker() {
 

@@ -258,8 +258,9 @@ public class SecureMediaStore {
         int defaultImageWidth = 600;
         //load lower-res bitmap
         Bitmap bmp = getThumbnailFile(context, uri, defaultImageWidth);
-        
+
         File file = new File(targetPath);
+        file.getParentFile().mkdirs();
         FileOutputStream out = new FileOutputStream(file);
         
         if (imagePath.endsWith(".png") || (mimeType != null && mimeType.contains("png"))) //preserve alpha channel

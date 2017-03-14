@@ -23,6 +23,7 @@ import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.service.ImServiceConstants;
 import android.content.ContentResolver;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -31,6 +32,7 @@ import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.PreferenceActivity;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -38,7 +40,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-import cn.pedant.SweetAlert.*;
+//import cn.pedant.SweetAlert.*;
 
 public class AccountSettingsActivity extends PreferenceActivity implements
         OnSharedPreferenceChangeListener {
@@ -91,6 +93,23 @@ public class AccountSettingsActivity extends PreferenceActivity implements
 
     private void deleteAccount ()
     {
+        new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.delete_account))
+                .setMessage(getString(R.string.confirm))
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // continue with delete
+                        confirmDeleteAccount();
+                    }
+                })
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // do nothing
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
+        /**
         new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE)
                 .setTitleText(getString(R.string.delete_account))
            //     .setContentText("Won't be able to recover this account!")
@@ -102,7 +121,9 @@ public class AccountSettingsActivity extends PreferenceActivity implements
                         sDialog.dismissWithAnimation();
                     }
                 })
-                .show();
+                .show();**/
+
+        //TODO confirm delete dialog
 
     }
 

@@ -43,9 +43,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.awesomeapp.messenger.MainActivity;
+import org.awesomeapp.messenger.model.Address;
 import org.awesomeapp.messenger.model.ImConnection;
 import org.awesomeapp.messenger.model.ImErrorInfo;
 import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
+import org.awesomeapp.messenger.service.IChatSession;
+import org.awesomeapp.messenger.service.IChatSessionManager;
 import org.awesomeapp.messenger.service.IContactListManager;
 import org.awesomeapp.messenger.service.IImConnection;
 import org.awesomeapp.messenger.ui.legacy.ErrorResUtils;
@@ -55,8 +58,6 @@ import org.awesomeapp.messenger.provider.Imps;
 import java.io.IOException;
 
 import im.zom.messenger.R;
-import xyz.danoz.recyclerviewfastscroller.sectionindicator.title.SectionTitleIndicator;
-import xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller;
 
 import org.awesomeapp.messenger.ImApp;
 
@@ -170,6 +171,14 @@ public class ContactsListFragment extends Fragment {
             ImApp app = ((ImApp)activity.getApplication());
             mConn = app.getConnection(providerId, accountId);
 
+            //first leave, delete an existing chat session
+            IChatSessionManager sessionMgr = mConn.getChatSessionManager();
+            if (sessionMgr != null) {
+                IChatSession session = sessionMgr.getChatSession(Address.stripResource(address));
+
+            }
+
+            //then delete the contact from our list
             IContactListManager manager = mConn.getContactListManager();
 
             int res = manager.removeContact(address);
@@ -177,6 +186,7 @@ public class ContactsListFragment extends Fragment {
                 //mHandler.showAlert(R.string.error,
                   //      ErrorResUtils.getErrorRes(getResources(), res, address));
             }
+
 
         }
         catch (RemoteException re)

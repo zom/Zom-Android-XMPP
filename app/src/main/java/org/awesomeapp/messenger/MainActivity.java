@@ -36,6 +36,7 @@ import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -321,6 +322,29 @@ public class MainActivity extends BaseActivity {
 
         handleIntent();
 
+        if (!checkConnection())
+        {
+            Snackbar sb = Snackbar.make(mViewPager, R.string.error_suspended_connection, Snackbar.LENGTH_LONG);
+            sb.show();
+        }
+
+    }
+
+    private boolean checkConnection() {
+        try {
+            if (mApp.getDefaultProviderId() != -1) {
+                IImConnection conn = mApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
+
+                if (conn.getState() == ImConnection.DISCONNECTED
+                        || conn.getState() == ImConnection.SUSPENDED
+                        || conn.getState() == ImConnection.SUSPENDING)
+                    return false;
+            }
+
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
 
     }
 

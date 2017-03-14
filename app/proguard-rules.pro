@@ -1,6 +1,6 @@
 # Add project specific ProGuard rules here.
 # By default, the flags in this file are appended to flags specified
-# in /Users/davidbrodsky/sdk/tools/proguard/proguard-android.txt
+# in /home/n8fr8/dev/android/sdk/tools/proguard/proguard-android.txt
 # You can edit the include path and order by changing the proguardFiles
 # directive in build.gradle.
 #
@@ -16,3 +16,63 @@
 #   public *;
 #}
 
+#-optimizationpasses 5
+-dontobfuscate
+-dontusemixedcaseclassnames
+-dontskipnonpubliclibraryclasses
+-dontskipnonpubliclibraryclassmembers
+-dontpreverify
+-verbose
+#-repackageclasses ''
+#-allowaccessmodification
+-keepattributes *Annotation*
+
+-dontwarn javax.naming.**
+-dontwarn android.support.**
+
+####
+-keep class org.awesomeapp.messenger.**  { *; }
+-keep class net.java.otr4j.**  { *; }
+-keep class net.java.otr4j.**  { *; }
+-keep class net.java.otr4j.OtrException  { *; }
+-keep class org.chatsecure.**  { *; }
+-keep class net.sqlcipher.**  { *; }
+-keep class info.guardianproject.**  { *; }
+-keep class org.jivesoftware.smack.**  { *; }
+-keep class org.jivesoftware.smackx.**  { *; }
+-keep class android.support.v7.widget.SearchView
+-keep class org.ocpsoft.prettytime.**   { *; }
+
+-keep public class * extends android.app.Activity
+-keep public class * extends android.app.Application
+-keep public class * extends android.app.Service
+-keep public class * extends android.content.BroadcastReceiver
+-keep public class * extends android.content.ContentProvider
+-keep public class * extends android.app.backup.BackupAgentHelper
+-keep public class * extends android.preference.Preference
+-keep public class com.android.vending.licensing.ILicensingService
+
+-keepclasseswithmembernames class * {
+    native <methods>;
+}
+
+-keepclasseswithmembers class * {
+    public <init>(android.content.Context, android.util.AttributeSet);
+}
+
+-keepclasseswithmembers class * {
+    public <init>(android.content.Context, android.util.AttributeSet, int);
+}
+
+-keepclassmembers class * extends android.app.Activity {
+   public void *(android.view.View);
+}
+
+-keepclassmembers enum * {
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
+}
+
+-keep class * implements android.os.Parcelable {
+  public static final android.os.Parcelable$Creator *;
+}

@@ -248,7 +248,7 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
 
             return sessionId;
 
-        } catch (OtrException e) {
+        } catch (Exception e) {
             OtrDebugLogger.log("startSession", e);
 
             showError(sessionId, "Unable to start OTR session: " + e.getLocalizedMessage());
@@ -273,7 +273,7 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
             
             return sessionId;
 
-        } catch (OtrException e) {
+        } catch (Exception e) {
             OtrDebugLogger.log("startSession", e);
 
             showError(sessionId,"Unable to start OTR session: " + e.getLocalizedMessage());
@@ -293,7 +293,7 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
             mOtrEngine.endSession(sessionId);
             mSessions.remove(sessionId.toString());
 
-        } catch (OtrException e) {
+        } catch (Exception e) {
             OtrDebugLogger.log("endSession", e);
         }
     }
@@ -383,7 +383,7 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
                     body += " \t  \t\t\t\t \t \t \t   \t \t  \t   \t\t  \t ";
 
                 }
-            } catch (OtrException e) {
+            } catch (Exception e) {
                 OtrDebugLogger.log("error encrypting", e);
                 return false;
             }
@@ -439,7 +439,7 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
                                     Session session = mOtrEngine.getSession(sessionId);
                                     session.removeTlvHandler(tokenTlvHandler);
 
-                                } catch (OtrException e) {
+                                } catch (Exception e) {
                                     Log.d(TAG, "Failed to encrypt outbound Whitelist Token TLV");
                                 }
                             }
@@ -654,7 +654,7 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
 
             Log.e(ImApp.LOG_TAG, "Failed to craft ChatSecure-Push Whitelist Token TLV", e);
             return false;
-        } catch (OtrException e) {
+        } catch (Exception e) {
             OtrDebugLogger.log("error encrypting", e);
             return false;
         }
@@ -683,7 +683,7 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
                                 mOtrEngineHost.injectMessage(sessionID, encrypted);
                                 if (Debug.DEBUG_ENABLED)
                                     Log.d(TAG, "Began Push Whitelist Token TLV Exchange");
-                            } catch (OtrException e) {
+                            } catch (Exception e) {
                                 Log.e(TAG, "Failed to encrypt outbound Whitelist Token TLV");
                                 mWhitelistTokenExchangedSessions.remove(sessionID.toString());
                             }

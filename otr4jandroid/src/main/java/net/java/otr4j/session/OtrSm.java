@@ -1,6 +1,5 @@
 package net.java.otr4j.session;
 
-import info.guardianproject.bouncycastle.util.encoders.Hex;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -19,6 +18,8 @@ import net.java.otr4j.crypto.SM.SMException;
 import net.java.otr4j.crypto.SM.SMState;
 import net.java.otr4j.io.OtrOutputStream;
 import net.java.otr4j.io.SerializationUtils;
+
+import org.spongycastle.util.encoders.Hex;
 
 public class OtrSm implements OtrTlvHandler {
     public static interface OtrSmEngineHost extends OtrEngineHost {

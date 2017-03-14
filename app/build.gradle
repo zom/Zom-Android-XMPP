@@ -8,7 +8,7 @@ buildscript {
         maven { url "https://jitpack.io" }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.3'
+        classpath 'com.android.tools.build:gradle:2.3.0'
         classpath files('../libs/gradle-witness.jar')
     }
 }
@@ -31,39 +31,38 @@ android {
     compileSdkVersion project.ext.compileSdkVersion
     buildToolsVersion project.ext.buildToolsVersion
 
-    dexOptions {
-        jumboMode true
-        javaMaxHeapSize "2g"
-        preDexLibraries false
-    }
-
     defaultConfig {
         applicationId 'im.zom.messenger'
-        versionCode 1502002
+        versionCode 1503001
         versionName getVersionName()
         archivesBaseName = "Zom-$versionName"
         minSdkVersion project.ext.minSdkVersion
         targetSdkVersion project.ext.targetSdkVersion
         testApplicationId 'im.zom.messenger.test'
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
-        multiDexEnabled false
+        multiDexEnabled true
+
+    }
+
+    dexOptions {
+        javaMaxHeapSize "2g"
     }
 
     buildTypes {
         release {
             minifyEnabled false
             shrinkResources false
-            //proguardFiles getDefaultProguardFile('proguard-android.txt')
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            debuggable false
         }
         debug {
             applicationIdSuffix ".debug"
             minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'),'proguard-rules.pro'
             shrinkResources false
 
         }
     }
-
-    useLibrary  'org.apache.http.legacy'
 
     productFlavors {
         free {
@@ -96,52 +95,18 @@ android {
 
     dependencyVerification {
         verify = [
-                'commons-codec:commons-codec:ad19d2601c3abf0b946b5c3a4113e226a8c1e3305e395b90013b78dd94a723ce',
-                'commons-io:commons-io:cc6a41dc3eaacc9e440a6bd0d2890b20d36b4ee408fe2d67122f328bb6e01581',
-             //   'com.android.support:appcompat-v7:b5783b390d1440769c9b8a7b42290523a4ff058ef2d3fb90c983973934ca115b',
-               // 'com.android.support:design:ff53a30489cf77c5ed83805e59709f712b8dae1727524422c0d4fafd9b6bafe5',
-              //  'com.android.support:recyclerview-v7:464ec6e5004400a4fe0310f35343da9e5a2912386a3606db3585f7cf987c444a',
-               // 'com.android.support:support-annotations:d50996a4cbca17178989fef38635f2cc570c5d3a77870aaa57f4f7e4fc6de9dc',
-               // 'com.android.support:support-v4:a0309e9c188afd25ad5dd38e484ad13610bc5f2ebfeafa40d2a07eea414896d5',
-             //   'com.google.guava:guava:d664fbfc03d2e5ce9cab2a44fb01f1d0bf9dfebeccc1a473b1f9ea31f79f6f99',
-                'com.google.zxing:core:e317820031ffe4beddbef9c8a67019c28a6bedfa5dc5f69a4ae0c53f0e403160',
-           //     'com.theartofdev.edmodo:android-image-cropper:6d14aadb0271a8347aa97a88cfaa34f95d8bc152834ff77d96a85aeb0dac1d19',
-          //      'de.hdodenhof:circleimageview:9bd0f21c8493d14c549b1c7f8e5f1ee05fec8acef740e0bbdb5c51f2ef265fa1',
-          //      'de.measite.minidns:minidns:5df876bdcdf42a2109d52f7408af8b145fd6d45ba4da776a5a0e73210286186c',
-                'info.guardianproject.cacheword:cachewordlib:933d8119f14af5024b90c17c3c64c13efccf48c8f37080c7c09a9fb0318cd1fe',
-                'info.guardianproject.panic:panic:a7ed9439826db2e9901649892cf9afbe76f00991b768d8f4c26332d7c9406cb2',
-                'net.hockeyapp.android:HockeySDK:6e73ad1188af47e7c0e054ed21da66b1b9ae227db7e9401d4de4e6b2b437d194',
-                /**
-                 *
-                 *                 'info.guardianproject.iocipher:IOCipher:898b3b8d113b2e83b76998101655944f6c5a14475deeb81159fdf6375d70258d',
 
-                 *                 'net.zetetic:android-database-sqlcipher:e7594bd98cf77e93579c084cbf08d99b742b71a8d2063169ffc1858f8de21aa8',
-
-                 'org.igniterealtime.smack:smack-android-extensions:4c1732d09e460107f1d3e0c25a3ac6c2f8a1b8cba2e9dfa726a866aa55c13bc8',
-                'org.igniterealtime.smack:smack-android:2b6ea0e762ecdbf03ce20bc35c564f0727d7f10ca7cb7d9c309b72b2fa3229cc',
-                'org.igniterealtime.smack:smack-core:31b058b51fa59ffe623622f2348783a876b6c5db9e93e7d8e51525e09eda7389',
-                'org.igniterealtime.smack:smack-extensions:5471cd6f866552014f8f7a6571b9ae19a5f99506f3d722687524219e73cef265',
-                'org.igniterealtime.smack:smack-im:97796c14ef5af33a0e4ab4d65c81c857120606785391277e4af026b23f795e1e',
-                'org.igniterealtime.smack:smack-resolver-minidns:3e708fb9dc6ad954dc3844f2a5ad51367d49ab8f79120c455bdff34f08f63efe',
-                'org.igniterealtime.smack:smack-sasl-provided:b2e7246efded60fcd21f846f789a6b97f8ac65851434c778c95455286b686379',
-                'org.igniterealtime.smack:smack-tcp:ae9a1bbeffdaa2fbb6ebffb253fbafff549015cd852c9443dfd034ab3ce80623',
-                 */
-                'org.jsoup:jsoup:ea201bf133aa542291ce9c5a8c52386f8f856a3bec2fd84e217e1ca9f6f5fe4e',
-                'org.jxmpp:jxmpp-core:8087e88d11065f812f9873ed82575c423f84b928e9c4010759183e47807279ce',
-                'org.jxmpp:jxmpp-util-cache:dff12030c01c951ca350837fd3b5e277711c2fc704e24abd90de5bbdc62d0852',
-                'org.ocpsoft.prettytime:prettytime:a422eb651cc6e7c7681bdf8b166f21a30b1320141fec8303f0fea6f6e8edde84',
-                'org.thoughtcrime.ssl.pinning:AndroidPinning:afa1d74e699257fa75cb109ff29bac50726ef269c6e306bdeffe8223cee06ef4',
-                'xpp3:xpp3:0341395a481bb887803957145a6a37879853dd625e9244c2ea2509d9bb7531b9',
         ]
     }
 }
 
 dependencies {
+    compile 'com.android.support:multidex:1.0.1'
+
     compile 'net.zetetic:android-database-sqlcipher:3.5.4@aar'
     compile project(':otr4jandroid')
     compile project(':tibetanTextLibrary')
     compile project(':chatsecure-push:sdk')
-    compile project(':IOCipher-v0.4')
 
     compile 'com.google.zxing:core:3.0.0'
 
@@ -149,16 +114,18 @@ dependencies {
     compile 'commons-io:commons-io:2.4'
 
     compile 'org.thoughtcrime.ssl.pinning:AndroidPinning:1.0.0'
-    compile 'com.android.support:multidex:1.0.1'
-    compile 'com.android.support:design:25.1.0'
-    compile 'com.android.support:recyclerview-v7:25.1.0'
-    compile 'com.android.support:support-v4:25.1.0'
+    compile 'com.android.support:design:25.2.0'
+    compile 'com.android.support:recyclerview-v7:25.2.0'
+    compile 'com.android.support:support-v4:25.2.0'
     compile project.ext.appcompat
 
+    compile 'info.guardianproject.cacheword:cachewordlib:0.1.1'
+    compile 'info.guardianproject.iocipher:IOCipher:0.4'
 
-    compile 'info.guardianproject.cacheword:cachewordlib:0.1'
-   /** compile 'info.guardianproject.iocipher:IOCipher:0.3'**/
-    compile 'info.guardianproject.netcipher:netcipher:1.2'
+    compile 'info.guardianproject.netcipher:netcipher:2.0.0-alpha1'
+    compile 'info.guardianproject.netcipher:netcipher-httpclient:2.0.0-alpha1'
+    compile 'cz.msebera.android:httpclient:4.4.1.2'
+
     compile 'info.guardianproject.panic:panic:0.5'
 
     compile "org.igniterealtime.smack:smack-android-extensions:4.1.7"
@@ -167,17 +134,12 @@ dependencies {
 
     compile 'com.github.ge0rg:MemorizingTrustManager:9e30ffdf7d'
 
-    compile 'org.jsoup:jsoup:1.5.2'
-
     compile 'org.ocpsoft.prettytime:prettytime:4.0.0.Final'
     compile 'com.theartofdev.edmodo:android-image-cropper:2.0.0'
     compile 'de.hdodenhof:circleimageview:2.0.0'
-    compile 'xyz.danoz:recyclerviewfastscroller:0.1.3'
     compile 'com.github.bumptech.glide:glide:3.5.2'
-    compile 'cn.pedant.sweetalert:library:1.3'
-    compile 'com.thebluealliance:spectrum:0.5.0'
 
-    compile 'com.github.javiersantos:AppUpdater:2.1.1'
+    compile 'com.github.javiersantos:AppUpdater:2.5.2'
     compile 'net.hockeyapp.android:HockeySDK:3.5.0'
 
     compile 'com.github.QuadFlask:colorpicker:0.0.10'
