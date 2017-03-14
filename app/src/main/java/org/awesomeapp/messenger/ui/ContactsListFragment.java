@@ -58,8 +58,6 @@ import org.awesomeapp.messenger.provider.Imps;
 import java.io.IOException;
 
 import im.zom.messenger.R;
-import xyz.danoz.recyclerviewfastscroller.sectionindicator.title.SectionTitleIndicator;
-import xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller;
 
 import org.awesomeapp.messenger.ImApp;
 

@@ -22,13 +22,11 @@ import com.flask.colorpicker.ColorPickerView;
 import com.flask.colorpicker.OnColorSelectedListener;
 import com.flask.colorpicker.builder.ColorPickerClickListener;
 import com.flask.colorpicker.builder.ColorPickerDialogBuilder;
-import com.thebluealliance.spectrum.SpectrumDialog;
 
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.MainActivity;
 import org.awesomeapp.messenger.tasks.AddContactAsyncTask;
 
-import cn.pedant.SweetAlert.SweetAlertDialog;
 import im.zom.messenger.R;
 
 public class MoreFragment extends Fragment {
@@ -126,20 +124,6 @@ public class MoreFragment extends Fragment {
 
         int selColor = settings.getInt("themeColor",-1);
 
-        /**
-        new SpectrumDialog.Builder(getContext())
-                .setColors(R.array.zom_colors)
-                .setDismissOnColorSelected(false)
-                .setSelectedColor(selColor)
-                .setOnColorSelectedListener(new SpectrumDialog.OnColorSelectedListener() {
-                    @Override public void onColorSelected(boolean positiveResult, @ColorInt int color) {
-                        if(positiveResult) {
-                            MainActivity activity = (MainActivity)getActivity();
-                            settings.edit().putInt("themeColor",color).commit();
-                            activity.applyStyle();
-                        }
-                    }
-                }).build().show(getFragmentManager(), "dialog_theme_1");**/
         ColorPickerDialogBuilder
                 .with(getContext())
                 .setTitle("Choose color")

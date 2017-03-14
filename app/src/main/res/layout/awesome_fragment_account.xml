@@ -85,12 +85,6 @@
 					android:padding="6dp"
 					android:layout_toRightOf="@+id/tvNickname"
 					/>
-				<Switch
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:id="@+id/switchOnline"
-					android:layout_alignParentRight="true"
-					/>
 
 
 </RelativeLayout>

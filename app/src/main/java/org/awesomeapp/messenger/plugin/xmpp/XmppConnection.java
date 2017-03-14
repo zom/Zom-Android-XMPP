@@ -74,7 +74,6 @@ import org.jivesoftware.smackx.commands.provider.AdHocCommandDataProvider;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.disco.provider.DiscoverInfoProvider;
 import org.jivesoftware.smackx.disco.provider.DiscoverItemsProvider;
-import org.jivesoftware.smackx.hoxt.packet.AbstractHttpOverXmpp;
 import org.jivesoftware.smackx.iqlast.packet.LastActivity;
 import org.jivesoftware.smackx.muc.DiscussionHistory;
 import org.jivesoftware.smackx.muc.InvitationListener;
@@ -1226,6 +1225,7 @@ public class XmppConnection extends ImConnection {
             mNeedReconnect = false;
 
 
+
         } catch (XMPPException e) {
             debug(TAG, "exception thrown on connection",e);
 
@@ -1386,7 +1386,7 @@ public class XmppConnection extends ImConnection {
 
             sendPresencePacket();
 
-//           getContactListManager().listenToRoster(mRoster);
+              getContactListManager().listenToRoster(mRoster);
 
             MultiUserChatManager.getInstanceFor(mConnection).addInvitationListener(new InvitationListener() {
                 @Override
@@ -1541,6 +1541,7 @@ public class XmppConnection extends ImConnection {
 
             debug(TAG, "(DNS SRV) resolving: " + domain);
             List<HostAddress> listHosts = DNSUtil.resolveXMPPDomain(domain, null);
+
             server = listHosts.get(0).getFQDN();
             serverPort = listHosts.get(0).getPort();
 
@@ -1979,7 +1980,7 @@ public class XmppConnection extends ImConnection {
     // We must release resources here, because we will not be reused
     void disconnected(ImErrorInfo info) {
         debug(TAG, "disconnected");
-        join();
+        //join();
         setState(DISCONNECTED, info);
     }
 
@@ -2596,7 +2597,7 @@ public class XmppConnection extends ImConnection {
         	}
         }*/
 
-        /**
+
         public void listenToRoster(final Roster roster) {
 
             roster.addRosterListener(rListener);
@@ -2692,7 +2693,7 @@ public class XmppConnection extends ImConnection {
                     Log.d(TAG,"error adding contacts",e);
                 }
             }
-        };**/
+        };
 
 
         @Override

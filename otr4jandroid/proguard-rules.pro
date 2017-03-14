@@ -16,6 +16,7 @@
 #   public *;
 #}
 
+-dontobfuscate
 -optimizationpasses 5
 -dontusemixedcaseclassnames
 -dontskipnonpubliclibraryclasses
@@ -26,10 +27,6 @@
 -allowaccessmodification
 -keepattributes *Annotation*
 
--injars libs
-
--outjars bin/classes-processed.jar
-
 -dontwarn javax.naming.**
 -dontwarn android.support.**
 
@@ -37,7 +34,7 @@
 -keep class net.java.otr4j.**  { *; }
 -keep class net.java.otr4j.OtrException  { *; }
 
--keep public class * extends Exception
+-keep public class * extends java.lang.Exception
 -keep public class * extends android.app.Activity
 -keep public class * extends android.app.Application
 -keep public class * extends android.app.Service

@@ -33,7 +33,6 @@ import org.awesomeapp.messenger.util.SystemServices;
 import java.util.HashMap;
 
 import org.awesomeapp.messenger.MainActivity;
-import org.jsoup.Jsoup;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -79,7 +78,7 @@ public class StatusBarNotifier {
             return;
         }
 
-        msg = html2text(msg); // strip tags for html client inbound msgs
+       // msg = html2text(msg); // strip tags for html client inbound msgs
         Bitmap avatar = null;
 
 
@@ -444,7 +443,8 @@ public class StatusBarNotifier {
         return (SystemClock.elapsedRealtime() - mLastSoundPlayedMs < SUPPRESS_SOUND_INTERVAL_MS);
     }
 
+    /**
     public static String html2text(String html) {
         return Jsoup.parse(html).text();
-    }
+    }**/
 }

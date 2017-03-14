@@ -43,7 +43,7 @@ public class WhitelistTokenTlvHandler implements OtrTlvHandler {
      * @throws OtrException
      */
     @Override
-    public synchronized void processTlv(final TLV tlv) throws OtrException {
+    public synchronized void processTlv(final TLV tlv) {
 
         if (tlv.getType() == WhitelistTokenTlv.TLV_WHITELIST_TOKEN) {
             try {
