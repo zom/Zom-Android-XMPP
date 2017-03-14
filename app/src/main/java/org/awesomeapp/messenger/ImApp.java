@@ -91,9 +91,6 @@ import org.chatsecure.pushsecure.PushSecureClient;
 import org.chatsecure.pushsecure.response.Account;
 import org.ironrabbit.type.CustomTypefaceManager;
 
-import android.support.multidex.MultiDex;
-import android.support.multidex.MultiDexApplication;
-
 public class ImApp extends Application implements ICacheWordSubscriber {
 
     public static final String LOG_TAG = "Zom";
