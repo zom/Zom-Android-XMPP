@@ -335,7 +335,9 @@ public class MainActivity extends BaseActivity {
             if (mApp.getDefaultProviderId() != -1) {
                 IImConnection conn = mApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
 
-                if (conn.getState() == ImConnection.DISCONNECTED)
+                if (conn.getState() == ImConnection.DISCONNECTED
+                        || conn.getState() == ImConnection.SUSPENDED
+                        || conn.getState() == ImConnection.SUSPENDING)
                     return false;
             }
 
