@@ -325,7 +325,15 @@ public class MainActivity extends BaseActivity {
         if (!checkConnection())
         {
             Snackbar sb = Snackbar.make(mViewPager, R.string.error_suspended_connection, Snackbar.LENGTH_LONG);
+            sb.setAction(getString(R.string.connect), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Intent i = new Intent(MainActivity.this, AccountsActivity.class);
+                            startActivity(i);
+                        }
+                    });
             sb.show();
+
         }
 
     }
