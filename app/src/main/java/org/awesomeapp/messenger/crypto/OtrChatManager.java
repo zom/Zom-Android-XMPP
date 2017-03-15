@@ -59,9 +59,9 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
     private Hashtable<String, OtrSm> mOtrSms;
 
     private Context mContext;
+    private ImApp mApp;
 
     // ChatSecure-Push
-    private PushManager mPushManager;
     private Hashtable<String, WhitelistTokenTlvHandler> mWhitelistTokenHandlers;
     private HashSet<String> mWhitelistTokenExchangedSessions;
 
@@ -81,12 +81,13 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
         mOtrSms = new Hashtable<String, OtrSm>();
 
         // Use the Application-managed PushManager which has a push account already authenticated
-        mPushManager = ((ImApp) mContext.getApplicationContext()).getPushManager();
+
         mWhitelistTokenHandlers = new Hashtable<>();
         mWhitelistTokenExchangedSessions = new HashSet<>();
 
-    }
+        mApp = ((ImApp)mContext.getApplicationContext());
 
+    }
 
     public static synchronized OtrChatManager getInstance(int otrPolicy, RemoteImService imService, OtrAndroidKeyManagerImpl otrKeyManager)
             throws Exception {
@@ -421,7 +422,7 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
 
             if (tokenTlvHandler == null) {
                 // ChatSecure-Push Whitelist Token Handler - One per session
-                tokenTlvHandler = new WhitelistTokenTlvHandler(mPushManager, sessionID,
+                tokenTlvHandler = new WhitelistTokenTlvHandler( mApp.getPushManager(), sessionID,
                         new WhitelistTokenTlvHandler.TlvSender() {
 
                             @Override
@@ -627,7 +628,7 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
 
         try {
 
-            TLV tokenTlv = mPushManager.createWhitelistTokenExchangeTlvWithToken(whitelistTokens, null);
+            TLV tokenTlv = mApp.getPushManager().createWhitelistTokenExchangeTlvWithToken(whitelistTokens, null);
 
             List<TLV> tlvs = new ArrayList<>(1);
             tlvs.add(tokenTlv);
@@ -669,7 +670,7 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
 
         mWhitelistTokenExchangedSessions.add(sessionID.toString());
         try {
-            mPushManager.createWhitelistTokenExchangeTlv(
+            mApp.getPushManager().createWhitelistTokenExchangeTlv(
                     PushManager.stripJabberIdResource(sessionID.getLocalUserId()),
                     PushManager.stripJabberIdResource(sessionID.getRemoteUserId()),
                     new PushSecureClient.RequestCallback<TLV>() {
@@ -707,7 +708,7 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
      */
     public void sendKnockPushMessage(@NonNull final SessionID sessionID) {
 
-        mPushManager.sendPushMessageToPeer(
+        mApp.getPushManager().sendPushMessageToPeer(
                 PushManager.stripJabberIdResource(sessionID.getLocalUserId()),
                 PushManager.stripJabberIdResource(sessionID.getRemoteUserId()),
                 new PushSecureClient.RequestCallback<org.chatsecure.pushsecure.response.Message>() {
@@ -739,8 +740,12 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
      * given {@param sessionID}.
      */
     public boolean canDoKnockPushMessage(@NonNull final SessionID sessionID) {
-        return mPushManager.hasPersistedWhitelistToken(
-                PushManager.stripJabberIdResource(sessionID.getRemoteUserId()),
-                PushManager.stripJabberIdResource(sessionID.getLocalUserId()));
+       if ( mApp.getPushManager() != null) {
+           return  mApp.getPushManager().hasPersistedWhitelistToken(
+                   PushManager.stripJabberIdResource(sessionID.getRemoteUserId()),
+                   PushManager.stripJabberIdResource(sessionID.getLocalUserId()));
+       }
+
+        return false;
     }
 }

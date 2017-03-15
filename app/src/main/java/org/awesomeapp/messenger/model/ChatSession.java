@@ -29,6 +29,7 @@ import net.java.otr4j.session.SessionID;
 import net.java.otr4j.session.SessionStatus;
 
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.util.Log;
 
 /**
@@ -87,7 +88,6 @@ public class ChatSession {
      * asynchronously and adds the message to the history. TODO: more docs on
      * async callbacks.
      *
-     * @param text the text to send.
      */
     // TODO these sendMessageAsync() should probably be renamed to sendMessageAsyncAndLog()/
     /*
@@ -122,6 +122,8 @@ public class ChatSession {
             SessionID sId = cm.getSessionId(message.getFrom().getAddress(), mParticipant.getAddress().getAddress());
             SessionStatus otrStatus = cm.getSessionStatus(sId);
 
+            boolean verified = cm.getKeyManager().isVerified(sId);
+
             message.setTo(new XmppAddress(sId.getRemoteUserId()));
             message.setType(Imps.MessageType.OUTGOING);
 
@@ -135,11 +137,6 @@ public class ChatSession {
                     // attempt to send a "Knock" push message to the peer asking them to come online
                     //cm.sendKnockPushMessage(sId);
                     if (!mPushSent) {
-
-                       // if (otrStatus == SessionStatus.ENCRYPTED) {
-                        //    cm.endSession(sId);
-                       // }
-
                         // ChatSecure-Push: If the remote peer is offline, send them a push
                         OtrChatManager.getInstance().sendKnockPushMessage(sId);
                         mPushSent = true;
@@ -162,26 +159,22 @@ public class ChatSession {
                     cm.maybeBeginPushWhitelistTokenExchange(sId);
                 }
 
-                boolean verified = cm.getKeyManager().isVerified(sId);
-
                 if (verified) {
                     message.setType(Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED);
                 } else {
                     message.setType(Imps.MessageType.OUTGOING_ENCRYPTED);
                 }
 
-            } else if (otrStatus == SessionStatus.FINISHED) {
+            } else {
 
-                /**
-                if (OtrChatManager.getInstance().canDoKnockPushMessage(sId)) {
-                    // ChatSecure-Push: If the remote peer is offline, send them a push
-                    OtrChatManager.getInstance().sendKnockPushMessage(sId);
-                }*/
+                boolean hasKey = !TextUtils.isEmpty(cm.getKeyManager().getRemoteFingerprint(sId));
 
-                //queue up messages until session restarts
-                message.setType(Imps.MessageType.POSTPONED);
-                return message.getType();
-
+                if (hasKey)
+                {
+                    //queue up messages until session restarts
+                    message.setType(Imps.MessageType.POSTPONED);
+                    return message.getType();
+                }
             }
 
             boolean canSend = cm.transformSending(message);

@@ -1042,6 +1042,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
         // unused
     }
 
+    @Override
     public void onCacheWordOpened() {
 
         new Thread(new Runnable() {
@@ -1050,6 +1051,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
                 Log.d(LOG_TAG, "Awaiting ImpsProvider ready");
                 // Wait for ImpsProvider to initialize : it listens to onCacheWordOpened as well...
                 ImpsProvider.awaitDataReady();
+
                 Log.d(LOG_TAG, "ImpsProvider ready");
                 // setupChatSecurePush will disconnect the CacheWordHandler when it's done
                 setupChatSecurePush();
