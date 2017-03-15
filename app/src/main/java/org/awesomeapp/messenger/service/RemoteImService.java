@@ -683,29 +683,28 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
         debug("networkStateChanged: type=" + networkInfo + " state=" + networkState);
 
+        boolean networkChanged = false;
+
         if (mNetworkState != networkState) {
 
             mNetworkState = networkState;
-            
+            networkChanged = true;
+
             for (ImConnectionAdapter conn : mConnections.values())
                 conn.networkTypeChanged();
 
             //update the notification
-            if (mNotifyBuilder != null)
-            {
+            if (mNotifyBuilder != null) {
                 String message = "";
-                
-                if (!isNetworkAvailable())
-                {
+
+                if (!isNetworkAvailable()) {
                     message = getString(R.string.error_suspended_connection);
                     mNotifyBuilder.setSmallIcon(R.drawable.notify_zom);
-                }
-                else
-                {
+                } else {
                     message = getString(R.string.app_unlocked);
                     mNotifyBuilder.setSmallIcon(R.drawable.notify_zom);
                 }
-                
+
                 mNotifyBuilder.setContentText(message);
                 // Because the ID remains unchanged, the existing notification is
                 // updated.
@@ -714,30 +713,21 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
                         mNotifyBuilder.build());
 
             }
-            
-              
-        }
 
-        
-        if (isNetworkAvailable())
-        {        
+            if (isNetworkAvailable()) {
                 boolean reConnd = reestablishConnections();
-                
-                if (!reConnd)
-                {
-                    if (mNeedCheckAutoLogin) {
-                        mNeedCheckAutoLogin = !autoLogin();;
 
+                if (!reConnd) {
+                    if (mNeedCheckAutoLogin) {
+                        mNeedCheckAutoLogin = !autoLogin();
                     }
                 }
 
-        }
-        else
-        {
-            suspendConnections();
-        }
-        
+            } else {
+                suspendConnections();
+            }
 
+        }
     }
 
     // package private for inner class access

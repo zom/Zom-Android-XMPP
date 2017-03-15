@@ -1253,6 +1253,7 @@ public class XmppConnection extends ImConnection {
                 }
                 else
                 {
+
                     debug(TAG, "not authorized - will not retry");
                     info = new ImErrorInfo(ImErrorInfo.INVALID_USERNAME, "invalid user/password");
                     setState(SUSPENDED, info);
@@ -3088,12 +3089,12 @@ public class XmppConnection extends ImConnection {
         execute(new Runnable() {
             @Override
             public void run() {
-               // if (mState == SUSPENDED || mState == SUSPENDING) {
+                if (mState == SUSPENDED || mState == SUSPENDING) {
                     debug(TAG, "network type changed");
                     mNeedReconnect = false;
                     setState(LOGGING_IN, null);
                     reconnect();
-                //}
+                }
             }
         });
 
