@@ -828,6 +828,8 @@ public class OtrDataHandler implements DataHandler {
             String filename = getFilenameFromUrl(url);
             localFilename = SecureMediaStore.getDownloadFilename(sessionId, filename);
             debug( "openFile: localFilename " + localFilename) ;
+            info.guardianproject.iocipher.File fileNew = new info.guardianproject.iocipher.File(localFilename);
+            fileNew.getParentFile().mkdirs();
             info.guardianproject.iocipher.RandomAccessFile ras = new info.guardianproject.iocipher.RandomAccessFile(localFilename, "rw");
             return ras;
         }
