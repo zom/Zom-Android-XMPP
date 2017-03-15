@@ -3855,7 +3855,7 @@ public class XmppConnection extends ImConnection {
 
                     }
                     
-                    //loadVCardsAsync();
+                    loadVCardsAsync();
 
                     //Log.d(TAG,"XMPP processed presence q=" + alUpdate.size());
 
