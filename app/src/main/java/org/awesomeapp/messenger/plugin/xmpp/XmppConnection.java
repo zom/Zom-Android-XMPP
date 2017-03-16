@@ -1186,7 +1186,7 @@ public class XmppConnection extends ImConnection {
     // Runs in executor thread
     private void do_login() {
 
-        if (getState() == LOGGING_IN || getState() == LOGGED_IN)
+        if (getState() == LOGGED_IN || getState() == SUSPENDED || getState() == SUSPENDING )
             return;
 
         /*
@@ -1271,8 +1271,8 @@ public class XmppConnection extends ImConnection {
 
             } else {
                //debug(TAG, "will not retry"); //WE MUST ALWAYS RETRY!
-               // disconnect();
-               // disconnected(info);
+                disconnect();
+                disconnected(info);
             }
 
 
@@ -2019,6 +2019,7 @@ public class XmppConnection extends ImConnection {
         clearPing();
 
         try {
+            mStreamHandler.quickShutdown();
             mConnection.disconnect();
         } catch (Throwable th) {
             // ignore
@@ -2045,20 +2046,23 @@ public class XmppConnection extends ImConnection {
 
     @Override
     public void suspend() {
-        execute(new Runnable() {
+
+        setState(SUSPENDED, null);
+
+        // Do not try to reconnect anymore if we were asked to suspend
+        mNeedReconnect = false;
+        clearPing();
+        
+        /**
+        new Thread(new Runnable() {
             @Override
             public void run() {
                 debug(TAG, "suspend");
-                setState(SUSPENDED, null);
-                mNeedReconnect = false;
-                clearPing();
-                // Do not try to reconnect anymore if we were asked to suspend
 
-                if (mStreamHandler != null)
-                    mStreamHandler.quickShutdown();
-
+                //if (mStreamHandler != null)
+                  //  mStreamHandler.quickShutdown();
             }
-        });
+        });**/
     }
 
     private ChatSession findOrCreateSession(String address, boolean groupChat) {
@@ -3227,8 +3231,8 @@ public class XmppConnection extends ImConnection {
             setState(LOGGING_IN, new ImErrorInfo(ImErrorInfo.NETWORK_ERROR,
                     "reconnection on network change failed"));
 
-            //while (mNeedReconnect)
-              //  do_login();
+            while (mNeedReconnect)
+                do_login();
 
         }
     }

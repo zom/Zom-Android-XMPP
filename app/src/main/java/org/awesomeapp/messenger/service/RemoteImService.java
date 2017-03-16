@@ -679,15 +679,18 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
     void networkStateChanged(NetworkInfo networkInfo, NetworkConnectivityReceiver.State networkState) {
 
-        mNetworkType = networkInfo != null ? networkInfo.getType() : -1;
+        int networkType = networkInfo != null ? networkInfo.getType() : -1;
 
         debug("networkStateChanged: type=" + networkInfo + " state=" + networkState);
 
         boolean networkChanged = false;
 
-        if (mNetworkState != networkState) {
+        if (mNetworkType != networkType
+            || mNetworkState != networkState) {
 
             mNetworkState = networkState;
+            mNetworkType = networkType;
+
             networkChanged = true;
 
             for (ImConnectionAdapter conn : mConnections.values())
@@ -714,28 +717,26 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
             }
 
-            if (isNetworkAvailable()) {
-                boolean reConnd = reestablishConnections();
 
-                if (!reConnd) {
-                    if (mNeedCheckAutoLogin) {
-                        mNeedCheckAutoLogin = !autoLogin();
-                    }
+        }
+
+
+        if (isNetworkAvailable()) {
+            boolean reConnd = reestablishConnections();
+
+            if (!reConnd) {
+                if (mNeedCheckAutoLogin) {
+                    mNeedCheckAutoLogin = !autoLogin();
                 }
-
-            } else {
-                suspendConnections();
             }
 
+        } else {
+            suspendConnections();
         }
     }
 
     // package private for inner class access
     boolean reestablishConnections() {
-
-        if (!isNetworkAvailable()) {
-            return false;
-        }
 
         for (ImConnectionAdapter conn : mConnections.values()) {
             int connState = conn.getState();
