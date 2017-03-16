@@ -86,6 +86,7 @@ import org.awesomeapp.messenger.util.SecureMediaStore;
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.util.SystemServices;
 import org.ironrabbit.type.CustomTypefaceManager;
+import org.ocpsoft.prettytime.PrettyTime;
 
 public class ConversationDetailActivity extends BaseActivity {
 
@@ -100,8 +101,9 @@ public class ConversationDetailActivity extends BaseActivity {
 
     private ImApp mApp;
 
-    private AppBarLayout appBarLayout;
-    private CoordinatorLayout mRootLayout;
+    //private AppBarLayout appBarLayout;
+    private View mRootLayout;
+    private Toolbar mToolbar;
 
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         public void onReceive(final Context context, final Intent intent) {
@@ -134,20 +136,22 @@ public class ConversationDetailActivity extends BaseActivity {
 
         mConvoView = new ConversationView(this);
 
-        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        appBarLayout = (AppBarLayout)findViewById(R.id.appbar);
-        mRootLayout = (CoordinatorLayout)findViewById(R.id.main_content);
 
-        setSupportActionBar(toolbar);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+      //  appBarLayout = (AppBarLayout)findViewById(R.id.appbar);
+        mRootLayout = findViewById(R.id.main_content);
+
+        setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         applyStyleForToolbar();
 
+        /**
         appBarLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 expandToolbar();
             }
-        });
+        });**/
 
         processIntent(getIntent());
 
@@ -161,25 +165,29 @@ public class ConversationDetailActivity extends BaseActivity {
 
     public void applyStyleForToolbar() {
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        CollapsingToolbarLayout collapsingToolbar =
-                (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
-        collapsingToolbar.setTitle(mConvoView.getTitle());
+
+//        CollapsingToolbarLayout collapsingToolbar =
+  //              (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+        //collapsingToolbar.setTitle(mConvoView.getTitle());
+        getSupportActionBar().setTitle(mConvoView.getTitle());
+
+        if (mConvoView.getLastSeen() != null) {
+
+            getSupportActionBar().setSubtitle(new PrettyTime().format(mConvoView.getLastSeen()));
+        }
 
         //first set font
         Typeface typeface = CustomTypefaceManager.getCurrentTypeface(this);
 
-
-        collapsingToolbar.setCollapsedTitleTypeface(typeface);
-        collapsingToolbar.setExpandedTitleTypeface(typeface);
+    //    collapsingToolbar.setCollapsedTitleTypeface(typeface);
+     //   collapsingToolbar.setExpandedTitleTypeface(typeface);
 
 
         if (typeface != null) {
-            for (int i = 0; i < toolbar.getChildCount(); i++) {
-                View view = toolbar.getChildAt(i);
+            for (int i = 0; i < mToolbar.getChildCount(); i++) {
+                View view = mToolbar.getChildAt(i);
                 if (view instanceof TextView) {
                     TextView tv = (TextView) view;
-
                     tv.setTypeface(typeface);
                     break;
                 }
@@ -203,10 +211,10 @@ public class ConversationDetailActivity extends BaseActivity {
                 getWindow().setTitleColor(themeColorText);
             }
 
-            appBarLayout.setBackgroundColor(themeColorHeader);
-            collapsingToolbar.setBackgroundColor(themeColorHeader);
-            toolbar.setBackgroundColor(themeColorHeader);
-            toolbar.setTitleTextColor(themeColorText);
+      //      appBarLayout.setBackgroundColor(themeColorHeader);
+         //   collapsingToolbar.setBackgroundColor(themeColorHeader);
+            mToolbar.setBackgroundColor(themeColorHeader);
+            mToolbar.setTitleTextColor(themeColorText);
 
         }
 
@@ -243,21 +251,26 @@ public class ConversationDetailActivity extends BaseActivity {
 
         mConvoView.bindChat(mChatId, mAddress, mNickname);
 
-        loadBackdrop();
+        //loadBackdrop();
 
-        CollapsingToolbarLayout collapsingToolbar =
-                (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
-        collapsingToolbar.setTitle(mConvoView.getTitle());
+     //   CollapsingToolbarLayout collapsingToolbar =
+       //         (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+        //collapsingToolbar.setTitle(mConvoView.getTitle());
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(mConvoView.getTitle());
+
+        //getSupportActionBar().setSubtitle("foo bar");
+
     }
 
     public void collapseToolbar(){
 
-        appBarLayout.setExpanded(false);
+     //   appBarLayout.setExpanded(false);
     }
 
     public void expandToolbar(){
 
-        appBarLayout.setExpanded(true);
+    //    appBarLayout.setExpanded(true);
     }
 
     @Override
@@ -336,13 +349,14 @@ public class ConversationDetailActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
     private void loadBackdrop() {
         final ImageView imageView = (ImageView) findViewById(R.id.backdrop);
 
         if (mConvoView.getHeader()!=null)
             imageView.setImageDrawable(mConvoView.getHeader());
 
-    }
+    }**/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

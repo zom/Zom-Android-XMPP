@@ -75,12 +75,11 @@ public class ContactDisplayActivity extends BaseActivity {
 
         setContentView(R.layout.awesome_activity_contact);
 
-
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        applyStyleForToolbar();
+       // applyStyleForToolbar();
 
         mContactId = (int)getIntent().getLongExtra("contactId",-1);
 
@@ -221,6 +220,8 @@ public class ContactDisplayActivity extends BaseActivity {
   //          showGallery (mContactId);
 
     }
+
+
 
     public void verifyClicked (View view)
     {
