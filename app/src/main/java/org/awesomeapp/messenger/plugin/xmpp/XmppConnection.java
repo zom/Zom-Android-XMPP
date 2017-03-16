@@ -2052,7 +2052,7 @@ public class XmppConnection extends ImConnection {
         // Do not try to reconnect anymore if we were asked to suspend
         mNeedReconnect = false;
         clearPing();
-        
+
         /**
         new Thread(new Runnable() {
             @Override
