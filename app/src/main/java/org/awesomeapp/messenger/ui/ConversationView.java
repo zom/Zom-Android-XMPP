@@ -92,6 +92,7 @@ import org.awesomeapp.messenger.Preferences;
 import org.awesomeapp.messenger.bho.DictionarySearch;
 import org.awesomeapp.messenger.crypto.IOtrChatSession;
 import org.awesomeapp.messenger.crypto.OtrAndroidKeyManagerImpl;
+import org.awesomeapp.messenger.crypto.OtrChatManager;
 import org.awesomeapp.messenger.model.Address;
 import org.awesomeapp.messenger.model.Contact;
 import org.awesomeapp.messenger.model.ImConnection;
@@ -1674,6 +1675,12 @@ public class ConversationView {
         intent.putExtra("account", mAccountId);
         intent.putExtra("contactId", mLastChatId);
 
+        try {
+            IOtrChatSession otrChatSession = mCurrentChatSession.getDefaultOtrChatSession();
+            intent.putExtra("fingerprint", otrChatSession.getRemoteFingerprint());
+        }
+        catch (RemoteException re){}
+
         mContext.startActivity(intent);
 
     }
@@ -2035,8 +2042,7 @@ public class ConversationView {
                 try
                 {
                     String rFingerprint = otrChatSession.getRemoteFingerprint();
-                    mIsVerified = otrChatSession.isKeyVerified(mRemoteAddress);
-
+                    mIsVerified = (OtrChatManager.getInstance().isRemoteKeyVerified(mRemoteAddress, rFingerprint));
                 }
                 catch (RemoteException re){}
 

@@ -175,6 +175,7 @@
                 android:text="@string/menu_verify"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="?contactTextSecondary"
+                android:onClick="verifyClicked"
                 >
 
             </org.ironrabbit.type.CustomTypefaceButton>

@@ -643,6 +643,35 @@ public class OtrAndroidKeyManagerImpl extends IOtrKeyManager.Stub implements Otr
         }
     }
 
+
+    public ArrayList<String> getRemoteKeyFingerprints(String userId) {
+
+        Enumeration<Object> keys = store.getKeys();
+
+        ArrayList<String> results = new ArrayList<String>();
+
+        String baseUserId = Address.stripResource(userId);
+
+        while (keys.hasMoreElements())
+        {
+            String key = (String)keys.nextElement();
+
+            if (key.startsWith(baseUserId + '/') && key.endsWith(".fingerprint"))
+            {
+
+                String fingerprint = this.store.getProperty(key);
+                if (fingerprint != null) {
+                    // If we have a fingerprint stashed, assume it is correct.
+                    results.add(fingerprint);
+                }
+
+            }
+
+        }
+
+        return results;
+    }
+
     public String[] getRemoteFingerprints(String userId) {
 
         Enumeration<Object> keys = store.getKeys();
@@ -675,14 +704,15 @@ public class OtrAndroidKeyManagerImpl extends IOtrKeyManager.Stub implements Otr
     public boolean isVerified(SessionID sessionID) {
         if (sessionID == null)
             return false;
-        return isVerified(sessionID.getRemoteUserId());
+        return isVerified(sessionID.getRemoteUserId(),null);
     }
 
-    public boolean isVerified(String remoteUserId) {
+    public boolean isVerified(String remoteUserId, String remoteFingerprint) {
         if (remoteUserId == null)
             return false;
 
-        String remoteFingerprint =getRemoteFingerprint(remoteUserId);
+        if (remoteFingerprint == null)
+               remoteFingerprint = getRemoteFingerprint(remoteUserId);
 
         if (remoteFingerprint != null)
         {
