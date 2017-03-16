@@ -101,6 +101,7 @@ public class OnboardingActivity extends BaseActivity {
     private ListPopupWindow mDomainList;
 
     private FindServerTask mCurrentFindServerTask;
+    private ExistingAccountTask mExistingAccountTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -721,8 +722,10 @@ public class OnboardingActivity extends BaseActivity {
         findViewById(R.id.progressExistingUser).setVisibility(View.VISIBLE);
         findViewById(R.id.progressExistingImage).setVisibility(View.VISIBLE);
 
-        new ExistingAccountTask().execute(username, password);
-
+        if (mExistingAccountTask == null) {
+            mExistingAccountTask = new ExistingAccountTask();
+            mExistingAccountTask.execute(username, password);
+        }
     }
 
     private class ExistingAccountTask extends AsyncTask<String, Void, OnboardingAccount> {
@@ -761,6 +764,8 @@ public class OnboardingActivity extends BaseActivity {
             signInHelper.signIn(account.password, account.providerId, account.accountId, true);
 
             showInviteScreen();
+
+            mExistingAccountTask = null;
         }
     }
 
