@@ -117,6 +117,7 @@ public class ContactDisplayActivity extends BaseActivity {
                     ImageView iv = (ImageView) findViewById(R.id.imageAvatar);
                     iv.setImageDrawable(avatar);
                     iv.setVisibility(View.VISIBLE);
+                    findViewById(R.id.imageSpacer).setVisibility(View.GONE);
                 }
             } catch (Exception e) {
             }
