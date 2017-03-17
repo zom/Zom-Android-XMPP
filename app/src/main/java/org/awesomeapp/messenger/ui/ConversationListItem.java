@@ -17,6 +17,7 @@
 
 package org.awesomeapp.messenger.ui;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -31,6 +32,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.v4.util.LruCache;
 import android.text.Spannable;
@@ -68,6 +70,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
+import java.util.Locale;
 
 import im.zom.messenger.R;
 
@@ -99,11 +102,14 @@ public class ConversationListItem extends FrameLayout {
     public static final int COLUMN_LAST_MESSAGE = 11;
 
     static Drawable AVATAR_DEFAULT_GROUP = null;
-    private final static PrettyTime sPrettyTime = new PrettyTime();
+    private static PrettyTime sPrettyTime = null;
 
     public ConversationListItem(Context context, AttributeSet attrs) {
         super(context, attrs);
 
+
+        if (sPrettyTime == null)
+            sPrettyTime = new PrettyTime(getCurrentLocale());
     }
 
 /**
@@ -536,4 +542,14 @@ public class ConversationListItem extends FrameLayout {
                 Math.max( (int)(b * factor), 0 ) );
     }
 
+
+    @TargetApi(Build.VERSION_CODES.N)
+    public Locale getCurrentLocale(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+            return getResources().getConfiguration().getLocales().get(0);
+        } else{
+            //noinspection deprecation
+            return getResources().getConfiguration().locale;
+        }
+    }
 }

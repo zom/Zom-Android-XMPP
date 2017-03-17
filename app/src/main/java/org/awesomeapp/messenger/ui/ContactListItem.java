@@ -86,7 +86,6 @@ public class ContactListItem extends FrameLayout {
     public static final int COLUMN_AVATAR_DATA = 13;
 
     static Drawable AVATAR_DEFAULT_GROUP = null;
-    private final static PrettyTime sPrettyTime = new PrettyTime();
 
     private String address;
     private String nickname;

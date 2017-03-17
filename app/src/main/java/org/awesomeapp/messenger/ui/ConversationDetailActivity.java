@@ -17,6 +17,7 @@
 package org.awesomeapp.messenger.ui;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -74,6 +75,7 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 import org.awesomeapp.messenger.service.IChatSession;
@@ -107,6 +109,8 @@ public class ConversationDetailActivity extends BaseActivity {
     private View mRootLayout;
     private Toolbar mToolbar;
 
+    private PrettyTime mPrettyTime;
+
     private Handler mHandler = new Handler()
     {
         @Override
@@ -116,7 +120,7 @@ public class ConversationDetailActivity extends BaseActivity {
             if (msg.what == 1)
             {
                 if (mConvoView.getLastSeen() != null) {
-                    getSupportActionBar().setSubtitle(new PrettyTime().format(mConvoView.getLastSeen()));
+                    getSupportActionBar().setSubtitle(mPrettyTime.format(mConvoView.getLastSeen()));
                 }
             }
         }
@@ -158,6 +162,8 @@ public class ConversationDetailActivity extends BaseActivity {
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
       //  appBarLayout = (AppBarLayout)findViewById(R.id.appbar);
         mRootLayout = findViewById(R.id.main_content);
+
+        mPrettyTime = new PrettyTime(getCurrentLocale());
 
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -876,6 +882,16 @@ public class ConversationDetailActivity extends BaseActivity {
         return titleTextView;
     }
 
+
+    @TargetApi(Build.VERSION_CODES.N)
+    public Locale getCurrentLocale(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+            return getResources().getConfiguration().getLocales().get(0);
+        } else{
+            //noinspection deprecation
+            return getResources().getConfiguration().locale;
+        }
+    }
 
     public static final int REQUEST_PICK_CONTACTS = RESULT_FIRST_USER + 1;
     public static final int REQUEST_SEND_IMAGE = REQUEST_PICK_CONTACTS + 1;
