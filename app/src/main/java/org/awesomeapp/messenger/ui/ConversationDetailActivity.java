@@ -17,6 +17,7 @@
 package org.awesomeapp.messenger.ui;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -33,6 +34,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.os.Parcelable;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
@@ -72,6 +75,7 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 import org.awesomeapp.messenger.service.IChatSession;
@@ -104,6 +108,24 @@ public class ConversationDetailActivity extends BaseActivity {
     //private AppBarLayout appBarLayout;
     private View mRootLayout;
     private Toolbar mToolbar;
+
+    private PrettyTime mPrettyTime;
+
+    private Handler mHandler = new Handler()
+    {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+
+            if (msg.what == 1)
+            {
+                if (mConvoView.getLastSeen() != null) {
+                    getSupportActionBar().setSubtitle(mPrettyTime.format(mConvoView.getLastSeen()));
+                }
+            }
+        }
+    };
+
 
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         public void onReceive(final Context context, final Intent intent) {
@@ -141,6 +163,8 @@ public class ConversationDetailActivity extends BaseActivity {
       //  appBarLayout = (AppBarLayout)findViewById(R.id.appbar);
         mRootLayout = findViewById(R.id.main_content);
 
+        mPrettyTime = new PrettyTime(getCurrentLocale());
+
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         applyStyleForToolbar();
@@ -163,24 +187,22 @@ public class ConversationDetailActivity extends BaseActivity {
 
     }
 
+    public void updateLastSeen (Date lastSeen)
+    {
+       mHandler.sendEmptyMessage(1);
+    }
+
     public void applyStyleForToolbar() {
 
 
-//        CollapsingToolbarLayout collapsingToolbar =
-  //              (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
-        //collapsingToolbar.setTitle(mConvoView.getTitle());
         getSupportActionBar().setTitle(mConvoView.getTitle());
 
         if (mConvoView.getLastSeen() != null) {
-
             getSupportActionBar().setSubtitle(new PrettyTime().format(mConvoView.getLastSeen()));
         }
 
         //first set font
         Typeface typeface = CustomTypefaceManager.getCurrentTypeface(this);
-
-    //    collapsingToolbar.setCollapsedTitleTypeface(typeface);
-     //   collapsingToolbar.setExpandedTitleTypeface(typeface);
 
 
         if (typeface != null) {
@@ -250,7 +272,7 @@ public class ConversationDetailActivity extends BaseActivity {
         mNickname = intent.getStringExtra("nickname");
 
         mConvoView.bindChat(mChatId, mAddress, mNickname);
-
+        mConvoView.startListening();
         //loadBackdrop();
 
      //   CollapsingToolbarLayout collapsingToolbar =
@@ -860,6 +882,16 @@ public class ConversationDetailActivity extends BaseActivity {
         return titleTextView;
     }
 
+
+    @TargetApi(Build.VERSION_CODES.N)
+    public Locale getCurrentLocale(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+            return getResources().getConfiguration().getLocales().get(0);
+        } else{
+            //noinspection deprecation
+            return getResources().getConfiguration().locale;
+        }
+    }
 
     public static final int REQUEST_PICK_CONTACTS = RESULT_FIRST_USER + 1;
     public static final int REQUEST_SEND_IMAGE = REQUEST_PICK_CONTACTS + 1;

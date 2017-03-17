@@ -39,7 +39,9 @@ import java.io.InputStream;
 import java.net.URLConnection;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
+import android.annotation.TargetApi;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -96,15 +98,19 @@ public class MessageListItem extends FrameLayout {
     private Context context;
     private boolean linkify = false;
 
+    private MessageViewHolder mHolder = null;
+
+    private static PrettyTime sPrettyTime = null;
+
     public MessageListItem(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
+
+        if (sPrettyTime == null) {
+            sPrettyTime = new PrettyTime(getCurrentLocale());
+        }
+
     }
-
-    private MessageViewHolder mHolder = null;
-
-    private final static PrettyTime sPrettyTime = new PrettyTime();
-    private final static Date DATE_NOW = new Date();
 
 
     /**
@@ -1096,4 +1102,13 @@ public class MessageListItem extends FrameLayout {
         return y >= 128 ? Color.BLACK : Color.WHITE;
     }
 
+    @TargetApi(Build.VERSION_CODES.N)
+    public Locale getCurrentLocale(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+            return getResources().getConfiguration().getLocales().get(0);
+        } else{
+            //noinspection deprecation
+            return getResources().getConfiguration().locale;
+        }
+    }
 }

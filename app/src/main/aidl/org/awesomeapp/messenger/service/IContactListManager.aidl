@@ -119,4 +119,9 @@ interface IContactListManager {
      * @return the state of the manager.
      */
     int getState();
+
+    /**
+    *   @param address remote id of contact you wish to receive
+    */
+    Contact getContactByAddress (String address);
 }
