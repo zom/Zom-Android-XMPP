@@ -1,2 +1,0 @@
-configurations.maybeCreate("default")
-artifacts.add("default", file('IOCipher-v0.3-16-g8cda1ac-debug.aar'))

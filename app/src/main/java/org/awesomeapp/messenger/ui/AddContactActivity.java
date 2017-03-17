@@ -51,7 +51,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.awesomeapp.messenger.ImApp;
+import org.awesomeapp.messenger.MainActivity;
 import org.awesomeapp.messenger.crypto.OtrAndroidKeyManagerImpl;
+import org.awesomeapp.messenger.model.ImConnection;
 import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.service.IContactList;
@@ -101,7 +103,7 @@ public class AddContactActivity extends BaseActivity {
         setTitle("");
 
         mApp = (ImApp)getApplication();
-     //   mApp.setAppTheme(this);
+
         mHandler = new SimpleAlertHandler(this);
 
         setContentView(R.layout.add_contact_activity);
@@ -135,6 +137,24 @@ public class AddContactActivity extends BaseActivity {
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (!checkConnection())
+        {
+            Snackbar sb = Snackbar.make(findViewById(R.id.main_content), R.string.error_suspended_connection, Snackbar.LENGTH_LONG);
+            sb.setAction(getString(R.string.connect), new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent i = new Intent(AddContactActivity.this, AccountsActivity.class);
+                    startActivity(i);
+                }
+            });
+            sb.show();
+
+        }
+    }
 
     private void setupActions ()
     {
@@ -524,6 +544,24 @@ public class AddContactActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
+
+    private boolean checkConnection() {
+        try {
+            if (mApp.getDefaultProviderId() != -1) {
+                IImConnection conn = mApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
+
+                if (conn.getState() == ImConnection.DISCONNECTED
+                        || conn.getState() == ImConnection.SUSPENDED
+                        || conn.getState() == ImConnection.SUSPENDING)
+                    return false;
+            }
+
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+
+    }
     private static final String[] PROVIDER_PROJECTION = {
                                                          Imps.Provider._ID,
                                                          Imps.Provider.NAME,

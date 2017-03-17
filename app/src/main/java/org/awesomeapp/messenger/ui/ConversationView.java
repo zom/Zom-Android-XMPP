@@ -92,6 +92,7 @@ import org.awesomeapp.messenger.Preferences;
 import org.awesomeapp.messenger.bho.DictionarySearch;
 import org.awesomeapp.messenger.crypto.IOtrChatSession;
 import org.awesomeapp.messenger.crypto.OtrAndroidKeyManagerImpl;
+import org.awesomeapp.messenger.crypto.OtrChatManager;
 import org.awesomeapp.messenger.model.Address;
 import org.awesomeapp.messenger.model.Contact;
 import org.awesomeapp.messenger.model.ImConnection;
@@ -223,6 +224,7 @@ public class ConversationView {
     long mInvitationId;
     private Context mContext; // TODO
     private int mPresenceStatus;
+    private Date mLastSeen;
 
     private int mViewType;
 
@@ -535,6 +537,11 @@ public class ConversationView {
         public void onContactTyping(IChatSession ses, Contact contact, boolean isTyping) throws RemoteException {
             super.onContactTyping(ses, contact, isTyping);
 
+            if (contact.getPresence() != null) {
+                mPresenceStatus = contact.getPresence().getStatus();
+                mLastSeen = contact.getPresence().getLastSeen();
+            }
+
             android.os.Message message = android.os.Message.obtain(null, SHOW_TYPING, (int) (mProviderId >> 32),
                     (int) mProviderId, -1);
 
@@ -622,8 +629,12 @@ public class ConversationView {
 
         public void onContactChange(int type, IContactList list, Contact contact) {
 
-           if (contact != null && contact.getPresence() != null)
+           if (contact != null && contact.getPresence() != null) {
                mPresenceStatus = contact.getPresence().getStatus();
+               mLastSeen = contact.getPresence().getLastSeen();
+
+           }
+
 
         }
 
@@ -643,6 +654,7 @@ public class ConversationView {
                     if (c != null && c.getPresence() != null)
                     {
                         mPresenceStatus = c.getPresence().getStatus();
+                        mLastSeen = c.getPresence().getLastSeen();
                         updatePresenceDisplay();
                         /**
                         try {
@@ -1253,6 +1265,11 @@ public class ConversationView {
 
     }
 
+    public Date getLastSeen ()
+    {
+        return mLastSeen;
+    }
+
     public RoundedAvatarDrawable getIcon ()
     {
         return mRemoteAvatar;
@@ -1674,6 +1691,12 @@ public class ConversationView {
         intent.putExtra("account", mAccountId);
         intent.putExtra("contactId", mLastChatId);
 
+        try {
+            IOtrChatSession otrChatSession = mCurrentChatSession.getDefaultOtrChatSession();
+            intent.putExtra("fingerprint", otrChatSession.getRemoteFingerprint());
+        }
+        catch (RemoteException re){}
+
         mContext.startActivity(intent);
 
     }
@@ -2035,8 +2058,7 @@ public class ConversationView {
                 try
                 {
                     String rFingerprint = otrChatSession.getRemoteFingerprint();
-                    mIsVerified = otrChatSession.isKeyVerified(mRemoteAddress);
-
+                    mIsVerified = (OtrChatManager.getInstance().isRemoteKeyVerified(mRemoteAddress, rFingerprint));
                 }
                 catch (RemoteException re){}
 

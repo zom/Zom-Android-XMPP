@@ -11,6 +11,7 @@ import org.awesomeapp.messenger.service.RemoteImService;
 import java.io.IOException;
 import java.security.KeyPair;
 import java.security.PublicKey;
+import java.util.ArrayList;
 import java.util.Hashtable;
 
 import net.java.otr4j.OtrEngineHost;
@@ -81,8 +82,8 @@ public class OtrEngineHostImpl implements OtrEngineHost {
         mOtrKeyManager.savePublicKey(sessionID, remoteKey);
     }
 
-    public boolean isRemoteKeyVerified(String userId) {
-        return mOtrKeyManager.isVerified(userId);
+    public boolean isRemoteKeyVerified(String userId, String fingerprint) {
+        return mOtrKeyManager.isVerified(userId, fingerprint);
     }
 
     public boolean isRemoteKeyVerified(SessionID sessionID) {
@@ -103,6 +104,10 @@ public class OtrEngineHostImpl implements OtrEngineHost {
 
     public String getRemoteKeyFingerprint(String userId) {
         return mOtrKeyManager.getRemoteFingerprint(userId);
+    }
+
+    public ArrayList<String> getRemoteKeyFingerprints(String userId) {
+        return mOtrKeyManager.getRemoteKeyFingerprints(userId);
     }
 
     public boolean hasRemoteKeyFingerprint (String userid)

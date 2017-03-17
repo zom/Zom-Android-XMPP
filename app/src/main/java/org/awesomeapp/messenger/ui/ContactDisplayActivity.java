@@ -54,6 +54,7 @@ import org.awesomeapp.messenger.util.LogCleaner;
 import org.ironrabbit.type.CustomTypefaceManager;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import im.zom.messenger.R;
 
@@ -74,12 +75,11 @@ public class ContactDisplayActivity extends BaseActivity {
 
         setContentView(R.layout.awesome_activity_contact);
 
-
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        applyStyleForToolbar();
+       // applyStyleForToolbar();
 
         mContactId = (int)getIntent().getLongExtra("contactId",-1);
 
@@ -87,12 +87,18 @@ public class ContactDisplayActivity extends BaseActivity {
         mUsername = getIntent().getStringExtra("address");
         mProviderId = getIntent().getLongExtra("provider", -1);
         mAccountId = getIntent().getLongExtra("account", -1);
+        mRemoteFingerprint = getIntent().getStringExtra("fingerprint");
 
         mConn = ((ImApp)getApplication()).getConnection(mProviderId,mAccountId);
 
         if (TextUtils.isEmpty(mNickname)) {
             mNickname = mUsername;
             mNickname = mNickname.split("@")[0].split("\\.")[0];
+        }
+
+        if (mRemoteFingerprint == null)
+        {
+            mRemoteFingerprint = OtrChatManager.getInstance().getRemoteKeyFingerprint(mUsername);
         }
 
         setTitle("");
@@ -111,6 +117,7 @@ public class ContactDisplayActivity extends BaseActivity {
                     ImageView iv = (ImageView) findViewById(R.id.imageAvatar);
                     iv.setImageDrawable(avatar);
                     iv.setVisibility(View.VISIBLE);
+                    findViewById(R.id.imageSpacer).setVisibility(View.GONE);
                 }
             } catch (Exception e) {
             }
@@ -121,17 +128,19 @@ public class ContactDisplayActivity extends BaseActivity {
         tv = (TextView)findViewById(R.id.tvFingerprint);
 
         Button btnVerify = (Button)findViewById(R.id.btnVerify);
-        btnVerify.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                verifyRemoteFingerprint();
-                findViewById(R.id.btnVerify).setVisibility(View.GONE);
-            }
-        });
+
 
         try {
 
-            mRemoteFingerprint = OtrChatManager.getInstance().getRemoteKeyFingerprint(mUsername);
+
+            ArrayList<String> fingerprints = OtrChatManager.getInstance().getRemoteKeyFingerprints(mUsername);
+
+            if (!fingerprints.contains(mRemoteFingerprint))
+            {
+                throw new Exception("Invalid key: " + mRemoteFingerprint);
+            }
+
+
 
             if (mRemoteFingerprint != null) {
 
@@ -174,7 +183,7 @@ public class ContactDisplayActivity extends BaseActivity {
                         }
                     });
 
-                    if (OtrChatManager.getInstance().isRemoteKeyVerified(mUsername))
+                    if (OtrChatManager.getInstance().isRemoteKeyVerified(mUsername, mRemoteFingerprint))
                         btnVerify.setVisibility(View.GONE);
 
 
@@ -211,6 +220,14 @@ public class ContactDisplayActivity extends BaseActivity {
 //        if (mContactId != -1)
   //          showGallery (mContactId);
 
+    }
+
+
+
+    public void verifyClicked (View view)
+    {
+        verifyRemoteFingerprint();
+        findViewById(R.id.btnVerify).setVisibility(View.GONE);
     }
 
     private void showGallery (int contactId)
@@ -278,24 +295,6 @@ public class ContactDisplayActivity extends BaseActivity {
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
 
-        /**
-        new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE)
-                .setTitleText(getString(R.string.menu_remove_contact))
-                .setContentText(getString(R.string.confirm_delete_contact, mNickname))
-                .setConfirmText(getString(R.string.ok))
-                .setCancelText(getString(R.string.cancel))
-                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sDialog) {
-                        doDeleteContact();
-                        sDialog.dismiss();
-                        finish();
-                        startActivity(new Intent(ContactDisplayActivity.this, MainActivity.class));
-                    }
-                })
-                .show();**/
-
-        //TODO confirm delete dialog
     }
 
     void doDeleteContact ()
