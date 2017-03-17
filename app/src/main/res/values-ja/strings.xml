@@ -32,7 +32,7 @@
   <!--Views: Setup-->
   <string name="add_account">&lt;xliff:g id="ACCOUNT"&gt;%1$s&lt;/xliff:g&gt;アカウント</string>
   <string name="menu_about">アプリについて</string>
-  <string name="signed_out_prompt_with_error">&lt;xliff:g id="ACCOUNT"&gt;%1$s&lt;/xliff:g&gt; をログアウトしています。理由 &lt;xliff:g id="reason"&gt;%2$s&lt;/xliff:g&gt;</string>
+  <string name="signed_out_prompt_with_error" formatted="false">&lt;xliff:g id="ACCOUNT"&gt;%1$s&lt;/xliff:g&gt; をログアウトしています。理由 &lt;xliff:g id="reason"&gt;%2$s&lt;/xliff:g&gt;</string>
   <string name="pass_err_length">パスフレーズの長さが足りません</string>
   <!--Views: About: Welcome-->
   <!--Views: About: OTR-->
@@ -173,7 +173,7 @@
   <string name="allow_s_to_create_a_new_chat_account_for_s_">ユーザー名 \'%1$s\' の新しいチャット アカウントを作成しますか?</string>
   <!--Alerts: Notifications-->
   <string name="subscription_notify_text">&lt;xliff:g id="user"&gt;%s&lt;/xliff:g&gt; から新しい友達の招待</string>
-  <string name="file_notify_text">新しいファイル &lt;xliff:g id="FILENAME"&gt;%s&lt;/xliff:g&gt; &lt;xliff:g id="USER"&gt;%s&lt;/xliff:g&gt; から</string>
+  <string name="file_notify_text" formatted="false">新しいファイル &lt;xliff:g id="FILENAME"&gt;%s&lt;/xliff:g&gt; &lt;xliff:g id="USER"&gt;%s&lt;/xliff:g&gt; から</string>
   <string name="notify_groupchat_label">グループチャットの招待</string>
   <string name="group_chat_invite_notify_text">&lt;xliff:g id="USER"&gt;%s&lt;/xliff:g&gt; から新しいグループチャットの招待</string>
   <string name="new_messages_notify">新しいメッセージ。送信者</string>

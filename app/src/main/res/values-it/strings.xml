@@ -109,8 +109,8 @@
   <string name="subscription_prompt">Aggiungere &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;?</string>
   <string name="approve_subscription">Sì</string>
   <string name="decline_subscription">No</string>
-  <string name="approve_subscription_error">Impossibile approvare l'iscrizione di &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;. Riprova più tardi.</string>
-  <string name="decline_subscription_error">Impossibile rifiutare l'iscrizione di &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;. Riprova più tardi.</string>
+  <string name="approve_subscription_error">Impossibile approvare l\'iscrizione di &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;. Riprova più tardi.</string>
+  <string name="decline_subscription_error">Impossibile rifiutare l\'iscrizione di &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;. Riprova più tardi.</string>
   <!--Security: OTR-->
   <string name="otr_session_status_finished">Il tuo interlocutore ha disabilitato la chat criptata.</string>
   <string name="otr_mode_force">Obbliga / Richiedi</string>
@@ -187,7 +187,7 @@
   <string name="unblock_contact_failed">Il contatto non è stato sbloccato.</string>
   <string name="load_contact_list_failed">Elenco contatti non caricato.</string>
   <string name="cant_connect_to_server">Impossibile collegarsi al server. Controllare la connessione.</string>
-  <string name="contact_already_exist">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; già presente nell'elenco contatti.</string>
+  <string name="contact_already_exist">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; già presente nell\'elenco contatti.</string>
   <string name="contact_blocked">Il contatto "&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;" è stato bloccato.</string>
   <string name="contact_not_loaded">Attendere il caricamento dell\'elenco contatti.</string>
   <string name="network_error">Errore di rete.</string>
