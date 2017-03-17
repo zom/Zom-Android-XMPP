@@ -5,12 +5,12 @@
   <string name="app_name">Zom</string>
   <string name="im_label">Zom</string>
   <!--General: Permissions-->
-  <string name="ro_perm_label">leggere i messaggi istantanei</string>
-  <string name="ro_perm_desc">Consente alle applicazioni di leggere i dati dal fornitore di contenuti IM.</string>
-  <string name="wo_perm_label">scrivere messaggi istantanei</string>
-  <string name="wo_perm_desc">Consente alle applicazioni di scrivere i dati al fornitore del contenuto IM.</string>
-  <string name="perm_label">avviare servizio IM</string>
-  <string name="perm_desc">Consente l\'avvio del servizio IM tramite intent.</string>
+  <string name="ro_perm_label">lettura messaggi istantanei</string>
+  <string name="ro_perm_desc">Consente alle applicazioni di leggere i dati dal provider di messaggistica.</string>
+  <string name="wo_perm_label">scrittura messaggi istantanei</string>
+  <string name="wo_perm_desc">Consente alle applicazioni di scrivere dati al provider di messaggistica.</string>
+  <string name="perm_label">avvia servizio di messaggistica</string>
+  <string name="perm_desc">Consente l\'avvio del servizio di messaggistica tramite intent.</string>
   <!--General: Actions-->
   <string name="confirm">Conferma</string>
   <string name="ok">OK</string>
@@ -19,147 +19,164 @@
   <string name="no">Annulla</string>
   <string name="connect">Connetti</string>
   <!--Views-->
-  <string name="lock_screen_create_passphrase">Imposta Password</string>
-  <string name="lock_screen_confirm_passphrase">Conferma Password</string>
+  <string name="title_activity_lock_screen">Zom bloccato</string>
+  <string name="lock_screen_create_passphrase">Imposta password</string>
+  <string name="lock_screen_confirm_passphrase">Conferma password</string>
   <string name="lock_screen_passphrase_hint">Password</string>
-  <string name="lock_screen_passphrase_not_set_confirm">Conferma Nuova Password</string>
+  <string name="lock_screen_passphrase_not_set_enter">Inserisci una password per bloccare l\'app</string>
+  <string name="lock_screen_passphrase_not_set_confirm">Conferma nuova password</string>
   <string name="lock_screen_passphrases_not_matching">La password non corrisponde, per favore riprova</string>
   <string name="lock_screen_skip">Salta &gt;&gt;</string>
   <!--Views: Setup-->
   <string name="add_account">Aggiungi account &lt;xliff:g id="ACCOUNT"&gt;%1$s&lt;/xliff:g&gt;</string>
   <string name="menu_about">Informazioni</string>
-  <string name="signed_out_prompt_with_error">Utente disconnesso da &lt;xliff:g id="account"&gt;%1$s&lt;/xliff:g&gt;. Causa: &lt;xliff:g id="reason"&gt;%2$s&lt;/xliff:g&gt;.</string>
-  <string name="pass_err_length">Il tuo codice segreto non era lungo abbastanza</string>
+  <string name="signed_out_prompt_with_error">Sei stato disconnesso da &lt;xliff:g id="account"&gt;%1$s&lt;/xliff:g&gt; perchè &lt;xliff:g id="reason"&gt;%2$s&lt;/xliff:g&gt;.</string>
+  <string name="pass_err_length">La tua password non era abbastanza lunga</string>
   <!--Views: About: Welcome-->
   <!--Views: About: OTR-->
   <!--Views: About: Security-->
   <!--Views: Account list-->
   <!--Views: Setup: Account-->
   <string name="sign_in">Accedi</string>
-  <string name="account_setup_example_email_address">utente@dominio.it</string>
+  <string name="account_setup_example_email_address">utente@dominio</string>
   <string name="account_setup_new_username">nuovo nome utente</string>
   <string name="account_setup_password">password</string>
   <string name="account_setup_password_confirm">conferma password</string>
-  <string name="btn_create_new_account">Registra Account</string>
-  <string name="account_setup_pers_now_title">Entra adesso</string>
+  <string name="btn_create_new_account">Registra account</string>
+  <string name="account_setup_pers_now_title">Accedi adesso</string>
   <string name="_via_orbot">Orbot (Tor)</string>
-  <string name="select_domain_new_account">Scegli un dominio</string>
+  <string name="select_domain_new_account">Dominio servizio di chat</string>
   <string name="registering_new_account_">Registrazione nuovo account…</string>
-  <string name="signing_in_wait">Accesso…</string>
-  <string name="signing_out_wait">Disconnessione…</string>
+  <string name="signing_in_wait">Accesso\u2026</string>
+  <string name="signing_out_wait">Disconnessione\u2026</string>
   <!--Views: Settings: Account-->
-  <string name="do_srv_lookup">Fare Lookup SRV</string>
-  <string name="use_dns_srv_to_find_actual_xmpp_server_from_domain_name">Utilizzare DNS SRV per trovare il server XMPP dal nome di dominio</string>
-  <string name="allow_the_username_and_password_to_be_sent_as_plain_text_when_using_an_unencrypted_transport">Permettere che nome utente e password siano inviati in chiaro quando si usa un trasporto non criptato</string>
-  <string name="allow_plain_text_auth">Permettere Autenticazione in Chiaro</string>
+  <string name="do_srv_lookup">Lookup SRV</string>
+  <string name="use_dns_srv_to_find_actual_xmpp_server_from_domain_name">Utilizza SRV DNS per trovare il server XMPP dal nome di dominio</string>
+  <string name="allow_the_username_and_password_to_be_sent_as_plain_text_when_using_an_unencrypted_transport">Permetti che nome utente e password siano inviati in chiaro quando si usa un trasporto non criptato</string>
+  <string name="allow_plain_text_auth">Permetti autenticazione in chiaro</string>
   <string name="require_tls_ssl_connection">Richiedi connessione TLS</string>
-  <string name="transport_encryption">Crittografia Protocollo di Trasporto</string>
-  <string name="how_encrypted_chats_are_started">come le chat crittografate vengono avviate</string>
+  <string name="transport_encryption">Crittografia protocollo di trasporto</string>
+  <string name="how_encrypted_chats_are_started">come le chat cifrate vengono avviate</string>
   <string name="the_server_to_connect_to_if_needed">Il server al quale connettersi, se necessario</string>
-  <string name="connect_server">Connettere al Server</string>
-  <string name="tcp_port_for_xmpp_server">Porta TCP per Server XMPP</string>
-  <string name="server_port">Porta del Server</string>
+  <string name="connect_server">Connetti al server</string>
+  <string name="tcp_port_for_xmpp_server">Porta TCP per server XMPP</string>
+  <string name="server_port">Porta del server</string>
   <string name="xmpp_resource">Risorsa XMPP</string>
   <string name="to_distinguish_this_connection_from_other_clients_that_are_also_logged_in">per distinguere questa connessione dagli altri client che sono connessi</string>
-  <string name="xmpp_resource_prio_title">Priorità XMPP Resource</string>
-  <string name="xmpp_resource_prio_summary">Messaggi verso client con risorse multiple attive verranno inviati alla risorsa con priorità più alta.</string>
+  <string name="xmpp_resource_prio_title">Priorità risorsa XMPP</string>
+  <string name="xmpp_resource_prio_summary">I messaggi verso client con risorse multiple attive verranno inviati alla risorsa con priorità più alta.</string>
   <!--Views: Contact list-->
   <string name="title_chats">Conversazioni</string>
-  <string name="empty_account_message">Nessun
-account configurato.
-
-Tocca qui per aggiungerne uno!</string>
+  <string name="empty_account_message">Nessun account configurato.\n\nTocca qui per aggiungerne uno!</string>
   <string name="menu_remove_contact">Elimina contatto</string>
-  <string name="menu_contact_nickname">Nickname Contatto</string>
+  <string name="menu_contact_nickname">Nickname del contatto</string>
   <string name="menu_view_blocked">Bloccati</string>
-  <string name="confirm_delete_contact">Il contatto "&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;" sarà eliminato.</string>
-  <string name="confirm_block_contact">Il contatto "&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;" sarà bloccato.</string>
+  <string name="nickname">Nickname</string>
+  <string name="confirm_delete_contact">Il contatto "&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;" verrà eliminato.</string>
+  <string name="confirm_block_contact">Il contatto "&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;" verrà bloccato.</string>
   <string name="add_contact_success">Contatto "&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;" aggiunto.</string>
   <string name="delete_contact_success">Contatto "&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;" eliminato.</string>
   <string name="block_contact_success">Contatto "&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;" bloccato.</string>
   <string name="unblock_contact_success">Contatto "&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;" sbloccato.</string>
-  <string name="menu_verify">Verifica Chiave</string>
-  <string name="empty_conversation_group">Nessuna conversazione</string>
-  <string name="search_label">Contatti</string>
+  <string name="menu_verify">Verifica contatto</string>
+  <string name="empty_conversation_group">Nessuna conversazione aperta\n\nTocca per iniziare a chattare!</string>
+  <string name="search_label">Contatto</string>
   <string name="search_hint">inserisci il nome del contatto con cui chattare</string>
+  <string name="input_contact_label">Inserisci il nome utente del tuo amico (es. zomisfun.4x3f5g@zom.im) qui:</string>
   <!--Views: Chat: Single-->
   <string name="contact_online">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; è online</string>
-  <string name="contact_away">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; non è al computer</string>
+  <string name="contact_away">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; non è disponibile</string>
   <string name="contact_busy">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; è occupato</string>
   <string name="contact_offline">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; è offline</string>
   <string name="contact_joined">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; è entrato</string>
   <string name="contact_left">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; è uscito</string>
-  <string name="file_transfer">Trasferimento File</string>
+  <string name="file_transfer">Trasferimento file</string>
   <string name="accept_transfer_">Accettare il trasferimento?</string>
   <string name="wants_to_send_you_the_file">vuole inviarti il file</string>
+  <string name="no_connection_for_sending">Nessuna connessione disponibile per l\'invio della tua condivisione!</string>
   <string name="compose_hint">Invia un messaggio</string>
-  <string name="compose_hint_secure">Invia messaggio sicuro</string>
+  <string name="compose_hint_secure">Invia messaggio privato</string>
   <string name="menu_end_conversation">Termina conversazione</string>
   <string name="select_link_title">Seleziona link</string>
   <string name="delete">Elimina</string>
-  <string name="export_media">Esporta Media File?</string>
+  <string name="export_media">Esporta file multimediale?</string>
   <!--Views: Chat: Group-->
-  <string name="invitation_prompt">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; ti ha invitato a unirti a una conversazione di gruppo.</string>
+  <string name="invitation_prompt">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; ti ha invitato a unirti ad una chat di gruppo.</string>
   <string name="accept_invitation">Accetto</string>
   <string name="decline_invitation">Rifiuto</string>
   <string name="connecting_to_group_chat_">Connessione alla chat di gruppo…</string>
-  <string name="empty_contact_list">Nessun contatto trovato.
-
-Tocca per invitare qualcuno.</string>
+  <string name="empty_contact_list">Nessun contatto trovato.\n\nTocca per invitare.</string>
+  <string name="subscription_prompt">Aggiungere &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;?</string>
   <string name="approve_subscription">Sì</string>
   <string name="decline_subscription">No</string>
-  <string name="approve_subscription_error">Impossibile approvare l\'iscrizione di &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;. Riprova più tardi.</string>
-  <string name="decline_subscription_error">Impossibile rifiutare l\'iscrizione di &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;. Riprova più tardi.</string>
+  <string name="approve_subscription_error">Impossibile approvare l'iscrizione di &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;. Riprova più tardi.</string>
+  <string name="decline_subscription_error">Impossibile rifiutare l'iscrizione di &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;. Riprova più tardi.</string>
   <!--Security: OTR-->
   <string name="otr_session_status_finished">Il tuo interlocutore ha disabilitato la chat criptata.</string>
+  <string name="otr_mode_force">Obbliga / Richiedi</string>
+  <string name="otr_mode_auto">Tenta automaticamente</string>
+  <string name="otr_mode_requested">Come richiesto</string>
+  <string name="otr_mode_disabled">Disabilitato / Mai</string>
   <!--Security: OTR: Keyring-->
+  <string name="detected_Otr_keystore_import">Abbiamo rilevato un portachiavi OTR da importare. Vuoi scansionare la password QR adesso?</string>
   <!--Security: OTR: Verification-->
   <!--Security: OTR: Verification: QA-->
   <string name="smp_question_title">Autenticazione</string>
-  <string name="smp_question_summary">Inserisci una domanda da inviare ai propri contatti e la risposta che ci si attende da loro, in modo da verificare che solo siano veramente chi dicano di essere.</string>
+  <string name="smp_question_summary">Inserisci una domanda da inviare ai tuoi contatti e la risposta che ti aspetti da loro, in modo da verificare che siano veramente chi dicano di essere.</string>
   <string name="smp_question_hint">la domanda da porre</string>
   <string name="qmp_answer_hint">la risposta prevista</string>
   <string name="remote_verified_us">Il tuo contatto ti ha autenticato correttamente. Ora autentica tu il tuo contatto porgendogli la tua domanda.</string>
+  <string name="otr_qa_title">Verifica D&amp;R OTR</string>
+  <string name="chat_encryption_title">Cifratura chat</string>
   <string name="otr_qa_send">Invia</string>
   <string name="otr_qa_cancel">Annulla</string>
   <!--Views: VoIP-->
   <!--Views: Settings: General-->
   <!--Actions: Settings: General: Security and Privacy-->
-  <string name="pref_group_security_title">Sicurezza e Privacy</string>
-  <string name="encryption_and_anonymity_title">Crittografia e Anonimato</string>
+  <string name="pref_group_security_title">Sicurezza e privacy</string>
+  <string name="encryption_and_anonymity_title">Crittografia e anonimato</string>
   <!--Actions: Settings: General: User Interface-->
-  <string name="menu_locale">Lingua</string>
-  <string name="KEY_PREF_LANGUAGE_TITLE">Lingue</string>
-  <string name="button_yes_accept_all">Sì, Accetta Tutti</string>
-  <string name="pref_delete_unsecured_media_title">Elimina Media Non Protetti</string>
-  <string name="pref_delete_unsecured_media_summary">Quando condividi una foto o un file, questi verranno eliminati automaticamente dalla posizione originale non protetta dopo l\'importazione.</string>
+  <string name="pref_linkify_on_tor_title">Link cliccabili su Tor</string>
+  <string name="pref_linkify_on_tor_summary">Per gli account che usano Tor, rendi cliccabili i link nelle chat (ATTENZIONE, sconsigliato per la privacy!)</string>
+  <string name="menu_locale">Language</string>
+  <string name="KEY_PREF_LANGUAGE_TITLE">Languages</string>
+  <string name="use_system_default">Usa predefinito di sistema</string>
+  <string name="button_yes_accept_all">Sì, accetta tutti</string>
+  <string name="pref_delete_unsecured_media_title">Elimina media non sicuri</string>
+  <string name="pref_delete_unsecured_media_summary">Quando condividi una foto o un file, eliminalo automaticamente dalla posizione originale non protetta dopo l\'importazione.</string>
   <!--Actions: Settings: General: Other Tuning-->
-  <string name="pref_group_tuning_title">Altre Impostazioni</string>
-  <string name="start_on_boot_summary">Avvia ed entra automaticamente negli account connessi in precedenza sempre</string>
+  <string name="pref_group_tuning_title">Altre impostazioni</string>
+  <string name="start_on_boot">Avvia Zom automaticamente</string>
+  <string name="start_on_boot_summary">Avvia ed entra sempre automaticamente negli account connessi in precedenza</string>
   <string name="hide_offline_contacts">Nascondi contatti offline</string>
-  <string name="foreground_service_title">Usa la priorità  del primo piano</string>
+  <string name="foreground_service_title">Usa priorità in primo piano</string>
   <string name="foreground_service_summary">Diminuisce la probabilità che Android riavvii il nostro servizio di connessione. Questo aggiungerà una notifica nell\'area notifiche.</string>
   <string name="heartbeat_interval_title">Intervallo di Heartbeat</string>
-  <string name="heartbeat_interval_summary">Usa un avalore più alto (in minuti) per risparmiare batteria. Un valore alto può causare la chiusura della connessione da parte del tuo provider per inattività.</string>
+  <string name="heartbeat_interval_summary">Usa un valore più alto (in minuti) per risparmiare batteria. Un valore alto può causare la chiusura della connessione da parte del tuo provider per inattività.</string>
   <!--Actions: Settings: General: Notifications-->
   <string name="notification_group_title">Impostazioni notifiche</string>
   <string name="notification_enabled_title">Notifiche chat</string>
   <string name="notification_enabled_summary">Notifica in barra di stato all\'arrivo di un messaggio</string>
   <string name="notification_vibrate_title">Vibrazione</string>
-  <string name="notification_vibrate_summary">Vibra anche all\'arrivo di msg chat</string>
-  <string name="notification_sound_title">Allarme</string>
-  <string name="notification_sound_summary">Usa anche suoneria all\'arrivo di msg chat</string>
-  <string name="notification_ringtone_title">Usa suoneria personalizzata Zom</string>
+  <string name="notification_vibrate_summary">Vibra anche all\'arrivo di un messaggio</string>
+  <string name="notification_sound_title">Suoni</string>
+  <string name="notification_sound_summary">Usa anche suoneria all\'arrivo di un messaggio</string>
+  <string name="notification_ringtone_title">Seleziona suoneria personalizzata</string>
   <!--Actions: Settings: General: Developer-->
-  <string name="pref_debug_title">Attiva Registri di Debug</string>
+  <string name="pref_debug_title">Attiva registri di debug</string>
+  <string name="pref_debug_summary">Registra i dati di log nello standard out / logcat per il debugging</string>
   <!--Alerts: Dialogs-->
-  <string name="bg_data_prompt_message">&lt;xliff:g id="PROVIDER"&gt;%1$s&lt;/xliff:g&gt; richiede l\'attivazione dei dati in background.</string>
+  <string name="bg_data_prompt_message">È necessaria una connessione alla rete (inclusi dati in background) perchè l\'app possa accedere.</string>
   <string name="prompt_create_new_account_">Creare un nuovo account?</string>
+  <string name="allow_s_to_create_a_new_chat_account_for_s_">Creare un nuovo account di chat con il nome utente \'%1$s\'?</string>
   <!--Alerts: Notifications-->
+  <string name="subscription_notify_text">Nuova richiesta di amicizia da &lt;xliff:g id="user"&gt;%s&lt;/xliff:g&gt;</string>
   <string name="file_notify_text">Nuovo file &lt;xliff:g id="filename"&gt;%1$s&lt;/xliff:g&gt; da &lt;xliff:g id="user"&gt;%2$s&lt;/xliff:g&gt;</string>
-  <string name="notify_groupchat_label">Invito a conversazione di gruppo</string>
-  <string name="new_messages_notify">Nuovo messaggio(i) da</string>
-  <string name="app_unlocked">Attivato &amp; sbloccato</string>
+  <string name="notify_groupchat_label">Invito a chat di gruppo</string>
+  <string name="group_chat_invite_notify_text">Nuova richiesta di chat di gruppo da &lt;xliff:g id="user"&gt;%s&lt;/xliff:g&gt;</string>
+  <string name="new_messages_notify">Nuovo(i) messaggio(i) da</string>
+  <string name="starting_the_chatsecure_service_">Avvio il servizio di Zom...</string>
+  <string name="app_unlocked">Zom è in esecuzione</string>
   <!--Alerts: Exceptions-->
   <string name="error">Attenzione</string>
   <string name="error_prefix">Errore:</string>
@@ -170,39 +187,58 @@ Tocca per invitare qualcuno.</string>
   <string name="unblock_contact_failed">Il contatto non è stato sbloccato.</string>
   <string name="load_contact_list_failed">Elenco contatti non caricato.</string>
   <string name="cant_connect_to_server">Impossibile collegarsi al server. Controllare la connessione.</string>
-  <string name="contact_already_exist">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; già presente nell\'elenco contatti.</string>
+  <string name="contact_already_exist">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; già presente nell'elenco contatti.</string>
   <string name="contact_blocked">Il contatto "&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;" è stato bloccato.</string>
   <string name="contact_not_loaded">Attendere il caricamento dell\'elenco contatti.</string>
   <string name="network_error">Errore di rete.</string>
-  <string name="wifi_not_connected_error">Il WiFi é necessario per questa connessione.</string>
+  <string name="wifi_not_connected_error">Il WiFi è necessario per questa connessione.</string>
   <string name="service_not_support">Il server non supporta questa funzionalità.</string>
   <string name="invalid_password">La password inserita non è valida.</string>
-  <string name="internal_server_error">Errore del server.</string>
+  <string name="internal_server_error">Il server ha riscontrato un errore.</string>
   <string name="not_implemented">Il server non supporta questa funzionalità.</string>
   <string name="service_unavaiable">Server al momento non disponibile.</string>
   <string name="timeout">Timeout del server.</string>
-  <string name="version_not_supported">Il server non supporta la versione corrente.</string>
+  <string name="version_not_supported">Il server non supporta la versione attuale.</string>
   <string name="message_queue_full">La coda messaggi è piena.</string>
   <string name="domain_not_supported">Il server non supporta l\'inoltro al dominio.</string>
   <string name="unknown_user">Nome utente inserito non riconosciuto.</string>
-  <string name="recipient_blocked_the_user">Spiacenti. Sei stato bloccato dall\'utente.</string>
+  <string name="recipient_blocked_the_user">Spiacenti, sei stato bloccato dall\'utente.</string>
   <string name="session_expired">Sessione scaduta. Accedi di nuovo.</string>
-  <string name="forced_logout">accesso effettuato da un altro client</string>
-  <string name="already_logged_in">accesso effettuato da un altro client</string>
+  <string name="forced_logout">hai effettuato l\'accesso da un altro client.</string>
+  <string name="already_logged_in">hai effettuato l\'accessoda un altro client</string>
   <string name="msisdn_error">Spiacenti. Impossibile leggere il numero di telefono sulla scheda SIM. Contattare l\'operatore.</string>
-  <string name="not_signed_in">Accesso non effettuato.</string>
-  <string name="account_setup_error_server">Zom è verificato un errore durante la connessione al server di chat - si prega di controllare la configurazione e riprovare.</string>
-  <string name="error_suspended_connection">Zom ha perso una connessione alla rete</string>
+  <string name="not_signed_in">Non hai effettuato l\'accesso.</string>
+  <string name="account_setup_error_server">Errore durante la connessione al server di chat - si prega di controllare la configurazione e riprovare.</string>
+  <string name="error_suspended_connection">La rete è offline</string>
   <string name="unable_to_create_or_join_group_chat">Impossibile creare o unirsi alla chat di gruppo</string>
+  <string name="unsupported_incoming_data">Dati in ricezione non supportati, impossibile condividere!</string>
+  <string name="swipe_alert">Zom ha rilevato una richiesta di rimuovere il proprio processo. Zom potrebbe crashare. Si consiglia piuttosto di premere su \"Scollega tutti\" dal menu della lista degli account.</string>
   <string name="there_is_no_viewer_available_for_this_file_format">Nessun visualizzatore disponibile per questo formato</string>
+  <string name="otr_keysync_warning_message">Copia il file \'otr_keystore.ofcaes\' dal programma OtrFileConverter alla root del tuo dispositivo</string>
   <string name="msg_sent_failed">Impossibile inviare il messaggio.</string>
-  <string name="disconnected_warning">I messaggi saranno inviati quando verrà ristabilita la connessione</string>
-  <string name="error_account_settings_priority">La priorità dev\'essere un numero compreso nell\'intervallo [0 .. 127]</string>
+  <string name="disconnected_warning">Sei disconnesso. I messaggi verranno inviati quando ti riconnetterai.</string>
+  <string name="error_account_password_mismatch">Le tue password non corrispondono</string>
+  <string name="error_account_settings_priority">La priorità dev\'essere un numero nell\'intervallo [0 .. 127]</string>
   <string name="error_account_settings_port">Il numero di porta dev\'essere un numero</string>
-  <string name="account_settings_title">Impostazioni Account</string>
+  <string name="error_welcome_database">Errore grave: impossibile sbloccare o caricare il database dell\'app. Reinstalla l\'app o cancella i dati.</string>
+  <string name="account_settings_title">Impostazioni account</string>
+  <string name="pref_group_protect_data_title">Proteggi i miei dati</string>
+  <string name="panic_trigger_app">App anti panico</string>
+  <string name="panic_trigger_app_summary">Un\'app anti panico può bloccare Zom, inviare un messaggio, eliminare dati, ecc.</string>
+  <string name="panic_setup">Setup anti panico</string>
+  <string name="panic_setup_summary">Imposta come Zom reagisce ad una notifica di panico.</string>
+  <string name="panic_app_none">Nessuna</string>
+  <string name="panic_app_none_summary">Nessuna app anti panico, ignora tutte le notifiche di panico.</string>
+  <string name="panic_app_default">Predefinita</string>
+  <string name="protect_data">Proteggi i miei dati</string>
+  <string name="action_done">Fatto</string>
+  <string name="lock_app">Blocca l\'app</string>
+  <string name="clear_app_data">Elimina tutti i dati all\'interno dell\'app</string>
+  <string name="uninstall_app">Disinstalla l\'app</string>
+  <string name="include_location">Includi la mia posizione</string>
   <!--added 2011/09/01-->
   <string name="menu_view_groups">Gruppi</string>
-  <string name="buddies">Contatti</string>
+  <string name="buddies">Amici</string>
   <string name="contacts">Contatti</string>
   <string name="mtm_accept_cert">Accettare il certificato del server?</string>
   <string name="loading">caricamento…</string>
@@ -225,18 +261,18 @@ Tocca per invitare qualcuno.</string>
     <item>Felice</item>
     <item>Triste</item>
     <item>Strizza l\'occhio</item>
-    <item>Lingua sporge</item>
+    <item>Linguaccia</item>
     <item>Sorpreso</item>
-    <item>Kissing</item>
+    <item>Bacio</item>
     <item>Urlando</item>
-    <item>Cool</item>
+    <item>Figo</item>
     <item>Denaro bocca</item>
     <item>Piede in bocca</item>
     <item>Imbarazzato</item>
-    <item>Angel</item>
+    <item>Angelo</item>
     <item>Indeciso</item>
     <item>Pianto</item>
-    <item>Lips Are Sealed</item>
+    <item>Labbra serrate</item>
     <item>Ridente</item>
     <item>Confuso</item>
   </string-array>
@@ -245,18 +281,18 @@ Tocca per invitare qualcuno.</string>
     <item>Felice</item>
     <item>Triste</item>
     <item>Strizza l\'occhio</item>
-    <item>Lingua sporge</item>
+    <item>Linguaccia</item>
     <item>Sorpreso</item>
-    <item>Kissing</item>
+    <item>Bacio</item>
     <item>Urlando</item>
-    <item>Cool</item>
+    <item>Figo</item>
     <item>Denaro bocca</item>
     <item>Piede in bocca</item>
     <item>Imbarazzato</item>
-    <item>Angel</item>
+    <item>Angelo</item>
     <item>Indeciso</item>
     <item>Pianto</item>
-    <item>Lips Are Sealed</item>
+    <item>Labbra serrate</item>
     <item>Ridente</item>
     <item>Confuso</item>
   </string-array>
@@ -279,7 +315,12 @@ Tocca per invitare qualcuno.</string>
     <item>:-D</item>
     <item>o_O</item>
   </string-array>
-  <string name="this_is_a_group_chat">Questa è una chat di gruppo</string>
+  <string name="this_is_a_group_chat">Invia un messaggio al gruppo</string>
   <string name="unable_to_securely_share_this_file">Impossibile condividere questo file in modo sicuro</string>
+  <string name="your_keystore_is_corrupted_please_re_install_chatsecure_or_clear_data_for_the_app">Il tuo portachiavi è corrotto. Reinstalla Zom o cancella i dati dell\'app</string>
+  <string name="swipe_hint">&lt; scorri a sinistra e a destra per altre opzioni &gt;</string>
+  <string name="no_convos">È ora di Zommare!</string>
+  <string name="title_more">Scopri</string>
   <string name="title_me">Io</string>
+  <string name="no_photos">Le foto condivise e ricevute appariranno qui</string>
 </resources>

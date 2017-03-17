@@ -25,7 +25,7 @@
   <string name="lock_screen_create_passphrase">パスワードを設定</string>
   <string name="lock_screen_confirm_passphrase">パスワードを確認</string>
   <string name="lock_screen_passphrase_hint">パスワード</string>
-  <string name="lock_screen_passphrase_not_set_enter">パスワードなしに連絡先やメッセージへアクセスすることを防止するために、オプションで Zom にマスターパスワードを設定することができます:</string>
+  <string name="lock_screen_passphrase_not_set_enter">パスワードなしに連絡先やメッセージへアクセスすることを防止するために、オプションで ChatSecure にマスターパスワードを設定することができます:</string>
   <string name="lock_screen_passphrase_not_set_confirm">新しいパスワードを確認</string>
   <string name="lock_screen_passphrases_not_matching">パスワードが一致しません、再度入力してください</string>
   <string name="lock_screen_skip">スキップ &gt;&gt;</string>
@@ -84,7 +84,7 @@
   <string name="empty_conversation_group">チャットなし</string>
   <string name="search_label">連絡先</string>
   <string name="search_hint">チャットする連絡先の名前を入力してください</string>
-  <string name="input_contact_label">追加したい友達のフル full Jabber ID (name@theirchatserver.org) を入力してください</string>
+  <string name="input_contact_label">友達の完全なユーザー名 (例 zomisfun.4x3f5g@zom.im) をここに入力してください:</string>
   <!--Views: Chat: Single-->
   <string name="contact_online">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;さんはオンラインです</string>
   <string name="contact_away">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;さんは退席中です</string>
@@ -173,7 +173,7 @@
   <string name="allow_s_to_create_a_new_chat_account_for_s_">ユーザー名 \'%1$s\' の新しいチャット アカウントを作成しますか?</string>
   <!--Alerts: Notifications-->
   <string name="subscription_notify_text">&lt;xliff:g id="user"&gt;%s&lt;/xliff:g&gt; から新しい友達の招待</string>
-  <string name="file_notify_text" formatted="false">新しいファイル &lt;xliff:g id="FILENAME"&gt;%s&lt;/xliff:g&gt; &lt;xliff:g id="USER"&gt;%s&lt;/xliff:g&gt; から</string>
+  <string name="file_notify_text">新しいファイル &lt;xliff:g id="FILENAME"&gt;%s&lt;/xliff:g&gt; &lt;xliff:g id="USER"&gt;%s&lt;/xliff:g&gt; から</string>
   <string name="notify_groupchat_label">グループチャットの招待</string>
   <string name="group_chat_invite_notify_text">&lt;xliff:g id="USER"&gt;%s&lt;/xliff:g&gt; から新しいグループチャットの招待</string>
   <string name="new_messages_notify">新しいメッセージ。送信者</string>
@@ -210,7 +210,7 @@
   <string name="already_logged_in">別のクライアントから既にログインしています。</string>
   <string name="msisdn_error">SIMカードから電話番号を読み取れませんでした。通信事業者にお問い合わせください。</string>
   <string name="not_signed_in">現在ログインしていません。</string>
-  <string name="account_setup_error_server">チャットサーバに接続中 Zom でエラーが発生しました - 設定を確認して、再度実行してください。</string>
+  <string name="account_setup_error_server">チャットサーバに接続中 ChatSecure でエラーが発生しました - 設定を確認して、再度実行してください。</string>
   <string name="error_suspended_connection">ネットワークはオフラインです</string>
   <string name="unable_to_create_or_join_group_chat">グループチャットを作成または参加することができません</string>
   <string name="unsupported_incoming_data">取得したデータはサポートされていません、共有できません!</string>

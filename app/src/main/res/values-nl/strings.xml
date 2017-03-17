@@ -6,190 +6,195 @@
   <string name="im_label">Zom</string>
   <!--General: Permissions-->
   <string name="ro_perm_label">lees chatberichten</string>
-  <string name="ro_perm_desc">⏎
-        Staat applicaties toe om data te lezen van de IM content provider.
-    </string>
+  <string name="ro_perm_desc">Staat applicaties toe om gegevens te lezen van de IM-inhoudsprovider.</string>
   <string name="wo_perm_label">schrijf chatberichten</string>
-  <string name="wo_perm_desc">
-        Staat applicaties om data te schrijven naar de IM content provider.
-    </string>
+  <string name="wo_perm_desc">Staat applicaties om gegevens te schrijven naar de IM-inhoudsprovider.</string>
   <string name="perm_label">chatservice starten</string>
-  <string name="perm_desc">Toepassingen toestaan om chatservice te starten zoals bedoeld.</string>
+  <string name="perm_desc">Staat applicaties toe om de chatdienst te starten via een \'intent\'.</string>
   <!--General: Actions-->
   <string name="confirm">Bevestigen</string>
-  <string name="ok">OK</string>
+  <string name="ok">Oké</string>
   <string name="cancel">Annuleren</string>
-  <string name="yes">OK</string>
+  <string name="yes">Oké</string>
   <string name="no">Annuleren</string>
-  <string name="connect">Verbind</string>
+  <string name="connect">Verbinden</string>
   <!--Views-->
+  <string name="title_activity_lock_screen">Zom vergrendeld</string>
   <string name="lock_screen_create_passphrase">Wachtwoord instellen</string>
   <string name="lock_screen_confirm_passphrase">Bevestig wachtwoord</string>
   <string name="lock_screen_passphrase_hint">Wachtwoord</string>
   <string name="lock_screen_passphrase_not_set_enter">Nieuw wachtwoord</string>
   <string name="lock_screen_passphrase_not_set_confirm">Bevestig nieuw wachtwoord</string>
-  <string name="lock_screen_passphrases_not_matching">Wachtwoorden kwamen niet overeen, probeer opnieuw</string>
-  <string name="lock_screen_skip">Ik voel me lui (Geen Paswoord!)</string>
+  <string name="lock_screen_passphrases_not_matching">Wachtwoorden komen niet overeen, probeer het opnieuw</string>
+  <string name="lock_screen_skip">Overslaan &gt;&gt;</string>
   <!--Views: Setup-->
-  <string name="add_account">&lt;xliff:g id="ACCOUNT"&gt;%1$s&lt;/xliff:g&gt;-account toevoegen</string>
+  <string name="add_account">&lt;xliff:g id="account"&gt;%1$s&lt;/xliff:g&gt;-account toevoegen</string>
   <string name="menu_about">Over</string>
-  <string name="signed_out_prompt_with_error">U bent afgemeld bij &lt;xliff:g id="ACCOUNT"&gt;%1$s&lt;/xliff:g&gt; vanwege &lt;xliff:g id="REASON"&gt;%2$s&lt;/xliff:g&gt;</string>
-  <string name="pass_err_length">Uw wachtwoord was niet lang genoeg</string>
+  <string name="signed_out_prompt_with_error">Je bent uitgelogd bij &lt;xliff:g id="account"&gt;%1$s&lt;/xliff:g&gt; wegens &lt;xliff:g id="reason"&gt;%2$s&lt;/xliff:g&gt;</string>
+  <string name="pass_err_length">Je wachtwoord is niet lang genoeg</string>
   <!--Views: About: Welcome-->
   <!--Views: About: OTR-->
   <!--Views: About: Security-->
   <!--Views: Account list-->
   <!--Views: Setup: Account-->
-  <string name="sign_in">Aanmelden</string>
-  <string name="account_setup_example_email_address">gebruiker@domein.com</string>
+  <string name="sign_in">Inloggen</string>
+  <string name="account_setup_example_email_address">gebruiker@domein</string>
   <string name="account_setup_new_username">nieuwe gebruikersnaam</string>
   <string name="account_setup_password">wachtwoord</string>
-  <string name="account_setup_password_confirm">wachtwoord bevestigen</string>
-  <string name="btn_create_new_account">Registreer Account</string>
+  <string name="account_setup_password_confirm">bevestig wachtwoord</string>
+  <string name="btn_create_new_account">Account registreren</string>
   <string name="account_setup_pers_now_title">Nu inloggen</string>
   <string name="_via_orbot">Orbot (Tor)</string>
-  <string name="select_domain_new_account">Kies een domein</string>
-  <string name="registering_new_account_">Registreer een nieuwe account…</string>
-  <string name="signing_in_wait">Aanmelden…</string>
-  <string name="signing_out_wait">Logt uit\u2026</string>
+  <string name="select_domain_new_account">Gespreksdienstdomein</string>
+  <string name="registering_new_account_">Nieuwe account wordt geregistreerd…</string>
+  <string name="signing_in_wait">Bezig met inloggen\u2026</string>
+  <string name="signing_out_wait">Bezig met uitloggen\u2026</string>
   <!--Views: Settings: Account-->
-  <string name="do_srv_lookup">Check SRV</string>
-  <string name="use_dns_srv_to_find_actual_xmpp_server_from_domain_name">Gebruik DNS SRV om de werlijke XMPP server van de domeinnaam te vinden</string>
+  <string name="do_srv_lookup">SRV opzoeken</string>
+  <string name="use_dns_srv_to_find_actual_xmpp_server_from_domain_name">Gebruik DNS SRV om de werkelijke XMPP-server van de domeinnaam te vinden</string>
   <string name="allow_the_username_and_password_to_be_sent_as_plain_text_when_using_an_unencrypted_transport">Toestaan om de gebruikersnaam en wachtwoord als platte tekst te versturen bij een onversleutelde verbinding</string>
-  <string name="allow_plain_text_auth">Sta platte tekst authentificatie toe</string>
-  <string name="require_tls_ssl_connection">Vereis TLS Connectie</string>
-  <string name="transport_encryption">Transport Versleuteling</string>
-  <string name="how_encrypted_chats_are_started">Hoe de versleuteling van de chat te starten.</string>
-  <string name="the_server_to_connect_to_if_needed">De server om mee te verbinding, indien nodig</string>
-  <string name="connect_server">Server Adres</string>
-  <string name="tcp_port_for_xmpp_server">TCP Poort voor XMPP Server</string>
-  <string name="server_port">Server Poort</string>
-  <string name="xmpp_resource">XMPP Middel</string>
+  <string name="allow_plain_text_auth">Authenticatie in platte tekst toestaan</string>
+  <string name="require_tls_ssl_connection">Vereis TLS-verbinding</string>
+  <string name="transport_encryption">Transportversleuteling</string>
+  <string name="how_encrypted_chats_are_started">hoe versleutelde gesprekken worden gestart</string>
+  <string name="the_server_to_connect_to_if_needed">De server om verbinding mee te maken, indien nodig</string>
+  <string name="connect_server">Verbindingsserver</string>
+  <string name="tcp_port_for_xmpp_server">TCP-poort voor XMPP-server</string>
+  <string name="server_port">Serverpoort</string>
+  <string name="xmpp_resource">XMPP-bron</string>
   <string name="to_distinguish_this_connection_from_other_clients_that_are_also_logged_in">om deze verbinding te onderscheiden van andere ingelogde cliënten</string>
-  <string name="xmpp_resource_prio_title">XMPP Middel Prioriteit</string>
-  <string name="xmpp_resource_prio_summary">Berichten naar cliënten met meerdere actieve XMPP middelen worden gestuurd naar het middel met de hoogste prioriteit.</string>
+  <string name="xmpp_resource_prio_title">XMPP-bronprioriteit</string>
+  <string name="xmpp_resource_prio_summary">Berichten naar cliënten met meerdere actieve bronnen worden gestuurd naar de bron met de hoogste prioriteit.</string>
   <!--Views: Contact list-->
-  <string name="title_chats">Conversaties</string>
-  <string name="empty_account_message">Je hebt geen
-accounten ingesteld.
-
-Klik hier om er één toe te voegen!</string>
+  <string name="title_chats">Gesprekken</string>
+  <string name="empty_account_message">Je hebt geen\naccounts ingesteld.\n\nTik hier om er een toe te voegen!</string>
   <string name="menu_remove_contact">Contact verwijderen</string>
-  <string name="menu_contact_nickname">Contact bijnaam</string>
+  <string name="menu_contact_nickname">Bijnaam van contact</string>
   <string name="menu_view_blocked">Geblokkeerd</string>
-  <string name="nickname">Gebruikersnaam</string>
-  <string name="confirm_delete_contact">Contact \'&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;\' wordt verwijderd.</string>
-  <string name="confirm_block_contact">Contact \'&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;\' wordt geblokkeerd.</string>
-  <string name="add_contact_success">Contact \'&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;\' is toegevoegd.</string>
-  <string name="delete_contact_success">Contact \'&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;\' is verwijderd.</string>
-  <string name="block_contact_success">Contact \'&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;\' is geblokkeerd.</string>
-  <string name="unblock_contact_success">Contact \'&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;\' is gedeblokkeerd.</string>
-  <string name="menu_verify">Verifieer sleutel</string>
-  <string name="empty_conversation_group">Geen gesprekken</string>
+  <string name="nickname">Bijnaam</string>
+  <string name="confirm_delete_contact">Contact '&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt;' wordt verwijderd.</string>
+  <string name="confirm_block_contact">Contact '&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt;' wordt geblokkeerd.</string>
+  <string name="add_contact_success">Contact ' &lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt;' is toegevoegd.</string>
+  <string name="delete_contact_success">Contact '&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt;' is verwijderd.</string>
+  <string name="block_contact_success">Contact '&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt;' is geblokkeerd.</string>
+  <string name="unblock_contact_success">Contact '&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt;' is gedeblokkeerd.</string>
+  <string name="menu_verify">Contact verifiëren</string>
+  <string name="empty_conversation_group">Nog geen gesprekken\n\nTik om te beginnen!</string>
   <string name="search_label">Contact</string>
   <string name="search_hint">typ de naam van een contact om mee te chatten</string>
+  <string name="input_contact_label">Voer de volledige gebruikersnaam van je vriend hier in (bv. zomisleuk.4x3f5g@zom.im):</string>
   <!--Views: Chat: Single-->
-  <string name="contact_online">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; is online</string>
-  <string name="contact_away">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; is afwezig</string>
-  <string name="contact_busy">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; is bezet</string>
-  <string name="contact_offline">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; is offline</string>
-  <string name="contact_joined">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; is online gekomen</string>
-  <string name="contact_left">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; is weggegaan</string>
+  <string name="contact_online">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt; is online</string>
+  <string name="contact_away">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt; is afwezig</string>
+  <string name="contact_busy">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt; is bezet</string>
+  <string name="contact_offline">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt; is offline</string>
+  <string name="contact_joined">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt; is online gekomen</string>
+  <string name="contact_left">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt; is weggegaan</string>
   <string name="file_transfer">Bestandsoverdracht</string>
-  <string name="accept_transfer_">Aanvaard overdracht?</string>
-  <string name="wants_to_send_you_the_file">wil je een bestand versturen</string>
-  <string name="compose_hint">Verstuur een bericht</string>
-  <string name="compose_hint_secure">Stuur beveiligd bericht</string>
-  <string name="menu_end_conversation">Chat beëindigen</string>
+  <string name="accept_transfer_">Overdracht aanvaarden?</string>
+  <string name="wants_to_send_you_the_file">wil je een bestand sturen</string>
+  <string name="no_connection_for_sending">Geen verbinding beschikbaar voor het verzenden van je deel!</string>
+  <string name="compose_hint">Stuur een bericht</string>
+  <string name="compose_hint_secure">Stuur een privébericht</string>
+  <string name="menu_end_conversation">Gesprek beëindigen</string>
   <string name="select_link_title">Link selecteren</string>
   <string name="delete">Verwijderen</string>
-  <string name="export_media">Exporteer media bestand</string>
+  <string name="export_media">Mediabestand exporteren?</string>
   <!--Views: Chat: Group-->
-  <string name="invitation_prompt">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; heeft u uitgenodigd deel te nemen aan een groepchat</string>
-  <string name="accept_invitation">Accepteren</string>
-  <string name="decline_invitation">Afwijzen</string>
-  <string name="connecting_to_group_chat_">Connecteerd naar group chat…</string>
-  <string name="empty_contact_list">Geen contacten gevonden.
-
-Klik hier om uit te nodigen.</string>
-  <string name="approve_subscription_error">Kan het abonnement van &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; niet goedkeuren. Probeer het later opnieuw.</string>
-  <string name="decline_subscription_error">Kan het abonnement van &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; niet afwijzen. Probeer het later opnieuw.</string>
+  <string name="invitation_prompt">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt; heeft je uitgenodigd om deel te nemen aan een groepsgesprek.</string>
+  <string name="accept_invitation">Aanvaarden</string>
+  <string name="decline_invitation">Weigeren</string>
+  <string name="connecting_to_group_chat_">Verbinden met groepsgesprek…</string>
+  <string name="empty_contact_list">Geen contacten gevonden.\n\nTik om uit te nodigen.</string>
+  <string name="subscription_prompt">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; toevoegen?</string>
+  <string name="approve_subscription">Ja</string>
+  <string name="decline_subscription">Nee</string>
+  <string name="approve_subscription_error">Kan het abonnement van &lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt; niet goedkeuren. Probeer het later opnieuw.</string>
+  <string name="decline_subscription_error">Kan het abonnement van &lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt; niet weigeren. Probeer het later opnieuw.</string>
   <!--Security: OTR-->
-  <string name="otr_session_status_finished">Je contact heeft de beveiligde chat beëindigd.</string>
+  <string name="otr_session_status_finished">Je contact heeft het versleuteld gesprek beëindigd.</string>
+  <string name="otr_mode_force">Dwingen / vereisen</string>
+  <string name="otr_mode_auto">Automatisch proberen</string>
+  <string name="otr_mode_requested">Zoals vereist</string>
+  <string name="otr_mode_disabled">Uitgeschakeld / nooit</string>
   <!--Security: OTR: Keyring-->
-  <string name="detected_Otr_keystore_import">We hebben een OTR keystore gevonden om te importeren. Wil je het QR paswoord meteen inscannen?</string>
+  <string name="detected_Otr_keystore_import">We hebben een OTR-sleutelopslag gevonden om te importeren. Wil je het QR-wachtwoord nu scannen?</string>
   <!--Security: OTR: Verification-->
   <!--Security: OTR: Verification: QA-->
-  <string name="smp_question_title">Authentificatie</string>
-  <string name="smp_question_summary">Voer een vraag in om naar de ander te sturen en het antwoord wat je verwacht te krijgen, zodat je de identiteit van de ander kan verifieren.</string>
+  <string name="smp_question_title">Authenticatie</string>
+  <string name="smp_question_summary">Voer een vraag in om naar de ander te sturen en het antwoord wat je verwacht te krijgen, zodat je hun identiteit kan verifiëren.</string>
   <string name="smp_question_hint">de vraag om te stellen</string>
   <string name="qmp_answer_hint">het verwachte antwoord</string>
-  <string name="remote_verified_us">Uw contact heeft u succesvol geauthentificeerd. Authentificeer nu uw contact door uw eigen vraag te stellen.</string>
-  <string name="otr_qa_title">OTR Vraag &amp; Antwoord verificatie</string>
-  <string name="chat_encryption_title">Chat Encryptie</string>
+  <string name="remote_verified_us">Je contact heeft je succesvol geauthenticeerd. Authenticeer nu je contact door je eigen vraag te stellen.</string>
+  <string name="otr_qa_title">OTR-\'vraag&amp;antwoord\'-verificatie</string>
+  <string name="chat_encryption_title">Gespreksversleuteling</string>
   <string name="otr_qa_send">Verzenden</string>
   <string name="otr_qa_cancel">Annuleren</string>
   <!--Views: VoIP-->
   <!--Views: Settings: General-->
   <!--Actions: Settings: General: Security and Privacy-->
-  <string name="pref_group_security_title">Beveiliging en Privacy</string>
-  <string name="encryption_and_anonymity_title">Versleuteling en Anonimiteit</string>
+  <string name="pref_group_security_title">Beveiliging en privacy</string>
+  <string name="encryption_and_anonymity_title">Versleuteling en anonimiteit</string>
   <!--Actions: Settings: General: User Interface-->
+  <string name="pref_linkify_on_tor_title">Klikbare links op Tor</string>
+  <string name="pref_linkify_on_tor_summary">Zorg dat links in gesprekken van accounts die Tor gebruiken geopend kunnen worden (WAARSCHUWING: mogelijk privacylek!)</string>
   <string name="menu_locale">Taal</string>
   <string name="KEY_PREF_LANGUAGE_TITLE">Talen</string>
-  <string name="use_system_default">Gebruik systeem standaard</string>
-  <string name="button_yes_accept_all">Ja, aanvaard alle</string>
+  <string name="use_system_default">Gebruik systeemstandaard</string>
+  <string name="button_yes_accept_all">Ja, aanvaard alles</string>
   <string name="pref_delete_unsecured_media_title">Verwijder onveilige media</string>
-  <string name="pref_delete_unsecured_media_summary">Verwijder automatisch een foto of bestand van de originele onveilige opslag na het importeren voor het delen.</string>
+  <string name="pref_delete_unsecured_media_summary">Verwijder automatisch een foto of bestand van de originele onveilige opslag na het importeren voor het delen</string>
   <!--Actions: Settings: General: Other Tuning-->
-  <string name="pref_group_tuning_title">Overige Tuning</string>
+  <string name="pref_group_tuning_title">Overig afstellen</string>
+  <string name="start_on_boot">Start Zom automatisch</string>
   <string name="start_on_boot_summary">Altijd starten en automatisch inloggen op eerder ingelogde accounts</string>
   <string name="hide_offline_contacts">Offline contacten verbergen</string>
-  <string name="foreground_service_title">Gebruik voorgrond prioriteit</string>
-  <string name="foreground_service_summary">Verminder de kans dat Android onze verbindingsservice herstart. Dit zal een melding in de notificatiebalk plaatsen.</string>
-  <string name="heartbeat_interval_title">Hartslag interval</string>
-  <string name="heartbeat_interval_summary">Gebruik een hogere waarde (in minuten) om uw batterij te sparen. Een hogere waarde kan veroorzaken dat de provider de connectie sluit vanwege inactiviteit.</string>
+  <string name="foreground_service_title">Gebruik voorgrondprioriteit</string>
+  <string name="foreground_service_summary">Verminder de kans dat Android onze verbindingsdienst herstart. Dit zal een melding in de notificatiebalk plaatsen.</string>
+  <string name="heartbeat_interval_title">Hartslaginterval</string>
+  <string name="heartbeat_interval_summary">Gebruik een hogere waarde (in minuten) om je batterij te sparen. Een hogere waarde kan ertoe leiden dat de provider de verbinding sluit wegens inactiviteit.</string>
   <!--Actions: Settings: General: Notifications-->
-  <string name="notification_group_title">Instellingen voor meldingen</string>
+  <string name="notification_group_title">Meldingsinstellingen</string>
   <string name="notification_enabled_title">Meldingen voor chatberichten</string>
   <string name="notification_enabled_summary">Melding op statusbalk weergeven wanneer een chatbericht wordt ontvangen</string>
   <string name="notification_vibrate_title">Trillen</string>
   <string name="notification_vibrate_summary">Ook trillen wanneer een chatbericht wordt ontvangen</string>
   <string name="notification_sound_title">Geluid</string>
   <string name="notification_sound_summary">Ook beltoon afspelen wanneer een chatbericht wordt ontvangen</string>
-  <string name="notification_ringtone_title">Gebruik de custom Zom ringtone.</string>
+  <string name="notification_ringtone_title">Kies een aangepaste beltoon</string>
   <!--Actions: Settings: General: Developer-->
-  <string name="pref_debug_title">Zet Debug Logs aan</string>
-  <string name="pref_debug_summary">Output app log data naar standard out / logcat voor debuggen</string>
+  <string name="pref_debug_title">Debuglogs inschakelen</string>
+  <string name="pref_debug_summary">Apploggegevens naar standard out / logcat uitvoeren voor debuggen</string>
   <!--Alerts: Dialogs-->
-  <string name="bg_data_prompt_message">&lt;xliff:g id="PROVIDER"&gt;%1$s&lt;/xliff:g&gt; heeft achtergrondgegevens nodig om te worden ingeschakeld.</string>
+  <string name="bg_data_prompt_message">Netwerkgegevensconnectiviteit (inclusief achtergrondgegevens) is vereist om te kunnen inloggen.</string>
   <string name="prompt_create_new_account_">Nieuwe account aanmaken?</string>
-  <string name="allow_s_to_create_a_new_chat_account_for_s_">Nieuwe chat account aanmaken voor gebruikersnaam \'%1$s\'?</string>
+  <string name="allow_s_to_create_a_new_chat_account_for_s_">Nieuwe account aanmaken voor gebruikersnaam \'%1$s\'?</string>
   <!--Alerts: Notifications-->
   <string name="subscription_notify_text">Nieuw vriendschapsverzoek van &lt;xliff:g id="user"&gt;%s&lt;/xliff:g&gt;</string>
   <string name="file_notify_text">Nieuw bestand &lt;xliff:g id="filename"&gt;%1$s&lt;/xliff:g&gt; van &lt;xliff:g id="user"&gt;%2$s&lt;/xliff:g&gt;</string>
-  <string name="notify_groupchat_label">Uitnodiging voor groepchat</string>
-  <string name="group_chat_invite_notify_text">Nieuwe uitnodiging voor groepchat van &lt;xliff:g id="USER"&gt;%s&lt;/xliff:g&gt;</string>
+  <string name="notify_groupchat_label">Uitnodiging voor groepsgesprek</string>
+  <string name="group_chat_invite_notify_text">Nieuwe uitnodiging voor groepsgesprek van &lt;xliff:g id="USER"&gt;%s&lt;/xliff:g&gt;</string>
   <string name="new_messages_notify">Nieuw(e) bericht(en) van</string>
-  <string name="app_unlocked">Geactiveerd &amp; ontgrendeld</string>
+  <string name="starting_the_chatsecure_service_">De Zom-dienst wordt gestart…</string>
+  <string name="app_unlocked">Zom draait</string>
   <!--Alerts: Exceptions-->
-  <string name="error">Aandacht vereist</string>
+  <string name="error">Opgelet</string>
   <string name="error_prefix">Fout:</string>
-  <string name="general_error">Foutcode &lt;xliff:g id="CODE"&gt;%1$d&lt;/xliff:g&gt;</string>
-  <string name="login_service_failed">Kan niet aanmelden bij de &lt;xliff:g id="SERVICE"&gt;%1$s&lt;/xliff:g&gt;-service. Probeer het later opnieuw."\n"(Details: &lt;xliff:g id="DESCRIPTION"&gt;%2$s&lt;/xliff:g&gt;)</string>
+  <string name="general_error">Foutcode &lt;xliff:g id="code"&gt;%1$d&lt;/xliff:g&gt;</string>
+  <string name="login_service_failed">Kan niet aanmelden bij de &lt;xliff:g id="service"&gt;%1$s&lt;/xliff:g&gt;-dienst. Probeer het later opnieuw.\n(Details: &lt;xliff:g id="description"&gt;%2$s&lt;/xliff:g&gt;)</string>
   <string name="add_list_failed">De lijst is niet toegevoegd.</string>
   <string name="block_contact_failed">Contact is niet geblokkeerd.</string>
   <string name="unblock_contact_failed">Contact is niet gedeblokkeerd.</string>
   <string name="load_contact_list_failed">De lijst met contacten is niet geladen.</string>
-  <string name="cant_connect_to_server">Kan geen verbinding maken met de server. Controleer uw verbinding.</string>
-  <string name="contact_already_exist">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; staat al in uw lijst met contacten.</string>
-  <string name="contact_blocked">Contact \'&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;\' is geblokkeerd.</string>
-  <string name="contact_not_loaded">Uw lijst met contacten wordt geladen.</string>
+  <string name="cant_connect_to_server">Kan geen verbinding maken met de server. Controleer je verbinding.</string>
+  <string name="contact_already_exist">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt; staat al in je contacten.</string>
+  <string name="contact_blocked">Contact '&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt;' is geblokkeerd.</string>
+  <string name="contact_not_loaded">Je contacten worden geladen.</string>
   <string name="network_error">Er is een netwerkfout opgetreden.</string>
-  <string name="wifi_not_connected_error">WiFi is nodig voor deze verbinding.</string>
+  <string name="wifi_not_connected_error">Wifi is nodig voor deze verbinding.</string>
   <string name="service_not_support">Deze functionaliteit wordt niet ondersteund door de server.</string>
   <string name="invalid_password">Het opgegeven wachtwoord is ongeldig.</string>
-  <string name="internal_server_error">Er is een fout aangetroffen op de server.</string>
+  <string name="internal_server_error">Er is een fout opgetreden op de server.</string>
   <string name="not_implemented">Deze functionaliteit wordt niet ondersteund door de server.</string>
   <string name="service_unavaiable">De server is momenteel niet beschikbaar.</string>
   <string name="timeout">Er is een time-out opgetreden op de server.</string>
@@ -197,36 +202,52 @@ Klik hier om uit te nodigen.</string>
   <string name="message_queue_full">De wachtrij voor berichten is vol.</string>
   <string name="domain_not_supported">Omleiden naar het domein wordt niet ondersteund door de server.</string>
   <string name="unknown_user">De opgegeven gebruikersnaam wordt niet herkend.</string>
-  <string name="recipient_blocked_the_user">U bent geblokkeerd door deze gebruiker.</string>
-  <string name="session_expired">De sessie is verlopen. Meld u opnieuw aan.</string>
-  <string name="forced_logout">u bent aangemeld via een andere client.</string>
-  <string name="already_logged_in">u bent al aangemeld via een andere client.</string>
-  <string name="msisdn_error">Het telefoonnummer kan niet worden gelezen vanaf uw SIM-kaart. Neem contact op met uw operator voor ondersteuning.</string>
-  <string name="not_signed_in">U bent momenteel niet aangemeld.</string>
-  <string name="account_setup_error_server">Zom trof een fout aan tijdens het verbinding maken met de chatserver - controleer alstublieft uw instellingen en probeer opnieuw.</string>
-  <string name="error_suspended_connection">Zom heeft de verbinding met het netwerk verloren</string>
-  <string name="unable_to_create_or_join_group_chat">Kan geen groepschat starten of toetreden.</string>
+  <string name="recipient_blocked_the_user">Sorry, deze gebruiker heeft je geblokkeerd.</string>
+  <string name="session_expired">De sessie is verlopen, log opnieuw in.</string>
+  <string name="forced_logout">je bent ingelogd op een andere cliënt.</string>
+  <string name="already_logged_in">je bent ingelogd op een andere cliënt.</string>
+  <string name="msisdn_error">Sorry, het telefoonnummer kan niet worden gelezen vanaf je SIM-kaart. Neem contact op met je provider voor ondersteuning.</string>
+  <string name="not_signed_in">Je bent momenteel niet ingelogd.</string>
+  <string name="account_setup_error_server">Er trad een fout op bij het verbinden met de server - controleer je configuratie en probeer het opnieuw.</string>
+  <string name="error_suspended_connection">Netwerk is offline</string>
+  <string name="unable_to_create_or_join_group_chat">Kan geen groepsgesprek aanmaken of toetreden</string>
+  <string name="unsupported_incoming_data">Inkomende gegevens worden niet ondersteund, kan ze niet delen!</string>
+  <string name="swipe_alert">Zom detecteerde een verzoek om de taak te verwijderen en zal dus waarschijnlijk crashen. Gebruik in plaats daarvan de optie \"Alle accounts uitloggen\" in het accountlijstscherm.</string>
   <string name="there_is_no_viewer_available_for_this_file_format">Er is geen viewer beschikbaar voor dit bestandsformaat</string>
-  <string name="otr_keysync_warning_message">Kopieer a.u.b. het \'otr_keystore.ofcaes\' bestand van de desktop OtrFileConverter tool naar de root directory van je opslagruimte.</string>
+  <string name="otr_keysync_warning_message">Kopieer het \'otr_keystore.ofcaes\'-bestand van het OtrFileConverter-programma naar de rootmap van je opslagruimte</string>
   <string name="msg_sent_failed">Dit bericht kan niet worden verzonden.</string>
-  <string name="disconnected_warning">Berichten zullen na herverbinding verstuurd worden.</string>
+  <string name="disconnected_warning">Je verbinding is verbroken. Berichten zullen verzonden worden wanneer je opnieuw verbinding hebt gemaakt.</string>
   <string name="error_account_password_mismatch">Je wachtwoorden komen niet overeen</string>
   <string name="error_account_settings_priority">Prioriteit moet een getal zijn tussen [0 .. 127]</string>
-  <string name="error_account_settings_port">De poort moet een getal zijn</string>
-  <string name="error_welcome_database">Grote Fout: Kan de app database niet laden of ontgrendelen. Gelive de app opnieuw te installeren of de data te wissen.</string>
-  <string name="account_settings_title">Account Instellingen</string>
+  <string name="error_account_settings_port">Poortnummer moet een getal zijn</string>
+  <string name="error_welcome_database">Grote fout: kan de appdatabase niet laden of ontgrendelen. Installeer de app opnieuw of wis de gegevens.</string>
+  <string name="account_settings_title">Accountinstellingen</string>
+  <string name="pref_group_protect_data_title">Bescherm mijn gegevens</string>
+  <string name="panic_trigger_app">Paniekapp</string>
+  <string name="panic_trigger_app_summary">Een paniekapp kan Zom vergrendelen, een bericht verzenden, gegevens verwijderen, enz.</string>
+  <string name="panic_setup">Paniekinstellingen</string>
+  <string name="panic_setup_summary">Stel in hoe Zom moet reageren op een paniekmelding.</string>
+  <string name="panic_app_none">Doe niets</string>
+  <string name="panic_app_none_summary">Geen paniekapp, negeer alle paniekmeldingen.</string>
+  <string name="panic_app_default">Standaard</string>
+  <string name="protect_data">Bescherm mijn gegevens</string>
+  <string name="action_done">Klaar</string>
+  <string name="lock_app">Vergrendel de app</string>
+  <string name="clear_app_data">Wis alle gegevens binnen de app</string>
+  <string name="uninstall_app">Verwijder de app</string>
+  <string name="include_location">Mijn locatie invoegen</string>
   <!--added 2011/09/01-->
   <string name="menu_view_groups">Groepen</string>
   <string name="buddies">Vrienden</string>
   <string name="contacts">Contacten</string>
-  <string name="mtm_accept_cert">Aanvaard Server Certificaat?</string>
-  <string name="loading">Laden…</string>
+  <string name="mtm_accept_cert">Servercertificaat aanvaarden?</string>
+  <string name="loading">laden…</string>
   <!--Other-->
   <!--Other: Slide Menu-->
   <string name="menu_settings">Instellingen</string>
-  <string name="menu_sign_out">Afmelden</string>
+  <string name="menu_sign_out">Uitloggen</string>
   <!--Other: Provider-->
-  <string name="provider_full_name_xmpp">Jabber/XMPP</string>
+  <string name="provider_full_name_xmpp">Jabber (XMPP)</string>
   <!--Other: Development Strings [Do not localize!]-->
   <!--Other: Presence States-->
   <string name="presence_available">Online</string>
@@ -234,7 +255,7 @@ Klik hier om uit te nodigen.</string>
   <string name="presence_away">Afwezig</string>
   <string name="presence_idle">Inactief</string>
   <string name="presence_offline">Offline</string>
-  <string name="presence_invisible">Offline weergeven</string>
+  <string name="presence_invisible">Offline verschijnen</string>
   <!--Other: Smileys-->
   <string-array name="default_smiley_names">
     <item>Blij</item>
@@ -294,7 +315,12 @@ Klik hier om uit te nodigen.</string>
     <item>:-D</item>
     <item>o_O</item>
   </string-array>
-  <string name="this_is_a_group_chat">Dit is een groepsgesprek</string>
+  <string name="this_is_a_group_chat">Stuur een groepsbericht</string>
   <string name="unable_to_securely_share_this_file">Niet mogelijk dit bestand veilig te delen</string>
+  <string name="your_keystore_is_corrupted_please_re_install_chatsecure_or_clear_data_for_the_app">Je sleutelopslag is corrupt. Installeer Zom opnieuw of gebruik \'gegevens wissen\' voor de app</string>
+  <string name="swipe_hint">&lt; veeg naar links en rechts voor meer opties &gt;</string>
+  <string name="no_convos">Tijd om te Zommen!</string>
+  <string name="title_more">Ontdekken</string>
   <string name="title_me">Ik</string>
+  <string name="no_photos">Gedeelde en ontvangen foto\'s zullen hier verschijnen</string>
 </resources>

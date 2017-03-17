@@ -6,6 +6,7 @@
   <string name="advanced">先进</string>
   <string name="account_congrats">恭喜你，你可以准备使用zom</string>
   <string name="account_congrats_details">您可以在个人简介页面上找到您的密码和帐户详细信息。</string>
+  <string name="invite_friends">添加朋友</string>
   <string name="invite_sms">短信</string>
   <string name="invite_share">分享</string>
   <string name="invite_scan_qr">扫描</string>
@@ -57,4 +58,10 @@
   <string name="color_bg_summary">聊天背景和列表的颜色</string>
   <string name="menu_approve_friend">批准好友？</string>
   <string name="header_got_invited">收到邀请？</string>
+  <string name="action_tap_invite">点击你朋友所发送的邀请链接或扫描他们的QR码</string>
+  <string name="action_invite_new_friends">通过短信向您的朋友发送邀请链接或者通过任何应用转发</string>
+  <string name="not_verified">为了确保安全，请验证您朋友的安全身份。</string>
+  <string name="security_code">安全身份</string>
+  <string name="reset_passphrase">复位锁</string>
+  <string name="action_services">众服务</string>
 </resources>

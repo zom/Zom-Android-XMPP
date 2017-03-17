@@ -1,6 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <!--General: Names-->
+  <string name="ic_launcher_name">Zom</string>
+  <string name="app_name">Zom</string>
+  <string name="im_label">Zom</string>
   <!--General: Permissions-->
   <string name="ro_perm_label">쪽지 읽기</string>
   <string name="ro_perm_desc">
@@ -16,10 +19,21 @@
   <string name="cancel">취소</string>
   <string name="yes">확인</string>
   <string name="no">취소</string>
+  <string name="connect">연결</string>
   <!--Views-->
+  <string name="title_activity_lock_screen">잠김</string>
+  <string name="lock_screen_create_passphrase">비밀번호 설정</string>
+  <string name="lock_screen_confirm_passphrase">비밀번호 확인</string>
+  <string name="lock_screen_passphrase_hint">비밀번호</string>
+  <string name="lock_screen_passphrase_not_set_enter">앱을 잠그려면 비밀번호를 설정하세요</string>
+  <string name="lock_screen_passphrase_not_set_confirm">새 비밀번호 확인</string>
+  <string name="lock_screen_passphrases_not_matching">비밀번호가 부정확합니다. 다시 시도하세요</string>
+  <string name="lock_screen_skip">&gt;&gt; 건너뛰기</string>
   <!--Views: Setup-->
   <string name="add_account">&lt;xliff:g id="ACCOUNT"&gt;%1$s&lt;/xliff:g&gt; 계정 추가</string>
   <string name="menu_about">이 앱에 대하여</string>
+  <string name="signed_out_prompt_with_error">&lt;xliff:g id="reason"&gt;%2$s&lt;/xliff:g&gt;에 의해 해당 &lt;xliff:g id="account"&gt;%1$s&lt;/xliff:g&gt; 계정이 로그아웃 되었습니다.</string>
+  <string name="pass_err_length">충분히 길지 않습니다</string>
   <!--Views: About: Welcome-->
   <!--Views: About: OTR-->
   <!--Views: About: Security-->
@@ -27,24 +41,49 @@
   <!--Views: Setup: Account-->
   <string name="sign_in">로그인</string>
   <string name="account_setup_example_email_address">user@domain.com</string>
+  <string name="account_setup_new_username">새 유저네임</string>
   <string name="account_setup_password">암호</string>
+  <string name="account_setup_password_confirm">비밀번호 확인</string>
+  <string name="btn_create_new_account">계정 등록</string>
   <string name="account_setup_pers_now_title">로그인</string>
+  <string name="_via_orbot">Orbot (Tor)</string>
+  <string name="select_domain_new_account">채팅 서비스 도메인</string>
+  <string name="registering_new_account_">새 계정 등록중...</string>
   <string name="signing_in_wait">로그인 중\u2026</string>
+  <string name="signing_out_wait">로그아웃 중\u2026</string>
   <!--Views: Settings: Account-->
+  <string name="do_srv_lookup">SRV Lookup 실시</string>
+  <string name="use_dns_srv_to_find_actual_xmpp_server_from_domain_name">실제 XMPP 서버를 도메인으로부터 얻기 위해 DNS SRV 사용</string>
+  <string name="allow_the_username_and_password_to_be_sent_as_plain_text_when_using_an_unencrypted_transport">보호되지 않은 연결을 사용할 때 유저네임과 비밀번호를 암호화 하지 않고 보내도록 허가</string>
+  <string name="allow_plain_text_auth">암호화 되지 않는 인증 허가</string>
+  <string name="require_tls_ssl_connection">TLS 연결 요구</string>
+  <string name="transport_encryption">연결 암호화</string>
+  <string name="how_encrypted_chats_are_started">암호화된 채팅을 시작하는 방법</string>
+  <string name="the_server_to_connect_to_if_needed">연결할 서버, 필요할 때만</string>
+  <string name="connect_server">서버에 연결</string>
+  <string name="tcp_port_for_xmpp_server">XMPP 서버 TCP 포트</string>
   <string name="server_port">서버 포트</string>
+  <string name="xmpp_resource">XMPP 리소스</string>
+  <string name="xmpp_resource_prio_title">XMPP 리소스 우선도</string>
+  <string name="xmpp_resource_prio_summary">다수의 파일들이 전송됬을 경우, 우선도에 따라 리소스들을 다운받습니다.</string>
   <!--Views: Contact list-->
+  <string name="title_chats">대화</string>
+  <string name="empty_account_message">계정 설정이\n되어있지 않습니다.\n\n추가하려면 터치하세요!</string>
   <string name="menu_remove_contact">연락처 삭제</string>
+  <string name="menu_contact_nickname">친구 닉네임</string>
   <string name="menu_view_blocked">차단 목록</string>
-  <string name="confirm_delete_contact">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;이(가) 삭제됩니다.</string>
-  <string name="confirm_block_contact">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;이(가) 차단됩니다.</string>
-  <string name="add_contact_success">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;이(가) 추가되었습니다.</string>
-  <string name="delete_contact_success">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;이(가) 삭제되었습니다.</string>
-  <string name="block_contact_success">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;이(가) 차단되었습니다.</string>
-  <string name="unblock_contact_success">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;이(가) 차단 해제되었습니다.</string>
+  <string name="nickname">닉네임</string>
+  <string name="confirm_delete_contact">연락처 '&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;'이(가) 삭제됩니다.</string>
+  <string name="confirm_block_contact">연락처 '&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;'이(가) 차단됩니다.</string>
+  <string name="add_contact_success">연락처 '&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;'이(가) 추가되었습니다.</string>
+  <string name="delete_contact_success">연락처 '&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;'이(가) 삭제되었습니다.</string>
+  <string name="block_contact_success">연락처 '&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;'이(가) 차단되었습니다.</string>
+  <string name="unblock_contact_success">연락처 '&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;'이(가) 차단 해제되었습니다.</string>
+  <string name="menu_verify">친구 인증</string>
   <string name="empty_conversation_group">대화 내용 없음</string>
   <string name="search_label">연락처</string>
   <string name="search_hint">채팅하시려는 연락처의 이름을 넣어보세요</string>
-  <string name="input_contact_label">초대할 사람의 이메일 주소:</string>
+  <string name="input_contact_label">친구의 XMPP 계정, 혹은 메일을 입력하세요 (예: zomisfun.4x3f5g@zom.im) :</string>
   <!--Views: Chat: Single-->
   <string name="contact_online">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;님이 온라인 상태입니다.</string>
   <string name="contact_away">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;님이 자리비움 상태입니다.</string>
@@ -52,29 +91,67 @@
   <string name="contact_offline">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;님은 오프라인 상태입니다.</string>
   <string name="contact_joined">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;님이 채팅에 참여했습니다.</string>
   <string name="contact_left">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;님이 채팅에서 나갔습니다.</string>
+  <string name="file_transfer">파일 전송</string>
+  <string name="accept_transfer_">전송을 허가합니까?</string>
+  <string name="wants_to_send_you_the_file">파일을 보내려고 합니다</string>
+  <string name="no_connection_for_sending">공유하려면 인터넷에 먼저 연결해야 합니다!</string>
+  <string name="compose_hint">메세지 전송</string>
+  <string name="compose_hint_secure">비밀 메세지 전송</string>
   <string name="menu_end_conversation">채팅 종료</string>
   <string name="select_link_title">링크 선택</string>
+  <string name="delete">삭제</string>
+  <string name="export_media">미디어 파일을 추출할까요?</string>
   <!--Views: Chat: Group-->
   <string name="invitation_prompt">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;님이 그룹 채팅에 초대하셨습니다.</string>
   <string name="accept_invitation">수락</string>
   <string name="decline_invitation">거부</string>
+  <string name="connecting_to_group_chat_">그룹 채팅에 연결중...</string>
+  <string name="empty_contact_list">친구 발견안됨\n\n초대하려면 터치하세요.</string>
+  <string name="subscription_prompt">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;을 추가합니까?</string>
+  <string name="approve_subscription">예</string>
+  <string name="decline_subscription">아니오</string>
   <string name="approve_subscription_error">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;님의 구독을 승인할 수 없습니다. 잠시 후에 다시 시도해 주세요.</string>
   <string name="decline_subscription_error">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;님의 구독을 거부할 수 없습니다. 잠시 후에 다시 시도해 주세요.</string>
   <!--Security: OTR-->
+  <string name="otr_session_status_finished">친구가 암호화된 채팅을 중지하였습니다.</string>
+  <string name="otr_mode_force">강제 / 요구</string>
+  <string name="otr_mode_auto">자동으로 시도</string>
+  <string name="otr_mode_requested">요청이 들어온 대로</string>
+  <string name="otr_mode_disabled">비활성화됨 / 불가능</string>
   <!--Security: OTR: Keyring-->
+  <string name="detected_Otr_keystore_import">적용 가능한 OTR Keystore를 발견했습니다. QR 패스워드를 바로 스캔하겠습니까?</string>
   <!--Security: OTR: Verification-->
   <!--Security: OTR: Verification: QA-->
+  <string name="smp_question_title">인증</string>
+  <string name="smp_question_summary">친구에게 보낼 질문을 입력하고, 정답을 기입해주세요. 상대가 진짜 아는 사람이 맞는지 확인하는 절차입니다.</string>
+  <string name="smp_question_hint">물어볼 질문</string>
+  <string name="qmp_answer_hint">원하는 대답</string>
+  <string name="remote_verified_us">친구가 성공적으로 당신을 인증했습니다. 이제 당신이 친구를 인증할 차례입니다. 둘만이 아는 질문을 하여 진짜 친구인지 확인하세요.</string>
+  <string name="otr_qa_title">OTR Q&amp;A 검증</string>
+  <string name="chat_encryption_title">채팅 암호화</string>
   <string name="otr_qa_send">전송</string>
   <string name="otr_qa_cancel">취소</string>
   <!--Views: VoIP-->
   <!--Views: Settings: General-->
   <!--Actions: Settings: General: Security and Privacy-->
+  <string name="pref_group_security_title">보안 및 프라이버시</string>
   <string name="encryption_and_anonymity_title">암호화 및 익명</string>
   <!--Actions: Settings: General: User Interface-->
+  <string name="pref_linkify_on_tor_title">토르를 이용해 링크 열기</string>
+  <string name="pref_linkify_on_tor_summary">토르를 이용하는 계정을 위해, 채팅상에서의 링크를 클릭 가능하게 만듭니다 (경고, 프라이버시가 노출될 가능성이 있음!)</string>
   <string name="menu_locale">언어</string>
   <string name="KEY_PREF_LANGUAGE_TITLE">언어</string>
+  <string name="use_system_default">시스템 기본값 사용</string>
+  <string name="button_yes_accept_all">예, 모두 허가합니다</string>
+  <string name="pref_delete_unsecured_media_title">위험할 수 있는 미디어 삭제</string>
+  <string name="pref_delete_unsecured_media_summary">사진이나 파일을 공유한 이후, 자동으로 보호되지 않은 스토리지의 원래 파일을 삭제합니다.</string>
   <!--Actions: Settings: General: Other Tuning-->
+  <string name="start_on_boot">Zom 자동으로 시작</string>
+  <string name="start_on_boot_summary">자동으로 시작하고, 전에 사용했던 계정으로 로그인하기</string>
   <string name="hide_offline_contacts">오프라인 주소록 숨기기</string>
+  <string name="foreground_service_title">백그라운드 우선도를 사용</string>
+  <string name="foreground_service_summary">안드로이드가 연결 재시작 빈도를 줄입니다. 해당 상태는 알림 표시줄에 나타납니다.</string>
+  <string name="heartbeat_interval_summary">배터리를 아끼려면 숫자를 높이세요. (분단위) 너무 높은 숫자를 쓴다면, 서버에서 비활성화된 연결로 인식해 연결을 끊을수도 있습니다.</string>
   <!--Actions: Settings: General: Notifications-->
   <string name="notification_group_title">알림 설정</string>
   <string name="notification_enabled_title">쪽지 알림</string>
@@ -83,13 +160,24 @@
   <string name="notification_vibrate_summary">쪽지 오면 진동</string>
   <string name="notification_sound_title">사운드</string>
   <string name="notification_sound_summary">쪽지 오면 벨소리 재생</string>
+  <string name="notification_ringtone_title">벨소리 변경</string>
   <!--Actions: Settings: General: Developer-->
+  <string name="pref_debug_title">디버그 로그 활성화</string>
   <!--Alerts: Dialogs-->
   <string name="bg_data_prompt_message">&lt;xliff:g id="PROVIDER"&gt;%1$s&lt;/xliff:g&gt;을(를) 사용하려면 백그라운드 데이터를 사용하도록 설정해야 합니다.</string>
+  <string name="prompt_create_new_account_">새 계정을 만드시겠습니까?</string>
+  <string name="allow_s_to_create_a_new_chat_account_for_s_">\'%1$s\'으로 유저네임을 설정합니까?</string>
   <!--Alerts: Notifications-->
+  <string name="subscription_notify_text">&lt;xliff:g id="user"&gt;%s&lt;/xliff:g&gt;의 새 친구 초대</string>
+  <string name="file_notify_text">&lt;xliff:g id="user"&gt;%2$s&lt;/xliff:g&gt;의 새로운 파일 &lt;xliff:g id="filename"&gt;%1$s&lt;/xliff:g&gt;</string>
   <string name="notify_groupchat_label">그룹 채팅 초대</string>
+  <string name="group_chat_invite_notify_text">&lt;xliff:g id="USER"&gt;%s&lt;/xliff:g&gt;의 새 그룹챗 초대</string>
+  <string name="new_messages_notify">새 메세지를 받았습니다. 발송자:</string>
+  <string name="starting_the_chatsecure_service_">Zom 서비스 시작 중...</string>
+  <string name="app_unlocked">Zom이 작동중입니다</string>
   <!--Alerts: Exceptions-->
   <string name="error">주의</string>
+  <string name="error_prefix">오류:</string>
   <string name="general_error">오류 코드 &lt;xliff:g id="CODE"&gt;%1$d&lt;/xliff:g&gt;</string>
   <string name="login_service_failed">&lt;xliff:g id="SERVICE"&gt;%1$s&lt;/xliff:g&gt; 서비스에 로그인할 수 없습니다. 잠시 후에 다시 시도해 주세요."\n"(세부정보: &lt;xliff:g id="DESCRIPTION"&gt;%2$s&lt;/xliff:g&gt;)</string>
   <string name="add_list_failed">목록이 추가되지 않았습니다.</string>
@@ -98,9 +186,10 @@
   <string name="load_contact_list_failed">연락처 목록을 로드하지 못했습니다.</string>
   <string name="cant_connect_to_server">서버에 연결할 수 없습니다. 연결을 확인하세요.</string>
   <string name="contact_already_exist">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;님이 이미 연락처 목록에 있습니다.</string>
-  <string name="contact_blocked">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;은(는) 차단되었습니다.</string>
+  <string name="contact_blocked">연락처 '&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;'은(는) 차단되었습니다.</string>
   <string name="contact_not_loaded">연락처 목록이 로드되는 동안 잠시 기다려 주세요.</string>
   <string name="network_error">네트워크 오류가 발생했습니다.</string>
+  <string name="wifi_not_connected_error">해당 연결을 위해서는 WiFi에 연결되어 있어야 합니다.</string>
   <string name="service_not_support">서버에서 이 기능을 지원하지 않습니다.</string>
   <string name="invalid_password">입력한 비밀번호가 올바르지 않습니다.</string>
   <string name="internal_server_error">서버에서 오류가 발생했습니다.</string>
@@ -117,15 +206,46 @@
   <string name="already_logged_in">이미 다른 클라이언트로부터 로그인했습니다.</string>
   <string name="msisdn_error">죄송합니다. SIM 카드에서 전화번호를 읽을 수 없습니다. 이동통신사에 문의하세요.</string>
   <string name="not_signed_in">현재 로그인되어 있지 않습니다.</string>
+  <string name="account_setup_error_server">채팅 서버에 연결중 오류가 발생했습니다 - 설정을 확인 후 다시 시도하세요.</string>
+  <string name="error_suspended_connection">네트워크가 오프라인 입니다</string>
+  <string name="unable_to_create_or_join_group_chat">그룹 채팅을 만들거나 참여할 수 없습니다</string>
+  <string name="unsupported_incoming_data">데이터 수신 지원안됨, 공유 불가!</string>
+  <string name="swipe_alert">해당 task를 삭제하라는 명령을 감지했습니다. Zom이 강제종료 될 수 있습니다. 계정 리스트의 All 메뉴를 이용해 로그아웃 해주세요.</string>
+  <string name="there_is_no_viewer_available_for_this_file_format">파일을 열기위한 어플리케이션이 없습니다</string>
+  <string name="otr_keysync_warning_message">\'otr_keystore.ofcaes\' 파일을 컴퓨터의 OtrFileConverter 도구에서 장치의 최상위 디렉토리로 복사해주세요</string>
   <string name="msg_sent_failed">메시지를 보내지 못했습니다.</string>
+  <string name="disconnected_warning">연결이 해제되었습니다. 다시 연결되면 메세지를 보냅니다.</string>
+  <string name="error_account_password_mismatch">패스워드가 일치하지 않습니다</string>
+  <string name="error_account_settings_priority">빈도는 [0 .. 127] 사이의 숫자로 입력하세요.</string>
+  <string name="error_account_settings_port">포트 넘버는 숫자만 입력하세요</string>
+  <string name="error_welcome_database">주요 오류: 앱 데이터베이스를 잠금해제하거나 불러올 수 없습니다. 앱을 삭제하거나 데이터를 지워주세요.</string>
   <string name="account_settings_title">계정 설정</string>
+  <string name="pref_group_protect_data_title">정보 보호</string>
+  <string name="panic_trigger_app">패닉 트리거 앱</string>
+  <string name="panic_trigger_app_summary">패닉 앱으로 Zom 잠그기, 메세지 보내기, 데이터 삭제 등이 가능합니다.</string>
+  <string name="panic_setup">패닉 세팅</string>
+  <string name="panic_setup_summary">Zom이 패닉 알림에 어떻게 대응할지 설정하세요.</string>
+  <string name="panic_app_none">없음</string>
+  <string name="panic_app_none_summary">패닉 트리거 앱 없음. 일어나는 모든 패닉 트리거를 무시합니다.</string>
+  <string name="panic_app_default">기본값</string>
+  <string name="protect_data">정보 보호</string>
+  <string name="action_done">완료</string>
+  <string name="lock_app">앱 잠금</string>
+  <string name="clear_app_data">Zom의 모든 데이터 삭제</string>
+  <string name="uninstall_app">앱 삭제</string>
+  <string name="include_location">위치정보 포함</string>
   <!--added 2011/09/01-->
   <string name="menu_view_groups">그룹</string>
+  <string name="buddies">친구들</string>
+  <string name="contacts">연락처</string>
+  <string name="mtm_accept_cert">서버 증명을 허가합니까?</string>
+  <string name="loading">로딩중...</string>
   <!--Other-->
   <!--Other: Slide Menu-->
   <string name="menu_settings">설정</string>
   <string name="menu_sign_out">로그아웃</string>
   <!--Other: Provider-->
+  <string name="provider_full_name_xmpp">Jabber (XMPP)</string>
   <!--Other: Development Strings [Do not localize!]-->
   <!--Other: Presence States-->
   <string name="presence_available">온라인</string>
@@ -193,5 +313,12 @@
     <item>:-D</item>
     <item>o_O</item>
   </string-array>
+  <string name="this_is_a_group_chat">그룹 메세지 보내기</string>
+  <string name="unable_to_securely_share_this_file">해당 파일을 안전하게 공유할 수 없습니다</string>
+  <string name="your_keystore_is_corrupted_please_re_install_chatsecure_or_clear_data_for_the_app">Key-Store가 손상됬습니다. Zom을 재설치 하거나 데이터를 지워주세요.</string>
+  <string name="swipe_hint">&lt; 좌우로 밀어 더 많은 옵션을 확인하세요 &gt;</string>
+  <string name="no_convos">Zom을 시작할 시간입니다!</string>
+  <string name="title_more">발견</string>
   <string name="title_me">나</string>
+  <string name="no_photos">공유되거나 받은 사진들이 표시됩니다</string>
 </resources>
