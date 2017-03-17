@@ -288,7 +288,20 @@ public class ConversationView {
                     if (mCurrentChatSession == null)
                         return;
 
+                    IContactListManager manager = mConn.getContactListManager();
+                    Contact contact = manager.getContactByAddress(mRemoteAddress);
+
+                    if (contact.getPresence() != null) {
+
+                        if (contact.getPresence().getStatus() == Presence.AVAILABLE) {
+                            mLastSeen = contact.getPresence().getLastSeen();
+                            mActivity.updateLastSeen(mLastSeen);
+                        }
+
+                    }
+
                     IOtrChatSession otrChatSession = mCurrentChatSession.getDefaultOtrChatSession();
+
 
                     if (otrChatSession != null && (!isGroupChat()))
                     {
@@ -342,6 +355,9 @@ public class ConversationView {
         }
 
     }
+    //    collapsingToolbar.setCollapsedTitleTypeface(typeface);
+     //   collapsingToolbar.setExpandedTitleTypeface(typeface);
+
 
     private boolean checkConnection ()
     {
@@ -541,6 +557,13 @@ public class ConversationView {
                 mPresenceStatus = contact.getPresence().getStatus();
                 mLastSeen = contact.getPresence().getLastSeen();
             }
+            else
+            {
+                mLastSeen = new Date();
+            }
+
+            mActivity.updateLastSeen(mLastSeen);
+
 
             android.os.Message message = android.os.Message.obtain(null, SHOW_TYPING, (int) (mProviderId >> 32),
                     (int) mProviderId, -1);
@@ -631,10 +654,11 @@ public class ConversationView {
 
            if (contact != null && contact.getPresence() != null) {
                mPresenceStatus = contact.getPresence().getStatus();
-               mLastSeen = contact.getPresence().getLastSeen();
 
            }
+            mLastSeen = new Date();
 
+            mActivity.updateLastSeen(mLastSeen);
 
         }
 
@@ -654,13 +678,12 @@ public class ConversationView {
                     if (c != null && c.getPresence() != null)
                     {
                         mPresenceStatus = c.getPresence().getStatus();
-                        mLastSeen = c.getPresence().getLastSeen();
-                        updatePresenceDisplay();
-                        /**
-                        try {
-                            mCurrentChatSession.presenceChanged(mPresenceStatus);
+
+                        if (mPresenceStatus == Presence.AVAILABLE) {
+                            mLastSeen = c.getPresence().getLastSeen();
+                            mActivity.updateLastSeen(mLastSeen);
                         }
-                        catch (RemoteException re){}*/
+                        updatePresenceDisplay();
                     }
 
                     mHandler.post(mUpdateChatCallback);

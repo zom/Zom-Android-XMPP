@@ -33,6 +33,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.os.Parcelable;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
@@ -105,6 +107,22 @@ public class ConversationDetailActivity extends BaseActivity {
     private View mRootLayout;
     private Toolbar mToolbar;
 
+    private Handler mHandler = new Handler()
+    {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+
+            if (msg.what == 1)
+            {
+                if (mConvoView.getLastSeen() != null) {
+                    getSupportActionBar().setSubtitle(new PrettyTime().format(mConvoView.getLastSeen()));
+                }
+            }
+        }
+    };
+
+
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         public void onReceive(final Context context, final Intent intent) {
             //check if the broadcast is our desired one
@@ -163,24 +181,22 @@ public class ConversationDetailActivity extends BaseActivity {
 
     }
 
+    public void updateLastSeen (Date lastSeen)
+    {
+       mHandler.sendEmptyMessage(1);
+    }
+
     public void applyStyleForToolbar() {
 
 
-//        CollapsingToolbarLayout collapsingToolbar =
-  //              (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
-        //collapsingToolbar.setTitle(mConvoView.getTitle());
         getSupportActionBar().setTitle(mConvoView.getTitle());
 
         if (mConvoView.getLastSeen() != null) {
-
             getSupportActionBar().setSubtitle(new PrettyTime().format(mConvoView.getLastSeen()));
         }
 
         //first set font
         Typeface typeface = CustomTypefaceManager.getCurrentTypeface(this);
-
-    //    collapsingToolbar.setCollapsedTitleTypeface(typeface);
-     //   collapsingToolbar.setExpandedTitleTypeface(typeface);
 
 
         if (typeface != null) {
@@ -250,7 +266,7 @@ public class ConversationDetailActivity extends BaseActivity {
         mNickname = intent.getStringExtra("nickname");
 
         mConvoView.bindChat(mChatId, mAddress, mNickname);
-
+        mConvoView.startListening();
         //loadBackdrop();
 
      //   CollapsingToolbarLayout collapsingToolbar =
