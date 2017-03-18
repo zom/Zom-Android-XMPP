@@ -278,7 +278,7 @@ public class ConversationView {
                 IContactListManager manager = mConn.getContactListManager();
                 Contact contact = manager.getContactByAddress(mRemoteAddress);
 
-                if (contact.getPresence() != null) {
+                if (contact != null && contact.getPresence() != null) {
 
                     if (contact.getPresence().getStatus() == Presence.AVAILABLE) {
                         mLastSeen = contact.getPresence().getLastSeen();
