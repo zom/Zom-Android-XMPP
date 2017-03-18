@@ -1,14 +1,9 @@
 <AppUpdater>
   <update>
-    <latestVersion>15.0.2.002</latestVersion>
-    <url>https://github.com/zom/Zom-Android/releases/download/15.0.2.002/Zom-15.0.2.002-zomrelease-release.apk</url>
+    <latestVersion>15.0.3.005</latestVersion>
+    <url>https://github.com/zom/Zom-Android/releases/download/15.0.3-RC-3/Zom-15.0.3-RC-3-zomrelease-release.apk</url>
     <releaseNotes>
-	- "Zom Services" chat bot is now enabled
-	- Default server is now home.zom.im
-	- Adding friend now waits for them to confirm you before starting to chat
-	- Forwarding / sharing QR codes and invite links to friends on Zom works better
-	- new Buddhist sticker pack!
-	- and much much more...
+- new "expression" stickers! - now showing limited "last seen" - improved ability to log into existing account - update localizations / language support - many small cosmetic improvements - now warns when network or account not connected - typing indicator
     </releaseNotes>
   </update>
 </AppUpdater>
