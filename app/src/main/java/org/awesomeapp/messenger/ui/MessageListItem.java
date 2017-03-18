@@ -106,9 +106,8 @@ public class MessageListItem extends FrameLayout {
         super(context, attrs);
         this.context = context;
 
-        if (sPrettyTime == null) {
-            sPrettyTime = new PrettyTime(getCurrentLocale());
-        }
+        sPrettyTime = new PrettyTime(getCurrentLocale());
+
 
     }
 

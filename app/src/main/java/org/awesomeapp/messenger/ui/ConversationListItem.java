@@ -102,14 +102,11 @@ public class ConversationListItem extends FrameLayout {
     public static final int COLUMN_LAST_MESSAGE = 11;
 
     static Drawable AVATAR_DEFAULT_GROUP = null;
-    private static PrettyTime sPrettyTime = null;
+    private PrettyTime sPrettyTime = null;
 
     public ConversationListItem(Context context, AttributeSet attrs) {
         super(context, attrs);
-
-
-        if (sPrettyTime == null)
-            sPrettyTime = new PrettyTime(getCurrentLocale());
+        sPrettyTime = new PrettyTime(getCurrentLocale());
     }
 
 /**

@@ -275,7 +275,18 @@ public class ConversationView {
 
             try
             {
+                IContactListManager manager = mConn.getContactListManager();
+                Contact contact = manager.getContactByAddress(mRemoteAddress);
 
+                if (contact.getPresence() != null) {
+
+                    if (contact.getPresence().getStatus() == Presence.AVAILABLE) {
+                        mLastSeen = contact.getPresence().getLastSeen();
+                        mActivity.updateLastSeen(mLastSeen);
+                    }
+
+                }
+                
                 if ((mLastSessionStatus == null || mLastSessionStatus == SessionStatus.PLAINTEXT)) {
 
                     //boolean otrPolicyAuto = mActivity.getOtrPolicy() == OtrPolicy.OTRL_POLICY_ALWAYS
@@ -288,17 +299,7 @@ public class ConversationView {
                     if (mCurrentChatSession == null)
                         return;
 
-                    IContactListManager manager = mConn.getContactListManager();
-                    Contact contact = manager.getContactByAddress(mRemoteAddress);
 
-                    if (contact.getPresence() != null) {
-
-                        if (contact.getPresence().getStatus() == Presence.AVAILABLE) {
-                            mLastSeen = contact.getPresence().getLastSeen();
-                            mActivity.updateLastSeen(mLastSeen);
-                        }
-
-                    }
 
                     IOtrChatSession otrChatSession = mCurrentChatSession.getDefaultOtrChatSession();
 
@@ -326,8 +327,11 @@ public class ConversationView {
                     }
 
                 }
+
+
             }
             catch (RemoteException re){}
+
         }
         else
         {
