@@ -234,8 +234,8 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
         if (sThreadPoolExecutor == null) {
             int corePoolSize = 20;
-            int maximumPoolSize = 40;
-            int keepAliveTime = 60;
+            int maximumPoolSize = 120;
+            int keepAliveTime = 30;
             BlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<Runnable>(maximumPoolSize);
             sThreadPoolExecutor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, TimeUnit.SECONDS, workQueue);
         }
