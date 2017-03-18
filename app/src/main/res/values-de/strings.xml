@@ -27,9 +27,9 @@
   <string name="lock_screen_passphrases_not_matching">Passwort stimmt nicht überein, bitte versuchen Sie es erneut</string>
   <string name="lock_screen_skip">Überspringen &gt;&gt;</string>
   <!--Views: Setup-->
-  <string name="add_account">&lt;xliff:g id="account"&gt;%1$s&lt;/xliff:g&gt;-Konto hinzufügen</string>
+  <string name="add_account"><xliff:g id="account">%1$s</xliff:g>-Konto hinzufügen</string>
   <string name="menu_about">Über</string>
-  <string name="signed_out_prompt_with_error">Sie wurden aus folgendem Grund von &lt;xliff:g id="account"&gt;%1$s&lt;/xliff:g&gt; abgemeldet: &lt;xliff:g id="reason"&gt;%2$s&lt;/xliff:g&gt;</string>
+  <string name="signed_out_prompt_with_error">Sie wurden aus folgendem Grund von <xliff:g id="account">%1$s</xliff:g> abgemeldet: <xliff:g id="reason">%2$s</xliff:g></string>
   <string name="pass_err_length">Ihre Passphrase war nicht lang genug</string>
   <!--Views: About: Welcome-->
   <!--Views: About: OTR-->
@@ -74,23 +74,23 @@ Hier antippen um eines hinzuzufügen!</string>
   <string name="menu_contact_nickname">Kontaktspitzname</string>
   <string name="menu_view_blocked">Gesperrt</string>
   <string name="nickname">Spitzname</string>
-  <string name="confirm_delete_contact">Kontakt »&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;« wird gelöscht.</string>
-  <string name="confirm_block_contact">Kontakt »&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt;« wird gesperrt.</string>
-  <string name="add_contact_success">Kontakt »&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt;« hinzugefügt.</string>
-  <string name="delete_contact_success">Kontakt »&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt;« gelöscht.</string>
-  <string name="block_contact_success">Kontakt »&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt;« gesperrt.</string>
-  <string name="unblock_contact_success">Sperrung des Kontaktes »&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt;« aufgehoben.</string>
+  <string name="confirm_delete_contact">Kontakt »<xliff:g id="USER">%1$s</xliff:g>« wird gelöscht.</string>
+  <string name="confirm_block_contact">Kontakt »<xliff:g id="user">%1$s</xliff:g>« wird gesperrt.</string>
+  <string name="add_contact_success">Kontakt »<xliff:g id="user">%1$s</xliff:g>« hinzugefügt.</string>
+  <string name="delete_contact_success">Kontakt »<xliff:g id="user">%1$s</xliff:g>« gelöscht.</string>
+  <string name="block_contact_success">Kontakt »<xliff:g id="user">%1$s</xliff:g>« gesperrt.</string>
+  <string name="unblock_contact_success">Sperrung des Kontaktes »<xliff:g id="user">%1$s</xliff:g>« aufgehoben.</string>
   <string name="menu_verify">Schlüssel überprüfen</string>
   <string name="empty_conversation_group">Keine Gespräche offen.\n\nHier antippen, um Unterhaltung zu beginnen!</string>
   <string name="search_label">Kontakt</string>
   <string name="search_hint">Den Namen des Kontakts eingeben, mit dem Sie sich unterhalten möchten.</string>
   <!--Views: Chat: Single-->
-  <string name="contact_online">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt; is verbunden</string>
-  <string name="contact_away">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt; ist abwesend</string>
-  <string name="contact_busy">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt; ist beschäftigt</string>
-  <string name="contact_offline">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt; is getrennt</string>
-  <string name="contact_joined">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt; ist beigetreten</string>
-  <string name="contact_left">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt; hat die Unterhaltung verlassen</string>
+  <string name="contact_online"><xliff:g id="user">%1$s</xliff:g> is verbunden</string>
+  <string name="contact_away"><xliff:g id="user">%1$s</xliff:g> ist abwesend</string>
+  <string name="contact_busy"><xliff:g id="user">%1$s</xliff:g> ist beschäftigt</string>
+  <string name="contact_offline"><xliff:g id="user">%1$s</xliff:g> is getrennt</string>
+  <string name="contact_joined"><xliff:g id="user">%1$s</xliff:g> ist beigetreten</string>
+  <string name="contact_left"><xliff:g id="user">%1$s</xliff:g> hat die Unterhaltung verlassen</string>
   <string name="file_transfer">Dateiübertragung</string>
   <string name="accept_transfer_">Übertragung akzeptieren?</string>
   <string name="wants_to_send_you_the_file">will Ihnen eine Datei senden</string>
@@ -102,7 +102,7 @@ Hier antippen um eines hinzuzufügen!</string>
   <string name="delete">Löschen</string>
   <string name="export_media">Mediendatei exportieren?</string>
   <!--Views: Chat: Group-->
-  <string name="invitation_prompt">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt; hat Sie zu einer Gruppenunterhaltung eingeladen.</string>
+  <string name="invitation_prompt"><xliff:g id="user">%1$s</xliff:g> hat Sie zu einer Gruppenunterhaltung eingeladen.</string>
   <string name="accept_invitation">Annehmen</string>
   <string name="decline_invitation">Ablehnen</string>
   <string name="connecting_to_group_chat_">Zur Gruppenunterhaltung wird verbunden …</string>
@@ -112,8 +112,8 @@ Zum Einladen antippen.</string>
   <string name="subscription_prompt">Kontakt hinzufügen?</string>
   <string name="approve_subscription">Ja</string>
   <string name="decline_subscription">Nein</string>
-  <string name="approve_subscription_error">Anmeldung von &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; kann nicht genehmigt werden. Bitte versuchen Sie es später erneut.</string>
-  <string name="decline_subscription_error">Anmeldung von &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; kann nicht abgelehnt werden. Bitte versuchen Sie es später erneut.</string>
+  <string name="approve_subscription_error">Anmeldung von <xliff:g id="USER">%1$s</xliff:g> kann nicht genehmigt werden. Bitte versuchen Sie es später erneut.</string>
+  <string name="decline_subscription_error">Anmeldung von <xliff:g id="USER">%1$s</xliff:g> kann nicht abgelehnt werden. Bitte versuchen Sie es später erneut.</string>
   <!--Security: OTR-->
   <string name="otr_session_status_finished">Ihr Kontakt hat die verschlüsselte Unterhaltung beendet.</string>
   <!--Security: OTR: Keyring-->
@@ -170,24 +170,24 @@ Für die Anmeldung wird eine Datenverbindung (inklusive Hintergrunddaten) benöt
   <string name="prompt_create_new_account_">Neues Konto erstellen?</string>
   <string name="allow_s_to_create_a_new_chat_account_for_s_">Ein neues Unterhaltungskonto für den Benutzernamen »%1$s« erstellen?</string>
   <!--Alerts: Notifications-->
-  <string name="subscription_notify_text">Neue Freundschaftseinladung von &lt;xliff:g id="user"&gt;%s&lt;/xliff:g&gt;</string>
-  <string name="file_notify_text">Neue Datei &lt;xliff:g id="filename"&gt;%1$s&lt;/xliff:g&gt; von &lt;xliff:g id="user"&gt;%2$s&lt;/xliff:g&gt;</string>
+  <string name="subscription_notify_text">Neue Freundschaftseinladung von <xliff:g id="user">%s</xliff:g></string>
+  <string name="file_notify_text">Neue Datei <xliff:g id="filename">%1$s</xliff:g> von <xliff:g id="user">%2$s</xliff:g></string>
   <string name="notify_groupchat_label">Einladung zur Gruppenunterhaltung</string>
-  <string name="group_chat_invite_notify_text">Neue Einladung zur Gruppenunterhaltung von &lt;xliff:g id="user"&gt;%s&lt;/xliff:g&gt;</string>
+  <string name="group_chat_invite_notify_text">Neue Einladung zur Gruppenunterhaltung von <xliff:g id="user">%s</xliff:g></string>
   <string name="new_messages_notify">Neue Nachricht(en) von</string>
   <string name="app_unlocked">Aktiviert und entsperrt</string>
   <!--Alerts: Exceptions-->
   <string name="error">Achtung</string>
   <string name="error_prefix">Fehler: </string>
-  <string name="general_error">Fehlercode &lt;xliff:g id="code"&gt;%1$d&lt;/xliff:g&gt;</string>
-  <string name="login_service_failed">Anmeldung beim &lt;xliff:g id="service"&gt;%1$s&lt;/xliff:g&gt;-Dienst nicht möglich. Bitte versuchen Sie es später erneut. (Details: &lt;xliff:g id="description"&gt;%2$s&lt;/xliff:g&gt;)</string>
+  <string name="general_error">Fehlercode <xliff:g id="code">%1$d</xliff:g></string>
+  <string name="login_service_failed">Anmeldung beim <xliff:g id="service">%1$s</xliff:g>-Dienst nicht möglich. Bitte versuchen Sie es später erneut. (Details: <xliff:g id="description">%2$s</xliff:g>)</string>
   <string name="add_list_failed">Die Liste wurde nicht hinzugefügt.</string>
   <string name="block_contact_failed">Kontakt wurde nicht gesperrt.</string>
   <string name="unblock_contact_failed">Sperrung des Kontakts wurde nicht aufgehoben.</string>
   <string name="load_contact_list_failed">Kontaktliste wurde nicht geladen.</string>
   <string name="cant_connect_to_server">Verbindung zum Server kann nicht hergestellt werden. Überprüfen Sie die Verbindung.</string>
-  <string name="contact_already_exist">»&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt;« ist bereits in der Kontaktliste vorhanden.</string>
-  <string name="contact_blocked">Kontakt »&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt;« wurde gesperrt.</string>
+  <string name="contact_already_exist">»<xliff:g id="user">%1$s</xliff:g>« ist bereits in der Kontaktliste vorhanden.</string>
+  <string name="contact_blocked">Kontakt »<xliff:g id="user">%1$s</xliff:g>« wurde gesperrt.</string>
   <string name="contact_not_loaded">Kontaktliste wird geladen, bitte warten.</string>
   <string name="network_error">Ein Netzwerkfehler ist aufgetreten.</string>
   <string name="wifi_not_connected_error">Für diese Verbindung ist WLAN notwendig.</string>

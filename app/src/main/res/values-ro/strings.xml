@@ -22,7 +22,7 @@
   <string name="lock_screen_passphrases_not_matching">Parolele nu coincid, mai incearca o data</string>
   <string name="lock_screen_skip">Sari peste &gt;&gt;</string>
   <!--Views: Setup-->
-  <string name="add_account">Adauga cont &lt;xliff:g id="account"&gt;%1$s&lt;/xliff:g&gt;</string>
+  <string name="add_account">Adauga cont <xliff:g id="account">%1$s</xliff:g></string>
   <string name="menu_about">Despre</string>
   <!--Views: About: Welcome-->
   <!--Views: About: OTR-->

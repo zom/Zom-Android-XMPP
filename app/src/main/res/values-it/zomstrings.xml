@@ -20,8 +20,8 @@
   <string name="choose_friend">Scegli un amico</string>
   <string name="send_message">Invia un messaggio</string>
   <string name="push_to_talk">Tocca per parlare</string>
-  <string name="recording_release">Registrazione... rilascia per inviare</string>
-  <string name="recording_delete">Registrazione... rilascia per eliminare</string>
+  <string name="recording_release">Registrazione… rilascia per inviare</string>
+  <string name="recording_delete">Registrazione… rilascia per eliminare</string>
   <string name="swipe_up_delete">Scorri in su per eliminare</string>
   <string name="create_group">Crea un gruppo</string>
   <string name="members">Membri</string>

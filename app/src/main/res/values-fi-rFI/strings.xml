@@ -29,9 +29,9 @@ Sallii tietojen kirjoittamisen pikaviestisovelluksiin.</string>
   <string name="lock_screen_passphrases_not_matching">Salasanat eivät täsmänneet, yritä uudelleen</string>
   <string name="lock_screen_skip">Olen laiska (Ei salasanaa)</string>
   <!--Views: Setup-->
-  <string name="add_account">Lisää &lt;xliff:g id="account"&gt;%1$s&lt;/xliff:g&gt; tili</string>
+  <string name="add_account">Lisää <xliff:g id="account">%1$s</xliff:g> tili</string>
   <string name="menu_about">Tietoa</string>
-  <string name="signed_out_prompt_with_error">Olet kirjautunut ulos palvelusta &lt;xliff:g id="account"&gt;%1$s&lt;/xliff:g&gt;, koska &lt;xliff:g id="reason"&gt;%2$s&lt;/xliff:g&gt;</string>
+  <string name="signed_out_prompt_with_error">Olet kirjautunut ulos palvelusta <xliff:g id="account">%1$s</xliff:g>, koska <xliff:g id="reason">%2$s</xliff:g></string>
   <string name="pass_err_length">Tunnuslauseesi ei ollut riittävän pitkä</string>
   <!--Views: About: Welcome-->
   <!--Views: About: OTR-->
@@ -59,23 +59,23 @@ Sallii tietojen kirjoittamisen pikaviestisovelluksiin.</string>
   <string name="menu_remove_contact">Poista yhteystieto</string>
   <string name="menu_contact_nickname">Kontaktin lempinimi</string>
   <string name="menu_view_blocked">Estetty</string>
-  <string name="confirm_delete_contact">Yhteystieto "&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt;" poistetaan.</string>
-  <string name="confirm_block_contact">Yhteystieto "&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt;" estetään.</string>
-  <string name="add_contact_success">Yhteystieto "&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt;" lisätty.</string>
-  <string name="delete_contact_success">Yhteystieto "&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt;" poistettu.</string>
-  <string name="block_contact_success">Contact "&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt;" estetty.</string>
-  <string name="unblock_contact_success">Contact "&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt;" poistettu estolistalta.</string>
+  <string name="confirm_delete_contact">Yhteystieto "<xliff:g id="user">%1$s</xliff:g>" poistetaan.</string>
+  <string name="confirm_block_contact">Yhteystieto "<xliff:g id="user">%1$s</xliff:g>" estetään.</string>
+  <string name="add_contact_success">Yhteystieto "<xliff:g id="user">%1$s</xliff:g>" lisätty.</string>
+  <string name="delete_contact_success">Yhteystieto "<xliff:g id="user">%1$s</xliff:g>" poistettu.</string>
+  <string name="block_contact_success">Contact "<xliff:g id="user">%1$s</xliff:g>" estetty.</string>
+  <string name="unblock_contact_success">Contact "<xliff:g id="user">%1$s</xliff:g>" poistettu estolistalta.</string>
   <string name="menu_verify">Varmista avain</string>
   <string name="empty_conversation_group">Ei keskusteluita</string>
   <string name="search_label">Yhteystieto</string>
   <string name="input_contact_label">Kutsuttavan henkilön sähköpostiosoite:</string>
   <!--Views: Chat: Single-->
-  <string name="contact_online">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt; on online</string>
-  <string name="contact_away">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt; on poissa</string>
-  <string name="contact_busy">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt; on kiireinen</string>
-  <string name="contact_offline">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt; on offline</string>
-  <string name="contact_joined">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt; on liittynyt</string>
-  <string name="contact_left">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt; on poistunut</string>
+  <string name="contact_online"><xliff:g id="user">%1$s</xliff:g> on online</string>
+  <string name="contact_away"><xliff:g id="user">%1$s</xliff:g> on poissa</string>
+  <string name="contact_busy"><xliff:g id="user">%1$s</xliff:g> on kiireinen</string>
+  <string name="contact_offline"><xliff:g id="user">%1$s</xliff:g> on offline</string>
+  <string name="contact_joined"><xliff:g id="user">%1$s</xliff:g> on liittynyt</string>
+  <string name="contact_left"><xliff:g id="user">%1$s</xliff:g> on poistunut</string>
   <string name="file_transfer">Tiedostojen siirto</string>
   <string name="accept_transfer_">Hyväksy tiedostonsiirto?</string>
   <string name="wants_to_send_you_the_file">haluaa lähettää sinulle tiedoston</string>
@@ -84,7 +84,7 @@ Sallii tietojen kirjoittamisen pikaviestisovelluksiin.</string>
   <string name="select_link_title">Valitse linkki</string>
   <string name="delete">Poista</string>
   <!--Views: Chat: Group-->
-  <string name="invitation_prompt">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt; on kutsunut sinut ryhmäkeskusteluun.</string>
+  <string name="invitation_prompt"><xliff:g id="user">%1$s</xliff:g> on kutsunut sinut ryhmäkeskusteluun.</string>
   <string name="accept_invitation">Hyväksy</string>
   <string name="decline_invitation">Hylkää</string>
   <string name="connecting_to_group_chat_">Yhdistetään ryhmäkeskusteluun…</string>
@@ -130,24 +130,24 @@ Klikkaa kutsuaksesi.</string>
   <string name="prompt_create_new_account_">Luo uusi tili?</string>
   <string name="allow_s_to_create_a_new_chat_account_for_s_">Luo uusi keskustelutili käyttäjänimellä \'%1$s\'?</string>
   <!--Alerts: Notifications-->
-  <string name="subscription_notify_text">Uusi ystäväpyyntö henkilöltä &lt;xliff:g id="user"&gt;%s&lt;/xliff:g&gt;</string>
-  <string name="file_notify_text">Uusi tiedosto &lt;xliff:g id="filename"&gt;%1$s&lt;/xliff:g&gt; henkilöltä &lt;xliff:g id="user"&gt;%2$s&lt;/xliff:g&gt;</string>
+  <string name="subscription_notify_text">Uusi ystäväpyyntö henkilöltä <xliff:g id="user">%s</xliff:g></string>
+  <string name="file_notify_text">Uusi tiedosto <xliff:g id="filename">%1$s</xliff:g> henkilöltä <xliff:g id="user">%2$s</xliff:g></string>
   <string name="notify_groupchat_label">Ryhmächatkutsu</string>
-  <string name="group_chat_invite_notify_text">Uusi ryhmächatkutsu henkilöltä &lt;xliff:g id="user"&gt;%s&lt;/xliff:g&gt;</string>
+  <string name="group_chat_invite_notify_text">Uusi ryhmächatkutsu henkilöltä <xliff:g id="user">%s</xliff:g></string>
   <string name="new_messages_notify">Uusia viestejä henkilöltä</string>
   <string name="app_unlocked">Aktivoitu &amp; lukitsematon</string>
   <!--Alerts: Exceptions-->
   <string name="error">Huomio</string>
   <string name="error_prefix">Virhe:</string>
-  <string name="general_error">Virhekoodi &lt;xliff:g id="code"&gt;%1$d&lt;/xliff:g&gt;</string>
-  <string name="login_service_failed">Palveluun &lt;xliff:g id="service"&gt;%1$s&lt;/xliff:g&gt; ei voitu kirjautua. Yritä uudelleen myöhemmin.\n(Lisätietoja: &lt;xliff:g id="description"&gt;%2$s&lt;/xliff:g&gt;)</string>
+  <string name="general_error">Virhekoodi <xliff:g id="code">%1$d</xliff:g></string>
+  <string name="login_service_failed">Palveluun <xliff:g id="service">%1$s</xliff:g> ei voitu kirjautua. Yritä uudelleen myöhemmin.\n(Lisätietoja: <xliff:g id="description">%2$s</xliff:g>)</string>
   <string name="add_list_failed">Listaa ei lisätty.</string>
   <string name="block_contact_failed">Kontaktia ei estetty.</string>
   <string name="unblock_contact_failed">Kontaktia ei poistettu estolistalta.</string>
   <string name="load_contact_list_failed">Kontaktilistaa ei ladattu.</string>
   <string name="cant_connect_to_server">Palvelimeen ei voitu yhdistää. Tarkista yhteytesi.</string>
-  <string name="contact_already_exist">"&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt;" on jo kontaktilistallasi.</string>
-  <string name="contact_blocked">"&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt;" on estetty.</string>
+  <string name="contact_already_exist">"<xliff:g id="user">%1$s</xliff:g>" on jo kontaktilistallasi.</string>
+  <string name="contact_blocked">"<xliff:g id="user">%1$s</xliff:g>" on estetty.</string>
   <string name="contact_not_loaded">Odota, kontaktilistaasi ladataan.</string>
   <string name="network_error">Verkkovirhe.</string>
   <string name="wifi_not_connected_error">WiFi-yhteyttä vaaditaan tähän.</string>

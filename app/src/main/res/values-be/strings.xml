@@ -27,9 +27,9 @@
   <string name="lock_screen_passphrases_not_matching">Пасворд не супадае, калі ласка праспрабуйце яшчэ раз</string>
   <string name="lock_screen_skip">Прапусціць</string>
   <!--Views: Setup-->
-  <string name="add_account">Дадаць &lt;xliff:g id="account"&gt;%1$s&lt;/xliff:g&gt; акаўнт</string>
+  <string name="add_account">Дадаць <xliff:g id="account">%1$s</xliff:g> акаўнт</string>
   <string name="menu_about">Пра прыладу</string>
-  <string name="signed_out_prompt_with_error">Вы выйшлі з &lt;xliff:g id="account"&gt;%1$s&lt;/xliff:g&gt; бо &lt;xliff:g id="reason"&gt;%2$s&lt;/xliff:g&gt;</string>
+  <string name="signed_out_prompt_with_error">Вы выйшлі з <xliff:g id="account">%1$s</xliff:g> бо <xliff:g id="reason">%2$s</xliff:g></string>
   <string name="pass_err_length">Ваш пароль не дастаткова доўгі</string>
   <!--Views: About: Welcome-->
   <!--Views: About: OTR-->

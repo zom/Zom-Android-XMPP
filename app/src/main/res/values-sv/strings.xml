@@ -30,9 +30,9 @@ Tillåt applikationer att skriva data till IM innehållsleverantör.
   <string name="lock_screen_passphrases_not_matching">Lösenord matchade inte, var vänlig försök igen</string>
   <string name="lock_screen_skip">Jag är lat (inget lösenord!)</string>
   <!--Views: Setup-->
-  <string name="add_account">Lägg till kontot &lt;xliff:g id="ACCOUNT"&gt;%1$s&lt;/xliff:g&gt;</string>
+  <string name="add_account">Lägg till kontot <xliff:g id="ACCOUNT">%1$s</xliff:g></string>
   <string name="menu_about">Om</string>
-  <string name="signed_out_prompt_with_error">Du har loggats ut från &lt;xliff:g id="account"&gt;%1$s&lt;/xliff:g&gt; på grund av &lt;xliff:g id="reason"&gt;%2$s&lt;/xliff:g&gt;</string>
+  <string name="signed_out_prompt_with_error">Du har loggats ut från <xliff:g id="account">%1$s</xliff:g> på grund av <xliff:g id="reason">%2$s</xliff:g></string>
   <string name="pass_err_length">Ditt lösenord var inte långt nog</string>
   <!--Views: About: Welcome-->
   <!--Views: About: OTR-->
@@ -76,23 +76,23 @@ Tappa här för att lägga till ett!</string>
   <string name="menu_remove_contact">Ta bort kontakt</string>
   <string name="menu_contact_nickname">Kontaktsmeknamn</string>
   <string name="menu_view_blocked">Blockerad</string>
-  <string name="confirm_delete_contact">Kontakten &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; tas bort.</string>
-  <string name="confirm_block_contact">Kontakten &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; blockeras.</string>
-  <string name="add_contact_success">Kontakten &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; har lagts till.</string>
-  <string name="delete_contact_success">Kontakten &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; har tagits bort.</string>
-  <string name="block_contact_success">Kontakten &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; är blockerad.</string>
-  <string name="unblock_contact_success">Blockering hävs för kontakten &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;.</string>
+  <string name="confirm_delete_contact">Kontakten <xliff:g id="USER">%1$s</xliff:g> tas bort.</string>
+  <string name="confirm_block_contact">Kontakten <xliff:g id="USER">%1$s</xliff:g> blockeras.</string>
+  <string name="add_contact_success">Kontakten <xliff:g id="USER">%1$s</xliff:g> har lagts till.</string>
+  <string name="delete_contact_success">Kontakten <xliff:g id="USER">%1$s</xliff:g> har tagits bort.</string>
+  <string name="block_contact_success">Kontakten <xliff:g id="USER">%1$s</xliff:g> är blockerad.</string>
+  <string name="unblock_contact_success">Blockering hävs för kontakten <xliff:g id="USER">%1$s</xliff:g>.</string>
   <string name="menu_verify">Verifiera nyckel</string>
   <string name="empty_conversation_group">Inga konversationer</string>
   <string name="search_label">Kontakt</string>
   <string name="search_hint">skriv namnet på en kontakt du vill chatta med</string>
   <!--Views: Chat: Single-->
-  <string name="contact_online">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; är online</string>
-  <string name="contact_away">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; är borta</string>
-  <string name="contact_busy">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; är upptagen</string>
-  <string name="contact_offline">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; är offline</string>
-  <string name="contact_joined">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; är med</string>
-  <string name="contact_left">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; har lämnat chatten</string>
+  <string name="contact_online"><xliff:g id="USER">%1$s</xliff:g> är online</string>
+  <string name="contact_away"><xliff:g id="USER">%1$s</xliff:g> är borta</string>
+  <string name="contact_busy"><xliff:g id="USER">%1$s</xliff:g> är upptagen</string>
+  <string name="contact_offline"><xliff:g id="USER">%1$s</xliff:g> är offline</string>
+  <string name="contact_joined"><xliff:g id="USER">%1$s</xliff:g> är med</string>
+  <string name="contact_left"><xliff:g id="USER">%1$s</xliff:g> har lämnat chatten</string>
   <string name="file_transfer">Filöverföring</string>
   <string name="accept_transfer_">Acceptera överföring?</string>
   <string name="wants_to_send_you_the_file">vill skicka dig filen</string>
@@ -104,15 +104,15 @@ Tappa här för att lägga till ett!</string>
   <string name="delete">Radera</string>
   <string name="export_media">Exportera mediafil?</string>
   <!--Views: Chat: Group-->
-  <string name="invitation_prompt">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; har bjudit in dig till en gruppchatt.</string>
+  <string name="invitation_prompt"><xliff:g id="USER">%1$s</xliff:g> har bjudit in dig till en gruppchatt.</string>
   <string name="accept_invitation">Acceptera</string>
   <string name="decline_invitation">Avvisa</string>
   <string name="connecting_to_group_chat_">Ansluter till gruppchatt…</string>
   <string name="empty_contact_list">Inga kontakter funna.
 
 Klicka för att bjuda in.</string>
-  <string name="approve_subscription_error">Det gick inte att godkänna prenumeration från &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;. Försök igen lite senare.</string>
-  <string name="decline_subscription_error">Det gick inte att avvisa prenumeration från &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;. Försök igen senare.</string>
+  <string name="approve_subscription_error">Det gick inte att godkänna prenumeration från <xliff:g id="USER">%1$s</xliff:g>. Försök igen lite senare.</string>
+  <string name="decline_subscription_error">Det gick inte att avvisa prenumeration från <xliff:g id="USER">%1$s</xliff:g>. Försök igen senare.</string>
   <!--Security: OTR-->
   <string name="otr_session_status_finished">Din kontakt har stoppat den krypterade chatten.</string>
   <!--Security: OTR: Keyring-->
@@ -168,24 +168,24 @@ Nätverkstrafik (även i bakgrunden) krävs för att kunna logga in med appen.</
   <string name="prompt_create_new_account_">Skapa nytt konto?</string>
   <string name="allow_s_to_create_a_new_chat_account_for_s_">Skapa nytt chattkonto för användarnamn \'%1$s\'?</string>
   <!--Alerts: Notifications-->
-  <string name="subscription_notify_text">Ny kontaktförfrågan från &lt;xliff:g id="user"&gt;%s&lt;/xliff:g&gt;</string>
-  <string name="file_notify_text">Ny fil &lt;xliff:g id="filename"&gt;%1$s&lt;/xliff:g&gt; från &lt;xliff:g id="user"&gt;%2$s&lt;/xliff:g&gt;</string>
+  <string name="subscription_notify_text">Ny kontaktförfrågan från <xliff:g id="user">%s</xliff:g></string>
+  <string name="file_notify_text">Ny fil <xliff:g id="filename">%1$s</xliff:g> från <xliff:g id="user">%2$s</xliff:g></string>
   <string name="notify_groupchat_label">Inbjudan till gruppchatt</string>
-  <string name="group_chat_invite_notify_text">Ny gruppchattinbjudan från &lt;xliff:g id="user"&gt;%s&lt;/xliff:g&gt;</string>
+  <string name="group_chat_invite_notify_text">Ny gruppchattinbjudan från <xliff:g id="user">%s</xliff:g></string>
   <string name="new_messages_notify">Nytt meddelande(n) från</string>
   <string name="app_unlocked">Aktiverad &amp; olåst</string>
   <!--Alerts: Exceptions-->
   <string name="error">Obs!</string>
   <string name="error_prefix">Fel:</string>
-  <string name="general_error">Felkod &lt;xliff:g id="CODE"&gt;%1$d&lt;/xliff:g&gt;</string>
-  <string name="login_service_failed">Det gick inte att logga in till tjänsten &lt;xliff:g id="SERVICE"&gt;%1$s&lt;/xliff:g&gt;. Försök igen senare."\n"(Information: &lt;xliff:g id="DESCRIPTION"&gt;%2$s&lt;/xliff:g&gt;)</string>
+  <string name="general_error">Felkod <xliff:g id="CODE">%1$d</xliff:g></string>
+  <string name="login_service_failed">Det gick inte att logga in till tjänsten <xliff:g id="SERVICE">%1$s</xliff:g>. Försök igen senare."\n"(Information: <xliff:g id="DESCRIPTION">%2$s</xliff:g>)</string>
   <string name="add_list_failed">Det gick inte att lägga till listan.</string>
   <string name="block_contact_failed">Kontakten blockerades inte.</string>
   <string name="unblock_contact_failed">Blockeringen hävdes inte för kontakten.</string>
   <string name="load_contact_list_failed">Det gick inte att hämta kontaktlistan.</string>
   <string name="cant_connect_to_server">Det går inte att ansluta till servern. Kontrollera anslutningen.</string>
-  <string name="contact_already_exist">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; finns redan i din Kontaktlista.</string>
-  <string name="contact_blocked">Kontakten &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; har blockerats.</string>
+  <string name="contact_already_exist"><xliff:g id="USER">%1$s</xliff:g> finns redan i din Kontaktlista.</string>
+  <string name="contact_blocked">Kontakten <xliff:g id="USER">%1$s</xliff:g> har blockerats.</string>
   <string name="contact_not_loaded">Vänta medan vi hämtar din Kontaktlista.</string>
   <string name="network_error">Ett nätverksfel inträffade.</string>
   <string name="wifi_not_connected_error">WiFi behövs för denna anslutning.</string>

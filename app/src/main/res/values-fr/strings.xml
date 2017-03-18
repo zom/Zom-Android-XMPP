@@ -28,7 +28,7 @@ Permet aux applications d\'écrire des données au fournisseur de contenu de mes
   <string name="lock_screen_passphrases_not_matching">Les mots de passe ne correspondent pas, veuillez essayer à nouveau</string>
   <string name="lock_screen_skip">J\'ai la flemme (PAS de mot de passe!)</string>
   <!--Views: Setup-->
-  <string name="add_account">Ajouter un compte &lt;xliff:g id=\"ACCOUNT\"&gt;%1$s&lt;/xliff:g&gt;</string>
+  <string name="add_account">Ajouter un compte <xliff:g id="ACCOUNT">%1$s</xliff:g></string>
   <string name="menu_about">À propos</string>
   <string name="pass_err_length">Votre phrase secrète est trop courte</string>
   <!--Views: About: Welcome-->
@@ -73,23 +73,23 @@ Appuyez ici pour en ajouter un !</string>
   <string name="menu_remove_contact">Supprimer le contact</string>
   <string name="menu_contact_nickname">Surnom du contact</string>
   <string name="menu_view_blocked">Bloqué</string>
-  <string name="confirm_delete_contact">Le contact \"&lt;xliff:g id=\"USER\"&gt;%1$s&lt;/xliff:g&gt;\" sera supprimé.</string>
-  <string name="confirm_block_contact">Le contact \"&lt;xliff:g id=\"USER\"&gt;%1$s&lt;/xliff:g&gt;\" sera bloqué.</string>
-  <string name="add_contact_success">Contact \"&lt;xliff:g id=\"USER\"&gt;%1$s&lt;/xliff:g&gt;\" ajouté.</string>
-  <string name="delete_contact_success">Contact \"&lt;xliff:g id=\"USER\"&gt;%1$s&lt;/xliff:g&gt;\" supprimé.</string>
-  <string name="block_contact_success">Contact \"&lt;xliff:g id=\"USER\"&gt;%1$s&lt;/xliff:g&gt;\" bloqué.</string>
-  <string name="unblock_contact_success">Contact \"&lt;xliff:g id=\"USER\"&gt;%1$s&lt;/xliff:g&gt;\" débloqué.</string>
+  <string name="confirm_delete_contact">Le contact \"<xliff:g id="USER">%1$s</xliff:g>\" sera supprimé.</string>
+  <string name="confirm_block_contact">Le contact \"<xliff:g id="USER">%1$s</xliff:g>\" sera bloqué.</string>
+  <string name="add_contact_success">Contact \"<xliff:g id="USER">%1$s</xliff:g>\" ajouté.</string>
+  <string name="delete_contact_success">Contact \"<xliff:g id="USER">%1$s</xliff:g>\" supprimé.</string>
+  <string name="block_contact_success">Contact \"<xliff:g id="USER">%1$s</xliff:g>\" bloqué.</string>
+  <string name="unblock_contact_success">Contact \"<xliff:g id="USER">%1$s</xliff:g>\" débloqué.</string>
   <string name="menu_verify">Vérifier la clé</string>
   <string name="empty_conversation_group">Aucune conversation</string>
   <string name="search_label">Contact</string>
   <string name="search_hint">Tappez le nom d\'un contact avec qui discuter</string>
   <!--Views: Chat: Single-->
-  <string name="contact_online">&lt;xliff:g id=\"USER\"&gt;%1$s&lt;/xliff:g&gt; est en ligne</string>
-  <string name="contact_away">&lt;xliff:g id=\"USER\"&gt;%1$s&lt;/xliff:g&gt; est absent</string>
-  <string name="contact_busy">&lt;xliff:g id=\"USER\"&gt;%1$s&lt;/xliff:g&gt; est occupé</string>
-  <string name="contact_offline">&lt;xliff:g id=\"USER\"&gt;%1$s&lt;/xliff:g&gt; est hors ligne</string>
-  <string name="contact_joined">&lt;xliff:g id=\"USER\"&gt;%1$s&lt;/xliff:g&gt; a rejoint la conversation</string>
-  <string name="contact_left">&lt;xliff:g id=\"USER\"&gt;%1$s&lt;/xliff:g&gt; a quitté la conversation</string>
+  <string name="contact_online"><xliff:g id="USER">%1$s</xliff:g> est en ligne</string>
+  <string name="contact_away"><xliff:g id="USER">%1$s</xliff:g> est absent</string>
+  <string name="contact_busy"><xliff:g id="USER">%1$s</xliff:g> est occupé</string>
+  <string name="contact_offline"><xliff:g id="USER">%1$s</xliff:g> est hors ligne</string>
+  <string name="contact_joined"><xliff:g id="USER">%1$s</xliff:g> a rejoint la conversation</string>
+  <string name="contact_left"><xliff:g id="USER">%1$s</xliff:g> a quitté la conversation</string>
   <string name="file_transfer">Transfert de fichier</string>
   <string name="accept_transfer_">Accepter le transfert ?</string>
   <string name="wants_to_send_you_the_file">souhaite vous envoyer le fichier</string>
@@ -99,7 +99,7 @@ Appuyez ici pour en ajouter un !</string>
   <string name="select_link_title">Sélectionner le lien</string>
   <string name="delete">Supprimer</string>
   <!--Views: Chat: Group-->
-  <string name="invitation_prompt">&lt;xliff:g id=\"USER\"&gt;%1$s&lt;/xliff:g&gt; vous a invité à rejoindre un chat en groupe.</string>
+  <string name="invitation_prompt"><xliff:g id="USER">%1$s</xliff:g> vous a invité à rejoindre un chat en groupe.</string>
   <string name="accept_invitation">Accepter</string>
   <string name="decline_invitation">Refuser</string>
   <string name="connecting_to_group_chat_">Connexion au chat de groupe…</string>
@@ -108,8 +108,8 @@ Appuyez ici pour en ajouter un !</string>
 Appuyez pour inviter.</string>
   <string name="approve_subscription">Oui</string>
   <string name="decline_subscription">Non</string>
-  <string name="approve_subscription_error">Impossible d\'approuver l\'inscription de &lt;xliff:g id=\"USER\"&gt;%1$s&lt;/xliff:g&gt;. Veuillez réessayer ultérieurement.</string>
-  <string name="decline_subscription_error">Impossible de refuser l\'inscription de &lt;xliff:g id=\"USER\"&gt;%1$s&lt;/xliff:g&gt;. Veuillez réessayer ultérieurement.</string>
+  <string name="approve_subscription_error">Impossible d\'approuver l\'inscription de <xliff:g id="USER">%1$s</xliff:g>. Veuillez réessayer ultérieurement.</string>
+  <string name="decline_subscription_error">Impossible de refuser l\'inscription de <xliff:g id="USER">%1$s</xliff:g>. Veuillez réessayer ultérieurement.</string>
   <!--Security: OTR-->
   <string name="otr_session_status_finished">Votre contact a arrêté le chat chiffré.</string>
   <!--Security: OTR: Keyring-->
@@ -153,7 +153,7 @@ Appuyez pour inviter.</string>
   <string name="pref_debug_title">Activer journal de déboguage</string>
   <string name="pref_debug_summary">Afficher journal de l\'application sur la sortie standard / logcat pour déboguage</string>
   <!--Alerts: Dialogs-->
-  <string name="bg_data_prompt_message">Les données d\'arrière-plan sont requises pour l\'activation de &lt;xliff:g id=\"PROVIDER\"&gt;%1$s&lt;/xliff:g&gt;.</string>
+  <string name="bg_data_prompt_message">Les données d\'arrière-plan sont requises pour l\'activation de <xliff:g id="PROVIDER">%1$s</xliff:g>.</string>
   <string name="prompt_create_new_account_">Créer un nouveau compte ?</string>
   <string name="allow_s_to_create_a_new_chat_account_for_s_">Créer un nouveau compte de chat pour \'%1$s\'?</string>
   <!--Alerts: Notifications-->
@@ -162,15 +162,15 @@ Appuyez pour inviter.</string>
   <string name="app_unlocked">Activé &amp; déverrouillé</string>
   <!--Alerts: Exceptions-->
   <string name="error">Avertissement</string>
-  <string name="general_error">Code d\'erreur &lt;xliff:g id=\"CODE\"&gt;%1$d&lt;/xliff:g&gt;</string>
-  <string name="login_service_failed">Connexion au service &lt;xliff:g id=\"SERVICE\"&gt;%1$s&lt;/xliff:g&gt; impossible. Veuillez réessayer ultérieurement.\"\n\"(Détails : &lt;xliff:g id=\"DESCRIPTION\"&gt;%2$s&lt;/xliff:g&gt;)</string>
+  <string name="general_error">Code d\'erreur <xliff:g id="CODE">%1$d</xliff:g></string>
+  <string name="login_service_failed">Connexion au service <xliff:g id="SERVICE">%1$s</xliff:g> impossible. Veuillez réessayer ultérieurement.\"\n\"(Détails : <xliff:g id="DESCRIPTION">%2$s</xliff:g>)</string>
   <string name="add_list_failed">La liste n\'a pas été ajoutée.</string>
   <string name="block_contact_failed">Le contact n\'a pas été bloqué.</string>
   <string name="unblock_contact_failed">Le contact n\'a pas été débloqué.</string>
   <string name="load_contact_list_failed">La liste de contacts n\'a pas pu être chargée.</string>
   <string name="cant_connect_to_server">Connexion au serveur impossible. Veuillez vérifier votre connexion.</string>
-  <string name="contact_already_exist">&lt;xliff:g id=\"USER\"&gt;%1$s&lt;/xliff:g&gt; existe déjà dans votre liste de contacts.</string>
-  <string name="contact_blocked">Le contact \"&lt;xliff:g id=\"USER\"&gt;%1$s&lt;/xliff:g&gt;\" a été bloqué.</string>
+  <string name="contact_already_exist"><xliff:g id="USER">%1$s</xliff:g> existe déjà dans votre liste de contacts.</string>
+  <string name="contact_blocked">Le contact \"<xliff:g id="USER">%1$s</xliff:g>\" a été bloqué.</string>
   <string name="contact_not_loaded">Veuillez patienter pendant le chargement de votre liste de contacts.</string>
   <string name="network_error">Une erreur réseau s\'est produite.</string>
   <string name="wifi_not_connected_error">Le WiFi est requis pour cette connexion.</string>

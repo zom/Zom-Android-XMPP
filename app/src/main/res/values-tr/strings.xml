@@ -27,9 +27,9 @@
   <string name="lock_screen_passphrases_not_matching">Parola uyumlu değil, lütfen yeniden deneyin</string>
   <string name="lock_screen_skip">Tembelin tekiyim (Ne Parolası!)</string>
   <!--Views: Setup-->
-  <string name="add_account">&lt;xliff:g id="ACCOUNT"&gt;%1$s&lt;/xliff:g&gt; hesabını ekle</string>
+  <string name="add_account"><xliff:g id="ACCOUNT">%1$s</xliff:g> hesabını ekle</string>
   <string name="menu_about">Hakkında</string>
-  <string name="signed_out_prompt_with_error">&lt;xliff:g id="account"&gt;%1$s&lt;/xliff:g&gt; oturumunuz &lt;xliff:g id="reason"&gt;%2$s&lt;/xliff:g&gt; nedeniyle kapatıldı.</string>
+  <string name="signed_out_prompt_with_error"><xliff:g id="account">%1$s</xliff:g> oturumunuz <xliff:g id="reason">%2$s</xliff:g> nedeniyle kapatıldı.</string>
   <string name="pass_err_length">Parolanız yeterince uzun değil.</string>
   <!--Views: About: Welcome-->
   <!--Views: About: OTR-->
@@ -74,23 +74,23 @@ Eklemek için basın!</string>
   <string name="menu_contact_nickname">Kişi takma adı</string>
   <string name="menu_view_blocked">Engellenenler</string>
   <string name="nickname">Rumuz</string>
-  <string name="confirm_delete_contact">"&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;" kişisi silinecek.</string>
-  <string name="confirm_block_contact">"&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;" kişisi engellenecek.</string>
-  <string name="add_contact_success">"&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;" kişisi eklendi.</string>
-  <string name="delete_contact_success">"&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;" kişisi silindi.</string>
-  <string name="block_contact_success">"&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;" kişisi engellendi.</string>
-  <string name="unblock_contact_success">"&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;" kişisinin engellemesi kaldırıldı.</string>
+  <string name="confirm_delete_contact">"<xliff:g id="USER">%1$s</xliff:g>" kişisi silinecek.</string>
+  <string name="confirm_block_contact">"<xliff:g id="USER">%1$s</xliff:g>" kişisi engellenecek.</string>
+  <string name="add_contact_success">"<xliff:g id="USER">%1$s</xliff:g>" kişisi eklendi.</string>
+  <string name="delete_contact_success">"<xliff:g id="USER">%1$s</xliff:g>" kişisi silindi.</string>
+  <string name="block_contact_success">"<xliff:g id="USER">%1$s</xliff:g>" kişisi engellendi.</string>
+  <string name="unblock_contact_success">"<xliff:g id="USER">%1$s</xliff:g>" kişisinin engellemesi kaldırıldı.</string>
   <string name="menu_verify">Anahtarı Doğrula</string>
   <string name="empty_conversation_group">Konuşma yok</string>
   <string name="search_label">Kişi</string>
   <string name="search_hint">Sohbet edilecek bağlantının ismini yazın</string>
   <!--Views: Chat: Single-->
-  <string name="contact_online">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; çevrimiçi</string>
-  <string name="contact_away">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; dışarıda</string>
-  <string name="contact_busy">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; meşgul</string>
-  <string name="contact_offline">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; çevrimdışı</string>
-  <string name="contact_joined">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; katıldı</string>
-  <string name="contact_left">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; ayrıldı</string>
+  <string name="contact_online"><xliff:g id="USER">%1$s</xliff:g> çevrimiçi</string>
+  <string name="contact_away"><xliff:g id="USER">%1$s</xliff:g> dışarıda</string>
+  <string name="contact_busy"><xliff:g id="USER">%1$s</xliff:g> meşgul</string>
+  <string name="contact_offline"><xliff:g id="USER">%1$s</xliff:g> çevrimdışı</string>
+  <string name="contact_joined"><xliff:g id="USER">%1$s</xliff:g> katıldı</string>
+  <string name="contact_left"><xliff:g id="USER">%1$s</xliff:g> ayrıldı</string>
   <string name="file_transfer">Dosya Aktarımı</string>
   <string name="accept_transfer_">Aktarımı kabul?</string>
   <string name="wants_to_send_you_the_file">size dosyayı göndermek istiyor</string>
@@ -101,15 +101,15 @@ Eklemek için basın!</string>
   <string name="select_link_title">Bağlantıyı seç</string>
   <string name="delete">Sil</string>
   <!--Views: Chat: Group-->
-  <string name="invitation_prompt">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; sizi bir grup sohbetine katılmaya davet etti.</string>
+  <string name="invitation_prompt"><xliff:g id="USER">%1$s</xliff:g> sizi bir grup sohbetine katılmaya davet etti.</string>
   <string name="accept_invitation">Kabul Et</string>
   <string name="decline_invitation">Reddet</string>
   <string name="connecting_to_group_chat_">Grup sohbete bağlanılıyor…</string>
   <string name="empty_contact_list">Hiçbir kişi bulunamadı.
 
 Davet etmek için buraya basın.</string>
-  <string name="approve_subscription_error">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; kullanıcısından gelen abonelik onaylanamıyor. Lütfen daha sonra tekrar deneyin.</string>
-  <string name="decline_subscription_error">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; kullanıcısından gelen abonelik reddedilemiyor. Lütfen daha sonra tekrar deneyin.</string>
+  <string name="approve_subscription_error"><xliff:g id="USER">%1$s</xliff:g> kullanıcısından gelen abonelik onaylanamıyor. Lütfen daha sonra tekrar deneyin.</string>
+  <string name="decline_subscription_error"><xliff:g id="USER">%1$s</xliff:g> kullanıcısından gelen abonelik reddedilemiyor. Lütfen daha sonra tekrar deneyin.</string>
   <!--Security: OTR-->
   <string name="otr_session_status_finished">Karşı taraf şifreli görüşmeyi durdurdu.</string>
   <!--Security: OTR: Keyring-->
@@ -157,28 +157,28 @@ Davet etmek için buraya basın.</string>
   <string name="pref_debug_title">Hata Ayıklama günlüğünü etkinleştir</string>
   <string name="pref_debug_summary">Uygulama çıkış kayıt verisini hata ayıklama için standart çıkışa / logcat\'e</string>
   <!--Alerts: Dialogs-->
-  <string name="bg_data_prompt_message">&lt;xliff:g id="PROVIDER"&gt;%1$s&lt;/xliff:g&gt; arka plan verilerinin etkinleştirilmesine gereksinim duyuyor.</string>
+  <string name="bg_data_prompt_message"><xliff:g id="PROVIDER">%1$s</xliff:g> arka plan verilerinin etkinleştirilmesine gereksinim duyuyor.</string>
   <string name="prompt_create_new_account_">Yeni hesap oluştur?</string>
   <string name="allow_s_to_create_a_new_chat_account_for_s_">\'%1$s\' kullanıcısı için yeni bir sohbet hesabı oluşturulsun mu?</string>
   <!--Alerts: Notifications-->
-  <string name="subscription_notify_text">&lt;xliff:g id="user"&gt;%s&lt;/xliff:g&gt; kullanıcısından yeni arkadaş davetiyesi</string>
-  <string name="file_notify_text">&lt;xliff:g id="filename"&gt;%1$s&lt;/xliff:g&gt; kullanıcısından yeni dosya &lt;xliff:g id="user"&gt;%2$s&lt;/xliff:g&gt;</string>
+  <string name="subscription_notify_text"><xliff:g id="user">%s</xliff:g> kullanıcısından yeni arkadaş davetiyesi</string>
+  <string name="file_notify_text"><xliff:g id="filename">%1$s</xliff:g> kullanıcısından yeni dosya <xliff:g id="user">%2$s</xliff:g></string>
   <string name="notify_groupchat_label">Grup sohbeti davetiyeleri</string>
-  <string name="group_chat_invite_notify_text">&lt;xliff:g id="user"&gt;%s&lt;/xliff:g&gt; kullanıcısından gelen yeni grup sohbeti daveti</string>
+  <string name="group_chat_invite_notify_text"><xliff:g id="user">%s</xliff:g> kullanıcısından gelen yeni grup sohbeti daveti</string>
   <string name="new_messages_notify">Gelen yeni ileti(ler)</string>
   <string name="app_unlocked">Etkinleştirildi &amp; kilidi açıldı</string>
   <!--Alerts: Exceptions-->
   <string name="error">Dikkat</string>
   <string name="error_prefix">Hata:</string>
-  <string name="general_error">Hata kodu &lt;xliff:g id="CODE"&gt;%1$d&lt;/xliff:g&gt;</string>
-  <string name="login_service_failed">&lt;xliff:g id="SERVICE"&gt;%1$s&lt;/xliff:g&gt; hizmetinde oturum açılamıyor. Lütfen daha sonra tekrar deneyin."\n"(Ayrıntılı bilgi: &lt;xliff:g id="DESCRIPTION"&gt;%2$s&lt;/xliff:g&gt;)</string>
+  <string name="general_error">Hata kodu <xliff:g id="CODE">%1$d</xliff:g></string>
+  <string name="login_service_failed"><xliff:g id="SERVICE">%1$s</xliff:g> hizmetinde oturum açılamıyor. Lütfen daha sonra tekrar deneyin."\n"(Ayrıntılı bilgi: <xliff:g id="DESCRIPTION">%2$s</xliff:g>)</string>
   <string name="add_list_failed">Liste eklenmedi.</string>
   <string name="block_contact_failed">Kişi engellenmedi.</string>
   <string name="unblock_contact_failed">Kişinin engellemesi kaldırılmadı.</string>
   <string name="load_contact_list_failed">Kişi listesi yüklenmedi.</string>
   <string name="cant_connect_to_server">Sunucuya bağlanılamıyor. Lütfen bağlantınızı kontrol edin.</string>
-  <string name="contact_already_exist">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; zaten Kişi listenizde var.</string>
-  <string name="contact_blocked">"&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;" kişisi engellenmiş.</string>
+  <string name="contact_already_exist"><xliff:g id="USER">%1$s</xliff:g> zaten Kişi listenizde var.</string>
+  <string name="contact_blocked">"<xliff:g id="USER">%1$s</xliff:g>" kişisi engellenmiş.</string>
   <string name="contact_not_loaded">Kişi listeniz yüklenirken lütfen bekleyin.</string>
   <string name="network_error">Bir ağ hatası oluştu.</string>
   <string name="wifi_not_connected_error">Bu bağlantı için WiFi gereklidir.</string>

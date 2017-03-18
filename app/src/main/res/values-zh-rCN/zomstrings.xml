@@ -20,8 +20,8 @@
   <string name="choose_friend">选择朋友</string>
   <string name="send_message">发送信息</string>
   <string name="push_to_talk">按住说话</string>
-  <string name="recording_release">录音中... 放开手指以发送</string>
-  <string name="recording_delete">录音中... 放开手指以取消发送</string>
+  <string name="recording_release">录音中… 放开手指以发送</string>
+  <string name="recording_delete">录音中… 放开手指以取消发送</string>
   <string name="swipe_up_delete">向上滑动去删除</string>
   <string name="create_group">删除群聊</string>
   <string name="members">成员</string>

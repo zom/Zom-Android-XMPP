@@ -13,7 +13,7 @@
   <!--Views-->
   <string name="lock_screen_passphrase_hint">कूटशब्द </string>
   <!--Views: Setup-->
-  <string name="add_account">&lt;xliff:g id="account"&gt;%1$s&lt;/xliff:g&gt; खाता जोड़ें </string>
+  <string name="add_account"><xliff:g id="account">%1$s</xliff:g> खाता जोड़ें </string>
   <string name="menu_about">परिचय </string>
   <!--Views: About: Welcome-->
   <!--Views: About: OTR-->
@@ -52,7 +52,7 @@
   <!--Alerts: Exceptions-->
   <string name="error">ध्यान </string>
   <string name="error_prefix">त्रुटि:</string>
-  <string name="general_error">त्रुटि कोड  &lt;xliff:g id="code"&gt;%1$d&lt;/xliff:g&gt;</string>
+  <string name="general_error">त्रुटि कोड  <xliff:g id="code">%1$d</xliff:g></string>
   <string name="msg_sent_failed">संदेश नहीं भेजा गया </string>
   <string name="account_settings_title">खाता विन्यास </string>
   <!--added 2011/09/01-->

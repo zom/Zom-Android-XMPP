@@ -29,9 +29,9 @@ Aplikazioek BM eduki hornitzailean irakurtzea baimentzen du.</string>
   <string name="lock_screen_passphrases_not_matching">Pasahitzak ez datoz bat, saiatu berriro mesedez</string>
   <string name="lock_screen_skip">Alfer nabil (Pasahitzik ez!)</string>
   <!--Views: Setup-->
-  <string name="add_account">&lt;xliff:g id=\"account\"&gt;%1$s&lt;/xliff:g&gt; kontua gehitu</string>
+  <string name="add_account"><xliff:g id="account">%1$s</xliff:g> kontua gehitu</string>
   <string name="menu_about">Honi buruz</string>
-  <string name="signed_out_prompt_with_error">&lt;xliff:g id=\"account\"&gt;%1$s&lt;/xliff:g&gt; zerbitzariak saioa bukatu du, arrazoi honengatik: &lt;xliff:g id=\"reason\"&gt;%2$s&lt;/xliff:g&gt;</string>
+  <string name="signed_out_prompt_with_error"><xliff:g id="account">%1$s</xliff:g> zerbitzariak saioa bukatu du, arrazoi honengatik: <xliff:g id="reason">%2$s</xliff:g></string>
   <string name="pass_err_length">Zure pasaesaldia ez du luzera nahikorik</string>
   <!--Views: About: Welcome-->
   <!--Views: About: OTR-->
@@ -75,23 +75,23 @@ Hemen ikutu  bat gehitzeko!</string>
   <string name="menu_remove_contact">Kontaktua ezabatu</string>
   <string name="menu_contact_nickname">Kontaktuaren ezizena</string>
   <string name="menu_view_blocked">Blokeatuta</string>
-  <string name="confirm_delete_contact">\"&lt;xliff:g id=\"user\"&gt;%1$s&lt;/xliff:g&gt;\" kontaktua ezabatuko da.</string>
-  <string name="confirm_block_contact">\"&lt;xliff:g id=\"user\"&gt;%1$s&lt;/xliff:g&gt;\" kontaktua blokeatuko da.</string>
-  <string name="add_contact_success">\"&lt;xliff:g id=\"user\"&gt;%1$s&lt;/xliff:g&gt;\" kontaktua gehituta.</string>
-  <string name="delete_contact_success">\"&lt;xliff:g id=\"user\"&gt;%1$s&lt;/xliff:g&gt;\" kontaktua ezabatuta.</string>
-  <string name="block_contact_success">\"&lt;xliff:g id=\"user\"&gt;%1$s&lt;/xliff:g&gt;\" kontaktua blokeatuta.</string>
-  <string name="unblock_contact_success">\"&lt;xliff:g id=\"user\"&gt;%1$s&lt;/xliff:g&gt;\" kontaktua desblokeatuta.</string>
+  <string name="confirm_delete_contact">\"<xliff:g id="user">%1$s</xliff:g>\" kontaktua ezabatuko da.</string>
+  <string name="confirm_block_contact">\"<xliff:g id="user">%1$s</xliff:g>\" kontaktua blokeatuko da.</string>
+  <string name="add_contact_success">\"<xliff:g id="user">%1$s</xliff:g>\" kontaktua gehituta.</string>
+  <string name="delete_contact_success">\"<xliff:g id="user">%1$s</xliff:g>\" kontaktua ezabatuta.</string>
+  <string name="block_contact_success">\"<xliff:g id="user">%1$s</xliff:g>\" kontaktua blokeatuta.</string>
+  <string name="unblock_contact_success">\"<xliff:g id="user">%1$s</xliff:g>\" kontaktua desblokeatuta.</string>
   <string name="menu_verify">Gakoa egiaztatu</string>
   <string name="empty_conversation_group">Elkarrizketarik ez</string>
   <string name="search_label">Kontaktua</string>
   <string name="search_hint">idatzi norekin egin nahi duzun berriketan</string>
   <!--Views: Chat: Single-->
-  <string name="contact_online">&lt;xliff:g id=\"user\"&gt;%1$s&lt;/xliff:g&gt; linean dago</string>
-  <string name="contact_away">&lt;xliff:g id=\"user\"&gt;%1$s&lt;/xliff:g&gt; kanpoan dago</string>
-  <string name="contact_busy">&lt;xliff:g id=\"user\"&gt;%1$s&lt;/xliff:g&gt; lanpetuta dago</string>
-  <string name="contact_offline">&lt;xliff:g id=\"user\"&gt;%1$s&lt;/xliff:g&gt; lineaz kanpo dago</string>
-  <string name="contact_joined">&lt;xliff:g id=\"user\"&gt;%1$s&lt;/xliff:g&gt; etorri da</string>
-  <string name="contact_left">&lt;xliff:g id=\"user\"&gt;%1$s&lt;/xliff:g&gt; joan da</string>
+  <string name="contact_online"><xliff:g id="user">%1$s</xliff:g> linean dago</string>
+  <string name="contact_away"><xliff:g id="user">%1$s</xliff:g> kanpoan dago</string>
+  <string name="contact_busy"><xliff:g id="user">%1$s</xliff:g> lanpetuta dago</string>
+  <string name="contact_offline"><xliff:g id="user">%1$s</xliff:g> lineaz kanpo dago</string>
+  <string name="contact_joined"><xliff:g id="user">%1$s</xliff:g> etorri da</string>
+  <string name="contact_left"><xliff:g id="user">%1$s</xliff:g> joan da</string>
   <string name="file_transfer">Fitxategi transferentzia</string>
   <string name="accept_transfer_">Transferentzia onartu?</string>
   <string name="wants_to_send_you_the_file">fitxategi hau bidali nahi dizu</string>
@@ -100,15 +100,15 @@ Hemen ikutu  bat gehitzeko!</string>
   <string name="menu_end_conversation">Berriketa amaitu</string>
   <string name="select_link_title">Lotura aukeratu</string>
   <!--Views: Chat: Group-->
-  <string name="invitation_prompt">&lt;xliff:g id=\"user\"&gt;%1$s&lt;/xliff:g&gt; erabiltzaileak talde berriketara gonbidatu zaitu.</string>
+  <string name="invitation_prompt"><xliff:g id="user">%1$s</xliff:g> erabiltzaileak talde berriketara gonbidatu zaitu.</string>
   <string name="accept_invitation">Onartu</string>
   <string name="decline_invitation">Ukatu</string>
   <string name="connecting_to_group_chat_">Talde berriketara konektatzen…</string>
   <string name="empty_contact_list">Ez dago kontakturik.
 
 Ikutu gonbidatzeko.</string>
-  <string name="approve_subscription_error">Ezin da &lt;xliff:g id=\"user\"&gt;%1$s&lt;/xliff:g&gt; erabiltzailearen harpidetza onartu. Saiatu geroago mesedez.</string>
-  <string name="decline_subscription_error">Ezin da &lt;xliff:g id=\"user\"&gt;%1$s&lt;/xliff:g&gt; erabiltzailearen harpidetza ukatu. Saiatu geroago mesedez.</string>
+  <string name="approve_subscription_error">Ezin da <xliff:g id="user">%1$s</xliff:g> erabiltzailearen harpidetza onartu. Saiatu geroago mesedez.</string>
+  <string name="decline_subscription_error">Ezin da <xliff:g id="user">%1$s</xliff:g> erabiltzailearen harpidetza ukatu. Saiatu geroago mesedez.</string>
   <!--Security: OTR-->
   <string name="otr_session_status_finished">Zure kontaktuak berriketa zifratua gelditu du.</string>
   <!--Security: OTR: Keyring-->
@@ -164,14 +164,14 @@ Sareko datuen konektibitatea (baita atzeko planoko datuena) beharrezkoa da aplik
   <string name="app_unlocked">Gaituta eta desblokeatuta</string>
   <!--Alerts: Exceptions-->
   <string name="error">Arreta</string>
-  <string name="general_error">&lt;xliff:g id=\"code\"&gt;%1$d&lt;/xliff:g&gt; errore kodea</string>
+  <string name="general_error"><xliff:g id="code">%1$d</xliff:g> errore kodea</string>
   <string name="add_list_failed">Zerrenda ez da gehitu.</string>
   <string name="block_contact_failed">Kontaktua ez zegoen blokeatuta</string>
   <string name="unblock_contact_failed">Kontaktua ez zegoen desblokeatuta</string>
   <string name="load_contact_list_failed">Kontaktu zerrenda ez da kargatu.</string>
   <string name="cant_connect_to_server">Ezin da zerbitzarira konektatu. Egiaztatu zure konexioa.</string>
-  <string name="contact_already_exist">\"&lt;xliff:g id=\"user\"&gt;%1$s&lt;/xliff:g&gt;\" dagoeneko zure kontaktu zerrendan dago.</string>
-  <string name="contact_blocked">\"&lt;xliff:g id=\"user\"&gt;%1$s&lt;/xliff:g&gt;\" kontaktua blokeatua izan da</string>
+  <string name="contact_already_exist">\"<xliff:g id="user">%1$s</xliff:g>\" dagoeneko zure kontaktu zerrendan dago.</string>
+  <string name="contact_blocked">\"<xliff:g id="user">%1$s</xliff:g>\" kontaktua blokeatua izan da</string>
   <string name="contact_not_loaded">Mesedez itxaron zure kontaktu zerrenda kargatu bitartean.</string>
   <string name="network_error">Sare akats bat gertatu da.</string>
   <string name="wifi_not_connected_error">Konexio honetarako WiFi-a beharrezkoa da.</string>

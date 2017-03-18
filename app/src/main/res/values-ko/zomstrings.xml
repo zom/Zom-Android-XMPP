@@ -19,8 +19,8 @@
   <string name="chats">채팅</string>
   <string name="choose_friend">친구 선택</string>
   <string name="send_message">메세지 발송</string>
-  <string name="recording_release">녹음중... 놓아서 보내기</string>
-  <string name="recording_delete">녹음중... 놓아서 삭제</string>
+  <string name="recording_release">녹음중… 놓아서 보내기</string>
+  <string name="recording_delete">녹음중… 놓아서 삭제</string>
   <string name="swipe_up_delete">삭제하려면 위로 스와이프</string>
   <string name="create_group">그룹챗 만들기</string>
   <string name="members">멤버</string>

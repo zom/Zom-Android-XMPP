@@ -20,7 +20,7 @@
   <string name="connect">連線</string>
   <!--Views-->
   <!--Views: Setup-->
-  <string name="add_account">新增 &lt;xliff:g id="ACCOUNT"&gt;%1$s&lt;/xliff:g&gt; 帳戶</string>
+  <string name="add_account">新增 <xliff:g id="ACCOUNT">%1$s</xliff:g> 帳戶</string>
   <string name="menu_about">關於</string>
   <string name="pass_err_length">你的密碼字數不夠長</string>
   <!--Views: About: Welcome-->
@@ -56,31 +56,31 @@
   <string name="title_chats">對話</string>
   <string name="menu_remove_contact">刪除聯絡人</string>
   <string name="menu_view_blocked">封鎖</string>
-  <string name="confirm_delete_contact">刪除「&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;」？</string>
-  <string name="confirm_block_contact">封鎖「&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;」。</string>
-  <string name="add_contact_success">「&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;」已新增。</string>
-  <string name="delete_contact_success">「&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;」已刪除。</string>
-  <string name="block_contact_success">「&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;」已封鎖。</string>
-  <string name="unblock_contact_success">「&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;」已解除封鎖。</string>
+  <string name="confirm_delete_contact">刪除「<xliff:g id="USER">%1$s</xliff:g>」？</string>
+  <string name="confirm_block_contact">封鎖「<xliff:g id="USER">%1$s</xliff:g>」。</string>
+  <string name="add_contact_success">「<xliff:g id="USER">%1$s</xliff:g>」已新增。</string>
+  <string name="delete_contact_success">「<xliff:g id="USER">%1$s</xliff:g>」已刪除。</string>
+  <string name="block_contact_success">「<xliff:g id="USER">%1$s</xliff:g>」已封鎖。</string>
+  <string name="unblock_contact_success">「<xliff:g id="USER">%1$s</xliff:g>」已解除封鎖。</string>
   <string name="empty_conversation_group">沒有對話</string>
   <string name="search_label">聯絡人</string>
   <string name="search_hint">打入聯絡人的名字以便聊天喇賽</string>
   <string name="input_contact_label">您要邀請的對象電子郵件地址：</string>
   <!--Views: Chat: Single-->
-  <string name="contact_online">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; 在線上</string>
-  <string name="contact_away">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; 顯示離開</string>
-  <string name="contact_busy">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; 目前忙碌</string>
-  <string name="contact_offline">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; 顯示離線</string>
-  <string name="contact_joined">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; 已加入</string>
-  <string name="contact_left">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; 已離開</string>
+  <string name="contact_online"><xliff:g id="USER">%1$s</xliff:g> 在線上</string>
+  <string name="contact_away"><xliff:g id="USER">%1$s</xliff:g> 顯示離開</string>
+  <string name="contact_busy"><xliff:g id="USER">%1$s</xliff:g> 目前忙碌</string>
+  <string name="contact_offline"><xliff:g id="USER">%1$s</xliff:g> 顯示離線</string>
+  <string name="contact_joined"><xliff:g id="USER">%1$s</xliff:g> 已加入</string>
+  <string name="contact_left"><xliff:g id="USER">%1$s</xliff:g> 已離開</string>
   <string name="menu_end_conversation">結束即時通訊</string>
   <string name="select_link_title">選取連結</string>
   <!--Views: Chat: Group-->
-  <string name="invitation_prompt">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;邀請您加入群組即時通訊。</string>
+  <string name="invitation_prompt"><xliff:g id="USER">%1$s</xliff:g>邀請您加入群組即時通訊。</string>
   <string name="accept_invitation">接受</string>
   <string name="decline_invitation">拒絕</string>
-  <string name="approve_subscription_error">訂閱 &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; 資訊失敗。請稍後再試一次。</string>
-  <string name="decline_subscription_error">拒絕訂閱 &lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt; 資訊失敗。請稍後再試一次。</string>
+  <string name="approve_subscription_error">訂閱 <xliff:g id="USER">%1$s</xliff:g> 資訊失敗。請稍後再試一次。</string>
+  <string name="decline_subscription_error">拒絕訂閱 <xliff:g id="USER">%1$s</xliff:g> 資訊失敗。請稍後再試一次。</string>
   <!--Security: OTR-->
   <!--Security: OTR: Keyring-->
   <!--Security: OTR: Verification-->
@@ -118,21 +118,21 @@
   <string name="notification_sound_summary">收到即時訊息時播放鈴聲</string>
   <!--Actions: Settings: General: Developer-->
   <!--Alerts: Dialogs-->
-  <string name="bg_data_prompt_message">&lt;xliff:g id="PROVIDER"&gt;%1$s&lt;/xliff:g&gt; 需要啟用背景資料。</string>
+  <string name="bg_data_prompt_message"><xliff:g id="PROVIDER">%1$s</xliff:g> 需要啟用背景資料。</string>
   <!--Alerts: Notifications-->
   <string name="notify_groupchat_label">群組即時通訊邀請</string>
   <string name="new_messages_notify">新訊息來自</string>
   <!--Alerts: Exceptions-->
   <string name="error">注意</string>
-  <string name="general_error">錯誤代碼 &lt;xliff:g id="CODE"&gt;%1$d&lt;/xliff:g&gt;</string>
-  <string name="login_service_failed">無法登入 &lt;xliff:g id="SERVICE"&gt;%1$s&lt;/xliff:g&gt; 服務。請稍候再試一次。"\n" (詳細內容：&lt;xliff:g id="DESCRIPTION"&gt;%2$s&lt;/xliff:g&gt;)</string>
+  <string name="general_error">錯誤代碼 <xliff:g id="CODE">%1$d</xliff:g></string>
+  <string name="login_service_failed">無法登入 <xliff:g id="SERVICE">%1$s</xliff:g> 服務。請稍候再試一次。"\n" (詳細內容：<xliff:g id="DESCRIPTION">%2$s</xliff:g>)</string>
   <string name="add_list_failed">清單未增加</string>
   <string name="block_contact_failed">聯絡人未封鎖。</string>
   <string name="unblock_contact_failed">聯絡人未解除封鎖。</string>
   <string name="load_contact_list_failed">聯絡人清單未載入。</string>
   <string name="cant_connect_to_server">無法連線到伺服器。請檢查連線狀態。</string>
-  <string name="contact_already_exist">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;已在您的聯絡人清單。</string>
-  <string name="contact_blocked">「&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;」已封鎖。</string>
+  <string name="contact_already_exist"><xliff:g id="USER">%1$s</xliff:g>已在您的聯絡人清單。</string>
+  <string name="contact_blocked">「<xliff:g id="USER">%1$s</xliff:g>」已封鎖。</string>
   <string name="contact_not_loaded">請等待聯絡人清單載入完成。</string>
   <string name="network_error">網路發生問題。</string>
   <string name="wifi_not_connected_error">要連線必需要開通WIFI無線網路</string>

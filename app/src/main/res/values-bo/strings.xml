@@ -28,9 +28,9 @@
   <string name="lock_screen_passphrases_not_matching">གསང་ཡིག་གཉིས་མཐུན་གྱི་མི་འདུག བསྐྱར་དུ་བཟོས།</string>
   <string name="lock_screen_skip">གཡུག་ཞོག</string>
   <!--Views: Setup-->
-  <string name="add_account">ཐོ་བྱང་&lt;xliff:g id="account"&gt;%1$s&lt;/xliff:g&gt;ཡི་ཁར་སྣོན། </string>
+  <string name="add_account">ཐོ་བྱང་<xliff:g id="account">%1$s</xliff:g>ཡི་ཁར་སྣོན། </string>
   <string name="menu_about">དེའི་སྐོར།</string>
-  <string name="signed_out_prompt_with_error">ཁྱེད་རང་&lt;xliff:g id="account"&gt;%1$s&lt;/xliff:g&gt;ནས་ཕྱིར་བུད་འདུག  རྒྱུ་མཚན་ནི་&lt;xliff:g id="reason"&gt;%2$s&lt;/xliff:g&gt;</string>
+  <string name="signed_out_prompt_with_error">ཁྱེད་རང་<xliff:g id="account">%1$s</xliff:g>ནས་ཕྱིར་བུད་འདུག  རྒྱུ་མཚན་ནི་<xliff:g id="reason">%2$s</xliff:g></string>
   <string name="pass_err_length">ཁྱོད་ཀྱི་གསང་ཡིག་དེ་ཐུང་དྲགས་འདུག </string>
   <!--Views: About: Welcome-->
   <!--Views: About: OTR-->
@@ -73,24 +73,24 @@
   <string name="menu_contact_nickname">འབྲེལ་གཏུགས་ཀྱི་སྙུག་མིང་། </string>
   <string name="menu_view_blocked">བཀག་ཟིན།</string>
   <string name="nickname">སྙུག་མིང་།</string>
-  <string name="confirm_delete_contact">འབྲེལ་མིང་འདི་"&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt;"གསུབ་ཀྱི་རེད།</string>
-  <string name="confirm_block_contact">འབྲེལ་མིང་འདི་"&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt;" བཀག་གི་རེད།</string>
-  <string name="add_contact_success">འབྲེལ་མིང་ "&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt;" བསྣན་ཟིན། </string>
-  <string name="delete_contact_success">འབྲེལ་མིང་ "&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt;" གསུབ་ཟིན།</string>
-  <string name="block_contact_success">འབྲེལ་མིང་ "&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt;" བཀག་ཟིན།</string>
-  <string name="unblock_contact_success">འབྲེལ་མིང་"&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt;"ཁ་ཕྱེས་ཟིན། </string>
+  <string name="confirm_delete_contact">འབྲེལ་མིང་འདི་"<xliff:g id="user">%1$s</xliff:g>"གསུབ་ཀྱི་རེད།</string>
+  <string name="confirm_block_contact">འབྲེལ་མིང་འདི་"<xliff:g id="user">%1$s</xliff:g>" བཀག་གི་རེད།</string>
+  <string name="add_contact_success">འབྲེལ་མིང་ "<xliff:g id="user">%1$s</xliff:g>" བསྣན་ཟིན། </string>
+  <string name="delete_contact_success">འབྲེལ་མིང་ "<xliff:g id="user">%1$s</xliff:g>" གསུབ་ཟིན།</string>
+  <string name="block_contact_success">འབྲེལ་མིང་ "<xliff:g id="user">%1$s</xliff:g>" བཀག་ཟིན།</string>
+  <string name="unblock_contact_success">འབྲེལ་མིང་"<xliff:g id="user">%1$s</xliff:g>"ཁ་ཕྱེས་ཟིན། </string>
   <string name="menu_verify">འབྲེལ་གཏུག་ར་སྤྲོད་གྱིས།</string>
   <string name="empty_conversation_group">གླེང་མོལ་སྒོ་ཕྱེ་མེད། གླེང་མོལ་བྱེད་འགོ་བཙུགས།</string>
   <string name="search_label">འབྲེལ་མིང་། </string>
   <string name="search_hint">གླེང་མོལ་བྱེད་འདོད་ཡོད་ས་ཞིག་གི་མིང་ཕྲིས།</string>
   <string name="input_contact_label">ཁྱེད་ཀྱི་གྲོགས་པོའི་ཐོ་འགོད་མིང་ཆ་ཚང་ཕྲིས། དཔེར་ན། (zomisfun.4x3f5g@zom.im) ལྟ་བུ།</string>
   <!--Views: Chat: Single-->
-  <string name="contact_online">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt; དྲ་ཐོག་ཏུ་ཡོད།</string>
-  <string name="contact_away">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt; ད་ལྟ་འདིར་མེད།</string>
-  <string name="contact_busy">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt; ལ་ད་ལྟ་བྲེལ་བ་འདུག</string>
-  <string name="contact_offline">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt; དྲ་ཐོག་ཏུ་མེད།</string>
-  <string name="contact_joined">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt;ཞུགས་སོང་།</string>
-  <string name="contact_left">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt;དྲ་ཐོག་ནས་ལོག་སོང་།</string>
+  <string name="contact_online"><xliff:g id="user">%1$s</xliff:g> དྲ་ཐོག་ཏུ་ཡོད།</string>
+  <string name="contact_away"><xliff:g id="user">%1$s</xliff:g> ད་ལྟ་འདིར་མེད།</string>
+  <string name="contact_busy"><xliff:g id="user">%1$s</xliff:g> ལ་ད་ལྟ་བྲེལ་བ་འདུག</string>
+  <string name="contact_offline"><xliff:g id="user">%1$s</xliff:g> དྲ་ཐོག་ཏུ་མེད།</string>
+  <string name="contact_joined"><xliff:g id="user">%1$s</xliff:g>ཞུགས་སོང་།</string>
+  <string name="contact_left"><xliff:g id="user">%1$s</xliff:g>དྲ་ཐོག་ནས་ལོག་སོང་།</string>
   <string name="file_transfer">ཡིག་ཆ་ཐོངས།</string>
   <string name="accept_transfer_">གཏོང་བ་ངོས་ལེན་བྱེད་ཀྱི་ཡིན་ནམ།</string>
   <string name="wants_to_send_you_the_file">ནས་ཁྱོད་ལ་ཡིག་ཆ་ཞིག་གཏོང་འདོད། </string>
@@ -102,18 +102,18 @@
   <string name="delete">གསུབ། </string>
   <string name="export_media">བརྒྱུད་ལམ་གྱི་ཡིག་ཆ་གཞན་ལ་དབོར་གྱི་ཡིན་ནམ།</string>
   <!--Views: Chat: Group-->
-  <string name="invitation_prompt">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt; ཡིས་ཁྱེད་རང་མཉམ་འདུས་གླེང་མོལ་ཞིག་ལ་མགྲོན་འབོད་བཏང་འདུག </string>
+  <string name="invitation_prompt"><xliff:g id="user">%1$s</xliff:g> ཡིས་ཁྱེད་རང་མཉམ་འདུས་གླེང་མོལ་ཞིག་ལ་མགྲོན་འབོད་བཏང་འདུག </string>
   <string name="accept_invitation">མོས་མཐུན་ཡོད།</string>
   <string name="decline_invitation">མོས་མཐུན་མེད། </string>
   <string name="connecting_to_group_chat_">མཉམ་འདུས་གླེང་མོལ་ལ་འབྲེལ་མཐུད་བྱེད་བཞིན་ཡོད་། </string>
   <string name="empty_contact_list">འབྲེལ་མིང་ཅི་ཡང་རྙེད་མ་སོང་།⏎
 ⏎
 མགྲོན་འབོད་བྱེད་རྒྱུའི་འབྲེལ་མིང་དག་གདམ།</string>
-  <string name="subscription_prompt">&lt;xliff:g id="USER"&gt;%1$s&lt;/xliff:g&gt;སྣོན་གྱི་ཡིིན་ནམ?</string>
+  <string name="subscription_prompt"><xliff:g id="USER">%1$s</xliff:g>སྣོན་གྱི་ཡིིན་ནམ?</string>
   <string name="approve_subscription">ཡིན་ལགས།</string>
   <string name="decline_subscription">མིན།</string>
-  <string name="approve_subscription_error">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt;  ཡི་མངགས་ཆ་དེར་བཀའ་འཁྲོལ་ཐུབ་མ་སོང་། སྐུ་མཁྱེན། རྗེས་སུ་ཚོད་ལྟ་བྱེད་རོགས།</string>
-  <string name="decline_subscription_error">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt;  ཡི་མངགས་ཆ་དེ་ཕྱིར་འཐེན་བྱེད་ཐུབ་མ་སོང་། སྐུ་མཁྱེན། རྗེས་སུ་ཚོད་ལྟ་བྱེད་རོགས།</string>
+  <string name="approve_subscription_error"><xliff:g id="user">%1$s</xliff:g>  ཡི་མངགས་ཆ་དེར་བཀའ་འཁྲོལ་ཐུབ་མ་སོང་། སྐུ་མཁྱེན། རྗེས་སུ་ཚོད་ལྟ་བྱེད་རོགས།</string>
+  <string name="decline_subscription_error"><xliff:g id="user">%1$s</xliff:g>  ཡི་མངགས་ཆ་དེ་ཕྱིར་འཐེན་བྱེད་ཐུབ་མ་སོང་། སྐུ་མཁྱེན། རྗེས་སུ་ཚོད་ལྟ་བྱེད་རོགས།</string>
   <!--Security: OTR-->
   <string name="otr_session_status_finished">ཁྱོད་ཀྱི་འབྲེལ་མི་དེས་ཉེན་སྲུང་གླེང་མོལ་མཚམས་བཞག་འདུག </string>
   <string name="otr_mode_force">བཙན་གྱིས/མཁོ་བ།</string>
@@ -177,25 +177,25 @@
   <string name="prompt_create_new_account_">ཐོ་བྱང་གསར་བ་ཞིག་བཟོ་གི་ཡིན་ནམ། </string>
   <string name="allow_s_to_create_a_new_chat_account_for_s_">%1$s\'་ཡི་ཐོ་འགོད་མིང་ཐོག་ལ་གླེང་མོལ་ཐོ་བྱང་གསར་བ་ཞིག་བཟོ་གི་ཡིན་ནམ། </string>
   <!--Alerts: Notifications-->
-  <string name="subscription_notify_text">&lt;xliff:g id="user"&gt;%s&lt;/xliff:g&gt; ནས་གྲོགས་པའི་མགྲོན་འབོད་ཞིག </string>
-  <string name="file_notify_text">&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt;ནས་  &lt;xliff:g id="filename"&gt;%2$s&lt;/xliff:g&gt;   ཡིག་ཆ་གསར་བ་ཞིག </string>
+  <string name="subscription_notify_text"><xliff:g id="user">%s</xliff:g> ནས་གྲོགས་པའི་མགྲོན་འབོད་ཞིག </string>
+  <string name="file_notify_text"><xliff:g id="user">%1$s</xliff:g>ནས་  <xliff:g id="filename">%2$s</xliff:g>   ཡིག་ཆ་གསར་བ་ཞིག </string>
   <string name="notify_groupchat_label">མཉམ་འདུས་གླེང་མོལ་མགྲོན་འབོད།</string>
-  <string name="group_chat_invite_notify_text">&lt;xliff:g id="user"&gt;%s&lt;/xliff:g&gt;ནས་གླེང་མོལ་གྱི་ཚོམས་གསར་བའི་མགྲོན་ཤོག་ཞིག </string>
+  <string name="group_chat_invite_notify_text"><xliff:g id="user">%s</xliff:g>ནས་གླེང་མོལ་གྱི་ཚོམས་གསར་བའི་མགྲོན་ཤོག་ཞིག </string>
   <string name="new_messages_notify">ནས་འཕྲིན་ཐུང་(རྣམས)གསར་པ། </string>
   <string name="starting_the_chatsecure_service_">འཛོམས་ཀྱི་ཞབས་ཞུ་འགོ་འཛུགས་བཞིན་པ།</string>
   <string name="app_unlocked">&amp; ནུས་ཅན་བཟོས་ཚར། སྒོ་ཕྱེས་ཡོད། </string>
   <!--Alerts: Exceptions-->
   <string name="error">དོ་སྣང་བྱོས། </string>
   <string name="error_prefix">ནོར་འཁྲུལ།</string>
-  <string name="general_error">ཨང་ཚབ་ནོར་བ། &lt;xliff:g id="code"&gt;%1$d&lt;/xliff:g&gt;</string>
-  <string name="login_service_failed"> &lt;xliff:g id="service"&gt;%1$s&lt;/xliff:g&gt; འདི་ལ་འཛུལ་ཐུབ་ཀྱི་མི་འདུག རྗེས་སུ་བསྐྱར་དུ་ཚོད་ལྟ་བྱེད་རོགས།(ཞིབ་ཕྲ། &lt;xliff:g id="description"&gt;%2$s&lt;/xliff:g&gt;)</string>
+  <string name="general_error">ཨང་ཚབ་ནོར་བ། <xliff:g id="code">%1$d</xliff:g></string>
+  <string name="login_service_failed"> <xliff:g id="service">%1$s</xliff:g> འདི་ལ་འཛུལ་ཐུབ་ཀྱི་མི་འདུག རྗེས་སུ་བསྐྱར་དུ་ཚོད་ལྟ་བྱེད་རོགས།(ཞིབ་ཕྲ། <xliff:g id="description">%2$s</xliff:g>)</string>
   <string name="add_list_failed">ཐོ་གཞུང་དེ་བསྣན་མི་འདུག</string>
   <string name="block_contact_failed">འབྲེལ་མིང་དེ་བཀག་མེད།</string>
   <string name="unblock_contact_failed">བཀག་ཟིན་པའི་འབྲེལ་མིང་དེ་མུ་མཐུད་དུ་བཀག་ཡོད། </string>
   <string name="load_contact_list_failed">འབྲེལ་མིང་ཐོ་གཞུང་དེ་སྣོན་འཇུག་བྱས་མི་འདུག</string>
   <string name="cant_connect_to_server">དྲ་ཐོག་ཞབས་ཞུར་མཐུད་ཐུབ་ཀྱི་མི་འདུག དྲ་འབྲེལ་ལ་བལྟ་རོགས།</string>
-  <string name="contact_already_exist">"&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt;" ཁྱོད་ཀྱི་འབྲེལ་ཐོའི་ནང་ཡོད་བཞིན་པ་རེད་འདུག</string>
-  <string name="contact_blocked">འབྲེལ་མིང་ "&lt;xliff:g id="user"&gt;%1$s&lt;/xliff:g&gt;" བཀག་ཟིན་འདུག</string>
+  <string name="contact_already_exist">"<xliff:g id="user">%1$s</xliff:g>" ཁྱོད་ཀྱི་འབྲེལ་ཐོའི་ནང་ཡོད་བཞིན་པ་རེད་འདུག</string>
+  <string name="contact_blocked">འབྲེལ་མིང་ "<xliff:g id="user">%1$s</xliff:g>" བཀག་ཟིན་འདུག</string>
   <string name="contact_not_loaded">ཁྱེད་ཀྱི་འབྲེལ་གཏུགས་ཐོ་གཞུང་ལ་ཁ་སྣོན་བྱེད་བཞིན་ཡིན། སྒུག་རོགས།</string>
   <string name="network_error">དྲ་ལམ་ལ་སྐྱོན་ཞིག་བྱུང་སོང་།</string>
   <string name="wifi_not_connected_error">དྲ་འབྲེལ་འདི་ལ་ WiFi དགོས་ངེས་རེད། </string>

@@ -19,8 +19,8 @@
   <string name="choose_friend">Elegir un amigo</string>
   <string name="send_message">Escriba el texto aquí</string>
   <string name="push_to_talk">Pulsar y hablar</string>
-  <string name="recording_release">Grabando... Suelte para enviar.</string>
-  <string name="recording_delete">Grabando... Suelte para eliminar.</string>
+  <string name="recording_release">Grabando… Suelte para enviar.</string>
+  <string name="recording_delete">Grabando… Suelte para eliminar.</string>
   <string name="swipe_up_delete">Deslizar hacia arriba para eliminar</string>
   <string name="create_group">Crear un grupo</string>
   <string name="members">Miembros</string>

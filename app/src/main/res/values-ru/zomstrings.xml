@@ -19,8 +19,8 @@
   <string name="choose_friend">Выбрать друга</string>
   <string name="send_message">Отправить сообщение</string>
   <string name="push_to_talk">Нажать и говорить</string>
-  <string name="recording_release">Идет запись... Отпустите, чтобы отправить</string>
-  <string name="recording_delete">Идет запись... Отпустите, чтобы удалить</string>
+  <string name="recording_release">Идет запись… Отпустите, чтобы отправить</string>
+  <string name="recording_delete">Идет запись… Отпустите, чтобы удалить</string>
   <string name="swipe_up_delete">Проведите пальцем вверх, чтобы удалить</string>
   <string name="create_group">Создать группу</string>
   <string name="members">Участники</string>

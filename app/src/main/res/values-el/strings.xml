@@ -29,7 +29,7 @@
   <string name="lock_screen_passphrases_not_matching">Ο κωδικός δεν ταιριάζει, δοκιμάστε ξανά</string>
   <string name="lock_screen_skip">Βαριέμαι (μη χρήση κωδικού)</string>
   <!--Views: Setup-->
-  <string name="add_account">Προσθήκη λογαριασμού &lt;xliff:g id=\"ACCOUNT\"&gt;%1$s&lt;/xliff:g&gt;</string>
+  <string name="add_account">Προσθήκη λογαριασμού <xliff:g id="ACCOUNT">%1$s</xliff:g></string>
   <string name="menu_about">Σχετικά με</string>
   <string name="pass_err_length">Ο κωδικός ασφαλείας δεν είναι αρκετά μεγάλος</string>
   <!--Views: About: Welcome-->
@@ -72,23 +72,23 @@
   <string name="menu_remove_contact">Διαγραφή επαφής</string>
   <string name="menu_contact_nickname">Ψευδώνυμο επαφής</string>
   <string name="menu_view_blocked">Αποκλεισμένος/η</string>
-  <string name="confirm_delete_contact">Η επαφή \"&lt;xliff:g id=\"USER\"&gt;%1$s&lt;/xliff:g&gt;\" θα διαγραφεί.</string>
-  <string name="confirm_block_contact">Θα γίνει αποκλεισμός της επαφής \"&lt;xliff:g id=\"USER\"&gt;%1$s&lt;/xliff:g&gt;\".</string>
-  <string name="add_contact_success">Έγινε προσθήκη της επαφής \"&lt;xliff:g id=\"USER\"&gt;%1$s&lt;/xliff:g&gt;\".</string>
-  <string name="delete_contact_success">Η επαφή \"&lt;xliff:g id=\"USER\"&gt;%1$s&lt;/xliff:g&gt;\" διαγράφηκε.</string>
-  <string name="block_contact_success">Έγινε αποκλεισμός της επαφής \"&lt;xliff:g id=\"USER\"&gt;%1$s&lt;/xliff:g&gt;\".</string>
-  <string name="unblock_contact_success">Κατάργηση αποκλεισμού της επαφής \"&lt;xliff:g id=\"USER\"&gt;%1$s&lt;/xliff:g&gt;\".</string>
+  <string name="confirm_delete_contact">Η επαφή \"<xliff:g id="USER">%1$s</xliff:g>\" θα διαγραφεί.</string>
+  <string name="confirm_block_contact">Θα γίνει αποκλεισμός της επαφής \"<xliff:g id="USER">%1$s</xliff:g>\".</string>
+  <string name="add_contact_success">Έγινε προσθήκη της επαφής \"<xliff:g id="USER">%1$s</xliff:g>\".</string>
+  <string name="delete_contact_success">Η επαφή \"<xliff:g id="USER">%1$s</xliff:g>\" διαγράφηκε.</string>
+  <string name="block_contact_success">Έγινε αποκλεισμός της επαφής \"<xliff:g id="USER">%1$s</xliff:g>\".</string>
+  <string name="unblock_contact_success">Κατάργηση αποκλεισμού της επαφής \"<xliff:g id="USER">%1$s</xliff:g>\".</string>
   <string name="menu_verify">Επαλήθευση κλειδιού</string>
   <string name="empty_conversation_group">Δεν υπάρχουν συνομιλίες</string>
   <string name="search_label">Επαφή</string>
   <string name="search_hint">εισάγετε το όνομα μιας επαφής για συνομιλία</string>
   <!--Views: Chat: Single-->
-  <string name="contact_online">Ο χρήστης &lt;xliff:g id=\"USER\"&gt;%1$s&lt;/xliff:g&gt; συνδέθηκε</string>
-  <string name="contact_away">Ο χρήστης &lt;xliff:g id=\"USER\"&gt;%1$s&lt;/xliff:g&gt; βρίσκεται μακριά από τον υπολογιστή του</string>
-  <string name="contact_busy">Ο χρήστης &lt;xliff:g id=\"USER\"&gt;%1$s&lt;/xliff:g&gt; είναι απασχολημένος/η</string>
-  <string name="contact_offline">Ο χρήστης &lt;xliff:g id=\"USER\"&gt;%1$s&lt;/xliff:g&gt; βρίσκεται εκτός σύνδεσης</string>
-  <string name="contact_joined">Ο χρήστης &lt;xliff:g id=\"USER\"&gt;%1$s&lt;/xliff:g&gt; συνδέθηκε</string>
-  <string name="contact_left">Ο χρήστης &lt;xliff:g id=\"USER\"&gt;%1$s&lt;/xliff:g&gt; αποχώρησε</string>
+  <string name="contact_online">Ο χρήστης <xliff:g id="USER">%1$s</xliff:g> συνδέθηκε</string>
+  <string name="contact_away">Ο χρήστης <xliff:g id="USER">%1$s</xliff:g> βρίσκεται μακριά από τον υπολογιστή του</string>
+  <string name="contact_busy">Ο χρήστης <xliff:g id="USER">%1$s</xliff:g> είναι απασχολημένος/η</string>
+  <string name="contact_offline">Ο χρήστης <xliff:g id="USER">%1$s</xliff:g> βρίσκεται εκτός σύνδεσης</string>
+  <string name="contact_joined">Ο χρήστης <xliff:g id="USER">%1$s</xliff:g> συνδέθηκε</string>
+  <string name="contact_left">Ο χρήστης <xliff:g id="USER">%1$s</xliff:g> αποχώρησε</string>
   <string name="file_transfer">Αποστολή Αρχείου</string>
   <string name="accept_transfer_">Αποδοχή μεταφοράς;</string>
   <string name="wants_to_send_you_the_file">θέλει να σας στείλει το αρχείο </string>
@@ -97,15 +97,15 @@
   <string name="menu_end_conversation">Τερματισμός συζήτησης</string>
   <string name="select_link_title">Επιλογή συνδέσμου</string>
   <!--Views: Chat: Group-->
-  <string name="invitation_prompt">Ο χρήστης &lt;xliff:g id=\"USER\"&gt;%1$s&lt;/xliff:g&gt; σας προσκάλεσε να συμμετέχετε σε ομαδική συζήτηση.</string>
+  <string name="invitation_prompt">Ο χρήστης <xliff:g id="USER">%1$s</xliff:g> σας προσκάλεσε να συμμετέχετε σε ομαδική συζήτηση.</string>
   <string name="accept_invitation">Αποδοχή</string>
   <string name="decline_invitation">Απόρριψη</string>
   <string name="connecting_to_group_chat_">Σύνδεση στο ομαδικό chat…</string>
   <string name="empty_contact_list">Δεν βρέθηκαν επαφές.
 
 Πατήστε για να προσθέσετε κάποιες.</string>
-  <string name="approve_subscription_error">Δεν ήταν δυνατή η έγκριση συνδρομής από τον χρήστη &lt;xliff:g id=\"USER\"&gt;%1$s&lt;/xliff:g&gt;. Δοκιμάστε ξανά αργότερα.</string>
-  <string name="decline_subscription_error">Δεν ήταν δυνατή η απόρριψη συνδρομής από τον χρήστη &lt;xliff:g id=\"USER\"&gt;%1$s&lt;/xliff:g&gt;. Δοκιμάστε ξανά αργότερα.</string>
+  <string name="approve_subscription_error">Δεν ήταν δυνατή η έγκριση συνδρομής από τον χρήστη <xliff:g id="USER">%1$s</xliff:g>. Δοκιμάστε ξανά αργότερα.</string>
+  <string name="decline_subscription_error">Δεν ήταν δυνατή η απόρριψη συνδρομής από τον χρήστη <xliff:g id="USER">%1$s</xliff:g>. Δοκιμάστε ξανά αργότερα.</string>
   <!--Security: OTR-->
   <string name="otr_session_status_finished">Η επαφή σας έχει σταματήσει την κρυπτογραφημένη συνομιλία.</string>
   <!--Security: OTR: Keyring-->
@@ -146,7 +146,7 @@
   <!--Actions: Settings: General: Developer-->
   <string name="pref_debug_title">Ενεργοποίηση Debug Logs</string>
   <!--Alerts: Dialogs-->
-  <string name="bg_data_prompt_message">&lt;xliff:g id=\"PROVIDER\"&gt;%1$s&lt;/xliff:g&gt; χρειάζεται ενεργοποιημένα τα δεδομένα παρασκηνίου.</string>
+  <string name="bg_data_prompt_message"><xliff:g id="PROVIDER">%1$s</xliff:g> χρειάζεται ενεργοποιημένα τα δεδομένα παρασκηνίου.</string>
   <string name="prompt_create_new_account_">Δημιουργία νέο λογαριασμού;</string>
   <string name="allow_s_to_create_a_new_chat_account_for_s_">Δημιουργία ένος νέου chat λογαριασμού για τον χρήστη \'%1$s\';</string>
   <!--Alerts: Notifications-->
@@ -155,15 +155,15 @@
   <string name="app_unlocked">Ενεργοποιημένο και ξεκλείδωτο</string>
   <!--Alerts: Exceptions-->
   <string name="error">Προσοχή</string>
-  <string name="general_error">Κωδικός σφάλματος &lt;xliff:g id=\"CODE\"&gt;%1$d&lt;/xliff:g&gt;</string>
-  <string name="login_service_failed">Δεν είναι δυνατή η σύνδεση στην υπηρεσία &lt;xliff:g id=\"SERVICE\"&gt;%1$s&lt;/xliff:g&gt;. Δοκιμάστε ξανά αργότερα.\"\n\"(Λεπτομέρειες: &lt;xliff:g id=\"DESCRIPTION\"&gt;%2$s&lt;/xliff:g&gt;)</string>
+  <string name="general_error">Κωδικός σφάλματος <xliff:g id="CODE">%1$d</xliff:g></string>
+  <string name="login_service_failed">Δεν είναι δυνατή η σύνδεση στην υπηρεσία <xliff:g id="SERVICE">%1$s</xliff:g>. Δοκιμάστε ξανά αργότερα.\"\n\"(Λεπτομέρειες: <xliff:g id="DESCRIPTION">%2$s</xliff:g>)</string>
   <string name="add_list_failed">Δεν έγινε προσθήκη της λίστας.</string>
   <string name="block_contact_failed">Δεν έγινε αποκλεισμός της επαφής.</string>
   <string name="unblock_contact_failed">Δεν έγινε κατάργηση αποκλεισμού της επαφής.</string>
   <string name="load_contact_list_failed">Δεν έγινε φόρτωση της λίστας επαφών.</string>
   <string name="cant_connect_to_server">Δεν είναι δυνατή η σύνδεση με τον διακομιστή. Ελέγξτε τη σύνδεσή σας.</string>
-  <string name="contact_already_exist">Ο χρήστης &lt;xliff:g id=\"USER\"&gt;%1$s&lt;/xliff:g&gt; υπάρχει ήδη στη λίστα επαφών σας.</string>
-  <string name="contact_blocked">Έγινε αποκλεισμός της επαφής \"&lt;xliff:g id=\"USER\"&gt;%1$s&lt;/xliff:g&gt;\".</string>
+  <string name="contact_already_exist">Ο χρήστης <xliff:g id="USER">%1$s</xliff:g> υπάρχει ήδη στη λίστα επαφών σας.</string>
+  <string name="contact_blocked">Έγινε αποκλεισμός της επαφής \"<xliff:g id="USER">%1$s</xliff:g>\".</string>
   <string name="contact_not_loaded">Περιμένετε μέχρι να φορτώσει η λίστα επαφών σας.</string>
   <string name="network_error">Προέκυψε σφάλμα δικτύου.</string>
   <string name="wifi_not_connected_error">Απαιτείται WiFi για αυτήν την συνεδρία</string>

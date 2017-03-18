@@ -20,8 +20,8 @@
   <string name="choose_friend">Kies een vriend</string>
   <string name="send_message">Verstuur een bericht</string>
   <string name="push_to_talk">Druk om te praten</string>
-  <string name="recording_release">Bezig met opnemen... laat los om te verzenden</string>
-  <string name="recording_delete">Bezig met opnemen... laat los om te verwijderen</string>
+  <string name="recording_release">Bezig met opnemen… laat los om te verzenden</string>
+  <string name="recording_delete">Bezig met opnemen… laat los om te verwijderen</string>
   <string name="swipe_up_delete">Veeg omhoog om te verwijderen</string>
   <string name="create_group">Groep aanmaken</string>
   <string name="members">Leden</string>
