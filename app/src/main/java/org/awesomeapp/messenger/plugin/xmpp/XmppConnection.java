@@ -63,6 +63,7 @@ import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 import org.jivesoftware.smack.util.DNSUtil;
 import org.jivesoftware.smack.util.dns.HostAddress;
+
 import org.jivesoftware.smack.util.stringencoder.Base64;
 import org.jivesoftware.smackx.address.provider.MultipleAddressesProvider;
 import org.jivesoftware.smackx.bytestreams.socks5.provider.BytestreamsProvider;
@@ -70,6 +71,7 @@ import org.jivesoftware.smackx.chatstates.ChatState;
 import org.jivesoftware.smackx.chatstates.ChatStateListener;
 import org.jivesoftware.smackx.chatstates.ChatStateManager;
 import org.jivesoftware.smackx.chatstates.packet.ChatStateExtension;
+import org.jivesoftware.smackx.chatstates.provider.ChatStateExtensionProvider;
 import org.jivesoftware.smackx.commands.provider.AdHocCommandDataProvider;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.disco.provider.DiscoverInfoProvider;
@@ -83,6 +85,7 @@ import org.jivesoftware.smackx.muc.Occupant;
 import org.jivesoftware.smackx.muc.ParticipantStatusListener;
 import org.jivesoftware.smackx.muc.RoomInfo;
 import org.jivesoftware.smackx.muc.SubjectUpdatedListener;
+import org.jivesoftware.smackx.muc.packet.MUCUser;
 import org.jivesoftware.smackx.muc.provider.MUCAdminProvider;
 import org.jivesoftware.smackx.muc.provider.MUCOwnerProvider;
 import org.jivesoftware.smackx.muc.provider.MUCUserProvider;
@@ -105,6 +108,14 @@ import org.jivesoftware.smackx.xdata.Form;
 import org.jivesoftware.smackx.xdata.FormField;
 import org.jivesoftware.smackx.xdata.provider.DataFormProvider;
 import org.jivesoftware.smackx.xhtmlim.provider.XHTMLExtensionProvider;
+import org.jxmpp.jid.DomainBareJid;
+import org.jxmpp.jid.EntityFullJid;
+import org.jxmpp.jid.EntityJid;
+import org.jxmpp.jid.Jid;
+import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.jid.parts.Localpart;
+import org.jxmpp.jid.parts.Resourcepart;
+import org.jxmpp.stringprep.XmppStringprepException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -327,7 +338,7 @@ public class XmppConnection extends ImConnection {
     void postpone(final org.jivesoftware.smack.packet.Stanza packet) {
         if (packet instanceof org.jivesoftware.smack.packet.Message) {
             boolean groupChat = ((org.jivesoftware.smack.packet.Message) packet).getType().equals( org.jivesoftware.smack.packet.Message.Type.groupchat);
-            ChatSession session = findOrCreateSession(packet.getTo(), groupChat);
+            ChatSession session = findOrCreateSession(packet.getTo().toString(), groupChat);
             if (session != null)
                 session.onMessagePostponed(packet.getStanzaId());
         }
@@ -374,7 +385,7 @@ public class XmppConnection extends ImConnection {
                 debug(TAG, "loading vcard for: " + jid);
 
                 VCardManager vCardManager = VCardManager.getInstanceFor(mConnection);
-                VCard vCard = vCardManager.loadVCard(jid);
+                VCard vCard = vCardManager.loadVCard(JidCreate.entityBareFrom(jid));
 
                 Contact contact = mContactListManager.getContact(jid);
 
@@ -552,12 +563,15 @@ public class XmppConnection extends ImConnection {
         {
             try {
                 // Create a MultiUserChat using a Connection for a room
+                //TODO fix this with new smack
                 MultiUserChatManager mucMgr = MultiUserChatManager.getInstanceFor(mConnection);
-                Collection<String> servers = mucMgr.getServiceNames();
+
+                Collection<DomainBareJid> servers = mucMgr.getXMPPServiceDomains();
 
                 //just grab the first one
-                for (String server : servers)
-                    return server;
+                for (DomainBareJid server : servers)
+                    return server.toString();
+
             }
             catch (Exception xe)
             {
@@ -582,10 +596,10 @@ public class XmppConnection extends ImConnection {
             if (chatRoomJid.endsWith("@"))
             {
                  //let's add a host to that!
-                Collection<String> servers = mucMgr.getServiceNames();
+                Collection<DomainBareJid> servers = mucMgr.getXMPPServiceDomains();
 
                 if (servers.iterator().hasNext())
-                    chatRoomJid += servers.iterator().next();
+                    chatRoomJid += servers.iterator().next().toString();
                 else
                 {
                     chatRoomJid += DEFAULT_CONFERENCE_SERVER;
@@ -606,16 +620,14 @@ public class XmppConnection extends ImConnection {
 
             try {
 
-                MultiUserChat muc = mucMgr.getMultiUserChat(chatRoomJid);
+                MultiUserChat muc = mucMgr.getMultiUserChat(JidCreate.entityBareFrom(chatRoomJid));
                 boolean mucCreated = false;
 
                 try
                 {
                     // Create the room
-                    DiscussionHistory history = new DiscussionHistory();
-                    history.setMaxStanzas(20);
-                    long timeout = 30*1000;//30 seconds
-                    mucCreated = muc.createOrJoin(nickname, null, history, timeout);
+                    MultiUserChat.MucCreateConfigFormHandle handle = muc.createOrJoin(Resourcepart.from(nickname));
+                    mucCreated = true;
                 }
                 catch (Exception iae)
                 {
@@ -703,14 +715,14 @@ public class XmppConnection extends ImConnection {
 
                 }
 
-                List<String> mucOccupant = muc.getOccupants();
+                List<EntityFullJid> mucOccupant = muc.getOccupants();
 
-                for (String occupantAddress : mucOccupant) {
+                for (EntityFullJid occupantAddress : mucOccupant) {
 
                     Occupant occupant = muc.getOccupant(occupantAddress);
-                    XmppAddress xa = new XmppAddress(occupant.getJid());
+                    XmppAddress xa = new XmppAddress(occupant.getJid().toString());
                     Contact mucContact = new Contact(xa,xa.getResource());
-                    org.jivesoftware.smack.packet.Presence presence = muc.getOccupantPresence(occupant.getJid());
+                    org.jivesoftware.smack.packet.Presence presence = muc.getOccupantPresence(occupantAddress);
                     if (presence != null) {
                         ExtensionElement packetExtension = presence.getExtension("x", "vcard-temp:x:update");
                         if (packetExtension != null) {
@@ -788,7 +800,7 @@ public class XmppConnection extends ImConnection {
                 MultiUserChat muc = mMUCs.get(chatRoomJid);
                 try {
                     String reason = "";
-                    muc.kickParticipant(contact.getName(),reason);
+                    muc.kickParticipant(Resourcepart.from(contact.getName()),reason);
                   //  muc.kickParticipant(chatRoomJid, contact.getAddress().getBareAddress());
                 } catch (Exception e) {
                     // TODO Auto-generated catch block
@@ -812,10 +824,9 @@ public class XmppConnection extends ImConnection {
                 // Create a MultiUserChat using a Connection for a room
 
                 MultiUserChatManager mucMgr = MultiUserChatManager.getInstanceFor(mConnection);
+                MultiUserChat muc = mucMgr.getMultiUserChat( JidCreate.entityBareFrom(chatRoomJid));
 
-                MultiUserChat muc = mucMgr.getMultiUserChat(chatRoomJid);
-
-                muc.join(nickname);
+                muc.join(Resourcepart.from(nickname));
 
                 if (TextUtils.isEmpty(subject))
                     subject = room;
@@ -829,10 +840,10 @@ public class XmppConnection extends ImConnection {
 
                 mMUCs.put(chatRoomJid, muc);
 
-                List<String> mucOccupant = muc.getOccupants();
+                List<EntityFullJid> mucOccupant = muc.getOccupants();
 
-                for (String occupant : mucOccupant) {
-                    XmppAddress xa = new XmppAddress(occupant);
+                for (EntityFullJid occupant : mucOccupant) {
+                    XmppAddress xa = new XmppAddress(occupant.toString());
                     Contact mucContact = new Contact(xa,xa.getResource());
                     org.jivesoftware.smack.packet.Presence presence = muc.getOccupantPresence(occupant);
                     Presence p = new Presence(parsePresence(presence), null, null, null, Presence.CLIENT_TYPE_MOBILE);
@@ -856,9 +867,9 @@ public class XmppConnection extends ImConnection {
             muc.addSubjectUpdatedListener(new SubjectUpdatedListener() {
 
                 @Override
-                public void subjectUpdated(String subject, String from) {
+                public void subjectUpdated(String subject, EntityFullJid from) {
 
-                    XmppAddress xa = new XmppAddress(from);
+                    XmppAddress xa = new XmppAddress(from.toString());
                     MultiUserChat muc = mChatGroupManager.getMultiUserChat(xa.getBareAddress());
                     ChatGroup chatGroup = mChatGroupManager.getChatGroup(xa);
                     chatGroup.setName(subject);
@@ -868,15 +879,15 @@ public class XmppConnection extends ImConnection {
             });
 
             muc.addParticipantStatusListener(new ParticipantStatusListener() {
-                @Override
-                public void joined(String participant) {
 
-                    XmppAddress xa = new XmppAddress(participant);
+                @Override
+                public void joined(EntityFullJid entityFullJid) {
+                    XmppAddress xa = new XmppAddress(entityFullJid.toString());
                     MultiUserChat muc = mChatGroupManager.getMultiUserChat(xa.getBareAddress());
                     ChatGroup chatGroup = mChatGroupManager.getChatGroup(xa);
                     Contact mucContact = new Contact(xa, xa.getResource());
                     Presence p = new Presence(Imps.Presence.AVAILABLE, null, null, null, Presence.CLIENT_TYPE_MOBILE);
-                    org.jivesoftware.smack.packet.Presence presence = muc.getOccupantPresence(participant);
+                    org.jivesoftware.smack.packet.Presence presence = muc.getOccupantPresence(entityFullJid);
                     if (presence != null) {
                         ExtensionElement packetExtension = presence.getExtension("x", "vcard-temp:x:update");
                         if (packetExtension != null) {
@@ -891,13 +902,11 @@ public class XmppConnection extends ImConnection {
                     }
                     mucContact.setPresence(p);
                     chatGroup.addMemberAsync(mucContact);
-
                 }
 
                 @Override
-                public void left(String participant) {
-
-                    XmppAddress xa = new XmppAddress(participant);
+                public void left(EntityFullJid entityFullJid) {
+                    XmppAddress xa = new XmppAddress(entityFullJid.toString());
                     MultiUserChat muc = mChatGroupManager.getMultiUserChat(xa.getBareAddress());
                     ChatGroup chatGroup = mChatGroupManager.getChatGroup(xa);
                     Contact mucContact = new Contact(xa, xa.getResource());
@@ -906,78 +915,79 @@ public class XmppConnection extends ImConnection {
                 }
 
                 @Override
-                public void kicked(String participant, String actor, String reason) {
+                public void kicked(EntityFullJid entityFullJid, Jid jid, String s) {
 
                 }
 
                 @Override
-                public void voiceGranted(String participant) {
+                public void voiceGranted(EntityFullJid entityFullJid) {
 
                 }
 
                 @Override
-                public void voiceRevoked(String participant) {
+                public void voiceRevoked(EntityFullJid entityFullJid) {
 
                 }
 
                 @Override
-                public void banned(String participant, String actor, String reason) {
+                public void banned(EntityFullJid entityFullJid, Jid jid, String s) {
 
                 }
 
                 @Override
-                public void membershipGranted(String participant) {
+                public void membershipGranted(EntityFullJid entityFullJid) {
 
                 }
 
                 @Override
-                public void membershipRevoked(String participant) {
+                public void membershipRevoked(EntityFullJid entityFullJid) {
 
                 }
 
                 @Override
-                public void moderatorGranted(String participant) {
+                public void moderatorGranted(EntityFullJid entityFullJid) {
 
                 }
 
                 @Override
-                public void moderatorRevoked(String participant) {
+                public void moderatorRevoked(EntityFullJid entityFullJid) {
 
                 }
 
                 @Override
-                public void ownershipGranted(String participant) {
+                public void ownershipGranted(EntityFullJid entityFullJid) {
 
                 }
 
                 @Override
-                public void ownershipRevoked(String participant) {
+                public void ownershipRevoked(EntityFullJid entityFullJid) {
 
                 }
 
                 @Override
-                public void adminGranted(String participant) {
+                public void adminGranted(EntityFullJid entityFullJid) {
 
                 }
 
                 @Override
-                public void adminRevoked(String participant) {
+                public void adminRevoked(EntityFullJid entityFullJid) {
 
                 }
 
                 @Override
-                public void nicknameChanged(String participant, String newNickname) {
-                   // XmppAddress xa = new XmppAddress(participant);
-                   // Contact mucContact = new Contact(xa, xa.getResource());
-                   // mucContact.setName(newNickname);
+                public void nicknameChanged(EntityFullJid entityFullJid, Resourcepart resourcepart) {
+
                 }
+
+
+
             });
 
             muc.addParticipantListener(new PresenceListener() {
                 @Override
                 public void processPresence(org.jivesoftware.smack.packet.Presence presence) {
 
-                    XmppAddress xa = new XmppAddress(presence.getFrom());
+                    XmppAddress xa = new XmppAddress(presence.getFrom().toString());
                     Contact mucContact = new Contact(xa, xa.getResource());
                     Presence p = new Presence(parsePresence(presence), presence.getStatus(), null, null, Presence.CLIENT_TYPE_DEFAULT);
                     mucContact.setPresence(p);
@@ -997,7 +1007,7 @@ public class XmppConnection extends ImConnection {
                 try {
                     muc.leave();
                 }
-                catch (SmackException.NotConnectedException nce)
+                catch (Exception nce)
                 {
                     Log.e(ImApp.LOG_TAG,"not connected error trying to leave group",nce);
 
@@ -1022,8 +1032,8 @@ public class XmppConnection extends ImConnection {
 
                         String reason = group.getName(); //no reason for now
                         try {
-                            muc.invite(invitee.getAddress().getAddress(), reason);
-                            muc.grantMembership(invitee.getAddress().getAddress());
+                            muc.invite(JidCreate.entityBareFrom(invitee.getAddress().getAddress()), reason);
+                            muc.grantMembership(JidCreate.entityBareFrom(invitee.getAddress().getAddress()));
                         } catch (Exception nce) {
                             Log.e(ImApp.LOG_TAG, "not connected error trying to add invite", nce);
 
@@ -1054,10 +1064,10 @@ public class XmppConnection extends ImConnection {
             MultiUserChatManager mucMgr = MultiUserChatManager.getInstanceFor(mConnection);
             try {
 
-                    mucMgr.decline(addressGroup.getAddress(), invitation.getSender().getAddress(), reason);
+                    mucMgr.decline(JidCreate.entityBareFrom(addressGroup.getAddress()), JidCreate.entityBareFrom(invitation.getSender().getAddress()), reason);
 
                 }
-                catch (SmackException.NotConnectedException nce)
+                catch (Exception nce)
                 {
                     Log.e(ImApp.LOG_TAG,"not connected error trying to reject invite",nce);
                 }
@@ -1319,7 +1329,7 @@ public class XmppConnection extends ImConnection {
     // TODO shouldn't setProxy be handled in Imps/settings?
     public void setProxy(String type, String host, int port) {
         if (type == null) {
-            mProxyInfo = ProxyInfo.forNoProxy();
+            mProxyInfo = null;
         } else {
 
             ProxyInfo.ProxyType pType = ProxyInfo.ProxyType.valueOf(type);
@@ -1353,7 +1363,7 @@ public class XmppConnection extends ImConnection {
         setState(state, null);
     }*/
 
-    private void initConnectionAndLogin (Imps.ProviderSettings.QueryMap providerSettings,String userName) throws IOException, SmackException, XMPPException, KeyManagementException, NoSuchAlgorithmException, IllegalStateException, RuntimeException
+    private void initConnectionAndLogin (Imps.ProviderSettings.QueryMap providerSettings,String userName) throws InterruptedException, IOException, SmackException, XMPPException, KeyManagementException, NoSuchAlgorithmException, IllegalStateException, RuntimeException
     {
         Roster.SubscriptionMode subMode = Roster.SubscriptionMode.manual;//Roster.SubscriptionMode.accept_all;//load this from a preference
 
@@ -1377,9 +1387,9 @@ public class XmppConnection extends ImConnection {
 
             mPingManager = PingManager.getInstanceFor(mConnection) ;
 
-            mConnection.login(mUsername, mPassword, mResource);
+            mConnection.login(mUsername, mPassword, Resourcepart.from(mResource));
             
-            String fullJid = mConnection.getUser();
+            String fullJid = mConnection.getUser().toString();
             XmppAddress xa = new XmppAddress(fullJid);
 
             if (mUser == null)
@@ -1393,27 +1403,35 @@ public class XmppConnection extends ImConnection {
               getContactListManager().listenToRoster(mRoster);
 
             MultiUserChatManager.getInstanceFor(mConnection).addInvitationListener(new InvitationListener() {
+
                 @Override
-                public void invitationReceived(XMPPConnection conn, MultiUserChat muc, String inviter, String reason, String password, org.jivesoftware.smack.packet.Message message) {
+                public void invitationReceived(XMPPConnection xmppConnection, MultiUserChat muc, EntityJid entityJid, String reason, String password, org.jivesoftware.smack.packet.Message message, MUCUser.Invite invite) {
 
-                    getChatGroupManager().acceptInvitationAsync(muc.getRoom());
-                    XmppAddress xa = new XmppAddress(muc.getRoom());
+                    try {
 
-                    mChatGroupManager.joinChatGroupAsync(xa,reason);
 
-                    ChatSession session = mSessionManager.findSession(xa.getAddress());
+                        getChatGroupManager().acceptInvitationAsync(invite.getFrom().toString());
+                        XmppAddress xa = new XmppAddress(muc.getRoom().toString());
 
-                    //create a session
-                    if (session == null) {
-                        ImEntity participant = findOrCreateParticipant(xa.getBareAddress(), true);
+                        mChatGroupManager.joinChatGroupAsync(xa, reason);
 
-                        if (participant != null)
-                            session = mSessionManager.createChatSession(participant,false);
+                        ChatSession session = mSessionManager.findSession(xa.getAddress());
 
-                        if (session != null)
-                            ((ChatGroup)session.getParticipant()).setName(reason);
+                        //create a session
+                        if (session == null) {
+                            ImEntity participant = findOrCreateParticipant(xa.getBareAddress(), true);
+
+                            if (participant != null)
+                                session = mSessionManager.createChatSession(participant, false);
+
+                            if (session != null)
+                                ((ChatGroup) session.getParticipant()).setName(reason);
+                        }
                     }
-
+                    catch (Exception se)
+                    {
+                        Log.e(TAG,"error accepting invite",se);
+                    }
 
 
 
@@ -1452,7 +1470,7 @@ public class XmppConnection extends ImConnection {
             VCard vCard = null;
 
             try {
-                vCard = vCardManager.loadVCard(jid);
+                vCard = vCardManager.loadVCard(JidCreate.entityBareFrom(jid));
             }
             catch (Exception e){
                 debug(TAG,"error loading vcard",e);
@@ -1493,7 +1511,7 @@ public class XmppConnection extends ImConnection {
     }
 
     // Runs in executor thread
-    private void initConnection(Imps.ProviderSettings.QueryMap providerSettings, String userName) throws NoSuchAlgorithmException, KeyManagementException, XMPPException, SmackException, IOException  {
+    private void initConnection(Imps.ProviderSettings.QueryMap providerSettings, String userName) throws InterruptedException, NoSuchAlgorithmException, KeyManagementException, XMPPException, SmackException, IOException  {
 
         boolean allowPlainAuth = false;//never! // providerSettings.getAllowPlainAuth();
         boolean requireTls = true;// providerSettings.getRequireTls(); //always!
@@ -1535,7 +1553,7 @@ public class XmppConnection extends ImConnection {
         }
 
         if (mProxyInfo == null)
-            mProxyInfo = ProxyInfo.forNoProxy();
+            mProxyInfo = null;
 
         // If user did not specify a server, and SRV requested then lookup SRV
         if (doDnsSrv) {
@@ -1544,7 +1562,9 @@ public class XmppConnection extends ImConnection {
             //java.lang.System.setProperty("java.net.preferIPv6Addresses", "false");
 
             debug(TAG, "(DNS SRV) resolving: " + domain);
-            List<HostAddress> listHosts = DNSUtil.resolveXMPPDomain(domain, null);
+            List<HostAddress> listHostsFailed = null;
+
+            List<HostAddress> listHosts = DNSUtil.resolveXMPPServiceDomain(domain, listHostsFailed, ConnectionConfiguration.DnssecMode.disabled);
 
             server = listHosts.get(0).getFQDN();
             serverPort = listHosts.get(0).getPort();
@@ -1577,7 +1597,7 @@ public class XmppConnection extends ImConnection {
 
         mConfig = XMPPTCPConnectionConfiguration.builder();
 
-        mConfig.setServiceName(domain);
+        mConfig.setServiceName(JidCreate.domainBareFrom(domain));
         mConfig.setPort(serverPort);
 
         // No server requested and SRV lookup wasn't requested or returned nothing - use domain
@@ -1680,7 +1700,7 @@ public class XmppConnection extends ImConnection {
         mConnection.addAsyncStanzaListener(new StanzaListener() {
 
             @Override
-            public void processPacket(Stanza stanza) {
+            public void processStanza(Stanza stanza) {
 
                 debug(TAG, "receive message: " + stanza.getFrom() + " to " + stanza.getTo());
 
@@ -1691,7 +1711,7 @@ public class XmppConnection extends ImConnection {
                 String msg_xml = smackMessage.toXML().toString();
 
                 try {
-                    handleChatState(smackMessage.getFrom(), msg_xml);
+                    handleChatState(smackMessage.getFrom().toString(), msg_xml);
                 }
                 catch (RemoteException re)
                 {
@@ -1703,7 +1723,7 @@ public class XmppConnection extends ImConnection {
         mConnection.addAsyncStanzaListener(new StanzaListener() {
 
             @Override
-            public void processPacket(Stanza packet) {
+            public void processStanza(Stanza packet) {
 
                 org.jivesoftware.smack.packet.Presence presence = (org.jivesoftware.smack.packet.Presence) packet;
                 qPresence.push(presence);
@@ -1881,7 +1901,7 @@ public class XmppConnection extends ImConnection {
 
         }
 
-        ChatSession session = findOrCreateSession(smackMessage.getFrom(), isGroupMessage);
+        ChatSession session = findOrCreateSession(smackMessage.getFrom().toString(), isGroupMessage);
 
         if (session != null) //not subscribed so don't do anything
         {
@@ -1901,8 +1921,8 @@ public class XmppConnection extends ImConnection {
 
                 Message rec = new Message(body);
 
-                rec.setTo(new XmppAddress(smackMessage.getTo()));
-                rec.setFrom(new XmppAddress(smackMessage.getFrom()));
+                rec.setTo(new XmppAddress(smackMessage.getTo().toString()));
+                rec.setFrom(new XmppAddress(smackMessage.getFrom().toString()));
                 rec.setDateTime(new Date());
 
                 rec.setID(smackMessage.getStanzaId());
@@ -1917,15 +1937,23 @@ public class XmppConnection extends ImConnection {
                         return; //do nothing if there is no resource since that is a system message
                     }
                     else if (rec.getFrom().getResource().equals(rec.getTo().getUser())) {
-                        //rec.setType(Imps.MessageType.OUTGOING);
-                        Occupant oc = mChatGroupManager.getMultiUserChat(rec.getFrom().getBareAddress()).getOccupant(rec.getFrom().getAddress());
-                        if (oc != null && oc.getJid().equals(mUser.getAddress().getAddress()))
-                            return; //do nothing if it is from us
+                        try {
+
+
+                            //rec.setType(Imps.MessageType.OUTGOING);
+                            Occupant oc = mChatGroupManager.getMultiUserChat(rec.getFrom().getBareAddress()).getOccupant(JidCreate.entityFullFrom(rec.getFrom().getAddress()));
+                            if (oc != null && oc.getJid().equals(mUser.getAddress().getAddress()))
+                                return; //do nothing if it is from us
+
+                        }
+                        catch (Exception e){
+                            debug(TAG,"error parsing address",e);
+                        }
                     }
 
                 }
 
-                setPresence(smackMessage.getFrom(),Presence.AVAILABLE);
+                setPresence(smackMessage.getFrom().toString(),Presence.AVAILABLE);
 
                 boolean good = session.onReceiveMessage(rec);
 
@@ -2159,24 +2187,29 @@ public class XmppConnection extends ImConnection {
         //load from roster if we don't have the contact
         RosterEntry rEntry = null;
 
-        if (mConnection != null)
-            rEntry = mRoster.getEntry(address);
+        try {
 
-        if (rEntry != null)
-        {
-            XmppAddress xAddress = new XmppAddress(address);
 
-            String name = rEntry.getName();
-            if (name == null)
-                name = xAddress.getUser();
+            if (mConnection != null)
+                rEntry = mRoster.getEntry(JidCreate.bareFrom(address));
 
-            contact = new Contact(xAddress, name);
+            if (rEntry != null) {
+                XmppAddress xAddress = new XmppAddress(address);
+
+                String name = rEntry.getName();
+                if (name == null)
+                    name = xAddress.getUser();
+
+                contact = new Contact(xAddress, name);
+            } else {
+                XmppAddress xAddress = new XmppAddress(address);
+
+                contact = new Contact(xAddress, xAddress.getUser());
+            }
         }
-        else
+        catch (XmppStringprepException xe)
         {
-            XmppAddress xAddress = new XmppAddress(address);
-
-            contact = new Contact(xAddress, xAddress.getUser());
+            //nothing return null;
         }
 
         return contact;
@@ -2190,37 +2223,41 @@ public class XmppConnection extends ImConnection {
 
             org.jivesoftware.smack.packet.Message msgXmpp = null;
 
-            if (muc != null)
-            {
-                msgXmpp = muc.createMessage();
-            }
-            else
-            {
-                msgXmpp = new org.jivesoftware.smack.packet.Message(
-                        message.getTo().getAddress(), org.jivesoftware.smack.packet.Message.Type.chat);
-                msgXmpp.addExtension(new DeliveryReceiptRequest());
-                
-                Contact contact = mContactListManager.getContact(message.getTo().getBareAddress());
-                
-                if (contact != null && contact.getPresence() !=null && (!contact.getPresence().isOnline()))
-                    requestPresenceRefresh(message.getTo().getBareAddress());
-                
-            }
-            
-            if (message.getFrom() == null)
-                msgXmpp.setFrom(mUser.getAddress().getAddress());
-            else
-                msgXmpp.setFrom(message.getFrom().getAddress());
-            
-            msgXmpp.setBody(message.getBody());
+            try {
 
-            if (message.getID() != null)
-                msgXmpp.setStanzaId(message.getID());
-            else
-                message.setID(msgXmpp.getStanzaId());
-            
-            sendPacket(msgXmpp);            
 
+                if (muc != null) {
+                    msgXmpp = muc.createMessage();
+                } else {
+                    msgXmpp = new org.jivesoftware.smack.packet.Message(
+                            JidCreate.entityBareFrom(message.getTo().getAddress()), org.jivesoftware.smack.packet.Message.Type.chat);
+                    msgXmpp.addExtension(new DeliveryReceiptRequest());
+
+                    Contact contact = mContactListManager.getContact(message.getTo().getBareAddress());
+
+                    if (contact != null && contact.getPresence() != null && (!contact.getPresence().isOnline()))
+                        requestPresenceRefresh(message.getTo().getBareAddress());
+
+                }
+
+                if (message.getFrom() == null)
+                    msgXmpp.setFrom(mUser.getAddress().getAddress());
+                else
+                    msgXmpp.setFrom(message.getFrom().getAddress());
+
+                msgXmpp.setBody(message.getBody());
+
+                if (message.getID() != null)
+                    msgXmpp.setStanzaId(message.getID());
+                else
+                    message.setID(msgXmpp.getStanzaId());
+
+                sendPacket(msgXmpp);
+            }
+            catch (XmppStringprepException xe)
+            {
+                debug(TAG, "unable to send message",xe);
+            }
         }
 
         ChatSession findSession(String address) {
@@ -2471,9 +2508,9 @@ public class XmppConnection extends ImConnection {
                     }
 
 
-                    int subStatus = subStatus = Imps.ContactsColumns.SUBSCRIPTION_STATUS_NONE;
-                    if (rEntry.getStatus() == RosterPacket.ItemStatus.SUBSCRIPTION_PENDING)
-                        subStatus = Imps.ContactsColumns.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING;
+                    int subStatus = Imps.ContactsColumns.SUBSCRIPTION_STATUS_NONE;
+                   // if (rEntry.get )
+                     //   subStatus = Imps.ContactsColumns.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING;
 
                     int subType = 0;
                     if (rEntry.getType() == RosterPacket.ItemType.both)
@@ -2623,28 +2660,28 @@ public class XmppConnection extends ImConnection {
             }
 
             @Override
-            public void entriesUpdated(Collection<String> addresses) {
+            public void entriesUpdated(Collection<Jid> addresses) {
 
                 
-                for (String address :addresses)
+                for (Jid address :addresses)
                 {
 
-                    requestPresenceRefresh(address);
+                    requestPresenceRefresh(address.toString());
                     
                 }
             }
 
             @Override
-            public void entriesDeleted(Collection<String> addresses) {
+            public void entriesDeleted(Collection<Jid> addresses) {
 
                 ContactList cl;
                 try {
                     cl = mContactListManager.getDefaultContactList();
 
-                    for (String address : addresses) {
-                        requestPresenceRefresh(address);
+                    for (Jid address : addresses) {
+                        requestPresenceRefresh(address.toString());
 
-                        Contact contact = new Contact(new XmppAddress(address),address);
+                        Contact contact = new Contact(new XmppAddress(address.toString()),address.toString());
                         mContactListManager.notifyContactListUpdated(cl, ContactListListener.LIST_CONTACT_REMOVED, contact);
                     }
                     
@@ -2657,23 +2694,25 @@ public class XmppConnection extends ImConnection {
             }
 
             @Override
-            public void entriesAdded(Collection<String> addresses) {
+            public void entriesAdded(Collection<Jid> addresses) {
 
                 try
                 {
                     if (mContactListManager.getState() == LISTS_LOADED)
                     {
                         
-                        for (String address : addresses)
+                        for (Jid address : addresses)
                         {
-        
-                            Contact contact = getContact(address);
+
+                            String addressString = address.toString();
+
+                            Contact contact = getContact(addressString);
                             
-                            requestPresenceRefresh(address);
+                            requestPresenceRefresh(addressString);
 
                             if (contact == null)
                             {
-                                XmppAddress xAddr = new XmppAddress(address);
+                                XmppAddress xAddr = new XmppAddress(addressString);
                                 contact = new Contact(xAddr,xAddr.getUser());
         
                             }
@@ -2729,7 +2768,7 @@ public class XmppConnection extends ImConnection {
             sendPacket(presence);
             
             try {
-                RosterEntry entry = mRoster.getEntry(address);
+                RosterEntry entry = mRoster.getEntry(JidCreate.bareFrom(address));
                 RosterGroup group = mRoster.getGroup(list.getName());
 
                 if (group == null) {
@@ -2741,7 +2780,7 @@ public class XmppConnection extends ImConnection {
                 else
                 {
                     group.removeEntry(entry);
-                    entry = mRoster.getEntry(address);
+                    entry = mRoster.getEntry(JidCreate.bareFrom(address));
                     // Remove from Roster if this is the last group
                     if (entry != null && entry.getGroups().size() <= 1)
                         mRoster.removeEntry(entry);
@@ -2794,37 +2833,35 @@ public class XmppConnection extends ImConnection {
 
                 String[] groups = new String[] { list.getName() };
 
-                RosterPacket.ItemStatus status = null;
+                boolean subPending = false;
                 RosterPacket.ItemType type = RosterPacket.ItemType.none;
 
                 if (autoSubscribedPresence)
                 {
-                    status = RosterPacket.ItemStatus.subscribe;
                     type = RosterPacket.ItemType.both;
                 }
                 else
                 {
-                    status = RosterPacket.ItemStatus.SUBSCRIPTION_PENDING;
                     type = RosterPacket.ItemType.to;
                 }
 
                 try {
-                    rEntry = mRoster.getEntry(contact.getAddress().getBareAddress());
+                    rEntry = mRoster.getEntry(JidCreate.bareFrom(contact.getAddress().getBareAddress()));
                     RosterGroup rGroup = mRoster.getGroup(list.getName());
 
                     if (rGroup == null)
                     {
                         if (rEntry == null) {
 
-                            addRosterEntry(contact.getAddress().getBareAddress(), contact.getName(), null, status, type);
-                            rEntry = mRoster.getEntry(contact.getAddress().getBareAddress());
+                            addRosterEntry(contact.getAddress().getBareAddress(), contact.getName(), null, subPending, type);
+                            rEntry = mRoster.getEntry(JidCreate.bareFrom(contact.getAddress().getBareAddress()));
                         }
 
                     }
                     else if (rEntry == null)
                     {
-                        addRosterEntry(contact.getAddress().getBareAddress(), contact.getName(), groups, status, type);
-                        rEntry = mRoster.getEntry(contact.getAddress().getBareAddress());
+                        addRosterEntry(contact.getAddress().getBareAddress(), contact.getName(), groups, subPending, type);
+                        rEntry = mRoster.getEntry(JidCreate.bareFrom(contact.getAddress().getBareAddress()));
                     }
 
 
@@ -2859,13 +2896,13 @@ public class XmppConnection extends ImConnection {
 
         }
 
-        private void addRosterEntry (String user, String name, String[] groups, RosterPacket.ItemStatus status, RosterPacket.ItemType type) throws SmackException, XMPPException.XMPPErrorException
+        private void addRosterEntry (String user, String name, String[] groups, boolean subscriptionPending, RosterPacket.ItemType type) throws InterruptedException, XmppStringprepException, SmackException, XMPPException.XMPPErrorException
         {
             // Create and send roster entry creation packet.
             RosterPacket rosterPacket = new RosterPacket();
             rosterPacket.setType(IQ.Type.set);
-            RosterPacket.Item item = new RosterPacket.Item(user, name);
-            item.setItemStatus(status);
+            RosterPacket.Item item = new RosterPacket.Item(JidCreate.bareFrom(user), name);
+            item.setSubscriptionPending(subscriptionPending);
             item.setItemType(type);
             if (groups != null) {
                 for (String group : groups) {
@@ -2875,7 +2912,7 @@ public class XmppConnection extends ImConnection {
                 }
             }
             rosterPacket.addRosterItem(item);
-            mConnection.createPacketCollectorAndSend(rosterPacket).nextResultOrThrow();
+            mConnection.createStanzaCollectorAndSend(rosterPacket).nextResultOrThrow();
 
             /**
             // Create a presence subscription packet and send.
@@ -2899,7 +2936,7 @@ public class XmppConnection extends ImConnection {
                     privacyManager.updatePrivacyList(PRIVACY_LIST_DEFAULT, list);
                     privacyManager.setActiveListName(PRIVACY_LIST_DEFAULT);
                     return true;
-                } catch (SmackException.NoResponseException | XMPPException.XMPPErrorException | SmackException.NotConnectedException e) {
+                } catch (InterruptedException | SmackException.NoResponseException | XMPPException.XMPPErrorException | SmackException.NotConnectedException e) {
                     e.printStackTrace();
                     return false;
                 }
@@ -2986,13 +3023,14 @@ public class XmppConnection extends ImConnection {
 
         @Override
         protected void doSetContactName(String address, String name) throws ImException {
-            RosterEntry entry = mRoster.getEntry(address);
-            // confirm entry still exists
-            if (entry == null) {
-                return;
-            }
+
             // set name
             try {
+                RosterEntry entry = mRoster.getEntry(JidCreate.bareFrom(address));
+                // confirm entry still exists
+                if (entry == null) {
+                    return;
+                }
                 entry.setName(name);
             }
             catch (Exception e)
@@ -3408,12 +3446,13 @@ public class XmppConnection extends ImConnection {
        // ProviderManager.addExtensionProvider("x","jabber:x:event", new MessageEventProvider());
 
         //  Chat State
+        ChatStateExtensionProvider csep = new ChatStateExtensionProvider();
 
-        ProviderManager.addExtensionProvider("active","http://jabber.org/protocol/chatstates", new ChatStateExtension.Provider());
-        ProviderManager.addExtensionProvider("composing","http://jabber.org/protocol/chatstates", new ChatStateExtension.Provider());
-        ProviderManager.addExtensionProvider("paused","http://jabber.org/protocol/chatstates", new ChatStateExtension.Provider());
-        ProviderManager.addExtensionProvider("inactive","http://jabber.org/protocol/chatstates", new ChatStateExtension.Provider());
-        ProviderManager.addExtensionProvider("gone","http://jabber.org/protocol/chatstates", new ChatStateExtension.Provider());
+        ProviderManager.addExtensionProvider("active","http://jabber.org/protocol/chatstates", csep);
+        ProviderManager.addExtensionProvider("composing","http://jabber.org/protocol/chatstates",  csep);
+        ProviderManager.addExtensionProvider("paused","http://jabber.org/protocol/chatstates",  csep);
+        ProviderManager.addExtensionProvider("inactive","http://jabber.org/protocol/chatstates",  csep);
+        ProviderManager.addExtensionProvider("gone","http://jabber.org/protocol/chatstates",  csep);
 
 
         //  XHTML
@@ -3525,7 +3564,7 @@ public class XmppConnection extends ImConnection {
             org.jivesoftware.smackx.iqregister.AccountManager aMgr = org.jivesoftware.smackx.iqregister.AccountManager.getInstance(mConnection);
 
             if (aMgr.supportsAccountCreation()) {
-                aMgr.createAccount(username, password, params);
+                aMgr.createAccount(Localpart.from(username), password, params);
 
                 return true;
 
@@ -3624,7 +3663,7 @@ public class XmppConnection extends ImConnection {
 
             if (mConnection.isConnected())
             {
-                Chat thisChat = mChatManager.createChat(to);
+                Chat thisChat = mChatManager.createChat(JidCreate.entityFullFrom(to));
                 ChatStateManager.getInstance(mConnection).setCurrentState(currentChatState, thisChat);
             }
         }
@@ -3670,16 +3709,16 @@ public class XmppConnection extends ImConnection {
             if (presence.getFrom() == null)
                 return null;
             
-            presence = mRoster.getPresence(presence.getFrom());
+            presence = mRoster.getPresence(presence.getFrom().asBareJid());
         }
         
         if (TextUtils.isEmpty(presence.getFrom()))
             return null;
 
-        if (presence.getFrom().startsWith(mUser.getAddress().getBareAddress())) //ignore presence from yourself
+        if (presence.getFrom().toString().startsWith(mUser.getAddress().getBareAddress())) //ignore presence from yourself
             return null;
 
-        XmppAddress xaddress = new XmppAddress(presence.getFrom());
+        XmppAddress xaddress = new XmppAddress(presence.getFrom().toString());
 
         Presence p = new Presence(parsePresence(presence), presence.getStatus(), null, null,
                 Presence.CLIENT_TYPE_MOBILE);
@@ -3696,9 +3735,7 @@ public class XmppConnection extends ImConnection {
 
         Contact contact = mContactListManager.getContact(xaddress.getBareAddress());
 
-        String[] presenceParts = presence.getFrom().split("/");
-        if (presenceParts.length > 1)
-            p.setResource(presenceParts[1]);
+            p.setResource(presence.getFrom().getResourceOrEmpty().toString());
 
 
         if (presence.getType() == org.jivesoftware.smack.packet.Presence.Type.subscribe
@@ -3708,7 +3745,7 @@ public class XmppConnection extends ImConnection {
             try
             {
                 if (contact == null) {
-                    XmppAddress xAddr = new XmppAddress(presence.getFrom());
+                    XmppAddress xAddr = new XmppAddress(presence.getFrom().toString());
                     contact = new Contact(xAddr, xAddr.getUser());
                 }
 
@@ -3750,7 +3787,7 @@ public class XmppConnection extends ImConnection {
                 sendPacket(reqSubscribe);
 
                 if (contact == null) {
-                    XmppAddress xAddr = new XmppAddress(presence.getFrom());
+                    XmppAddress xAddr = new XmppAddress(presence.getFrom().toString());
                     contact = new Contact(xAddr, xAddr.getUser());
                     mContactListManager.doAddContactToListAsync(contact,getContactListManager().getDefaultContactList(),true);
                 }

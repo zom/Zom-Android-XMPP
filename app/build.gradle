@@ -101,9 +101,13 @@ android {
 }
 
 dependencies {
+
+    compile fileTree(dir: 'libs', include: '*.jar')
+
     compile 'com.android.support:multidex:1.0.1'
 
     compile 'net.zetetic:android-database-sqlcipher:3.5.4@aar'
+
     compile project(':otr4jandroid')
     compile project(':tibetanTextLibrary')
     compile project(':chatsecure-push:sdk')
@@ -128,9 +132,22 @@ dependencies {
 
     compile 'info.guardianproject.panic:panic:0.5'
 
-    compile "org.igniterealtime.smack:smack-android-extensions:4.1.7"
-    compile "org.igniterealtime.smack:smack-experimental:4.1.7"
-    compile "org.igniterealtime.smack:smack-tcp:4.1.7"
+    //compile "org.igniterealtime.smack:smack-android-extensions:4.1.7"
+    //compile "org.igniterealtime.smack:smack-experimental:4.1.7"
+    //compile "org.igniterealtime.smack:smack-tcp:4.1.7"
+
+// https://mvnrepository.com/artifact/org.jxmpp/jxmpp-core
+compile group: 'org.jxmpp', name: 'jxmpp-core', version: '0.5.0'
+compile group: 'org.jxmpp', name: 'jxmpp-jid', version: '0.5.0'
+compile group: 'org.jxmpp', name: 'jxmpp-util-cache', version: '0.5.0'
+
+
+    compile 'org.whispersystems:signal-protocol-java:2.3.0'
+    compile 'org.bouncycastle:bcprov-jdk15on:1.56'
+    compile 'org.whispersystems:curve25519-android:0.3.0'
+
+    // https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java
+    compile group: 'com.google.protobuf', name: 'protobuf-java', version: '2.5.0'
 
     compile 'com.github.ge0rg:MemorizingTrustManager:9e30ffdf7d'
 
