@@ -18,7 +18,6 @@
 package org.awesomeapp.messenger;
 
 import android.app.Activity;
-import android.app.Application;
 import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -30,7 +29,6 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -42,11 +40,9 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 
-import net.hockeyapp.android.CrashManager;
-import net.hockeyapp.android.CrashManagerListener;
 import net.sqlcipher.database.SQLiteDatabase;
 
-import org.awesomeapp.messenger.crypto.OtrAndroidKeyManagerImpl;
+import org.awesomeapp.messenger.crypto.otr.OtrAndroidKeyManagerImpl;
 import org.awesomeapp.messenger.model.ImConnection;
 import org.awesomeapp.messenger.model.ImErrorInfo;
 import org.awesomeapp.messenger.provider.Imps;
@@ -69,7 +65,6 @@ import org.awesomeapp.messenger.util.Debug;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
@@ -91,6 +86,7 @@ import org.awesomeapp.messenger.util.Languages;
 import org.chatsecure.pushsecure.PushSecureClient;
 import org.chatsecure.pushsecure.response.Account;
 import org.ironrabbit.type.CustomTypefaceManager;
+import org.jivesoftware.smackx.omemo.OmemoInitializer;
 
 public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
@@ -240,6 +236,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
             sThreadPoolExecutor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, TimeUnit.SECONDS, workQueue);
         }
 
+        new OmemoInitializer().initialize();
     }
 
     public boolean isThemeDark ()
@@ -800,14 +797,6 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
         ImPluginHelper.getInstance(this).loadAvailablePlugins();
     }
 
-    public void checkForCrashes(final Activity activity) {
-        CrashManager.register(activity, ImApp.HOCKEY_APP_ID, new CrashManagerListener() {
-            @Override
-            public String getDescription() {
-                return Debug.getTrail(activity);
-            }
-        });
-    }
 
     public boolean setDefaultAccount (long providerId, long accountId)
     {

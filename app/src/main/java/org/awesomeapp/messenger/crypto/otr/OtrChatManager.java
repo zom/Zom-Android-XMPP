@@ -1,4 +1,4 @@
-package org.awesomeapp.messenger.crypto;
+package org.awesomeapp.messenger.crypto.otr;
 
 // Originally: package com.zadov.beem;
 
@@ -6,7 +6,6 @@ import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
 import org.awesomeapp.messenger.push.PushManager;
 import org.awesomeapp.messenger.push.WhitelistTokenTlvHandler;
-import org.awesomeapp.messenger.push.model.PersistedPushToken;
 import org.awesomeapp.messenger.ui.legacy.SmpResponseActivity;
 import org.awesomeapp.messenger.model.Contact;
 import org.awesomeapp.messenger.model.Message;
@@ -40,7 +39,6 @@ import net.java.otr4j.session.SessionStatus;
 import net.java.otr4j.session.TLV;
 import android.content.Context;
 import android.content.Intent;
-import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
@@ -245,7 +243,7 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
 
         try {
 
-            mOtrEngine.startSession(sessionId);
+          //  mOtrEngine.startSession(sessionId);
 
             return sessionId;
 
@@ -270,7 +268,7 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
 
         try {
 
-            mOtrEngine.startSession(sessionId);
+          //  mOtrEngine.startSession(sessionId);
             
             return sessionId;
 

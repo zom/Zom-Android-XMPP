@@ -135,6 +135,8 @@ dependencies {
     //compile "org.igniterealtime.smack:smack-android-extensions:4.1.7"
     //compile "org.igniterealtime.smack:smack-experimental:4.1.7"
     //compile "org.igniterealtime.smack:smack-tcp:4.1.7"
+    compile "de.measite.minidns:minidns-hla:0.2.1"
+
 
 // https://mvnrepository.com/artifact/org.jxmpp/jxmpp-core
 compile group: 'org.jxmpp', name: 'jxmpp-core', version: '0.5.0'
@@ -157,7 +159,6 @@ compile group: 'org.jxmpp', name: 'jxmpp-util-cache', version: '0.5.0'
     compile 'com.github.bumptech.glide:glide:3.5.2'
 
     compile 'com.github.javiersantos:AppUpdater:2.5.2'
-    compile 'net.hockeyapp.android:HockeySDK:3.5.0'
 
     compile 'com.github.QuadFlask:colorpicker:0.0.10'
 

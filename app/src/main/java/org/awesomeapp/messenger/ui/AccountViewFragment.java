@@ -50,7 +50,7 @@ import org.awesomeapp.messenger.ui.legacy.SignInHelper;
 import org.awesomeapp.messenger.ui.legacy.SimpleAlertHandler;
 import org.awesomeapp.messenger.ui.onboarding.OnboardingManager;
 import org.awesomeapp.messenger.crypto.IOtrChatSession;
-import org.awesomeapp.messenger.crypto.OtrAndroidKeyManagerImpl;
+import org.awesomeapp.messenger.crypto.otr.OtrAndroidKeyManagerImpl;
 import org.awesomeapp.messenger.service.IImConnection;
 
 import info.guardianproject.netcipher.proxy.OrbotHelper;

@@ -1,4 +1,4 @@
-package org.awesomeapp.messenger.crypto;
+package org.awesomeapp.messenger.crypto.otr;
 
 import org.awesomeapp.messenger.model.Address;
 import org.awesomeapp.messenger.model.Message;
@@ -18,9 +18,8 @@ import net.java.otr4j.OtrEngineHost;
 import net.java.otr4j.OtrKeyManager;
 import net.java.otr4j.OtrPolicy;
 import net.java.otr4j.session.SessionID;
-import net.java.otr4j.session.SessionStatus;
+
 import android.content.Context;
-import android.os.RemoteException;
 
 /*
  * OtrEngineHostImpl is the connects this app and the OtrEngine

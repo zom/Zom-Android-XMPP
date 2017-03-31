@@ -17,20 +17,15 @@
 
 package org.awesomeapp.messenger.model;
 
-import org.awesomeapp.messenger.crypto.OtrChatManager;
+import org.awesomeapp.messenger.crypto.otr.OtrChatManager;
 import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
 import org.awesomeapp.messenger.provider.Imps;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Vector;
 
 import net.java.otr4j.session.SessionID;
 import net.java.otr4j.session.SessionStatus;
 
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
-import android.util.Log;
 
 /**
  * A ChatSession represents a conversation between two users. A ChatSession has
@@ -143,8 +138,8 @@ public class ChatSession {
 
                     }
 
-                     message.setType(Imps.MessageType.POSTPONED);
-                     return message.getType();
+                    message.setType(Imps.MessageType.POSTPONED);
+                    return message.getType();
                 }
             }
 
@@ -166,6 +161,7 @@ public class ChatSession {
                 }
 
             } else {
+
 
                 boolean hasKey = !TextUtils.isEmpty(cm.getKeyManager().getRemoteFingerprint(sId));
 

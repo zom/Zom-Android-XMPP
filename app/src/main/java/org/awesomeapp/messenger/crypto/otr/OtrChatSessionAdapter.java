@@ -1,4 +1,4 @@
-package org.awesomeapp.messenger.crypto;
+package org.awesomeapp.messenger.crypto.otr;
 
 import org.awesomeapp.messenger.crypto.IOtrChatSession.Stub;
 import org.awesomeapp.messenger.model.ImEntity;
@@ -8,7 +8,7 @@ import net.java.otr4j.session.SessionID;
 import net.java.otr4j.session.SessionStatus;
 import android.os.RemoteException;
 
-public class OtrChatSessionAdapter extends IOtrChatSession.Stub {
+public class OtrChatSessionAdapter extends Stub {
 
     private OtrChatManager _chatManager;
     private String _localUser;

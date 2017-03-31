@@ -1,4 +1,4 @@
-package org.awesomeapp.messenger.crypto;
+package org.awesomeapp.messenger.crypto.otr;
 
 import android.text.TextUtils;
 
@@ -6,13 +6,11 @@ import org.awesomeapp.messenger.model.ChatSession;
 import org.awesomeapp.messenger.model.ImErrorInfo;
 import org.awesomeapp.messenger.model.Message;
 import org.awesomeapp.messenger.model.MessageListener;
-import org.awesomeapp.messenger.util.Debug;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import net.java.otr4j.OtrException;
-import net.java.otr4j.session.Session;
 import net.java.otr4j.session.SessionID;
 import net.java.otr4j.session.SessionStatus;
 import net.java.otr4j.session.TLV;

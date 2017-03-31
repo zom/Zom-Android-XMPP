@@ -17,7 +17,6 @@
 
 package org.awesomeapp.messenger.service.adapters;
 
-import org.awesomeapp.messenger.crypto.OtrChatManager;
 import org.awesomeapp.messenger.service.IChatSessionManager;
 import org.awesomeapp.messenger.service.IConnectionListener;
 import org.awesomeapp.messenger.service.IContactListManager;
@@ -36,7 +35,6 @@ import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.service.RemoteImService;
 
 import org.awesomeapp.messenger.tasks.ChatSessionInitTask;
-import org.awesomeapp.messenger.ui.ConversationListFragment;
 import org.awesomeapp.messenger.util.Debug;
 
 import java.util.Collection;

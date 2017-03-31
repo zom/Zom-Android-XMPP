@@ -314,7 +314,6 @@ public class MainActivity extends BaseActivity {
         } else {
             ImApp app = (ImApp) getApplication();
 
-            app.checkForCrashes(this);
             mApp.maybeInit(this);
             mApp.initAccountInfo();
 

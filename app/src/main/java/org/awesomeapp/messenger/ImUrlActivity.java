@@ -32,9 +32,8 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
-import org.awesomeapp.messenger.crypto.OtrDataHandler;
+import org.awesomeapp.messenger.crypto.otr.OtrDataHandler;
 import org.awesomeapp.messenger.model.ImConnection;
-import org.awesomeapp.messenger.model.SystemService;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.service.IChatSession;
 import org.awesomeapp.messenger.service.IChatSessionManager;

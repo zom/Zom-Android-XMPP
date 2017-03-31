@@ -50,6 +50,7 @@ import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.DefaultExtensionElement;
 import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.packet.IQ;
+import org.jivesoftware.smack.packet.StandardExtensionElement;
 import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smack.proxy.ProxyInfo;
@@ -91,6 +92,13 @@ import org.jivesoftware.smackx.muc.provider.MUCOwnerProvider;
 import org.jivesoftware.smackx.muc.provider.MUCUserProvider;
 import org.jivesoftware.smackx.offline.packet.OfflineMessageInfo;
 import org.jivesoftware.smackx.offline.packet.OfflineMessageRequest;
+import org.jivesoftware.smackx.omemo.OmemoManager;
+import org.jivesoftware.smackx.omemo.exceptions.CryptoFailedException;
+import org.jivesoftware.smackx.omemo.exceptions.InvalidOmemoKeyException;
+import org.jivesoftware.smackx.omemo.listener.OmemoMessageListener;
+import org.jivesoftware.smackx.omemo.signal.FileBasedSignalOmemoStore;
+import org.jivesoftware.smackx.omemo.signal.SignalOmemoService;
+import org.jivesoftware.smackx.omemo.signal.SignalOmemoStore;
 import org.jivesoftware.smackx.ping.PingManager;
 import org.jivesoftware.smackx.privacy.PrivacyListManager;
 import org.jivesoftware.smackx.privacy.packet.PrivacyItem;
@@ -108,6 +116,7 @@ import org.jivesoftware.smackx.xdata.Form;
 import org.jivesoftware.smackx.xdata.FormField;
 import org.jivesoftware.smackx.xdata.provider.DataFormProvider;
 import org.jivesoftware.smackx.xhtmlim.provider.XHTMLExtensionProvider;
+import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.DomainBareJid;
 import org.jxmpp.jid.EntityFullJid;
 import org.jxmpp.jid.EntityJid;
@@ -221,6 +230,10 @@ public class XmppConnection extends ImConnection {
     private final static String DEFAULT_CONFERENCE_SERVER = "conference.zom.im";
 
     private final static String PRIVACY_LIST_DEFAULT = "defaultprivacylist";
+
+    private OmemoManager mOmemoManager;
+    private SignalOmemoService mOmemoService;
+    private SignalOmemoStore mOmemoStore;
 
     public XmppConnection(Context context) throws IOException, KeyStoreException, NoSuchAlgorithmException, CertificateException {
         super(context);
@@ -1237,7 +1250,7 @@ public class XmppConnection extends ImConnection {
             debug(TAG, "logged in");
             mNeedReconnect = false;
 
-
+            initOmemo();
 
         } catch (XMPPException e) {
             debug(TAG, "exception thrown on connection",e);
@@ -1306,25 +1319,37 @@ public class XmppConnection extends ImConnection {
 
     }
 
-    /**
-    private String refreshGoogleToken (String userName, String expiredToken, String domain)
+    private void initOmemo ()
     {
-        
-        //invalidate our old one, that is locally cached
-        android.accounts.AccountManager.get(mContext.getApplicationContext()).invalidateAuthToken("com.google", expiredToken);
-        //request a new one
-        String newToken = null;//GTalkOAuth2.getGoogleAuthToken(userName + '@' + domain, mContext.getApplicationContext());
 
-        if (newToken != null)
-        {
-            //now store the new one, for future use until it expires
-        ///    ImApp.insertOrUpdateAccount(mContext.getContentResolver(), mProviderId, userName,
-           //         GTalkOAuth2.NAME + ':' + newToken );
+        try {
+
+            mOmemoManager = OmemoManager.getInstanceFor(mConnection);
+
+            if (mOmemoStore == null)
+            {
+                File fileOmemoStore = new File(mContext.getFilesDir(),"omemo.store");
+                mOmemoStore = new FileBasedSignalOmemoStore(mOmemoManager, fileOmemoStore);
+            }
+
+            mOmemoService = new SignalOmemoService(mOmemoManager, mOmemoStore);
+
+            //Single user chats
+            mOmemoManager.addOmemoMessageListener(new OmemoMessageListener() {
+                @Override
+                public void onOmemoMessageReceived(BareJid bareJid, org.jivesoftware.smack.packet.Message message) {
+
+                    debug(TAG,"got inbound message omemo: " + message.getBody());
+                }
+            });
+
         }
+        catch (Exception ome)
+        {
+            Log.e(TAG,"error init'ng OMEMO: " + ome.getMessage(),ome);
+        }
+    }
 
-        return newToken;
-
-    }*/
 
     // TODO shouldn't setProxy be handled in Imps/settings?
     public void setProxy(String type, String host, int port) {
@@ -1354,14 +1379,6 @@ public class XmppConnection extends ImConnection {
         }
     }
 
-    /**
-    public void initConnection(XMPPTCPConnection connection, Contact user, int state) {
-        mConnection = connection;
-        mRoster = Roster.getInstanceFor(mConnection);
-        mRoster.setRosterLoadedAtLogin(true);
-        mUser = user;
-        setState(state, null);
-    }*/
 
     private void initConnectionAndLogin (Imps.ProviderSettings.QueryMap providerSettings,String userName) throws InterruptedException, IOException, SmackException, XMPPException, KeyManagementException, NoSuchAlgorithmException, IllegalStateException, RuntimeException
     {
@@ -1562,8 +1579,7 @@ public class XmppConnection extends ImConnection {
             //java.lang.System.setProperty("java.net.preferIPv6Addresses", "false");
 
             debug(TAG, "(DNS SRV) resolving: " + domain);
-            List<HostAddress> listHostsFailed = null;
-
+            List<HostAddress> listHostsFailed = new ArrayList<>();
             List<HostAddress> listHosts = DNSUtil.resolveXMPPServiceDomain(domain, listHostsFailed, ConnectionConfiguration.DnssecMode.disabled);
 
             server = listHosts.get(0).getFQDN();
@@ -2229,6 +2245,7 @@ public class XmppConnection extends ImConnection {
                 if (muc != null) {
                     msgXmpp = muc.createMessage();
                 } else {
+
                     msgXmpp = new org.jivesoftware.smack.packet.Message(
                             JidCreate.entityBareFrom(message.getTo().getAddress()), org.jivesoftware.smack.packet.Message.Type.chat);
                     msgXmpp.addExtension(new DeliveryReceiptRequest());
@@ -2252,7 +2269,18 @@ public class XmppConnection extends ImConnection {
                 else
                     message.setID(msgXmpp.getStanzaId());
 
-                sendPacket(msgXmpp);
+
+                try {
+                    org.jivesoftware.smack.packet.Message msgEncrypted = mOmemoManager.encrypt(JidCreate.bareFrom(message.getTo().getAddress()), msgXmpp);
+                    sendPacket(msgEncrypted);
+                }
+                catch (CryptoFailedException cfe)
+                {
+                    debug(TAG,"crypto failed",cfe);
+                    sendPacket(msgXmpp);
+                }
+
+
             }
             catch (XmppStringprepException xe)
             {
@@ -3669,7 +3697,7 @@ public class XmppConnection extends ImConnection {
         }
         catch (Exception e)
         {
-            Log.e(ImApp.LOG_TAG,"error sending chat state",e);
+            Log.w(ImApp.LOG_TAG,"error sending chat state: " + e.getMessage());
         }
     }
 
@@ -3846,8 +3874,8 @@ public class XmppConnection extends ImConnection {
             ExtensionElement packetExtension=presence.getExtension("x","vcard-temp:x:update");
             if (packetExtension != null) {
 
-                DefaultExtensionElement o=(DefaultExtensionElement)packetExtension;
-                String hash=o.getValue("photo");
+                StandardExtensionElement o=(StandardExtensionElement)packetExtension;
+                String hash=o.getAttributeValue("photo");
                 if (hash != null) {
 
 

@@ -8,9 +8,7 @@ import android.util.Log;
 
 import java.util.List;
 
-import org.awesomeapp.messenger.crypto.OtrAndroidKeyManagerImpl;
-import org.awesomeapp.messenger.model.Contact;
-import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
+import org.awesomeapp.messenger.crypto.otr.OtrAndroidKeyManagerImpl;
 import org.awesomeapp.messenger.service.IContactList;
 import org.awesomeapp.messenger.service.IContactListManager;
 import org.awesomeapp.messenger.service.IImConnection;

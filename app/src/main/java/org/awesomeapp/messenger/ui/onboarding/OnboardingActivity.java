@@ -34,11 +34,9 @@ import android.view.View.OnClickListener;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -49,8 +47,7 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.MainActivity;
-import org.awesomeapp.messenger.Preferences;
-import org.awesomeapp.messenger.crypto.OtrAndroidKeyManagerImpl;
+import org.awesomeapp.messenger.crypto.otr.OtrAndroidKeyManagerImpl;
 import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.tasks.AddContactAsyncTask;
@@ -58,8 +55,6 @@ import org.awesomeapp.messenger.ui.BaseActivity;
 import org.awesomeapp.messenger.ui.legacy.DatabaseUtils;
 import org.awesomeapp.messenger.ui.legacy.SignInHelper;
 import org.awesomeapp.messenger.ui.legacy.SimpleAlertHandler;
-import org.awesomeapp.messenger.ui.legacy.ThemeableActivity;
-import org.awesomeapp.messenger.ui.widgets.InstantAutoCompleteTextView;
 import org.awesomeapp.messenger.ui.widgets.RoundedAvatarDrawable;
 import org.awesomeapp.messenger.util.SecureMediaStore;
 
@@ -69,12 +64,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.KeyPair;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import im.zom.messenger.R;
 import org.awesomeapp.messenger.util.Languages;
-import org.ironrabbit.type.CustomTypefaceManager;
 
 public class OnboardingActivity extends BaseActivity {
 

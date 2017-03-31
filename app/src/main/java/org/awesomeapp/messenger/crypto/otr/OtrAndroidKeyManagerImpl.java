@@ -1,4 +1,4 @@
-package org.awesomeapp.messenger.crypto;
+package org.awesomeapp.messenger.crypto.otr;
 
 import org.awesomeapp.messenger.crypto.IOtrKeyManager;
 import im.zom.messenger.R;
@@ -617,7 +617,7 @@ public class OtrAndroidKeyManagerImpl extends IOtrKeyManager.Stub implements Otr
         }
 
         //if we can't find an exact match, let's show the first one that matches the id sans resource
-        for (Object fpKey : store.getKeySet())
+        for (Object fpKey : store.getKeySet().toArray())
         {
             String fpKeyString = (String)fpKey;
             if (fpKeyString.startsWith(fullUserId) && fpKeyString.endsWith(".fingerprint")) {
