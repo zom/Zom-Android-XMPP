@@ -1330,6 +1330,7 @@ public class XmppConnection extends ImConnection {
             {
                 File fileOmemoStore = new File(mContext.getFilesDir(),"omemo.store");
                 mOmemoStore = new FileBasedSignalOmemoStore(mOmemoManager, fileOmemoStore);
+
             }
 
             mOmemoService = new SignalOmemoService(mOmemoManager, mOmemoStore);
@@ -2269,7 +2270,9 @@ public class XmppConnection extends ImConnection {
                 else
                     message.setID(msgXmpp.getStanzaId());
 
+                sendPacket(msgXmpp);
 
+                /**
                 try {
                     org.jivesoftware.smack.packet.Message msgEncrypted = mOmemoManager.encrypt(JidCreate.bareFrom(message.getTo().getAddress()), msgXmpp);
                     sendPacket(msgEncrypted);
@@ -2277,9 +2280,7 @@ public class XmppConnection extends ImConnection {
                 catch (CryptoFailedException cfe)
                 {
                     debug(TAG,"crypto failed",cfe);
-                    sendPacket(msgXmpp);
-                }
-
+                }**/
 
             }
             catch (XmppStringprepException xe)
