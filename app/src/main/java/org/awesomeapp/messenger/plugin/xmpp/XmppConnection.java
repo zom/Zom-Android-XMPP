@@ -125,6 +125,7 @@ import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.jid.parts.Resourcepart;
 import org.jxmpp.stringprep.XmppStringprepException;
+import org.whispersystems.libsignal.IdentityKey;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -446,7 +447,7 @@ public class XmppConnection extends ImConnection {
 
                         debug(TAG, "compressed avatar length: " + avatarBytesCompressed.length);
 
-                        DatabaseUtils.insertAvatarBlob(resolver, Imps.Avatars.CONTENT_URI, mProviderId, mAccountId, avatarBytesCompressed, avatarHash, XmppAddress.stripResource(jid));
+                        DatabaseUtils.insertAvatarBlob(resolver, Imps.Avatars.CONTENT_URI, mProviderId, mAccountId, avatarBytesCompressed, avatarHash, jid);
 
                         // int providerId, int accountId, byte[] data, String hash,String contact
                         return true;
@@ -1335,12 +1336,19 @@ public class XmppConnection extends ImConnection {
 
             mOmemoService = new SignalOmemoService(mOmemoManager, mOmemoStore);
 
-            //Single user chats
             mOmemoManager.addOmemoMessageListener(new OmemoMessageListener() {
                 @Override
                 public void onOmemoMessageReceived(BareJid bareJid, org.jivesoftware.smack.packet.Message message) {
-
-                    debug(TAG,"got inbound message omemo: " + message.getBody());
+                    if (message != null) {
+                        debug(TAG, "got inbound message omemo: from:" + bareJid.toString() + "=" + message.getBody());
+                        message.setFrom(bareJid);
+                        message.setTo(mUsername);
+                        handleMessage(message);
+                    }
+                    else
+                    {
+                        debug(TAG, "got empty ibound message omemo: from:" + bareJid.toString());
+                    }
                 }
             });
 
@@ -1437,7 +1445,7 @@ public class XmppConnection extends ImConnection {
 
                         //create a session
                         if (session == null) {
-                            ImEntity participant = findOrCreateParticipant(xa.getBareAddress(), true);
+                            ImEntity participant = findOrCreateParticipant(xa.getAddress(), true);
 
                             if (participant != null)
                                 session = mSessionManager.createChatSession(participant, false);
@@ -2112,7 +2120,7 @@ public class XmppConnection extends ImConnection {
 
     private ChatSession findOrCreateSession(String address, boolean groupChat) {
 
-        ChatSession session = mSessionManager.findSession(XmppAddress.stripResource(address));
+        ChatSession session = mSessionManager.findSession(address);
 
         //create a session if this it not groupchat
         if (session == null && (!groupChat)) {
@@ -2121,6 +2129,15 @@ public class XmppConnection extends ImConnection {
             if (participant != null) {
                 session = mSessionManager.createChatSession(participant, false);
 
+
+                try {
+
+                        mOmemoManager.getOmemoService().getPubSubHelper().fetchDeviceList(JidCreate.bareFrom(address));
+                    }
+                    catch (Exception ioe)
+                    {
+                        debug(TAG,"error fetching omemo devices",ioe);
+                    }
                 /**
                 ChatManager chatManager = ChatManager.getInstanceFor(mConnection);
                 Chat chat= chatManager.createChat(participant.getAddress().getAddress(), new ChatStateListener() {
@@ -2172,7 +2189,7 @@ public class XmppConnection extends ImConnection {
         ImEntity participant = null;
 
         if (isGroupChat) {
-            Address xmppAddress = new XmppAddress(XmppAddress.stripResource(address));
+            Address xmppAddress = new XmppAddress(address);
             participant = mChatGroupManager.getChatGroup(xmppAddress);
 
             if (participant == null) {
@@ -2270,20 +2287,21 @@ public class XmppConnection extends ImConnection {
                 else
                     message.setID(msgXmpp.getStanzaId());
 
-                sendPacket(msgXmpp);
+//                sendPacket(msgXmpp);
 
-                /**
+
                 try {
                     org.jivesoftware.smack.packet.Message msgEncrypted = mOmemoManager.encrypt(JidCreate.bareFrom(message.getTo().getAddress()), msgXmpp);
-                    sendPacket(msgEncrypted);
+                    Chat thisChat = mChatManager.createChat(JidCreate.entityBareFrom(message.getTo().getAddress()).asEntityJidIfPossible());
+                    thisChat.sendMessage(msgEncrypted);
                 }
                 catch (CryptoFailedException cfe)
                 {
                     debug(TAG,"crypto failed",cfe);
-                }**/
+                }
 
             }
-            catch (XmppStringprepException xe)
+            catch (Exception xe)
             {
                 debug(TAG, "unable to send message",xe);
             }
@@ -3632,7 +3650,7 @@ public class XmppConnection extends ImConnection {
     private void handleChatState (String from, String chatStateXml) throws RemoteException {
 
         Presence p = null;
-        Contact contact = mContactListManager.getContact(XmppAddress.stripResource(from));
+        Contact contact = mContactListManager.getContact(from);
         if (contact == null)
             return;
 
@@ -3705,7 +3723,7 @@ public class XmppConnection extends ImConnection {
     private void setPresence (String from, int presenceType) {
 
         Presence p = null;
-        Contact contact = mContactListManager.getContact(XmppAddress.stripResource(from));
+        Contact contact = mContactListManager.getContact(from);
         if (contact == null)
             return;
 
@@ -3739,6 +3757,7 @@ public class XmppConnection extends ImConnection {
                 return null;
             
             presence = mRoster.getPresence(presence.getFrom().asBareJid());
+
         }
         
         if (TextUtils.isEmpty(presence.getFrom()))
@@ -3750,7 +3769,7 @@ public class XmppConnection extends ImConnection {
         XmppAddress xaddress = new XmppAddress(presence.getFrom().toString());
 
         Presence p = new Presence(parsePresence(presence), presence.getStatus(), null, null,
-                Presence.CLIENT_TYPE_MOBILE);
+                Presence.CLIENT_TYPE_MOBILE,null,xaddress.getResource());
 
         //this is only persisted in memory
         p.setPriority(presence.getPriority());

@@ -587,7 +587,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
         Map<String, String> settings = loadProviderSettings(providerId);
 
         //make sure OTR is init'd before you create your first connection
-        initOtrChatManager();
+        //initOtrChatManager();
 
         ConnectionFactory factory = ConnectionFactory.getInstance();
         try {

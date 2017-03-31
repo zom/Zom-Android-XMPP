@@ -113,6 +113,11 @@ public class ChatSession {
     public int sendMessageAsync(Message message) {
 
         if (mParticipant instanceof Contact) {
+
+            message.setTo(mParticipant.getAddress());
+            mManager.sendMessageAsync(this, message);
+
+            /**
             OtrChatManager cm = OtrChatManager.getInstance();
             SessionID sId = cm.getSessionId(message.getFrom().getAddress(), mParticipant.getAddress().getAddress());
             SessionStatus otrStatus = cm.getSessionStatus(sId);
@@ -183,7 +188,7 @@ public class ChatSession {
                 return message.getType();
 
             }
-
+            **/
         }
         else if (mParticipant instanceof ChatGroup)
         {

@@ -153,8 +153,9 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                 mDataHandlerListener = new DataHandlerListenerImpl();
                 mDataHandler.setDataListener(mDataHandlerListener);
 
-                OtrChatManager cm = service.getOtrChatManager();
-                cm.addOtrEngineListener(mListenerAdapter);
+                OtrChatManager cm = null;
+                // OtrChatManager cm = service.getOtrChatManager();
+               // cm.addOtrEngineListener(mListenerAdapter);
                 mChatSession.setMessageListener(new OtrChatListener(cm, mListenerAdapter));
 
                 if (participant instanceof Contact) {

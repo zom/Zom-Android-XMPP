@@ -294,9 +294,8 @@ public class ConversationView {
                         return;
 
 
-
+                    /**
                     IOtrChatSession otrChatSession = mCurrentChatSession.getDefaultOtrChatSession();
-
 
                     if (otrChatSession != null && (!isGroupChat()))
                     {
@@ -318,7 +317,7 @@ public class ConversationView {
                                 }
                             },100);
                         }
-                    }
+                    }**/
 
                 }
 
@@ -373,8 +372,7 @@ public class ConversationView {
     }
 
     public void setOTRState(boolean otrEnabled) {
-
-
+        
         try {
 
             if (mCurrentChatSession == null)
@@ -386,7 +384,6 @@ public class ConversationView {
 
                 if (otrChatSession != null)
                 {
-
                     if (otrEnabled && (otrChatSession.getChatStatus() != SessionStatus.ENCRYPTED.ordinal())) {
 
                         otrChatSession.startChatEncryption();
@@ -1714,7 +1711,8 @@ public class ConversationView {
 
         try {
             IOtrChatSession otrChatSession = mCurrentChatSession.getDefaultOtrChatSession();
-            intent.putExtra("fingerprint", otrChatSession.getRemoteFingerprint());
+            if (otrChatSession != null)
+                intent.putExtra("fingerprint", otrChatSession.getRemoteFingerprint());
         }
         catch (RemoteException re){}
 
@@ -1825,7 +1823,7 @@ public class ConversationView {
                     IChatSessionManager sessionMgr = mConn.getChatSessionManager();
                     if (sessionMgr != null) {
 
-                            IChatSession session = sessionMgr.getChatSession(Address.stripResource(mRemoteAddress));
+                            IChatSession session = sessionMgr.getChatSession(mRemoteAddress);
 
                             return session;
 
@@ -2076,13 +2074,13 @@ public class ConversationView {
                     mSendButton.setImageResource(R.drawable.ic_send_secure);
                 }
 
-                try
-                {
-                    String rFingerprint = otrChatSession.getRemoteFingerprint();
-                    mIsVerified = (OtrChatManager.getInstance().isRemoteKeyVerified(mRemoteAddress, rFingerprint));
+                if (otrChatSession != null) {
+                    try {
+                        String rFingerprint = otrChatSession.getRemoteFingerprint();
+                        mIsVerified = (OtrChatManager.getInstance().isRemoteKeyVerified(mRemoteAddress, rFingerprint));
+                    } catch (RemoteException re) {
+                    }
                 }
-                catch (RemoteException re){}
-
 
             } else if (mLastSessionStatus == SessionStatus.FINISHED) {
 
