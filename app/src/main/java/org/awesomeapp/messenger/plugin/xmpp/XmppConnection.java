@@ -2189,7 +2189,7 @@ public class XmppConnection extends ImConnection {
                 try {
 
                         BareJid jid = JidCreate.bareFrom(address);
-                        OmemoDeviceListElement deviceList = mOmemoManager.getOmemoService().getPubSubHelper().fetchDeviceList(jid);
+                       // OmemoDeviceListElement deviceList = mOmemoManager.getOmemoService().getPubSubHelper().fetchDeviceList(jid);
                     trustOmemoDevice(jid,true);
 
 
@@ -2326,20 +2326,21 @@ public class XmppConnection extends ImConnection {
                 } else {
 
                     msgXmpp = new org.jivesoftware.smack.packet.Message(
-                            JidCreate.entityBareFrom(message.getTo().getAddress()), org.jivesoftware.smack.packet.Message.Type.chat);
+                            JidCreate.bareFrom(message.getTo().getAddress()), org.jivesoftware.smack.packet.Message.Type.chat);
                     msgXmpp.addExtension(new DeliveryReceiptRequest());
 
+                    /**
                     Contact contact = mContactListManager.getContact(message.getTo().getBareAddress());
-
                     if (contact != null && contact.getPresence() != null && (!contact.getPresence().isOnline()))
                         requestPresenceRefresh(message.getTo().getBareAddress());
+                     **/
 
                 }
 
                 if (message.getFrom() == null)
-                    msgXmpp.setFrom(JidCreate.entityFullFrom(mUser.getAddress().getAddress()));
+                    msgXmpp.setFrom(JidCreate.bareFrom(mUser.getAddress().getAddress()));
                 else
-                    msgXmpp.setFrom(JidCreate.entityFullFrom(message.getFrom().getAddress()));
+                    msgXmpp.setFrom(JidCreate.bareFrom(message.getFrom().getAddress()));
 
                 msgXmpp.setBody(message.getBody());
 
@@ -2351,7 +2352,8 @@ public class XmppConnection extends ImConnection {
                 Jid jidTo = JidCreate.entityFullFrom(message.getTo().getAddress());
                 Chat thisChat = mChatManager.createChat(jidTo.asEntityJidIfPossible());
 
-                if (mOmemoManager.resourceSupportsOmemo(jidTo)) {
+                //if this isn't already OTR encrypted, and the JID can support OMEMO then do it!
+                if (message.getType() == Imps.MessageType.OUTGOING && mOmemoManager.resourceSupportsOmemo(jidTo)) {
 
                     try {
                         org.jivesoftware.smack.packet.Message msgEncrypted = mOmemoManager.encrypt(jidTo.asBareJid(), msgXmpp);

@@ -3,6 +3,7 @@ package org.awesomeapp.messenger.crypto.otr;
 import org.awesomeapp.messenger.model.Address;
 import org.awesomeapp.messenger.model.Message;
 import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
+import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.service.adapters.ChatSessionAdapter;
 import org.awesomeapp.messenger.service.adapters.ChatSessionManagerAdapter;
 import org.awesomeapp.messenger.service.adapters.ImConnectionAdapter;
@@ -158,6 +159,14 @@ public class OtrEngineHostImpl implements OtrEngineHost {
                 if (!to.getAddress().contains("/")) {
                     //always send OTR messages to a resource
                     msg.setTo(appendSessionResource(sessionID, to));
+                }
+
+                boolean verified = mOtrKeyManager.isVerified(sessionID);
+
+                if (verified) {
+                    msg.setType(Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED);
+                } else {
+                    msg.setType(Imps.MessageType.OUTGOING_ENCRYPTED);
                 }
 
                 // msg ID is set by plugin
