@@ -92,13 +92,21 @@ import org.jivesoftware.smackx.muc.provider.MUCOwnerProvider;
 import org.jivesoftware.smackx.muc.provider.MUCUserProvider;
 import org.jivesoftware.smackx.offline.packet.OfflineMessageInfo;
 import org.jivesoftware.smackx.offline.packet.OfflineMessageRequest;
+import org.jivesoftware.smackx.omemo.FileBasedOmemoStore;
 import org.jivesoftware.smackx.omemo.OmemoManager;
+import org.jivesoftware.smackx.omemo.elements.OmemoDeviceListElement;
+import org.jivesoftware.smackx.omemo.exceptions.CannotEstablishOmemoSessionException;
 import org.jivesoftware.smackx.omemo.exceptions.CryptoFailedException;
 import org.jivesoftware.smackx.omemo.exceptions.InvalidOmemoKeyException;
+import org.jivesoftware.smackx.omemo.internal.CachedDeviceList;
+import org.jivesoftware.smackx.omemo.internal.OmemoDevice;
+import org.jivesoftware.smackx.omemo.internal.OmemoMessageInformation;
 import org.jivesoftware.smackx.omemo.listener.OmemoMessageListener;
-import org.jivesoftware.smackx.omemo.signal.FileBasedSignalOmemoStore;
+import org.jivesoftware.smackx.omemo.signal.SignalFileBasedOmemoStore;
 import org.jivesoftware.smackx.omemo.signal.SignalOmemoService;
+import org.jivesoftware.smackx.omemo.signal.SignalOmemoSession;
 import org.jivesoftware.smackx.omemo.signal.SignalOmemoStore;
+import org.jivesoftware.smackx.omemo.util.KeyUtil;
 import org.jivesoftware.smackx.ping.PingManager;
 import org.jivesoftware.smackx.privacy.PrivacyListManager;
 import org.jivesoftware.smackx.privacy.packet.PrivacyItem;
@@ -234,7 +242,7 @@ public class XmppConnection extends ImConnection {
 
     private OmemoManager mOmemoManager;
     private SignalOmemoService mOmemoService;
-    private SignalOmemoStore mOmemoStore;
+    private SignalFileBasedOmemoStore mOmemoStore;
 
     public XmppConnection(Context context) throws IOException, KeyStoreException, NoSuchAlgorithmException, CertificateException {
         super(context);
@@ -1330,24 +1338,25 @@ public class XmppConnection extends ImConnection {
             if (mOmemoStore == null)
             {
                 File fileOmemoStore = new File(mContext.getFilesDir(),"omemo.store");
-                mOmemoStore = new FileBasedSignalOmemoStore(mOmemoManager, fileOmemoStore);
+                mOmemoStore = new SignalFileBasedOmemoStore(mOmemoManager, fileOmemoStore);
 
             }
 
             mOmemoService = new SignalOmemoService(mOmemoManager, mOmemoStore);
 
-            mOmemoManager.addOmemoMessageListener(new OmemoMessageListener() {
+            mOmemoService.addOmemoMessageListener(new OmemoMessageListener() {
+
                 @Override
-                public void onOmemoMessageReceived(BareJid bareJid, org.jivesoftware.smack.packet.Message message) {
-                    if (message != null) {
-                        debug(TAG, "got inbound message omemo: from:" + bareJid.toString() + "=" + message.getBody());
-                        message.setFrom(bareJid);
-                        message.setTo(mUsername);
-                        handleMessage(message);
+                public void onOmemoMessageReceived(String body, org.jivesoftware.smack.packet.Message message, org.jivesoftware.smack.packet.Message message1, OmemoMessageInformation omemoMessageInformation) {
+
+                    if (body != null) {
+                        debug(TAG, "got inbound message omemo: from:" + message.getFrom() + "=" + message.getBody());
+                        message.setBody(body);
+                        handleMessage(message, true);
                     }
                     else
                     {
-                        debug(TAG, "got empty ibound message omemo: from:" + bareJid.toString());
+                        debug(TAG, "got empty ibound message omemo: from:" +  message.getFrom().toString());
                     }
                 }
             });
@@ -1357,6 +1366,50 @@ public class XmppConnection extends ImConnection {
         {
             Log.e(TAG,"error init'ng OMEMO: " + ome.getMessage(),ome);
         }
+    }
+
+    private boolean trustOmemoDevice (BareJid jid, boolean isTrusted)
+    {
+
+        CachedDeviceList l = mOmemoStore.loadCachedDeviceList(jid);
+        int ourId = mOmemoStore.loadOmemoDeviceId();
+
+        for (Integer deviceId : l.getActiveDevices())
+        {
+
+            OmemoDevice d = new OmemoDevice(jid, deviceId);
+            SignalOmemoSession s = (SignalOmemoSession) mOmemoStore.getOmemoSessionOf(d);
+            if(s.getIdentityKey() == null) {
+                try {
+                    debug(TAG,"OMEMO Build session...");
+                    mOmemoService.buildSessionFromOmemoBundle(d);
+                    s = (SignalOmemoSession) mOmemoStore.getOmemoSessionOf(d);
+                    debug(TAG, "OMEMO Session built: " + jid.toString());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+            if (mOmemoStore.isDecidedOmemoIdentity(d, s.getIdentityKey())) {
+                if (mOmemoStore.isTrustedOmemoIdentity(d, s.getIdentityKey())) {
+                    debug(TAG, jid.toString() + " Status: Trusted");
+                } else {
+                    debug(TAG,jid.toString() +  " Status: Untrusted");
+                }
+            }
+
+            if (isTrusted) {
+                mOmemoStore.trustOmemoIdentity(d, s.getIdentityKey());
+            }
+            else
+            {
+                mOmemoStore.distrustOmemoIdentity(d, s.getIdentityKey());
+            }
+        }
+
+
+        return true;
     }
 
 
@@ -1731,7 +1784,7 @@ public class XmppConnection extends ImConnection {
 
                 org.jivesoftware.smack.packet.Message smackMessage = (org.jivesoftware.smack.packet.Message) stanza;
 
-                handleMessage(smackMessage);
+                handleMessage(smackMessage, false);
 
                 String msg_xml = smackMessage.toXML().toString();
 
@@ -1901,7 +1954,7 @@ public class XmppConnection extends ImConnection {
 
     }
 
-    private void handleMessage (org.jivesoftware.smack.packet.Message smackMessage) {
+    private void handleMessage (org.jivesoftware.smack.packet.Message smackMessage, boolean encrypted) {
 
         String body = smackMessage.getBody();
         boolean isGroupMessage = smackMessage.getType() == org.jivesoftware.smack.packet.Message.Type.groupchat;
@@ -1952,7 +2005,10 @@ public class XmppConnection extends ImConnection {
 
                 rec.setID(smackMessage.getStanzaId());
 
-                rec.setType(Imps.MessageType.INCOMING);
+                if (encrypted)
+                    rec.setType(Imps.MessageType.INCOMING_ENCRYPTED_VERIFIED);
+                else
+                    rec.setType(Imps.MessageType.INCOMING);
 
                 // Detect if this was said by us, and mark message as outgoing
                 if (isGroupMessage) {
@@ -2132,9 +2188,14 @@ public class XmppConnection extends ImConnection {
 
                 try {
 
-                        mOmemoManager.getOmemoService().getPubSubHelper().fetchDeviceList(JidCreate.bareFrom(address));
+                        BareJid jid = JidCreate.bareFrom(address);
+                        OmemoDeviceListElement deviceList = mOmemoManager.getOmemoService().getPubSubHelper().fetchDeviceList(jid);
+                    trustOmemoDevice(jid,true);
+
+
                     }
                     catch (Exception ioe)
+
                     {
                         debug(TAG,"error fetching omemo devices",ioe);
                     }
@@ -2276,9 +2337,9 @@ public class XmppConnection extends ImConnection {
                 }
 
                 if (message.getFrom() == null)
-                    msgXmpp.setFrom(mUser.getAddress().getAddress());
+                    msgXmpp.setFrom(JidCreate.entityFullFrom(mUser.getAddress().getAddress()));
                 else
-                    msgXmpp.setFrom(message.getFrom().getAddress());
+                    msgXmpp.setFrom(JidCreate.entityFullFrom(message.getFrom().getAddress()));
 
                 msgXmpp.setBody(message.getBody());
 
@@ -2287,17 +2348,23 @@ public class XmppConnection extends ImConnection {
                 else
                     message.setID(msgXmpp.getStanzaId());
 
-//                sendPacket(msgXmpp);
+                Jid jidTo = JidCreate.entityFullFrom(message.getTo().getAddress());
+                Chat thisChat = mChatManager.createChat(jidTo.asEntityJidIfPossible());
 
+                if (mOmemoManager.resourceSupportsOmemo(jidTo)) {
 
-                try {
-                    org.jivesoftware.smack.packet.Message msgEncrypted = mOmemoManager.encrypt(JidCreate.bareFrom(message.getTo().getAddress()), msgXmpp);
-                    Chat thisChat = mChatManager.createChat(JidCreate.entityBareFrom(message.getTo().getAddress()).asEntityJidIfPossible());
-                    thisChat.sendMessage(msgEncrypted);
+                    try {
+                        org.jivesoftware.smack.packet.Message msgEncrypted = mOmemoManager.encrypt(jidTo.asBareJid(), msgXmpp);
+                        thisChat.sendMessage(msgEncrypted);
+                        message.setType(Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED);
+
+                    } catch (CryptoFailedException cfe) {
+                        debug(TAG, "crypto failed", cfe);
+                    }
                 }
-                catch (CryptoFailedException cfe)
+                else
                 {
-                    debug(TAG,"crypto failed",cfe);
+                    thisChat.sendMessage(msgXmpp);
                 }
 
             }

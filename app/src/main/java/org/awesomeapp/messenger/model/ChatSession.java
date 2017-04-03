@@ -20,6 +20,8 @@ package org.awesomeapp.messenger.model;
 import org.awesomeapp.messenger.crypto.otr.OtrChatManager;
 import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
 import org.awesomeapp.messenger.provider.Imps;
+import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.stringprep.XmppStringprepException;
 
 import net.java.otr4j.session.SessionID;
 import net.java.otr4j.session.SessionStatus;
@@ -114,12 +116,15 @@ public class ChatSession {
 
         if (mParticipant instanceof Contact) {
 
-            message.setTo(mParticipant.getAddress());
-            mManager.sendMessageAsync(this, message);
-
-            /**
             OtrChatManager cm = OtrChatManager.getInstance();
             SessionID sId = cm.getSessionId(message.getFrom().getAddress(), mParticipant.getAddress().getAddress());
+
+            message.setTo(new XmppAddress(sId.getRemoteUserId()));
+            mManager.sendMessageAsync(this, message);
+            message.setType(Imps.MessageType.OUTGOING);
+
+            /**
+
             SessionStatus otrStatus = cm.getSessionStatus(sId);
 
             boolean verified = cm.getKeyManager().isVerified(sId);
