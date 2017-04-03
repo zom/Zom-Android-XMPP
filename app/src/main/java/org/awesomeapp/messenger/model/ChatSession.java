@@ -17,6 +17,7 @@
 
 package org.awesomeapp.messenger.model;
 
+import org.awesomeapp.messenger.crypto.omemo.Omemo;
 import org.awesomeapp.messenger.crypto.otr.OtrChatManager;
 import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
 import org.awesomeapp.messenger.provider.Imps;
@@ -120,11 +121,10 @@ public class ChatSession {
             SessionID sId = cm.getSessionId(message.getFrom().getAddress(), mParticipant.getAddress().getAddress());
 
             boolean isOffline = !((Contact) mParticipant).getPresence().isOnline();
-            boolean canOmemo = true;
+            boolean canOmemo = Omemo.getInstance().resourceSupportsOmemo(sId.getRemoteUserId());
 
             message.setTo(new XmppAddress(sId.getRemoteUserId()));
             message.setType(Imps.MessageType.OUTGOING);
-
 
             SessionStatus otrStatus = cm.getSessionStatus(sId);
             boolean verified = cm.getKeyManager().isVerified(sId);

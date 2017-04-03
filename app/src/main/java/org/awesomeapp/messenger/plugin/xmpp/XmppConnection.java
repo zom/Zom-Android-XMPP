@@ -12,6 +12,7 @@ import android.util.Log;
 
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.crypto.TorProxyInfo;
+import org.awesomeapp.messenger.crypto.omemo.Omemo;
 import org.awesomeapp.messenger.model.Address;
 import org.awesomeapp.messenger.model.ChatGroup;
 import org.awesomeapp.messenger.model.ChatGroupManager;
@@ -239,10 +240,6 @@ public class XmppConnection extends ImConnection {
     private final static String DEFAULT_CONFERENCE_SERVER = "conference.zom.im";
 
     private final static String PRIVACY_LIST_DEFAULT = "defaultprivacylist";
-
-    private OmemoManager mOmemoManager;
-    private SignalOmemoService mOmemoService;
-    private SignalFileBasedOmemoStore mOmemoStore;
 
     public XmppConnection(Context context) throws IOException, KeyStoreException, NoSuchAlgorithmException, CertificateException {
         super(context);
@@ -1333,18 +1330,7 @@ public class XmppConnection extends ImConnection {
 
         try {
 
-            mOmemoManager = OmemoManager.getInstanceFor(mConnection);
-
-            if (mOmemoStore == null)
-            {
-                File fileOmemoStore = new File(mContext.getFilesDir(),"omemo.store");
-                mOmemoStore = new SignalFileBasedOmemoStore(mOmemoManager, fileOmemoStore);
-
-            }
-
-            mOmemoService = new SignalOmemoService(mOmemoManager, mOmemoStore);
-
-            mOmemoService.addOmemoMessageListener(new OmemoMessageListener() {
+            Omemo.getInstance(mConnection,mContext).getService().addOmemoMessageListener(new OmemoMessageListener() {
 
                 @Override
                 public void onOmemoMessageReceived(String body, org.jivesoftware.smack.packet.Message message, org.jivesoftware.smack.packet.Message message1, OmemoMessageInformation omemoMessageInformation) {
@@ -1368,49 +1354,7 @@ public class XmppConnection extends ImConnection {
         }
     }
 
-    private boolean trustOmemoDevice (BareJid jid, boolean isTrusted)
-    {
 
-        CachedDeviceList l = mOmemoStore.loadCachedDeviceList(jid);
-        int ourId = mOmemoStore.loadOmemoDeviceId();
-
-        for (Integer deviceId : l.getActiveDevices())
-        {
-
-            OmemoDevice d = new OmemoDevice(jid, deviceId);
-            SignalOmemoSession s = (SignalOmemoSession) mOmemoStore.getOmemoSessionOf(d);
-            if(s.getIdentityKey() == null) {
-                try {
-                    debug(TAG,"OMEMO Build session...");
-                    mOmemoService.buildSessionFromOmemoBundle(d);
-                    s = (SignalOmemoSession) mOmemoStore.getOmemoSessionOf(d);
-                    debug(TAG, "OMEMO Session built: " + jid.toString());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-
-            if (mOmemoStore.isDecidedOmemoIdentity(d, s.getIdentityKey())) {
-                if (mOmemoStore.isTrustedOmemoIdentity(d, s.getIdentityKey())) {
-                    debug(TAG, jid.toString() + " Status: Trusted");
-                } else {
-                    debug(TAG,jid.toString() +  " Status: Untrusted");
-                }
-            }
-
-            if (isTrusted) {
-                mOmemoStore.trustOmemoIdentity(d, s.getIdentityKey());
-            }
-            else
-            {
-                mOmemoStore.distrustOmemoIdentity(d, s.getIdentityKey());
-            }
-        }
-
-
-        return true;
-    }
 
 
     // TODO shouldn't setProxy be handled in Imps/settings?
@@ -2190,7 +2134,7 @@ public class XmppConnection extends ImConnection {
 
                         BareJid jid = JidCreate.bareFrom(address);
                        // OmemoDeviceListElement deviceList = mOmemoManager.getOmemoService().getPubSubHelper().fetchDeviceList(jid);
-                    trustOmemoDevice(jid,true);
+                    Omemo.getInstance(mConnection,mContext).trustOmemoDevice(jid,true);
 
 
                     }
@@ -2349,14 +2293,16 @@ public class XmppConnection extends ImConnection {
                 else
                     message.setID(msgXmpp.getStanzaId());
 
-                Jid jidTo = JidCreate.entityFullFrom(message.getTo().getAddress());
+                Jid jidTo = JidCreate.from(message.getTo().getAddress());
                 Chat thisChat = mChatManager.createChat(jidTo.asEntityJidIfPossible());
 
+                boolean canOmemo = Omemo.getInstance(mConnection,mContext).resourceSupportsOmemo(jidTo);
                 //if this isn't already OTR encrypted, and the JID can support OMEMO then do it!
-                if (message.getType() == Imps.MessageType.OUTGOING && mOmemoManager.resourceSupportsOmemo(jidTo)) {
+                if (message.getType() == Imps.MessageType.OUTGOING && canOmemo) {
 
                     try {
-                        org.jivesoftware.smack.packet.Message msgEncrypted = mOmemoManager.encrypt(jidTo.asBareJid(), msgXmpp);
+                        org.jivesoftware.smack.packet.Message msgEncrypted
+                                = Omemo.getInstance(mConnection,mContext).getManager().encrypt(jidTo.asBareJid(), msgXmpp);
                         thisChat.sendMessage(msgEncrypted);
                         message.setType(Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED);
 
