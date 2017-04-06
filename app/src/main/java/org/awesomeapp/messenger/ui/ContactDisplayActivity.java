@@ -45,6 +45,7 @@ import org.jxmpp.stringprep.XmppStringprepException;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import im.zom.messenger.R;
 
@@ -216,29 +217,23 @@ public class ContactDisplayActivity extends BaseActivity {
 
     private void displayOmemoFingerprints ()
     {
-        Omemo omemo = Omemo.getInstance();
+        try {
 
-        if (omemo != null) {
-            try {
+            List omemoFps = mConn.getFingerprints(mUsername);
 
-                ArrayList<String> omemoFps = omemo.getFingerprints(JidCreate.bareFrom(mUsername),false);
-
-                if (omemoFps != null && omemoFps.size() > 0)
-                {
-                    findViewById(R.id.listOmemo).setVisibility(View.VISIBLE);
-
-                    TextView tv = (TextView)findViewById(R.id.tvFingerprintOmemo);
-                    tv.setText(omemoFps.get(0));
-
-                }
-
-
-            }
-            catch (Exception xe)
+            if (omemoFps != null && omemoFps.size() > 0)
             {
-                xe.printStackTrace();
+                findViewById(R.id.listOmemo).setVisibility(View.VISIBLE);
+
+                TextView tv = (TextView)findViewById(R.id.tvFingerprintOmemo);
+                tv.setText((String)omemoFps.get(0));
+
             }
 
+        }
+        catch (Exception xe)
+        {
+            xe.printStackTrace();
         }
     }
 

@@ -19,6 +19,7 @@ package org.awesomeapp.messenger.model;
 
 import org.awesomeapp.messenger.service.adapters.ChatSessionAdapter;
 import org.awesomeapp.messenger.service.adapters.ChatSessionManagerAdapter;
+import org.jxmpp.jid.Jid;
 
 import java.util.Hashtable;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -126,4 +127,10 @@ public abstract class ChatSessionManager {
      * @param message the message to send.
      */
     public abstract void sendMessageAsync(ChatSession session, Message message);
+
+    /**
+     * The resource of this JID s
+     * @param jid
+     */
+    public abstract boolean resourceSupportsOmemo (Jid jid);
 }

@@ -180,7 +180,6 @@ import de.duenndns.ssl.MemorizingTrustManager;
 import info.guardianproject.netcipher.proxy.OrbotHelper;
 import im.zom.messenger.R;
 
-
 public class XmppConnection extends ImConnection {
 
     private static final String DISCO_FEATURE = "http://jabber.org/protocol/disco#info";
@@ -201,6 +200,8 @@ public class XmppConnection extends ImConnection {
 
     private XmppChatSessionManager mSessionManager;
     private XMPPTCPConnectionConfiguration.Builder mConfig;
+
+    private Omemo mOmemo;
 
     // True if we are in the process of reconnecting.  Reconnection is retried once per heartbeat.
     // Synchronized by executor thread.
@@ -1338,7 +1339,8 @@ public class XmppConnection extends ImConnection {
 
         try {
 
-            Omemo.getInstance(mConnection,mContext).getService().addOmemoMessageListener(new OmemoMessageListener() {
+            mOmemo = new Omemo(mConnection,mContext);
+            mOmemo.getService().addOmemoMessageListener(new OmemoMessageListener() {
 
                 @Override
                 public void onOmemoMessageReceived(String body, org.jivesoftware.smack.packet.Message message, org.jivesoftware.smack.packet.Message message1, OmemoMessageInformation omemoMessageInformation) {
@@ -2138,12 +2140,9 @@ public class XmppConnection extends ImConnection {
                 session = mSessionManager.createChatSession(participant, false);
 
                 try {
-
                         BareJid jid = JidCreate.bareFrom(address);
-                        Omemo.getInstance(mConnection,mContext).loadDeviceList(jid);
-                        Omemo.getInstance(mConnection,mContext).trustOmemoDevice(jid,true);
-
-
+                        mOmemo.loadDeviceList(jid);
+                        mOmemo.trustOmemoDevice(jid,true);
                     }
                     catch (Exception ioe)
 
@@ -2261,9 +2260,7 @@ public class XmppConnection extends ImConnection {
                 boolean canOmemo = false;
 
                 try {
-
-                    if (Omemo.getInstance(mConnection, mContext) != null)
-                        canOmemo = Omemo.getInstance(mConnection, mContext).resourceSupportsOmemo(jidTo);
+                        canOmemo = mOmemo.resourceSupportsOmemo(jidTo);
                 }
                 catch (Exception e)
                 {
@@ -2275,7 +2272,7 @@ public class XmppConnection extends ImConnection {
 
                     try {
                         org.jivesoftware.smack.packet.Message msgEncrypted
-                                = Omemo.getInstance(mConnection,mContext).getManager().encrypt(jidTo.asBareJid(), msgXmpp);
+                                = mOmemo.getManager().encrypt(jidTo.asBareJid(), msgXmpp);
                         thisChat.sendMessage(msgEncrypted);
                         message.setType(Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED);
 
@@ -2285,9 +2282,9 @@ public class XmppConnection extends ImConnection {
                     }
                     catch (UndecidedOmemoIdentityException uoie)
                     {
-                        Omemo.getInstance(mConnection,mContext).trustOmemoDevice(jidTo.asBareJid(),true);
+                        mOmemo.trustOmemoDevice(jidTo.asBareJid(),true);
                         org.jivesoftware.smack.packet.Message msgEncrypted
-                                = Omemo.getInstance(mConnection,mContext).getManager().encrypt(jidTo.asBareJid(), msgXmpp);
+                                = mOmemo.getManager().encrypt(jidTo.asBareJid(), msgXmpp);
                         thisChat.sendMessage(msgEncrypted);
                         message.setType(Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED);
                     }
@@ -2322,6 +2319,10 @@ public class XmppConnection extends ImConnection {
             return session;
         }
 
+        @Override
+        public boolean resourceSupportsOmemo(Jid jid) {
+            return mOmemo.resourceSupportsOmemo(jid);
+        }
     }
 
     
@@ -4108,6 +4109,19 @@ public class XmppConnection extends ImConnection {
              }
 
           }, 500, 500);
+    }
+
+    @Override
+    public List getFingerprints (String address)
+    {
+        try {
+
+            return mOmemo.getFingerprints(JidCreate.bareFrom(address), false);
+        }
+        catch (Exception xe)
+        {
+            return null;
+        }
     }
 
 }

@@ -40,24 +40,6 @@ public class Omemo {
     private SignalOmemoService mOmemoService;
     private SignalFileBasedOmemoStore mOmemoStore;
 
-    private static Omemo mInstance;
-
-    public synchronized static Omemo getInstance (XMPPTCPConnection connection, Context context) throws Exception
-    {
-        if (mInstance == null)
-        {
-            OmemoConstants.ADD_OMEMO_HINT_BODY = false;
-            mInstance = new Omemo(connection, context);
-        }
-
-        return mInstance;
-    }
-
-    public static Omemo getInstance ()
-    {
-        return mInstance;
-    }
-
     public OmemoService getService ()
     {
         return mOmemoService;
@@ -68,9 +50,14 @@ public class Omemo {
         return mOmemoManager;
     }
 
-    private Omemo (XMPPTCPConnection connection, Context context) throws Exception
     {
         new OmemoInitializer().initialize();
+    }
+
+    public Omemo (XMPPTCPConnection connection, Context context) throws Exception
+    {
+
+        OmemoConstants.ADD_OMEMO_HINT_BODY = false;
 
         mOmemoManager = OmemoManager.getInstanceFor(connection);
 

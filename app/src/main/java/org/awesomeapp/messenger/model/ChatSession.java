@@ -133,8 +133,7 @@ public class ChatSession {
                 boolean isOffline = !((Contact) mParticipant).getPresence().isOnline();
                 boolean canOmemo = false;
 
-                if (Omemo.getInstance() !=null)
-                    canOmemo = Omemo.getInstance().resourceSupportsOmemo(jid);
+                canOmemo = mManager.resourceSupportsOmemo(jid);
 
                 message.setTo(new XmppAddress(jid.toString()));
                 message.setType(Imps.MessageType.OUTGOING);

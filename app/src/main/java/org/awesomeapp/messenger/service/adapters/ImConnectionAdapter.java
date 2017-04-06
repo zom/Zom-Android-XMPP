@@ -40,6 +40,7 @@ import org.awesomeapp.messenger.util.Debug;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import android.content.ContentResolver;
@@ -621,4 +622,14 @@ public class ImConnectionAdapter extends org.awesomeapp.messenger.service.IImCon
             mConnection.sendTypingStatus(to,isTyping);
 
     }
+
+
+    public List getFingerprints (String address)
+    {
+        if (mConnection != null)
+            return mConnection.getFingerprints(address);
+        else
+            return null;
+    }
+
 }

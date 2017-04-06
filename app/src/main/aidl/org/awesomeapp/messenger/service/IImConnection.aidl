@@ -76,4 +76,5 @@ interface IImConnection {
 
     void sendTypingStatus (in String to, boolean isTyping);
 
+    List getFingerprints (String address);
 }

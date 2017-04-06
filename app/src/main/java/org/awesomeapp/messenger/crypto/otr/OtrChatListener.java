@@ -88,7 +88,7 @@ public class OtrChatListener implements MessageListener {
 
             } catch (OtrException oe) {
 
-                OtrDebugLogger.log("error decrypting message", oe);
+                OtrDebugLogger.log("error decrypting message: " + msg.getID());
                 //  mOtrChatManager.refreshSession(sessionID.getLocalUserId(),sessionID.getRemoteUserId());
                 // msg.setBody("[" + "You received an unreadable encrypted message" + "]");
                 // mMessageListener.onIncomingMessage(session, msg);
