@@ -25,6 +25,7 @@ import android.widget.TextView;
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.MainActivity;
 import org.awesomeapp.messenger.crypto.IOtrChatSession;
+import org.awesomeapp.messenger.crypto.omemo.Omemo;
 import org.awesomeapp.messenger.crypto.otr.OtrChatManager;
 import org.awesomeapp.messenger.model.Contact;
 import org.awesomeapp.messenger.model.ImErrorInfo;
@@ -39,6 +40,8 @@ import org.awesomeapp.messenger.ui.legacy.DatabaseUtils;
 import org.awesomeapp.messenger.ui.onboarding.OnboardingManager;
 import org.awesomeapp.messenger.ui.qr.QrDisplayActivity;
 import org.awesomeapp.messenger.ui.qr.QrShareAsyncTask;
+import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.stringprep.XmppStringprepException;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -65,8 +68,6 @@ public class ContactDisplayActivity extends BaseActivity {
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-       // applyStyleForToolbar();
 
         mContactId = (int)getIntent().getLongExtra("contactId",-1);
 
@@ -110,14 +111,32 @@ public class ContactDisplayActivity extends BaseActivity {
             }
         }
 
-        ImageView btnQrShare = (ImageView) findViewById(R.id.qrshare);
-        ImageView iv = (ImageView)findViewById(R.id.qrcode);
-        tv = (TextView)findViewById(R.id.tvFingerprint);
+        View btn = findViewById(R.id.btnStartChat);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
-        Button btnVerify = (Button)findViewById(R.id.btnVerify);
+                startChat();
 
+            }
+        });
+
+
+        displayOtrFingerprints ();
+        displayOmemoFingerprints ();
+
+    }
+
+    private void displayOtrFingerprints ()
+    {
 
         try {
+
+            ImageView btnQrShare = (ImageView) findViewById(R.id.qrshare);
+            ImageView iv = (ImageView)findViewById(R.id.qrcode);
+            TextView tv = (TextView)findViewById(R.id.tvFingerprint);
+
+            Button btnVerify = (Button)findViewById(R.id.btnVerify);
 
 
             ArrayList<String> fingerprints = OtrChatManager.getInstance().getRemoteKeyFingerprints(mUsername);
@@ -193,20 +212,34 @@ public class ContactDisplayActivity extends BaseActivity {
         {
             Log.e(ImApp.LOG_TAG,"error displaying contact",e);
         }
+    }
 
-        View btn = findViewById(R.id.btnStartChat);
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+    private void displayOmemoFingerprints ()
+    {
+        Omemo omemo = Omemo.getInstance();
 
-                startChat();
+        if (omemo != null) {
+            try {
+
+                ArrayList<String> omemoFps = omemo.getFingerprints(JidCreate.bareFrom(mUsername),false);
+
+                if (omemoFps != null && omemoFps.size() > 0)
+                {
+                    findViewById(R.id.listOmemo).setVisibility(View.VISIBLE);
+
+                    TextView tv = (TextView)findViewById(R.id.tvFingerprintOmemo);
+                    tv.setText(omemoFps.get(0));
+
+                }
+
 
             }
-        });
+            catch (Exception xe)
+            {
+                xe.printStackTrace();
+            }
 
-//        if (mContactId != -1)
-  //          showGallery (mContactId);
-
+        }
     }
 
 

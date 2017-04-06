@@ -236,7 +236,6 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
             sThreadPoolExecutor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, TimeUnit.SECONDS, workQueue);
         }
 
-        new OmemoInitializer().initialize();
     }
 
     public boolean isThemeDark ()

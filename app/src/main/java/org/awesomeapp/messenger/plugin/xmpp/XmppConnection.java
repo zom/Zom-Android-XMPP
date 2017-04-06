@@ -75,10 +75,12 @@ import org.jivesoftware.smackx.chatstates.ChatStateManager;
 import org.jivesoftware.smackx.chatstates.packet.ChatStateExtension;
 import org.jivesoftware.smackx.chatstates.provider.ChatStateExtensionProvider;
 import org.jivesoftware.smackx.commands.provider.AdHocCommandDataProvider;
+import org.jivesoftware.smackx.delay.provider.DelayInformationProvider;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.disco.provider.DiscoverInfoProvider;
 import org.jivesoftware.smackx.disco.provider.DiscoverItemsProvider;
 import org.jivesoftware.smackx.iqlast.packet.LastActivity;
+import org.jivesoftware.smackx.iqprivate.PrivateDataManager;
 import org.jivesoftware.smackx.muc.DiscussionHistory;
 import org.jivesoftware.smackx.muc.InvitationListener;
 import org.jivesoftware.smackx.muc.MultiUserChat;
@@ -87,6 +89,7 @@ import org.jivesoftware.smackx.muc.Occupant;
 import org.jivesoftware.smackx.muc.ParticipantStatusListener;
 import org.jivesoftware.smackx.muc.RoomInfo;
 import org.jivesoftware.smackx.muc.SubjectUpdatedListener;
+import org.jivesoftware.smackx.muc.packet.GroupChatInvitation;
 import org.jivesoftware.smackx.muc.packet.MUCUser;
 import org.jivesoftware.smackx.muc.provider.MUCAdminProvider;
 import org.jivesoftware.smackx.muc.provider.MUCOwnerProvider;
@@ -98,7 +101,7 @@ import org.jivesoftware.smackx.omemo.OmemoManager;
 import org.jivesoftware.smackx.omemo.elements.OmemoDeviceListElement;
 import org.jivesoftware.smackx.omemo.exceptions.CannotEstablishOmemoSessionException;
 import org.jivesoftware.smackx.omemo.exceptions.CryptoFailedException;
-import org.jivesoftware.smackx.omemo.exceptions.InvalidOmemoKeyException;
+import org.jivesoftware.smackx.omemo.exceptions.UndecidedOmemoIdentityException;
 import org.jivesoftware.smackx.omemo.internal.CachedDeviceList;
 import org.jivesoftware.smackx.omemo.internal.OmemoDevice;
 import org.jivesoftware.smackx.omemo.internal.OmemoMessageInformation;
@@ -108,10 +111,14 @@ import org.jivesoftware.smackx.omemo.signal.SignalOmemoService;
 import org.jivesoftware.smackx.omemo.signal.SignalOmemoSession;
 import org.jivesoftware.smackx.omemo.signal.SignalOmemoStore;
 import org.jivesoftware.smackx.omemo.util.KeyUtil;
+import org.jivesoftware.smackx.omemo.util.PubSubHelper;
 import org.jivesoftware.smackx.ping.PingManager;
+import org.jivesoftware.smackx.ping.provider.PingProvider;
 import org.jivesoftware.smackx.privacy.PrivacyListManager;
 import org.jivesoftware.smackx.privacy.packet.PrivacyItem;
 import org.jivesoftware.smackx.privacy.provider.PrivacyProvider;
+import org.jivesoftware.smackx.pubsub.PubSubManager;
+import org.jivesoftware.smackx.pubsub.packet.PubSub;
 import org.jivesoftware.smackx.receipts.DeliveryReceipt;
 import org.jivesoftware.smackx.receipts.DeliveryReceiptManager;
 import org.jivesoftware.smackx.receipts.DeliveryReceiptRequest;
@@ -258,6 +265,7 @@ public class XmppConnection extends ImConnection {
         addProviderManagerExtensions();
 
         XmppStreamHandler.addExtensionProviders();
+
        // DeliveryReceipts.addExtensionProviders();
 
        // ServiceDiscoveryManager.setIdentityName("ChatSecure");
@@ -2129,12 +2137,11 @@ public class XmppConnection extends ImConnection {
             if (participant != null) {
                 session = mSessionManager.createChatSession(participant, false);
 
-
                 try {
 
                         BareJid jid = JidCreate.bareFrom(address);
-                       // OmemoDeviceListElement deviceList = mOmemoManager.getOmemoService().getPubSubHelper().fetchDeviceList(jid);
-                    Omemo.getInstance(mConnection,mContext).trustOmemoDevice(jid,true);
+                        Omemo.getInstance(mConnection,mContext).loadDeviceList(jid);
+                        Omemo.getInstance(mConnection,mContext).trustOmemoDevice(jid,true);
 
 
                     }
@@ -2143,49 +2150,11 @@ public class XmppConnection extends ImConnection {
                     {
                         debug(TAG,"error fetching omemo devices",ioe);
                     }
-                /**
-                ChatManager chatManager = ChatManager.getInstanceFor(mConnection);
-                Chat chat= chatManager.createChat(participant.getAddress().getAddress(), new ChatStateListener() {
-                    @Override
-                    public void stateChanged(Chat chat, ChatState state) {
-                        switch (state){
-                            case active:
-                                Log.d("state","active");
-                                break;
-                            case composing:
-                                Log.d("state","composing");
-                                break;
-                            case paused:
-                                Log.d("state","paused");
-                                break;
-                            case inactive:
-                                Log.d("state","inactive");
-                                break;
-                            case gone:
-                                Log.d("state","gone");
-                                break;
-                        }
-                    }
 
-                    @Override
-                    public void processMessage(Chat chat, org.jivesoftware.smack.packet.Message message) {
-                        Log.d("processMessage","processMessage");
-                    }
-                });**/
 
             }
 
         }
-
-        /**
-        try {
-            if (session != null)
-                session.setSubscribed(!mContactListManager.isBlocked(address));
-        }
-        catch (ImException ime)
-        {
-            ime.printStackTrace();
-        }*/
 
         return session;
     }
@@ -2264,7 +2233,6 @@ public class XmppConnection extends ImConnection {
 
             try {
 
-
                 if (muc != null) {
                     msgXmpp = muc.createMessage();
                 } else {
@@ -2272,12 +2240,6 @@ public class XmppConnection extends ImConnection {
                     msgXmpp = new org.jivesoftware.smack.packet.Message(
                             JidCreate.bareFrom(message.getTo().getAddress()), org.jivesoftware.smack.packet.Message.Type.chat);
                     msgXmpp.addExtension(new DeliveryReceiptRequest());
-
-                    /**
-                    Contact contact = mContactListManager.getContact(message.getTo().getBareAddress());
-                    if (contact != null && contact.getPresence() != null && (!contact.getPresence().isOnline()))
-                        requestPresenceRefresh(message.getTo().getBareAddress());
-                     **/
 
                 }
 
@@ -2296,7 +2258,18 @@ public class XmppConnection extends ImConnection {
                 Jid jidTo = JidCreate.from(message.getTo().getAddress());
                 Chat thisChat = mChatManager.createChat(jidTo.asEntityJidIfPossible());
 
-                boolean canOmemo = Omemo.getInstance(mConnection,mContext).resourceSupportsOmemo(jidTo);
+                boolean canOmemo = false;
+
+                try {
+
+                    if (Omemo.getInstance(mConnection, mContext) != null)
+                        canOmemo = Omemo.getInstance(mConnection, mContext).resourceSupportsOmemo(jidTo);
+                }
+                catch (Exception e)
+                {
+                    Log.w("OMEMO","something is wrong with omemo: " + e.getMessage(),e);
+                }
+
                 //if this isn't already OTR encrypted, and the JID can support OMEMO then do it!
                 if (message.getType() == Imps.MessageType.OUTGOING && canOmemo) {
 
@@ -2307,7 +2280,16 @@ public class XmppConnection extends ImConnection {
                         message.setType(Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED);
 
                     } catch (CryptoFailedException cfe) {
+                        message.setType(Imps.MessageType.POSTPONED);
                         debug(TAG, "crypto failed", cfe);
+                    }
+                    catch (UndecidedOmemoIdentityException uoie)
+                    {
+                        Omemo.getInstance(mConnection,mContext).trustOmemoDevice(jidTo.asBareJid(),true);
+                        org.jivesoftware.smack.packet.Message msgEncrypted
+                                = Omemo.getInstance(mConnection,mContext).getManager().encrypt(jidTo.asBareJid(), msgXmpp);
+                        thisChat.sendMessage(msgEncrypted);
+                        message.setType(Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED);
                     }
                 }
                 else
@@ -2319,6 +2301,7 @@ public class XmppConnection extends ImConnection {
             catch (Exception xe)
             {
                 debug(TAG, "unable to send message",xe);
+                message.setType(Imps.MessageType.POSTPONED);
             }
         }
 
@@ -2334,12 +2317,8 @@ public class XmppConnection extends ImConnection {
 
         @Override
         public ChatSession createChatSession(ImEntity participant, boolean isNewSession) {
-
-          //  requestPresenceRefresh(participant.getAddress().getAddress());
-            
             ChatSession session = super.createChatSession(participant,isNewSession);
-
-         //   mSessions.put(Address.stripResource(participant.getAddress().getAddress()),session);
+            mSessions.put(participant.getAddress().getAddress(),session);
             return session;
         }
 
@@ -3487,8 +3466,112 @@ public class XmppConnection extends ImConnection {
     }
 
 
-    private void addProviderManagerExtensions ()
-    {
+    public static void addProviderManagerExtensions(){
+
+        ProviderManager.addIQProvider("query", "jabber:iq:private", new PrivateDataManager.PrivateDataIQProvider());
+        ProviderManager.addIQProvider("query","http://jabber.org/protocol/bytestreams", new BytestreamsProvider());
+        ProviderManager.addIQProvider("query","http://jabber.org/protocol/disco#items", new DiscoverItemsProvider());
+        ProviderManager.addIQProvider("query","http://jabber.org/protocol/disco#info", new DiscoverInfoProvider());
+
+        // Time
+        try {
+            ProviderManager.addIQProvider("query", "jabber:iq:time",
+                    Class.forName("org.jivesoftware.smackx.packet.Time"));
+        } catch (ClassNotFoundException e) {
+            Log.w("TestClient",
+                    "Can't load class for org.jivesoftware.smackx.packet.Time");
+        }
+        //Pings
+        ProviderManager.addIQProvider("ping","urn:xmpp:ping",new PingProvider());
+        // Roster Exchange
+       // providerManager.addExtensionProvider("x", "jabber:x:roster", new RosterExchangeProvider());
+        ProviderManager.addIQProvider("vCard", "vcard-temp", new VCardProvider());
+        // Message Events
+     //   providerManager.addExtensionProvider("x", "jabber:x:event",
+       //         new MessageEventProvider());
+
+        // XHTML
+        ProviderManager.addExtensionProvider("html", "http://jabber.org/protocol/xhtml-im",
+                new XHTMLExtensionProvider());
+        // Group Chat Invitations
+        ProviderManager.addExtensionProvider("x", "jabber:x:conference",
+                new GroupChatInvitation.Provider());
+        // Service Discovery # Items
+        ProviderManager.addIQProvider("query", "http://jabber.org/protocol/disco#items",
+                new DiscoverItemsProvider());
+        // Service Discovery # Info
+        ProviderManager.addIQProvider("query", "http://jabber.org/protocol/disco#info",
+                new DiscoverInfoProvider());
+        // Data Forms
+        ProviderManager.addExtensionProvider("x", "jabber:x:data", new DataFormProvider());
+        // MUC User
+        ProviderManager.addExtensionProvider("x", "http://jabber.org/protocol/muc#user",
+                new MUCUserProvider());
+        // MUC Admin
+        ProviderManager.addIQProvider("query", "http://jabber.org/protocol/muc#admin",
+                new MUCAdminProvider());
+        // MUC Owner
+        ProviderManager.addIQProvider("query", "http://jabber.org/protocol/muc#owner",
+                new MUCOwnerProvider());
+        // Delayed Delivery
+        //ProviderManager.addExtensionProvider("x", "jabber:x:delay",
+          //      new DelayInformationProvider());
+        // Version
+        try {
+            ProviderManager.addIQProvider("query", "jabber:iq:version",
+                    Class.forName("org.jivesoftware.smackx.packet.Version"));
+        } catch (ClassNotFoundException e) {
+            // Not sure what's happening here.
+        }
+        // VCard
+        ProviderManager.addIQProvider("vCard", "vcard-temp", new VCardProvider());
+        // Offline Message Requests
+        ProviderManager.addIQProvider("offline", "http://jabber.org/protocol/offline",
+                new OfflineMessageRequest.Provider());
+        // Offline Message Indicator
+        ProviderManager.addExtensionProvider("offline", "http://jabber.org/protocol/offline",
+                new OfflineMessageInfo.Provider());
+        // Last Activity
+        ProviderManager.addIQProvider("query", "jabber:iq:last", new LastActivity.Provider());
+        // User Search
+        ProviderManager.addIQProvider("query", "jabber:iq:search", new UserSearch.Provider());
+        // SharedGroupsInfo
+        ProviderManager.addIQProvider("sharedgroup", "http://www.jivesoftware.org/protocol/sharedgroup",
+                new SharedGroupsInfo.Provider());
+        // JEP-33: Extended Stanza Addressing
+        ProviderManager.addExtensionProvider("addresses", "http://jabber.org/protocol/address",
+                new MultipleAddressesProvider());
+        // FileTransfer
+        ProviderManager.addIQProvider("si", "http://jabber.org/protocol/si",
+                new StreamInitiationProvider());
+        // Privacy
+        ProviderManager.addIQProvider("query", "jabber:iq:privacy", new PrivacyProvider());
+        ProviderManager.addIQProvider("command", "http://jabber.org/protocol/commands", new AdHocCommandDataProvider());
+        ProviderManager.addExtensionProvider("malformed-action",
+                "http://jabber.org/protocol/commands",
+                new AdHocCommandDataProvider.MalformedActionError());
+        ProviderManager.addExtensionProvider("bad-locale",
+                "http://jabber.org/protocol/commands",
+                new AdHocCommandDataProvider.BadLocaleError());
+        ProviderManager.addExtensionProvider("bad-payload",
+                "http://jabber.org/protocol/commands",
+                new AdHocCommandDataProvider.BadPayloadError());
+        ProviderManager.addExtensionProvider("bad-sessionid",
+                "http://jabber.org/protocol/commands",
+                new AdHocCommandDataProvider.BadSessionIDError());
+        ProviderManager.addExtensionProvider("session-expired",
+                "http://jabber.org/protocol/commands",
+                new AdHocCommandDataProvider.SessionExpiredError());
+        ProviderManager.addIQProvider("offline", "http://jabber.org/protocol/offline", new OfflineMessageRequest.Provider());
+        //  Offline Message Indicator
+        ProviderManager.addExtensionProvider("offline", "http://jabber.org/protocol/offline", new OfflineMessageInfo.Provider());
+        ProviderManager.addIQProvider("query", "http://jabber.org/protocol/disco#info",
+                new DiscoverInfoProvider());
+        ProviderManager.addExtensionProvider("x", "jabber:x:data", new DataFormProvider());
+        // pm.addExtensionProvider("status ","", new XMLPlayerList());
+        ProviderManager.addIQProvider("query", "http://jabber.org/protocol/bytestreams", new BytestreamsProvider());
+        ProviderManager.addIQProvider("query", "http://jabber.org/protocol/disco#items", new DiscoverItemsProvider());
+        ProviderManager.addIQProvider("query", "http://jabber.org/protocol/disco#info", new DiscoverInfoProvider());
 
         //  Private Data Storage
        // ProviderManager.addIQProvider("query","jabber:iq:private", new PrivateDataManager.PrivateDataIQProvider());
@@ -3518,67 +3601,71 @@ public class XmppConnection extends ImConnection {
 
 
         //  XHTML
-        ProviderManager.addExtensionProvider("html","http://jabber.org/protocol/xhtml-im", new XHTMLExtensionProvider());
+//        ProviderManager.addExtensionProvider("html","http://jabber.org/protocol/xhtml-im", new XHTMLExtensionProvider());
 
         //  Group Chat Invitations
       //  ProviderManager.addExtensionProvider("x","jabber:x:conference", new GroupChatInvitation.Provider());
 
         //  Service Discovery # Items
-        ProviderManager.addIQProvider("query","http://jabber.org/protocol/disco#items", new DiscoverItemsProvider());
+  //      ProviderManager.addIQProvider("query","http://jabber.org/protocol/disco#items", new DiscoverItemsProvider());
 
         //  Service Discovery # Info
-        ProviderManager.addIQProvider("query","http://jabber.org/protocol/disco#info", new DiscoverInfoProvider());
+    //    ProviderManager.addIQProvider("query","http://jabber.org/protocol/disco#info", new DiscoverInfoProvider());
 
         //  Data Forms
-        ProviderManager.addExtensionProvider("x","jabber:x:data", new DataFormProvider());
+      //  ProviderManager.addExtensionProvider("x","jabber:x:data", new DataFormProvider());
 
         //  MUC User
-        ProviderManager.addExtensionProvider("x","http://jabber.org/protocol/muc#user", new MUCUserProvider());
+       // ProviderManager.addExtensionProvider("x","http://jabber.org/protocol/muc#user", new MUCUserProvider());
 
         //  MUC Admin
-        ProviderManager.addIQProvider("query","http://jabber.org/protocol/muc#admin", new MUCAdminProvider());
+       // ProviderManager.addIQProvider("query","http://jabber.org/protocol/muc#admin", new MUCAdminProvider());
 
         //  MUC Owner
-        ProviderManager.addIQProvider("query","http://jabber.org/protocol/muc#owner", new MUCOwnerProvider());
+        //ProviderManager.addIQProvider("query","http://jabber.org/protocol/muc#owner", new MUCOwnerProvider());
 
 
         //  Delayed Delivery
      //   ProviderManager.addExtensionProvider("x","jabber:x:delay", new DelayInformationProvider());
 
         //  Version
+        /**
         try {
             ProviderManager.addIQProvider("query","jabber:iq:version", Class.forName("org.jivesoftware.smackx.packet.Version"));
         } catch (ClassNotFoundException err) {
             //  Not sure what's happening here.
         }
+        **/
 
         //  VCard
-        ProviderManager.addIQProvider("vCard","vcard-temp", new VCardProvider());
+      //  ProviderManager.addIQProvider("vCard","vcard-temp", new VCardProvider());
 
         //  Offline Message Requests
-        ProviderManager.addIQProvider("offline","http://jabber.org/protocol/offline", new OfflineMessageRequest.Provider());
+        //ProviderManager.addIQProvider("offline","http://jabber.org/protocol/offline", new OfflineMessageRequest.Provider());
 
         //  Offline Message Indicator
-        ProviderManager.addExtensionProvider("offline","http://jabber.org/protocol/offline", new OfflineMessageInfo.Provider());
+        //ProviderManager.addExtensionProvider("offline","http://jabber.org/protocol/offline", new OfflineMessageInfo.Provider());
 
         //  Last Activity
-        ProviderManager.addIQProvider("query","jabber:iq:last", new LastActivity.Provider());
+        //ProviderManager.addIQProvider("query","jabber:iq:last", new LastActivity.Provider());
 
         //  User Search
-        ProviderManager.addIQProvider("query","jabber:iq:search", new UserSearch.Provider());
+        //ProviderManager.addIQProvider("query","jabber:iq:search", new UserSearch.Provider());
 
         //  SharedGroupsInfo
-        ProviderManager.addIQProvider("sharedgroup","http://www.jivesoftware.org/protocol/sharedgroup", new SharedGroupsInfo.Provider());
+        //ProviderManager.addIQProvider("sharedgroup","http://www.jivesoftware.org/protocol/sharedgroup", new SharedGroupsInfo.Provider());
 
         //  JEP-33: Extended Stanza Addressing
-        ProviderManager.addExtensionProvider("addresses","http://jabber.org/protocol/address", new MultipleAddressesProvider());
+        //ProviderManager.addExtensionProvider("addresses","http://jabber.org/protocol/address", new MultipleAddressesProvider());
 
         //   FileTransfer
-        ProviderManager.addIQProvider("si","http://jabber.org/protocol/si", new StreamInitiationProvider());
+        //ProviderManager.addIQProvider("si","http://jabber.org/protocol/si", new StreamInitiationProvider());
 
-        ProviderManager.addIQProvider("query","http://jabber.org/protocol/bytestreams", new BytestreamsProvider());
+        //ProviderManager.addIQProvider("query","http://jabber.org/protocol/bytestreams", new BytestreamsProvider());
 
         //  Privacy
+
+        /**
         ProviderManager.addIQProvider("query","jabber:iq:privacy", new PrivacyProvider());
         ProviderManager.addIQProvider("command", "http://jabber.org/protocol/commands", new AdHocCommandDataProvider());
         ProviderManager.addExtensionProvider("malformed-action", "http://jabber.org/protocol/commands", new AdHocCommandDataProvider.MalformedActionError());
@@ -3586,7 +3673,7 @@ public class XmppConnection extends ImConnection {
         ProviderManager.addExtensionProvider("bad-payload", "http://jabber.org/protocol/commands", new AdHocCommandDataProvider.BadPayloadError());
         ProviderManager.addExtensionProvider("bad-sessionid", "http://jabber.org/protocol/commands", new AdHocCommandDataProvider.BadSessionIDError());
         ProviderManager.addExtensionProvider("session-expired", "http://jabber.org/protocol/commands", new AdHocCommandDataProvider.SessionExpiredError());
-
+            **/
     }
 
     class NameSpace {
@@ -3725,7 +3812,7 @@ public class XmppConnection extends ImConnection {
 
             if (mConnection.isConnected())
             {
-                Chat thisChat = mChatManager.createChat(JidCreate.entityFullFrom(to));
+                Chat thisChat = mChatManager.createChat(JidCreate.from(to).asEntityJidIfPossible());
                 ChatStateManager.getInstance(mConnection).setCurrentState(currentChatState, thisChat);
             }
         }
@@ -3798,8 +3885,8 @@ public class XmppConnection extends ImConnection {
 
         Contact contact = mContactListManager.getContact(xaddress.getBareAddress());
 
+        if (presence.getFrom().hasResource())
             p.setResource(presence.getFrom().getResourceOrEmpty().toString());
-
 
         if (presence.getType() == org.jivesoftware.smack.packet.Presence.Type.subscribe
                 ) {

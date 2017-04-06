@@ -742,6 +742,31 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
      * Send a ChatSecure-Push "Knock" Push Message to the remote peer in the
      * given {@param sessionID}.
      */
+    public void sendKnockPushMessage(@NonNull final String localId, final String remoteId) {
+
+        mApp.getPushManager().sendPushMessageToPeer(
+                PushManager.stripJabberIdResource(localId),
+                PushManager.stripJabberIdResource(remoteId),
+                new PushSecureClient.RequestCallback<org.chatsecure.pushsecure.response.Message>() {
+                    @Override
+                    public void onSuccess(@NonNull org.chatsecure.pushsecure.response.Message response) {
+                        if (Debug.DEBUG_ENABLED)
+                            Log.d(TAG, "Sent push message to " + remoteId);
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Throwable t) {
+                        if (Debug.DEBUG_ENABLED)
+                            Log.d(TAG, "Failed to send push message to " + remoteId);
+                    }
+                });
+
+    }
+
+    /**
+     * Send a ChatSecure-Push "Knock" Push Message to the remote peer in the
+     * given {@param sessionID}.
+     */
     public boolean canDoKnockPushMessage(@NonNull final SessionID sessionID) {
        if ( mApp.getPushManager() != null) {
            return  mApp.getPushManager().hasPersistedWhitelistToken(

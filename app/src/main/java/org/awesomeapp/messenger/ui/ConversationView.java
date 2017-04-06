@@ -294,7 +294,6 @@ public class ConversationView {
                         return;
 
 
-                    /**
                     IOtrChatSession otrChatSession = mCurrentChatSession.getDefaultOtrChatSession();
 
                     if (otrChatSession != null && (!isGroupChat()))
@@ -317,7 +316,7 @@ public class ConversationView {
                                 }
                             },100);
                         }
-                    }**/
+                    }
 
                 }
 
