@@ -47,6 +47,9 @@ public class ChatSession {
     private boolean mIsSubscribed = true;
 
     private boolean mPushSent = false;
+
+    private boolean mCanOmemo = false;
+
     /**
      * Creates a new ChatSession with a particular participant.
      *
@@ -82,6 +85,11 @@ public class ChatSession {
     public MessageListener getMessageListener ()
     {
         return mListener;
+    }
+
+    public boolean canOmemo ()
+    {
+        return mCanOmemo;
     }
 
     /**
@@ -122,6 +130,7 @@ public class ChatSession {
 
             try {
                 Jid jid = JidCreate.from(mParticipant.getAddress().getAddress());
+
                 if (jid.hasNoResource()) {
 
                     String resource = ((Contact) mParticipant).getPresence().getResource();
@@ -130,44 +139,40 @@ public class ChatSession {
                     }
                 }
 
-                boolean isOffline = !((Contact) mParticipant).getPresence().isOnline();
-                boolean canOmemo = false;
+                OtrChatManager cm = OtrChatManager.getInstance();
+                SessionID sId = cm.getSessionId(message.getFrom().getAddress(), jid.toString());
 
-                canOmemo = mManager.resourceSupportsOmemo(jid);
+                SessionStatus otrStatus = cm.getSessionStatus(sId);
+                boolean verified = cm.getKeyManager().isVerified(sId);
+
+                boolean isOffline = !((Contact) mParticipant).getPresence().isOnline();
+
+                if (!mCanOmemo)
+                {
+                    mCanOmemo = mManager.resourceSupportsOmemo(jid);
+                }
 
                 message.setTo(new XmppAddress(jid.toString()));
                 message.setType(Imps.MessageType.OUTGOING);
 
-                if (canOmemo) {
+                //try to send ChatSecure Push message regardless of OMEMO or OTR
+                if (isOffline && OtrChatManager.getInstance().canDoKnockPushMessage(sId)) {
+
+                        // ChatSecure-Push : If no session is available when sending peer message,
+                        // attempt to send a "Knock" push message to the peer asking them to come online
+                        //cm.sendKnockPushMessage(sId);
+                       // if (!mPushSent) {
+                            // ChatSecure-Push: If the remote peer is offline, send them a push
+                            OtrChatManager.getInstance().sendKnockPushMessage(sId);
+                            mPushSent = true;
+                        //}
+                }
+
+                if (mCanOmemo) {
                     message.setType(Imps.MessageType.OUTGOING);
                     mManager.sendMessageAsync(this, message);
                 } else {
                     //do OTR!
-
-                    OtrChatManager cm = OtrChatManager.getInstance();
-
-                    SessionID sId = cm.getSessionId(message.getFrom().getAddress(), jid.toString());
-
-                    SessionStatus otrStatus = cm.getSessionStatus(sId);
-                    boolean verified = cm.getKeyManager().isVerified(sId);
-
-                    //try to send ChatSecure Push message regardless of OMEMO or OTR
-                    if (isOffline || otrStatus != SessionStatus.ENCRYPTED) {
-
-                        if (OtrChatManager.getInstance().canDoKnockPushMessage(sId)) {
-
-                            // ChatSecure-Push : If no session is available when sending peer message,
-                            // attempt to send a "Knock" push message to the peer asking them to come online
-                            //cm.sendKnockPushMessage(sId);
-                            if (!mPushSent) {
-                                // ChatSecure-Push: If the remote peer is offline, send them a push
-                                OtrChatManager.getInstance().sendKnockPushMessage(sId);
-                                mPushSent = true;
-                            }
-
-                        }
-                    }
-
 
                     if (otrStatus == SessionStatus.ENCRYPTED) {
 
@@ -185,13 +190,8 @@ public class ChatSession {
 
                     } else {
 
-                        boolean hasKey = !TextUtils.isEmpty(cm.getKeyManager().getRemoteFingerprint(sId));
-
-                        if (hasKey) {
-                            //queue up messages until session restarts
-                            message.setType(Imps.MessageType.POSTPONED);
-                            return message.getType();
-                        }
+                        message.setType(Imps.MessageType.POSTPONED);
+                        return message.getType();
                     }
 
                     boolean canSend = cm.transformSending(message);
@@ -209,6 +209,9 @@ public class ChatSession {
             catch (XmppStringprepException xe)
             {
                 Log.w(ImApp.LOG_TAG,"error parsing address on send: " + mParticipant.getAddress().toString(),xe);
+                message.setType(Imps.MessageType.POSTPONED);
+                return message.getType();
+
             }
         }
         else if (mParticipant instanceof ChatGroup)
@@ -218,8 +221,11 @@ public class ChatSession {
             message.setType(Imps.MessageType.OUTGOING);
             mManager.sendMessageAsync(this, message);
 
-
-
+        }
+        else
+        {
+            //what do we do ehre?
+            message.setType(Imps.MessageType.POSTPONED);
         }
 
         return message.getType();

@@ -96,25 +96,45 @@ public class Omemo {
         return fps;
     }
 
-    public boolean resourceSupportsOmemo(String jid)
+    public ArrayList<String> getJidWithFingerprint (BareJid jid) throws CorruptedOmemoKeyException, SmackException, XMPPException.XMPPErrorException, InterruptedException
     {
-        try {
-            return resourceSupportsOmemo(JidCreate.entityFullFrom(jid));
+        CachedDeviceList list = mOmemoStore.loadCachedDeviceList(jid);
+        if(list == null) {
+            list = new CachedDeviceList();
         }
-        catch (Exception e)
-        {
-            Log.w(TAG, "error checking if resource supports omemo: " + jid,e);
 
-            return false;
+        ArrayList<String> fps = new ArrayList<>();
+        for(int id : list.getActiveDevices()) {
+
+            IdentityKey idk = mOmemoStore.loadOmemoIdentityKey(new OmemoDevice(jid, id));
+            if(idk != null) {
+                fps.add(KeyUtil.prettyFingerprint(mOmemoStore.keyUtil().getFingerprint(idk)));
+
+            } else {
+                OmemoBundleElement b = mOmemoService.getPubSubHelper().fetchBundle(new OmemoDevice(jid, id));
+                idk = mOmemoStore.keyUtil().identityKeyFromBytes(b.getIdentityKey());
+                if(idk != null) {
+                    fps.add(KeyUtil.prettyFingerprint(mOmemoStore.keyUtil().getFingerprint(idk)));
+                }
+            }
         }
+
+        return fps;
     }
+
 
     public boolean resourceSupportsOmemo(final Jid jid)
     {
        try
        {
-           boolean result = mOmemoManager.resourceSupportsOmemo(jid);
-           return result;
+           if (jid.hasResource())
+           {
+               return mOmemoManager.resourceSupportsOmemo(jid);
+           }
+           else
+           {
+               return getFingerprints(jid.asBareJid(),false).size() > 0;
+           }
        }
        catch (Exception e)
        {

@@ -1265,7 +1265,13 @@ public class XmppConnection extends ImConnection {
             debug(TAG, "logged in");
             mNeedReconnect = false;
 
-            initOmemo();
+            execute(new Runnable ()
+            {
+                public void run ()
+                {
+                    initOmemo();
+                }
+            });
 
         } catch (XMPPException e) {
             debug(TAG, "exception thrown on connection",e);
@@ -1448,7 +1454,7 @@ public class XmppConnection extends ImConnection {
 
                         mChatGroupManager.joinChatGroupAsync(xa, reason);
 
-                        ChatSession session = mSessionManager.findSession(xa.getAddress());
+                        ChatSession session = mSessionManager.findSession(muc.getRoom());
 
                         //create a session
                         if (session == null) {
@@ -1933,21 +1939,15 @@ public class XmppConnection extends ImConnection {
 
         }
 
+        DeliveryReceipt drIncoming = (DeliveryReceipt) smackMessage.getExtension("received", DeliveryReceipt.NAMESPACE);
+
         ChatSession session = findOrCreateSession(smackMessage.getFrom().toString(), isGroupMessage);
 
         if (session != null) //not subscribed so don't do anything
         {
 
-            DeliveryReceipt drIncoming = (DeliveryReceipt) smackMessage.getExtension("received", DeliveryReceipt.NAMESPACE);
-
-            if (drIncoming != null) {
-
-                debug(TAG, "got delivery receipt for " + drIncoming.getId());
-
-                if (session != null)
-                    session.onMessageReceipt(drIncoming.getId());
-
-            }
+            if (drIncoming != null)
+                session.onMessageReceipt(drIncoming.getId());
 
             if (body != null && session != null) {
 
@@ -2130,32 +2130,38 @@ public class XmppConnection extends ImConnection {
 
     private ChatSession findOrCreateSession(String address, boolean groupChat) {
 
-        ChatSession session = mSessionManager.findSession(address);
+        try {
 
-        //create a session if this it not groupchat
-        if (session == null && (!groupChat)) {
-            ImEntity participant = findOrCreateParticipant(address, groupChat);
+            ChatSession session = mSessionManager.findSession(JidCreate.bareFrom(address));
 
-            if (participant != null) {
-                session = mSessionManager.createChatSession(participant, false);
+            //create a session if this it not groupchat
+            if (session == null && (!groupChat)) {
+                ImEntity participant = findOrCreateParticipant(address, groupChat);
 
-                try {
+                if (participant != null) {
+                    session = mSessionManager.createChatSession(participant, false);
+
+                    try {
                         BareJid jid = JidCreate.bareFrom(address);
-                        mOmemo.loadDeviceList(jid);
-                        mOmemo.trustOmemoDevice(jid,true);
-                    }
-                    catch (Exception ioe)
+                        mOmemo.trustOmemoDevice(jid, true);
+                    } catch (Exception ioe)
 
                     {
-                        debug(TAG,"error fetching omemo devices",ioe);
+                        debug(TAG, "error fetching omemo devices", ioe);
                     }
 
+
+                }
 
             }
 
+            return session;
         }
-
-        return session;
+        catch (Exception e)
+        {
+            debug(ImApp.LOG_TAG,"error findOrCreateSession",e);
+            return null;
+        }
     }
 
     synchronized ImEntity findOrCreateParticipant(String address, boolean isGroupChat) {
@@ -2226,20 +2232,20 @@ public class XmppConnection extends ImConnection {
         @Override
         public void sendMessageAsync(ChatSession session, Message message) {
 
-            MultiUserChat muc = ((XmppChatGroupManager)getChatGroupManager()).getMultiUserChat(message.getTo().getAddress());
+            MultiUserChat muc = null;
 
             org.jivesoftware.smack.packet.Message msgXmpp = null;
 
             try {
 
-                if (muc != null) {
+                Jid jidTo = JidCreate.from(message.getTo().getAddress());
+
+                if (session.getParticipant() instanceof ChatGroup) {
+                    muc = ((XmppChatGroupManager)getChatGroupManager()).getMultiUserChat(message.getTo().getAddress());
                     msgXmpp = muc.createMessage();
                 } else {
-
                     msgXmpp = new org.jivesoftware.smack.packet.Message(
-                            JidCreate.bareFrom(message.getTo().getAddress()), org.jivesoftware.smack.packet.Message.Type.chat);
-                    msgXmpp.addExtension(new DeliveryReceiptRequest());
-
+                            jidTo.asBareJid(), org.jivesoftware.smack.packet.Message.Type.chat);
                 }
 
                 if (message.getFrom() == null)
@@ -2254,44 +2260,50 @@ public class XmppConnection extends ImConnection {
                 else
                     message.setID(msgXmpp.getStanzaId());
 
-                Jid jidTo = JidCreate.from(message.getTo().getAddress());
                 Chat thisChat = mChatManager.createChat(jidTo.asEntityJidIfPossible());
 
-                boolean canOmemo = false;
+                //this isn't an OTR message, so let's try OMEMO
+                if (message.getType() == Imps.MessageType.OUTGOING) {
 
-                try {
-                        canOmemo = mOmemo.resourceSupportsOmemo(jidTo);
-                }
-                catch (Exception e)
-                {
-                    Log.w("OMEMO","something is wrong with omemo: " + e.getMessage(),e);
-                }
+                    //if this isn't already OTR encrypted, and the JID can support OMEMO then do it!
+                    if (session.canOmemo()) {
 
-                //if this isn't already OTR encrypted, and the JID can support OMEMO then do it!
-                if (message.getType() == Imps.MessageType.OUTGOING && canOmemo) {
+                        try {
+                            org.jivesoftware.smack.packet.Message msgEncrypted
+                                    = mOmemo.getManager().encrypt(jidTo.asBareJid(), msgXmpp);
+                            msgEncrypted.addExtension(new DeliveryReceiptRequest());
+                            msgEncrypted.setStanzaId(msgXmpp.getStanzaId());
+                            thisChat.sendMessage(msgEncrypted);
+                            message.setType(Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED);
 
-                    try {
-                        org.jivesoftware.smack.packet.Message msgEncrypted
-                                = mOmemo.getManager().encrypt(jidTo.asBareJid(), msgXmpp);
-                        thisChat.sendMessage(msgEncrypted);
-                        message.setType(Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED);
+                        } catch (CryptoFailedException cfe) {
+                            message.setType(Imps.MessageType.POSTPONED);
+                            debug(TAG, "crypto failed", cfe);
+                        } catch (UndecidedOmemoIdentityException uoie) {
+                            message.setType(Imps.MessageType.POSTPONED);
+                            debug(TAG, "crypto failed", uoie);
+                            mOmemo.trustOmemoDevice(jidTo.asBareJid(), true);
+                            org.jivesoftware.smack.packet.Message msgEncrypted
+                                    = mOmemo.getManager().encrypt(jidTo.asBareJid(), msgXmpp);
+                            msgEncrypted.addExtension(new DeliveryReceiptRequest());
+                            msgEncrypted.setStanzaId(msgXmpp.getStanzaId());
+                            thisChat.sendMessage(msgEncrypted);
+                            message.setType(Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED);
+                        }
 
-                    } catch (CryptoFailedException cfe) {
-                        message.setType(Imps.MessageType.POSTPONED);
-                        debug(TAG, "crypto failed", cfe);
+                        return;
                     }
-                    catch (UndecidedOmemoIdentityException uoie)
+                    else
                     {
-                        mOmemo.trustOmemoDevice(jidTo.asBareJid(),true);
-                        org.jivesoftware.smack.packet.Message msgEncrypted
-                                = mOmemo.getManager().encrypt(jidTo.asBareJid(), msgXmpp);
-                        thisChat.sendMessage(msgEncrypted);
-                        message.setType(Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED);
+                        message.setType(Imps.MessageType.POSTPONED);
+                        return;
                     }
                 }
                 else
                 {
+                    msgXmpp.addExtension(new DeliveryReceiptRequest());
                     thisChat.sendMessage(msgXmpp);
+                    return;
                 }
 
             }
@@ -2302,9 +2314,9 @@ public class XmppConnection extends ImConnection {
             }
         }
 
-        ChatSession findSession(String address) {
+        ChatSession findSession(BareJid bareJid) {
 
-            ChatSession result = mSessions.get(address);
+            ChatSession result = mSessions.get(bareJid.toString());
 
          //   if (result == null)
            //     result = mSessions.get(XmppAddress.stripResource(address));
@@ -3005,7 +3017,7 @@ public class XmppConnection extends ImConnection {
                 e.printStackTrace();
             }
 
-            findOrCreateSession(contact.getAddress().getBareAddress(), false).setSubscribed(false);
+            findOrCreateSession(contact.getAddress().toString(), false).setSubscribed(false);
 
         }
 
@@ -3039,7 +3051,7 @@ public class XmppConnection extends ImConnection {
 
             }
 
-            findOrCreateSession(contact.getAddress().getBareAddress(), false).setSubscribed(true);
+            findOrCreateSession(contact.getAddress().toString(), false).setSubscribed(true);
 
             sendPresencePacket();
             requestPresenceRefresh(contact.getAddress().getBareAddress());

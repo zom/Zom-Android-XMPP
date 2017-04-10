@@ -1658,7 +1658,7 @@ public class ConversationView {
 
     public void refreshSession ()
     {
-        setOTRState(false);
+     //   setOTRState(false);
         setOTRState(true);
     }
 

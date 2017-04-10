@@ -767,25 +767,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
     int updateMessageInDb(String id, int type, long time) {
 
-        Uri.Builder builder = Imps.Messages.OTR_MESSAGES_CONTENT_URI_BY_PACKET_ID.buildUpon();
-        builder.appendPath(id);
-
-        ContentValues values = new ContentValues(2);
-        values.put(Imps.Messages.TYPE, type);
-        values.put(Imps.Messages.THREAD_ID, mContactId);
-        if (time != -1)
-            values.put(Imps.Messages.DATE, time);
-
-        int result = mContentResolver.update(builder.build(), values, null, null);
-
-        if (result == 0)
-        {
-            builder = Imps.Messages.CONTENT_URI_MESSAGES_BY_PACKET_ID.buildUpon();
-            builder.appendPath(id);
-            result = mContentResolver.update(builder.build(), values, null, null);
-        }
-
-        return result;
+        return Imps.updateMessageInDb(mContentResolver, id, type, time, mContactId);
     }
 
 
