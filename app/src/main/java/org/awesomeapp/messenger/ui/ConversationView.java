@@ -1044,8 +1044,8 @@ public class ConversationView {
 
         if (mLastIsTyping != isTyping) {
             try {
-                mConn.sendTypingStatus(mRemoteAddress, isTyping);
-
+                if (mConn != null)
+                    mConn.sendTypingStatus(mRemoteAddress, isTyping);
             } catch (Exception ie) {
                 Log.e(ImApp.LOG_TAG, "error sending typing status", ie);
             }
@@ -2054,15 +2054,14 @@ public class ConversationView {
 
             }
 
+            boolean isSessionEncrypted = false;
 
-            if (mLastSessionStatus == SessionStatus.PLAINTEXT) {
-
-                mSendButton.setImageResource(R.drawable.ic_send_holo_light);
-                mComposeMessage.setHint(R.string.compose_hint);
-
-
+            try {
+                isSessionEncrypted = mCurrentChatSession.isEncrypted() ||  mLastSessionStatus == SessionStatus.ENCRYPTED;
             }
-            else if (mLastSessionStatus == SessionStatus.ENCRYPTED) {
+            catch (RemoteException re){}
+
+            if (isSessionEncrypted) {
 
                 if (mIsStartingOtr) {
                     mIsStartingOtr = false; //it's started!
@@ -2081,7 +2080,15 @@ public class ConversationView {
                     }
                 }
 
-            } else if (mLastSessionStatus == SessionStatus.FINISHED) {
+            }
+            else if (mLastSessionStatus == SessionStatus.PLAINTEXT) {
+
+                mSendButton.setImageResource(R.drawable.ic_send_holo_light);
+                mComposeMessage.setHint(R.string.compose_hint);
+
+
+            }
+            else if (mLastSessionStatus == SessionStatus.FINISHED) {
 
                 mSendButton.setImageResource(R.drawable.ic_send_holo_light);
                 mComposeMessage.setHint(R.string.compose_hint);

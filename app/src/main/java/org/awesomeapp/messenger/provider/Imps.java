@@ -235,12 +235,15 @@ public class Imps {
             Cursor cursor = cr.query(CONTENT_URI, new String[] { NAME }, _ID + "=" + accountId,
                     null /* selection args */, null /* sort order */);
             String ret = null;
-            try {
-                if (cursor.moveToFirst()) {
-                    ret = cursor.getString(cursor.getColumnIndexOrThrow(NAME));
+
+            if (cursor != null) {
+                try {
+                    if (cursor.moveToFirst()) {
+                        ret = cursor.getString(cursor.getColumnIndexOrThrow(NAME));
+                    }
+                } finally {
+                    cursor.close();
                 }
-            } finally {
-                cursor.close();
             }
 
             return ret;

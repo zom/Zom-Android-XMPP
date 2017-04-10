@@ -18,6 +18,7 @@
 package org.awesomeapp.messenger.model;
 
 import org.awesomeapp.messenger.ImApp;
+import org.awesomeapp.messenger.crypto.IOtrChatSession;
 import org.awesomeapp.messenger.crypto.omemo.Omemo;
 import org.awesomeapp.messenger.crypto.otr.OtrChatManager;
 import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
@@ -49,6 +50,8 @@ public class ChatSession {
     private boolean mPushSent = false;
 
     private boolean mCanOmemo = false;
+    private Jid mJid = null;
+    private XmppAddress mXa = null; //our temporary internal representation
 
     /**
      * Creates a new ChatSession with a particular participant.
@@ -60,7 +63,17 @@ public class ChatSession {
         mParticipant = participant;
         mManager = manager;
 
-   //     mHistoryMessages = new Vector<Message>();
+        try {
+            mJid = JidCreate.from(mParticipant.getAddress().getAddress());
+            mXa = new XmppAddress(mJid.toString());
+            mCanOmemo = mManager.resourceSupportsOmemo(mJid);
+        }
+        catch (XmppStringprepException xe)
+        {
+            throw new RuntimeException("Error with address that shouldn't happen: " + xe);
+        }
+
+        //     mHistoryMessages = new Vector<Message>();
     }
 
     public ImEntity getParticipant() {
@@ -89,8 +102,11 @@ public class ChatSession {
 
     public boolean canOmemo ()
     {
+
         return mCanOmemo;
+
     }
+
 
     /**
      * Sends a text message to other participant(s) in this session
@@ -129,18 +145,18 @@ public class ChatSession {
         if (mParticipant instanceof Contact) {
 
             try {
-                Jid jid = JidCreate.from(mParticipant.getAddress().getAddress());
 
-                if (jid.hasNoResource()) {
+                if (mJid.hasNoResource()) {
 
                     String resource = ((Contact) mParticipant).getPresence().getResource();
                     if (!TextUtils.isEmpty(resource)) {
-                        jid = JidCreate.from(mParticipant.getAddress().getAddress() + '/' + resource);
+                        mJid = JidCreate.from(mParticipant.getAddress().getAddress() + '/' + resource);
+                        mXa = new XmppAddress(mJid.toString());
                     }
                 }
 
                 OtrChatManager cm = OtrChatManager.getInstance();
-                SessionID sId = cm.getSessionId(message.getFrom().getAddress(), jid.toString());
+                SessionID sId = cm.getSessionId(message.getFrom().getAddress(), mJid.toString());
 
                 SessionStatus otrStatus = cm.getSessionStatus(sId);
                 boolean verified = cm.getKeyManager().isVerified(sId);
@@ -149,10 +165,10 @@ public class ChatSession {
 
                 if (!mCanOmemo)
                 {
-                    mCanOmemo = mManager.resourceSupportsOmemo(jid);
+                    mCanOmemo = mManager.resourceSupportsOmemo(mJid);
                 }
 
-                message.setTo(new XmppAddress(jid.toString()));
+                message.setTo(mXa);
                 message.setType(Imps.MessageType.OUTGOING);
 
                 //try to send ChatSecure Push message regardless of OMEMO or OTR

@@ -3051,7 +3051,10 @@ public class XmppConnection extends ImConnection {
 
             }
 
-            findOrCreateSession(contact.getAddress().toString(), false).setSubscribed(true);
+            ChatSession session = findOrCreateSession(contact.getAddress().toString(), false);
+
+            if (session != null)
+                session.setSubscribed(true);
 
             sendPresencePacket();
             requestPresenceRefresh(contact.getAddress().getBareAddress());

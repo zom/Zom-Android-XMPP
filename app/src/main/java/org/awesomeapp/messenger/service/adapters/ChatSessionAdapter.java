@@ -1327,6 +1327,38 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
        // mConnection.sendTypingStatus("fpp", isTyping);
     }
 
+    public boolean isEncrypted ()
+    {
+        if (mChatSession.canOmemo())
+        {
+            return true;
+        }
+        else
+        {
+            IOtrChatSession otrChatSession = getDefaultOtrChatSession();
+            if (otrChatSession != null)
+            {
+                try {
+
+                    SessionStatus chatStatus = SessionStatus.values()[otrChatSession.getChatStatus()];
+
+                    if (chatStatus == SessionStatus.ENCRYPTED) {
+                        //boolean isVerified = otrChatSession.isKeyVerified(mChatSession.getParticipant().getAddress().toString());
+                        // holder.mStatusIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_lock_outline_black_18dp));
+
+                        return true;
+                    }
+                }
+                catch (Exception e)
+                {
+
+                }
+            }
+        }
+
+        return false;
+
+    }
 
 
 }
