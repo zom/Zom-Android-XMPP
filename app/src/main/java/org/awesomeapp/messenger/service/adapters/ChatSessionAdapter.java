@@ -208,7 +208,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
                     if (hasPostponedMessages())
                     {
-                        if (getDefaultOtrChatSession().isChatEncrypted())
+                        if (getDefaultOtrChatSession().isChatEncrypted() || mChatSession.canOmemo())
                             sendPostponedMessages();
                         else {
                            // getDefaultOtrChatSession().stopChatEncryption();
