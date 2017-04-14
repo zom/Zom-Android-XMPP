@@ -51,3 +51,5 @@ Currently the instrumented target tests (to be run on a device) in the directory
 
 ## Logging
 
+`adb -d logcat -v time -s Zom`
+
