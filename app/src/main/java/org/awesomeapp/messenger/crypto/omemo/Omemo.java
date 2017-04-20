@@ -21,6 +21,7 @@ import org.jivesoftware.smackx.omemo.signal.SignalOmemoSession;
 import org.jivesoftware.smackx.omemo.util.KeyUtil;
 import org.jivesoftware.smackx.omemo.util.OmemoConstants;
 import org.jxmpp.jid.BareJid;
+import org.jxmpp.jid.FullJid;
 import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
 import org.whispersystems.libsignal.IdentityKey;
@@ -40,6 +41,10 @@ public class Omemo {
     private SignalOmemoService mOmemoService;
     private SignalFileBasedOmemoStore mOmemoStore;
 
+    {
+        new OmemoInitializer().initialize();
+    }
+
     public OmemoService getService ()
     {
         return mOmemoService;
@@ -50,24 +55,22 @@ public class Omemo {
         return mOmemoManager;
     }
 
-    {
-        new OmemoInitializer().initialize();
-    }
-
     public Omemo (XMPPTCPConnection connection, Context context) throws Exception
     {
 
         OmemoConstants.ADD_OMEMO_HINT_BODY = false;
 
         mOmemoManager = OmemoManager.getInstanceFor(connection);
-
+        
         if (mOmemoStore == null)
         {
             File fileOmemoStore = new File(context.getFilesDir(),"omemo.store");
             mOmemoStore = new SignalFileBasedOmemoStore(mOmemoManager, fileOmemoStore);
+
         }
 
         mOmemoService = new SignalOmemoService(mOmemoManager, mOmemoStore);
+        mOmemoService.setup();
     }
 
     public ArrayList<String> getFingerprints (BareJid jid, boolean autoload) throws CorruptedOmemoKeyException, SmackException, XMPPException.XMPPErrorException, InterruptedException
@@ -123,7 +126,7 @@ public class Omemo {
     }
 
 
-    public boolean resourceSupportsOmemo(final Jid jid)
+    public boolean resourceSupportsOmemo(final FullJid jid)
     {
        try
        {
@@ -155,6 +158,7 @@ public class Omemo {
         }
     }
 
+    /**
     public boolean allDevicesTrustDecided (BareJid jid)
     {
 
@@ -165,29 +169,35 @@ public class Omemo {
         {
 
             OmemoDevice d = new OmemoDevice(jid, deviceId);
-            SignalOmemoSession s = (SignalOmemoSession) mOmemoStore.getOmemoSessionOf(d);
-            if(s.getIdentityKey() == null) {
-                try {
-                    //debug(TAG,"OMEMO Build session...");
-                    mOmemoService.buildSessionFromOmemoBundle(d);
-                    s = (SignalOmemoSession) mOmemoStore.getOmemoSessionOf(d);
-                    //debug(TAG, "OMEMO Session built: " + jid.toString());
-                } catch (Exception e) {
-                    Log.w(TAG, "error getting device session",e);
+            try {
+                mOmemoService.buildSessionFromOmemoBundle(d);
+                SignalOmemoSession s = (SignalOmemoSession) mOmemoStore.getOmemoSessionOf(d);
+                if(s.getIdentityKey() == null) {
+                        //debug(TAG,"OMEMO Build session...");
+                        mOmemoService.buildSessionFromOmemoBundle(d);
+                        s = (SignalOmemoSession) mOmemoStore.getOmemoSessionOf(d);
+                        //debug(TAG, "OMEMO Session built: " + jid.toString());
 
                 }
+
+
+                //if we have a device that is untrusted
+                if (!mOmemoStore.isDecidedOmemoIdentity(d, s.getIdentityKey())) {
+                    return false;
+                }
+
+            } catch (Exception e) {
+                Log.w(TAG, "error getting device session",e);
+
             }
 
-            //if we have a device that is untrusted
-            if (!mOmemoStore.isDecidedOmemoIdentity(d, s.getIdentityKey())) {
-                return false;
-            }
+
 
         }
 
 
         return true;
-    }
+    }**/
 
     public boolean trustOmemoDevice (BareJid jid, boolean isTrusted)
     {
@@ -198,38 +208,35 @@ public class Omemo {
         for (Integer deviceId : l.getActiveDevices())
         {
 
-            OmemoDevice d = new OmemoDevice(jid, deviceId);
-            SignalOmemoSession s = (SignalOmemoSession) mOmemoStore.getOmemoSessionOf(d);
-            if(s.getIdentityKey() == null) {
-                try {
-                    //debug(TAG,"OMEMO Build session...");
-                    mOmemoService.buildSessionFromOmemoBundle(d);
-                    s = (SignalOmemoSession) mOmemoStore.getOmemoSessionOf(d);
-                    //debug(TAG, "OMEMO Session built: " + jid.toString());
-                } catch (Exception e) {
-                    Log.w(TAG, "error getting device session",e);
-
+            try {
+                OmemoDevice d = new OmemoDevice(jid, deviceId);
+                mOmemoService.buildSessionFromOmemoBundle(d);
+                SignalOmemoSession s = (SignalOmemoSession) mOmemoStore.getOmemoSessionOf(d);
+                if(s.getIdentityKey() == null) {
+                    Log.d(TAG,"unable to find identity key for: " + jid + " deviceid:" + deviceId);
+                     continue;
                 }
-            }
 
-            if (s.getIdentityKey() == null)
-                continue; //can't trust a key that is null!
-
-            if (mOmemoStore.isDecidedOmemoIdentity(d, s.getIdentityKey())) {
-                if (mOmemoStore.isTrustedOmemoIdentity(d, s.getIdentityKey())) {
-                   // debug(TAG, jid.toString() + " Status: Trusted");
-                } else {
-                   // debug(TAG,jid.toString() +  " Status: Untrusted");
+                if (mOmemoStore.isDecidedOmemoIdentity(d, s.getIdentityKey())) {
+                    if (mOmemoStore.isTrustedOmemoIdentity(d, s.getIdentityKey())) {
+                       // debug(TAG, jid.toString() + " Status: Trusted");
+                    } else {
+                       // debug(TAG,jid.toString() +  " Status: Untrusted");
+                    }
                 }
+
+                if (isTrusted) {
+                    mOmemoStore.trustOmemoIdentity(d, s.getIdentityKey());
+                }
+                else
+                {
+                    mOmemoStore.distrustOmemoIdentity(d, s.getIdentityKey());
+                }
+            } catch (Exception e) {
+                Log.w(TAG, "error getting device session",e);
+
             }
 
-            if (isTrusted) {
-                mOmemoStore.trustOmemoIdentity(d, s.getIdentityKey());
-            }
-            else
-            {
-                mOmemoStore.distrustOmemoIdentity(d, s.getIdentityKey());
-            }
         }
 
 

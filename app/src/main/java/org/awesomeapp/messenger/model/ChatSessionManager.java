@@ -19,6 +19,7 @@ package org.awesomeapp.messenger.model;
 
 import org.awesomeapp.messenger.service.adapters.ChatSessionAdapter;
 import org.awesomeapp.messenger.service.adapters.ChatSessionManagerAdapter;
+import org.jxmpp.jid.FullJid;
 import org.jxmpp.jid.Jid;
 
 import java.util.Hashtable;

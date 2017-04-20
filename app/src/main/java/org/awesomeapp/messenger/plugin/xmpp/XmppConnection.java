@@ -136,6 +136,7 @@ import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.DomainBareJid;
 import org.jxmpp.jid.EntityFullJid;
 import org.jxmpp.jid.EntityJid;
+import org.jxmpp.jid.FullJid;
 import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Localpart;
@@ -2271,6 +2272,7 @@ public class XmppConnection extends ImConnection {
                         try {
                             org.jivesoftware.smack.packet.Message msgEncrypted
                                     = mOmemo.getManager().encrypt(jidTo.asBareJid(), msgXmpp);
+
                             msgEncrypted.addExtension(new DeliveryReceiptRequest());
                             msgEncrypted.setStanzaId(msgXmpp.getStanzaId());
                             thisChat.sendMessage(msgEncrypted);
@@ -2333,7 +2335,11 @@ public class XmppConnection extends ImConnection {
 
         @Override
         public boolean resourceSupportsOmemo(Jid jid) {
-            return mOmemo.resourceSupportsOmemo(jid);
+
+            if (jid.hasNoResource())
+                return false;
+            else
+                return mOmemo.resourceSupportsOmemo(jid.asFullJidIfPossible());
         }
     }
 
@@ -3795,7 +3801,9 @@ public class XmppConnection extends ImConnection {
         }
 
         IChatSession csa = mSessionManager.getAdapter().getChatSession(from);
-        csa.setContactTyping(contact, isTyping);
+
+        if (csa != null)
+            csa.setContactTyping(contact, isTyping);
 
         if (p != null) {
             String[] presenceParts = from.split("/");
@@ -4131,7 +4139,7 @@ public class XmppConnection extends ImConnection {
     {
         try {
 
-            return mOmemo.getFingerprints(JidCreate.bareFrom(address), false);
+            return mOmemo.getFingerprints(JidCreate.bareFrom(address), true);
         }
         catch (Exception xe)
         {
