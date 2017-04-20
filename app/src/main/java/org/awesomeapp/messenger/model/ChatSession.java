@@ -63,17 +63,41 @@ public class ChatSession {
         mParticipant = participant;
         mManager = manager;
 
-        try {
-            mJid = JidCreate.from(mParticipant.getAddress().getAddress());
-            mXa = new XmppAddress(mJid.toString());
-            mCanOmemo = mManager.resourceSupportsOmemo(mJid);
-        }
-        catch (XmppStringprepException xe)
-        {
-            throw new RuntimeException("Error with address that shouldn't happen: " + xe);
-        }
+        initJid ();
 
         //     mHistoryMessages = new Vector<Message>();
+    }
+
+    private void initJid ()
+    {
+        try {
+            if (mJid == null) {
+
+                    mJid = JidCreate.from(mParticipant.getAddress().getAddress());
+                    mXa = new XmppAddress(mJid.toString());
+
+            }
+
+            if (mJid.hasNoResource()) {
+
+                if (!TextUtils.isEmpty(mParticipant.getAddress().getResource()))
+                {
+                    mJid = JidCreate.from(mParticipant.getAddress().getAddress());
+                }
+                else {
+                    String resource = ((Contact) mParticipant).getPresence().getResource();
+                    if (!TextUtils.isEmpty(resource)) {
+                        mJid = JidCreate.from(mParticipant.getAddress().getBareAddress() + '/' + resource);
+                        mXa = new XmppAddress(mJid.toString());
+                    }
+                }
+            }
+
+            mCanOmemo = mManager.resourceSupportsOmemo(mJid);
+
+        } catch (XmppStringprepException xe) {
+            throw new RuntimeException("Error with address that shouldn't happen: " + xe);
+        }
     }
 
     public ImEntity getParticipant() {
@@ -144,91 +168,75 @@ public class ChatSession {
 
         if (mParticipant instanceof Contact) {
 
-            try {
+            initJid();
 
-                if (mJid.hasNoResource()) {
+            OtrChatManager cm = OtrChatManager.getInstance();
+            SessionID sId = cm.getSessionId(message.getFrom().getAddress(), mJid.toString());
 
-                    String resource = ((Contact) mParticipant).getPresence().getResource();
-                    if (!TextUtils.isEmpty(resource)) {
-                        mJid = JidCreate.from(mParticipant.getAddress().getAddress() + '/' + resource);
-                        mXa = new XmppAddress(mJid.toString());
-                    }
-                }
+            SessionStatus otrStatus = cm.getSessionStatus(sId);
+            boolean verified = cm.getKeyManager().isVerified(sId);
 
-                OtrChatManager cm = OtrChatManager.getInstance();
-                SessionID sId = cm.getSessionId(message.getFrom().getAddress(), mJid.toString());
+            boolean isOffline = !((Contact) mParticipant).getPresence().isOnline();
 
-                SessionStatus otrStatus = cm.getSessionStatus(sId);
-                boolean verified = cm.getKeyManager().isVerified(sId);
+            if (!mCanOmemo)
+            {
+                mCanOmemo = mManager.resourceSupportsOmemo(mJid);
+            }
 
-                boolean isOffline = !((Contact) mParticipant).getPresence().isOnline();
+            message.setTo(mXa);
+            message.setType(Imps.MessageType.OUTGOING);
 
-                if (!mCanOmemo)
-                {
-                    mCanOmemo = mManager.resourceSupportsOmemo(mJid);
-                }
+            //try to send ChatSecure Push message regardless of OMEMO or OTR
+            if (isOffline && OtrChatManager.getInstance().canDoKnockPushMessage(sId)) {
 
-                message.setTo(mXa);
+                    // ChatSecure-Push : If no session is available when sending peer message,
+                    // attempt to send a "Knock" push message to the peer asking them to come online
+                    //cm.sendKnockPushMessage(sId);
+                   // if (!mPushSent) {
+                        // ChatSecure-Push: If the remote peer is offline, send them a push
+                        OtrChatManager.getInstance().sendKnockPushMessage(sId);
+                        mPushSent = true;
+                    //}
+            }
+
+            if (mCanOmemo) {
                 message.setType(Imps.MessageType.OUTGOING);
+                mManager.sendMessageAsync(this, message);
+            } else {
+                //do OTR!
 
-                //try to send ChatSecure Push message regardless of OMEMO or OTR
-                if (isOffline && OtrChatManager.getInstance().canDoKnockPushMessage(sId)) {
+                if (otrStatus == SessionStatus.ENCRYPTED) {
 
-                        // ChatSecure-Push : If no session is available when sending peer message,
-                        // attempt to send a "Knock" push message to the peer asking them to come online
-                        //cm.sendKnockPushMessage(sId);
-                       // if (!mPushSent) {
-                            // ChatSecure-Push: If the remote peer is offline, send them a push
-                            OtrChatManager.getInstance().sendKnockPushMessage(sId);
-                            mPushSent = true;
-                        //}
+                    if (!OtrChatManager.getInstance().canDoKnockPushMessage(sId)) {
+                        // ChatSecure-Push : If OTR session is available when sending peer message,
+                        // ensure we have exchanged Push Whitelist tokens with that peer
+                        cm.maybeBeginPushWhitelistTokenExchange(sId);
+                    }
+
+                    if (verified) {
+                        message.setType(Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED);
+                    } else {
+                        message.setType(Imps.MessageType.OUTGOING_ENCRYPTED);
+                    }
+
+                } else {
+
+                    message.setType(Imps.MessageType.POSTPONED);
+                    return message.getType();
                 }
 
-                if (mCanOmemo) {
-                    message.setType(Imps.MessageType.OUTGOING);
+                boolean canSend = cm.transformSending(message);
+
+                if (canSend) {
                     mManager.sendMessageAsync(this, message);
                 } else {
-                    //do OTR!
+                    //can't be sent due to OTR state
+                    message.setType(Imps.MessageType.POSTPONED);
+                    return message.getType();
 
-                    if (otrStatus == SessionStatus.ENCRYPTED) {
-
-                        if (!OtrChatManager.getInstance().canDoKnockPushMessage(sId)) {
-                            // ChatSecure-Push : If OTR session is available when sending peer message,
-                            // ensure we have exchanged Push Whitelist tokens with that peer
-                            cm.maybeBeginPushWhitelistTokenExchange(sId);
-                        }
-
-                        if (verified) {
-                            message.setType(Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED);
-                        } else {
-                            message.setType(Imps.MessageType.OUTGOING_ENCRYPTED);
-                        }
-
-                    } else {
-
-                        message.setType(Imps.MessageType.POSTPONED);
-                        return message.getType();
-                    }
-
-                    boolean canSend = cm.transformSending(message);
-
-                    if (canSend) {
-                        mManager.sendMessageAsync(this, message);
-                    } else {
-                        //can't be sent due to OTR state
-                        message.setType(Imps.MessageType.POSTPONED);
-                        return message.getType();
-
-                    }
                 }
             }
-            catch (XmppStringprepException xe)
-            {
-                Log.w(ImApp.LOG_TAG,"error parsing address on send: " + mParticipant.getAddress().toString(),xe);
-                message.setType(Imps.MessageType.POSTPONED);
-                return message.getType();
 
-            }
         }
         else if (mParticipant instanceof ChatGroup)
         {
