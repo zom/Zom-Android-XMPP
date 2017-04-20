@@ -61,7 +61,7 @@ public class Omemo {
         OmemoConstants.ADD_OMEMO_HINT_BODY = false;
 
         mOmemoManager = OmemoManager.getInstanceFor(connection);
-        
+
         if (mOmemoStore == null)
         {
             File fileOmemoStore = new File(context.getFilesDir(),"omemo.store");

@@ -49,11 +49,13 @@ public class ChatSessionInitTask extends AsyncTask<String, Long, Long> {
 
                     if (session != null && mContactType == Imps.Contacts.TYPE_NORMAL)
                     {
-                            if (session.getDefaultOtrChatSession() != null
-                                && (!session.getDefaultOtrChatSession().isChatEncrypted()))
-                            {
-                                session.getDefaultOtrChatSession().startChatEncryption();
-                            }
+                        //first check OMEMO
+                        if (!session.isEncrypted()) {
+
+                            //then you can try OTR
+                            session.getDefaultOtrChatSession().startChatEncryption();
+
+                        }
 
                     } else {
 
