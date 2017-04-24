@@ -57,6 +57,7 @@ import android.net.Uri;
 import android.net.Uri.Builder;
 import android.os.RemoteCallbackList;
 import android.os.RemoteException;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -992,6 +993,7 @@ public class ContactListManagerAdapter extends
         ArrayList<String> statusArray = new ArrayList<String>();
         ArrayList<String> customStatusArray = new ArrayList<String>();
         ArrayList<String> clientTypeArray = new ArrayList<String>();
+        ArrayList<String> resourceArray = new ArrayList<String>();
 
         for (Contact c : contacts) {
             String username = mAdaptee.normalizeAddress(c.getAddress().getAddress());
@@ -1006,6 +1008,11 @@ public class ContactListManagerAdapter extends
             customStatusArray.add(customStatus);
             clientTypeArray.add(String.valueOf(clientType));
 
+            if (!TextUtils.isEmpty(p.getResource()))
+                resourceArray.add(p.getResource());
+            else
+                resourceArray.add("");
+
         }
 
         ContentValues values = new ContentValues();
@@ -1015,6 +1022,7 @@ public class ContactListManagerAdapter extends
         putStringArrayList(values, Imps.Presence.PRESENCE_STATUS, statusArray);
         putStringArrayList(values, Imps.Presence.PRESENCE_CUSTOM_STATUS, customStatusArray);
         putStringArrayList(values, Imps.Presence.CONTENT_TYPE, clientTypeArray);
+        putStringArrayList(values, Imps.Presence.JID_RESOURCE, resourceArray);
 
         mResolver.update(Imps.Presence.BULK_CONTENT_URI, values, null, null);
     }

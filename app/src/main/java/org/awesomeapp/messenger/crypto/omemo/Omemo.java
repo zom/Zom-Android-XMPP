@@ -58,7 +58,7 @@ public class Omemo {
     public Omemo (XMPPTCPConnection connection, Context context) throws Exception
     {
 
-        OmemoConstants.ADD_OMEMO_HINT_BODY = false;
+      //  OmemoConstants. = false;
 
         mOmemoManager = OmemoManager.getInstanceFor(connection);
 
@@ -70,7 +70,8 @@ public class Omemo {
         }
 
         mOmemoService = new SignalOmemoService(mOmemoManager, mOmemoStore);
-        mOmemoService.setup();
+
+        mOmemoManager.initialize();
     }
 
     public ArrayList<String> getFingerprints (BareJid jid, boolean autoload) throws CorruptedOmemoKeyException, SmackException, XMPPException.XMPPErrorException, InterruptedException
@@ -82,23 +83,19 @@ public class Omemo {
         if(list == null) {
             list = new CachedDeviceList();
         }
+
         ArrayList<String> fps = new ArrayList<>();
         for(int id : list.getActiveDevices()) {
-            IdentityKey idk = mOmemoStore.loadOmemoIdentityKey(new OmemoDevice(jid, id));
-            if(idk != null) {
-                fps.add(KeyUtil.prettyFingerprint(mOmemoStore.keyUtil().getFingerprint(idk)));
-            } else {
-                OmemoBundleElement b = mOmemoService.getPubSubHelper().fetchBundle(new OmemoDevice(jid, id));
-                idk = mOmemoStore.keyUtil().identityKeyFromBytes(b.getIdentityKey());
-                if(idk != null) {
-                    fps.add(KeyUtil.prettyFingerprint(mOmemoStore.keyUtil().getFingerprint(idk)));
-                }
-            }
+
+           String fingerprint = mOmemoStore.getFingerprint(new OmemoDevice(jid, id));
+            fps.add(KeyUtil.prettyFingerprint(fingerprint));
+
         }
 
         return fps;
     }
 
+    /**
     public ArrayList<String> getJidWithFingerprint (BareJid jid) throws CorruptedOmemoKeyException, SmackException, XMPPException.XMPPErrorException, InterruptedException
     {
         CachedDeviceList list = mOmemoStore.loadCachedDeviceList(jid);
@@ -123,16 +120,15 @@ public class Omemo {
         }
 
         return fps;
-    }
+    }**/
 
-
-    public boolean resourceSupportsOmemo(final FullJid jid)
+    public boolean resourceSupportsOmemo(final Jid jid)
     {
        try
        {
            if (jid.hasResource())
            {
-               return mOmemoManager.resourceSupportsOmemo(jid);
+               return mOmemoManager.resourceSupportsOmemo(jid.asFullJidIfPossible());
            }
            else
            {
@@ -141,16 +137,22 @@ public class Omemo {
        }
        catch (Exception e)
        {
-           Log.w(TAG, "error checking if resource supports omemo: " + jid,e);
+           Log.e(TAG, "error checking if resource supports omemo: " + jid,e);
            ;
-           return false;
+
        }
+
+       return false;
     }
 
     public void loadDeviceList (BareJid jid)
     {
         try {
-            OmemoDeviceListElement deviceList = mOmemoService.getPubSubHelper().fetchDeviceList(jid);
+
+            mOmemoManager.requestDeviceListUpdateFor(jid);
+
+         //   OmemoDeviceListElement deviceList = mOmemoService.getPubSubHelper().fetchDeviceList(jid);
+
         }
         catch (Exception e)
         {
@@ -224,13 +226,12 @@ public class Omemo {
                        // debug(TAG,jid.toString() +  " Status: Untrusted");
                     }
                 }
-
-                if (isTrusted) {
-                    mOmemoStore.trustOmemoIdentity(d, s.getIdentityKey());
-                }
-                else
-                {
-                    mOmemoStore.distrustOmemoIdentity(d, s.getIdentityKey());
+                else {
+                    if (isTrusted) {
+                        mOmemoStore.trustOmemoIdentity(d, s.getIdentityKey());
+                    } else {
+                        mOmemoStore.distrustOmemoIdentity(d, s.getIdentityKey());
+                    }
                 }
             } catch (Exception e) {
                 Log.w(TAG, "error getting device session",e);

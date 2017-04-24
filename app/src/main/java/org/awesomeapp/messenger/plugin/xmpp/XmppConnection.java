@@ -79,6 +79,7 @@ import org.jivesoftware.smackx.delay.provider.DelayInformationProvider;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.disco.provider.DiscoverInfoProvider;
 import org.jivesoftware.smackx.disco.provider.DiscoverItemsProvider;
+import org.jivesoftware.smackx.iqlast.LastActivityManager;
 import org.jivesoftware.smackx.iqlast.packet.LastActivity;
 import org.jivesoftware.smackx.iqprivate.PrivateDataManager;
 import org.jivesoftware.smackx.muc.DiscussionHistory;
@@ -102,16 +103,8 @@ import org.jivesoftware.smackx.omemo.elements.OmemoDeviceListElement;
 import org.jivesoftware.smackx.omemo.exceptions.CannotEstablishOmemoSessionException;
 import org.jivesoftware.smackx.omemo.exceptions.CryptoFailedException;
 import org.jivesoftware.smackx.omemo.exceptions.UndecidedOmemoIdentityException;
-import org.jivesoftware.smackx.omemo.internal.CachedDeviceList;
-import org.jivesoftware.smackx.omemo.internal.OmemoDevice;
 import org.jivesoftware.smackx.omemo.internal.OmemoMessageInformation;
 import org.jivesoftware.smackx.omemo.listener.OmemoMessageListener;
-import org.jivesoftware.smackx.omemo.signal.SignalFileBasedOmemoStore;
-import org.jivesoftware.smackx.omemo.signal.SignalOmemoService;
-import org.jivesoftware.smackx.omemo.signal.SignalOmemoSession;
-import org.jivesoftware.smackx.omemo.signal.SignalOmemoStore;
-import org.jivesoftware.smackx.omemo.util.KeyUtil;
-import org.jivesoftware.smackx.omemo.util.PubSubHelper;
 import org.jivesoftware.smackx.ping.PingManager;
 import org.jivesoftware.smackx.ping.provider.PingProvider;
 import org.jivesoftware.smackx.privacy.PrivacyListManager;
@@ -1265,14 +1258,8 @@ public class XmppConnection extends ImConnection {
             setState(LOGGED_IN, null);
             debug(TAG, "logged in");
             mNeedReconnect = false;
+            initOmemo();
 
-            execute(new Runnable ()
-            {
-                public void run ()
-                {
-                    initOmemo();
-                }
-            });
 
         } catch (XMPPException e) {
             debug(TAG, "exception thrown on connection",e);
@@ -1347,7 +1334,7 @@ public class XmppConnection extends ImConnection {
         try {
 
             mOmemo = new Omemo(mConnection,mContext);
-            mOmemo.getService().addOmemoMessageListener(new OmemoMessageListener() {
+            mOmemo.getManager().addOmemoMessageListener(new OmemoMessageListener() {
 
                 @Override
                 public void onOmemoMessageReceived(String body, org.jivesoftware.smack.packet.Message message, org.jivesoftware.smack.packet.Message message1, OmemoMessageInformation omemoMessageInformation) {
@@ -2134,6 +2121,10 @@ public class XmppConnection extends ImConnection {
         try {
 
             ChatSession session = mSessionManager.findSession(JidCreate.bareFrom(address));
+            Jid jid = JidCreate.from(address);
+
+            if (jid.hasNoResource())
+                return null;
 
             //create a session if this it not groupchat
             if (session == null && (!groupChat)) {
@@ -2143,8 +2134,7 @@ public class XmppConnection extends ImConnection {
                     session = mSessionManager.createChatSession(participant, false);
 
                     try {
-                        BareJid jid = JidCreate.bareFrom(address);
-                        mOmemo.trustOmemoDevice(jid, true);
+                        mOmemo.trustOmemoDevice(jid.asBareJid(), true);
                     } catch (Exception ioe)
 
                     {
@@ -2183,6 +2173,7 @@ public class XmppConnection extends ImConnection {
             }
         } else
         {
+
            return mContactListManager.getContact(address);
 
         }
@@ -2273,8 +2264,8 @@ public class XmppConnection extends ImConnection {
                             org.jivesoftware.smack.packet.Message msgEncrypted
                                     = mOmemo.getManager().encrypt(jidTo.asBareJid(), msgXmpp);
 
-                            msgEncrypted.addExtension(new DeliveryReceiptRequest());
                             msgEncrypted.setStanzaId(msgXmpp.getStanzaId());
+                            msgEncrypted.addExtension(new DeliveryReceiptRequest());
                             thisChat.sendMessage(msgEncrypted);
                             message.setType(Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED);
 
@@ -2316,9 +2307,9 @@ public class XmppConnection extends ImConnection {
             }
         }
 
-        ChatSession findSession(BareJid bareJid) {
+        ChatSession findSession(Jid jid) {
 
-            ChatSession result = mSessions.get(bareJid.toString());
+            ChatSession result = mSessions.get(jid.toString());
 
          //   if (result == null)
            //     result = mSessions.get(XmppAddress.stripResource(address));
@@ -2335,20 +2326,16 @@ public class XmppConnection extends ImConnection {
 
         @Override
         public boolean resourceSupportsOmemo(Jid jid) {
-
-            if (jid.hasNoResource())
-                return false;
-            else
-                return mOmemo.resourceSupportsOmemo(jid.asFullJidIfPossible());
+            return mOmemo.resourceSupportsOmemo(jid);
         }
     }
 
     
     private void requestPresenceRefresh (String address)
     {
-        org.jivesoftware.smack.packet.Presence p = new org.jivesoftware.smack.packet.Presence(org.jivesoftware.smack.packet.Presence.Type.error);
-        p.setFrom(address);
-        qPresence.push(p);
+        //org.jivesoftware.smack.packet.Presence p = new org.jivesoftware.smack.packet.Presence(org.jivesoftware.smack.packet.Presence.Type.error);
+        //p.setFrom(address);
+        //qPresence.push(p);
     }
 
     public class XmppContactListManager extends ContactListManager {
@@ -2515,6 +2502,9 @@ public class XmppConnection extends ImConnection {
 
             //since we don't show lists anymore, let's just load all entries together
 
+            LastActivityManager lam = LastActivityManager.getInstanceFor(mConnection);
+            long now = new Date().getTime();
+
 
             ContactList cl;
 
@@ -2541,13 +2531,25 @@ public class XmppConnection extends ImConnection {
             if (mConnection != null) {
 
                 for (RosterEntry rEntry : mRoster.getEntries()) {
-                    String address = rEntry.getUser();
+                    String address = rEntry.getJid().toString();
+
                     String name = rEntry.getName();
 
                     if (mUser.getAddress().getBareAddress().equals(address)) //don't load a roster for yourself
                         continue;
 
-                    Contact contact = getContact(address);
+                    Contact contact = null;
+                    Presence p = null;
+
+                    org.jivesoftware.smack.packet.Presence presence = mRoster.getPresence(rEntry.getJid().asBareJid());
+                    if (presence != null) {
+                        address = presence.getFrom().toString();
+                        p = new Presence(parsePresence(presence), presence.getStatus(), null, null,
+                                Presence.CLIENT_TYPE_MOBILE, null, presence.getFrom().getResourceOrEmpty().toString());
+
+                    }
+
+                    contact = getContact(address);
 
                     if (contact == null) {
                         XmppAddress xAddr = new XmppAddress(address);
@@ -2558,6 +2560,9 @@ public class XmppConnection extends ImConnection {
                         contact = new Contact(xAddr, name);
 
                     }
+
+                    if (p != null)
+                        contact.setPresence(p);
 
                     if (!cl.containsContact(contact)) {
                         try {
@@ -2586,6 +2591,16 @@ public class XmppConnection extends ImConnection {
                     else if (rEntry.getType() == RosterPacket.ItemType.remove)
                         subType = Imps.ContactsColumns.SUBSCRIPTION_TYPE_REMOVE;
 
+                    /**
+                    try {
+
+                        LastActivity activity = lam.getLastActivity(JidCreate.from(address));
+                        contact.setPresence(new Date(activity.getIdleTime());
+                    }
+                    catch (Exception e)
+                    {
+                        Log.e("LastActivity","error getting last activity for: " + address,e);
+                    }**/
 
                     try {
 
@@ -2944,7 +2959,7 @@ public class XmppConnection extends ImConnection {
                     reqSubscribe.setTo(contact.getAddress().getBareAddress());
                     sendPacket(reqSubscribe);
 
-                    findOrCreateSession(contact.getAddress().getBareAddress(), false).setSubscribed(true);
+                    findOrCreateSession(contact.getAddress().toString(), false).setSubscribed(true);
 
                 }
 
@@ -3875,16 +3890,7 @@ public class XmppConnection extends ImConnection {
             return null;
 
         if (presence.getType() == org.jivesoftware.smack.packet.Presence.Type.error)
-        {            
-            if (mRoster == null)
-                return null;
-
-            if (presence.getFrom() == null)
-                return null;
-            
-            presence = mRoster.getPresence(presence.getFrom().asBareJid());
-
-        }
+            return null;
         
         if (TextUtils.isEmpty(presence.getFrom()))
             return null;

@@ -91,6 +91,8 @@ public class ChatSession {
                         mXa = new XmppAddress(mJid.toString());
                     }
                 }
+
+                mXa = new XmppAddress(mJid.toString());
             }
 
             mCanOmemo = mManager.resourceSupportsOmemo(mJid);
@@ -178,64 +180,65 @@ public class ChatSession {
 
             boolean isOffline = !((Contact) mParticipant).getPresence().isOnline();
 
-            if (!mCanOmemo)
-            {
-                mCanOmemo = mManager.resourceSupportsOmemo(mJid);
-            }
-
             message.setTo(mXa);
             message.setType(Imps.MessageType.OUTGOING);
 
             //try to send ChatSecure Push message regardless of OMEMO or OTR
             if (isOffline && OtrChatManager.getInstance().canDoKnockPushMessage(sId)) {
 
-                    // ChatSecure-Push : If no session is available when sending peer message,
-                    // attempt to send a "Knock" push message to the peer asking them to come online
-                    //cm.sendKnockPushMessage(sId);
-                   // if (!mPushSent) {
-                        // ChatSecure-Push: If the remote peer is offline, send them a push
-                        OtrChatManager.getInstance().sendKnockPushMessage(sId);
-                        mPushSent = true;
-                    //}
-            }
-
-            if (mCanOmemo) {
-                message.setType(Imps.MessageType.OUTGOING);
-                mManager.sendMessageAsync(this, message);
-            } else {
-                //do OTR!
-
-                if (otrStatus == SessionStatus.ENCRYPTED) {
-
-                    if (!OtrChatManager.getInstance().canDoKnockPushMessage(sId)) {
-                        // ChatSecure-Push : If OTR session is available when sending peer message,
-                        // ensure we have exchanged Push Whitelist tokens with that peer
-                        cm.maybeBeginPushWhitelistTokenExchange(sId);
-                    }
-
-                    if (verified) {
-                        message.setType(Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED);
-                    } else {
-                        message.setType(Imps.MessageType.OUTGOING_ENCRYPTED);
-                    }
-
-                } else {
-
+                    // ChatSecure-Push: If the remote peer is offline, send them a push
+                    OtrChatManager.getInstance().sendKnockPushMessage(sId);
+                    mPushSent = true;
                     message.setType(Imps.MessageType.POSTPONED);
                     return message.getType();
+
+            }
+            else {
+
+                if (!mCanOmemo)
+                {
+                    mCanOmemo = mManager.resourceSupportsOmemo(mJid);
                 }
 
-                boolean canSend = cm.transformSending(message);
-
-                if (canSend) {
+                if (mCanOmemo) {
+                    message.setType(Imps.MessageType.OUTGOING);
                     mManager.sendMessageAsync(this, message);
                 } else {
-                    //can't be sent due to OTR state
-                    message.setType(Imps.MessageType.POSTPONED);
-                    return message.getType();
+                    //do OTR!
 
+                    if (otrStatus == SessionStatus.ENCRYPTED) {
+
+                        if (!OtrChatManager.getInstance().canDoKnockPushMessage(sId)) {
+                            // ChatSecure-Push : If OTR session is available when sending peer message,
+                            // ensure we have exchanged Push Whitelist tokens with that peer
+                            cm.maybeBeginPushWhitelistTokenExchange(sId);
+                        }
+
+                        if (verified) {
+                            message.setType(Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED);
+                        } else {
+                            message.setType(Imps.MessageType.OUTGOING_ENCRYPTED);
+                        }
+
+                    } else {
+
+                        message.setType(Imps.MessageType.POSTPONED);
+                        return message.getType();
+                    }
+
+                    boolean canSend = cm.transformSending(message);
+
+                    if (canSend) {
+                        mManager.sendMessageAsync(this, message);
+                    } else {
+                        //can't be sent due to OTR state
+                        message.setType(Imps.MessageType.POSTPONED);
+                        return message.getType();
+
+                    }
                 }
             }
+
 
         }
         else if (mParticipant instanceof ChatGroup)

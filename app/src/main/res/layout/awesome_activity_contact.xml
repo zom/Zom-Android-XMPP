@@ -122,6 +122,8 @@
             android:layout_height="wrap_content"
             android:padding="10dp"
             android:id="@+id/listOtr"
+            android:visibility="gone"
+
             >
 
             <ImageView
@@ -209,6 +211,7 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="?contactTextSecondary"
                 android:onClick="verifyClicked"
+                android:visibility="gone"
                 >
 
             </org.ironrabbit.type.CustomTypefaceButton>
@@ -216,12 +219,11 @@
         </RelativeLayout>
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/fragment_container"
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="300dp" >
-        </LinearLayout>
+    <LinearLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:orientation="vertical"></LinearLayout>
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
