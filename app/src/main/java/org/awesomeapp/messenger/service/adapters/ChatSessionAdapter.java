@@ -197,16 +197,19 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             return null;
     }
 
+    private int lastPresence = -1;
+
     public void presenceChanged (int newPresence)
     {
 
         if (mChatSession.getParticipant() instanceof Contact) {
             ((Contact) mChatSession.getParticipant()).getPresence().setStatus(newPresence);
 
-            if (newPresence == Presence.AVAILABLE)
+            if (lastPresence != newPresence && newPresence == Presence.AVAILABLE)
                 if (hasPostponedMessages())
                     sendPostponedMessages();
 
+            lastPresence = newPresence;
         }
 
     }
@@ -478,30 +481,39 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
     }
 
-    synchronized void sendPostponedMessages() {
-        String[] projection = new String[] { BaseColumns._ID, Imps.Messages.BODY,
-                                             Imps.Messages.PACKET_ID,
-                                            Imps.Messages.DATE, Imps.Messages.TYPE, Imps.Messages.IS_DELIVERED };
-        String selection = Imps.Messages.TYPE + "=?";
+    boolean sendingPostponed = false;
 
-        Cursor c = mContentResolver.query(mMessageURI, projection, selection,
-                new String[] { Integer.toString(Imps.MessageType.POSTPONED) }, null);
-        if (c == null) {
-            RemoteImService.debug("Query error while querying postponed messages");
-            return;
+    void sendPostponedMessages() {
+
+        if (!sendingPostponed) {
+            sendingPostponed = true;
+
+            String[] projection = new String[]{BaseColumns._ID, Imps.Messages.BODY,
+                    Imps.Messages.PACKET_ID,
+                    Imps.Messages.DATE, Imps.Messages.TYPE, Imps.Messages.IS_DELIVERED};
+            String selection = Imps.Messages.TYPE + "=?";
+
+            Cursor c = mContentResolver.query(mMessageURI, projection, selection,
+                    new String[]{Integer.toString(Imps.MessageType.POSTPONED)}, null);
+            if (c == null) {
+                RemoteImService.debug("Query error while querying postponed messages");
+                return;
+            }
+
+            ArrayList<String> messages = new ArrayList<String>();
+
+            while (c.moveToNext())
+                messages.add(c.getString(1));
+
+            c.close();
+
+            removeMessageInDb(Imps.MessageType.POSTPONED);
+
+            for (String body : messages)
+                sendMessage(body, false);
+
+            sendingPostponed = false;
         }
-
-        ArrayList<String> messages = new ArrayList<String>();
-
-        while (c.moveToNext())
-            messages.add(c.getString(1));
-
-        c.close();
-
-        removeMessageInDb(Imps.MessageType.POSTPONED);
-
-        for (String body : messages)
-            sendMessage(body,false);
     }
 
     public void registerChatListener(IChatListener listener) {
