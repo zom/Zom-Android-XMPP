@@ -150,7 +150,6 @@ public class Omemo {
            catch (Exception e2)
            {
                Log.e(TAG, "error checking if resource supports omemo: " + jid, e2);
-               
            }
        }
 
