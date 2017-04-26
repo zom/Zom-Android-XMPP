@@ -1433,18 +1433,7 @@ public class ConversationView {
 
             c.close();
 
-            mCurrentChatSession = getChatSession();
-
-            if (mCurrentChatSession == null)
-                mCurrentChatSession = createChatSession();
-
-            if (mCurrentChatSession != null) {
-                isServiceUp = true;
-
-            }
-
-
-            updateChat();
+            initSession ();
 
             if (mRemoteNickname == null)
                 if (TextUtils.isEmpty(name))
@@ -1460,6 +1449,31 @@ public class ConversationView {
             }
         }
 
+    }
+
+    private void initSession ()
+    {
+        mHandler.post(mUpdateChatCallback);
+
+        new Thread ()
+        {
+            public void run ()
+            {
+
+                mCurrentChatSession = getChatSession();
+
+                if (mCurrentChatSession == null)
+                    mCurrentChatSession = createChatSession();
+
+                if (mCurrentChatSession != null) {
+                    isServiceUp = true;
+                }
+
+
+                mHandler.post(mUpdateChatCallback);
+
+            }
+        }.start();
     }
 
 
@@ -1708,12 +1722,14 @@ public class ConversationView {
         intent.putExtra("account", mAccountId);
         intent.putExtra("contactId", mLastChatId);
 
-        try {
-            IOtrChatSession otrChatSession = mCurrentChatSession.getDefaultOtrChatSession();
-            if (otrChatSession != null)
-                intent.putExtra("fingerprint", otrChatSession.getRemoteFingerprint());
+        if (mCurrentChatSession != null) {
+            try {
+                IOtrChatSession otrChatSession = mCurrentChatSession.getDefaultOtrChatSession();
+                if (otrChatSession != null)
+                    intent.putExtra("fingerprint", otrChatSession.getRemoteFingerprint());
+            } catch (RemoteException re) {
+            }
         }
-        catch (RemoteException re){}
 
         mContext.startActivity(intent);
 

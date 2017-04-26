@@ -4031,7 +4031,7 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
     }
 
     static void log(String message) {
-        LogCleaner.debug(LOG_TAG, message);
+        //LogCleaner.debug(LOG_TAG, message);
     }
 
 }

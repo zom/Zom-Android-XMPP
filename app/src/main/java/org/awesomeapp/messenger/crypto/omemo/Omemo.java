@@ -58,8 +58,6 @@ public class Omemo {
     public Omemo (XMPPTCPConnection connection, Context context) throws Exception
     {
 
-      //  OmemoConstants. = false;
-
         mOmemoManager = OmemoManager.getInstanceFor(connection);
 
         if (mOmemoStore == null)
@@ -71,7 +69,14 @@ public class Omemo {
 
         mOmemoService = new SignalOmemoService(mOmemoManager, mOmemoStore);
 
+        mOmemoManager.setAddOmemoHintBody(false);
         mOmemoManager.initialize();
+
+    }
+
+    public void close ()
+    {
+        //do we need to do anything to reinit on reconnect?
     }
 
     public ArrayList<String> getFingerprints (BareJid jid, boolean autoload) throws CorruptedOmemoKeyException, SmackException, XMPPException.XMPPErrorException, InterruptedException
@@ -135,11 +140,18 @@ public class Omemo {
                return getFingerprints(jid.asBareJid(),false).size() > 0;
            }
        }
-       catch (Exception e)
-       {
-           Log.e(TAG, "error checking if resource supports omemo: " + jid,e);
+       catch (Exception e) {
+           Log.e(TAG, "error checking if resource supports omemo: " + jid, e);
            ;
-
+           try {
+               //let's just check fingerprints instead
+               return getFingerprints(jid.asBareJid(), false).size() > 0;
+           }
+           catch (Exception e2)
+           {
+               Log.e(TAG, "error checking if resource supports omemo: " + jid, e2);
+               
+           }
        }
 
        return false;
@@ -205,9 +217,9 @@ public class Omemo {
     {
 
         CachedDeviceList l = mOmemoStore.loadCachedDeviceList(jid);
-        int ourId = mOmemoStore.loadOmemoDeviceId();
+//        int ourId = mOmemoStore.loadOmemoDeviceId();
 
-        for (Integer deviceId : l.getActiveDevices())
+        for (Integer deviceId : l.getAllDevices())
         {
 
             try {
@@ -221,16 +233,27 @@ public class Omemo {
 
                 if (mOmemoStore.isDecidedOmemoIdentity(d, s.getIdentityKey())) {
                     if (mOmemoStore.isTrustedOmemoIdentity(d, s.getIdentityKey())) {
-                       // debug(TAG, jid.toString() + " Status: Trusted");
+                        Log.d(TAG, jid.toString() + " Status: Trusted");
                     } else {
-                       // debug(TAG,jid.toString() +  " Status: Untrusted");
+                        Log.d(TAG,jid.toString() +  " Status: Untrusted");
                     }
                 }
                 else {
-                    if (isTrusted) {
-                        mOmemoStore.trustOmemoIdentity(d, s.getIdentityKey());
-                    } else {
-                        mOmemoStore.distrustOmemoIdentity(d, s.getIdentityKey());
+                    if (s.getIdentityKey() == null)
+                    {
+                        Log.w(TAG, jid.toString() + " can't trust, identity key is null");
+
+                    }
+                    else {
+                        if (isTrusted) {
+                            mOmemoStore.trustOmemoIdentity(d, s.getIdentityKey());
+                            Log.d(TAG, jid.toString() + " New Status: Trusted");
+
+                        } else {
+                            mOmemoStore.distrustOmemoIdentity(d, s.getIdentityKey());
+                            Log.d(TAG, jid.toString() + " New Status: Untrusted");
+
+                        }
                     }
                 }
             } catch (Exception e) {

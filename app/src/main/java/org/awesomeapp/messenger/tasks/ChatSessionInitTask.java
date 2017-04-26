@@ -50,12 +50,13 @@ public class ChatSessionInitTask extends AsyncTask<String, Long, Long> {
                     if (session != null && mContactType == Imps.Contacts.TYPE_NORMAL)
                     {
                         //first check OMEMO
+                        /**
                         if (!session.isEncrypted()) {
 
                             //then you can try OTR
                             session.getDefaultOtrChatSession().startChatEncryption();
 
-                        }
+                        }**/
 
                     } else {
 
@@ -63,7 +64,7 @@ public class ChatSessionInitTask extends AsyncTask<String, Long, Long> {
                             session = conn.getChatSessionManager().createMultiUserChatSession(address, null, null, false);
                         else {
                             session = conn.getChatSessionManager().createChatSession(address, false);
-                            session.getDefaultOtrChatSession().startChatEncryption();
+                         //   session.getDefaultOtrChatSession().startChatEncryption();
                         }
 
 
