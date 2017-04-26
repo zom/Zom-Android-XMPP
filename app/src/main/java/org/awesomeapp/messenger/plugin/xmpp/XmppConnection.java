@@ -217,7 +217,7 @@ public class XmppConnection extends ImConnection {
     private static SSLContext sslContext;
     private MemorizingTrustManager mMemTrust;
 
-    private final static int SOTIMEOUT = 1000 * 120;
+    private final static int SOTIMEOUT = 1000 * 30;
 
     private PingManager mPingManager;
 
@@ -371,6 +371,7 @@ public class XmppConnection extends ImConnection {
 
     private void loadVCardsAsync ()
     {
+
         if (!mLoadingAvatars)
         {
             executeIfIdle(new AvatarLoader());
@@ -1270,31 +1271,14 @@ public class XmppConnection extends ImConnection {
 
             if (mConnection != null && mConnection.isConnected() && (!mConnection.isAuthenticated())) {
 
-                if (mIsGoogleAuth)
-                {
-                    debug (TAG, "google failed; may need to refresh");
-
-                    String newPassword = null;//refreshGoogleToken (userName, mPassword,providerSettings.getDomain());
-
-                    if (newPassword != null)
-                        mPassword = newPassword;
-
-                    mRetryLogin = true;
+                debug(TAG, "not authorized - will not retry");
+                info = new ImErrorInfo(ImErrorInfo.INVALID_USERNAME, "invalid user/password");
+                setState(SUSPENDED, info);
+                mRetryLogin = false;
+                mNeedReconnect = false;
 
 
-                }
-                else
-                {
-
-                    debug(TAG, "not authorized - will not retry");
-                    info = new ImErrorInfo(ImErrorInfo.INVALID_USERNAME, "invalid user/password");
-                    setState(SUSPENDED, info);
-                    mRetryLogin = false;
-                    mNeedReconnect = false;
-
-                }
             }
-
 
             if (mRetryLogin && getState() != SUSPENDED) {
                 debug(TAG, "will retry");
@@ -1328,29 +1312,31 @@ public class XmppConnection extends ImConnection {
 
     }
 
-    private void initOmemo ()
+    private synchronized void initOmemo ()
     {
-
         try {
 
-            mOmemo = new Omemo(mConnection,mContext);
-            mOmemo.getManager().addOmemoMessageListener(new OmemoMessageListener() {
+            if (mConnection != null && mConnection.isAuthenticated()) {
 
-                @Override
-                public void onOmemoMessageReceived(String body, org.jivesoftware.smack.packet.Message message, org.jivesoftware.smack.packet.Message message1, OmemoMessageInformation omemoMessageInformation) {
+                if (mOmemo != null)
+                    mOmemo.close();
 
-                    if (body != null) {
-                        debug(TAG, "got inbound message omemo: from:" + message.getFrom() + "=" + message.getBody());
-                        message.setBody(body);
-                        handleMessage(message, true);
+                mOmemo = new Omemo(mConnection, mContext);
+                mOmemo.getManager().addOmemoMessageListener(new OmemoMessageListener() {
+
+                    @Override
+                    public void onOmemoMessageReceived(String body, org.jivesoftware.smack.packet.Message message, org.jivesoftware.smack.packet.Message message1, OmemoMessageInformation omemoMessageInformation) {
+
+                        if (body != null) {
+                            debug(TAG, "got inbound message omemo: from:" + message.getFrom() + "=" + message.getBody());
+                            message.setBody(body);
+                            handleMessage(message, true);
+                        } else {
+                            debug(TAG, "got empty ibound message omemo: from:" + message.getFrom().toString());
+                        }
                     }
-                    else
-                    {
-                        debug(TAG, "got empty ibound message omemo: from:" +  message.getFrom().toString());
-                    }
-                }
-            });
-
+                });
+            }
         }
         catch (Exception ome)
         {
@@ -1626,6 +1612,9 @@ public class XmppConnection extends ImConnection {
         mConfig.setServiceName(JidCreate.domainBareFrom(domain));
         mConfig.setPort(serverPort);
 
+        mConfig.setCompressionEnabled(true);
+        mConfig.setConnectTimeout(SOTIMEOUT);
+
         // No server requested and SRV lookup wasn't requested or returned nothing - use domain
         if (server == null)
             mConfig.setHost(domain);
@@ -1775,6 +1764,7 @@ public class XmppConnection extends ImConnection {
                     debug(TAG, "Reconnection success");
                     onReconnectionSuccessful();
                     mRoster = Roster.getInstanceFor(mConnection);
+                    initOmemo();
                 } else {
                     debug(TAG, "Ignoring reconnection callback due to pending resume");
                 }
@@ -2070,7 +2060,7 @@ public class XmppConnection extends ImConnection {
         clearPing();
 
         try {
-            mStreamHandler.quickShutdown();
+         //   mStreamHandler.quickShutdown();
             mConnection.disconnect();
         } catch (Throwable th) {
             // ignore
@@ -2136,7 +2126,6 @@ public class XmppConnection extends ImConnection {
                     try {
                         mOmemo.trustOmemoDevice(jid.asBareJid(), true);
                     } catch (Exception ioe)
-
                     {
                         debug(TAG, "error fetching omemo devices", ioe);
                     }
@@ -2224,6 +2213,11 @@ public class XmppConnection extends ImConnection {
         @Override
         public void sendMessageAsync(ChatSession session, Message message) {
 
+            if (!mConnection.isConnected()) {
+                message.setType(Imps.MessageType.POSTPONED);
+                return;
+            }
+
             MultiUserChat muc = null;
 
             org.jivesoftware.smack.packet.Message msgXmpp = null;
@@ -2275,13 +2269,18 @@ public class XmppConnection extends ImConnection {
                         } catch (UndecidedOmemoIdentityException uoie) {
                             message.setType(Imps.MessageType.POSTPONED);
                             debug(TAG, "crypto failed", uoie);
-                            mOmemo.trustOmemoDevice(jidTo.asBareJid(), true);
-                            org.jivesoftware.smack.packet.Message msgEncrypted
-                                    = mOmemo.getManager().encrypt(jidTo.asBareJid(), msgXmpp);
-                            msgEncrypted.addExtension(new DeliveryReceiptRequest());
-                            msgEncrypted.setStanzaId(msgXmpp.getStanzaId());
-                            thisChat.sendMessage(msgEncrypted);
-                            message.setType(Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED);
+
+                            //if we are connected, then try again
+                            if (mConnection != null && mConnection.isConnected()) {
+                                mOmemo.trustOmemoDevice(msgXmpp.getFrom().asBareJid(), true);
+                                mOmemo.trustOmemoDevice(jidTo.asBareJid(), true);
+                                org.jivesoftware.smack.packet.Message msgEncrypted
+                                        = mOmemo.getManager().encrypt(jidTo.asBareJid(), msgXmpp);
+                                msgEncrypted.addExtension(new DeliveryReceiptRequest());
+                                msgEncrypted.setStanzaId(msgXmpp.getStanzaId());
+                                thisChat.sendMessage(msgEncrypted);
+                                message.setType(Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED);
+                            }
                         }
 
                         return;
@@ -2326,7 +2325,11 @@ public class XmppConnection extends ImConnection {
 
         @Override
         public boolean resourceSupportsOmemo(Jid jid) {
-            return mOmemo.resourceSupportsOmemo(jid);
+
+            if (mOmemo != null)
+                return mOmemo.resourceSupportsOmemo(jid);
+            else
+                return false;
         }
     }
 
@@ -4144,8 +4147,7 @@ public class XmppConnection extends ImConnection {
     public List getFingerprints (String address)
     {
         try {
-
-            return mOmemo.getFingerprints(JidCreate.bareFrom(address), true);
+            return mOmemo.getFingerprints(JidCreate.bareFrom(address), false);
         }
         catch (Exception xe)
         {
