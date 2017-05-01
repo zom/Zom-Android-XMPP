@@ -497,9 +497,9 @@ public class ImConnectionAdapter extends org.awesomeapp.messenger.service.IImCon
                 try {
                     Collection<ChatSessionAdapter> adapters = mChatSessionManager.mActiveChatSessionAdapters.values();
 
-                  //  for (ChatSessionAdapter session : adapters) {
-                  //      session.sendPostponedMessages();
-                  //  }
+                    for (ChatSessionAdapter session : adapters) {
+                        session.sendPostponedMessages();
+                    }
                 }
                 catch (ConcurrentModificationException cme)
                 {
