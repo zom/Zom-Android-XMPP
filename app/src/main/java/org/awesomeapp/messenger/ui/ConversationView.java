@@ -2782,7 +2782,7 @@ public class ConversationView {
                 break;
 
             case Imps.MessageType.OUTGOING:
-            case Imps.MessageType.POSTPONED:
+            case Imps.MessageType.QUEUED:
 
                 int errCode = cursor.getInt(mErrCodeColumn);
                 if (errCode != 0) {

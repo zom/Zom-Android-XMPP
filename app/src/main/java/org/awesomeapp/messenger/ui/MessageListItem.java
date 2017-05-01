@@ -25,7 +25,6 @@ import org.awesomeapp.messenger.util.SecureMediaStore;
 import org.awesomeapp.messenger.ui.legacy.DatabaseUtils;
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.ui.legacy.Markup;
-import org.awesomeapp.messenger.model.Presence;
 import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.ui.widgets.ImageViewActivity;
@@ -34,8 +33,6 @@ import org.awesomeapp.messenger.ui.widgets.RoundedAvatarDrawable;
 import org.awesomeapp.messenger.util.LinkifyHelper;
 import org.ocpsoft.prettytime.PrettyTime;
 
-import java.io.File;
-import java.io.InputStream;
 import java.net.URLConnection;
 import java.util.Date;
 import java.util.List;
@@ -51,17 +48,13 @@ import android.content.pm.ResolveInfo;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.Resources;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.provider.Browser;
 import android.provider.MediaStore;
-import android.support.v4.util.LruCache;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -74,7 +67,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -886,7 +878,7 @@ public class MessageListItem extends FrameLayout {
             deliveryText.append(' ');
             //this is for delivery
 
-            if (messageType == Imps.MessageType.POSTPONED)
+            if (messageType == Imps.MessageType.QUEUED)
             {
                 //do nothing
                 deliveryText.append("X");
