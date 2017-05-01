@@ -321,19 +321,7 @@ public class MainActivity extends BaseActivity {
 
         handleIntent();
 
-        if (!checkConnection())
-        {
-            Snackbar sb = Snackbar.make(mViewPager, R.string.error_suspended_connection, Snackbar.LENGTH_LONG);
-            sb.setAction(getString(R.string.connect), new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Intent i = new Intent(MainActivity.this, AccountsActivity.class);
-                            startActivity(i);
-                        }
-                    });
-            sb.show();
-
-        }
+        checkConnection();
 
     }
 
@@ -344,8 +332,30 @@ public class MainActivity extends BaseActivity {
 
                 if (conn.getState() == ImConnection.DISCONNECTED
                         || conn.getState() == ImConnection.SUSPENDED
-                        || conn.getState() == ImConnection.SUSPENDING)
+                        || conn.getState() == ImConnection.SUSPENDING) {
+
+                    Snackbar sb = Snackbar.make(mViewPager, R.string.error_suspended_connection, Snackbar.LENGTH_LONG);
+                    sb.setAction(getString(R.string.connect), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Intent i = new Intent(MainActivity.this, AccountsActivity.class);
+                            startActivity(i);
+                        }
+                    });
+                    sb.show();
+
                     return false;
+                }
+                else if (conn.getState() == ImConnection.LOGGING_IN)
+                {
+                    Snackbar sb = Snackbar.make(mViewPager, R.string.signing_in_wait, Snackbar.LENGTH_LONG);
+                    sb.show();
+                }
+                else if (conn.getState() == ImConnection.LOGGING_OUT)
+                {
+                    Snackbar sb = Snackbar.make(mViewPager, R.string.signing_out_wait, Snackbar.LENGTH_LONG);
+                    sb.show();
+                }
             }
 
             return true;
