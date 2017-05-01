@@ -72,6 +72,8 @@ public class Omemo {
         mOmemoManager.setAddOmemoHintBody(false);
         mOmemoManager.initialize();
 
+       // mOmemoManager.purgeDevices();
+
     }
 
     public void close ()
@@ -141,7 +143,7 @@ public class Omemo {
            }
        }
        catch (Exception e) {
-           Log.e(TAG, "error checking if resource supports omemo: " + jid, e);
+           Log.w(TAG, "error checking if resource supports omemo, will check for local fingerprints: " + jid, e);
            ;
            try {
                //let's just check fingerprints instead
@@ -216,9 +218,8 @@ public class Omemo {
     {
 
         CachedDeviceList l = mOmemoStore.loadCachedDeviceList(jid);
-//        int ourId = mOmemoStore.loadOmemoDeviceId();
 
-        for (Integer deviceId : l.getAllDevices())
+        for (Integer deviceId : l.getActiveDevices())
         {
 
             try {
