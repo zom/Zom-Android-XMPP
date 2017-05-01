@@ -17,9 +17,6 @@
 
 package org.awesomeapp.messenger.model;
 
-import org.awesomeapp.messenger.ImApp;
-import org.awesomeapp.messenger.crypto.IOtrChatSession;
-import org.awesomeapp.messenger.crypto.omemo.Omemo;
 import org.awesomeapp.messenger.crypto.otr.OtrChatManager;
 import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
 import org.awesomeapp.messenger.provider.Imps;
@@ -32,7 +29,6 @@ import net.java.otr4j.session.SessionStatus;
 
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
-import android.util.Log;
 
 /**
  * A ChatSession represents a conversation between two users. A ChatSession has
@@ -95,7 +91,10 @@ public class ChatSession {
                 mXa = new XmppAddress(mJid.toString());
             }
 
-            mCanOmemo = mManager.resourceSupportsOmemo(mJid);
+            //if we can't omemo, check it again to be sure
+            if (!mCanOmemo) {
+                mCanOmemo = mManager.resourceSupportsOmemo(mJid);
+            }
 
         } catch (XmppStringprepException xe) {
             throw new RuntimeException("Error with address that shouldn't happen: " + xe);
@@ -181,27 +180,31 @@ public class ChatSession {
             boolean isOffline = !((Contact) mParticipant).getPresence().isOnline();
 
             message.setTo(mXa);
-            message.setType(Imps.MessageType.OUTGOING);
+            message.setType(Imps.MessageType.QUEUED);
 
             //try to send ChatSecure Push message regardless of OMEMO or OTR
-            if (isOffline && OtrChatManager.getInstance().canDoKnockPushMessage(sId)) {
+            if (isOffline) {
 
-                    // ChatSecure-Push: If the remote peer is offline, send them a push
-                    OtrChatManager.getInstance().sendKnockPushMessage(sId);
-                    mPushSent = true;
-                    message.setType(Imps.MessageType.POSTPONED);
-                    return message.getType();
+                if (OtrChatManager.getInstance().canDoKnockPushMessage(sId)) {
+                    if (!mPushSent) {
+                        // ChatSecure-Push: If the remote peer is offline, send them a push
+                        OtrChatManager.getInstance().sendKnockPushMessage(sId);
+                        mPushSent = true;
+                    }
+                }
+
+                return message.getType();
 
             }
             else {
 
                 if (!mCanOmemo)
                 {
+                    //check again!
                     mCanOmemo = mManager.resourceSupportsOmemo(mJid);
                 }
 
                 if (mCanOmemo) {
-                    message.setType(Imps.MessageType.OUTGOING);
                     mManager.sendMessageAsync(this, message);
                 } else {
                     //do OTR!
@@ -222,7 +225,7 @@ public class ChatSession {
 
                     } else {
 
-                        message.setType(Imps.MessageType.POSTPONED);
+                        message.setType(Imps.MessageType.QUEUED);
                         return message.getType();
                     }
 
@@ -232,7 +235,7 @@ public class ChatSession {
                         mManager.sendMessageAsync(this, message);
                     } else {
                         //can't be sent due to OTR state
-                        message.setType(Imps.MessageType.POSTPONED);
+                        message.setType(Imps.MessageType.QUEUED);
                         return message.getType();
 
                     }
@@ -252,7 +255,7 @@ public class ChatSession {
         else
         {
             //what do we do ehre?
-            message.setType(Imps.MessageType.POSTPONED);
+            message.setType(Imps.MessageType.QUEUED);
         }
 
         return message.getType();
