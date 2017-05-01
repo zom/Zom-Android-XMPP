@@ -761,7 +761,7 @@ public class Imps {
         /* generic status */
         int STATUS = 7;
         /* the message cannot be sent now, but will be sent later */
-        int POSTPONED = 8;
+        int QUEUED = 8;
         /* off The Record status is turned off */
         int OTR_IS_TURNED_OFF = 9;
         /* off the record status is turned on */
