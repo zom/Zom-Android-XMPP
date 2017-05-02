@@ -481,12 +481,12 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
     }**/
 
-    boolean sentPostponed = false;
+    boolean sendingPostponed = false;
 
     void sendPostponedMessages() {
 
-        if (!sentPostponed) {
-            sentPostponed = true;
+        if (!sendingPostponed) {
+            sendingPostponed = true;
 
             String[] projection = new String[]{BaseColumns._ID, Imps.Messages.BODY,
                     Imps.Messages.PACKET_ID,
@@ -514,7 +514,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
             c.close();
 
-          //  sendingPostponed = false;
+            sendingPostponed = false;
         }
     }
 
