@@ -2974,7 +2974,10 @@ public class XmppConnection extends ImConnection {
                 reqSubscribe.setTo(contact.getAddress().getBareAddress());
                 sendPacket(reqSubscribe);
 
-                findOrCreateSession(contact.getAddress().toString(), false).setSubscribed(true);
+                ChatSession session = findOrCreateSession(contact.getAddress().toString(), false);
+
+                if (session != null)
+                    session.setSubscribed(true);
 
             }
 
@@ -3051,7 +3054,10 @@ public class XmppConnection extends ImConnection {
                 e.printStackTrace();
             }
 
-            findOrCreateSession(contact.getAddress().toString(), false).setSubscribed(false);
+            ChatSession session = findOrCreateSession(contact.getAddress().toString(), false);
+
+            if (session != null)
+                session.setSubscribed(false);
 
         }
 
