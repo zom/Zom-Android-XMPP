@@ -1226,7 +1226,7 @@ public class XmppConnection extends ImConnection {
 
 
         // providerSettings is closed in initConnection();
-        String userName = Imps.Account.getUserName(contentResolver, mAccountId);
+        mUsername = Imps.Account.getUserName(contentResolver, mAccountId);
 
         String defaultStatus = null;
 
@@ -1236,10 +1236,10 @@ public class XmppConnection extends ImConnection {
         mUserPresence = new Presence(Presence.AVAILABLE, defaultStatus, Presence.CLIENT_TYPE_MOBILE);
 
         try {
-            if (userName == null || userName.length() == 0)
+            if (mUsername == null || mUsername.length() == 0)
                 throw new Exception("empty username not allowed");
 
-            initConnectionAndLogin(providerSettings, userName);
+            initConnectionAndLogin(providerSettings, mUsername);
 
             setState(LOGGED_IN, null);
             debug(TAG, "logged in");
@@ -1533,6 +1533,14 @@ public class XmppConnection extends ImConnection {
         if ("".equals(server))
             server = null;
 
+        if (domain.equals("dukgo.com"))
+        {
+            doDnsSrv = false;
+            server = "dukgo.com";
+        }
+
+        
+
         /**
          * //need to move this to the new NetCipher BroadcastReceiver API
         try {
@@ -1570,14 +1578,15 @@ public class XmppConnection extends ImConnection {
             List<HostAddress> listHostsFailed = new ArrayList<>();
             List<HostAddress> listHosts = DNSUtil.resolveXMPPServiceDomain(domain, listHostsFailed, ConnectionConfiguration.DnssecMode.disabled);
 
-            server = listHosts.get(0).getFQDN();
-            serverPort = listHosts.get(0).getPort();
+            if (listHosts.size() > 0) {
+                server = listHosts.get(0).getFQDN();
+                serverPort = listHosts.get(0).getPort();
 
-            debug(TAG, "(DNS SRV) resolved: " + domain + "=" + server + ":" + serverPort);
-
-
+                debug(TAG, "(DNS SRV) resolved: " + domain + "=" + server + ":" + serverPort);
+            }
         }
 
+        /**
         if (server != null && server.contains("google.com"))
         {
             mUsername = userName + '@' + domain;
@@ -1593,7 +1602,7 @@ public class XmppConnection extends ImConnection {
         else
         {
             mUsername = userName;
-        }
+        }**/
 
 
         if (serverPort == 0) //if serverPort is set to 0 then use 5222 as default
