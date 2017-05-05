@@ -488,7 +488,7 @@ public class XmppConnection extends ImConnection {
                 type, statusText, priority, mode);
 
         try {
-            byte[] avatar = DatabaseUtils.getAvatarBytesFromAddress(mContext.getContentResolver(), mUser.getAddress().getBareAddress(), 256, 256);
+            byte[] avatar = DatabaseUtils.getAvatarBytesFromAddress(mContext.getContentResolver(), mUser.getAddress().getBareAddress());
             if (avatar != null) {
                 VCardTempXUpdatePresenceExtension vcardExt = new VCardTempXUpdatePresenceExtension(avatar);
                 packet.addExtension(vcardExt);
@@ -1446,7 +1446,8 @@ public class XmppConnection extends ImConnection {
 
     }
 
-    private void sendVCard ()
+
+    public void sendVCard ()
     {
 
         try {
@@ -1473,13 +1474,12 @@ public class XmppConnection extends ImConnection {
             else if (vCard.getAvatarHash() != null)
             {
                 setAvatar = !DatabaseUtils.doesAvatarHashExist(mContext.getContentResolver(),  Imps.Avatars.CONTENT_URI, mUser.getAddress().getBareAddress(), vCard.getAvatarHash());
-
             }
 
             vCard.setNickName(mUser.getName());
 
             if (setAvatar) {
-                byte[] avatar = DatabaseUtils.getAvatarBytesFromAddress(mContext.getContentResolver(), mUser.getAddress().getBareAddress(), ImApp.DEFAULT_AVATAR_WIDTH, ImApp.DEFAULT_AVATAR_HEIGHT);
+                byte[] avatar = DatabaseUtils.getAvatarBytesFromAddress(mContext.getContentResolver(), mUser.getAddress().getBareAddress());
                 if (avatar != null) {
                     vCard.setAvatar(avatar, "image/jpeg");
                 }

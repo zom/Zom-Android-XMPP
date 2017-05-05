@@ -15,13 +15,15 @@
  * the License.
  */
 
-package org.awesomeapp.messenger.ui.legacy;
+package org.awesomeapp.messenger.ui;
 
 import im.zom.messenger.R;
 
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.service.ImServiceConstants;
+import org.awesomeapp.messenger.tasks.MigrateAccountTask;
+
 import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -90,6 +92,15 @@ public class AccountSettingsActivity extends PreferenceActivity implements
         settings.close();
     }
 
+    private void migrateAccount ()
+    {
+
+        String domain = "home.zom.im";
+
+        MigrateAccountTask maTask = new MigrateAccountTask(this, (ImApp)getApplication(),mProviderId,mAccountId);
+        maTask.execute(domain);
+
+    }
 
     private void deleteAccount ()
     {
@@ -247,7 +258,12 @@ public class AccountSettingsActivity extends PreferenceActivity implements
                 if(arg0.getItemId() == R.id.menu_delete){
                     deleteAccount();
                 }
-                return false;
+                else if(arg0.getItemId() == R.id.menu_migrate) {
+
+                    migrateAccount ();
+                }
+
+                    return false;
             }
         });
     }

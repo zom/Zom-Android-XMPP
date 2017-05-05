@@ -575,7 +575,7 @@ public class OnboardingActivity extends BaseActivity {
                 String nickname = setupValues[0];
                 String username = setupValues[1] + '.' + mFingerprint.substring(mFingerprint.length()-8,mFingerprint.length()).toLowerCase();
 
-                OnboardingAccount result = OnboardingManager.registerAccount(OnboardingActivity.this, mHandler, nickname, username, null, domain, 5222);
+                OnboardingAccount result = OnboardingManager.registerAccount(OnboardingActivity.this, nickname, username, null, domain, 5222);
 
                 if (result != null) {
                     String jabberId = result.username + '@' + result.domain;

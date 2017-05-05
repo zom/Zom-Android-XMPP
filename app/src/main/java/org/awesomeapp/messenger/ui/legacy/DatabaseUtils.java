@@ -84,7 +84,7 @@ public class DatabaseUtils {
 
     public static Drawable getAvatarFromAddress(ContentResolver cr, String address, int width, int height, boolean getRound) throws DecoderException {
 
-        byte[] data = getAvatarBytesFromAddress(cr, address, width, height);
+        byte[] data = getAvatarBytesFromAddress(cr, address);
 
         if (data != null)
             if (getRound)
@@ -96,7 +96,7 @@ public class DatabaseUtils {
 
     }
 
-    public static byte[] getAvatarBytesFromAddress(ContentResolver cr, String address, int width, int height) throws DecoderException {
+    public static byte[] getAvatarBytesFromAddress(ContentResolver cr, String address) throws DecoderException {
 
         String[] projection =  {Imps.Avatars.DATA};
         String[] args = {address};

@@ -402,4 +402,6 @@
     <string name="title_me">Me</string>
     <string name="no_photos">Shared and received photos will appear here</string>
 
+    <string name="migrate_account">Migrant Account</string>
+
 </resources>

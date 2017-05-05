@@ -82,7 +82,7 @@ public class StatusBarNotifier {
         Bitmap avatar = null;
 
 
-        try { byte[] bdata = DatabaseUtils.getAvatarBytesFromAddress(mContext.getContentResolver(), XmppAddress.stripResource(username), ImApp.SMALL_AVATAR_WIDTH, ImApp.SMALL_AVATAR_HEIGHT);
+        try { byte[] bdata = DatabaseUtils.getAvatarBytesFromAddress(mContext.getContentResolver(), XmppAddress.stripResource(username));
             avatar = BitmapFactory.decodeByteArray(bdata, 0, bdata.length);
         }
         catch (Exception e){}
