@@ -113,6 +113,7 @@ import org.jivesoftware.smackx.xdata.Form;
 import org.jivesoftware.smackx.xdata.FormField;
 import org.jivesoftware.smackx.xdata.provider.DataFormProvider;
 import org.jivesoftware.smackx.xhtmlim.provider.XHTMLExtensionProvider;
+import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.DomainBareJid;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.EntityFullJid;
@@ -422,28 +423,8 @@ public class XmppConnection extends ImConnection {
                         debug(TAG, "found avatar image in vcard for: " + bareJid.toString());
                         debug(TAG, "start avatar length: " + avatarBytes.length);
 
-                        /**
-                        int width = ImApp.DEFAULT_AVATAR_WIDTH;
-                        int height = ImApp.DEFAULT_AVATAR_HEIGHT;
-
-                        BitmapFactory.Options options = new BitmapFactory.Options();
-                        options.inJustDecodeBounds = true;
-                        BitmapFactory.decodeByteArray(avatarBytes, 0, avatarBytes.length,options);
-                        options.inSampleSize = DatabaseUtils.calculateInSampleSize(options, width, height);
-                        options.inJustDecodeBounds = false;
-
-                        Bitmap b = BitmapFactory.decodeByteArray(avatarBytes, 0, avatarBytes.length,options);
-                        b = Bitmap.createScaledBitmap(b, ImApp.DEFAULT_AVATAR_WIDTH, ImApp.DEFAULT_AVATAR_HEIGHT, false);
-
-                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                        b.compress(Bitmap.CompressFormat.JPEG, 80, stream);
-                        byte[] avatarBytesCompressed = stream.toByteArray();
-
-                        debug(TAG, "compressed avatar length: " + avatarBytesCompressed.length);**/
-
                         DatabaseUtils.insertAvatarBlob(resolver, Imps.Avatars.CONTENT_URI, mProviderId, mAccountId, avatarBytes, avatarHash, bareJid.toString());
 
-                        // int providerId, int accountId, byte[] data, String hash,String contact
                         return true;
                     }
                 }
@@ -2947,7 +2928,10 @@ public class XmppConnection extends ImConnection {
             }
 
             try {
-                rEntry = mRoster.getEntry(JidCreate.bareFrom(contact.getAddress().getBareAddress()));
+
+                BareJid jid = JidCreate.bareFrom(contact.getAddress().getBareAddress());
+
+                rEntry = mRoster.getEntry(jid);
                 RosterGroup rGroup = mRoster.getGroup(list.getName());
 
                 if (rGroup == null)
@@ -2955,14 +2939,33 @@ public class XmppConnection extends ImConnection {
                     if (rEntry == null) {
 
                         addRosterEntry(contact.getAddress().getBareAddress(), contact.getName(), null, subPending, type);
-                        rEntry = mRoster.getEntry(JidCreate.bareFrom(contact.getAddress().getBareAddress()));
+                        rEntry = mRoster.getEntry(jid);
                     }
 
                 }
                 else if (rEntry == null)
                 {
                     addRosterEntry(contact.getAddress().getBareAddress(), contact.getName(), groups, subPending, type);
-                    rEntry = mRoster.getEntry(JidCreate.bareFrom(contact.getAddress().getBareAddress()));
+                    rEntry = mRoster.getEntry(jid);
+                }
+
+
+
+                if (autoSubscribedPresence) {
+
+                    //i want your presence
+                    org.jivesoftware.smack.packet.Presence reqSubscribe = new org.jivesoftware.smack.packet.Presence(
+                            org.jivesoftware.smack.packet.Presence.Type.subscribe);
+                    reqSubscribe.setTo(jid);
+                    sendPacket(reqSubscribe);
+
+                    mRoster.preApprove(jid);
+
+                    ChatSession session = findOrCreateSession(contact.getAddress().toString(), false);
+
+                    if (session != null)
+                        session.setSubscribed(true);
+
                 }
 
 
@@ -2974,21 +2977,6 @@ public class XmppConnection extends ImConnection {
                 String msg = "Not logged in to server while updating remote roster";
                 debug(TAG, msg, e);
                 throw new ImException(msg);
-            }
-
-            if (autoSubscribedPresence) {
-
-                //i want your presence
-                org.jivesoftware.smack.packet.Presence reqSubscribe = new org.jivesoftware.smack.packet.Presence(
-                        org.jivesoftware.smack.packet.Presence.Type.subscribe);
-                reqSubscribe.setTo(contact.getAddress().getBareAddress());
-                sendPacket(reqSubscribe);
-
-                ChatSession session = findOrCreateSession(contact.getAddress().toString(), false);
-
-                if (session != null)
-                    session.setSubscribed(true);
-
             }
 
             notifyContactListUpdated(list, ContactListListener.LIST_CONTACT_ADDED, contact);
@@ -3080,14 +3068,8 @@ public class XmppConnection extends ImConnection {
             response.setTo(contact.getAddress().getBareAddress());
             sendPacket(response);
 
-            response = new org.jivesoftware.smack.packet.Presence(
-                    org.jivesoftware.smack.packet.Presence.Type.subscribe);
-            response.setTo(contact.getAddress().getBareAddress());
-            sendPacket(response);
-
-
-//            try { mRoster.reload(); }
-//            catch (Exception e){}
+            try { mRoster.reload(); }
+            catch (Exception e){}
 
             try
             {
@@ -3981,10 +3963,12 @@ public class XmppConnection extends ImConnection {
             try
             {
                 //i want your presence
+                /**
                 org.jivesoftware.smack.packet.Presence reqSubscribe = new org.jivesoftware.smack.packet.Presence(
                         org.jivesoftware.smack.packet.Presence.Type.subscribed);
                 reqSubscribe.setTo(contact.getAddress().getBareAddress());
                 sendPacket(reqSubscribe);
+                 **/
 
                 if (contact == null) {
                     XmppAddress xAddr = new XmppAddress(presence.getFrom().toString());
