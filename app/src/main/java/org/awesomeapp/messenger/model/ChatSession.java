@@ -169,7 +169,7 @@ public class ChatSession {
 
         if (mParticipant instanceof Contact) {
 
-            initJid();
+            //initJid();
 
             OtrChatManager cm = OtrChatManager.getInstance();
             SessionID sId = cm.getSessionId(message.getFrom().getAddress(), mJid.toString());

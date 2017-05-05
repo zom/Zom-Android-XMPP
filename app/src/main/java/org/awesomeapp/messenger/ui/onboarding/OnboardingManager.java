@@ -226,7 +226,7 @@ public class OnboardingManager {
         }
     }
 
-    public static OnboardingAccount registerAccount (Activity context, Handler handler, String nickname, String username, String password, String domain, int port) throws JSONException {
+    public static OnboardingAccount registerAccount (Context context, Handler handler, String nickname, String username, String password, String domain, int port) throws JSONException {
 
         if (password == null)
             password = generatePassword();

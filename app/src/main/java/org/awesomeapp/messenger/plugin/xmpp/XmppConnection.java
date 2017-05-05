@@ -1539,7 +1539,7 @@ public class XmppConnection extends ImConnection {
             server = "dukgo.com";
         }
 
-        
+
 
         /**
          * //need to move this to the new NetCipher BroadcastReceiver API
@@ -2130,6 +2130,7 @@ public class XmppConnection extends ImConnection {
 
                 if (participant != null) {
                     session = mSessionManager.createChatSession(participant, false);
+                    mContactListManager.refreshPresence(address);
 
                     /**
                     try {
@@ -2347,12 +2348,9 @@ public class XmppConnection extends ImConnection {
         }
     }
 
-    
     private void requestPresenceRefresh (String address)
     {
-        //org.jivesoftware.smack.packet.Presence p = new org.jivesoftware.smack.packet.Presence(org.jivesoftware.smack.packet.Presence.Type.error);
-        //p.setFrom(address);
-        //qPresence.push(p);
+        mContactListManager.refreshPresence(address);
     }
 
     public class XmppContactListManager extends ContactListManager {
@@ -2566,16 +2564,7 @@ public class XmppConnection extends ImConnection {
 
                     Contact contact = null;
 
-                    /**
-                    Presence p = null;
 
-                    org.jivesoftware.smack.packet.Presence presence = mRoster.getPresence(rEntry.getJid().asBareJid());
-                    if (presence != null) {
-                        address = presence.getFrom().toString();
-                        p = new Presence(parsePresence(presence), presence.getStatus(), null, null,
-                                Presence.CLIENT_TYPE_MOBILE, null, presence.getFrom().getResourceOrEmpty().toString());
-
-                    }**/
 
                     contact = getContact(address);
 
@@ -2710,6 +2699,22 @@ public class XmppConnection extends ImConnection {
 
         }
 
+        public void refreshPresence (String address)
+        {
+
+            try {
+                org.jivesoftware.smack.packet.Presence presence = mRoster.getPresence(JidCreate.bareFrom(address));
+                if (presence != null) {
+                    handlePresenceChanged(presence);
+                }
+            }
+            catch (XmppStringprepException xe)
+            {
+                debug(TAG,"error refreshing presence: " + xe,xe);
+            }
+
+        }
+
         /*
          * iterators through a list of contacts to see if there were any Presence
          * notifications sent before the contact was loaded
@@ -2781,8 +2786,6 @@ public class XmppConnection extends ImConnection {
                     cl = mContactListManager.getDefaultContactList();
 
                     for (Jid address : addresses) {
-                        requestPresenceRefresh(address.toString());
-
                         Contact contact = new Contact(new XmppAddress(address.toString()),address.toString());
                         mContactListManager.notifyContactListUpdated(cl, ContactListListener.LIST_CONTACT_REMOVED, contact);
                     }
@@ -2809,8 +2812,6 @@ public class XmppConnection extends ImConnection {
                             String addressString = address.toString();
 
                             Contact contact = getContact(addressString);
-                            
-                            requestPresenceRefresh(addressString);
 
                             if (contact == null)
                             {
@@ -3391,14 +3392,6 @@ public class XmppConnection extends ImConnection {
             //update and send new presence packet out
             mUserPresence = new Presence(Presence.AVAILABLE, "", Presence.CLIENT_TYPE_MOBILE);
             sendPresencePacket();
-
-            if (mSessionManager != null) {
-                //request presence of remote contact for all existing sessions
-                for (ChatSessionAdapter session : mSessionManager.getAdapter().getActiveChatSessions()) {
-                    requestPresenceRefresh(session.getAddress());
-                }
-            }
-
             mChatGroupManager.reconnectAll();
         }
     }    
@@ -3876,9 +3869,9 @@ public class XmppConnection extends ImConnection {
     private void sendChatState (String to, ChatState currentChatState)
     {
         try {
-
             if (mConnection.isConnected())
             {
+                findOrCreateSession(to, false);
                 Chat thisChat = mChatManager.createChat(JidCreate.from(to).asEntityJidIfPossible());
                 ChatStateManager.getInstance(mConnection).setCurrentState(currentChatState, thisChat);
             }
@@ -3913,17 +3906,17 @@ public class XmppConnection extends ImConnection {
 
     private Contact handlePresenceChanged(org.jivesoftware.smack.packet.Presence presence) {
 
-        if (presence == null || presence.getFrom() == null) //our presence isn't really valid
+        if (presence == null) //our presence isn't really valid
+            return null;
+
+        if (TextUtils.isEmpty(presence.getFrom()))
             return null;
 
         if (presence.getType() == org.jivesoftware.smack.packet.Presence.Type.error)
             return null;
-        
-        if (TextUtils.isEmpty(presence.getFrom()))
-            return null;
 
-        if (presence.getFrom().toString().startsWith(mUser.getAddress().getBareAddress())) //ignore presence from yourself
-            return null;
+//        if (presence.getFrom().toString().startsWith(mUser.getAddress().getBareAddress())) //ignore presence from yourself
+  //          return null;
 
         XmppAddress xaddress = new XmppAddress(presence.getFrom().toString());
 

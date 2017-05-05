@@ -184,9 +184,9 @@ public class ChatSessionManagerAdapter extends
         }
     }
 
-    public List<ChatSessionAdapter> getActiveChatSessions() {
+    public List<IChatSession> getActiveChatSessions() {
         synchronized (mActiveChatSessionAdapters) {
-            return new ArrayList<ChatSessionAdapter>(mActiveChatSessionAdapters.values());
+            return new ArrayList<IChatSession>(mActiveChatSessionAdapters.values());
         }
     }
 
