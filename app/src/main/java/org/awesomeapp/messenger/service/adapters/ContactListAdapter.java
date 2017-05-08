@@ -25,6 +25,8 @@ import org.awesomeapp.messenger.model.ImException;
 
 import org.awesomeapp.messenger.service.RemoteImService;
 
+import java.util.Collection;
+
 public class ContactListAdapter extends org.awesomeapp.messenger.service.IContactList.Stub {
     private ContactList mAdaptee;
     private long mDataBaseId;
@@ -93,5 +95,18 @@ public class ContactListAdapter extends org.awesomeapp.messenger.service.IContac
         }
 
         mAdaptee.setName(name);
+    }
+
+    public String[] getContacts ()
+    {
+        Collection<Contact> contacts = mAdaptee.getContacts();
+        String[] contactArray = new String[contacts.size()];
+
+        int i = 0;
+
+        for (Contact contact : contacts)
+            contactArray[i++] = contact.getAddress().getAddress();
+
+        return contactArray;
     }
 }

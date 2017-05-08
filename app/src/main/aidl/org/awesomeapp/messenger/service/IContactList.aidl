@@ -49,4 +49,9 @@ interface IContactList {
      * Tells if the list is the default list.
      */
     boolean isDefault();
+
+    /**
+    * Get all contacts in the list
+    **/
+    String[] getContacts();
 }

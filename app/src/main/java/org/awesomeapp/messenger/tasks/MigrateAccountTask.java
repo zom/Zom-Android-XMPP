@@ -24,6 +24,7 @@ import org.awesomeapp.messenger.ui.onboarding.OnboardingManager;
 import org.json.JSONException;
 
 import java.security.KeyPair;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -86,22 +87,29 @@ public class MigrateAccountTask extends AsyncTask<String, Void, OnboardingAccoun
 
             String inviteLink = OnboardingManager.generateInviteLink(mContext,jabberId,fingerprint,nickname);
             String migrateMessage = "I have moved to a new account at " + jabberId + ". You can add me here: " + inviteLink;
+            IChatSessionManager sessionMgr = mConn.getChatSessionManager();
 
+            /**
             IChatSessionManager sessionMgr = mConn.getChatSessionManager();
             List<IChatSession> sessions = sessionMgr.getActiveChatSessions();
 
             for (IChatSession session : sessions)
             {
                 session.sendMessage(migrateMessage, false);
-            }
+            }**/
 
-            /**
             List<String> listOfLists = mConn.getContactListManager().getContactLists();
             for (String listName : listOfLists)
             {
                 IContactList contactList = mConn.getContactListManager().getContactList(listName);
+                String[] contacts = contactList.getContacts();
 
-            }**/
+                for (String contact : contacts)
+                {
+                    IChatSession session = sessionMgr.getChatSession(contact);
+                    session.sendMessage(migrateMessage, false);
+                }
+            }
 
             //login and set new default account
 
