@@ -111,7 +111,9 @@ public class MigrateAccountTask extends AsyncTask<String, Void, OnboardingAccoun
         //send migration message to existing contacts and/or sessions
         try {
 
-            String migrateMessage = mContext.getString(R.string.migrate_message) + ' ' + newJabberId;
+            String inviteLink = OnboardingManager.generateInviteLink(mContext,newJabberId,fingerprint,nickname);
+
+            String migrateMessage = mContext.getString(R.string.migrate_message) + ' ' + inviteLink;
             IChatSessionManager sessionMgr = mConn.getChatSessionManager();
 
             //login and set new default account
@@ -171,8 +173,12 @@ public class MigrateAccountTask extends AsyncTask<String, Void, OnboardingAccoun
 
             mConn.broadcastMigrationIdentity(newJabberId);
 
+            mApp.setDefaultAccount(mNewAccount.providerId,mNewAccount.accountId);
+
             //logout of existing account
             setKeepSignedIn(mAccountId, false);
+
+
             mConn.logout();
 
             return mNewAccount;

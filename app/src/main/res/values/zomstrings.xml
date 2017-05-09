@@ -83,7 +83,7 @@
   <string name="action_services">Zom Services</string>
 
   <string name="migrate_menu">Migrate Account</string>
-  <string name="migrate_message">"I’ve upgraded my account. Zom with me at</string>
+  <string name="migrate_message">"I’ve upgraded my account. Click here to add me </string>
 
   <string name="migrate_notification">Your account is expiring soon. Open the app to upgrade.</string>
 

@@ -1479,8 +1479,7 @@ public class XmppConnection extends ImConnection {
                 vCard = vCardManager.loadVCard(JidCreate.entityBareFrom(jid));
             }
             catch (Exception e){
-                debug(TAG,"error loading vcard",e);
-
+               // debug(TAG,"error loading vcard",e);
             }
 
             boolean setAvatar = true;

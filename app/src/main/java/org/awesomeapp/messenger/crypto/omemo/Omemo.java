@@ -1,6 +1,7 @@
 package org.awesomeapp.messenger.crypto.omemo;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
 
 import org.jivesoftware.smack.SmackException;
@@ -94,9 +95,12 @@ public class Omemo {
         ArrayList<String> fps = new ArrayList<>();
         for(int id : list.getActiveDevices()) {
 
-           String fingerprint = mOmemoStore.getFingerprint(new OmemoDevice(jid, id));
-            fps.add(KeyUtil.prettyFingerprint(fingerprint));
-
+            OmemoDevice device =   new OmemoDevice(jid, id);
+            if (mOmemoStore.loadOmemoIdentityKey(device)!=null) {
+                String fingerprint = mOmemoStore.getFingerprint(device);
+                if (!TextUtils.isEmpty(fingerprint))
+                 fps.add(KeyUtil.prettyFingerprint(fingerprint));
+            }
         }
 
         return fps;
@@ -139,13 +143,16 @@ public class Omemo {
            }
            else
            {
-               return getFingerprints(jid.asBareJid(),false).size() > 0;
+               return getFingerprints(jid.asBareJid(),true).size() > 0;
            }
        }
        catch (Exception e) {
            Log.w(TAG, "error checking if resource supports omemo, will check for local fingerprints: " + jid, e);
            ;
+
            try {
+               mOmemoManager.requestDeviceListUpdateFor(jid.asBareJid());
+
                //let's just check fingerprints instead
                return getFingerprints(jid.asBareJid(), false).size() > 0;
            }

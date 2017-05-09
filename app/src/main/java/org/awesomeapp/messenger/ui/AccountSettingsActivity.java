@@ -93,23 +93,33 @@ public class AccountSettingsActivity extends PreferenceActivity implements
         settings.close();
     }
 
+    private boolean mIsMigrating = false;
+
     private void migrateAccount ()
     {
 
-        String domain = "home.zom.im";
+        if (!mIsMigrating) {
 
-        MigrateAccountTask maTask = new MigrateAccountTask(this, (ImApp) getApplication(), mProviderId, mAccountId, new MigrateAccountTask.MigrateAccountListener() {
-            @Override
-            public void migrateComplete(OnboardingAccount account) {
-                Toast.makeText(AccountSettingsActivity.this,R.string.upgrade_complete,Toast.LENGTH_SHORT).show();
-            }
+            mIsMigrating = true;
 
-            @Override
-            public void migrateFailed(long providerId, long accountId) {
-                Toast.makeText(AccountSettingsActivity.this,R.string.upgrade_failed,Toast.LENGTH_SHORT).show();
-            }
-        });
-        maTask.execute(domain);
+            String domain = "home.zom.im";
+
+            MigrateAccountTask maTask = new MigrateAccountTask(this, (ImApp) getApplication(), mProviderId, mAccountId, new MigrateAccountTask.MigrateAccountListener() {
+                @Override
+                public void migrateComplete(OnboardingAccount account) {
+                    mIsMigrating = false;
+
+                    Toast.makeText(AccountSettingsActivity.this, R.string.upgrade_complete, Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void migrateFailed(long providerId, long accountId) {
+                    Toast.makeText(AccountSettingsActivity.this, R.string.upgrade_failed, Toast.LENGTH_SHORT).show();
+                    mIsMigrating = false;
+                }
+            });
+            maTask.execute(domain);
+        }
 
     }
 
