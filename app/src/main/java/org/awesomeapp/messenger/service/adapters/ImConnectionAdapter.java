@@ -623,6 +623,12 @@ public class ImConnectionAdapter extends org.awesomeapp.messenger.service.IImCon
 
     }
 
+    public void broadcastMigrationIdentity(String address)
+    {
+        if (mConnection != null)
+            mConnection.broadcastMigrationIdentity(address);
+
+    }
 
     public List getFingerprints (String address)
     {

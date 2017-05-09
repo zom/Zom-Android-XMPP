@@ -140,48 +140,6 @@ public class ConversationListFragment extends Fragment {
         Cursor cursor = null;
         mAdapter = new ConversationListRecyclerViewAdapter(getActivity(),cursor);
 
-        /**
-        final SwipeToDismissTouchListener<RecyclerViewAdapter> touchListener =
-                new SwipeToDismissTouchListener<>(
-                        new RecyclerViewAdapter(recyclerView),
-                        new SwipeToDismissTouchListener.DismissCallbacks<RecyclerViewAdapter>() {
-                            @Override
-                            public boolean canDismiss(int position) {
-                                return true;
-                            }
-
-
-                            @Override
-                            public void onDismiss(RecyclerViewAdapter view, int position) {
-                               // mAdapter.remove(position);
-                                mAdapter.notifyItemRemoved(position);
-                                mAdapter.notifyItemRangeChanged(position, mAdapter.getItemCount());
-                            }
-                        });
-
-
-
-// Dismiss the item automatically after 3 seconds
-       touchListener.setDismissDelay(3000);
-
-        recyclerView.setOnTouchListener(touchListener);
-        recyclerView.setOnScrollListener((RecyclerView.OnScrollListener)touchListener.makeScrollListener());
-        recyclerView.addOnItemTouchListener(new SwipeableItemClickListener(getActivity(),
-                new OnItemClickListener() {
-                    @Override
-                    public void onItemClick(View view, int position) {
-                        if (view.getId() == R.id.txt_archived) {
-                            touchListener.processPendingDismisses();
-                        } else if (view.getId() == R.id.txt_undo) {
-                            touchListener.undoPendingDismiss();
-                        } else { // R.id.txt_data
-                            //Toast.makeText(context, "Position " + position, LENGTH_SHORT).show();
-                        }
-                    }
-                }));
-
-         **/
-
         // init swipe to dismiss logic
 
         ItemTouchHelper swipeToDismissTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(
@@ -356,7 +314,6 @@ public class ConversationListFragment extends Fragment {
 
                 clItem.bind(viewHolder, chatId, providerId, accountId, address, nickname, type, lastMsg, lastMsgDate, presence, null, true, false);
 
-                /**
                 clItem.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -367,7 +324,7 @@ public class ConversationListFragment extends Fragment {
                         intent.putExtra("nickname", nickname);
                         context.startActivity(intent);
                     }
-                });**/
+                });
             }
             else
             {
@@ -380,7 +337,6 @@ public class ConversationListFragment extends Fragment {
                 if (address != null) {
                     ((ConversationListItem) viewHolder.itemView).bind(viewHolder, chatId, -1, -1, address, nickname, -1, body, messageDate, -1, mSearchString, true, false);
 
-                    /**
                     viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -392,7 +348,7 @@ public class ConversationListFragment extends Fragment {
 
                             context.startActivity(intent);
                         }
-                    });**/
+                    });
                 }
             }
 

@@ -336,4 +336,9 @@ public class LoopbackConnection extends ImConnection {
         return null;
     }
 
+    public void broadcastMigrationIdentity (String newIdentity)
+    {
+        //nothing to do here
+    }
+
 }

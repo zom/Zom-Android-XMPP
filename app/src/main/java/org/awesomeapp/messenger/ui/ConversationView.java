@@ -76,6 +76,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -274,15 +275,20 @@ public class ConversationView {
                 IContactListManager manager = mConn.getContactListManager();
                 Contact contact = manager.getContactByAddress(mRemoteAddress);
 
-                if (contact != null && contact.getPresence() != null) {
+                if (contact != null) {
 
-                    if (contact.getPresence().getStatus() == Presence.AVAILABLE) {
+                    if (contact.getPresence() != null && contact.getPresence().getStatus() == Presence.AVAILABLE) {
                         mLastSeen = contact.getPresence().getLastSeen();
                         mActivity.updateLastSeen(mLastSeen);
                     }
 
+                    if (!TextUtils.isEmpty(contact.getForwardingAddress()))
+                    {
+                        showContactMoved (contact);
+                    }
+
                 }
-                
+
                 if ((mLastSessionStatus == null || mLastSessionStatus == SessionStatus.PLAINTEXT)) {
 
                     //boolean otrPolicyAuto = mActivity.getOtrPolicy() == OtrPolicy.OTRL_POLICY_ALWAYS
@@ -1254,7 +1260,7 @@ public class ConversationView {
 
             mSubscriptionStatus = c.getInt(SUBSCRIPTION_STATUS_COLUMN);
             if (mSubscriptionStatus == Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING) {
-                Snackbar sb = Snackbar.make(mHistory, mContext.getString(R.string.subscription_prompt, mRemoteAddress), Snackbar.LENGTH_LONG);
+                Snackbar sb = Snackbar.make(mHistory, mContext.getString(R.string.subscription_prompt, mRemoteNickname), Snackbar.LENGTH_LONG);
                 sb.setAction(mActivity.getString(R.string.approve_subscription), new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -3079,6 +3085,51 @@ public class ConversationView {
             }
         }
     }
+
+    private void showContactMoved (final Contact contact)
+    {
+        final View viewNotify = mActivity.findViewById(R.id.upgrade_view);
+        ImageView viewImage = (ImageView)mActivity.findViewById(R.id.upgrade_view_image);
+        TextView viewDesc = (TextView)mActivity.findViewById(R.id.upgrade_view_text);
+        Button buttonAction = (Button)mActivity.findViewById(R.id.upgrade_action);
+
+        viewNotify.setVisibility(View.VISIBLE);
+
+        viewDesc.setText(mActivity.getString(R.string.contact_migration_notice) + ' ' + contact.getForwardingAddress());
+
+        buttonAction.setText(R.string.contact_migration_action);
+        buttonAction.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                viewNotify.setVisibility(View.GONE);
+                startChat(contact.getForwardingAddress());
+            }
+        });
+    }
+
+    private void startChat (String username)
+    {
+
+        if (username != null) {
+            new ChatSessionInitTask(((ImApp) mActivity.getApplication()), mProviderId, mAccountId, Imps.Contacts.TYPE_NORMAL, true) {
+                @Override
+                protected void onPostExecute(Long chatId) {
+
+                    if (chatId != -1 && true) {
+                        Intent intent = new Intent(mActivity, ConversationDetailActivity.class);
+                        intent.putExtra("id", chatId);
+                        mActivity.startActivity(intent);
+                    }
+
+                    super.onPostExecute(chatId);
+                }
+
+            }.executeOnExecutor(ImApp.sThreadPoolExecutor, username);
+
+            mActivity.finish();
+        }
+    }
+
 
 
 }

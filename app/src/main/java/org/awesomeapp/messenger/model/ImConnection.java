@@ -263,4 +263,5 @@ public abstract class ImConnection {
 
     public abstract List getFingerprints (String address);
 
+    public abstract void broadcastMigrationIdentity (String newIdentity);
 }

@@ -403,11 +403,16 @@ public class XmppConnection extends ImConnection {
                     {
                         contact.setName(vCard.getNickName());
                         mContactListManager.doSetContactName(contact.getAddress().getBareAddress(), contact.getName());
-                       // mContactListManager.doAddContactToListAsync(contact, getContactListManager().getDefaultContactList(), false);
                     }
 
                 }
 
+                //check for a forwarding address
+                if (vCard.getJabberId() != null && (!vCard.getJabberId().equals(bareJid.toString())))
+                {
+                    contact.setForwardingAddress(vCard.getJabberId());
+
+                }
 
 
                     // If VCard is loaded, then save the avatar to the personal folder.
@@ -1446,8 +1451,22 @@ public class XmppConnection extends ImConnection {
 
     }
 
+    public void broadcastMigrationIdentity (String newIdentity)
+    {
+
+        sendVCard(newIdentity);
+
+        String migrateMessage = mContext.getString(R.string.migrate_message) + ' ' + newIdentity;
+        mUserPresence = new Presence(Presence.AVAILABLE, migrateMessage, Presence.CLIENT_TYPE_MOBILE);
+        sendPresencePacket();
+    }
 
     public void sendVCard ()
+    {
+        sendVCard(null);
+    }
+
+    public void sendVCard (String migrateJabberId)
     {
 
         try {
@@ -1477,6 +1496,12 @@ public class XmppConnection extends ImConnection {
             }
 
             vCard.setNickName(mUser.getName());
+
+            //if we have moved to a new account, send it here
+            if (migrateJabberId != null)
+            {
+                vCard.setJabberId(migrateJabberId);
+            }
 
             if (setAvatar) {
                 byte[] avatar = DatabaseUtils.getAvatarBytesFromAddress(mContext.getContentResolver(), mUser.getAddress().getBareAddress());
@@ -1670,8 +1695,15 @@ public class XmppConnection extends ImConnection {
             // Enable TLS1.2 and TLS1.1 on supported versions of android
             // http://stackoverflow.com/questions/16531807/android-client-server-on-tls-v1-2
 
-            mConfig.setEnabledSSLProtocols(new String[] { "TLSv1.2", "TLSv1.1", "TLSv1" });
-            sslContext.getDefaultSSLParameters().setProtocols(new String[] { "TLSv1.2", "TLSv1.1", "TLSv1" });
+            while (true) {
+                try {
+                    mConfig.setEnabledSSLProtocols(new String[]{"TLSv1.2", "TLSv1.1", "TLSv1"});
+                    sslContext.getDefaultSSLParameters().setProtocols(new String[]{"TLSv1.2", "TLSv1.1", "TLSv1"});
+                    break;
+                } catch (IllegalStateException ise) {
+                    try { Thread.sleep(1000); } catch (Exception e){}
+                }
+            }
 
         }
 
@@ -4153,5 +4185,6 @@ public class XmppConnection extends ImConnection {
             return null;
         }
     }
+
 
 }

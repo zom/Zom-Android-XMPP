@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
@@ -23,13 +26,17 @@ import org.awesomeapp.messenger.service.IContactList;
 import org.awesomeapp.messenger.service.IContactListManager;
 import org.awesomeapp.messenger.service.IImConnection;
 import org.awesomeapp.messenger.service.adapters.ChatSessionAdapter;
+import org.awesomeapp.messenger.ui.legacy.DatabaseUtils;
 import org.awesomeapp.messenger.ui.legacy.SignInHelper;
 import org.awesomeapp.messenger.ui.legacy.SimpleAlertHandler;
 import org.awesomeapp.messenger.ui.onboarding.OnboardingAccount;
 import org.awesomeapp.messenger.ui.onboarding.OnboardingActivity;
 import org.awesomeapp.messenger.ui.onboarding.OnboardingManager;
+import org.awesomeapp.messenger.util.AssetUtil;
 import org.json.JSONException;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.security.KeyPair;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -98,13 +105,13 @@ public class MigrateAccountTask extends AsyncTask<String, Void, OnboardingAccoun
                 return null;
         }
 
-        String jabberId = mNewAccount.username + '@' + mNewAccount.domain;
-        keyMan.storeKeyPair(jabberId,keyPair);
+        String newJabberId = mNewAccount.username + '@' + mNewAccount.domain;
+        keyMan.storeKeyPair(newJabberId,keyPair);
 
         //send migration message to existing contacts and/or sessions
         try {
 
-            String migrateMessage = mContext.getString(R.string.migrate_message) + ' ' + jabberId;
+            String migrateMessage = mContext.getString(R.string.migrate_message) + ' ' + newJabberId;
             IChatSessionManager sessionMgr = mConn.getChatSessionManager();
 
             //login and set new default account
@@ -113,7 +120,6 @@ public class MigrateAccountTask extends AsyncTask<String, Void, OnboardingAccoun
             signInHelper.signIn(mNewAccount.password, mNewAccount.providerId, mNewAccount.accountId, true);
 
             mNewConn = mApp.getConnection(mNewAccount.providerId, mNewAccount.accountId);
-        //    mNewConn.login(mNewAccount.password, true, true);
 
             while(mNewConn.getState() != ImConnection.LOGGED_IN)
             {
@@ -160,6 +166,10 @@ public class MigrateAccountTask extends AsyncTask<String, Void, OnboardingAccoun
             {
                 session.leave();
             }
+
+            migrateAvatars(username, newJabberId);
+
+            mConn.broadcastMigrationIdentity(newJabberId);
 
             //logout of existing account
             setKeepSignedIn(mAccountId, false);
@@ -284,5 +294,52 @@ public class MigrateAccountTask extends AsyncTask<String, Void, OnboardingAccoun
         ContentValues values = new ContentValues();
         values.put(Imps.Account.KEEP_SIGNED_IN, signin);
         mContext.getContentResolver().update(mAccountUri, values, null, null);
+    }
+
+    private void migrateAvatars (String oldUsername, String newUsername)
+    {
+
+        try {
+
+            //first copy the old avatar over to the new account
+            byte[] oldAvatar = DatabaseUtils.getAvatarBytesFromAddress(mContext.getContentResolver(),oldUsername);
+            if (oldAvatar != null)
+            {
+                setAvatar(newUsername, oldAvatar);
+            }
+
+            //now change the older avatar, so the vcard gets reloaded
+            Bitmap bitmap = BitmapFactory.decodeStream(mContext.getAssets().open("stickers/olo and shimi/4greeting.png"));
+            setAvatar(oldUsername, bitmap);
+        }
+        catch (Exception ioe)
+        {
+            ioe.printStackTrace();
+        }
+    }
+
+    private void setAvatar(String address, Bitmap bmp) {
+
+        try {
+
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            bmp.compress(Bitmap.CompressFormat.JPEG, 90, stream);
+
+            byte[] avatarBytesCompressed = stream.toByteArray();
+            String avatarHash = "nohash";
+            DatabaseUtils.insertAvatarBlob(mContext.getContentResolver(), Imps.Avatars.CONTENT_URI, mProviderId, mAccountId, avatarBytesCompressed, avatarHash, address);
+        } catch (Exception e) {
+            Log.w(ImApp.LOG_TAG, "error loading image bytes", e);
+        }
+    }
+
+    private void setAvatar(String address, byte[] avatarBytesCompressed) {
+
+        try {
+            String avatarHash = "nohash";
+            DatabaseUtils.insertAvatarBlob(mContext.getContentResolver(), Imps.Avatars.CONTENT_URI, mProviderId, mAccountId, avatarBytesCompressed, avatarHash, address);
+        } catch (Exception e) {
+            Log.w(ImApp.LOG_TAG, "error loading image bytes", e);
+        }
     }
 }

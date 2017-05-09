@@ -27,6 +27,8 @@ public class Contact extends ImEntity implements Parcelable {
     private String mName;
     private Presence mPresence;
 
+    private String mForwardAddress;
+
     public Contact(Address address, String name) {
         mAddress = address;
 
@@ -36,12 +38,15 @@ public class Contact extends ImEntity implements Parcelable {
             mName = address.getUser();
 
         mPresence = new Presence();
+
+        mForwardAddress = "";
     }
 
     public Contact(Parcel source) {
         mAddress = AddressParcelHelper.readFromParcel(source);
         mName = source.readString();
         mPresence = new Presence(source);
+        mForwardAddress = source.readString();
     }
 
     public Address getAddress() {
@@ -58,6 +63,16 @@ public class Contact extends ImEntity implements Parcelable {
 
     public Presence getPresence() {
         return mPresence;
+    }
+
+    public void setForwardingAddress (String forwardAddress)
+    {
+        mForwardAddress = forwardAddress;
+    }
+
+    public String getForwardingAddress ()
+    {
+        return mForwardAddress;
     }
 
     public boolean equals(Object other) {
@@ -84,6 +99,7 @@ public class Contact extends ImEntity implements Parcelable {
         AddressParcelHelper.writeToParcel(dest, mAddress);
         dest.writeString(mName);
         mPresence.writeToParcel(dest, 0);
+        dest.writeString(mForwardAddress);
     }
 
     public int describeContents() {

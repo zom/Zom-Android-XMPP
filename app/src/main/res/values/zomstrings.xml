@@ -101,4 +101,6 @@
 
     <string name="upgrade_failed">The upgrade failed. Please try again later! You can also select \"Migrate Account\" from the account settings menu.</string>
 
+    <string name="contact_migration_notice">Your friend has upgraded. Chat with them at</string>
+    <string name="contact_migration_action">Chat Now</string>
 </resources>
