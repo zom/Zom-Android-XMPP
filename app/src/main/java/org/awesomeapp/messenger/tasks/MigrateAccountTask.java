@@ -1,7 +1,10 @@
 package org.awesomeapp.messenger.tasks;
 
 import android.app.Activity;
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.IBinder;
@@ -159,6 +162,7 @@ public class MigrateAccountTask extends AsyncTask<String, Void, OnboardingAccoun
             }
 
             //logout of existing account
+            setKeepSignedIn(mAccountId, false);
             mConn.logout();
 
             return mNewAccount;
@@ -273,5 +277,12 @@ public class MigrateAccountTask extends AsyncTask<String, Void, OnboardingAccoun
         public void migrateComplete (OnboardingAccount account);
 
         public void migrateFailed (long providerId, long accountId);
+    }
+
+    private void setKeepSignedIn(final long accountId, boolean signin) {
+        Uri mAccountUri = ContentUris.withAppendedId(Imps.Account.CONTENT_URI, accountId);
+        ContentValues values = new ContentValues();
+        values.put(Imps.Account.KEEP_SIGNED_IN, signin);
+        mContext.getContentResolver().update(mAccountUri, values, null, null);
     }
 }

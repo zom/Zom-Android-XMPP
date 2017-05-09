@@ -1151,6 +1151,8 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
         if (cursorProviders != null)
             cursorProviders.close();
 
+        mNeedsAccountUpgrade = false;
+
         return result;
 
     }
