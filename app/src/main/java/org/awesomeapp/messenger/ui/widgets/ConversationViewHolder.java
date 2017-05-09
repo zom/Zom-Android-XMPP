@@ -38,4 +38,14 @@ public class ConversationViewHolder extends RecyclerView.ViewHolder
 
     }
 
+    public void onItemSelected ()
+    {
+
+    }
+
+    public void onItemClear ()
+    {
+
+    }
+
 }

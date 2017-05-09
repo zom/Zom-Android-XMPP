@@ -6,7 +6,7 @@
 
     <item
         android:id="@+id/menu_migrate"
-        android:title="@string/migrate_account"
+        android:title="@string/migrate_menu"
         app:showAsAction="never" />
 
     <item

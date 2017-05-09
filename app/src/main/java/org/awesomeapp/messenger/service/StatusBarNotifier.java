@@ -225,6 +225,21 @@ public class StatusBarNotifier {
         }
     }
 
+    public void notify(String title, String tickerText, String message,
+                        Intent intent, boolean lightWeightNotify) {
+
+        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        NotificationInfo info;
+                info = new NotificationInfo(-1, -1);
+            info.addItem("", title, message, intent);
+
+        mNotificationManager.notify(info.computeNotificationId(),
+                info.createNotification(tickerText, lightWeightNotify, R.drawable.ic_stat_status, null, intent));
+
+
+    }
+
     private void notify(String sender, String title, String tickerText, String message,
                         long providerId, long accountId, Intent intent, boolean lightWeightNotify, int iconSmall) {
 

@@ -264,6 +264,23 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         startForeground(notifyId, getForegroundNotification());
 
+
+    }
+
+    private void checkUpgrade ()
+    {
+        ImApp app = ((ImApp)getApplication());
+
+        if (app.needsAccountUpgrade())
+        {
+            Intent notificationIntent = new Intent(this, MainActivity.class);
+            PendingIntent launchIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent, 0);
+
+            getStatusBarNotifier().notify(getString(R.string.upgrade_action),
+                    getString(R.string.upgrade_desc),getString(R.string.upgrade_desc),notificationIntent, false);
+        }
+
+
     }
     
     private void connectToCacheWord ()
@@ -957,6 +974,8 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
         if (mNeedCheckAutoLogin && mNetworkState != NetworkConnectivityReceiver.State.NOT_CONNECTED) {
             mNeedCheckAutoLogin = !autoLogin();;
         }
+
+        checkUpgrade();
 
     }
 

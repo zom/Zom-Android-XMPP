@@ -23,6 +23,7 @@ import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.service.ImServiceConstants;
 import org.awesomeapp.messenger.tasks.MigrateAccountTask;
+import org.awesomeapp.messenger.ui.onboarding.OnboardingAccount;
 
 import android.content.ContentResolver;
 import android.content.DialogInterface;
@@ -97,7 +98,17 @@ public class AccountSettingsActivity extends PreferenceActivity implements
 
         String domain = "home.zom.im";
 
-        MigrateAccountTask maTask = new MigrateAccountTask(this, (ImApp)getApplication(),mProviderId,mAccountId);
+        MigrateAccountTask maTask = new MigrateAccountTask(this, (ImApp) getApplication(), mProviderId, mAccountId, new MigrateAccountTask.MigrateAccountListener() {
+            @Override
+            public void migrateComplete(OnboardingAccount account) {
+                Toast.makeText(AccountSettingsActivity.this,R.string.upgrade_complete,Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void migrateFailed(long providerId, long accountId) {
+                Toast.makeText(AccountSettingsActivity.this,R.string.upgrade_failed,Toast.LENGTH_SHORT).show();
+            }
+        });
         maTask.execute(domain);
 
     }

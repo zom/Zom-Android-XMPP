@@ -1660,9 +1660,10 @@ public class XmppConnection extends ImConnection {
                 mConfig.setKeystorePath(path);
             }
 
+            //wait a second while the ssl context init's
+            try { Thread.sleep(1000); } catch (Exception e) {}
 
         }
-
 
         int currentapiVersion = android.os.Build.VERSION.SDK_INT;
         if (currentapiVersion >= 16){

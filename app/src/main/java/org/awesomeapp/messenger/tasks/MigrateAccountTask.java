@@ -32,6 +32,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import im.zom.messenger.R;
+
 /**
  * Created by n8fr8 on 5/1/17.
  */
@@ -46,16 +48,20 @@ public class MigrateAccountTask extends AsyncTask<String, Void, OnboardingAccoun
     IImConnection mNewConn;
     OnboardingAccount mNewAccount;
 
+    MigrateAccountListener mListener;
+
     Handler mHandler = new Handler();
 
     ArrayList<String> mContacts;
 
-    public MigrateAccountTask(Activity context, ImApp app, long providerId, long accountId)
+    public MigrateAccountTask(Activity context, ImApp app, long providerId, long accountId, MigrateAccountListener listener)
     {
         mContext = context;
         mAccountId = accountId;
         mProviderId = providerId;
         mApp = app;
+
+        mListener = listener;
 
         mConn = app.getConnection(providerId, accountId);
 
@@ -95,8 +101,7 @@ public class MigrateAccountTask extends AsyncTask<String, Void, OnboardingAccoun
         //send migration message to existing contacts and/or sessions
         try {
 
-            String inviteLink = OnboardingManager.generateInviteLink(mContext,jabberId,fingerprint,nickname);
-            String migrateMessage = "I have moved to a new account at " + jabberId + ". You can add me here: " + inviteLink;
+            String migrateMessage = mContext.getString(R.string.migrate_message) + ' ' + jabberId;
             IChatSessionManager sessionMgr = mConn.getChatSessionManager();
 
             //login and set new default account
@@ -127,6 +132,13 @@ public class MigrateAccountTask extends AsyncTask<String, Void, OnboardingAccoun
 
                     if (session == null) {
                         session = sessionMgr.createChatSession(contact, true);
+                    }
+
+                    if (!session.isEncrypted()) {
+                        //try to kick off some encryption here
+                        session.getDefaultOtrChatSession().startChatEncryption();
+                        try { Thread.sleep(500);} //just wait a half second here?
+                        catch (Exception e){}
                     }
 
                     session.sendMessage(migrateMessage, false);
@@ -167,6 +179,16 @@ public class MigrateAccountTask extends AsyncTask<String, Void, OnboardingAccoun
         super.onPostExecute(account);
 
 
+        if (account == null)
+        {
+            if (mListener != null)
+                mListener.migrateFailed(mProviderId,mAccountId);
+        }
+        else
+        {
+            if (mListener != null)
+                mListener.migrateComplete(account);
+        }
 
     }
 
@@ -244,5 +266,12 @@ public class MigrateAccountTask extends AsyncTask<String, Void, OnboardingAccoun
             // If the service has died, there is no list for now.
             return null;
         }
+    }
+
+    public interface MigrateAccountListener {
+
+        public void migrateComplete (OnboardingAccount account);
+
+        public void migrateFailed (long providerId, long accountId);
     }
 }

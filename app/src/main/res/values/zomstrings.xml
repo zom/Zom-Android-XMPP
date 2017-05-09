@@ -82,6 +82,23 @@
 
   <string name="action_services">Zom Services</string>
 
+  <string name="migrate_menu">Migrate Account</string>
+  <string name="migrate_message">"I’ve upgraded my account. Zom with me at</string>
 
+  <string name="migrate_notification">Your account is expiring soon. Open the app to upgrade.</string>
+
+    <string name="title_archive">Archive</string>
+
+    <string name="action_undo">Undo</string>
+
+    <string name="upgrade_desc">We\'re making improvements around here.\nGet your free upgrade!</string>
+    <string name="upgrade_action">Upgrade Now</string>
+
+    <string name="upgrade_complete">Upgrade Complete! Waiting for your friends to approve your upgraded account.</string>
+    <string name="upgrade_complete_action">Done</string>
+
+    <string name="upgrade_progress_action">Working on it...</string>
+
+    <string name="upgrade_failed">The upgrade failed. Please try again later! You can also select \"Migrate Account\" from the account settings menu.</string>
 
 </resources>

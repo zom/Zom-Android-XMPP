@@ -11,6 +11,12 @@
         android:title="@string/search_history"/>
 
     <item
+        android:id="@+id/menu_archive"
+        android:icon="@drawable/ic_archive_white_24dp"
+        app:showAsAction="always|collapseActionView"
+        android:title="@string/menu_archive"/>
+
+    <item
         android:id="@+id/menu_new_account"
         android:icon="@drawable/ic_action_new"
         android:title="@string/accounts"
