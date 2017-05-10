@@ -476,41 +476,57 @@ public class ConversationListFragment extends Fragment {
 
     }
 
-    private void doUpgrade ()
-    {
+    private MigrateAccountTask.MigrateAccountListener mMigrateTaskListener;
 
-        mUpgradeAction.setText(getString(R.string.upgrade_progress_action));
-        mUpgradeAction.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //do nothing
+    private synchronized void doUpgrade () {
 
-            }
-        });
+        if (mMigrateTaskListener == null) {
 
-        mUpgradeImage.setImageResource(R.drawable.olo_thinking);
+            mMigrateTaskListener = new MigrateAccountTask.MigrateAccountListener() {
+                @Override
+                public void migrateComplete(OnboardingAccount account) {
 
-        ((ImApp)getActivity().getApplication()).doUpgrade(getActivity(), "home.zom.im", new MigrateAccountTask.MigrateAccountListener() {
-            @Override
-            public void migrateComplete(OnboardingAccount account) {
+                    mUpgradeAction.setText(getString(R.string.upgrade_complete_action));
+                    mUpgradeAction.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
 
-                mUpgradeAction.setText(getString(R.string.upgrade_complete_action));
-                mUpgradeAction.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
+                            mUpgradeView.setVisibility(View.GONE);
 
-                        mUpgradeView.setVisibility(View.GONE);
+                        }
+                    });
+                }
 
-                    }
-                });
-            }
+                @Override
+                public void migrateFailed(long providerId, long accountId) {
 
-            @Override
-            public void migrateFailed(long providerId, long accountId) {
+                    mUpgradeDesc.setText(getString(R.string.upgrade_failed));
+                    mUpgradeAction.setText(getString(R.string.upgrade_complete_action));
+                    mUpgradeAction.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
 
-                mUpgradeAction.setText(getString(R.string.upgrade_failed));
-                mUpgradeAction.setText(getString(R.string.upgrade_action));
-            }
-        });
+                            mUpgradeView.setVisibility(View.GONE);
+
+                        }
+                    });
+                }
+            };
+
+            mUpgradeAction.setText(getString(R.string.upgrade_progress_action));
+            mUpgradeAction.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //do nothing
+
+                }
+            });
+
+            mUpgradeImage.setImageResource(R.drawable.olo_thinking);
+
+
+            ((ImApp) getActivity().getApplication()).doUpgrade(getActivity(), "home.zom.im", mMigrateTaskListener);
+
+        }
     }
 }

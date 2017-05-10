@@ -25,6 +25,7 @@ import org.awesomeapp.messenger.service.ImServiceConstants;
 import org.awesomeapp.messenger.tasks.MigrateAccountTask;
 import org.awesomeapp.messenger.ui.onboarding.OnboardingAccount;
 
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -103,19 +104,26 @@ public class AccountSettingsActivity extends PreferenceActivity implements
             mIsMigrating = true;
 
             String domain = "home.zom.im";
+            final ProgressDialog progress = new ProgressDialog(this);
+            progress.setIndeterminate(true);
+            progress.setTitle(R.string.upgrade_progress_action);
+            progress.show();
 
             MigrateAccountTask maTask = new MigrateAccountTask(this, (ImApp) getApplication(), mProviderId, mAccountId, new MigrateAccountTask.MigrateAccountListener() {
                 @Override
                 public void migrateComplete(OnboardingAccount account) {
                     mIsMigrating = false;
-
+                    progress.dismiss();
                     Toast.makeText(AccountSettingsActivity.this, R.string.upgrade_complete, Toast.LENGTH_SHORT).show();
+                    finish();
                 }
 
                 @Override
                 public void migrateFailed(long providerId, long accountId) {
                     Toast.makeText(AccountSettingsActivity.this, R.string.upgrade_failed, Toast.LENGTH_SHORT).show();
                     mIsMigrating = false;
+                    progress.dismiss();
+
                 }
             });
             maTask.execute(domain);
