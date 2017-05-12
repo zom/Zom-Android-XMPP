@@ -83,7 +83,7 @@ public class ContactList extends ImEntity {
      * @throws NullPointerException if the address string is null
      * @throws ImException if the contact is not allowed to be added
      */
-    public void addContact(final String address, final String nickname) throws ImException {
+    public synchronized void addContact(final String address, final String nickname) throws ImException {
 
         if (null == address) {
             throw new NullPointerException();
@@ -123,9 +123,9 @@ public class ContactList extends ImEntity {
      * @throws NullPointerException if the address string is null
      * @throws ImException if the {@link Contact} is not allowed to be added
      */
-    public void addExistingContact(Contact contact) throws ImException {
+    public synchronized void addExistingContact(Contact contact) throws ImException {
 
-        String aKey = mManager.normalizeAddress(contact.getAddress().getAddress());
+        String aKey = contact.getAddress().getBareAddress();
 
         if (mManager.getState() == ContactListManager.BLOCKED_LIST_LOADED) {
             if (mManager.isBlocked(aKey)) {

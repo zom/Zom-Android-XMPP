@@ -414,7 +414,7 @@ public class ContactListManagerAdapter extends
 
     ContactListAdapter getContactListAdapter(Address address) {
         synchronized (mContactLists) {
-            return mContactLists.get(address);
+            return mContactLists.get(address.getAddress());
         }
     }
 
@@ -1071,7 +1071,7 @@ public class ContactListManagerAdapter extends
 
         mResolver.delete(ContentUris.withAppendedId(Imps.ContactList.CONTENT_URI, id), null, null);
         synchronized (mContactLists) {
-            return mContactLists.remove(listAdapter.getAddress());
+            return mContactLists.remove(listAdapter.getAddress().getAddress());
         }
     }
 

@@ -340,6 +340,7 @@ public class ContactsListFragment extends Fragment {
         public void onLoadFinished(Loader<Cursor> loader, Cursor newCursor) {
             if (newCursor == null)
                 return; // the app was quit or something while this was working
+
             newCursor.setNotificationUri(getActivity().getContentResolver(), mUri);
 
             mAdapter.changeCursor(newCursor);

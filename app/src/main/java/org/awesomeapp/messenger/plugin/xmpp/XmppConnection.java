@@ -1392,6 +1392,7 @@ public class XmppConnection extends ImConnection {
             sendPresencePacket();
 
             getContactListManager().listenToRoster(mRoster);
+            getContactListManager().loadContactListsAsync();
 
             MultiUserChatManager.getInstanceFor(mConnection).addInvitationListener(new InvitationListener() {
 
@@ -2031,15 +2032,16 @@ public class XmppConnection extends ImConnection {
         org.jivesoftware.smack.packet.Presence.Mode rmode = presence.getMode();
         org.jivesoftware.smack.packet.Presence.Type rtype = presence.getType();
 
-        if (rmode == org.jivesoftware.smack.packet.Presence.Mode.away || rmode == org.jivesoftware.smack.packet.Presence.Mode.xa)
+        if (rmode == org.jivesoftware.smack.packet.Presence.Mode.away
+                || rmode == org.jivesoftware.smack.packet.Presence.Mode.xa)
             type = Imps.Presence.AWAY;
         else if (rmode == org.jivesoftware.smack.packet.Presence.Mode.dnd)
             type = Imps.Presence.DO_NOT_DISTURB;
-        else if (rtype == org.jivesoftware.smack.packet.Presence.Type.unavailable || rtype ==  org.jivesoftware.smack.packet.Presence.Type.error)
+        else if (rtype == org.jivesoftware.smack.packet.Presence.Type.unavailable)
             type = Imps.Presence.OFFLINE;
         else if (rtype ==  org.jivesoftware.smack.packet.Presence.Type.unsubscribed)
             type = Imps.Presence.OFFLINE;
-        
+
         return type;
     }
 
@@ -2478,56 +2480,6 @@ public class XmppConnection extends ImConnection {
 
             debug(TAG, "load contact lists");
 
-
-            //Set<String> seen = new HashSet<String>();
-
-            // This group will also contain all the unfiled contacts.  We will create it locally if it
-            // does not exist.
-            /*
-            String generalGroupName = mContext.getString(R.string.buddies);
-
-            for (Iterator<RosterGroup> giter = roster.getGroups().iterator(); giter.hasNext();) {
-
-                RosterGroup group = giter.next();
-
-                debug(TAG, "loading group: " + group.getName() + " size:" + group.getEntryCount());
-
-                Collection<Contact> contacts = fillContacts(group.getEntries(), null);
-
-                if (group.getName().equals(generalGroupName) && roster.getUnfiledEntryCount() > 0) {
-                    Collection<Contact> unfiled = fillContacts(roster.getUnfiledEntries(), null);
-                    contacts.addAll(unfiled);
-                }
-
-                XmppAddress groupAddress = new XmppAddress(group.getName());
-                ContactList cl = new ContactList(groupAddress, group.getName(), group
-                        .getName().equals(generalGroupName), contacts, this);
-
-                notifyContactListCreated(cl);
-
-                notifyContactsPresenceUpdated(contacts.toArray(new Contact[contacts.size()]));
-            }
-
-            Collection<Contact> contacts;
-            if (roster.getUnfiledEntryCount() > 0) {
-                contacts = fillContacts(roster.getUnfiledEntries(), null);
-            } else {
-                contacts = new ArrayList<Contact>();
-            }
-
-            ContactList cl = getContactList(generalGroupName);
-                cl = new ContactList(groupAddress, group.getName(), group
-                        .getName().equals(generalGroupName), contacts, this);
-
-            // We might have already created the Buddies contact list above
-            if (cl == null) {
-                cl = new ContactList(mUser.getAddress(), generalGroupName, true, contacts, this);
-                notifyContactListCreated(cl);
-
-                notifyContactsPresenceUpdated(contacts.toArray(new Contact[contacts.size()]));
-            }
-             */
-
             //since we don't show lists anymore, let's just load all entries together
 
             try {
@@ -2935,6 +2887,12 @@ public class XmppConnection extends ImConnection {
         protected void doAddContactToListAsync(Contact contact, ContactList list, boolean autoSubscribedPresence) throws ImException {
             debug(TAG, "add contact to " + list.getName());
 
+            if (contact.getPresence() == null)
+            {
+                Presence p = new Presence();
+                contact.setPresence(p);
+            }
+
             if (!list.containsContact(contact)) {
                 try {
                     list.addExistingContact(contact);
@@ -2943,23 +2901,21 @@ public class XmppConnection extends ImConnection {
                 }
             }
 
-            RosterEntry rEntry;
+            ChatSession session = findOrCreateSession(contact.getAddress().toString(), false);
 
-            String[] groups = new String[] { list.getName() };
+            if (session != null)
+                session.setSubscribed(true);
 
-            boolean subPending = false;
-            RosterPacket.ItemType type = RosterPacket.ItemType.none;
+            notifyContactListUpdated(list, ContactListListener.LIST_CONTACT_ADDED, contact);
 
-            if (autoSubscribedPresence)
-            {
-                type = RosterPacket.ItemType.both;
-            }
-            else
-            {
-                type = RosterPacket.ItemType.to;
-            }
+            Contact[] contacts = {contact};
+            notifyContactsPresenceUpdated(contacts);
 
             try {
+
+                RosterEntry rEntry;
+
+                String[] groups = new String[] { list.getName() };
 
                 BareJid jid = JidCreate.bareFrom(contact.getAddress().getBareAddress());
 
@@ -2970,34 +2926,15 @@ public class XmppConnection extends ImConnection {
                 {
                     if (rEntry == null) {
 
-                        addRosterEntry(contact.getAddress().getBareAddress(), contact.getName(), null, subPending, type);
+                        mRoster.createEntry(jid, contact.getName(), groups);
                         rEntry = mRoster.getEntry(jid);
                     }
 
                 }
                 else if (rEntry == null)
                 {
-                    addRosterEntry(contact.getAddress().getBareAddress(), contact.getName(), groups, subPending, type);
+                    mRoster.createEntry(jid, contact.getName(), groups);
                     rEntry = mRoster.getEntry(jid);
-                }
-
-
-
-                if (autoSubscribedPresence) {
-
-                    //i want your presence
-                    org.jivesoftware.smack.packet.Presence reqSubscribe = new org.jivesoftware.smack.packet.Presence(
-                            org.jivesoftware.smack.packet.Presence.Type.subscribe);
-                    reqSubscribe.setTo(jid);
-                    sendPacket(reqSubscribe);
-
-                    mRoster.preApprove(jid);
-
-                    ChatSession session = findOrCreateSession(contact.getAddress().toString(), false);
-
-                    if (session != null)
-                        session.setSubscribed(true);
-
                 }
 
 
@@ -3011,37 +2948,9 @@ public class XmppConnection extends ImConnection {
                 throw new ImException(msg);
             }
 
-            notifyContactListUpdated(list, ContactListListener.LIST_CONTACT_ADDED, contact);
 
         }
 
-        private void addRosterEntry (String user, String name, String[] groups, boolean subscriptionPending, RosterPacket.ItemType type) throws InterruptedException, XmppStringprepException, SmackException, XMPPException.XMPPErrorException
-        {
-            // Create and send roster entry creation packet.
-            RosterPacket rosterPacket = new RosterPacket();
-            rosterPacket.setType(IQ.Type.set);
-            RosterPacket.Item item = new RosterPacket.Item(JidCreate.bareFrom(user), name);
-            item.setSubscriptionPending(subscriptionPending);
-            item.setItemType(type);
-            if (groups != null) {
-                for (String group : groups) {
-                    if (group != null && group.trim().length() > 0) {
-                        item.addGroupName(group);
-                    }
-                }
-            }
-            rosterPacket.addRosterItem(item);
-            sendPacket(rosterPacket);
-
-            //mConnection.createStanzaCollectorAndSend(rosterPacket).nextResultOrThrow();
-
-            /**
-            // Create a presence subscription packet and send.
-            org.jivesoftware.smack.packet.Presence presencePacket = new org.jivesoftware.smack.packet.Presence(org.jivesoftware.smack.packet.Presence.Type.subscribe);
-            presencePacket.setTo(user);
-            mConnection.sendStanza(presencePacket);
-             */
-        }
 
         public boolean blockContact(String blockContact, boolean doBlock) {
 
@@ -3929,8 +3838,8 @@ public class XmppConnection extends ImConnection {
         if (presence.getType() == org.jivesoftware.smack.packet.Presence.Type.error)
             return null;
 
-//        if (presence.getFrom().toString().startsWith(mUser.getAddress().getBareAddress())) //ignore presence from yourself
-  //          return null;
+        if (presence.getFrom().toString().startsWith(mUser.getAddress().getBareAddress())) //ignore presence from yourself
+              return null;
 
         XmppAddress xaddress = new XmppAddress(presence.getFrom().toString());
 
@@ -3958,28 +3867,18 @@ public class XmppConnection extends ImConnection {
 
             try
             {
+                ContactList cList = null;
+
                 if (contact == null) {
                     XmppAddress xAddr = new XmppAddress(presence.getFrom().toString());
                     contact = new Contact(xAddr, xAddr.getUser());
+                    cList = getContactListManager().getDefaultContactList();
+                    mContactListManager.doAddContactToListAsync(contact, cList, false);
+                    mContactListManager.getSubscriptionRequestListener().onSubScriptionRequest(contact, mProviderId, mAccountId);
                 }
 
                 contact.setPresence(p);
 
-                ContactList cList = null;
-
-                while (cList == null) {
-                    try {
-
-                        cList = getContactListManager().getDefaultContactList();
-                        mContactListManager.doAddContactToListAsync(contact, cList, false);
-                        mContactListManager.getSubscriptionRequestListener().onSubScriptionRequest(contact, mProviderId, mAccountId);
-
-                    } catch (ImException ime) {
-
-                        debug (TAG, "Contact List not yet ready... let's sleep!");
-                        Thread.sleep (1000);
-                    }
-                }
 
             }
             catch (Exception e)
@@ -3994,23 +3893,15 @@ public class XmppConnection extends ImConnection {
             debug(TAG, "got subscribed confirmation: " + presence.getFrom());
             try
             {
-                //i want your presence
-                /**
-                org.jivesoftware.smack.packet.Presence reqSubscribe = new org.jivesoftware.smack.packet.Presence(
-                        org.jivesoftware.smack.packet.Presence.Type.subscribed);
-                reqSubscribe.setTo(contact.getAddress().getBareAddress());
-                sendPacket(reqSubscribe);
-                 **/
-
                 if (contact == null) {
                     XmppAddress xAddr = new XmppAddress(presence.getFrom().toString());
                     contact = new Contact(xAddr, xAddr.getUser());
                     mContactListManager.doAddContactToListAsync(contact,getContactListManager().getDefaultContactList(),true);
+                    mContactListManager.getSubscriptionRequestListener().onSubscriptionApproved(contact, mProviderId, mAccountId);
                 }
 
                 p.setPriority(1000);//max this out to ensure the user shows as online
                 contact.setPresence(p);
-                mContactListManager.getSubscriptionRequestListener().onSubscriptionApproved(contact, mProviderId, mAccountId);
             }
             catch (Exception e)
             {
@@ -4090,6 +3981,20 @@ public class XmppConnection extends ImConnection {
 
                 if (qPresence.size() > 0)
                 {
+
+                    try {
+                        ContactList cList = getContactListManager().getDefaultContactList();
+
+                        if (cList == null)
+                            return; //not ready yet
+                    }
+                    catch (Exception e){
+
+                        //not ready yet
+                        return;
+                    }
+
+
                     Map<String, Contact> alUpdate = new HashMap<String, Contact>();
                     
                     org.jivesoftware.smack.packet.Presence p = null;
@@ -4099,6 +4004,7 @@ public class XmppConnection extends ImConnection {
 
                     while (qPresence.peek() != null && alUpdate.size()<maxBatch)
                     {
+
                         p = qPresence.poll();
                         contact = handlePresenceChanged(p);
                         if (contact != null)
