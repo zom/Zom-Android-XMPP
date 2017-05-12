@@ -221,6 +221,8 @@ public class XmppConnection extends ImConnection {
 
     private LinkedList<org.jivesoftware.smack.packet.Presence> qPresence = new LinkedList<org.jivesoftware.smack.packet.Presence>();
     private LinkedList<org.jivesoftware.smack.packet.Stanza> qPacket = new LinkedList<org.jivesoftware.smack.packet.Stanza>();
+    private LinkedList<Contact> qNewContact = new LinkedList<Contact>();
+
 
     private final static String DEFAULT_CONFERENCE_SERVER = "conference.zom.im";
 
@@ -1766,6 +1768,9 @@ public class XmppConnection extends ImConnection {
         
         if (mTimerPresence == null)
             initPresenceProcessor ();
+
+        if (mTimerNewContacts == null)
+            initNewContactProcessor();
         
         ConnectionListener connectionListener = new ConnectionListener() {
             /**
@@ -2904,50 +2909,15 @@ public class XmppConnection extends ImConnection {
             ChatSession session = findOrCreateSession(contact.getAddress().toString(), false);
 
             if (session != null)
-                session.setSubscribed(true);
+                session.setSubscribed(autoSubscribedPresence);
 
             notifyContactListUpdated(list, ContactListListener.LIST_CONTACT_ADDED, contact);
 
             Contact[] contacts = {contact};
             notifyContactsPresenceUpdated(contacts);
 
-            try {
-
-                RosterEntry rEntry;
-
-                String[] groups = new String[] { list.getName() };
-
-                BareJid jid = JidCreate.bareFrom(contact.getAddress().getBareAddress());
-
-                rEntry = mRoster.getEntry(jid);
-                RosterGroup rGroup = mRoster.getGroup(list.getName());
-
-                if (rGroup == null)
-                {
-                    if (rEntry == null) {
-
-                        mRoster.createEntry(jid, contact.getName(), groups);
-                        rEntry = mRoster.getEntry(jid);
-                    }
-
-                }
-                else if (rEntry == null)
-                {
-                    mRoster.createEntry(jid, contact.getName(), groups);
-                    rEntry = mRoster.getEntry(jid);
-                }
-
-
-            } catch (XMPPException e) {
-
-                debug(TAG,"error updating remote roster",e);
-                throw new ImException("error updating remote roster");
-            } catch (Exception e) {
-                String msg = "Not logged in to server while updating remote roster";
-                debug(TAG, msg, e);
-                throw new ImException(msg);
-            }
-
+            if (autoSubscribedPresence)
+                qNewContact.push(contact);
 
         }
 
@@ -3009,8 +2979,10 @@ public class XmppConnection extends ImConnection {
             response.setTo(contact.getAddress().getBareAddress());
             sendPacket(response);
 
-            try { mRoster.reload(); }
-            catch (Exception e){}
+            qNewContact.push(contact);
+
+         //   try { mRoster.reload(); }
+         //   catch (Exception e){}
 
             try
             {
@@ -3867,15 +3839,15 @@ public class XmppConnection extends ImConnection {
 
             try
             {
-                ContactList cList = null;
+                ContactList cList = getContactListManager().getDefaultContactList();
 
                 if (contact == null) {
                     XmppAddress xAddr = new XmppAddress(presence.getFrom().toString());
                     contact = new Contact(xAddr, xAddr.getUser());
-                    cList = getContactListManager().getDefaultContactList();
-                    mContactListManager.doAddContactToListAsync(contact, cList, false);
-                    mContactListManager.getSubscriptionRequestListener().onSubScriptionRequest(contact, mProviderId, mAccountId);
                 }
+
+                mContactListManager.doAddContactToListAsync(contact, cList, false);
+                mContactListManager.getSubscriptionRequestListener().onSubScriptionRequest(contact, mProviderId, mAccountId);
 
                 contact.setPresence(p);
 
@@ -3896,12 +3868,17 @@ public class XmppConnection extends ImConnection {
                 if (contact == null) {
                     XmppAddress xAddr = new XmppAddress(presence.getFrom().toString());
                     contact = new Contact(xAddr, xAddr.getUser());
-                    mContactListManager.doAddContactToListAsync(contact,getContactListManager().getDefaultContactList(),true);
-                    mContactListManager.getSubscriptionRequestListener().onSubscriptionApproved(contact, mProviderId, mAccountId);
+
                 }
+
+                mContactListManager.doAddContactToListAsync(contact,getContactListManager().getDefaultContactList(),true);
+                mContactListManager.getSubscriptionRequestListener().onSubscriptionApproved(contact, mProviderId, mAccountId);
 
                 p.setPriority(1000);//max this out to ensure the user shows as online
                 contact.setPresence(p);
+
+              //  mContactListManager.approveSubscriptionRequest(contact);
+
             }
             catch (Exception e)
             {
@@ -4055,28 +4032,112 @@ public class XmppConnection extends ImConnection {
                                 debug(TAG, "postponed packet to " + packet.getTo()
                                         + " because we are not connected");
                                 postpone(packet);
+                                qPacket.push(packet);//return the packet to the stack
                                 return;
                             }
+
                             try {
                                 mConnection.sendStanza(packet);
                             } catch (IllegalStateException ex) {
                                 postpone(packet);
                                debug(TAG, "postponed packet to " + packet.getTo()
                                         + " because socket is disconnected");
+                                qPacket.push(packet);//return the packet to the stack
+                                return;
                             }
                         }
-
 
                 }
                 catch (Exception e)
                 {
-                    Log.e(TAG,"error processing presence",e);
+                    Log.e(TAG,"error sending packet",e);
                 }
 
 
              }
 
           }, 500, 500);
+    }
+
+    Timer mTimerNewContacts = null;
+
+    private void initNewContactProcessor ()
+    {
+        mTimerNewContacts = new Timer();
+
+        mTimerNewContacts.scheduleAtFixedRate(new TimerTask() {
+
+            public void run() {
+
+                try
+                {
+
+                    Contact contact = null;
+
+                    if (qNewContact.size() > 0)
+                        while (qNewContact.peek()!=null)
+                        {
+                            contact = qNewContact.poll();
+
+                            if (mConnection == null || (!mConnection.isConnected())) {
+                                debug(TAG, "postponed adding new contact"
+                                        + " because we are not connected");
+
+                                qNewContact.push(contact);//return the packet to the stack
+                                return;
+                            }
+                            else
+                            {
+                                try {
+
+                                    RosterEntry rEntry;
+
+                                    ContactList list = mContactListManager.getDefaultContactList();
+                                    String[] groups = new String[] { list.getName() };
+
+                                    BareJid jid = JidCreate.bareFrom(contact.getAddress().getBareAddress());
+
+                                    rEntry = mRoster.getEntry(jid);
+                                    RosterGroup rGroup = mRoster.getGroup(list.getName());
+
+                                    if (rGroup == null)
+                                    {
+                                        if (rEntry == null) {
+
+                                            mRoster.createEntry(jid, contact.getName(), groups);
+                                        }
+
+                                    }
+                                    else if (rEntry == null)
+                                    {
+                                        mRoster.createEntry(jid, contact.getName(), groups);
+                                    }
+
+                                } catch (XMPPException e) {
+
+                                    debug(TAG,"error updating remote roster",e);
+                                    qNewContact.push(contact); //try again later
+
+                                } catch (Exception e) {
+                                    String msg = "Not logged in to server while updating remote roster";
+                                    debug(TAG, msg, e);
+                                    qNewContact.push(contact); //try again later
+
+                                }
+                            }
+
+                        }
+
+                }
+                catch (Exception e)
+                {
+                    Log.e(TAG,"error sending packet",e);
+                }
+
+
+            }
+
+        }, 500, 500);
     }
 
     @Override

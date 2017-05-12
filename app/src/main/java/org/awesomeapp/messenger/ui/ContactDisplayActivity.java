@@ -169,16 +169,15 @@ public class ContactDisplayActivity extends BaseActivity {
 
             Button btnVerify = (Button)findViewById(R.id.btnVerify);
 
-
             ArrayList<String> fingerprints = OtrChatManager.getInstance().getRemoteKeyFingerprints(mUsername);
 
-            if (!fingerprints.contains(remoteFingerprint))
-            {
-                throw new Exception("Invalid key: " + remoteFingerprint);
-            }
-
-
             if (!TextUtils.isEmpty(remoteFingerprint)) {
+
+
+                if (!fingerprints.contains(remoteFingerprint))
+                {
+                    throw new Exception("Invalid key: " + remoteFingerprint);
+                }
 
                 findViewById(R.id.listOtr).setVisibility(View.VISIBLE);
 
