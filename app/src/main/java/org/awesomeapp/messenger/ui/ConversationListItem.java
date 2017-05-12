@@ -355,18 +355,10 @@ public class ConversationListItem extends FrameLayout {
 
             if (chatSession != null)
             {
-                IOtrChatSession otrChatSession = chatSession.getDefaultOtrChatSession();
-                if (otrChatSession != null)
+                if (chatSession.isEncrypted())
                 {
-                    SessionStatus chatStatus = SessionStatus.values()[otrChatSession.getChatStatus()];
-
-                    if (chatStatus == SessionStatus.ENCRYPTED)
-                    {
-                        boolean isVerified = otrChatSession.isKeyVerified(address);
-                       // holder.mStatusIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_lock_outline_black_18dp));
-                        holder.mStatusIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_encrypted_grey));
-                        holder.mStatusIcon.setVisibility(View.VISIBLE);
-                    }
+                    holder.mStatusIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_encrypted_grey));
+                    holder.mStatusIcon.setVisibility(View.VISIBLE);
                 }
             }
 

@@ -18,7 +18,6 @@
 package org.awesomeapp.messenger;
 
 import android.app.Activity;
-import android.app.Application;
 import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -30,7 +29,6 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -42,11 +40,9 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 
-import net.hockeyapp.android.CrashManager;
-import net.hockeyapp.android.CrashManagerListener;
 import net.sqlcipher.database.SQLiteDatabase;
 
-import org.awesomeapp.messenger.crypto.OtrAndroidKeyManagerImpl;
+import org.awesomeapp.messenger.crypto.otr.OtrAndroidKeyManagerImpl;
 import org.awesomeapp.messenger.model.ImConnection;
 import org.awesomeapp.messenger.model.ImErrorInfo;
 import org.awesomeapp.messenger.provider.Imps;
@@ -61,6 +57,8 @@ import org.awesomeapp.messenger.service.IImConnection;
 import org.awesomeapp.messenger.service.IRemoteImService;
 import org.awesomeapp.messenger.service.ImServiceConstants;
 import org.awesomeapp.messenger.service.RemoteImService;
+import org.awesomeapp.messenger.service.StatusBarNotifier;
+import org.awesomeapp.messenger.tasks.MigrateAccountTask;
 import org.awesomeapp.messenger.ui.legacy.ImPluginHelper;
 import org.awesomeapp.messenger.ui.legacy.ProviderDef;
 import org.awesomeapp.messenger.ui.legacy.adapter.ConnectionListenerAdapter;
@@ -69,7 +67,6 @@ import org.awesomeapp.messenger.util.Debug;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
@@ -91,6 +88,7 @@ import org.awesomeapp.messenger.util.Languages;
 import org.chatsecure.pushsecure.PushSecureClient;
 import org.chatsecure.pushsecure.response.Account;
 import org.ironrabbit.type.CustomTypefaceManager;
+import org.jivesoftware.smackx.omemo.OmemoInitializer;
 
 public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
@@ -163,7 +161,11 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
     public static Executor sThreadPoolExecutor = null;
 
+    private SharedPreferences settings = null;
+
     private boolean mThemeDark = false;
+
+    private boolean mNeedsAccountUpgrade = false;
 
     public static final int EVENT_SERVICE_CONNECTED = 100;
     public static final int EVENT_CONNECTION_CREATED = 150;
@@ -211,6 +213,8 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
         sImApp = this;
 
+        settings = PreferenceManager.getDefaultSharedPreferences(this);
+
         Debug.onAppStart();
 
         PRNGFixes.apply(); //Google's fix for SecureRandom bug: http://android-developers.blogspot.com/2013/08/some-securerandom-thoughts.html
@@ -254,7 +258,6 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
     public void setAppTheme (Activity activity, Toolbar toolbar)
     {
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 
         mThemeDark = settings.getBoolean("themeDark", false);
 
@@ -800,14 +803,6 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
         ImPluginHelper.getInstance(this).loadAvailablePlugins();
     }
 
-    public void checkForCrashes(final Activity activity) {
-        CrashManager.register(activity, ImApp.HOCKEY_APP_ID, new CrashManagerListener() {
-            @Override
-            public String getDescription() {
-                return Debug.getTrail(activity);
-            }
-        });
-    }
 
     public boolean setDefaultAccount (long providerId, long accountId)
     {
@@ -835,6 +830,8 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
             mDefaultUsername = cursorProviders.getString(2);
             mDefaultNickname = cursorProviders.getString(3);
 
+            settings.edit().putLong("defaultAccountId",mDefaultAccountId).commit();
+
             Cursor pCursor = getContentResolver().query(Imps.ProviderSettings.CONTENT_URI, new String[]{Imps.ProviderSettings.NAME, Imps.ProviderSettings.VALUE}, Imps.ProviderSettings.PROVIDER + "=?", new String[]{Long.toString(mDefaultProviderId)}, null);
 
             Imps.ProviderSettings.QueryMap settings = new Imps.ProviderSettings.QueryMap(
@@ -858,6 +855,9 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
     public boolean initAccountInfo ()
     {
+
+        long lastAccountId = settings.getLong("defaultAccountId",-1);
+
         if (mDefaultProviderId == -1 || mDefaultAccountId == -1) {
 
             final Uri uri = Imps.Provider.CONTENT_URI_WITH_ACCOUNT;
@@ -865,8 +865,8 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
                     Imps.Provider._ID,
                     Imps.Provider.ACTIVE_ACCOUNT_ID,
                     Imps.Provider.ACTIVE_ACCOUNT_USERNAME,
-                    Imps.Provider.ACTIVE_ACCOUNT_NICKNAME
-
+                    Imps.Provider.ACTIVE_ACCOUNT_NICKNAME,
+                    Imps.Provider.ACTIVE_ACCOUNT_KEEP_SIGNED_IN
             };
 
             final Cursor cursorProviders = getContentResolver().query(uri, PROVIDER_PROJECTION,
@@ -875,32 +875,63 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
                     Imps.Provider.DEFAULT_SORT_ORDER);
 
             if (cursorProviders != null && cursorProviders.getCount() > 0) {
-                cursorProviders.moveToFirst();
-                mDefaultProviderId = cursorProviders.getLong(0);
-                mDefaultAccountId = cursorProviders.getLong(1);
-                mDefaultUsername = cursorProviders.getString(2);
-                mDefaultNickname = cursorProviders.getString(3);
+                while(cursorProviders.moveToNext()) {
 
-                Cursor pCursor = getContentResolver().query(Imps.ProviderSettings.CONTENT_URI, new String[]{Imps.ProviderSettings.NAME, Imps.ProviderSettings.VALUE}, Imps.ProviderSettings.PROVIDER + "=?", new String[]{Long.toString(mDefaultProviderId)}, null);
+                    long providerId = cursorProviders.getLong(0);
+                    long accountId = cursorProviders.getLong(1);
+                    String username = cursorProviders.getString(2);
+                    String nickname = cursorProviders.getString(3);
+                    boolean keepSignedIn = cursorProviders.getInt(4) != 0;
 
-                Imps.ProviderSettings.QueryMap settings = new Imps.ProviderSettings.QueryMap(
-                        pCursor, getContentResolver(), mDefaultProviderId, false /* don't keep updated */, null /* no handler */);
+                    Cursor pCursor = getContentResolver().query(Imps.ProviderSettings.CONTENT_URI, new String[]{Imps.ProviderSettings.NAME, Imps.ProviderSettings.VALUE}, Imps.ProviderSettings.PROVIDER + "=?", new String[]{Long.toString(providerId)}, null);
 
-                mDefaultUsername = mDefaultUsername + '@' + settings.getDomain();
-                mDefaultOtrFingerprint = OtrAndroidKeyManagerImpl.getInstance(this).getLocalFingerprint(mDefaultUsername);
+                    Imps.ProviderSettings.QueryMap settings = new Imps.ProviderSettings.QueryMap(
+                            pCursor, getContentResolver(), providerId, false /* don't keep updated */, null /* no handler */);
 
-                settings.close();
-                cursorProviders.close();
+                    username = username + '@' + settings.getDomain();
+                    String otrFingerprint = OtrAndroidKeyManagerImpl.getInstance(this).getLocalFingerprint(username);
 
-                return true;
+                    if ((!mNeedsAccountUpgrade)
+                            && settings.getDomain().equalsIgnoreCase("dukgo.com") && keepSignedIn)
+                    {
+                        mNeedsAccountUpgrade = true;
+                    }
+
+                    settings.close();
+
+                    if (lastAccountId == -1 && keepSignedIn)
+                    {
+                        mDefaultProviderId = providerId;
+                        mDefaultAccountId = accountId;
+                        mDefaultUsername = username;
+                        mDefaultNickname = nickname;
+                        mDefaultOtrFingerprint = otrFingerprint;
+                    }
+                    else if (lastAccountId == accountId)
+                    {
+                        mDefaultProviderId = providerId;
+                        mDefaultAccountId = accountId;
+                        mDefaultUsername = username;
+                        mDefaultNickname = nickname;
+                        mDefaultOtrFingerprint = otrFingerprint;
+                    }
+                    else if (mDefaultProviderId == -1)
+                    {
+                        mDefaultProviderId = providerId;
+                        mDefaultAccountId = accountId;
+                        mDefaultUsername = username;
+                        mDefaultNickname = nickname;
+                        mDefaultOtrFingerprint = otrFingerprint;
+                    }
+
+                }
             }
-
 
             if (cursorProviders != null)
                 cursorProviders.close();
         }
 
-        return false;
+        return true;
 
     }
 
@@ -1058,5 +1089,73 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
             }
         }).start();
     }
+
+    public boolean needsAccountUpgrade ()
+    {
+        return mNeedsAccountUpgrade;
+    }
+
+    public void notifyAccountUpgrade ()
+    {
+        StatusBarNotifier notifier = new StatusBarNotifier(this);
+
+    }
+
+    public boolean doUpgrade (Activity activity, String newDomain, MigrateAccountTask.MigrateAccountListener listener)
+    {
+
+        boolean result = false;
+
+        long lastAccountId = settings.getLong("defaultAccountId",-1);
+
+        final Uri uri = Imps.Provider.CONTENT_URI_WITH_ACCOUNT;
+        String[] PROVIDER_PROJECTION = {
+                Imps.Provider._ID,
+                Imps.Provider.ACTIVE_ACCOUNT_ID,
+                Imps.Provider.ACTIVE_ACCOUNT_USERNAME,
+                Imps.Provider.ACTIVE_ACCOUNT_NICKNAME,
+                Imps.Provider.ACTIVE_ACCOUNT_KEEP_SIGNED_IN
+        };
+
+        final Cursor cursorProviders = getContentResolver().query(uri, PROVIDER_PROJECTION,
+                Imps.Provider.CATEGORY + "=?" + " AND " + Imps.Provider.ACTIVE_ACCOUNT_USERNAME + " NOT NULL" /* selection */,
+                new String[]{ImApp.IMPS_CATEGORY} /* selection args */,
+                Imps.Provider.DEFAULT_SORT_ORDER);
+
+        if (cursorProviders != null && cursorProviders.getCount() > 0) {
+            while(cursorProviders.moveToNext()) {
+
+                long providerId = cursorProviders.getLong(0);
+                long accountId = cursorProviders.getLong(1);
+                String username = cursorProviders.getString(2);
+                String nickname = cursorProviders.getString(3);
+                boolean keepSignedIn = cursorProviders.getInt(4) != 0;
+
+                Cursor pCursor = getContentResolver().query(Imps.ProviderSettings.CONTENT_URI, new String[]{Imps.ProviderSettings.NAME, Imps.ProviderSettings.VALUE}, Imps.ProviderSettings.PROVIDER + "=?", new String[]{Long.toString(providerId)}, null);
+
+                Imps.ProviderSettings.QueryMap settings = new Imps.ProviderSettings.QueryMap(
+                        pCursor, getContentResolver(), providerId, false /* don't keep updated */, null /* no handler */);
+
+                username = username + '@' + settings.getDomain();
+
+                if (settings.getDomain().equalsIgnoreCase("dukgo.com") && keepSignedIn)
+                {
+                    new MigrateAccountTask(activity, this, providerId, accountId, listener).execute(newDomain);
+                }
+
+                settings.close();
+
+            }
+        }
+
+        if (cursorProviders != null)
+            cursorProviders.close();
+
+        mNeedsAccountUpgrade = false;
+
+        return result;
+
+    }
+
 
 }

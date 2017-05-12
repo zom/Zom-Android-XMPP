@@ -1,4 +1,4 @@
-package org.awesomeapp.messenger.crypto;
+package org.awesomeapp.messenger.crypto.otr;
 
 import android.text.TextUtils;
 
@@ -6,13 +6,11 @@ import org.awesomeapp.messenger.model.ChatSession;
 import org.awesomeapp.messenger.model.ImErrorInfo;
 import org.awesomeapp.messenger.model.Message;
 import org.awesomeapp.messenger.model.MessageListener;
-import org.awesomeapp.messenger.util.Debug;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import net.java.otr4j.OtrException;
-import net.java.otr4j.session.Session;
 import net.java.otr4j.session.SessionID;
 import net.java.otr4j.session.SessionStatus;
 import net.java.otr4j.session.TLV;
@@ -40,17 +38,7 @@ public class OtrChatListener implements MessageListener {
         String remoteAddress = msg.getFrom().getAddress();
         String localAddress = msg.getTo().getAddress();
 
-        //body = Debug.injectErrors(body);
-
-        SessionID sessionID = mOtrChatManager.getSessionId(localAddress, remoteAddress);
-        SessionStatus otrStatus = mOtrChatManager.getSessionStatus(sessionID);
-
-        List<TLV> tlvs = new ArrayList<TLV>();
-
-        try {
-
-            body = mOtrChatManager.decryptMessage(localAddress, remoteAddress, body, tlvs);
-
+        if (mOtrChatManager == null) {
             if (!TextUtils.isEmpty(body)) {
                 result = true;
                 msg.setBody(body);
@@ -60,40 +48,61 @@ public class OtrChatListener implements MessageListener {
                 OtrDebugLogger.log("Decrypted incoming body was null (otrdata?)");
 
             }
+        }
+        else {
+            SessionID sessionID = mOtrChatManager.getSessionId(localAddress, remoteAddress);
+            SessionStatus otrStatus = mOtrChatManager.getSessionStatus(sessionID);
 
-            for (TLV tlv : tlvs) {
-                if (tlv.getType() == TLV_DATA_REQUEST) {
-                    OtrDebugLogger.log("Got a TLV Data Request: " + new String(tlv.getValue()));
+            List<TLV> tlvs = new ArrayList<TLV>();
 
-                    mMessageListener.onIncomingDataRequest(session, msg, tlv.getValue());
+            try {
+
+                body = mOtrChatManager.decryptMessage(localAddress, remoteAddress, body, tlvs);
+
+                if (!TextUtils.isEmpty(body)) {
                     result = true;
+                    msg.setBody(body);
+                    mMessageListener.onIncomingMessage(session, msg);
+                } else {
 
-                } else if (tlv.getType() == TLV_DATA_RESPONSE) {
-
-                    OtrDebugLogger.log("Got a TLV Data Response: " + new String(tlv.getValue()));
-
-                    mMessageListener.onIncomingDataResponse(session, msg, tlv.getValue());
-                    result = true;
+                    OtrDebugLogger.log("Decrypted incoming body was null (otrdata?)");
 
                 }
+
+                for (TLV tlv : tlvs) {
+                    if (tlv.getType() == TLV_DATA_REQUEST) {
+                        OtrDebugLogger.log("Got a TLV Data Request: " + new String(tlv.getValue()));
+
+                        mMessageListener.onIncomingDataRequest(session, msg, tlv.getValue());
+                        result = true;
+
+                    } else if (tlv.getType() == TLV_DATA_RESPONSE) {
+
+                        OtrDebugLogger.log("Got a TLV Data Response: " + new String(tlv.getValue()));
+
+                        mMessageListener.onIncomingDataResponse(session, msg, tlv.getValue());
+                        result = true;
+
+                    }
+                }
+
+            } catch (OtrException oe) {
+
+                OtrDebugLogger.log("error decrypting message: " + msg.getID());
+                //  mOtrChatManager.refreshSession(sessionID.getLocalUserId(),sessionID.getRemoteUserId());
+                // msg.setBody("[" + "You received an unreadable encrypted message" + "]");
+                // mMessageListener.onIncomingMessage(session, msg);
+                mOtrChatManager.injectMessage(sessionID, "");
+
             }
 
-        } catch (OtrException oe) {
 
-            OtrDebugLogger.log("error decrypting message", oe);
-          //  mOtrChatManager.refreshSession(sessionID.getLocalUserId(),sessionID.getRemoteUserId());
-            // msg.setBody("[" + "You received an unreadable encrypted message" + "]");
-            // mMessageListener.onIncomingMessage(session, msg);
-             mOtrChatManager.injectMessage(sessionID, "");
+            SessionStatus newStatus = mOtrChatManager.getSessionStatus(sessionID.getLocalUserId(), sessionID.getRemoteUserId());
+            if (newStatus != otrStatus) {
 
-        }
-
-
-        SessionStatus newStatus = mOtrChatManager.getSessionStatus(sessionID.getLocalUserId(),sessionID.getRemoteUserId());
-        if (newStatus != otrStatus) {
-
-            OtrDebugLogger.log("OTR status changed from: " + otrStatus + " to " + newStatus);
-            mMessageListener.onStatusChanged(session, newStatus);
+                OtrDebugLogger.log("OTR status changed from: " + otrStatus + " to " + newStatus);
+                mMessageListener.onStatusChanged(session, newStatus);
+            }
         }
 
         return result;

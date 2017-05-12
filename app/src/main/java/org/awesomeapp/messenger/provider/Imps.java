@@ -235,12 +235,15 @@ public class Imps {
             Cursor cursor = cr.query(CONTENT_URI, new String[] { NAME }, _ID + "=" + accountId,
                     null /* selection args */, null /* sort order */);
             String ret = null;
-            try {
-                if (cursor.moveToFirst()) {
-                    ret = cursor.getString(cursor.getColumnIndexOrThrow(NAME));
+
+            if (cursor != null) {
+                try {
+                    if (cursor.moveToFirst()) {
+                        ret = cursor.getString(cursor.getColumnIndexOrThrow(NAME));
+                    }
+                } finally {
+                    cursor.close();
                 }
-            } finally {
-                cursor.close();
             }
 
             return ret;
@@ -758,7 +761,7 @@ public class Imps {
         /* generic status */
         int STATUS = 7;
         /* the message cannot be sent now, but will be sent later */
-        int POSTPONED = 8;
+        int QUEUED = 8;
         /* off The Record status is turned off */
         int OTR_IS_TURNED_OFF = 9;
         /* off the record status is turned on */
@@ -2419,6 +2422,29 @@ public class Imps {
         values.put(Imps.Messages.MIME_TYPE, mimeType);
 
         return resolver.update(builder.build(), values, null, null);
+    }
+
+    public static int updateMessageInDb(ContentResolver resolver, String id, int type, long time, long contactId) {
+
+        Uri.Builder builder = Imps.Messages.OTR_MESSAGES_CONTENT_URI_BY_PACKET_ID.buildUpon();
+        builder.appendPath(id);
+
+        ContentValues values = new ContentValues(2);
+        values.put(Imps.Messages.TYPE, type);
+        values.put(Imps.Messages.THREAD_ID, contactId);
+        if (time != -1)
+            values.put(Imps.Messages.DATE, time);
+
+        int result = resolver.update(builder.build(), values, null, null);
+
+        if (result == 0)
+        {
+            builder = Imps.Messages.CONTENT_URI_MESSAGES_BY_PACKET_ID.buildUpon();
+            builder.appendPath(id);
+            result = resolver.update(builder.build(), values, null, null);
+        }
+
+        return result;
     }
 
     public static int updateConfirmInDb(ContentResolver resolver, long threadId, String msgId, boolean isDelivered) {

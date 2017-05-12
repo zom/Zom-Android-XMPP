@@ -18,17 +18,15 @@
 package org.awesomeapp.messenger.service.adapters;
 
 import  org.awesomeapp.messenger.crypto.IOtrChatSession;
-import org.awesomeapp.messenger.crypto.OtrChatListener;
-import org.awesomeapp.messenger.crypto.OtrChatManager;
-import org.awesomeapp.messenger.crypto.OtrChatSessionAdapter;
-import org.awesomeapp.messenger.crypto.OtrDataHandler;
-import org.awesomeapp.messenger.crypto.OtrDataHandler.Transfer;
-import org.awesomeapp.messenger.crypto.OtrDebugLogger;
+import org.awesomeapp.messenger.crypto.otr.OtrChatListener;
+import org.awesomeapp.messenger.crypto.otr.OtrChatManager;
+import org.awesomeapp.messenger.crypto.otr.OtrChatSessionAdapter;
+import org.awesomeapp.messenger.crypto.otr.OtrDataHandler;
+import org.awesomeapp.messenger.crypto.otr.OtrDataHandler.Transfer;
+import org.awesomeapp.messenger.crypto.otr.OtrDebugLogger;
 import org.awesomeapp.messenger.model.Address;
-import org.awesomeapp.messenger.model.ContactListListener;
 import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
 import  org.awesomeapp.messenger.service.IChatListener;
-import org.awesomeapp.messenger.service.IChatSession;
 import org.awesomeapp.messenger.service.IDataListener;
 import im.zom.messenger.R;
 
@@ -47,16 +45,9 @@ import org.awesomeapp.messenger.model.Presence;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.util.SystemServices;
 
-import java.io.IOException;
-import java.security.SecureRandom;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.List;
-import java.util.Random;
-import java.util.UUID;
 
 import net.java.otr4j.OtrEngineListener;
 import net.java.otr4j.session.SessionID;
@@ -206,31 +197,18 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             return null;
     }
 
+    private int lastPresence = -1;
+
     public void presenceChanged (int newPresence)
     {
 
         if (mChatSession.getParticipant() instanceof Contact) {
             ((Contact) mChatSession.getParticipant()).getPresence().setStatus(newPresence);
 
-            try {
-                if (newPresence == Presence.AVAILABLE) {
+            if (lastPresence != newPresence && newPresence == Presence.AVAILABLE)
+                sendPostponedMessages();
 
-                    if (hasPostponedMessages())
-                    {
-                        if (getDefaultOtrChatSession().isChatEncrypted())
-                            sendPostponedMessages();
-                        else {
-                           // getDefaultOtrChatSession().stopChatEncryption();
-                            getDefaultOtrChatSession().startChatEncryption();
-                        }
-                    }
-                }
-
-            }
-            catch (RemoteException re)
-            {
-                //nothing to see here
-            }
+            lastPresence = newPresence;
         }
 
     }
@@ -396,7 +374,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         if (mConnection.getState() != ImConnection.LOGGED_IN) {
             // connection has been suspended, save the message without send it
             long now = System.currentTimeMillis();
-            insertMessageInDb(null, text, now, Imps.MessageType.POSTPONED);
+            insertMessageInDb(null, text, now, Imps.MessageType.QUEUED);
             return;
         }
 
@@ -404,7 +382,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         msg.setID(nextID());
 
         msg.setFrom(mConnection.getLoginUser().getAddress());
-        msg.setType(Imps.MessageType.OUTGOING);
+        msg.setType(Imps.MessageType.QUEUED);
 
         long sendTime = System.currentTimeMillis();
 
@@ -478,6 +456,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
      mChatSession.sendMessageAsync(msg);
     }*/
 
+    /**
     boolean hasPostponedMessages() {
         String[] projection = new String[] { BaseColumns._ID, Imps.Messages.BODY,
                 Imps.Messages.PACKET_ID,
@@ -487,7 +466,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         boolean result = false;
 
         Cursor c = mContentResolver.query(mMessageURI, projection, selection,
-                new String[] { Integer.toString(Imps.MessageType.POSTPONED) }, null);
+                new String[] { Integer.toString(Imps.MessageType.QUEUED) }, null);
         if (c == null) {
             RemoteImService.debug("Query error while querying postponed messages");
             return false;
@@ -500,32 +479,43 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         c.close();
         return true;
 
-    }
+    }**/
 
-    synchronized void sendPostponedMessages() {
-        String[] projection = new String[] { BaseColumns._ID, Imps.Messages.BODY,
-                                             Imps.Messages.PACKET_ID,
-                                            Imps.Messages.DATE, Imps.Messages.TYPE, Imps.Messages.IS_DELIVERED };
-        String selection = Imps.Messages.TYPE + "=?";
+    boolean sendingPostponed = false;
 
-        Cursor c = mContentResolver.query(mMessageURI, projection, selection,
-                new String[] { Integer.toString(Imps.MessageType.POSTPONED) }, null);
-        if (c == null) {
-            RemoteImService.debug("Query error while querying postponed messages");
-            return;
+    void sendPostponedMessages() {
+
+        if (!sendingPostponed) {
+            sendingPostponed = true;
+
+            String[] projection = new String[]{BaseColumns._ID, Imps.Messages.BODY,
+                    Imps.Messages.PACKET_ID,
+                    Imps.Messages.DATE, Imps.Messages.TYPE, Imps.Messages.IS_DELIVERED};
+            String selection = Imps.Messages.TYPE + "=?";
+
+            Cursor c = mContentResolver.query(mMessageURI, projection, selection,
+                    new String[]{Integer.toString(Imps.MessageType.QUEUED)}, null);
+            if (c == null) {
+                RemoteImService.debug("Query error while querying postponed messages");
+                return;
+            }
+
+            if (c.getCount() > 0) {
+                ArrayList<String> messages = new ArrayList<String>();
+
+                while (c.moveToNext())
+                    messages.add(c.getString(1));
+
+                removeMessageInDb(Imps.MessageType.QUEUED);
+
+                for (String body : messages)
+                    sendMessage(body, false);
+            }
+
+            c.close();
+
+            sendingPostponed = false;
         }
-
-        ArrayList<String> messages = new ArrayList<String>();
-
-        while (c.moveToNext())
-            messages.add(c.getString(1));
-
-        c.close();
-
-        removeMessageInDb(Imps.MessageType.POSTPONED);
-
-        for (String body : messages)
-            sendMessage(body,false);
     }
 
     public void registerChatListener(IChatListener listener) {
@@ -776,25 +766,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
     int updateMessageInDb(String id, int type, long time) {
 
-        Uri.Builder builder = Imps.Messages.OTR_MESSAGES_CONTENT_URI_BY_PACKET_ID.buildUpon();
-        builder.appendPath(id);
-
-        ContentValues values = new ContentValues(2);
-        values.put(Imps.Messages.TYPE, type);
-        values.put(Imps.Messages.THREAD_ID, mContactId);
-        if (time != -1)
-            values.put(Imps.Messages.DATE, time);
-
-        int result = mContentResolver.update(builder.build(), values, null, null);
-
-        if (result == 0)
-        {
-            builder = Imps.Messages.CONTENT_URI_MESSAGES_BY_PACKET_ID.buildUpon();
-            builder.appendPath(id);
-            result = mContentResolver.update(builder.build(), values, null, null);
-        }
-
-        return result;
+        return Imps.updateMessageInDb(mContentResolver, id, type, time, mContactId);
     }
 
 
@@ -968,7 +940,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
         @Override
         public void onMessagePostponed(ChatSession ses, String id) {
-            updateMessageInDb(id, Imps.MessageType.POSTPONED, -1);
+            updateMessageInDb(id, Imps.MessageType.QUEUED, -1);
         }
 
         @Override
@@ -1316,7 +1288,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
     public boolean sendPushWhitelistToken(@NonNull String token) {
         if (mConnection.getState() == ImConnection.SUSPENDED) {
-            // TODO Is it possible to postpone a TLV message? e.g: insertMessageInDb with type POSTPONED
+            // TODO Is it possible to postpone a TLV message? e.g: insertMessageInDb with type QUEUED
             return false;
         }
 
@@ -1354,6 +1326,38 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
        // mConnection.sendTypingStatus("fpp", isTyping);
     }
 
+    public boolean isEncrypted ()
+    {
+        if (mChatSession.canOmemo())
+        {
+            return true;
+        }
+        else
+        {
+            IOtrChatSession otrChatSession = getDefaultOtrChatSession();
+            if (otrChatSession != null)
+            {
+                try {
+
+                    SessionStatus chatStatus = SessionStatus.values()[otrChatSession.getChatStatus()];
+
+                    if (chatStatus == SessionStatus.ENCRYPTED) {
+                        //boolean isVerified = otrChatSession.isKeyVerified(mChatSession.getParticipant().getAddress().toString());
+                        // holder.mStatusIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_lock_outline_black_18dp));
+
+                        return true;
+                    }
+                }
+                catch (Exception e)
+                {
+
+                }
+            }
+        }
+
+        return false;
+
+    }
 
 
 }

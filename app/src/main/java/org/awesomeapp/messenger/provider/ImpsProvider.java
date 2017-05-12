@@ -1305,30 +1305,28 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
         {
             SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-            synchronized (db)
+            if (db.isOpen())
             {
-                if (db.isOpen())
-                {
-                    try {
-                        db.beginTransaction();
+                try {
+                    db.beginTransaction();
 
-                        result = updateInternal(url, values, selection, selectionArgs);
-                        db.setTransactionSuccessful();
+                    result = updateInternal(url, values, selection, selectionArgs);
+                    db.setTransactionSuccessful();
+                    db.endTransaction();
+                }
+                catch (Exception e){
+
+                    if (db.isOpen() && db.inTransaction())
                         db.endTransaction();
-                    }
-                    catch (Exception e){
-
-                        if (db.isOpen() && db.inTransaction())
-                            db.endTransaction();
-                    }
+                }
 
 
-                    if (result > 0) {
-                        getContext().getContentResolver()
-                                .notifyChange(url, null /* observer */, false /* sync */);
-                    }
+                if (result > 0) {
+                    getContext().getContentResolver()
+                            .notifyChange(url, null /* observer */, false /* sync */);
                 }
             }
+
         }
 
         return result;
@@ -4033,7 +4031,7 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
     }
 
     static void log(String message) {
-        LogCleaner.debug(LOG_TAG, message);
+        //LogCleaner.debug(LOG_TAG, message);
     }
 
 }

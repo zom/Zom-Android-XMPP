@@ -19,7 +19,7 @@ package org.awesomeapp.messenger.model;
 
 import net.java.otr4j.session.SessionStatus;
 
-import org.awesomeapp.messenger.crypto.OtrDataHandler.Transfer;
+import org.awesomeapp.messenger.crypto.otr.OtrDataHandler.Transfer;
 
 /**
  * Interface that allows for implementing classes to listen for new message.

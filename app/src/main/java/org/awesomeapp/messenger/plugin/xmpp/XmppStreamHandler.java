@@ -27,6 +27,7 @@ import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.bytestreams.ibb.provider.DataPacketProvider;
+
 import org.xmlpull.v1.XmlPullParser;
 
 import android.util.Log;
@@ -43,7 +44,7 @@ public class XmppStreamHandler {
     private String sessionId;
     private long incomingStanzaCount = 0;
     private long outgoingStanzaCount = 0;
-    private Queue<Packet> outgoingQueue;
+    private Queue<Stanza> outgoingQueue;
     private int maxOutgoingQueueSize = MAX_OUTGOING_QUEUE_SIZE;
     private ConnectionListener mConnectionListener;
 
@@ -105,7 +106,7 @@ public class XmppStreamHandler {
             mConnection.sendStanza(resumePacket);
         } else {
             outgoingStanzaCount = 0;
-            outgoingQueue = new ConcurrentLinkedQueue<Packet>();
+            outgoingQueue = new ConcurrentLinkedQueue<Stanza>();
             isOutgoingSmEnabled = true;
 
             StreamHandlingPacket enablePacket = new StreamHandlingPacket("enable", URN_SM_2);
@@ -161,12 +162,13 @@ public class XmppStreamHandler {
         });
 
         mConnection.addPacketSendingListener(new PacketListener() {
-            public void processPacket(Stanza packet) {
+            public void processStanza(Stanza packet) {
                 // Ignore our own request for acks - they are not counted
+                /**
                 if (!isStanza(packet)) {
                     trace("send " + packet.toXML());
                     return;
-                }
+                }**/
 
                 if (isOutgoingSmEnabled && !outgoingQueue.contains(packet)) {
                     outgoingStanzaCount++;
@@ -207,16 +209,16 @@ public class XmppStreamHandler {
 
         mConnection.addAsyncStanzaListener(new StanzaListener()
         {
-            public void processPacket(Stanza packet) {
-                if (isSmEnabled && isStanza(packet)) {
+            public void processStanza(Stanza stanza) {
+                if (isSmEnabled) {
                     incomingStanzaCount++;
-                    trace("recv " + incomingStanzaCount + " : " + packet.toXML());
+                    trace("recv " + incomingStanzaCount + " : " + stanza.toXML());
                 } else {
-                    trace("recv " + packet.toXML());
+                    trace("recv " + stanza.toXML());
                 }
 
-                if (packet instanceof StreamHandlingPacket) {
-                    StreamHandlingPacket shPacket = (StreamHandlingPacket) packet;
+                if (stanza instanceof StreamHandlingPacket) {
+                    StreamHandlingPacket shPacket = (StreamHandlingPacket) stanza;
                     String name = shPacket.getElementName();
 
                     try {
@@ -251,7 +253,7 @@ public class XmppStreamHandler {
                             trace(outgoingQueue.size() + " in outgoing queue after resume");
 
                             // Resend any unacked packets
-                            for (Packet resendPacket : outgoingQueue) {
+                            for (Stanza resendPacket : outgoingQueue) {
                                 //     mConnection.sendPacket(resendPacket);
                                // mConnection.send(resendPacket);
 
@@ -361,6 +363,11 @@ public class XmppStreamHandler {
             return name;
         }
 
+        public String toString ()
+        {
+            return toXML();
+        }
+
         public String toXML() {
             StringBuilder buf = new StringBuilder();
             buf.append("<").append(getElementName());
@@ -380,7 +387,7 @@ public class XmppStreamHandler {
     }
 
     /** Returns true if the packet is a Stanza as defined in RFC-6121 - a Message, IQ or Presence packet. */
-    public static boolean isStanza(Packet packet) {
+    public static boolean isStanza(Stanza packet) {
         if (packet instanceof Message)
             return true;
         if (packet instanceof IQ)
@@ -390,7 +397,7 @@ public class XmppStreamHandler {
         return false;
     }
 
-    public void queue(Packet packet) {
+    public void queue(Stanza packet) {
         if (outgoingQueue.size() >= maxOutgoingQueueSize) {
             Log.e(XmppConnection.TAG, "outgoing queue full");
             return;

@@ -1,4 +1,4 @@
-package org.awesomeapp.messenger.crypto;
+package org.awesomeapp.messenger.crypto.otr;
 
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.util.Debug;

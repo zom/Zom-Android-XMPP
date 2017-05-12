@@ -295,6 +295,7 @@
     <!-- Other -->
 
     <!-- Other: Slide Menu -->
+    <string name="menu_archive">Archive</string>
     <string name="menu_settings">Settings</string>
     <string name="menu_sign_out">Sign out</string>
     <!-- Other: Provider -->
@@ -401,5 +402,6 @@
     <string name="title_more">Discover</string>
     <string name="title_me">Me</string>
     <string name="no_photos">Shared and received photos will appear here</string>
+
 
 </resources>

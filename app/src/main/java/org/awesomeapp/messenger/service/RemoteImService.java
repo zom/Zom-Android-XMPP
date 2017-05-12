@@ -51,9 +51,9 @@ import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.MainActivity;
 import org.awesomeapp.messenger.Preferences;
 import org.awesomeapp.messenger.crypto.IOtrKeyManager;
-import org.awesomeapp.messenger.crypto.OtrAndroidKeyManagerImpl;
-import org.awesomeapp.messenger.crypto.OtrChatManager;
-import org.awesomeapp.messenger.crypto.OtrDebugLogger;
+import org.awesomeapp.messenger.crypto.otr.OtrAndroidKeyManagerImpl;
+import org.awesomeapp.messenger.crypto.otr.OtrChatManager;
+import org.awesomeapp.messenger.crypto.otr.OtrDebugLogger;
 import org.awesomeapp.messenger.model.ConnectionFactory;
 import org.awesomeapp.messenger.model.ConnectionListener;
 import org.awesomeapp.messenger.model.ImConnection;
@@ -263,6 +263,23 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         startForeground(notifyId, getForegroundNotification());
+
+
+    }
+
+    private void checkUpgrade ()
+    {
+        ImApp app = ((ImApp)getApplication());
+
+        if (app.needsAccountUpgrade())
+        {
+            Intent notificationIntent = new Intent(this, MainActivity.class);
+            PendingIntent launchIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent, 0);
+
+            getStatusBarNotifier().notify(getString(R.string.upgrade_action),
+                    getString(R.string.upgrade_desc),getString(R.string.upgrade_desc),notificationIntent, false);
+        }
+
 
     }
     
@@ -591,7 +608,6 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
         ConnectionFactory factory = ConnectionFactory.getInstance();
         try {
-
 
             ImConnection conn = factory.createConnection(settings, this);
             conn.initUser(providerId, accountId);
@@ -958,6 +974,8 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
         if (mNeedCheckAutoLogin && mNetworkState != NetworkConnectivityReceiver.State.NOT_CONNECTED) {
             mNeedCheckAutoLogin = !autoLogin();;
         }
+
+        checkUpgrade();
 
     }
 

@@ -322,7 +322,7 @@
         </activity>
 
         <activity
-            android:name="org.awesomeapp.messenger.ui.legacy.AccountSettingsActivity"
+            android:name="org.awesomeapp.messenger.ui.AccountSettingsActivity"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.PICK" />

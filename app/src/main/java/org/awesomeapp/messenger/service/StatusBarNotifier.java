@@ -82,7 +82,7 @@ public class StatusBarNotifier {
         Bitmap avatar = null;
 
 
-        try { byte[] bdata = DatabaseUtils.getAvatarBytesFromAddress(mContext.getContentResolver(), XmppAddress.stripResource(username), ImApp.SMALL_AVATAR_WIDTH, ImApp.SMALL_AVATAR_HEIGHT);
+        try { byte[] bdata = DatabaseUtils.getAvatarBytesFromAddress(mContext.getContentResolver(), XmppAddress.stripResource(username));
             avatar = BitmapFactory.decodeByteArray(bdata, 0, bdata.length);
         }
         catch (Exception e){}
@@ -223,6 +223,21 @@ public class StatusBarNotifier {
                 mNotificationManager.cancel(info.computeNotificationId());
             }
         }
+    }
+
+    public void notify(String title, String tickerText, String message,
+                        Intent intent, boolean lightWeightNotify) {
+
+        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        NotificationInfo info;
+                info = new NotificationInfo(-1, -1);
+            info.addItem("", title, message, intent);
+
+        mNotificationManager.notify(info.computeNotificationId(),
+                info.createNotification(tickerText, lightWeightNotify, R.drawable.ic_stat_status, null, intent));
+
+
     }
 
     private void notify(String sender, String title, String tickerText, String message,

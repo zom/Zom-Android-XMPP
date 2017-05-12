@@ -1,4 +1,4 @@
-package org.awesomeapp.messenger.crypto;
+package org.awesomeapp.messenger.crypto.otr;
 
 import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.HttpException;

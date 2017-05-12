@@ -1,4 +1,4 @@
-package org.awesomeapp.messenger.crypto;
+package org.awesomeapp.messenger.crypto.otr;
 
 // Originally: package com.zadov.beem;
 
@@ -6,7 +6,6 @@ import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
 import org.awesomeapp.messenger.push.PushManager;
 import org.awesomeapp.messenger.push.WhitelistTokenTlvHandler;
-import org.awesomeapp.messenger.push.model.PersistedPushToken;
 import org.awesomeapp.messenger.ui.legacy.SmpResponseActivity;
 import org.awesomeapp.messenger.model.Contact;
 import org.awesomeapp.messenger.model.Message;
@@ -40,7 +39,6 @@ import net.java.otr4j.session.SessionStatus;
 import net.java.otr4j.session.TLV;
 import android.content.Context;
 import android.content.Intent;
-import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
@@ -738,6 +736,31 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
         {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Send a ChatSecure-Push "Knock" Push Message to the remote peer in the
+     * given {@param sessionID}.
+     */
+    public void sendKnockPushMessage(@NonNull final String localId, final String remoteId) {
+
+        mApp.getPushManager().sendPushMessageToPeer(
+                PushManager.stripJabberIdResource(localId),
+                PushManager.stripJabberIdResource(remoteId),
+                new PushSecureClient.RequestCallback<org.chatsecure.pushsecure.response.Message>() {
+                    @Override
+                    public void onSuccess(@NonNull org.chatsecure.pushsecure.response.Message response) {
+                        if (Debug.DEBUG_ENABLED)
+                            Log.d(TAG, "Sent push message to " + remoteId);
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Throwable t) {
+                        if (Debug.DEBUG_ENABLED)
+                            Log.d(TAG, "Failed to send push message to " + remoteId);
+                    }
+                });
+
     }
 
     /**

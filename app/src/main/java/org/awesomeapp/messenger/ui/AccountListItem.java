@@ -24,17 +24,13 @@ import org.awesomeapp.messenger.model.ImConnection;
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.service.ImServiceConstants;
-import org.awesomeapp.messenger.ui.legacy.AccountSettingsActivity;
-import org.awesomeapp.messenger.ui.legacy.SignInHelper;
 
 import android.app.Activity;
 import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.os.Handler;
 import android.os.Message;
 import android.os.RemoteException;

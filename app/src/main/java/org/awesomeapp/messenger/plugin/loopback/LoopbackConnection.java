@@ -14,12 +14,14 @@ import org.awesomeapp.messenger.model.Message;
 import org.awesomeapp.messenger.model.Presence;
 import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
 import org.awesomeapp.messenger.provider.Imps;
+import org.jxmpp.jid.Jid;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import android.content.ContentResolver;
@@ -93,6 +95,10 @@ public class LoopbackConnection extends ImConnection {
                 session.onReceiveMessage(rec);
             }
 
+            @Override
+            public boolean resourceSupportsOmemo(Jid jid) {
+                return false;
+            }
         };
     }
 
@@ -323,4 +329,16 @@ public class LoopbackConnection extends ImConnection {
 
         //sendChatState (session, isTyping ? ChatSTate.paused : ChatState.composing);
     }
+
+    @Override
+    public List getFingerprints (String address)
+    {
+        return null;
+    }
+
+    public void broadcastMigrationIdentity (String newIdentity)
+    {
+        //nothing to do here
+    }
+
 }

@@ -139,5 +139,10 @@ interface IChatSession {
      * set typing active indicator for contact
      **/
      void sendTypingStatus (boolean isTyping);
+
+    /**
+     * is ready to send and receive encyprted messages
+     **/
+     boolean isEncrypted ();
 }
 

@@ -121,6 +121,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="10dp"
+            android:id="@+id/listOtr"
+            android:visibility="gone"
+
             >
 
             <ImageView
@@ -159,6 +162,47 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:id="@+id/listOmemo"
+            android:visibility="gone"
+            >
+
+            <ImageView
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:id="@+id/qrcodeOmemo"
+                android:background="#dddddd"
+                android:src="@drawable/qr"
+                android:layout_alignParentLeft="true"
+                />
+
+            <org.ironrabbit.type.CustomTypefaceTextView android:id="@+id/tvFingerprintOmemo"
+                android:selectAllOnFocus="true"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="6dp"
+                android:autoLink="none"
+                android:text=""
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="?contactTextSecondary"
+
+                android:layout_toRightOf="@+id/qrcodeOmemo"
+                android:layout_centerVertical="true"
+                />
+            <ImageView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:id="@+id/qrshareOmemo"
+                android:layout_alignParentRight="true"
+                android:src="@android:drawable/ic_menu_share"
+                android:padding="6dp"
+                android:layout_margin="1dp"
+                />
+
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:padding="10dp">
             <org.ironrabbit.type.CustomTypefaceButton android:id="@+id/btnVerify"
                 android:layout_width="wrap_content"
@@ -167,6 +211,7 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="?contactTextSecondary"
                 android:onClick="verifyClicked"
+                android:visibility="gone"
                 >
 
             </org.ironrabbit.type.CustomTypefaceButton>
@@ -174,12 +219,11 @@
         </RelativeLayout>
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/fragment_container"
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="300dp" >
-        </LinearLayout>
+    <LinearLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:orientation="vertical"></LinearLayout>
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"

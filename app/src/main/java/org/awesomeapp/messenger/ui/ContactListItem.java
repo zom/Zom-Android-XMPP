@@ -235,6 +235,10 @@ public class ContactListItem extends FrameLayout {
             });
 
         }
+        else if (subStatus == Imps.ContactsColumns.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING)
+        {
+
+        }
         else {
             holder.mSubBox.setVisibility(View.GONE);
 

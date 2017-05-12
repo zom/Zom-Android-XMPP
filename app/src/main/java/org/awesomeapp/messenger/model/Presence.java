@@ -75,8 +75,20 @@ public final class Presence implements Parcelable {
         this(Presence.OFFLINE, null, null, null, CLIENT_TYPE_DEFAULT, null, null);
     }
 
+    public Presence(Date lastSeen) {
+        this(Presence.OFFLINE, null, null, null, CLIENT_TYPE_DEFAULT, null, null);
+        mLastSeen = lastSeen;
+    }
+
+
     public Presence(int status, String statusText, int clientType) {
         this(status, statusText, null, null, clientType);
+
+    }
+
+    public Presence(int status, String statusText, int clientType, Date lastSeen) {
+        this(status, statusText, null, null, clientType);
+        this.mLastSeen = lastSeen;
     }
 
     public Presence(int status, String statusText, byte[] avatarData, String avatarType,

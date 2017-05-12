@@ -17,7 +17,6 @@
 
 package org.awesomeapp.messenger.service.adapters;
 
-import org.awesomeapp.messenger.crypto.OtrChatManager;
 import org.awesomeapp.messenger.service.IChatSessionManager;
 import org.awesomeapp.messenger.service.IConnectionListener;
 import org.awesomeapp.messenger.service.IContactListManager;
@@ -36,12 +35,12 @@ import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.service.RemoteImService;
 
 import org.awesomeapp.messenger.tasks.ChatSessionInitTask;
-import org.awesomeapp.messenger.ui.ConversationListFragment;
 import org.awesomeapp.messenger.util.Debug;
 
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import android.content.ContentResolver;
@@ -463,8 +462,8 @@ public class ImConnectionAdapter extends org.awesomeapp.messenger.service.IImCon
                                     String remoteAddress = c.getString(3);
                                     boolean startCrypto = false;
 
-                                    if (remoteAddress != null)
-                                        new ChatSessionInitTask((ImApp) getContext().getApplication(), mProviderId, mAccountId, chatType, startCrypto).executeOnExecutor(ImApp.sThreadPoolExecutor,remoteAddress);
+                                    //if (remoteAddress != null)
+                                      //  new ChatSessionInitTask((ImApp) getContext().getApplication(), mProviderId, mAccountId, chatType, startCrypto).executeOnExecutor(ImApp.sThreadPoolExecutor,remoteAddress);
                                 }
                             }
                             c.close();
@@ -498,9 +497,9 @@ public class ImConnectionAdapter extends org.awesomeapp.messenger.service.IImCon
                 try {
                     Collection<ChatSessionAdapter> adapters = mChatSessionManager.mActiveChatSessionAdapters.values();
 
-                  //  for (ChatSessionAdapter session : adapters) {
-                  //      session.sendPostponedMessages();
-                  //  }
+                    for (ChatSessionAdapter session : adapters) {
+                        session.sendPostponedMessages();
+                    }
                 }
                 catch (ConcurrentModificationException cme)
                 {
@@ -623,4 +622,20 @@ public class ImConnectionAdapter extends org.awesomeapp.messenger.service.IImCon
             mConnection.sendTypingStatus(to,isTyping);
 
     }
+
+    public void broadcastMigrationIdentity(String address)
+    {
+        if (mConnection != null)
+            mConnection.broadcastMigrationIdentity(address);
+
+    }
+
+    public List getFingerprints (String address)
+    {
+        if (mConnection != null)
+            return mConnection.getFingerprints(address);
+        else
+            return null;
+    }
+
 }

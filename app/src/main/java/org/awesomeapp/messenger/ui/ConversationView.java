@@ -27,7 +27,6 @@ import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.database.CharArrayBuffer;
 import android.database.ContentObserver;
@@ -46,6 +45,7 @@ import android.os.Bundle;
 import android.os.Message;
 import android.os.RemoteException;
 import android.provider.Browser;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -68,7 +68,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
-import android.view.TextureView;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
@@ -81,18 +80,18 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import net.java.otr4j.session.SessionStatus;
 
 import org.awesomeapp.messenger.ImApp;
+import org.awesomeapp.messenger.MainActivity;
 import org.awesomeapp.messenger.Preferences;
 import org.awesomeapp.messenger.bho.DictionarySearch;
 import org.awesomeapp.messenger.crypto.IOtrChatSession;
-import org.awesomeapp.messenger.crypto.OtrAndroidKeyManagerImpl;
-import org.awesomeapp.messenger.crypto.OtrChatManager;
+import org.awesomeapp.messenger.crypto.otr.OtrAndroidKeyManagerImpl;
+import org.awesomeapp.messenger.crypto.otr.OtrChatManager;
 import org.awesomeapp.messenger.model.Address;
 import org.awesomeapp.messenger.model.Contact;
 import org.awesomeapp.messenger.model.ImConnection;
@@ -100,7 +99,6 @@ import org.awesomeapp.messenger.model.ImErrorInfo;
 import org.awesomeapp.messenger.model.Presence;
 import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
 import org.awesomeapp.messenger.provider.Imps;
-import org.awesomeapp.messenger.provider.ImpsAddressUtils;
 import org.awesomeapp.messenger.service.IChatListener;
 import org.awesomeapp.messenger.service.IChatSession;
 import org.awesomeapp.messenger.service.IChatSessionManager;
@@ -127,7 +125,6 @@ import org.awesomeapp.messenger.util.Debug;
 import org.awesomeapp.messenger.util.GiphyAPI;
 import org.awesomeapp.messenger.util.LogCleaner;
 import org.awesomeapp.messenger.util.SystemServices;
-import org.ironrabbit.type.CustomTypefaceManager;
 import org.ironrabbit.type.CustomTypefaceSpan;
 
 import java.net.URLEncoder;
@@ -275,18 +272,27 @@ public class ConversationView {
 
             try
             {
+
+                if (mConn == null)
+                    checkConnection();
+
                 IContactListManager manager = mConn.getContactListManager();
                 Contact contact = manager.getContactByAddress(mRemoteAddress);
 
-                if (contact != null && contact.getPresence() != null) {
+                if (contact != null) {
 
-                    if (contact.getPresence().getStatus() == Presence.AVAILABLE) {
+                    if (contact.getPresence() != null && contact.getPresence().getStatus() == Presence.AVAILABLE) {
                         mLastSeen = contact.getPresence().getLastSeen();
                         mActivity.updateLastSeen(mLastSeen);
                     }
 
+                    if (!TextUtils.isEmpty(contact.getForwardingAddress()))
+                    {
+                        showContactMoved (contact);
+                    }
+
                 }
-                
+
                 if ((mLastSessionStatus == null || mLastSessionStatus == SessionStatus.PLAINTEXT)) {
 
                     //boolean otrPolicyAuto = mActivity.getOtrPolicy() == OtrPolicy.OTRL_POLICY_ALWAYS
@@ -300,9 +306,7 @@ public class ConversationView {
                         return;
 
 
-
                     IOtrChatSession otrChatSession = mCurrentChatSession.getDefaultOtrChatSession();
-
 
                     if (otrChatSession != null && (!isGroupChat()))
                     {
@@ -379,8 +383,7 @@ public class ConversationView {
     }
 
     public void setOTRState(boolean otrEnabled) {
-
-
+        
         try {
 
             if (mCurrentChatSession == null)
@@ -392,7 +395,6 @@ public class ConversationView {
 
                 if (otrChatSession != null)
                 {
-
                     if (otrEnabled && (otrChatSession.getChatStatus() != SessionStatus.ENCRYPTED.ordinal())) {
 
                         otrChatSession.startChatEncryption();
@@ -1054,8 +1056,8 @@ public class ConversationView {
 
         if (mLastIsTyping != isTyping) {
             try {
-                mConn.sendTypingStatus(mRemoteAddress, isTyping);
-
+                if (mConn != null)
+                    mConn.sendTypingStatus(mRemoteAddress, isTyping);
             } catch (Exception ie) {
                 Log.e(ImApp.LOG_TAG, "error sending typing status", ie);
             }
@@ -1262,24 +1264,14 @@ public class ConversationView {
 
             mSubscriptionStatus = c.getInt(SUBSCRIPTION_STATUS_COLUMN);
             if (mSubscriptionStatus == Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING) {
-              //  bindSubscription(mProviderId, mRemoteAddress);
-
-                new android.support.v7.app.AlertDialog.Builder(mActivity)
-                        .setTitle(mActivity.getString(R.string.add_friends))
-                        .setMessage(mContext.getString(R.string.subscription_notify_text, mRemoteAddress))
-                        .setPositiveButton(mActivity.getString(R.string.accept_invitation), new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                approveSubscription();
-                            }
-                        })
-                        .setNegativeButton(mActivity.getString(R.string.decline_subscription), new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                // do nothing
-                            }
-                        })
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .show();
-
+                Snackbar sb = Snackbar.make(mHistory, mContext.getString(R.string.subscription_prompt, mRemoteNickname), Snackbar.LENGTH_LONG);
+                sb.setAction(mActivity.getString(R.string.approve_subscription), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        approveSubscription();
+                    }
+                });
+                sb.show();
             }
 
         }
@@ -1443,18 +1435,7 @@ public class ConversationView {
 
             c.close();
 
-            mCurrentChatSession = getChatSession();
-
-            if (mCurrentChatSession == null)
-                mCurrentChatSession = createChatSession();
-
-            if (mCurrentChatSession != null) {
-                isServiceUp = true;
-
-            }
-
-
-            updateChat();
+            initSession ();
 
             if (mRemoteNickname == null)
                 if (TextUtils.isEmpty(name))
@@ -1470,6 +1451,31 @@ public class ConversationView {
             }
         }
 
+    }
+
+    private void initSession ()
+    {
+        mHandler.post(mUpdateChatCallback);
+
+        new Thread ()
+        {
+            public void run ()
+            {
+
+                mCurrentChatSession = getChatSession();
+
+                if (mCurrentChatSession == null)
+                    mCurrentChatSession = createChatSession();
+
+                if (mCurrentChatSession != null) {
+                    isServiceUp = true;
+                }
+
+
+                mHandler.post(mUpdateChatCallback);
+
+            }
+        }.start();
     }
 
 
@@ -1668,7 +1674,7 @@ public class ConversationView {
 
     public void refreshSession ()
     {
-        setOTRState(false);
+     //   setOTRState(false);
         setOTRState(true);
     }
 
@@ -1718,11 +1724,14 @@ public class ConversationView {
         intent.putExtra("account", mAccountId);
         intent.putExtra("contactId", mLastChatId);
 
-        try {
-            IOtrChatSession otrChatSession = mCurrentChatSession.getDefaultOtrChatSession();
-            intent.putExtra("fingerprint", otrChatSession.getRemoteFingerprint());
+        if (mCurrentChatSession != null) {
+            try {
+                IOtrChatSession otrChatSession = mCurrentChatSession.getDefaultOtrChatSession();
+                if (otrChatSession != null)
+                    intent.putExtra("fingerprint", otrChatSession.getRemoteFingerprint());
+            } catch (RemoteException re) {
+            }
         }
-        catch (RemoteException re){}
 
         mContext.startActivity(intent);
 
@@ -1831,7 +1840,7 @@ public class ConversationView {
                     IChatSessionManager sessionMgr = mConn.getChatSessionManager();
                     if (sessionMgr != null) {
 
-                            IChatSession session = sessionMgr.getChatSession(Address.stripResource(mRemoteAddress));
+                            IChatSession session = sessionMgr.getChatSession(mRemoteAddress);
 
                             return session;
 
@@ -2063,15 +2072,14 @@ public class ConversationView {
 
             }
 
+            boolean isSessionEncrypted = false;
 
-            if (mLastSessionStatus == SessionStatus.PLAINTEXT) {
-
-                mSendButton.setImageResource(R.drawable.ic_send_holo_light);
-                mComposeMessage.setHint(R.string.compose_hint);
-
-
+            try {
+                isSessionEncrypted = mCurrentChatSession.isEncrypted() ||  mLastSessionStatus == SessionStatus.ENCRYPTED;
             }
-            else if (mLastSessionStatus == SessionStatus.ENCRYPTED) {
+            catch (RemoteException re){}
+
+            if (isSessionEncrypted) {
 
                 if (mIsStartingOtr) {
                     mIsStartingOtr = false; //it's started!
@@ -2082,15 +2090,23 @@ public class ConversationView {
                     mSendButton.setImageResource(R.drawable.ic_send_secure);
                 }
 
-                try
-                {
-                    String rFingerprint = otrChatSession.getRemoteFingerprint();
-                    mIsVerified = (OtrChatManager.getInstance().isRemoteKeyVerified(mRemoteAddress, rFingerprint));
+                if (otrChatSession != null) {
+                    try {
+                        String rFingerprint = otrChatSession.getRemoteFingerprint();
+                        mIsVerified = (OtrChatManager.getInstance().isRemoteKeyVerified(mRemoteAddress, rFingerprint));
+                    } catch (RemoteException re) {
+                    }
                 }
-                catch (RemoteException re){}
+
+            }
+            else if (mLastSessionStatus == SessionStatus.PLAINTEXT) {
+
+                mSendButton.setImageResource(R.drawable.ic_send_holo_light);
+                mComposeMessage.setHint(R.string.compose_hint);
 
 
-            } else if (mLastSessionStatus == SessionStatus.FINISHED) {
+            }
+            else if (mLastSessionStatus == SessionStatus.FINISHED) {
 
                 mSendButton.setImageResource(R.drawable.ic_send_holo_light);
                 mComposeMessage.setHint(R.string.compose_hint);
@@ -2768,7 +2784,7 @@ public class ConversationView {
                 break;
 
             case Imps.MessageType.OUTGOING:
-            case Imps.MessageType.POSTPONED:
+            case Imps.MessageType.QUEUED:
 
                 int errCode = cursor.getInt(mErrCodeColumn);
                 if (errCode != 0) {
@@ -3073,6 +3089,51 @@ public class ConversationView {
             }
         }
     }
+
+    private void showContactMoved (final Contact contact)
+    {
+        final View viewNotify = mActivity.findViewById(R.id.upgrade_view);
+        ImageView viewImage = (ImageView)mActivity.findViewById(R.id.upgrade_view_image);
+        TextView viewDesc = (TextView)mActivity.findViewById(R.id.upgrade_view_text);
+        Button buttonAction = (Button)mActivity.findViewById(R.id.upgrade_action);
+
+        viewNotify.setVisibility(View.VISIBLE);
+
+        viewDesc.setText(mActivity.getString(R.string.contact_migration_notice) + ' ' + contact.getForwardingAddress());
+
+        buttonAction.setText(R.string.contact_migration_action);
+        buttonAction.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                viewNotify.setVisibility(View.GONE);
+                startChat(contact.getForwardingAddress());
+            }
+        });
+    }
+
+    private void startChat (String username)
+    {
+
+        if (username != null) {
+            new ChatSessionInitTask(((ImApp) mActivity.getApplication()), mProviderId, mAccountId, Imps.Contacts.TYPE_NORMAL, true) {
+                @Override
+                protected void onPostExecute(Long chatId) {
+
+                    if (chatId != -1 && true) {
+                        Intent intent = new Intent(mActivity, ConversationDetailActivity.class);
+                        intent.putExtra("id", chatId);
+                        mActivity.startActivity(intent);
+                    }
+
+                    super.onPostExecute(chatId);
+                }
+
+            }.executeOnExecutor(ImApp.sThreadPoolExecutor, username);
+
+            mActivity.finish();
+        }
+    }
+
 
 
 }

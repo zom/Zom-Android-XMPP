@@ -375,7 +375,8 @@ public class PushManager {
                 Uri persistedTokenUri = context.getContentResolver().insert(PushDatabase.Tokens.CONTENT_URI, tokenValues);
                 if (Debug.DEBUG_ENABLED)
                     Timber.d("Inserted token %s for recipient %s issuer %s. Uri %s", response.token, recipientIdentifier, issuerIdentifier, persistedTokenUri);
-                logAllTokens();
+
+                //logAllTokens();
 
                 String persistedTokenId = persistedTokenUri.getLastPathSegment();
                 Cursor persistedTokenCursor = context.getContentResolver().query(Uri.withAppendedPath(PushDatabase.Tokens.CONTENT_URI, persistedTokenId), null, null, null, null);
@@ -849,13 +850,14 @@ public class PushManager {
 
         if (nonIssuedTokens != null) nonIssuedTokens.close();
 
-        if (Debug.DEBUG_ENABLED)
-            Timber.d(log.toString());
+      //  if (Debug.DEBUG_ENABLED)
+        //    Timber.d(log.toString());
     }
 
     private void logAllTokens() {
 
-        if (Debug.DEBUG_ENABLED) {
+        //if (Debug.DEBUG_ENABLED) {
+        if (false) {
             StringBuilder log = new StringBuilder("All Whitelist Tokens:\nId\tRecipient\tIssuer\tIssued\tToken\n");
 
             Cursor allTokens = context.getContentResolver().query(PushDatabase.Tokens.CONTENT_URI, null, null, null, PushDatabase.Tokens.CREATED_DATE + " DESC");

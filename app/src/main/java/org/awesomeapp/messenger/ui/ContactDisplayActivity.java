@@ -1,23 +1,16 @@
 package org.awesomeapp.messenger.ui;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.RemoteException;
-import android.preference.PreferenceManager;
-import android.provider.Settings;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
@@ -33,8 +26,8 @@ import android.widget.TextView;
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.MainActivity;
 import org.awesomeapp.messenger.crypto.IOtrChatSession;
-import org.awesomeapp.messenger.crypto.OtrAndroidKeyManagerImpl;
-import org.awesomeapp.messenger.crypto.OtrChatManager;
+import org.awesomeapp.messenger.crypto.omemo.Omemo;
+import org.awesomeapp.messenger.crypto.otr.OtrChatManager;
 import org.awesomeapp.messenger.model.Contact;
 import org.awesomeapp.messenger.model.ImErrorInfo;
 import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
@@ -47,14 +40,13 @@ import org.awesomeapp.messenger.tasks.ChatSessionInitTask;
 import org.awesomeapp.messenger.ui.legacy.DatabaseUtils;
 import org.awesomeapp.messenger.ui.onboarding.OnboardingManager;
 import org.awesomeapp.messenger.ui.qr.QrDisplayActivity;
-import org.awesomeapp.messenger.ui.qr.QrGenAsyncTask;
-import org.awesomeapp.messenger.ui.qr.QrScanActivity;
 import org.awesomeapp.messenger.ui.qr.QrShareAsyncTask;
-import org.awesomeapp.messenger.util.LogCleaner;
-import org.ironrabbit.type.CustomTypefaceManager;
+import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.stringprep.XmppStringprepException;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import im.zom.messenger.R;
 
@@ -67,7 +59,9 @@ public class ContactDisplayActivity extends BaseActivity {
     private long mProviderId = -1;
     private long mAccountId = -1;
     private IImConnection mConn;
-    private String mRemoteFingerprint;
+
+    private String mRemoteOtrFingerprint;
+    private List<String> mRemoteOmemoFingerprints;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,35 +73,30 @@ public class ContactDisplayActivity extends BaseActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-       // applyStyleForToolbar();
-
-        mContactId = (int)getIntent().getLongExtra("contactId",-1);
+        mContactId = (int) getIntent().getLongExtra("contactId", -1);
 
         mNickname = getIntent().getStringExtra("nickname");
         mUsername = getIntent().getStringExtra("address");
         mProviderId = getIntent().getLongExtra("provider", -1);
         mAccountId = getIntent().getLongExtra("account", -1);
-        mRemoteFingerprint = getIntent().getStringExtra("fingerprint");
 
-        mConn = ((ImApp)getApplication()).getConnection(mProviderId,mAccountId);
+        String remoteFingerprint = getIntent().getStringExtra("fingerprint");
+
+        mConn = ((ImApp) getApplication()).getConnection(mProviderId, mAccountId);
 
         if (TextUtils.isEmpty(mNickname)) {
             mNickname = mUsername;
             mNickname = mNickname.split("@")[0].split("\\.")[0];
         }
 
-        if (mRemoteFingerprint == null)
-        {
-            mRemoteFingerprint = OtrChatManager.getInstance().getRemoteKeyFingerprint(mUsername);
-        }
 
         setTitle("");
 
-        TextView tv = (TextView)findViewById(R.id.tvNickname);
-        tv = (TextView)findViewById(R.id.tvNickname);
+        TextView tv = (TextView) findViewById(R.id.tvNickname);
+        tv = (TextView) findViewById(R.id.tvNickname);
         tv.setText(mNickname);
 
-        tv = (TextView)findViewById(R.id.tvUsername);
+        tv = (TextView) findViewById(R.id.tvUsername);
         tv.setText(mUsername);
 
         if (!TextUtils.isEmpty(mUsername)) {
@@ -123,90 +112,6 @@ public class ContactDisplayActivity extends BaseActivity {
             }
         }
 
-        ImageView btnQrShare = (ImageView) findViewById(R.id.qrshare);
-        ImageView iv = (ImageView)findViewById(R.id.qrcode);
-        tv = (TextView)findViewById(R.id.tvFingerprint);
-
-        Button btnVerify = (Button)findViewById(R.id.btnVerify);
-
-
-        try {
-
-
-            ArrayList<String> fingerprints = OtrChatManager.getInstance().getRemoteKeyFingerprints(mUsername);
-
-            if (!fingerprints.contains(mRemoteFingerprint))
-            {
-                throw new Exception("Invalid key: " + mRemoteFingerprint);
-            }
-
-
-
-            if (mRemoteFingerprint != null) {
-
-                if (!TextUtils.isEmpty(mRemoteFingerprint)) {
-                    tv.setText(prettyPrintFingerprint(mRemoteFingerprint));
-
-                    iv.setOnClickListener(new View.OnClickListener() {
-
-                        @Override
-                        public void onClick(View v) {
-
-                            String inviteString;
-                            try {
-                                inviteString = OnboardingManager.generateInviteLink(ContactDisplayActivity.this, mUsername, mRemoteFingerprint, mNickname);
-
-                                Intent intent = new Intent(ContactDisplayActivity.this, QrDisplayActivity.class);
-                                intent.putExtra(Intent.EXTRA_TEXT, inviteString);
-                                intent.setType("text/plain");
-                                startActivity(intent);
-
-                            } catch (IOException e) {
-                                // TODO Auto-generated catch block
-                                e.printStackTrace();
-                            }
-
-                        }
-
-                    });
-
-                    btnQrShare.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-
-                            try {
-                                String inviteLink = OnboardingManager.generateInviteLink(ContactDisplayActivity.this, mUsername, mRemoteFingerprint, mNickname);
-                                new QrShareAsyncTask(ContactDisplayActivity.this).execute(inviteLink, mNickname);
-                            } catch (IOException ioe) {
-                                Log.e(ImApp.LOG_TAG, "couldn't generate QR code", ioe);
-                            }
-                        }
-                    });
-
-                    if (OtrChatManager.getInstance().isRemoteKeyVerified(mUsername, mRemoteFingerprint))
-                        btnVerify.setVisibility(View.GONE);
-
-
-                } else {
-                    iv.setVisibility(View.GONE);
-                    tv.setVisibility(View.GONE);
-                    btnQrShare.setVisibility(View.GONE);
-                    btnVerify.setVisibility(View.GONE);
-
-                }
-            }
-            else {
-                iv.setVisibility(View.GONE);
-                tv.setVisibility(View.GONE);
-                btnQrShare.setVisibility(View.GONE);
-                btnVerify.setVisibility(View.GONE);
-            }
-        }
-        catch (Exception e)
-        {
-            Log.e(ImApp.LOG_TAG,"error displaying contact",e);
-        }
-
         View btn = findViewById(R.id.btnStartChat);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -217,9 +122,136 @@ public class ContactDisplayActivity extends BaseActivity {
             }
         });
 
-//        if (mContactId != -1)
-  //          showGallery (mContactId);
 
+        new AsyncTask<String, Void, Boolean>()
+        {
+            @Override
+            protected Boolean doInBackground(String... strings) {
+
+                mRemoteOtrFingerprint = strings[0];
+
+                if (mRemoteOtrFingerprint == null) {
+                    mRemoteOtrFingerprint = OtrChatManager.getInstance().getRemoteKeyFingerprint(mUsername);
+                }
+
+
+                try {
+                    mRemoteOmemoFingerprints = mConn.getFingerprints(mUsername);
+                }
+                catch (RemoteException re)
+                {
+
+                }
+
+                return true;
+            }
+
+            @Override
+            protected void onPostExecute(Boolean success) {
+                super.onPostExecute(success);
+
+                displayOtrFingerprints (mRemoteOtrFingerprint);
+                displayOmemoFingerprints (mRemoteOmemoFingerprints);
+            }
+        }.execute(remoteFingerprint);
+
+
+    }
+
+    private void displayOtrFingerprints (final String remoteFingerprint)
+    {
+
+        try {
+
+            ImageView btnQrShare = (ImageView) findViewById(R.id.qrshare);
+            ImageView iv = (ImageView)findViewById(R.id.qrcode);
+            TextView tv = (TextView)findViewById(R.id.tvFingerprint);
+
+            Button btnVerify = (Button)findViewById(R.id.btnVerify);
+
+            ArrayList<String> fingerprints = OtrChatManager.getInstance().getRemoteKeyFingerprints(mUsername);
+
+            if (!TextUtils.isEmpty(remoteFingerprint)) {
+
+
+                if (!fingerprints.contains(remoteFingerprint))
+                {
+                    throw new Exception("Invalid key: " + remoteFingerprint);
+                }
+
+                findViewById(R.id.listOtr).setVisibility(View.VISIBLE);
+
+                tv.setText(prettyPrintFingerprint(remoteFingerprint));
+
+                iv.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+
+                        String inviteString;
+                        try {
+                            inviteString = OnboardingManager.generateInviteLink(ContactDisplayActivity.this, mUsername, remoteFingerprint, mNickname);
+
+                            Intent intent = new Intent(ContactDisplayActivity.this, QrDisplayActivity.class);
+                            intent.putExtra(Intent.EXTRA_TEXT, inviteString);
+                            intent.setType("text/plain");
+                            startActivity(intent);
+
+                        } catch (IOException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+
+                    }
+
+                });
+
+                btnQrShare.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        try {
+                            String inviteLink = OnboardingManager.generateInviteLink(ContactDisplayActivity.this, mUsername, remoteFingerprint, mNickname);
+                            new QrShareAsyncTask(ContactDisplayActivity.this).execute(inviteLink, mNickname);
+                        } catch (IOException ioe) {
+                            Log.e(ImApp.LOG_TAG, "couldn't generate QR code", ioe);
+                        }
+                    }
+                });
+
+                if (!OtrChatManager.getInstance().isRemoteKeyVerified(mUsername, remoteFingerprint))
+                    btnVerify.setVisibility(View.VISIBLE);
+
+
+            }
+
+        }
+        catch (Exception e)
+        {
+            Log.e(ImApp.LOG_TAG,"error displaying contact",e);
+        }
+
+
+    }
+
+    private void displayOmemoFingerprints (List<String> omemoFps)
+    {
+        try {
+
+            if (omemoFps != null && omemoFps.size() > 0)
+            {
+                findViewById(R.id.listOmemo).setVisibility(View.VISIBLE);
+
+                TextView tv = (TextView)findViewById(R.id.tvFingerprintOmemo);
+                tv.setText((String)omemoFps.get(0));
+
+            }
+
+        }
+        catch (Exception xe)
+        {
+            Log.e(ImApp.LOG_TAG,"error displaying contact",xe);
+        }
     }
 
 

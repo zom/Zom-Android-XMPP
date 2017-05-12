@@ -1,18 +1,3 @@
-buildscript {
-    repositories {
-        maven {
-            url 'https://oss.sonatype.org/content/repositories/snapshots'
-        }
-        mavenCentral()
-        jcenter()
-        maven { url "https://jitpack.io" }
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.0'
-        classpath files('../libs/gradle-witness.jar')
-    }
-}
-
 apply plugin: 'com.android.application'
 apply plugin: 'witness'
 
@@ -27,13 +12,12 @@ def getVersionName = { ->
 }
 
 android {
-
     compileSdkVersion project.ext.compileSdkVersion
     buildToolsVersion project.ext.buildToolsVersion
 
     defaultConfig {
         applicationId 'im.zom.messenger'
-        versionCode 1503005
+        versionCode 1510005
         versionName getVersionName()
         archivesBaseName = "Zom-$versionName"
         minSdkVersion project.ext.minSdkVersion
@@ -41,11 +25,11 @@ android {
         testApplicationId 'im.zom.messenger.test'
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
         multiDexEnabled true
-
     }
 
     dexOptions {
-        javaMaxHeapSize "2g"
+        javaMaxHeapSize "1536m"
+ 	    preDexLibraries true
     }
 
     buildTypes {
@@ -101,47 +85,53 @@ android {
 }
 
 dependencies {
+    compile fileTree(include: '*.jar', dir: 'libs')
     compile 'com.android.support:multidex:1.0.1'
-
     compile 'net.zetetic:android-database-sqlcipher:3.5.4@aar'
     compile project(':otr4jandroid')
     compile project(':tibetanTextLibrary')
     compile project(':chatsecure-push:sdk')
-
     compile 'com.google.zxing:core:3.0.0'
-
     compile 'commons-codec:commons-codec:1.9'
     compile 'commons-io:commons-io:2.4'
-
     compile 'org.thoughtcrime.ssl.pinning:AndroidPinning:1.0.0'
     compile 'com.android.support:design:25.2.0'
     compile 'com.android.support:recyclerview-v7:25.2.0'
     compile 'com.android.support:support-v4:25.2.0'
     compile project.ext.appcompat
-
     compile 'info.guardianproject.cacheword:cachewordlib:0.1.1'
     compile 'info.guardianproject.iocipher:IOCipher:0.4'
-
     compile 'info.guardianproject.netcipher:netcipher:2.0.0-alpha1'
     compile 'info.guardianproject.netcipher:netcipher-httpclient:2.0.0-alpha1'
     compile 'cz.msebera.android:httpclient:4.4.1.2'
-
     compile 'info.guardianproject.panic:panic:0.5'
+    compile 'de.measite.minidns:minidns-hla:0.2.1'
 
-    compile "org.igniterealtime.smack:smack-android-extensions:4.1.7"
-    compile "org.igniterealtime.smack:smack-experimental:4.1.7"
-    compile "org.igniterealtime.smack:smack-tcp:4.1.7"
+    // https://mvnrepository.com/artifact/org.jxmpp/jxmpp-core
+    compile 'org.jxmpp:jxmpp-core:0.5.0'
+    compile 'org.jxmpp:jxmpp-jid:0.5.0'
+    compile 'org.jxmpp:jxmpp-util-cache:0.5.0'
+
+    // for OMEMO support
+    compile 'org.whispersystems:signal-protocol-java:2.3.0'
+    compile 'org.bouncycastle:bcprov-jdk15on:1.56'
+    compile 'org.whispersystems:curve25519-android:0.3.0'
+
+    // https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java
+    compile 'com.google.protobuf:protobuf-java:2.5.0'
 
     compile 'com.github.ge0rg:MemorizingTrustManager:9e30ffdf7d'
-
     compile 'org.ocpsoft.prettytime:prettytime:4.0.0.Final'
     compile 'com.theartofdev.edmodo:android-image-cropper:2.0.0'
     compile 'de.hdodenhof:circleimageview:2.0.0'
     compile 'com.github.bumptech.glide:glide:3.5.2'
-
     compile 'com.github.javiersantos:AppUpdater:2.5.2'
-    compile 'net.hockeyapp.android:HockeySDK:3.5.0'
-
     compile 'com.github.QuadFlask:colorpicker:0.0.10'
+
+
+    //swipe to reveal code
+    //compile 'com.chauthai.swipereveallayout:swipe-reveal-layout:1.4.0'
+   // compile 'com.hudomju:swipe-to-dismiss-undo:1.0'
+
 
 }

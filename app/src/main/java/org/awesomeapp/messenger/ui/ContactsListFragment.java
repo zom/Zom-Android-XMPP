@@ -74,6 +74,8 @@ public class ContactsListFragment extends Fragment {
     private View mEmptyView;
     String mSearchString = null;
 
+    private boolean mFilterArchive = false;
+
 
     @Nullable
     @Override
@@ -94,6 +96,14 @@ public class ContactsListFragment extends Fragment {
         setupRecyclerView(mRecView);
 
         return view;
+    }
+
+    public void setArchiveFilter (boolean filterAchive)
+    {
+        mFilterArchive = filterAchive;
+
+        if (mLoaderManager != null)
+            mLoaderManager.restartLoader(mLoaderId, null, mLoaderCallbacks);
     }
 
     public int getContactCount ()
@@ -129,36 +139,8 @@ public class ContactsListFragment extends Fragment {
 
         }
 
-        /**
-        // init swipe to dismiss logic
-        ItemTouchHelper swipeToDismissTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(
-                ItemTouchHelper.RIGHT, ItemTouchHelper.RIGHT) {
-            @Override
-            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-                // callback for drag-n-drop, false to skip this feature
-                return false;
-            }
 
-            @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
 
-                final long itemId = mAdapter.getItemId( viewHolder.getAdapterPosition());
-                 final String address= ((ContactListRecyclerViewAdapter.ViewHolder)viewHolder).mAddress;
-
-                Snackbar.make(mRecView, "Remove " + address + "?", Snackbar.LENGTH_LONG)
-                        .setAction("Yes", new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                //if they click, then cancel timer that will be used to end the chat
-                                deleteContact(itemId, address);
-
-                            }
-                        }).show();
-            }
-        });
-
-        swipeToDismissTouchHelper.attachToRecyclerView(recyclerView);
-         */
 
     }
 
@@ -358,6 +340,7 @@ public class ContactsListFragment extends Fragment {
         public void onLoadFinished(Loader<Cursor> loader, Cursor newCursor) {
             if (newCursor == null)
                 return; // the app was quit or something while this was working
+
             newCursor.setNotificationUri(getActivity().getContentResolver(), mUri);
 
             mAdapter.changeCursor(newCursor);

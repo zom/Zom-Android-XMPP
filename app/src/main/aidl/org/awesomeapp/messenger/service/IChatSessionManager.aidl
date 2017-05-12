@@ -21,6 +21,7 @@ import org.awesomeapp.messenger.service.IChatSession;
 import org.awesomeapp.messenger.service.IChatSessionListener;
 
 interface IChatSessionManager {
+
     void registerChatSessionListener(IChatSessionListener listener);
     void unregisterChatSessionListener(IChatSessionListener listener);
 
@@ -56,4 +57,5 @@ interface IChatSessionManager {
      * @return a list of IBinders of all active ChatSessions.
      */
     List getActiveChatSessions();
+
 }

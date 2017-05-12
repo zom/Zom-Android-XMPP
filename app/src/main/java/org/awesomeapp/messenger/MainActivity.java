@@ -121,6 +121,8 @@ public class MainActivity extends BaseActivity {
     private MoreFragment mMoreFragment;
     private AccountFragment mAccountFragment;
 
+    private boolean mIsArchiveView = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -142,8 +144,6 @@ public class MainActivity extends BaseActivity {
         mTabLayout = (TabLayout) findViewById(R.id.tabs);
 
         setSupportActionBar(mToolbar);
-
-        setTitle(getString(R.string.app_name_zom));
 
         final ActionBar ab = getSupportActionBar();
 
@@ -233,7 +233,7 @@ public class MainActivity extends BaseActivity {
             }
         });
 
-        setToolbarTitle(1);
+        setToolbarTitle(0);
 
         //don't wnat this to happen to often
         checkForUpdates();
@@ -260,10 +260,21 @@ public class MainActivity extends BaseActivity {
 
         switch (tabPosition) {
             case 0:
-                sb.append(getString(R.string.chats));
+
+
+                if (mIsArchiveView)
+                    sb.append(getString(R.string.title_archive));
+                else
+                    sb.append(getString(R.string.chats));
+
                 break;
             case 1:
-                sb.append(getString(R.string.friends));
+
+                if (mIsArchiveView)
+                    sb.append(getString(R.string.title_archive));
+                else
+                    sb.append(getString(R.string.friends));
+
                 break;
             case 2:
                 sb.append(getString(R.string.title_more));
@@ -314,7 +325,6 @@ public class MainActivity extends BaseActivity {
         } else {
             ImApp app = (ImApp) getApplication();
 
-            app.checkForCrashes(this);
             mApp.maybeInit(this);
             mApp.initAccountInfo();
 
@@ -322,19 +332,7 @@ public class MainActivity extends BaseActivity {
 
         handleIntent();
 
-        if (!checkConnection())
-        {
-            Snackbar sb = Snackbar.make(mViewPager, R.string.error_suspended_connection, Snackbar.LENGTH_LONG);
-            sb.setAction(getString(R.string.connect), new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Intent i = new Intent(MainActivity.this, AccountsActivity.class);
-                            startActivity(i);
-                        }
-                    });
-            sb.show();
-
-        }
+        checkConnection();
 
     }
 
@@ -345,8 +343,30 @@ public class MainActivity extends BaseActivity {
 
                 if (conn.getState() == ImConnection.DISCONNECTED
                         || conn.getState() == ImConnection.SUSPENDED
-                        || conn.getState() == ImConnection.SUSPENDING)
+                        || conn.getState() == ImConnection.SUSPENDING) {
+
+                    Snackbar sb = Snackbar.make(mViewPager, R.string.error_suspended_connection, Snackbar.LENGTH_LONG);
+                    sb.setAction(getString(R.string.connect), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Intent i = new Intent(MainActivity.this, AccountsActivity.class);
+                            startActivity(i);
+                        }
+                    });
+                    sb.show();
+
                     return false;
+                }
+                else if (conn.getState() == ImConnection.LOGGING_IN)
+                {
+                    Snackbar sb = Snackbar.make(mViewPager, R.string.signing_in_wait, Snackbar.LENGTH_LONG);
+                    sb.show();
+                }
+                else if (conn.getState() == ImConnection.LOGGING_OUT)
+                {
+                    Snackbar sb = Snackbar.make(mViewPager, R.string.signing_out_wait, Snackbar.LENGTH_LONG);
+                    sb.show();
+                }
             }
 
             return true;
@@ -633,6 +653,10 @@ public class MainActivity extends BaseActivity {
                 startActivityForResult(sintent,  REQUEST_CHANGE_SETTINGS);
                 return true;
 
+            case R.id.menu_archive:
+                toggleArchiveFilter();
+                return true;
+
             case R.id.menu_lock:
                 handleLock();
                 return true;
@@ -647,6 +671,15 @@ public class MainActivity extends BaseActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void toggleArchiveFilter ()
+    {
+        mIsArchiveView =  !mIsArchiveView;
+
+        setToolbarTitle(mTabLayout.getSelectedTabPosition());
+
+        mConversationList.setArchiveFilter(mIsArchiveView);
     }
 
     public void resetPassphrase ()

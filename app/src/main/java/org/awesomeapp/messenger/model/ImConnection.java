@@ -17,6 +17,7 @@
 
 package org.awesomeapp.messenger.model;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -260,4 +261,7 @@ public abstract class ImConnection {
 
     public abstract void sendTypingStatus (String to, boolean isTyping);
 
+    public abstract List getFingerprints (String address);
+
+    public abstract void broadcastMigrationIdentity (String newIdentity);
 }

@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
+import android.graphics.Canvas;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -44,14 +45,17 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
-
-//import com.bumptech.glide.Glide;
 
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.MainActivity;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.tasks.ChatSessionInitTask;
+import org.awesomeapp.messenger.tasks.MigrateAccountTask;
+import org.awesomeapp.messenger.ui.onboarding.OnboardingAccount;
 import org.awesomeapp.messenger.ui.widgets.ConversationViewHolder;
 
 import im.zom.messenger.R;
@@ -68,6 +72,13 @@ public class ConversationListFragment extends Fragment {
     private View mEmptyView;
     private View mEmptyViewImage;
 
+    private View mUpgradeView;
+    private TextView mUpgradeDesc;
+    private ImageView mUpgradeImage;
+    private Button mUpgradeAction;
+
+    private boolean mFilterArchive = false;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -76,6 +87,20 @@ public class ConversationListFragment extends Fragment {
 
         mRecView =  (RecyclerView)view.findViewById(R.id.recyclerview);
         mEmptyView = view.findViewById(R.id.empty_view);
+
+        mUpgradeView = view.findViewById(R.id.upgrade_view);
+        mUpgradeImage = (ImageView)view.findViewById(R.id.upgrade_view_image);
+        mUpgradeDesc = (TextView)view.findViewById(R.id.upgrade_view_text);
+        mUpgradeAction = (Button)view.findViewById(R.id.upgrade_action);
+
+        mUpgradeAction.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                doUpgrade();
+            }
+        });
+
+
 
 
         mEmptyViewImage = view.findViewById(R.id.empty_view_image);
@@ -96,6 +121,8 @@ public class ConversationListFragment extends Fragment {
         view.setBackgroundColor(themeColorBg);
             */
 
+        checkUpgrade();
+
         return view;
     }
 
@@ -113,10 +140,52 @@ public class ConversationListFragment extends Fragment {
         Cursor cursor = null;
         mAdapter = new ConversationListRecyclerViewAdapter(getActivity(),cursor);
 
-
         // init swipe to dismiss logic
+
         ItemTouchHelper swipeToDismissTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(
                ItemTouchHelper.RIGHT, ItemTouchHelper.RIGHT) {
+
+            public static final float ALPHA_FULL = 1.0f;
+
+            @Override
+            public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
+                // We only want the active item to change
+                if (actionState != ItemTouchHelper.ACTION_STATE_IDLE) {
+                    if (viewHolder instanceof ConversationViewHolder) {
+                        // Let the view holder know that this item is being moved or dragged
+                        ConversationViewHolder itemViewHolder = (ConversationViewHolder) viewHolder;
+                        itemViewHolder.onItemSelected();
+                    }
+                }
+
+                super.onSelectedChanged(viewHolder, actionState);
+            }
+
+            @Override
+            public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+                if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+                    // Fade out the view as it is swiped out of the parent's bounds
+                    final float alpha = ALPHA_FULL - Math.abs(dX) / (float) viewHolder.itemView.getWidth();
+                    viewHolder.itemView.setAlpha(alpha);
+                    viewHolder.itemView.setTranslationX(dX);
+                } else {
+                    super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+                }
+            }
+
+            @Override
+            public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                super.clearView(recyclerView, viewHolder);
+
+                viewHolder.itemView.setAlpha(ALPHA_FULL);
+
+                if (viewHolder instanceof ConversationViewHolder) {
+                    // Tell the view holder it's time to restore the idle state
+                    ConversationViewHolder itemViewHolder = (ConversationViewHolder) viewHolder;
+                    itemViewHolder.onItemClear();
+                }
+            }
+
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
                 // callback for drag-n-drop, false to skip this feature
@@ -138,6 +207,16 @@ public class ConversationListFragment extends Fragment {
 
                 Snackbar.make(mRecView, getString(R.string.action_archived), Snackbar.LENGTH_LONG).show();
             }
+
+            @Override
+            public boolean isLongPressDragEnabled() {
+                return true;
+            }
+
+            @Override
+            public boolean isItemViewSwipeEnabled() {
+                return true;
+            }
         });
         swipeToDismissTouchHelper.attachToRecyclerView(recyclerView);
 
@@ -157,6 +236,14 @@ public class ConversationListFragment extends Fragment {
 
     }
 
+    public void setArchiveFilter (boolean filterAchive)
+    {
+        mFilterArchive = filterAchive;
+
+        if (mLoaderManager != null)
+            mLoaderManager.restartLoader(mLoaderId, null, mLoaderCallbacks);
+    }
+
     private void endConversation (long itemId)
     {
         Uri chatUri = ContentUris.withAppendedId(Imps.Chats.CONTENT_URI, itemId);
@@ -170,6 +257,7 @@ public class ConversationListFragment extends Fragment {
         private final TypedValue mTypedValue = new TypedValue();
         private int mBackground;
         private Context mContext;
+
 
         public ConversationListRecyclerViewAdapter(Context context, Cursor cursor) {
             super(context,cursor);
@@ -191,9 +279,10 @@ public class ConversationListFragment extends Fragment {
 
         @Override
         public ConversationViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            ConversationListItem view = (ConversationListItem)LayoutInflater.from(parent.getContext())
+            View view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.conversation_view, parent, false);
             view.setBackgroundResource(mBackground);
+
             ConversationViewHolder viewHolder = (ConversationViewHolder)view.getTag();
 
             if (viewHolder == null) {
@@ -221,9 +310,11 @@ public class ConversationListFragment extends Fragment {
                 long lastMsgDate = cursor.getLong(ConversationListItem.COLUMN_LAST_MESSAGE_DATE);
                 final int presence = cursor.getInt(ConversationListItem.COLUMN_CONTACT_PRESENCE_STATUS);
 
-                ((ConversationListItem) viewHolder.itemView).bind(viewHolder, chatId, providerId, accountId, address, nickname, type, lastMsg, lastMsgDate, presence, null, true, false);
+                ConversationListItem clItem = ((ConversationListItem)viewHolder.itemView.findViewById(R.id.convoitemview));
 
-                viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                clItem.bind(viewHolder, chatId, providerId, accountId, address, nickname, type, lastMsg, lastMsgDate, presence, null, true, false);
+
+                clItem.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Context context = v.getContext();
@@ -370,5 +461,72 @@ public class ConversationListFragment extends Fragment {
 
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
 
+    }
+
+    private void checkUpgrade ()
+    {
+        if (((ImApp)getActivity().getApplication()).needsAccountUpgrade())
+        {
+            mUpgradeView.setVisibility(View.VISIBLE);
+        }
+
+    }
+
+    private MigrateAccountTask.MigrateAccountListener mMigrateTaskListener;
+
+    private synchronized void doUpgrade () {
+
+        if (mMigrateTaskListener == null) {
+
+            mMigrateTaskListener = new MigrateAccountTask.MigrateAccountListener() {
+                @Override
+                public void migrateComplete(OnboardingAccount account) {
+
+                    mUpgradeAction.setText(getString(R.string.upgrade_complete_action));
+                    mUpgradeAction.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+                            mUpgradeView.setVisibility(View.GONE);
+
+                        }
+                    });
+                }
+
+                @Override
+                public void migrateFailed(long providerId, long accountId) {
+
+                    mUpgradeDesc.setText(getString(R.string.upgrade_failed));
+                    mUpgradeAction.setText(getString(R.string.upgrade_complete_action));
+                    mUpgradeAction.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+                            mUpgradeView.setVisibility(View.GONE);
+
+                        }
+                    });
+                }
+            };
+
+            mUpgradeAction.setText(getString(R.string.upgrade_progress_action));
+            mUpgradeAction.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //do nothing
+
+                }
+            });
+
+            mUpgradeImage.setImageResource(R.drawable.olo_thinking);
+
+
+            ((ImApp) getActivity().getApplication()).doUpgrade(getActivity(), "home.zom.im", mMigrateTaskListener);
+
+        }
+    }
 }

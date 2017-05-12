@@ -573,6 +573,9 @@ public class ConversationDetailActivity extends BaseActivity {
     public void handleSendDelete(IChatSession session, Uri contentUri, String defaultType, boolean delete, boolean resizeImage, boolean importContent) {
         try {
 
+            if (!session.getDefaultOtrChatSession().isChatEncrypted())
+                session.getDefaultOtrChatSession().startChatEncryption();
+
             // import
             SystemServices.FileInfo info = SystemServices.getFileInfoFromURI(this, contentUri);
 
