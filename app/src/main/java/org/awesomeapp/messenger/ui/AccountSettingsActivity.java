@@ -96,7 +96,7 @@ public class AccountSettingsActivity extends PreferenceActivity implements
 
     private boolean mIsMigrating = false;
 
-    private void migrateAccount ()
+    private void migrateAccountConfirmed ()
     {
 
         if (!mIsMigrating) {
@@ -129,6 +129,26 @@ public class AccountSettingsActivity extends PreferenceActivity implements
             maTask.execute(domain);
         }
 
+    }
+
+    private void migrateAccount ()
+    {
+        new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.migrate_menu))
+                .setMessage(getString(R.string.message_upgrade))
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // continue with delete
+                        migrateAccountConfirmed();
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // do nothing
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
     }
 
     private void deleteAccount ()
@@ -289,7 +309,11 @@ public class AccountSettingsActivity extends PreferenceActivity implements
                 }
                 else if(arg0.getItemId() == R.id.menu_migrate) {
 
+
+
                     migrateAccount ();
+
+
                 }
 
                     return false;

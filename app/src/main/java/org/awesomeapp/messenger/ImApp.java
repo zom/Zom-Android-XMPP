@@ -935,6 +935,59 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
     }
 
+    public boolean checkUpgrade ()
+    {
+
+        final Uri uri = Imps.Provider.CONTENT_URI_WITH_ACCOUNT;
+        String[] PROVIDER_PROJECTION = {
+                Imps.Provider._ID,
+                Imps.Provider.ACTIVE_ACCOUNT_ID,
+                Imps.Provider.ACTIVE_ACCOUNT_USERNAME,
+                Imps.Provider.ACTIVE_ACCOUNT_NICKNAME,
+                Imps.Provider.ACTIVE_ACCOUNT_KEEP_SIGNED_IN
+        };
+
+        final Cursor cursorProviders = getContentResolver().query(uri, PROVIDER_PROJECTION,
+                Imps.Provider.CATEGORY + "=?" + " AND " + Imps.Provider.ACTIVE_ACCOUNT_USERNAME + " NOT NULL" /* selection */,
+                new String[]{ImApp.IMPS_CATEGORY} /* selection args */,
+                Imps.Provider.DEFAULT_SORT_ORDER);
+
+        if (cursorProviders != null && cursorProviders.getCount() > 0) {
+            while(cursorProviders.moveToNext()) {
+
+                long providerId = cursorProviders.getLong(0);
+                long accountId = cursorProviders.getLong(1);
+                String username = cursorProviders.getString(2);
+                String nickname = cursorProviders.getString(3);
+                boolean keepSignedIn = cursorProviders.getInt(4) != 0;
+
+                Cursor pCursor = getContentResolver().query(Imps.ProviderSettings.CONTENT_URI, new String[]{Imps.ProviderSettings.NAME, Imps.ProviderSettings.VALUE}, Imps.ProviderSettings.PROVIDER + "=?", new String[]{Long.toString(providerId)}, null);
+
+                Imps.ProviderSettings.QueryMap settings = new Imps.ProviderSettings.QueryMap(
+                        pCursor, getContentResolver(), providerId, false /* don't keep updated */, null /* no handler */);
+
+                username = username + '@' + settings.getDomain();
+                String otrFingerprint = OtrAndroidKeyManagerImpl.getInstance(this).getLocalFingerprint(username);
+
+                if ((!mNeedsAccountUpgrade)
+                        && settings.getDomain().equalsIgnoreCase("dukgo.com") && keepSignedIn)
+                {
+                    mNeedsAccountUpgrade = true;
+                }
+
+                settings.close();
+
+            }
+        }
+
+        if (cursorProviders != null)
+            cursorProviders.close();
+
+
+        return true;
+
+    }
+
     private long mDefaultProviderId = -1;
     private long mDefaultAccountId = -1;
     private String mDefaultUsername = null;

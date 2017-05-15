@@ -89,7 +89,9 @@
 
     <string name="action_undo">Undo</string>
 
-    <string name="message_upgrade_more">  We need to upgrade your Zom account to a new server. We can automatically upgrade you to provide the best performance. If you are an advanced user, you can also choose your own server.</string>
+    <string name="message_upgrade">We need to upgrade your Zom account to a new server. We can automatically upgrade you to provide the best performance.</string>
+
+    <string name="message_upgrade_more">We need to upgrade your Zom account to a new server. We can automatically upgrade you to provide the best performance. If you are an advanced user, you can also choose your own server.</string>
 
     <string name="upgrade_desc">We\'re making improvements around here.\nGet your free upgrade!</string>
 

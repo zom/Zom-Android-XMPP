@@ -235,7 +235,7 @@ public class AccountListItem extends LinearLayout {
                     }
 
                     if (mShowLongName)
-                        mProviderNameText = activeUserName + '@' + userDomain;
+                        mProviderNameText = activeUserName;// + '@' + userDomain;
                     else
                         mProviderNameText = nickname;
 
