@@ -190,6 +190,8 @@ public class ConversationListFragment extends Fragment {
             /* Set your color for positive displacement */
                         p.setARGB(255, 150, 150, 150);
 
+
+
                         // Draw Rect with varying right side, equal to displacement dX
                         c.drawRect((float) itemView.getLeft(), (float) itemView.getTop(), dX,
                                 (float) itemView.getBottom(), p);

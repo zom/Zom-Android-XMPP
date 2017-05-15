@@ -19,6 +19,8 @@ public class ContactViewHolder extends RecyclerView.ViewHolder
     public ContactListItem mView;
     public String mAddress;
     public String mNickname;
+    public int mType;
+
     public long mProviderId;
     public long mAccountId;
     public long mContactId;

@@ -177,7 +177,7 @@ public class ContactsListFragment extends Fragment {
             public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
                 // We only want the active item to change
                 if (actionState != ItemTouchHelper.ACTION_STATE_IDLE) {
-                    if (viewHolder instanceof ConversationViewHolder) {
+                    if (viewHolder instanceof ContactViewHolder) {
                         // Let the view holder know that this item is being moved or dragged
                         ContactViewHolder itemViewHolder = (ContactViewHolder) viewHolder;
                         //itemViewHolder.onItemSelected();
@@ -191,6 +191,14 @@ public class ContactsListFragment extends Fragment {
             public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
                 if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
 
+                    int contactType = Imps.Contacts.TYPE_NORMAL;
+
+                    if (viewHolder instanceof ContactViewHolder) {
+                        // Let the view holder know that this item is being moved or dragged
+                        ContactViewHolder itemViewHolder = (ContactViewHolder) viewHolder;
+                        contactType = itemViewHolder.mType;
+                    }
+
                     // Get RecyclerView item from the ViewHolder
                     View itemView = viewHolder.itemView;
 
@@ -202,11 +210,26 @@ public class ContactsListFragment extends Fragment {
                myself to get a context outside an Activity class -
                feel free to use your own method */
 
-                        icon = BitmapFactory.decodeResource(
-                                getActivity().getResources(), R.drawable.ic_archive_white_24dp);
+                        if (contactType == Imps.Contacts.TYPE_HIDDEN)
+                        {
+                            icon = BitmapFactory.decodeResource(
+                                    getActivity().getResources(), R.drawable.ic_unarchive_white_24dp);
 
-            /* Set your color for positive displacement */
-                        p.setARGB(255, 150, 150, 150);
+                    /* Set your color for positive displacement */
+                            //p.setARGB(255, 150, 255, 150);
+                            p.setColor(getResources().getColor(R.color.holo_green_dark));
+
+
+                        }
+                        else
+                        {
+                            icon = BitmapFactory.decodeResource(
+                                    getActivity().getResources(), R.drawable.ic_archive_white_24dp);
+
+                /* Set your color for positive displacement */
+                            p.setARGB(255, 150, 150, 150);
+
+                        }
 
                         // Draw Rect with varying right side, equal to displacement dX
                         c.drawRect((float) itemView.getLeft(), (float) itemView.getTop(), dX,
@@ -269,14 +292,17 @@ public class ContactsListFragment extends Fragment {
                     final ContactViewHolder itemViewHolder = (ContactViewHolder) viewHolder;
                     //itemViewHolder.onItemClear();
 
+                    final boolean doArchive = (itemViewHolder.mType == Imps.Contacts.TYPE_NORMAL ? true : false);
+
                     //then hide/archive contact
-                    archiveContact(((MainActivity) getActivity()), itemViewHolder.mView.getId(), itemViewHolder.mAddress, itemViewHolder.mProviderId, itemViewHolder.mAccountId, true);
+                    archiveContact(((MainActivity) getActivity()), itemViewHolder.mView.getId(), itemViewHolder.mAddress, itemViewHolder.mProviderId, itemViewHolder.mAccountId, doArchive);
 
                     Snackbar snack = Snackbar.make(mRecView, getString(R.string.action_archived), Snackbar.LENGTH_LONG);
                     snack.setAction(R.string.action_undo, new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            archiveContact(((MainActivity) getActivity()), itemViewHolder.mView.getId(), itemViewHolder.mAddress, itemViewHolder.mProviderId, itemViewHolder.mAccountId, false);
+
+                            archiveContact(((MainActivity) getActivity()), itemViewHolder.mView.getId(), itemViewHolder.mAddress, itemViewHolder.mProviderId, itemViewHolder.mAccountId, !doArchive);
 
                         }
                     });
@@ -429,6 +455,8 @@ public class ContactsListFragment extends Fragment {
 
             viewHolder.mContactId =  cursor.getInt(ContactListItem.COLUMN_CONTACT_ID);
            viewHolder.mAddress =  cursor.getString(ContactListItem.COLUMN_CONTACT_USERNAME);
+            viewHolder.mType =  cursor.getInt(ContactListItem.COLUMN_CONTACT_TYPE);
+
             String nickname =  cursor.getString(ContactListItem.COLUMN_CONTACT_NICKNAME);
 
             if (TextUtils.isEmpty(nickname))
@@ -437,15 +465,15 @@ public class ContactsListFragment extends Fragment {
             }
             else
             {
-            viewHolder.mProviderId = cursor.getLong(ContactListItem.COLUMN_CONTACT_PROVIDER);
-            viewHolder.mAccountId = cursor.getLong(ContactListItem.COLUMN_CONTACT_ACCOUNT);
-            nickname = nickname.split("@")[0].split("\\.")[0];
-        }
+                viewHolder.mProviderId = cursor.getLong(ContactListItem.COLUMN_CONTACT_PROVIDER);
+                viewHolder.mAccountId = cursor.getLong(ContactListItem.COLUMN_CONTACT_ACCOUNT);
+                nickname = nickname.split("@")[0].split("\\.")[0];
+             }
 
-        viewHolder.mNickname = nickname;
+            viewHolder.mNickname = nickname;
 
 
-        viewHolder.mView.bind(viewHolder, cursor,"", false, false);
+            viewHolder.mView.bind(viewHolder, cursor,"", false, false);
 
             viewHolder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
