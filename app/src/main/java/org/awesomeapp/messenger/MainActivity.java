@@ -434,7 +434,7 @@ public class MainActivity extends BaseActivity {
                 long providerId = data.getLongExtra(ContactsPickerActivity.EXTRA_RESULT_PROVIDER, -1);
                 long accountId = data.getLongExtra(ContactsPickerActivity.EXTRA_RESULT_ACCOUNT,-1);
 
-                startChat(providerId, accountId, username, false, false);
+                startChat(providerId, accountId, username, false, true);
 
             }
             else if (requestCode == REQUEST_CHOOSE_CONTACT)

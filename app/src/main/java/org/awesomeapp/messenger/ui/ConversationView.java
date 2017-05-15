@@ -498,6 +498,8 @@ public class ConversationView {
         public void onStatusChanged(IChatSession ses) throws RemoteException {
             scheduleRequery(DEFAULT_QUERY_INTERVAL);
             updatePresenceDisplay();
+            mActivity.findViewById(R.id.waiting_view).setVisibility(View.GONE);
+
         }
 
 
@@ -662,6 +664,7 @@ public class ConversationView {
             mLastSeen = new Date();
 
             mActivity.updateLastSeen(mLastSeen);
+
 
         }
 
@@ -1249,7 +1252,12 @@ public class ConversationView {
             mSubscriptionType = c.getInt(SUBSCRIPTION_TYPE_COLUMN);
 
             mSubscriptionStatus = c.getInt(SUBSCRIPTION_STATUS_COLUMN);
-            if (mSubscriptionStatus == Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING) {
+
+            if (mSubscriptionType == Imps.Contacts.SUBSCRIPTION_TYPE_FROM)
+            {
+                mActivity.findViewById(R.id.waiting_view).setVisibility(View.VISIBLE);
+            }
+            else if (mSubscriptionStatus == Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING) {
                 Snackbar sb = Snackbar.make(mHistory, mContext.getString(R.string.subscription_prompt, mRemoteNickname), Snackbar.LENGTH_LONG);
                 sb.setAction(mActivity.getString(R.string.approve_subscription), new View.OnClickListener() {
                     @Override
@@ -1258,6 +1266,10 @@ public class ConversationView {
                     }
                 });
                 sb.show();
+            }
+            else
+            {
+                mActivity.findViewById(R.id.waiting_view).setVisibility(View.GONE);
             }
 
         }
@@ -1268,6 +1280,11 @@ public class ConversationView {
     {
         return mRemoteNickname;
 
+    }
+
+    public String getSubtitle ()
+    {
+        return mRemoteAddress;
     }
 
     public Date getLastSeen ()
@@ -2054,14 +2071,14 @@ public class ConversationView {
 
             if (isSessionEncrypted) {
 
-                if (mIsStartingOtr) {
-                    mIsStartingOtr = false; //it's started!
-                }
+                mIsStartingOtr = false; //it's started!
 
                 if (mSendButton.getVisibility() == View.GONE) {
                     mComposeMessage.setHint(R.string.compose_hint_secure);
                     mSendButton.setImageResource(R.drawable.ic_send_secure);
                 }
+
+
 
                 if (otrChatSession != null) {
                     try {
@@ -2070,6 +2087,14 @@ public class ConversationView {
                     } catch (RemoteException re) {
                     }
                 }
+
+
+                mActivity.findViewById(R.id.waiting_view).setVisibility(View.GONE);
+
+
+            }
+            else if (mIsStartingOtr)
+            {
 
             }
             else if (mLastSessionStatus == SessionStatus.PLAINTEXT) {

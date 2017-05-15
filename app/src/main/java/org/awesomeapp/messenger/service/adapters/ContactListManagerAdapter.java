@@ -392,7 +392,7 @@ public class ContactListManagerAdapter extends
         synchronized (mTemporaryContacts) {
             mTemporaryContacts.put(mAdaptee.normalizeAddress(c.getAddress().getAddress()), c);
         }
-        Uri uri = insertContactContent(c, FAKE_TEMPORARY_LIST_ID, Imps.Contacts.TYPE_TEMPORARY);
+        Uri uri = insertContactContent(c, FAKE_TEMPORARY_LIST_ID, Imps.Contacts.TYPE_TEMPORARY, Imps.Contacts.SUBSCRIPTION_TYPE_NONE, Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING);
         return ContentUris.parseId(uri);
     }
 
@@ -598,7 +598,7 @@ public class ContactListManagerAdapter extends
                         boolean exists = updateContact(contact, listId);
 
                         if (!exists)
-                             insertContactContent(contact, listId, contact.getType());
+                             insertContactContent(contact, listId, contact.getType(),Imps.Contacts.SUBSCRIPTION_TYPE_FROM,Imps.Contacts.SUBSCRIPTION_STATUS_NONE);
                     }
                     notificationText = mContext.getResources().getString(R.string.add_contact_success,
                             contact.getName());
@@ -1244,9 +1244,13 @@ public class ContactListManagerAdapter extends
         }
     }
 
-    Uri insertContactContent(Contact contact, long listId, int type) {
+    Uri insertContactContent(Contact contact, long listId, int type, int subType, int subStatus) {
+
         ContentValues values = getContactContentValues(contact, listId);
         values.put(Imps.Contacts.TYPE, type);
+        values.put(Imps.Contacts.SUBSCRIPTION_TYPE,subType);
+        values.put(Imps.Contacts.SUBSCRIPTION_STATUS,subStatus);
+
         Uri uri = mResolver.insert(mContactUrl, values);
 
         ContentValues presenceValues = getPresenceValues(contact);

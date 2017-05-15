@@ -165,7 +165,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
     private boolean mThemeDark = false;
 
-    private boolean mNeedsAccountUpgrade = false;
+    private boolean mNeedsAccountUpgrade = true;
 
     public static final int EVENT_SERVICE_CONNECTED = 100;
     public static final int EVENT_CONNECTION_CREATED = 150;

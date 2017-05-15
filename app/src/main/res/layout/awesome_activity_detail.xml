@@ -114,7 +114,34 @@
         android:layout_marginTop="0dp"
         android:paddingTop="0dp"
         />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_margin="0dp"
+            android:id="@+id/waiting_view"
+            android:visibility="gone"
+            android:background="@android:color/white"
+            >
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="120dp"
+                android:src="@drawable/olo_waiting"
+                android:id="@+id/waiting_view_image"
+                />
 
+            <org.ironrabbit.type.CustomTypefaceTextView
+                android:id="@+id/waiting_view_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/message_waiting_for_friend"
+                android:textColor="?colorPrimary"
+                android:layout_margin="5dp"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:gravity="center"
+                />
+        </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

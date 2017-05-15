@@ -200,6 +200,10 @@ public class ConversationDetailActivity extends BaseActivity {
         if (mConvoView.getLastSeen() != null) {
             getSupportActionBar().setSubtitle(new PrettyTime().format(mConvoView.getLastSeen()));
         }
+        else
+        {
+            getSupportActionBar().setSubtitle(mConvoView.getSubtitle());
+        }
 
         //first set font
         Typeface typeface = CustomTypefaceManager.getCurrentTypeface(this);
@@ -275,13 +279,8 @@ public class ConversationDetailActivity extends BaseActivity {
         mConvoView.startListening();
         //loadBackdrop();
 
-     //   CollapsingToolbarLayout collapsingToolbar =
-       //         (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
-        //collapsingToolbar.setTitle(mConvoView.getTitle());
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle(mConvoView.getTitle());
 
-        //getSupportActionBar().setSubtitle("foo bar");
+        applyStyleForToolbar();
 
     }
 
@@ -312,7 +311,7 @@ public class ConversationDetailActivity extends BaseActivity {
                 )
         {
 
-            Snackbar sb = Snackbar.make(mConvoView.getHistoryView(), R.string.not_verified, Snackbar.LENGTH_LONG);
+            Snackbar sb = Snackbar.make(mConvoView.getHistoryView(), R.string.not_verified, Snackbar.LENGTH_INDEFINITE);
 
             sb.setAction(R.string.ok, new View.OnClickListener() {
                 @Override

@@ -578,9 +578,12 @@ public class ConversationListFragment extends Fragment {
                 public void migrateComplete(OnboardingAccount account) {
 
                     mUpgradeAction.setText(getString(R.string.upgrade_complete_action));
+                    mUpgradeAction.setBackgroundColor(getResources().getColor(R.color.message_background_light));
+                    mUpgradeAction.setTextColor(getResources().getColor(R.color.zom_primary));
                     mUpgradeAction.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
+
 
                             mUpgradeView.setVisibility(View.GONE);
 
@@ -605,6 +608,9 @@ public class ConversationListFragment extends Fragment {
             };
 
             mUpgradeAction.setText(getString(R.string.upgrade_progress_action));
+            mUpgradeAction.setBackgroundColor(getResources().getColor(R.color.message_background_dark));
+            mUpgradeAction.setTextColor(getResources().getColor(R.color.message_background_light));
+
             mUpgradeAction.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
