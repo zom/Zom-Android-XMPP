@@ -240,17 +240,13 @@ public class ContactListManagerAdapter extends
     }
 
     public int hideContact(String address) {
-        // update locally
-        String selection = Imps.Contacts.USERNAME + "=?";
-        String[] selectionArgs = { address };
-        ContentValues values = new ContentValues(1);
-        values.put( Imps.Contacts.TYPE, Imps.Contacts.TYPE_HIDDEN);
-        int updated = mResolver.update(mContactUrl, values, selection, selectionArgs);
-        if( updated != 1 ) {
-            return ImErrorInfo.ILLEGAL_CONTACT_ADDRESS;
-        }
 
-        return ImErrorInfo.NO_ERROR;
+        boolean result = updateContactType(address, Imps.Contacts.TYPE_HIDDEN);
+
+        if (result)
+            return ImErrorInfo.NO_ERROR;
+        else
+            return -1;
     }
 
 
@@ -602,7 +598,7 @@ public class ContactListManagerAdapter extends
                         boolean exists = updateContact(contact, listId);
 
                         if (!exists)
-                             insertContactContent(contact, listId, Imps.Contacts.TYPE_NORMAL);
+                             insertContactContent(contact, listId, contact.getType());
                     }
                     notificationText = mContext.getResources().getString(R.string.add_contact_success,
                             contact.getName());
@@ -890,10 +886,10 @@ public class ContactListManagerAdapter extends
         mResolver.update(mContactUrl, values, selection, selectionArgs);
     }
 
-    void updateContactType(String address, int type) {
+    boolean updateContactType(String address, int type) {
         ContentValues values = new ContentValues(1);
         values.put(Imps.Contacts.TYPE, type);
-        updateContact(address, values);
+        return updateContact(address, values);
     }
 
     /**
@@ -1121,14 +1117,18 @@ public class ContactListManagerAdapter extends
 
         mContactLists.put(list.getAddress().getAddress(), new ContactListAdapter(list, listId));
 
-        Cursor contactCursor = mResolver.query(mContactUrl, new String[] { Imps.Contacts.USERNAME },
+        Cursor contactCursor = mResolver.query(mContactUrl, new String[] { Imps.Contacts.USERNAME, Imps.Contacts.NICKNAME, Imps.Contacts.TYPE },
                 Imps.Contacts.CONTACTLIST + "=?", new String[] { "" + listId }, null);
         Set<String> existingUsernames = new HashSet<String>();
 
 
-        while (contactCursor.moveToNext())
-                existingUsernames.add(contactCursor.getString(0));
-
+        while (contactCursor.moveToNext()) {
+            String address = contactCursor.getString(0);
+            existingUsernames.add(address);
+            Contact contact = list.getContact(address);
+            contact.setName(contactCursor.getString(1));
+            contact.setType(contactCursor.getInt(2));
+        }
 
         contactCursor.close();
 
@@ -1140,6 +1140,7 @@ public class ContactListManagerAdapter extends
         Iterator<Contact> iter = contacts.iterator();
         while (iter.hasNext()) {
             Contact c = iter.next();
+
             String address = mAdaptee.normalizeAddress(c.getAddress().getAddress());
             if (isTemporary(address)) {
                 if (!existingUsernames.contains(address)) {
@@ -1161,7 +1162,7 @@ public class ContactListManagerAdapter extends
             String username = mAdaptee.normalizeAddress(c.getAddress().getAddress());
             String nickname = c.getName();
 
-            int type = Imps.Contacts.TYPE_NORMAL;
+            int type = c.getType();
             if (isTemporary(username)) {
                 type = Imps.Contacts.TYPE_TEMPORARY;
             }
@@ -1253,9 +1254,12 @@ public class ContactListManagerAdapter extends
     }
 
     private ContentValues getContactContentValues(Contact contact, long listId) {
+
         final String username = mAdaptee.normalizeAddress(contact.getAddress().getAddress());
         final String nickname = contact.getName();
-        int type = Imps.Contacts.TYPE_NORMAL;
+
+        int type = contact.getType();
+
         if (isTemporary(username)) {
             type = Imps.Contacts.TYPE_TEMPORARY;
         }

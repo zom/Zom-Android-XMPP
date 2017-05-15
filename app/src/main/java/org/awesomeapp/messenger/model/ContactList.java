@@ -18,6 +18,7 @@
 package org.awesomeapp.messenger.model;
 
 import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
+import org.awesomeapp.messenger.provider.Imps;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -101,7 +102,7 @@ public class ContactList extends ImEntity {
 
         if (contact == null)
         {
-            contact = new Contact (new XmppAddress(address),nickname);
+            contact = new Contact (new XmppAddress(address),nickname, Imps.Contacts.TYPE_NORMAL);
         }
         else if (nickname != null)
             contact.setName(nickname);

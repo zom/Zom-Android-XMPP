@@ -17,6 +17,7 @@
 
 package org.awesomeapp.messenger.service.adapters;
 
+import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.service.IChatSession;
 import org.awesomeapp.messenger.service.IChatSessionListener;
 import org.awesomeapp.messenger.ImApp;
@@ -89,7 +90,7 @@ public class ChatSessionManagerAdapter extends
         if (contact == null) {
             try {
 
-               contact = new Contact (new XmppAddress(contactAddress),contactAddress);
+               contact = new Contact (new XmppAddress(contactAddress),contactAddress, Imps.Contacts.TYPE_NORMAL);
 
                // long contactId = listManager.queryOrInsertContact(contact);
                 

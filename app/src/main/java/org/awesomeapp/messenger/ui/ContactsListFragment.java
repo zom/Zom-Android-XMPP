@@ -21,7 +21,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.RemoteException;
@@ -35,6 +38,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -76,8 +80,7 @@ public class ContactsListFragment extends Fragment {
     private View mEmptyView;
     String mSearchString = null;
 
-    private boolean mFilterArchive = false;
-
+    private int mType = Imps.Contacts.TYPE_NORMAL;
 
     @Nullable
     @Override
@@ -100,9 +103,22 @@ public class ContactsListFragment extends Fragment {
         return view;
     }
 
+    public int getCurrentType ()
+    {
+        return mType;
+    }
+
     public void setArchiveFilter (boolean filterAchive)
     {
-        mFilterArchive = filterAchive;
+       if (filterAchive)
+           setType(Imps.Contacts.TYPE_HIDDEN);
+        else
+           setType(Imps.Contacts.TYPE_NORMAL);
+    }
+
+    public void setType (int type)
+    {
+        mType = type;
 
         if (mLoaderManager != null)
             mLoaderManager.restartLoader(mLoaderId, null, mLoaderCallbacks);
@@ -174,13 +190,48 @@ public class ContactsListFragment extends Fragment {
             @Override
             public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
                 if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+
+                    // Get RecyclerView item from the ViewHolder
+                    View itemView = viewHolder.itemView;
+
+                    Paint p = new Paint();
+                    Bitmap icon;
+
+                    if (dX > 0) {
+            /* Note, ApplicationManager is a helper class I created
+               myself to get a context outside an Activity class -
+               feel free to use your own method */
+
+                        icon = BitmapFactory.decodeResource(
+                                getActivity().getResources(), R.drawable.ic_archive_white_24dp);
+
+            /* Set your color for positive displacement */
+                        p.setARGB(255, 150, 150, 150);
+
+                        // Draw Rect with varying right side, equal to displacement dX
+                        c.drawRect((float) itemView.getLeft(), (float) itemView.getTop(), dX,
+                                (float) itemView.getBottom(), p);
+
+                        // Set the image icon for Right swipe
+                        c.drawBitmap(icon,
+                                (float) itemView.getLeft() + convertDpToPx(16),
+                                (float) itemView.getTop() + ((float) itemView.getBottom() - (float) itemView.getTop() - icon.getHeight())/2,
+                                p);
+                    }
+
+
                     // Fade out the view as it is swiped out of the parent's bounds
                     final float alpha = ALPHA_FULL - Math.abs(dX) / (float) viewHolder.itemView.getWidth();
                     viewHolder.itemView.setAlpha(alpha);
                     viewHolder.itemView.setTranslationX(dX);
+
                 } else {
                     super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
                 }
+            }
+
+            private int convertDpToPx(int dp){
+                return Math.round(dp * (getResources().getDisplayMetrics().xdpi / DisplayMetrics.DENSITY_DEFAULT));
             }
 
             @Override
@@ -463,7 +514,7 @@ public class ContactsListFragment extends Fragment {
                // buf.append(" AND ");
             }
             else {
-                buf.append(Imps.Contacts.TYPE).append('=').append(Imps.Contacts.TYPE_NORMAL);
+                buf.append(Imps.Contacts.TYPE).append('=').append(mType);
             }
             
             CursorLoader loader = new CursorLoader(getActivity(), mUri, CHAT_PROJECTION,

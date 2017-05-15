@@ -280,7 +280,7 @@ public class XmppConnection extends ImConnection {
         String userName = Imps.Account.getUserName(contentResolver, mAccountId);
         String domain = providerSettings.getDomain();
         String xmppName = userName + '@' + domain + '/' + providerSettings.getXmppResource();
-        contactUser = new Contact(new XmppAddress(xmppName), nickname);
+        contactUser = new Contact(new XmppAddress(xmppName), nickname, Imps.Contacts.TYPE_NORMAL);
 
         return contactUser;
     }
@@ -717,7 +717,7 @@ public class XmppConnection extends ImConnection {
 
                     Occupant occupant = muc.getOccupant(occupantAddress);
                     XmppAddress xa = new XmppAddress(occupant.getJid().toString());
-                    Contact mucContact = new Contact(xa,xa.getResource());
+                    Contact mucContact = new Contact(xa,xa.getResource(), Imps.Contacts.TYPE_NORMAL);
                     org.jivesoftware.smack.packet.Presence presence = muc.getOccupantPresence(occupantAddress);
                     if (presence != null) {
                         ExtensionElement packetExtension = presence.getExtension("x", "vcard-temp:x:update");
@@ -840,7 +840,7 @@ public class XmppConnection extends ImConnection {
 
                 for (EntityFullJid occupant : mucOccupant) {
                     XmppAddress xa = new XmppAddress(occupant.toString());
-                    Contact mucContact = new Contact(xa,xa.getResource());
+                    Contact mucContact = new Contact(xa,xa.getResource(), Imps.Contacts.TYPE_NORMAL);
                     org.jivesoftware.smack.packet.Presence presence = muc.getOccupantPresence(occupant);
                     Presence p = new Presence(parsePresence(presence), null, null, null, Presence.CLIENT_TYPE_MOBILE);
                     mucContact.setPresence(p);
@@ -881,7 +881,7 @@ public class XmppConnection extends ImConnection {
                     XmppAddress xa = new XmppAddress(entityFullJid.toString());
                     MultiUserChat muc = mChatGroupManager.getMultiUserChat(xa.getBareAddress());
                     ChatGroup chatGroup = mChatGroupManager.getChatGroup(xa);
-                    Contact mucContact = new Contact(xa, xa.getResource());
+                    Contact mucContact = new Contact(xa, xa.getResource(), Imps.Contacts.TYPE_NORMAL);
                     Presence p = new Presence(Imps.Presence.AVAILABLE, null, null, null, Presence.CLIENT_TYPE_MOBILE);
                     org.jivesoftware.smack.packet.Presence presence = muc.getOccupantPresence(entityFullJid);
                     if (presence != null) {
@@ -905,7 +905,7 @@ public class XmppConnection extends ImConnection {
                     XmppAddress xa = new XmppAddress(entityFullJid.toString());
                     MultiUserChat muc = mChatGroupManager.getMultiUserChat(xa.getBareAddress());
                     ChatGroup chatGroup = mChatGroupManager.getChatGroup(xa);
-                    Contact mucContact = new Contact(xa, xa.getResource());
+                    Contact mucContact = new Contact(xa, xa.getResource(), Imps.Contacts.TYPE_NORMAL);
                     chatGroup.removeMemberAsync(mucContact);
 
                 }
@@ -984,7 +984,7 @@ public class XmppConnection extends ImConnection {
                 public void processPresence(org.jivesoftware.smack.packet.Presence presence) {
 
                     XmppAddress xa = new XmppAddress(presence.getFrom().toString());
-                    Contact mucContact = new Contact(xa, xa.getResource());
+                    Contact mucContact = new Contact(xa, xa.getResource(), Imps.Contacts.TYPE_NORMAL);
                     Presence p = new Presence(parsePresence(presence), presence.getStatus(), null, null, Presence.CLIENT_TYPE_DEFAULT);
                     mucContact.setPresence(p);
 
@@ -2224,11 +2224,12 @@ public class XmppConnection extends ImConnection {
                 if (name == null)
                     name = xAddress.getUser();
 
-                contact = new Contact(xAddress, name);
+                //TODO we should check the type from here
+                contact = new Contact(xAddress, name, Imps.Contacts.TYPE_NORMAL);
             } else {
                 XmppAddress xAddress = new XmppAddress(address);
 
-                contact = new Contact(xAddress, xAddress.getUser());
+                contact = new Contact(xAddress, xAddress.getUser(), Imps.Contacts.TYPE_NORMAL);
             }
         }
         catch (XmppStringprepException xe)
@@ -2544,7 +2545,7 @@ public class XmppConnection extends ImConnection {
                         if (name == null || name.length() == 0)
                             name = xAddr.getUser();
 
-                        contact = new Contact(xAddr, name);
+                        contact = new Contact(xAddr, name, Imps.Contacts.TYPE_NORMAL);
 
                     }
 
@@ -2646,7 +2647,7 @@ public class XmppConnection extends ImConnection {
                 {
                     XmppAddress xAddr = new XmppAddress(address);
 
-                    contact = new Contact(xAddr,xAddr.getUser());
+                    contact = new Contact(xAddr,xAddr.getUser(), Imps.Contacts.TYPE_NORMAL);
 
                 }
 
@@ -2756,7 +2757,7 @@ public class XmppConnection extends ImConnection {
                     cl = mContactListManager.getDefaultContactList();
 
                     for (Jid address : addresses) {
-                        Contact contact = new Contact(new XmppAddress(address.toString()),address.toString());
+                        Contact contact = new Contact(new XmppAddress(address.toString()),address.toString(), Imps.Contacts.TYPE_NORMAL);
                         mContactListManager.notifyContactListUpdated(cl, ContactListListener.LIST_CONTACT_REMOVED, contact);
                     }
                     
@@ -2786,7 +2787,7 @@ public class XmppConnection extends ImConnection {
                             if (contact == null)
                             {
                                 XmppAddress xAddr = new XmppAddress(addressString);
-                                contact = new Contact(xAddr,xAddr.getUser());
+                                contact = new Contact(xAddr,xAddr.getUser(), Imps.Contacts.TYPE_NORMAL);
         
                             }
         
@@ -3843,7 +3844,7 @@ public class XmppConnection extends ImConnection {
 
                 if (contact == null) {
                     XmppAddress xAddr = new XmppAddress(presence.getFrom().toString());
-                    contact = new Contact(xAddr, xAddr.getUser());
+                    contact = new Contact(xAddr, xAddr.getUser(), Imps.Contacts.TYPE_NORMAL);
                 }
 
                 mContactListManager.doAddContactToListAsync(contact, cList, false);
@@ -3867,7 +3868,7 @@ public class XmppConnection extends ImConnection {
             {
                 if (contact == null) {
                     XmppAddress xAddr = new XmppAddress(presence.getFrom().toString());
-                    contact = new Contact(xAddr, xAddr.getUser());
+                    contact = new Contact(xAddr, xAddr.getUser(), Imps.Contacts.TYPE_NORMAL);
 
                 }
 

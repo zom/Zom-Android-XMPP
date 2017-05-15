@@ -67,7 +67,7 @@ public class LoopbackConnection extends ImConnection {
 
     private Contact makeUser() {
 
-        return new Contact(new XmppAddress("test@foo"), "test");
+        return new Contact(new XmppAddress("test@foo"), "test", Imps.Contacts.TYPE_NORMAL);
     }
 
     @Override
@@ -136,7 +136,7 @@ public class LoopbackConnection extends ImConnection {
         String userName = Imps.Account.getUserName(contentResolver, accountId);
         mUserPresence = new Presence(Presence.AVAILABLE, "available", null, null,
                 Presence.CLIENT_TYPE_DEFAULT);
-        mUser = new Contact(new LoopbackAddress(userName + "!", "loopback", null), userName);
+        mUser = new Contact(new LoopbackAddress(userName + "!", "loopback", null), userName, Imps.Contacts.TYPE_NORMAL);
         setState(LOGGED_IN, null);
     }
 
@@ -177,7 +177,7 @@ public class LoopbackConnection extends ImConnection {
             contacts.toArray(contacts_array);
             Address dummy_addr = new LoopbackAddress("dummy", "dummy@google.com",null);
 
-            Contact dummy = new Contact(dummy_addr, "dummy");
+            Contact dummy = new Contact(dummy_addr, "dummy", Imps.Contacts.TYPE_NORMAL);
             dummy.setPresence(new Presence(Presence.AVAILABLE, "available", null, null,
                     Presence.CLIENT_TYPE_DEFAULT));
             contacts.add(dummy);

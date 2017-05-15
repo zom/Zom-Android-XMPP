@@ -340,7 +340,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         }
         ContactListManagerAdapter listManager = (ContactListManagerAdapter) mConnection
                 .getContactListManager();
-        Contact invitee = new Contact(new XmppAddress(contact),contact);
+        Contact invitee = new Contact(new XmppAddress(contact),contact,Imps.Contacts.TYPE_NORMAL);
         getGroupManager().inviteUserAsync((ChatGroup) mChatSession.getParticipant(), invitee);
 
     }

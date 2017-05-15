@@ -121,8 +121,6 @@ public class MainActivity extends BaseActivity {
     private MoreFragment mMoreFragment;
     private AccountFragment mAccountFragment;
 
-    private boolean mIsArchiveView = false;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -261,17 +259,16 @@ public class MainActivity extends BaseActivity {
         switch (tabPosition) {
             case 0:
 
-
-                if (mIsArchiveView)
-                    sb.append(getString(R.string.title_archive));
+                if (mConversationList.getArchiveFilter())
+                    sb.append(getString(R.string.action_archive));
                 else
                     sb.append(getString(R.string.chats));
 
                 break;
             case 1:
 
-                if (mIsArchiveView)
-                    sb.append(getString(R.string.title_archive));
+                if (mContactList.getCurrentType()==Imps.Contacts.TYPE_HIDDEN)
+                    sb.append(getString(R.string.action_archive));
                 else
                     sb.append(getString(R.string.friends));
 
@@ -660,8 +657,12 @@ public class MainActivity extends BaseActivity {
                 startActivityForResult(sintent,  REQUEST_CHANGE_SETTINGS);
                 return true;
 
-            case R.id.menu_archive:
-                toggleArchiveFilter();
+            case R.id.menu_list_normal:
+                clearFilters();
+                return true;
+
+            case R.id.menu_list_archive:
+                enableArchiveFilter();
                 return true;
 
             case R.id.menu_lock:
@@ -680,13 +681,30 @@ public class MainActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void toggleArchiveFilter ()
+    private void clearFilters ()
     {
-        mIsArchiveView =  !mIsArchiveView;
+
+        if (mTabLayout.getSelectedTabPosition() == 0)
+            mConversationList.setArchiveFilter(false);
+        else
+            mContactList.setArchiveFilter(false);
+
 
         setToolbarTitle(mTabLayout.getSelectedTabPosition());
 
-        mConversationList.setArchiveFilter(mIsArchiveView);
+    }
+
+    private void enableArchiveFilter ()
+    {
+
+        if (mTabLayout.getSelectedTabPosition() == 0)
+            mConversationList.setArchiveFilter(true);
+        else
+            mContactList.setArchiveFilter(true);
+
+
+        setToolbarTitle(mTabLayout.getSelectedTabPosition());
+
     }
 
     public void resetPassphrase ()

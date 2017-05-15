@@ -398,7 +398,7 @@ public class ContactDisplayActivity extends BaseActivity {
                 IContactListManager listManager = mConn.getContactListManager();
 
                 if (listManager != null)
-                    listManager.approveSubscription(new Contact(new XmppAddress(mUsername), mNickname));
+                    listManager.approveSubscription(new Contact(new XmppAddress(mUsername), mNickname, Imps.Contacts.TYPE_NORMAL));
 
                 IChatSessionManager manager = mConn.getChatSessionManager();
 

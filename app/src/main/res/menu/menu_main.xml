@@ -21,13 +21,13 @@
                 android:id="@+id/menu_list_normal"
                 android:icon="@drawable/ic_clear_all_black_24dp"
                 app:showAsAction="always|collapseActionView"
-                android:title="@string/menu_all"/>
+                android:title="@string/action_active"/>
 
             <item
                 android:id="@+id/menu_list_archive"
                 android:icon="@drawable/ic_archive_black_24dp"
                 app:showAsAction="always|collapseActionView"
-                android:title="@string/menu_archive"/>
+                android:title="@string/action_archive"/>
 
 
         </menu>

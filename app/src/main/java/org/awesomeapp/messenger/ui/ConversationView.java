@@ -3023,7 +3023,7 @@ public class ConversationView {
         {
             try {
                 IContactListManager manager = mConn.getContactListManager();
-                manager.approveSubscription(new Contact(new XmppAddress(mRemoteAddress),mRemoteNickname));
+                manager.approveSubscription(new Contact(new XmppAddress(mRemoteAddress),mRemoteNickname, Imps.Contacts.TYPE_NORMAL));
             } catch (RemoteException e) {
 
                 // mHandler.showServiceErrorAlert(e.getLocalizedMessage());
@@ -3038,7 +3038,7 @@ public class ConversationView {
         {
             try {
                 IContactListManager manager = mConn.getContactListManager();
-                manager.declineSubscription(new Contact(new XmppAddress(mRemoteAddress),mRemoteNickname));
+                manager.declineSubscription(new Contact(new XmppAddress(mRemoteAddress),mRemoteNickname, Imps.Contacts.TYPE_NORMAL));
             } catch (RemoteException e) {
                 // mHandler.showServiceErrorAlert(e.getLocalizedMessage());
                 LogCleaner.error(ImApp.LOG_TAG, "decline sub error",e);

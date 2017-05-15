@@ -29,7 +29,10 @@ public class Contact extends ImEntity implements Parcelable {
 
     private String mForwardAddress;
 
-    public Contact(Address address, String name) {
+    //This is based on the Imps.Contacts.TYPE values
+    private int mType;
+
+    public Contact(Address address, String name, int type) {
         mAddress = address;
 
         if (name != null)
@@ -40,6 +43,8 @@ public class Contact extends ImEntity implements Parcelable {
         mPresence = new Presence();
 
         mForwardAddress = "";
+
+        mType = type;
     }
 
     public Contact(Parcel source) {
@@ -47,10 +52,21 @@ public class Contact extends ImEntity implements Parcelable {
         mName = source.readString();
         mPresence = new Presence(source);
         mForwardAddress = source.readString();
+        mType = source.readInt();
     }
 
     public Address getAddress() {
         return mAddress;
+    }
+
+    public void setType (int type)
+    {
+        mType = type;
+    }
+
+    public int getType ()
+    {
+        return mType;
     }
 
     public String getName() {

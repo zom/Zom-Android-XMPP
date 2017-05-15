@@ -332,7 +332,7 @@ public class ContactListItem extends FrameLayout {
         {
             try {
                 IContactListManager manager = mConn.getContactListManager();
-                manager.approveSubscription(new Contact(new XmppAddress(address),nickname));
+                manager.approveSubscription(new Contact(new XmppAddress(address),nickname, Imps.Contacts.TYPE_NORMAL));
             } catch (RemoteException e) {
 
                 // mHandler.showServiceErrorAlert(e.getLocalizedMessage());
@@ -351,7 +351,7 @@ public class ContactListItem extends FrameLayout {
         {
             try {
                 IContactListManager manager = mConn.getContactListManager();
-                manager.declineSubscription(new Contact(new XmppAddress(address),nickname));
+                manager.declineSubscription(new Contact(new XmppAddress(address),nickname, Imps.Contacts.TYPE_NORMAL));
             } catch (RemoteException e) {
                 // mHandler.showServiceErrorAlert(e.getLocalizedMessage());
                 LogCleaner.error(ImApp.LOG_TAG, "decline sub error",e);
