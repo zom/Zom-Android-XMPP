@@ -11,10 +11,28 @@
         android:title="@string/search_history"/>
 
     <item
-        android:id="@+id/menu_archive"
-        android:icon="@drawable/ic_archive_white_24dp"
+        android:icon="@drawable/ic_sort_white_24dp"
         app:showAsAction="always|collapseActionView"
-        android:title="@string/menu_archive"/>
+        >
+
+
+        <menu>
+            <item
+                android:id="@+id/menu_list_normal"
+                android:icon="@drawable/ic_clear_all_black_24dp"
+                app:showAsAction="always|collapseActionView"
+                android:title="@string/menu_all"/>
+
+            <item
+                android:id="@+id/menu_list_archive"
+                android:icon="@drawable/ic_archive_black_24dp"
+                app:showAsAction="always|collapseActionView"
+                android:title="@string/menu_archive"/>
+
+
+        </menu>
+
+        </item>
 
     <item
         android:id="@+id/menu_new_account"

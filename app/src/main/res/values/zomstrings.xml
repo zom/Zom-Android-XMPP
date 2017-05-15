@@ -83,7 +83,7 @@
   <string name="action_services">Zom Services</string>
 
   <string name="migrate_menu">Migrate Account</string>
-  <string name="migrate_message">"I’ve upgraded my account. Click here to add me </string>
+  <string name="migrate_message">"I’ve upgraded my account. Zom me at </string>
 
   <string name="migrate_notification">Your account is expiring soon. Open the app to upgrade.</string>
 
@@ -91,16 +91,62 @@
 
     <string name="action_undo">Undo</string>
 
+    <string name="message_upgrade_more">  We need to upgrade your Zom account to a new server. We can automatically upgrade you to provide the best performance. If you are an advanced user, you can also choose your own server.</string>
+
     <string name="upgrade_desc">We\'re making improvements around here.\nGet your free upgrade!</string>
+
     <string name="upgrade_action">Upgrade Now</string>
 
     <string name="upgrade_complete">Upgrade Complete! Waiting for your friends to approve your upgraded account.</string>
-    <string name="upgrade_complete_action">Done</string>
+
+  <string name="upgrade_complete_action">Done</string>
 
     <string name="upgrade_progress_action">Working on it...</string>
 
-    <string name="upgrade_failed">The upgrade failed. Please try again later! You can also select \"Migrate Account\" from the account settings menu.</string>
+  <string name="upgrade_failed">The upgrade failed. Please try again later! You can also select \"Migrate Account\" from the account settings menu.</string>
 
     <string name="contact_migration_notice">Your friend has upgraded. Chat with them at</string>
-    <string name="contact_migration_action">Chat Now</string>
+
+  <string name="contact_migration_action">Chat Now</string>
+
+
+<string name="upgrade_old_chats">Your old chats from before you upgraded are stored here</string>
+
+<string name="message_waiting_for_friend">Waiting for your friend to accept you</string>
+
+
+  <string name="message_archive">Some of your Zom friends are upgrading their accounts. Expired accounts will be stored here.</string>
+
+
+  <string name="one_moment_please_privacy">One moment please! We’re preparing your private Zom.</string>
+
+
+
+  <string name="action_got_it">Got it</string>
+
+  <string name="action_done">Done</string>
+
+
+  <string name="action_inbox">Inbox</string>
+
+  <string name="action_active">Active</string>
+
+  <string name="action_archive">Archive</string>
+
+
+  <string name="title_pending">Pending Approval</string>
+
+
+  <string name="title_advanced">Advanced</string>
+
+  <string name="action_upgrade_now">Upgrade now</string>
+
+
+  <string name="action_chat_now">Chat now</string>
+
+
+  <string name="action_add_buddy">Add buddy</string>
+
+
+
 </resources>

@@ -63,4 +63,80 @@
   <string name="security_code">བདེ་འཇགས་ངོ་བོ།</string>
   <string name="reset_passphrase">སྒོ་ལྕགས་བསྐྱར་དུ་སྒྲིག་བཟོ།</string>
   <string name="action_services">འཛོམས་ཞབས་ཞུ།</string>
+
+
+
+  <string name="migrate_menu">Migrate Account</string>
+
+  <string name="migrate_message">ངས་མཉེན་ཆས་རིམ་སྤོར་བྱས་ཚར་ཡིན།  ངའི་མཉམ་དུ་སྐད་ཆ་བཤད་ན་འདིར་ཕེབས་རོགས།</string>
+
+  <string name="migrate_notification">Your account is expiring soon. Open the app to upgrade.</string>
+
+  <string name="title_archive">Archive</string>
+
+  <string name="action_undo">Undo</string>
+
+  <string name="upgrade_desc">ད་ལྟ་ང་ཚོ་འདིར་བཟོ་བཅོས་རྒྱག་གི་ཡོད།  རིན་མེད་མཉེན་ཆས་རིམ་སྤོར་འདི་ནས་ལེན་རོགས།</string>
+
+
+  <string name="upgrade_action">མཉེན་ཆས་རིམ་སྤོར་བྱོས།</string>
+
+  <string name="upgrade_complete">རིམ་སྤོར་ཚར་སོང་།  ད་ཁྱེད་ཀྱི་རོགས་པ་ཚོས་ངོས་ལེན་བྱེད་པར་སྒུག་བཞིན་ཡོད།</string>
+
+
+  <string name="upgrade_progress_action">ཏོག་ཙམ་སྒུག་རོགས།</string>
+
+
+  <string name="upgrade_failed">The upgrade failed. Please try again later! You can also select \"Migrate Account\" from the account settings menu.</string>
+
+  <string name="contact_migration_notice"> ཁྱེད་ཀྱི་རོགས་པས་མཉེན་ཆས་རིམ་སྤོར་བྱས་ཚར་འདུག   ཁོང་མཉམ་དུ་བཀའ་མོལ་གནང་ན་འདིར་ཕེབས་རོགས།</string>
+
+  <string name="contact_migration_action">Chat Now</string>
+
+
+  <string name="upgrade_old_chats">ཁྱེད་ཀྱི་སྐད་ཆ་རྙིང་པ་རྣམས་འདི་ནང་ཡོད།</string>
+
+  <string name="message_waiting_for_friend">ཁྱེད་ཀྱི་རོགས་པ་གསར་པའི་ལན་ལ་སྒུག་བཞིན་ཡོད།</string>
+
+
+  <string name="message_archive">འཛོམ་བེད་སྤྱོད་བྱེད་མཁན་ཁ་ཤས་མཉེན་ཆས་རིམ་སྤོར་བྱེད་བཞིན་འདུག  མཉེན་ཆས་རྙིང་པ་འདི་ནང་གནས་ཀྱི་རེད།</string>
+
+
+  <string name="one_moment_please_privacy">ཏོག་ཙམ་སྒུག་རོགས།  ང་ཚོས་ཁྱེད་ཀྱི་གསང་བའི་འཛོམ་ས་བཟོ་བཞིན་ཡོད།</string>
+
+
+  <string name="message_upgrade_more">ཁྱེད་ཀྱི་རོགས་པ་གསར་པའི་ལན་ལ་སྒུག་བཞིན་ཡོད།   ང་ཚོས་ཐད་ཀར་ཁྱེད་ཀྱི་མཉེན་ཆས་རིམ་སྤོར་བྱེད་ཆོག   གལ་ཏེ་ཁྱེད་གློག་ཀླད་ཐོག་མཁས་པ་ཞིག་ཡིན་ན་རང་གི་དྲ་གནས་མཁོ་སྤྲོད་མཁན་རང་རང་གིས་འདམ་ཡང་ཆོག</string>
+
+
+  <string name="action_got_it">ཧ་གོ་སོང།</string>
+
+  <string name="action_done">ཚར་སོང།</string>
+
+
+  <string name="action_inbox">ཡིག་སྒམ།</string>
+
+
+  <string name="action_active">དྲར་ཞུགས་བཞིན་པ།</string>
+
+
+  <string name="action_archive">ཡིག་ཚང།</string>
+
+
+
+  <string name="title_pending">ངོས་ལེན་ལ་སྒུག་བཞིན་ཡོད།</string>
+
+
+  <string name="title_advanced">ཚད་མཐོ་བོ།</string>
+
+
+  <string name="action_upgrade_now">རིམ་སྤོར་བྱོས།</string>
+
+
+
+  <string name="action_chat_now">སྐད་ཆ་ཤོད།</string>
+
+
+  <string name="action_add_buddy">གྲོགས་པོ་སྣོན།</string>
+
+
 </resources>

@@ -295,7 +295,9 @@
     <!-- Other -->
 
     <!-- Other: Slide Menu -->
+    <string name="menu_all">All</string>
     <string name="menu_archive">Archive</string>
+
     <string name="menu_settings">Settings</string>
     <string name="menu_sign_out">Sign out</string>
     <!-- Other: Provider -->
