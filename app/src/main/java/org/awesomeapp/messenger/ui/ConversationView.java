@@ -191,9 +191,6 @@ public class ConversationView {
     private ImageView mButtonDeleteVoice;
     private View mViewDeleteVoice;
 
-    private View mStatusWarningView;
-    private TextView mWarningText;
-
 
     private ImageView mDeliveryIcon;
     private boolean mExpectingDelivery;
@@ -762,9 +759,6 @@ public class ConversationView {
         mButtonAttach = (ImageButton) mActivity.findViewById(R.id.btnAttach);
         mViewAttach = mActivity.findViewById(R.id.attachPanel);
 
-        mStatusWarningView = mActivity.findViewById(R.id.warning);
-        mWarningText = (TextView) mActivity.findViewById(R.id.warningText);
-
         mButtonAttach.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -937,14 +931,6 @@ public class ConversationView {
             }
 
         });**/
-
-        mWarningText.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                showVerifyDialog();
-            }
-        });
 
         mComposeMessage.setOnTouchListener(new View.OnTouchListener()
         {
@@ -2019,7 +2005,6 @@ public class ConversationView {
 
         int visibility = View.GONE;
         int iconVisibility = View.GONE;
-        String message = null;
         boolean isConnected;
 
 
@@ -2059,18 +2044,6 @@ public class ConversationView {
                 LogCleaner.error(ImApp.LOG_TAG, "error getting OTR session in ChatView", e);
             }
 
-            if (mContactType == Imps.Contacts.TYPE_GROUP) {
-                message = "";
-            }
-            else if ((mSubscriptionType == Imps.Contacts.SUBSCRIPTION_TYPE_FROM)) {
-              //  bindSubscription(mProviderId, mRemoteAddress);
-                visibility = View.VISIBLE;
-
-            } else {
-
-                visibility = View.GONE;
-
-            }
 
             boolean isSessionEncrypted = false;
 
@@ -2111,28 +2084,11 @@ public class ConversationView {
                 mSendButton.setImageResource(R.drawable.ic_send_holo_light);
                 mComposeMessage.setHint(R.string.compose_hint);
 
-                mWarningText.setTextColor(Color.WHITE);
-                mStatusWarningView.setBackgroundColor(Color.DKGRAY);
-                message = mContext.getString(R.string.otr_session_status_finished);
-
                 visibility = View.VISIBLE;
             }
 
         }
 
-        mStatusWarningView.setVisibility(visibility);
-
-        if (visibility == View.VISIBLE) {
-            if (message != null && message.length() > 0)
-            {
-                mWarningText.setText(message);
-                mWarningText.setVisibility(View.VISIBLE);
-            }
-            else
-            {
-                mWarningText.setVisibility(View.GONE);
-            }
-        }
 
     }
 

@@ -129,7 +129,9 @@ public class MigrateAccountTask extends AsyncTask<String, Void, OnboardingAccoun
                 catch (Exception e){}
             }
 
-            List<IContactList> listOfLists = mConn.getContactListManager().getContactLists();
+            IContactListManager clManager = mConn.getContactListManager();
+            List<IContactList> listOfLists = clManager.getContactLists();
+
             for (IContactList contactList : listOfLists)
             {
                 //IContactList contactList = mConn.getContactListManager().getContactList(listName);
@@ -153,6 +155,9 @@ public class MigrateAccountTask extends AsyncTask<String, Void, OnboardingAccoun
                     }
 
                     session.sendMessage(migrateMessage, false);
+
+                    //archive existing contact
+                    clManager.hideContact(contact);
 
                 }
             }

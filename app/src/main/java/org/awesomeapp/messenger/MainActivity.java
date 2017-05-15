@@ -609,13 +609,20 @@ public class MainActivity extends BaseActivity {
             {
                 public boolean onQueryTextChange(String query)
                 {
-                    mConversationList.doSearch(query);
+                    if (mTabLayout.getSelectedTabPosition() == 0)
+                        mConversationList.doSearch(query);
+                    else if (mTabLayout.getSelectedTabPosition() == 0)
+                        mContactList.doSearch(query);
+
                     return true;
                 }
 
                 public boolean onQueryTextSubmit(String query)
                 {
-                    mConversationList.doSearch(query);
+                    if (mTabLayout.getSelectedTabPosition() == 0)
+                        mConversationList.doSearch(query);
+                    else if (mTabLayout.getSelectedTabPosition() == 0)
+                        mContactList.doSearch(query);
 
                     return true;
                 }

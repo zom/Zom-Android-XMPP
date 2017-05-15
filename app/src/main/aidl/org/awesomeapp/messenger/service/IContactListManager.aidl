@@ -81,6 +81,15 @@ interface IContactListManager {
     void declineSubscription(in Contact address);
 
     /**
+         * Hides or "Archives" a contact. The ContactListListener will be notified when the contact is hidden
+         * successfully or any error occurs.
+         *
+         * @param address the address of the contact to hide.
+         * @return ILLEGAL_CONTACT_LIST_MANAGER_STATE if contact lists is not loaded.
+         */
+     int hideContact(String address);
+
+    /**
      * Blocks a contact. The ContactListListener will be notified when the contact is blocked
      * successfully or any error occurs.
      *

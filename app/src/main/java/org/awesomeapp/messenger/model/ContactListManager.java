@@ -334,6 +334,20 @@ public abstract class ContactListManager {
     }
 
     /**
+     * Hides a certain Contact. The contact will be removed from any
+     * ContactList after be blocked. If the contact has already been blocked,
+     * the method does nothing.
+     *
+     * @param address the address of the contact to block.
+     * @throws ImException if an error occurs
+     */
+    public void hideContactAsync(String address) throws ImException {
+        checkState();
+
+        doBlockContactAsync(address, true);
+    }
+
+    /**
      * Blocks a certain Contact. The contact will be removed from any
      * ContactList after be blocked. If the contact has already been blocked,
      * the method does nothing.

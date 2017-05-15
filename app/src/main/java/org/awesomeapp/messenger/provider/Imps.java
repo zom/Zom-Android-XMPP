@@ -382,7 +382,7 @@ public class Imps {
         /** blocked contact. */
         int TYPE_BLOCKED = 3;
         /**
-         * the contact is hidden. The client should always display this contact
+         * the contact is hidden. The client should hide this contact
          * to the user.
          */
         int TYPE_HIDDEN = 4;

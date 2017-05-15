@@ -239,6 +239,21 @@ public class ContactListManagerAdapter extends
         mAdaptee.declineSubscriptionRequest(address);
     }
 
+    public int hideContact(String address) {
+        // update locally
+        String selection = Imps.Contacts.USERNAME + "=?";
+        String[] selectionArgs = { address };
+        ContentValues values = new ContentValues(1);
+        values.put( Imps.Contacts.TYPE, Imps.Contacts.TYPE_HIDDEN);
+        int updated = mResolver.update(mContactUrl, values, selection, selectionArgs);
+        if( updated != 1 ) {
+            return ImErrorInfo.ILLEGAL_CONTACT_ADDRESS;
+        }
+
+        return ImErrorInfo.NO_ERROR;
+    }
+
+
     public int blockContact(String address) {
         try {
             mAdaptee.blockContactAsync(address);

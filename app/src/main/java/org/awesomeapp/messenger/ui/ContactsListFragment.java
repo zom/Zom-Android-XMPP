@@ -21,6 +21,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
+import android.graphics.Canvas;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.RemoteException;
@@ -60,6 +61,7 @@ import java.io.IOException;
 import im.zom.messenger.R;
 
 import org.awesomeapp.messenger.ImApp;
+import org.awesomeapp.messenger.ui.widgets.ConversationViewHolder;
 
 //import com.bumptech.glide.Glide;
 
@@ -106,6 +108,15 @@ public class ContactsListFragment extends Fragment {
             mLoaderManager.restartLoader(mLoaderId, null, mLoaderCallbacks);
     }
 
+    public void doSearch (String searchString)
+    {
+        mSearchString = searchString;
+
+        if (mLoaderManager != null)
+            mLoaderManager.restartLoader(mLoaderId, null, mLoaderCallbacks);
+
+    }
+
     public int getContactCount ()
     {
         if (mAdapter != null)
@@ -139,7 +150,130 @@ public class ContactsListFragment extends Fragment {
 
         }
 
+        // init swipe to dismiss logic
 
+        ItemTouchHelper swipeToDismissTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(
+                ItemTouchHelper.RIGHT, ItemTouchHelper.RIGHT) {
+
+            public static final float ALPHA_FULL = 1.0f;
+
+            @Override
+            public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
+                // We only want the active item to change
+                if (actionState != ItemTouchHelper.ACTION_STATE_IDLE) {
+                    if (viewHolder instanceof ConversationViewHolder) {
+                        // Let the view holder know that this item is being moved or dragged
+                        ContactViewHolder itemViewHolder = (ContactViewHolder) viewHolder;
+                        //itemViewHolder.onItemSelected();
+                    }
+                }
+
+                super.onSelectedChanged(viewHolder, actionState);
+            }
+
+            @Override
+            public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+                if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+                    // Fade out the view as it is swiped out of the parent's bounds
+                    final float alpha = ALPHA_FULL - Math.abs(dX) / (float) viewHolder.itemView.getWidth();
+                    viewHolder.itemView.setAlpha(alpha);
+                    viewHolder.itemView.setTranslationX(dX);
+                } else {
+                    super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+                }
+            }
+
+            @Override
+            public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                super.clearView(recyclerView, viewHolder);
+
+                viewHolder.itemView.setAlpha(ALPHA_FULL);
+
+                if (viewHolder instanceof ContactViewHolder) {
+                    // Tell the view holder it's time to restore the idle state
+                    ContactViewHolder itemViewHolder = (ContactViewHolder) viewHolder;
+                    //itemViewHolder.onItemClear();
+                }
+            }
+
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                // callback for drag-n-drop, false to skip this feature
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+
+
+                // callback for swipe to dismiss, removing item from data and adapter
+                int position = viewHolder.getAdapterPosition();
+
+                //delete / endchat
+                //items.remove(viewHolder.getAdapterPosition());
+                long itemId = mAdapter.getItemId(position);
+
+                if (viewHolder instanceof ContactViewHolder) {
+                    // Tell the view holder it's time to restore the idle state
+                    ContactViewHolder itemViewHolder = (ContactViewHolder) viewHolder;
+                    //itemViewHolder.onItemClear();
+
+                    //then hide/archive contact
+                    archiveContact(((MainActivity) getActivity()), itemViewHolder.mView.getId(), itemViewHolder.mAddress, itemViewHolder.mProviderId, itemViewHolder.mAccountId);
+
+                    Snackbar.make(mRecView, getString(R.string.action_archived), Snackbar.LENGTH_LONG).show();
+
+                }
+            }
+
+            @Override
+            public boolean isLongPressDragEnabled() {
+                return true;
+            }
+
+            @Override
+            public boolean isItemViewSwipeEnabled() {
+                return true;
+            }
+        });
+        swipeToDismissTouchHelper.attachToRecyclerView(recyclerView);
+
+
+
+
+    }
+
+    private static void archiveContact (Activity activity, long itemId, String address, long providerId, long accountId)
+    {
+
+        try {
+
+            IImConnection mConn;
+            ImApp app = ((ImApp)activity.getApplication());
+            mConn = app.getConnection(providerId, accountId);
+
+            //first leave, delete an existing chat session
+            IChatSessionManager sessionMgr = mConn.getChatSessionManager();
+            if (sessionMgr != null) {
+                IChatSession session = sessionMgr.getChatSession(Address.stripResource(address));
+
+            }
+
+            //then delete the contact from our list
+            IContactListManager manager = mConn.getContactListManager();
+
+            int res = manager.hideContact(address);
+            if (res != ImErrorInfo.NO_ERROR) {
+                //mHandler.showAlert(R.string.error,
+                //      ErrorResUtils.getErrorRes(getResources(), res, address));
+            }
+
+
+        }
+        catch (RemoteException re)
+        {
+
+        }
 
 
     }
@@ -276,6 +410,7 @@ public class ContactsListFragment extends Fragment {
                 }
             });
 
+            /**
             viewHolder.mView.setOnLongClickListener(new View.OnLongClickListener()
             {
 
@@ -304,7 +439,7 @@ public class ContactsListFragment extends Fragment {
 
                     return false;
                 }
-            });
+            });**/
 
         }
 
