@@ -17,13 +17,6 @@
  * limitations under the License.
  */
 -->
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-
-
     <view
     class="org.awesomeapp.messenger.ui.ConversationListItem"
     android:layout_width="match_parent"
@@ -31,6 +24,8 @@
     android:padding="3dp"
     android:filterTouchesWhenObscured="true"
         android:id="@+id/convoitemview"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
     >
 
 
@@ -133,45 +128,3 @@
 
 
 </view>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:visibility="gone"
-        android:weightSum="3"
-        android:height="64dp"
-        android:paddingLeft="3dp"
-        android:paddingRight="3dp"
-        android:background="@color/holo_grey_dark"
-        >
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:text="@string/menu_archive"
-            android:src="@drawable/ic_archive_white_24dp"
-            />
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:id="@+id/txt_archived"
-            android:gravity="center_vertical"
-            android:text="@string/action_archived"
-            android:clickable="false"
-            android:layout_weight="2"
-            android:hapticFeedbackEnabled="true"
-            android:textColor="@android:color/white"/>
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:id="@+id/txt_undo"
-            android:text="@string/action_undo"
-            android:clickable="false"
-            android:layout_weight="1"
-            android:textColor="@color/holo_orange_light"
-            />
-
-    </LinearLayout>
-
-</FrameLayout>

@@ -176,7 +176,6 @@ public class ConversationListFragment extends Fragment {
             @Override
             public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
                 super.clearView(recyclerView, viewHolder);
-
                 viewHolder.itemView.setAlpha(ALPHA_FULL);
 
                 if (viewHolder instanceof ConversationViewHolder) {
@@ -335,20 +334,23 @@ public class ConversationListFragment extends Fragment {
                 final long messageDate = cursor.getLong(cursor.getColumnIndexOrThrow(Imps.Messages.DATE));
 
                 if (address != null) {
-                    ((ConversationListItem) viewHolder.itemView).bind(viewHolder, chatId, -1, -1, address, nickname, -1, body, messageDate, -1, mSearchString, true, false);
 
-                    viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Context context = v.getContext();
-                            Intent intent = new Intent(context, ConversationDetailActivity.class);
-                            intent.putExtra("id", chatId);
-                            intent.putExtra("address", nickname);
-                            intent.putExtra("nickname", nickname);
+                    if (viewHolder.itemView instanceof  ConversationListItem) {
+                        ((ConversationListItem) viewHolder.itemView).bind(viewHolder, chatId, -1, -1, address, nickname, -1, body, messageDate, -1, mSearchString, true, false);
 
-                            context.startActivity(intent);
-                        }
-                    });
+                        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Context context = v.getContext();
+                                Intent intent = new Intent(context, ConversationDetailActivity.class);
+                                intent.putExtra("id", chatId);
+                                intent.putExtra("address", nickname);
+                                intent.putExtra("nickname", nickname);
+
+                                context.startActivity(intent);
+                            }
+                        });
+                    }
                 }
             }
 

@@ -611,7 +611,7 @@ public class MainActivity extends BaseActivity {
                 {
                     if (mTabLayout.getSelectedTabPosition() == 0)
                         mConversationList.doSearch(query);
-                    else if (mTabLayout.getSelectedTabPosition() == 0)
+                    else if (mTabLayout.getSelectedTabPosition() == 1)
                         mContactList.doSearch(query);
 
                     return true;
@@ -621,7 +621,7 @@ public class MainActivity extends BaseActivity {
                 {
                     if (mTabLayout.getSelectedTabPosition() == 0)
                         mConversationList.doSearch(query);
-                    else if (mTabLayout.getSelectedTabPosition() == 0)
+                    else if (mTabLayout.getSelectedTabPosition() == 1)
                         mContactList.doSearch(query);
 
                     return true;
