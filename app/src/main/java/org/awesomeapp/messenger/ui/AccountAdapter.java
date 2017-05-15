@@ -133,7 +133,7 @@ public class AccountAdapter extends CursorAdapter implements AccountListItem.Sig
         // initialize the widget views (by calling getViewById()) in newView() instead of in
         // bindView(), which can be called more often.
         AccountListItem view = (AccountListItem) mInflater.inflate(mResId, parent, false);
-        boolean showLongName = false;
+        boolean showLongName = true;
         view.init(mActivity, cursor, showLongName, this);
         return view;
     }
