@@ -1126,8 +1126,10 @@ public class ContactListManagerAdapter extends
             String address = contactCursor.getString(0);
             existingUsernames.add(address);
             Contact contact = list.getContact(address);
-            contact.setName(contactCursor.getString(1));
-            contact.setType(contactCursor.getInt(2));
+            if (contact != null) {
+                contact.setName(contactCursor.getString(1));
+                contact.setType(contactCursor.getInt(2));
+            }
         }
 
         contactCursor.close();
