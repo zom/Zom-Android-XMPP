@@ -157,7 +157,7 @@ public class MigrateAccountTask extends AsyncTask<String, Void, OnboardingAccoun
                     session.sendMessage(migrateMessage, false);
 
                     //archive existing contact
-                    clManager.hideContact(contact);
+                    clManager.hideContact(contact, true);
 
                 }
             }

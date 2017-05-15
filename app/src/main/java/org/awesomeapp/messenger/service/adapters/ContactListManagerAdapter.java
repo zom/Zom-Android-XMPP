@@ -239,9 +239,9 @@ public class ContactListManagerAdapter extends
         mAdaptee.declineSubscriptionRequest(address);
     }
 
-    public int hideContact(String address) {
+    public int hideContact(String address, boolean isHidden) {
 
-        boolean result = updateContactType(address, Imps.Contacts.TYPE_HIDDEN);
+        boolean result = updateContactType(address, isHidden ? Imps.Contacts.TYPE_HIDDEN : Imps.Contacts.TYPE_NORMAL);
 
         if (result)
             return ImErrorInfo.NO_ERROR;

@@ -99,7 +99,7 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
     private static final String ENCRYPTED_DATABASE_NAME = "impsenc.db";
     private static final String UNENCRYPTED_DATABASE_NAME = "imps.db";
 
-    private static final int DATABASE_VERSION = 106;
+    private static final int DATABASE_VERSION = 108;
 
     protected static final int MATCH_PROVIDERS = 1;
     protected static final int MATCH_PROVIDERS_BY_ID = 2;
@@ -647,6 +647,29 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
                     }
                 return; // TODO : Why do other case blocks return at their conclusion?
                         // Wouldn't we want all applicable upgrades?
+            case 106:
+            case 107:
+
+                try {
+                    db.beginTransaction();
+
+                    Cursor c = db.query(TABLE_CHATS, null, null, null, null, null, null);
+                    if (c.getColumnIndex("chat_type")==-1)
+                    {
+                        db.execSQL("ALTER TABLE " + TABLE_CHATS
+                                + " ADD COLUMN chat_type INTEGER;");
+                    }
+                    c.close();
+
+                    db.setTransactionSuccessful();
+                } catch (Throwable ex) {
+                    LogCleaner.error(LOG_TAG, ex.getMessage(), ex);
+                } finally {
+                    db.endTransaction();
+                }
+
+
+                return;
             case 1:
                 if (newVersion <= 100) {
                     return;
@@ -821,7 +844,9 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
             buf.append("last_unread_message TEXT,"); // the last unread message
             buf.append("last_message_date INTEGER,"); // in seconds
             buf.append("unsent_composed_message TEXT,"); // a composed, but not sent message
-            buf.append("shortcut INTEGER);"); // which of 10 slots (if any) this chat occupies
+            buf.append("shortcut INTEGER,"); // which of 10 slots (if any) this chat occupies
+            buf.append("chat_type INTEGER);"); // chat type for filtering
+
 
             // chat sessions, including single person chats and group chats
             sqlStatement = buf.toString();
@@ -1042,6 +1067,8 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
         // Avatars columns
         sContactsProjectionMap.put(Imps.Contacts.AVATAR_HASH, "avatars.hash AS avatars_hash");
         sContactsProjectionMap.put(Imps.Contacts.AVATAR_DATA, "quote(avatars.data) AS avatars_data");
+
+        sContactsProjectionMap.put(Imps.Contacts.CHAT_TYPE, "chats.chat_type AS chat_type");
 
         // contactList projection map
         sContactListProjectionMap = new HashMap<String, String>();

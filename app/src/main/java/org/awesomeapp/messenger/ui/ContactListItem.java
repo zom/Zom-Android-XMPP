@@ -128,7 +128,6 @@ public class ContactListItem extends FrameLayout {
             nickname = nickname.split("@")[0].split("\\.")[0];
         }
 
-
         if (!TextUtils.isEmpty(underLineText)) {
             // highlight/underline the word being searched 
             String lowercase = nickname.toLowerCase();
@@ -213,6 +212,14 @@ public class ContactListItem extends FrameLayout {
      //   holder.mStatusText.setText("");
 
         statusText = address;
+
+
+        if (type == Imps.Contacts.TYPE_HIDDEN)
+        {
+            statusText += " | " + getContext().getString(R.string.action_archive);
+        }
+
+
         holder.mLine2.setText(statusText);
 
         if (subType == Imps.ContactsColumns.SUBSCRIPTION_TYPE_INVITATIONS)

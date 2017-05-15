@@ -266,20 +266,29 @@ public class ContactsListFragment extends Fragment {
 
                 if (viewHolder instanceof ContactViewHolder) {
                     // Tell the view holder it's time to restore the idle state
-                    ContactViewHolder itemViewHolder = (ContactViewHolder) viewHolder;
+                    final ContactViewHolder itemViewHolder = (ContactViewHolder) viewHolder;
                     //itemViewHolder.onItemClear();
 
                     //then hide/archive contact
-                    archiveContact(((MainActivity) getActivity()), itemViewHolder.mView.getId(), itemViewHolder.mAddress, itemViewHolder.mProviderId, itemViewHolder.mAccountId);
+                    archiveContact(((MainActivity) getActivity()), itemViewHolder.mView.getId(), itemViewHolder.mAddress, itemViewHolder.mProviderId, itemViewHolder.mAccountId, true);
 
-                    Snackbar.make(mRecView, getString(R.string.action_archived), Snackbar.LENGTH_LONG).show();
+                    Snackbar snack = Snackbar.make(mRecView, getString(R.string.action_archived), Snackbar.LENGTH_LONG);
+                    snack.setAction(R.string.action_undo, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            archiveContact(((MainActivity) getActivity()), itemViewHolder.mView.getId(), itemViewHolder.mAddress, itemViewHolder.mProviderId, itemViewHolder.mAccountId, false);
+
+                        }
+                    });
+
+                    snack.show();
 
                 }
             }
 
             @Override
             public boolean isLongPressDragEnabled() {
-                return true;
+                return false;
             }
 
             @Override
@@ -294,7 +303,7 @@ public class ContactsListFragment extends Fragment {
 
     }
 
-    private static void archiveContact (Activity activity, long itemId, String address, long providerId, long accountId)
+    private static void archiveContact (Activity activity, long itemId, String address, long providerId, long accountId, boolean isArchived)
     {
 
         try {
@@ -313,7 +322,7 @@ public class ContactsListFragment extends Fragment {
             //then delete the contact from our list
             IContactListManager manager = mConn.getContactListManager();
 
-            int res = manager.hideContact(address);
+            int res = manager.hideContact(address,isArchived);
             if (res != ImErrorInfo.NO_ERROR) {
                 //mHandler.showAlert(R.string.error,
                 //      ErrorResUtils.getErrorRes(getResources(), res, address));

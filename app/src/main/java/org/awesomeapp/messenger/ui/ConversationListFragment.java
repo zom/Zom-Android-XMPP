@@ -18,6 +18,7 @@ package org.awesomeapp.messenger.ui;
 
 import android.app.Activity;
 import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -72,6 +73,8 @@ public class ConversationListFragment extends Fragment {
     private LoaderManager mLoaderManager;
     private int mLoaderId = 1001;
     private RecyclerView mRecView;
+
+    private int mChatType = Imps.Chats.CHAT_TYPE_ACTIVE; //default chat type
 
     private View mEmptyView;
     private View mEmptyViewImage;
@@ -237,11 +240,19 @@ public class ConversationListFragment extends Fragment {
 
                 //delete / endchat
                 //items.remove(viewHolder.getAdapterPosition());
-                long itemId = mAdapter.getItemId(position);
+                final long itemId = mAdapter.getItemId(position);
 
-                endConversation(itemId);
+                archiveConversation(itemId);
 
-                Snackbar.make(mRecView, getString(R.string.action_archived), Snackbar.LENGTH_LONG).show();
+                Snackbar snack = Snackbar.make(mRecView, getString(R.string.action_archived), Snackbar.LENGTH_LONG);
+                snack.setAction(R.string.action_undo, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        unarchiveConversation(itemId);
+                    }
+                });
+                snack.show();
+
             }
 
             @Override
@@ -283,6 +294,12 @@ public class ConversationListFragment extends Fragment {
     {
         mFilterArchive = filterAchive;
 
+
+        if (mFilterArchive)
+            mChatType = Imps.Chats.CHAT_TYPE_ARCHIVED;
+        else
+            mChatType = Imps.Chats.CHAT_TYPE_ACTIVE;
+
         if (mLoaderManager != null)
             mLoaderManager.restartLoader(mLoaderId, null, mLoaderCallbacks);
     }
@@ -291,6 +308,24 @@ public class ConversationListFragment extends Fragment {
     {
         Uri chatUri = ContentUris.withAppendedId(Imps.Chats.CONTENT_URI, itemId);
         getActivity().getContentResolver().delete(chatUri, null, null);
+
+    }
+
+    private void archiveConversation (long itemId)
+    {
+        Uri chatUri = ContentUris.withAppendedId(Imps.Chats.CONTENT_URI, itemId);
+        ContentValues values = new ContentValues();
+        values.put(Imps.Chats.CHAT_TYPE,Imps.Chats.CHAT_TYPE_ARCHIVED);
+        getActivity().getContentResolver().update(chatUri,values,Imps.Chats.CONTACT_ID + "=" + itemId,null);
+
+    }
+
+    private void unarchiveConversation (long itemId)
+    {
+        Uri chatUri = ContentUris.withAppendedId(Imps.Chats.CONTENT_URI, itemId);
+        ContentValues values = new ContentValues();
+        values.put(Imps.Chats.CHAT_TYPE,Imps.Chats.CHAT_TYPE_ACTIVE);
+        getActivity().getContentResolver().update(chatUri,values,Imps.Chats.CONTACT_ID + "=" + itemId,null);
 
     }
 
@@ -445,6 +480,13 @@ public class ConversationListFragment extends Fragment {
             else
             {
                 mUri = Imps.Contacts.CONTENT_URI_CHAT_CONTACTS_BY;
+
+                if (mFilterArchive)
+                    buf.append(Imps.Chats.CHAT_TYPE + '=' + Imps.Chats.CHAT_TYPE_ARCHIVED);
+                else
+                    buf.append("(" + Imps.Chats.CHAT_TYPE + " IS NULL")
+                            .append(" OR " + Imps.Chats.CHAT_TYPE + '=' + Imps.Chats.CHAT_TYPE_ACTIVE + ")");
+
                 loader = new CursorLoader(getActivity(), mUri, CHAT_PROJECTION,
                         buf == null ? null : buf.toString(), null, Imps.Contacts.TIME_ORDER);
             }
@@ -498,7 +540,8 @@ public class ConversationListFragment extends Fragment {
                 Imps.Presence.PRESENCE_STATUS,
                 Imps.Presence.PRESENCE_CUSTOM_STATUS,
                 Imps.Chats.LAST_MESSAGE_DATE,
-                Imps.Chats.LAST_UNREAD_MESSAGE
+                Imps.Chats.LAST_UNREAD_MESSAGE,
+                Imps.Chats.CHAT_TYPE
       //          Imps.Contacts.AVATAR_HASH,
         //        Imps.Contacts.AVATAR_DATA
 

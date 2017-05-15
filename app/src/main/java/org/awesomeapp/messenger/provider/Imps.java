@@ -1272,6 +1272,16 @@ public class Imps {
          * chat) then the value is -1. <P>Type: INT</P>
          */
         String SHORTCUT = "shortcut";
+
+        /**
+         * This is to store a flag related to status like ACTIVE, MUTED, ARCHIVED
+         */
+        String CHAT_TYPE = "chat_type";
+
+        public final static int CHAT_TYPE_ACTIVE = -1;
+        public final static int CHAT_TYPE_MUTED = 1;
+        public final static int CHAT_TYPE_ARCHIVED = 2;
+
     }
 
     /** Contains ongoing chat sessions. */
