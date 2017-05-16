@@ -587,8 +587,11 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
         }
     }
 
-    public static void deleteAccount (ContentResolver resolver, long accountId, long providerId)
+    public void deleteAccount (ContentResolver resolver, long accountId, long providerId)
     {
+
+        IImConnection conn = getConnection(providerId, accountId);
+
         Uri accountUri = ContentUris.withAppendedId(Imps.Account.CONTENT_URI, accountId);
         resolver.delete(accountUri, null, null);
 

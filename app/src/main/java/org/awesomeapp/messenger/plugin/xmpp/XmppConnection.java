@@ -2845,22 +2845,21 @@ public class XmppConnection extends ImConnection {
                 RosterEntry entry = mRoster.getEntry(JidCreate.bareFrom(address));
                 RosterGroup group = mRoster.getGroup(list.getName());
 
-                if (group == null) {
-                    debug(TAG, "could not find group " + list.getName() + " in roster");
-                    if (mRoster != null)
-                        mRoster.removeEntry(entry);
+                if (entry != null) {
+                    if (group == null) {
+                        debug(TAG, "could not find group " + list.getName() + " in roster");
+                        if (mRoster != null)
+                            mRoster.removeEntry(entry);
 
+                    } else {
+                        group.removeEntry(entry);
+                        entry = mRoster.getEntry(JidCreate.bareFrom(address));
+                        // Remove from Roster if this is the last group
+                        if (entry != null && entry.getGroups().size() <= 1)
+                            mRoster.removeEntry(entry);
+
+                    }
                 }
-                else
-                {
-                    group.removeEntry(entry);
-                    entry = mRoster.getEntry(JidCreate.bareFrom(address));
-                    // Remove from Roster if this is the last group
-                    if (entry != null && entry.getGroups().size() <= 1)
-                        mRoster.removeEntry(entry);
-
-                }
-
             } catch (Exception e) {
                 debug(TAG, "remove entry failed: " + e.getMessage());
                 throw new RuntimeException(e);

@@ -680,12 +680,14 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
     public void removeConnection(ImConnectionAdapter connection) {
 
-        mConnections.remove(connection);
-        mConnectionsByUser.remove(connection.getLoginUser());
+        if (connection != null) {
+            mConnections.remove(connection);
+            mConnectionsByUser.remove(connection.getLoginUser());
 
-        if (mConnections.size() == 0)
-            if (Preferences.getUseForegroundPriority())
-                stopForeground(true);
+            if (mConnections.size() == 0)
+                if (Preferences.getUseForegroundPriority())
+                    stopForeground(true);
+        }
     }
 
     boolean isNetworkAvailable ()
@@ -804,6 +806,12 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
         @Override
         public IImConnection createConnection(long providerId, long accountId) {
             return RemoteImService.this.do_createConnection(providerId, accountId);
+        }
+
+        @Override
+        public boolean removeConnection(long providerId, long accountId) {
+            RemoteImService.this.removeConnection(mConnections.get(providerId + "." + accountId));
+            return true;
         }
 
         @Override

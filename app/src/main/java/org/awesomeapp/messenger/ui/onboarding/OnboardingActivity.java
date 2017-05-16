@@ -616,8 +616,12 @@ public class OnboardingActivity extends BaseActivity {
                 mUsername = account.username + '@' + account.domain;
                 mNewAccount = account;
 
+
                 viewCreate.findViewById(R.id.viewProgress).setVisibility(View.GONE);
                 viewCreate.findViewById(R.id.viewSuccess).setVisibility(View.VISIBLE);
+
+                ImApp mApp = (ImApp)getApplication();
+                mApp.setDefaultAccount(account.providerId,account.accountId);
 
                 SignInHelper signInHelper = new SignInHelper(OnboardingActivity.this, mHandler);
                 signInHelper.activateAccount(account.providerId, account.accountId);
@@ -751,6 +755,9 @@ public class OnboardingActivity extends BaseActivity {
         protected void onPostExecute(OnboardingAccount account) {
 
             mUsername = account.username + '@' + account.domain;
+
+            ImApp mApp = (ImApp)getApplication();
+            mApp.setDefaultAccount(account.providerId,account.accountId);
 
             SignInHelper signInHelper = new SignInHelper(OnboardingActivity.this, mHandler);
             signInHelper.activateAccount(account.providerId,account.accountId);
