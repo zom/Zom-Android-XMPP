@@ -14,6 +14,9 @@ env:
   global:
     # switch glibc to a memory conserving mode
     - MALLOC_ARENA_MAX=2
+  matrix:
+    - ANDROID_EMULATOR="android-25" ANDROID_ABI="google_apis/armeabi-v7a" ANDROID_PKGS="addon-google_apis-google-25,sys-img-armeabi-v7a-google_apis-25"
+
 
 jdk:
   # the release build infrastructure uses OpenJDK from Debian
@@ -42,6 +45,16 @@ android:
     - 'android-sdk-license-.+'
 
 cache: false
+
+before_install:
+  - bash .travis-android-license-bugfix.sh
+  - echo y | android update sdk --no-ui --all --filter ${ANDROID_EMULATOR},${ANDROID_PKGS},build-tools-25.0.2
+
+before_script:
+  - echo no | android create avd --force -n test -t "${ANDROID_EMULATOR}" --abi "${ANDROID_ABI}"
+  - emulator -avd test -no-audio -no-window &
+  - android-wait-for-emulator
+  - adb shell input keyevent 82 &
 
 script:
   # 'assemble' everything and run all checks that do not require a device/emulator
