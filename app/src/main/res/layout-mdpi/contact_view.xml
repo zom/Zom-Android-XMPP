@@ -76,9 +76,10 @@
         <Button android:id="@+id/btnApproveSubscription"
             android:layout_width="60dp"
             android:layout_height="wrap_content"
-            android:text="✓"
+            android:text="✔"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@color/holo_green_dark"
+            android:background="@color/holo_green_dark"
+            android:textColor="@android:color/white"
             android:layout_alignParentTop="true"
             android:layout_toLeftOf="@+id/btnDeclineSubscription"
             android:layout_toStartOf="@+id/btnDeclineSubscription" />
@@ -86,13 +87,13 @@
         <Button android:id="@+id/btnDeclineSubscription"
             android:layout_width="60dp"
             android:layout_height="wrap_content"
-            android:text="X"
+            android:text="✖"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@color/holo_red_dark"
+            android:background="@color/holo_red_dark"
+            android:textColor="@android:color/white"
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true" />
-
     </LinearLayout>
 
     <ImageView

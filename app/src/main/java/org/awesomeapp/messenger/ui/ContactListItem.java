@@ -230,6 +230,7 @@ public class ContactListItem extends FrameLayout {
                 @Override
                 public void onClick(View v) {
                     approveSubscription();
+                    mHolder.mView.performClick();
                 }
 
             });
