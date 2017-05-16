@@ -726,13 +726,19 @@ public class ContactListManagerAdapter extends
     final class SubscriptionRequestListenerAdapter extends ISubscriptionListener.Stub {
 
 
-        public void onSubScriptionChanged (final Contact from, long providerId, long accountId, int subStatus, int subType)
+        public void onSubScriptionChanged (final Contact from, long providerId, long accountId, final int subType, final int subStatus)
         {
             String username = mAdaptee.normalizeAddress(from.getAddress().getAddress());
             String nickname = from.getName();
             Uri uri = insertOrUpdateSubscription(username, nickname,
                     subType,
                     subStatus);
+
+            boolean hadListener = broadcast(new SubscriptionBroadcaster() {
+                public void broadcast(ISubscriptionListener listener) throws RemoteException {
+                    listener.onSubScriptionChanged(from,  mConn.getProviderId(), mConn.getAccountId(),subType,subStatus);
+                }
+            });
         }
 
         public void onSubScriptionRequest(final Contact from, long providerId, long accountId) {
@@ -791,7 +797,8 @@ public class ContactListManagerAdapter extends
         }
 
         public void onSubscriptionApproved(final Contact contact, long providerId, long accountId) {
-            insertOrUpdateSubscription(contact.getAddress().getBareAddress(), null, Imps.Contacts.SUBSCRIPTION_TYPE_BOTH,
+
+            onSubScriptionChanged(contact, providerId, accountId, Imps.Contacts.SUBSCRIPTION_TYPE_BOTH,
                     Imps.Contacts.SUBSCRIPTION_STATUS_NONE);
 
             boolean hadListener = broadcast(new SubscriptionBroadcaster() {
@@ -805,7 +812,8 @@ public class ContactListManagerAdapter extends
         }
 
         public void onSubscriptionDeclined(final Contact contact, long providerId, long accountId) {
-            insertOrUpdateSubscription(contact.getAddress().getBareAddress(), null, Imps.Contacts.SUBSCRIPTION_STATUS_NONE,
+
+            onSubScriptionChanged(contact, providerId, accountId, Imps.Contacts.SUBSCRIPTION_STATUS_NONE,
                     Imps.Contacts.SUBSCRIPTION_STATUS_NONE);
 
             broadcast(new SubscriptionBroadcaster() {

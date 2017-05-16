@@ -113,7 +113,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
     private OtrChatManager mOtrChatManager;
 
     private ImPluginHelper mPluginHelper;
-    private Hashtable<Long, ImConnectionAdapter> mConnections;
+    private Hashtable<String, ImConnectionAdapter> mConnections;
     private Hashtable<String, ImConnectionAdapter> mConnectionsByUser;
 
     private Handler mHandler;
@@ -234,7 +234,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
             Debug.recordTrail(this, PREV_CONNECTIONS_TRAIL_TAG, prevConnections);
         Debug.recordTrail(this, CONNECTIONS_TRAIL_TAG, "0");
         
-        mConnections = new Hashtable<Long, ImConnectionAdapter>();
+        mConnections = new Hashtable<String, ImConnectionAdapter>();
         mConnectionsByUser = new Hashtable<String, ImConnectionAdapter>();
 
         mHandler = new Handler();
@@ -495,7 +495,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
             int isKeepSignedIn = cursor.getInt(ACCOUNT_KEEP_SIGNED_IN);
 
             if (isActive == 1 && isKeepSignedIn == 1) {
-                IImConnection conn = mConnections.get(providerId);
+                IImConnection conn = mConnections.get(providerId + "." + accountId);
 
                 if (conn == null)
                     conn = do_createConnection(providerId, accountId);
@@ -645,7 +645,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
             providerSettings.close();
 
-            mConnections.put(providerId, imConnectionAdapter);
+            mConnections.put(providerId + "." + accountId, imConnectionAdapter);
             mConnectionsByUser.put(imConnectionAdapter.getLoginUser().getAddress().getBareAddress(),imConnectionAdapter);
 
             Debug.recordTrail(this, CONNECTIONS_TRAIL_TAG, "" + mConnections.size());
@@ -816,8 +816,8 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
         }
 
         @Override
-        public IImConnection getConnection(long providerId) {
-            return mConnections.get(providerId);
+        public IImConnection getConnection(long providerId, long accountId) {
+            return mConnections.get(providerId + "." + accountId);
         }
 
         @Override

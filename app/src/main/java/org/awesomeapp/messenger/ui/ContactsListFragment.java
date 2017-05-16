@@ -100,7 +100,16 @@ public class ContactsListFragment extends Fragment {
 
         setupRecyclerView(mRecView);
 
+
+
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+
     }
 
     public int getCurrentType ()

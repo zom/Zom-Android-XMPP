@@ -165,7 +165,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
     private boolean mThemeDark = false;
 
-    private boolean mNeedsAccountUpgrade = true;
+    private boolean mNeedsAccountUpgrade = false;
 
     public static final int EVENT_SERVICE_CONNECTED = 100;
     public static final int EVENT_CONNECTION_CREATED = 150;
@@ -537,7 +537,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
         try {
             if (mImService != null) {
-                IImConnection im = mImService.getConnection(providerId);
+                IImConnection im = mImService.getConnection(providerId, accountId);
 
                 if (im != null) {
 

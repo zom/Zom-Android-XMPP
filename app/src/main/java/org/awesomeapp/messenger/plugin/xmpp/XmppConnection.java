@@ -286,7 +286,7 @@ public class XmppConnection extends ImConnection {
     }
 
     private void createExecutor() {
-       mExecutor = new ThreadPoolExecutor(1, 1, 1L, TimeUnit.SECONDS,
+       mExecutor = new ThreadPoolExecutor(1, 1, 60L, TimeUnit.SECONDS,
               new LinkedBlockingQueue<Runnable>());
 
     }
@@ -2592,7 +2592,7 @@ public class XmppConnection extends ImConnection {
 
                     try {
 
-                        mContactListManager.getSubscriptionRequestListener().onSubScriptionChanged(contact, mProviderId, mAccountId, subStatus, subType);
+                        mContactListManager.getSubscriptionRequestListener().onSubScriptionChanged(contact, mProviderId, mAccountId, subType, subStatus);
                     }
                     catch (RemoteException re)
                     {

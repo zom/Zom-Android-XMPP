@@ -42,6 +42,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.os.Message;
 import android.os.RemoteException;
 import android.provider.Browser;
@@ -106,6 +107,7 @@ import org.awesomeapp.messenger.service.IContactList;
 import org.awesomeapp.messenger.service.IContactListListener;
 import org.awesomeapp.messenger.service.IContactListManager;
 import org.awesomeapp.messenger.service.IImConnection;
+import org.awesomeapp.messenger.service.ISubscriptionListener;
 import org.awesomeapp.messenger.service.ImServiceConstants;
 import org.awesomeapp.messenger.tasks.ChatSessionInitTask;
 import org.awesomeapp.messenger.ui.MessageListItem.DeliveryState;
@@ -274,6 +276,7 @@ public class ConversationView {
                     checkConnection();
 
                 IContactListManager manager = mConn.getContactListManager();
+
                 Contact contact = manager.getContactByAddress(mRemoteAddress);
 
                 if (contact != null) {
@@ -648,6 +651,31 @@ public class ConversationView {
            // if (mCursor != null && mCursor.requery() && mCursor.moveToFirst()) {
                 updateChat();
            // }
+        }
+    };
+
+    private ISubscriptionListener mSubscriptionListener = new ISubscriptionListener.Stub()
+    {
+        @Override
+        public void onSubScriptionChanged(Contact from, long providerId, long accountId, int subType, int subStatus) throws RemoteException {
+            mSubscriptionType = subType;
+            mSubscriptionStatus = subStatus;
+            showSubscriptionUI();
+        }
+
+        @Override
+        public void onSubScriptionRequest(Contact from, long providerId, long accountId) throws RemoteException {
+            showSubscriptionUI();
+        }
+
+        @Override
+        public void onSubscriptionApproved(Contact from, long providerId, long accountId) throws RemoteException {
+
+        }
+
+        @Override
+        public void onSubscriptionDeclined(Contact from, long providerId, long accountId) throws RemoteException {
+
         }
     };
 
@@ -1253,27 +1281,34 @@ public class ConversationView {
 
             mSubscriptionStatus = c.getInt(SUBSCRIPTION_STATUS_COLUMN);
 
-            if (mSubscriptionType == Imps.Contacts.SUBSCRIPTION_TYPE_FROM)
-            {
-                mActivity.findViewById(R.id.waiting_view).setVisibility(View.VISIBLE);
-            }
-            else if (mSubscriptionStatus == Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING) {
-                Snackbar sb = Snackbar.make(mHistory, mContext.getString(R.string.subscription_prompt, mRemoteNickname), Snackbar.LENGTH_LONG);
-                sb.setAction(mActivity.getString(R.string.approve_subscription), new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        approveSubscription();
-                    }
-                });
-                sb.show();
-            }
-            else
-            {
-                mActivity.findViewById(R.id.waiting_view).setVisibility(View.GONE);
-            }
+            showSubscriptionUI();
+
 
         }
 
+    }
+
+    private void showSubscriptionUI ()
+    {
+
+        if (mSubscriptionType == Imps.Contacts.SUBSCRIPTION_TYPE_FROM)
+        {
+            mActivity.findViewById(R.id.waiting_view).setVisibility(View.VISIBLE);
+        }
+        else if (mSubscriptionStatus == Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING) {
+            Snackbar sb = Snackbar.make(mHistory, mContext.getString(R.string.subscription_prompt, mRemoteNickname), Snackbar.LENGTH_LONG);
+            sb.setAction(mActivity.getString(R.string.approve_subscription), new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    approveSubscription();
+                }
+            });
+            sb.show();
+        }
+        else
+        {
+            mActivity.findViewById(R.id.waiting_view).setVisibility(View.GONE);
+        }
     }
 
     public String getTitle ()
@@ -1991,6 +2026,7 @@ public class ConversationView {
             {
                 IContactListManager listMgr = mConn.getContactListManager();
                 listMgr.registerContactListListener(mContactListListener);
+                listMgr.registerSubscriptionListener(mSubscriptionListener);
 
             }
 
@@ -2012,6 +2048,8 @@ public class ConversationView {
             if (mConn != null) {
                 IContactListManager listMgr = mConn.getContactListManager();
                 listMgr.unregisterContactListListener(mContactListListener);
+                listMgr.unregisterSubscriptionListener(mSubscriptionListener);
+
             }
         } catch (Exception e) {
             Log.w(ImApp.LOG_TAG, "<ChatView> unregisterChatListener fail:" + e.getMessage());
