@@ -1,9 +1,9 @@
 <AppUpdater>
   <update>
-    <latestVersion>15.0.3.005</latestVersion>
-    <url>https://github.com/zom/Zom-Android/releases/download/15.0.3-RC-3/Zom-15.0.3-RC-3-zomrelease-release.apk</url>
+    <latestVersion>15.1.0.001</latestVersion>
+    <url>https://github.com/zom/Zom-Android/releases/download/15.1.0-beta-2/Zom-15.1.0-beta-2-zomrelease-release.apk</url>
     <releaseNotes>
-- new "expression" stickers! - now showing limited "last seen" - improved ability to log into existing account - update localizations / language support - many small cosmetic improvements - now warns when network or account not connected - typing indicator
+- URGENT: Migration Assistant: Move from Dukgo to Zom.im servers! - NEW: Beta support for enhanced message privacy (OMEMO!) - Many more updates, fixes, and stability improvements
     </releaseNotes>
   </update>
 </AppUpdater>
