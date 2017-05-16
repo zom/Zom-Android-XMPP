@@ -775,23 +775,21 @@ public class ContactListManagerAdapter extends
         }
 
 
-        private boolean broadcast(SubscriptionBroadcaster callback) {
+        private synchronized boolean broadcast(SubscriptionBroadcaster callback) {
             boolean hadListener = false;
 
-            synchronized (mRemoteSubscriptionListeners) {
-                final int N = mRemoteSubscriptionListeners.beginBroadcast();
-                for (int i = 0; i < N; i++) {
-                    ISubscriptionListener listener = mRemoteSubscriptionListeners.getBroadcastItem(i);
-                    try {
-                        callback.broadcast(listener);
-                        hadListener = true;
-                    } catch (RemoteException e) {
-                        // The RemoteCallbackList will take care of removing the
-                        // dead listeners.
-                    }
+            final int N = mRemoteSubscriptionListeners.beginBroadcast();
+            for (int i = 0; i < N; i++) {
+                ISubscriptionListener listener = mRemoteSubscriptionListeners.getBroadcastItem(i);
+                try {
+                    callback.broadcast(listener);
+                    hadListener = true;
+                } catch (RemoteException e) {
+                    // The RemoteCallbackList will take care of removing the
+                    // dead listeners.
                 }
-                mRemoteSubscriptionListeners.finishBroadcast();
             }
+            mRemoteSubscriptionListeners.finishBroadcast();
 
             return hadListener;
         }

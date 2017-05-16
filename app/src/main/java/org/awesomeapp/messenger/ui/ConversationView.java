@@ -665,12 +665,16 @@ public class ConversationView {
 
         @Override
         public void onSubScriptionRequest(Contact from, long providerId, long accountId) throws RemoteException {
-            showSubscriptionUI();
+
         }
 
         @Override
         public void onSubscriptionApproved(Contact from, long providerId, long accountId) throws RemoteException {
 
+            if (!mCurrentChatSession.isEncrypted())
+            {
+                refreshSession();
+            }
         }
 
         @Override
@@ -1291,24 +1295,32 @@ public class ConversationView {
     private void showSubscriptionUI ()
     {
 
-        if (mSubscriptionType == Imps.Contacts.SUBSCRIPTION_TYPE_FROM)
-        {
-            mActivity.findViewById(R.id.waiting_view).setVisibility(View.VISIBLE);
-        }
-        else if (mSubscriptionStatus == Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING) {
-            Snackbar sb = Snackbar.make(mHistory, mContext.getString(R.string.subscription_prompt, mRemoteNickname), Snackbar.LENGTH_LONG);
-            sb.setAction(mActivity.getString(R.string.approve_subscription), new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    approveSubscription();
+        mHandler.post(new Runnable() {
+
+            public void run () {
+                if (mSubscriptionType == Imps.Contacts.SUBSCRIPTION_TYPE_FROM)
+
+                {
+                    mActivity.findViewById(R.id.waiting_view).setVisibility(View.VISIBLE);
+                } else if (mSubscriptionStatus == Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING)
+
+                {
+                    Snackbar sb = Snackbar.make(mHistory, mContext.getString(R.string.subscription_prompt, mRemoteNickname), Snackbar.LENGTH_LONG);
+                    sb.setAction(mActivity.getString(R.string.approve_subscription), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            approveSubscription();
+                        }
+                    });
+                    sb.show();
+                } else
+
+                {
+                    mActivity.findViewById(R.id.waiting_view).setVisibility(View.GONE);
                 }
-            });
-            sb.show();
-        }
-        else
-        {
-            mActivity.findViewById(R.id.waiting_view).setVisibility(View.GONE);
-        }
+            }
+        });
+
     }
 
     public String getTitle ()

@@ -3872,7 +3872,6 @@ public class XmppConnection extends ImConnection {
                 p.setPriority(1000);//max this out to ensure the user shows as online
                 contact.setPresence(p);
 
-              //  mContactListManager.approveSubscriptionRequest(contact);
 
             }
             catch (Exception e)
