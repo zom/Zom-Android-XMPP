@@ -2893,13 +2893,6 @@ public class XmppConnection extends ImConnection {
         protected void doAddContactToListAsync(Contact contact, ContactList list, boolean autoSubscribedPresence) throws ImException {
             debug(TAG, "add contact to " + list.getName());
 
-            /**
-            if (contact.getPresence() == null)
-            {
-                Presence p = new Presence();
-                contact.setPresence(p);
-            }**/
-
             if (!list.containsContact(contact)) {
                 try {
                     list.addExistingContact(contact);
@@ -3873,7 +3866,7 @@ public class XmppConnection extends ImConnection {
 
                 }
 
-                mContactListManager.doAddContactToListAsync(contact,getContactListManager().getDefaultContactList(),true);
+                mContactListManager.doAddContactToListAsync(contact,getContactListManager().getDefaultContactList(),false);
                 mContactListManager.getSubscriptionRequestListener().onSubscriptionApproved(contact, mProviderId, mAccountId);
 
                 p.setPriority(1000);//max this out to ensure the user shows as online

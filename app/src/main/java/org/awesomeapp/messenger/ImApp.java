@@ -536,6 +536,10 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
     public IImConnection getConnection(long providerId,long accountId) {
 
         try {
+
+            if (providerId == -1 || accountId == -1)
+                throw new RuntimeException("getConnection() needs valid values: " + providerId + "," + accountId);
+
             if (mImService != null) {
                 IImConnection im = mImService.getConnection(providerId, accountId);
 
