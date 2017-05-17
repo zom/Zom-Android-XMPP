@@ -206,19 +206,14 @@ implements QrCodeDecoder.ResultCallback {
                     resultStrings.add(resultString);
                     dataResult.putStringArrayListExtra("result", resultStrings);
 
-                    String[] parts = OnboardingManager.decodeInviteLink(resultString);
+                    OnboardingManager.DecodedInviteLink diLink = OnboardingManager.decodeInviteLink(resultString);
 
 					String message = null;
 
-                    if (parts != null) {
+                    if (diLink != null) {
 
-						message = getString(R.string.add_contact_success,parts[0]);
-
-
-                    } else {
-						message = getString(R.string.add_contact_success,resultString);
-
-					}
+						message = getString(R.string.add_contact_success,diLink.username);
+                    }
 
 					if (message != null)
 					{

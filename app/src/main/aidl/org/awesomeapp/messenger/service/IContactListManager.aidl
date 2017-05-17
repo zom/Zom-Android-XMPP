@@ -133,4 +133,9 @@ interface IContactListManager {
     *   @param address remote id of contact you wish to receive
     */
     Contact getContactByAddress (String address);
+
+/**
+*   get offline addresses when lists are not yet loaded
+**/
+    String[] getOfflineAddresses ();
 }

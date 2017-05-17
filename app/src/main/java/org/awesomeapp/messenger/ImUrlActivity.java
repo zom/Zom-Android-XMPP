@@ -386,24 +386,14 @@ public class ImUrlActivity extends Activity {
 
             try {
                 //parse each string and if they are for a new user then add the user
-                String[] parts = OnboardingManager.decodeInviteLink(data.toString());
+                OnboardingManager.DecodedInviteLink diLink = OnboardingManager.decodeInviteLink(data.toString());
                 ImApp app = (ImApp)getApplication();
                 app.initAccountInfo();
 
-                String username = parts[0];
-                String fingerprint = null;
-                String nickname = null;
-
-                if (parts.length > 1)
-                    fingerprint = parts[1];
-
-                if (parts.length > 2)
-                    nickname = parts[2];
-
-                new AddContactAsyncTask(app.getDefaultProviderId(), app.getDefaultAccountId(), (ImApp)getApplication()).executeOnExecutor(ImApp.sThreadPoolExecutor,username, fingerprint);
+                new AddContactAsyncTask(app.getDefaultProviderId(), app.getDefaultAccountId(), (ImApp)getApplication()).executeOnExecutor(ImApp.sThreadPoolExecutor,diLink.username,diLink.fingerprint,diLink.nickname);
 
                 Intent resultIntent = new Intent();
-                resultIntent.putExtra("newcontact",username);
+                resultIntent.putExtra("newcontact",diLink.username);
                 setResult(RESULT_OK,resultIntent);
 
                 //if they are for a group chat, then add the group

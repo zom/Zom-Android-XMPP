@@ -475,18 +475,12 @@ public class AddContactActivity extends BaseActivity {
                         }
                         else {
                             //parse each string and if they are for a new user then add the user
-                            String[] parts = OnboardingManager.decodeInviteLink(resultScan);
-                            String address = parts[0];
-                            String fingerprint = null, nickname = null;
-                            if (parts.length > 1)
-                                fingerprint = parts[1];
-                            if (parts.length > 2)
-                                nickname = parts[2];
+                            OnboardingManager.DecodedInviteLink diLink = OnboardingManager.decodeInviteLink(resultScan);
 
-                            new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).execute(address, fingerprint, nickname);
+                            new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).execute(diLink.username, diLink.fingerprint, diLink.nickname);
 
                             Intent intent=new Intent();
-                            intent.putExtra(ContactsPickerActivity.EXTRA_RESULT_USERNAME, address);
+                            intent.putExtra(ContactsPickerActivity.EXTRA_RESULT_USERNAME, diLink.username);
                             intent.putExtra(ContactsPickerActivity.EXTRA_RESULT_PROVIDER, mApp.getDefaultProviderId());
                             setResult(RESULT_OK, intent);
                         }

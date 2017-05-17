@@ -106,8 +106,10 @@ public class OnboardingManager {
         }
     }
 
-    public static String[] decodeInviteLink (String link)
+    public static DecodedInviteLink decodeInviteLink (String link)
     {
+        DecodedInviteLink diLink = null;
+
         Uri inviteLink = Uri.parse(link);
         String[] code = inviteLink.toString().split("#");
 
@@ -117,30 +119,43 @@ public class OnboardingManager {
                 String out = new String(Base64.decode(code[1], Base64.URL_SAFE | Base64.NO_WRAP | Base64.NO_PADDING));
 
 //                String[] parts = out.split("\\?otr=");
-                String[] partsTemp = out.split("\\?otr=");
+                String[] partsTemp = out.split("\\?");
 
                 if (partsTemp == null)
                 {
                     partsTemp = new String[1];
                     partsTemp[0] = out;
-                    return partsTemp;
+                    diLink = new DecodedInviteLink();
+                    diLink.username = out;
                 }
                 else {
 
-                    if (partsTemp.length > 1 && partsTemp[1].contains("&nickname="))
-                    {
-                        String[] parts = new String[3];
-                        parts[0] = partsTemp[0];
-                        parts[1] = partsTemp[1].substring(0,partsTemp[1].indexOf("&"));
-                        parts[2] = partsTemp[1].substring(partsTemp[1].indexOf("=")+1);
+                    diLink = new DecodedInviteLink();
+                    diLink.username = partsTemp[0];
 
-                        return parts;
+                    if (partsTemp.length > 1)
+                    {
+                        String[] parts = partsTemp[1].split("&");
+
+
+                        for (String part : parts) {
+
+                            String[] keyValue = part.split("=");
+
+                            if (keyValue[0].equals("otr"))
+                                diLink.fingerprint = keyValue[1];
+                            else if (keyValue[0].equals("m"))
+                                diLink.isMigration = true;
+                            else if (keyValue[0].equals("nickname"))
+                                diLink.nickname = keyValue[1];
+
+;
+                        }
+
+
 
                     }
-                    else
-                    {
-                        return partsTemp;
-                    }
+
                 }
 
             }
@@ -150,11 +165,16 @@ public class OnboardingManager {
             }
         }
 
-        return null;
+        return diLink;
 
     }
 
     public static String generateInviteLink (Context context, String username, String fingerprint, String nickname) throws IOException
+    {
+        return generateInviteLink(context, username, fingerprint, nickname);
+    }
+
+    public static String generateInviteLink (Context context, String username, String fingerprint, String nickname, boolean isMigrateLink) throws IOException
     {
         StringBuffer inviteUrl = new StringBuffer();
         inviteUrl.append(BASE_INVITE_URL);
@@ -165,7 +185,10 @@ public class OnboardingManager {
 
         if (nickname != null)
             code.append("&nickname=").append(nickname);
-        
+
+        if (isMigrateLink)
+            code.append("&m=1");
+
         inviteUrl.append(Base64.encodeToString(code.toString().getBytes(), Base64.URL_SAFE|Base64.NO_WRAP|Base64.NO_PADDING));
         return inviteUrl.toString();
     }
@@ -462,5 +485,11 @@ public class OnboardingManager {
 
     }
 
+    public static class DecodedInviteLink {
+        public String username;
+        public boolean isMigration = false;
+        public String fingerprint;
+        public String nickname;
+    }
 
 }

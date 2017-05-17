@@ -17,6 +17,7 @@ import android.util.Log;
 
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.crypto.otr.OtrAndroidKeyManagerImpl;
+import org.awesomeapp.messenger.model.Contact;
 import org.awesomeapp.messenger.model.ImConnection;
 import org.awesomeapp.messenger.model.ImErrorInfo;
 import org.awesomeapp.messenger.provider.Imps;
@@ -111,10 +112,7 @@ public class MigrateAccountTask extends AsyncTask<String, Void, OnboardingAccoun
         //send migration message to existing contacts and/or sessions
         try {
 
-            String inviteLink = OnboardingManager.generateInviteLink(mContext,newJabberId,fingerprint,nickname);
-
-            String migrateMessage = mContext.getString(R.string.migrate_message) + ' ' + inviteLink;
-            IChatSessionManager sessionMgr = mConn.getChatSessionManager();
+            boolean loggedInToOldAccount = mConn.getState() == ImConnection.LOGGED_IN;
 
             //login and set new default account
             SignInHelper signInHelper = new SignInHelper(mContext, mHandler);
@@ -123,71 +121,85 @@ public class MigrateAccountTask extends AsyncTask<String, Void, OnboardingAccoun
 
             mNewConn = mApp.getConnection(mNewAccount.providerId, mNewAccount.accountId);
 
-            while(mNewConn.getState() != ImConnection.LOGGED_IN)
-            {
-                try { Thread.sleep(500);}
-                catch (Exception e){}
-            }
-
-            IContactListManager clManager = mConn.getContactListManager();
-            List<IContactList> listOfLists = clManager.getContactLists();
-
-            for (IContactList contactList : listOfLists)
-            {
-                //IContactList contactList = mConn.getContactListManager().getContactList(listName);
-                String[] contacts = contactList.getContacts();
-
-                for (String contact : contacts)
-                {
-                    mContacts.add(contact);
-
-                    IChatSession session = sessionMgr.getChatSession(contact);
-
-                    if (session == null) {
-                        session = sessionMgr.createChatSession(contact, true);
-                    }
-
-                    if (!session.isEncrypted()) {
-                        //try to kick off some encryption here
-                        session.getDefaultOtrChatSession().startChatEncryption();
-                        try { Thread.sleep(500);} //just wait a half second here?
-                        catch (Exception e){}
-                    }
-
-                    session.sendMessage(migrateMessage, false);
-
-                    //archive existing contact
-                    clManager.hideContact(contact, true);
-
+            while (mNewConn.getState() != ImConnection.LOGGED_IN) {
+                try {
+                    Thread.sleep(500);
+                } catch (Exception e) {
                 }
             }
 
-            for (String contact : mContacts)
+            String inviteLink = OnboardingManager.generateInviteLink(mContext, newJabberId, fingerprint, nickname,true);
+
+            String migrateMessage = mContext.getString(R.string.migrate_message) + ' ' + inviteLink;
+            IChatSessionManager sessionMgr = mConn.getChatSessionManager();
+            IContactListManager clManager = mConn.getContactListManager();
+            List<IContactList> listOfLists = clManager.getContactLists();
+
+            if (loggedInToOldAccount) {
+
+                for (IContactList contactList : listOfLists) {
+                    String[] contacts = contactList.getContacts();
+
+                    for (String contact : contacts) {
+                        mContacts.add(contact);
+
+                        IChatSession session = sessionMgr.getChatSession(contact);
+
+                        if (session == null) {
+                            session = sessionMgr.createChatSession(contact, true);
+                        }
+
+                        if (!session.isEncrypted()) {
+                            //try to kick off some encryption here
+                            session.getDefaultOtrChatSession().startChatEncryption();
+                            try {
+                                Thread.sleep(500);
+                            } //just wait a half second here?
+                            catch (Exception e) {
+                            }
+                        }
+
+                        session.sendMessage(migrateMessage, false);
+
+                        //archive existing contact
+                        clManager.hideContact(contact, true);
+                    }
+
+                }
+            }
+            else
             {
+                String[] offlineAddresses = clManager.getOfflineAddresses();
+
+                for (String address : offlineAddresses) {
+                    mContacts.add(address);
+                    clManager.hideContact(address, true);
+                }
+            }
+
+            for (String contact : mContacts) {
                 addToContactList(mNewConn, contact, keyMan.getRemoteFingerprint(contact), null);
             }
 
-            //archive existing conversations and contacts
-            List<IChatSession> listSession = mConn.getChatSessionManager().getActiveChatSessions();
-            for (IChatSession session : listSession)
-            {
-                session.leave();
+            if (loggedInToOldAccount) {
+                //archive existing conversations and contacts
+                List<IChatSession> listSession = mConn.getChatSessionManager().getActiveChatSessions();
+                for (IChatSession session : listSession) {
+                    session.leave();
+                }
+                mConn.broadcastMigrationIdentity(newJabberId);
             }
 
             migrateAvatars(username, newJabberId);
-
-            mConn.broadcastMigrationIdentity(newJabberId);
-
-            mApp.setDefaultAccount(mNewAccount.providerId,mNewAccount.accountId);
+            mApp.setDefaultAccount(mNewAccount.providerId, mNewAccount.accountId);
 
             //logout of existing account
             setKeepSignedIn(mAccountId, false);
 
-
-            mConn.logout();
+            if (loggedInToOldAccount)
+                mConn.logout();
 
             return mNewAccount;
-
 
         }
         catch (Exception e)

@@ -62,7 +62,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 public class ContactListManagerAdapter extends
-        org.awesomeapp.messenger.service.IContactListManager.Stub implements Runnable {
+        org.awesomeapp.messenger.service.IContactListManager.Stub {
 
     ImConnectionAdapter mConn;
     ContentResolver mResolver;
@@ -80,7 +80,7 @@ public class ContactListManagerAdapter extends
     HashMap<String, Contact> mTemporaryContacts;
     // Offline contacts are created from the local DB before the server contact lists
     // are loaded.
-    HashMap<String, Contact> mOfflineContacts;
+    //HashMap<String, Contact> mOfflineContacts;
 
     HashSet<String> mValidatedContactLists;
     HashSet<String> mValidatedContacts;
@@ -101,16 +101,17 @@ public class ContactListManagerAdapter extends
         mContext = conn.getContext();
         mResolver = mContext.getContentResolver();
 
-        new Thread(this).start();
+        init();
     }
 
-    public void run ()
+    private void init ()
     {
         mContactListListenerAdapter = new ContactListListenerAdapter();
         mSubscriptionListenerAdapter = new SubscriptionRequestListenerAdapter();
         mContactLists = new HashMap<String, ContactListAdapter>();
         mTemporaryContacts = new HashMap<String, Contact>();
-        mOfflineContacts = new HashMap<String, Contact>();
+       // mOfflineContacts = new HashMap<String, Contact>();
+
         mValidatedContacts = new HashSet<String>();
         mValidatedContactLists = new HashSet<String>();
         mValidatedBlockedContacts = new HashSet<String>();
@@ -133,10 +134,10 @@ public class ContactListManagerAdapter extends
         if (mConn.getAccountId() != -1)
             seedInitialPresences();
 
-       // loadOfflineContacts();
     }
 
-    private void loadOfflineContacts() {
+    public String[] getOfflineAddresses ()
+    {
         Cursor contactCursor = mResolver.query(mContactUrl, new String[] { Imps.Contacts.USERNAME, Imps.Contacts.NICKNAME },
                 null, null, null);
 
@@ -147,12 +148,8 @@ public class ContactListManagerAdapter extends
             addresses[i++] = contactCursor.getString(0);
 
         }
-
-        Contact[] contacts = mAdaptee.createTemporaryContacts(addresses);
-        for (Contact contact : contacts)            
-                mOfflineContacts.put(contact.getAddress().getBareAddress(), contact);
-
         contactCursor.close();
+        return addresses;
     }
 
     public int createContactList(String name, List<Contact> contacts) {
@@ -322,9 +319,9 @@ public class ContactListManagerAdapter extends
 
     public Contact getContactByAddress(String address) {
         if (mAdaptee.getState() == ContactListManager.LISTS_NOT_LOADED) {
-            if (mOfflineContacts != null)
-                return mOfflineContacts.get(address);
-            else
+            //if (mOfflineContacts != null)
+             //   return mOfflineContacts.get(address);
+            //else
                 return null;
         }
 
