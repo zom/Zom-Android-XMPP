@@ -1,8 +1,9 @@
 <AppUpdater>
   <update>
-    <latestVersion>15.1.0.001</latestVersion>
-    <url>https://github.com/zom/Zom-Android/releases/download/15.1.0-beta-2/Zom-15.1.0-beta-2-zomrelease-release.apk</url>
+    <latestVersion>15.1.0.002</latestVersion>
+    <url>https://github.com/zom/Zom-Android/releases/download/15.1.0-beta-3/Zom-15.1.0-beta-3-zomrelease-release.apk</url>
     <releaseNotes>
+- ADDED: Ability to migrate to new server even when you existing server is offline (Dukgo XMPP ends today!)
 - URGENT: Migration Assistant: Move from Dukgo to Zom.im servers! - NEW: Beta support for enhanced message privacy (OMEMO!) - Many more updates, fixes, and stability improvements
     </releaseNotes>
   </update>
