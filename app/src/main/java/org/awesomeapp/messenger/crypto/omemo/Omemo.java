@@ -74,8 +74,6 @@ public class Omemo {
         mOmemoManager.setAddOmemoHintBody(false);
         mOmemoManager.initialize();
 
-       // mOmemoManager.purgeDevices();
-
     }
 
     public void close ()
@@ -148,7 +146,7 @@ public class Omemo {
            }
        }
        catch (Exception e) {
-           Log.w(TAG, "error checking if resource supports omemo, will check for local fingerprints: " + jid, e);
+           Log.w(TAG, "error checking if resource supports omemo, will check for local fingerprints");
            ;
 
            try {

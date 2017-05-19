@@ -68,10 +68,8 @@ public class ChatSession {
     {
         try {
             if (mJid == null) {
-
                     mJid = JidCreate.from(mParticipant.getAddress().getAddress());
                     mXa = new XmppAddress(mJid.toString());
-
             }
 
             if (mJid.hasNoResource()) {
@@ -169,7 +167,7 @@ public class ChatSession {
 
         if (mParticipant instanceof Contact) {
 
-            //initJid();
+            initJid();
 
             OtrChatManager cm = OtrChatManager.getInstance();
             SessionID sId = cm.getSessionId(message.getFrom().getAddress(), mJid.toString());
@@ -312,30 +310,6 @@ public class ChatSession {
     public boolean onReceiveMessage(Message message) {
 //        mHistoryMessages.add(message);
 
-        OtrChatManager cm = OtrChatManager.getInstance();
-
-        if (cm != null)
-        {
-            SessionStatus otrStatus = cm.getSessionStatus(message.getTo().getAddress(), message.getFrom().getAddress());
-
-            SessionID sId = cm.getSessionId(message.getTo().getAddress(),message.getFrom().getAddress());
-
-            if (otrStatus == SessionStatus.ENCRYPTED)
-            {
-                boolean verified = cm.getKeyManager().isVerified(sId);
-
-                if (verified)
-                {
-                    message.setType(Imps.MessageType.INCOMING_ENCRYPTED_VERIFIED);
-                }
-                else
-                {
-                    message.setType(Imps.MessageType.INCOMING_ENCRYPTED);
-                }
-
-            }
-
-        }
 
         if (mListener != null)
             return mListener.onIncomingMessage(this, message);

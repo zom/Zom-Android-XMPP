@@ -741,22 +741,25 @@ public class ContactListManagerAdapter extends
         public void onSubScriptionRequest(final Contact from, long providerId, long accountId) {
                         
             String username = mAdaptee.normalizeAddress(from.getAddress().getAddress());
-            String nickname = from.getName();
-            queryOrInsertContact(from); // FIXME Miron
-            Uri uri = insertOrUpdateSubscription(username, nickname,
-                    Imps.Contacts.SUBSCRIPTION_TYPE_INVITATIONS,
-                    Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING);
 
-            boolean hadListener = broadcast(new SubscriptionBroadcaster() {
-                public void broadcast(ISubscriptionListener listener) throws RemoteException {
-                    listener.onSubScriptionRequest(from,  mConn.getProviderId(), mConn.getAccountId());
+            if (!isSubscribed(username)) {
+
+                String nickname = from.getName();
+                queryOrInsertContact(from); // FIXME Miron
+                Uri uri = insertOrUpdateSubscription(username, nickname,
+                        Imps.Contacts.SUBSCRIPTION_TYPE_INVITATIONS,
+                        Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING);
+
+                boolean hadListener = broadcast(new SubscriptionBroadcaster() {
+                    public void broadcast(ISubscriptionListener listener) throws RemoteException {
+                        listener.onSubScriptionRequest(from, mConn.getProviderId(), mConn.getAccountId());
+                    }
+                });
+
+                if (!hadListener) {
+                    mContext.getStatusBarNotifier().notifySubscriptionRequest(mConn.getProviderId(), mConn.getAccountId(),
+                            ContentUris.parseId(uri), username, nickname);
                 }
-            });
-
-            if (!hadListener)
-            {
-                mContext.getStatusBarNotifier().notifySubscriptionRequest( mConn.getProviderId(), mConn.getAccountId(),
-                        ContentUris.parseId(uri), username, nickname);
             }
         }
 
@@ -793,17 +796,19 @@ public class ContactListManagerAdapter extends
 
         public void onSubscriptionApproved(final Contact contact, long providerId, long accountId) {
 
-            onSubScriptionChanged(contact, providerId, accountId, Imps.Contacts.SUBSCRIPTION_TYPE_BOTH,
-                    Imps.Contacts.SUBSCRIPTION_STATUS_NONE);
+            if (!isSubscribed(contact.getAddress().getBareAddress())) {
+                onSubScriptionChanged(contact, providerId, accountId, Imps.Contacts.SUBSCRIPTION_TYPE_BOTH,
+                        Imps.Contacts.SUBSCRIPTION_STATUS_NONE);
 
-            boolean hadListener = broadcast(new SubscriptionBroadcaster() {
-                public void broadcast(ISubscriptionListener listener) throws RemoteException {
-                    listener.onSubscriptionApproved(contact,  mConn.getProviderId(), mConn.getAccountId());
-                }
-            });
+                boolean hadListener = broadcast(new SubscriptionBroadcaster() {
+                    public void broadcast(ISubscriptionListener listener) throws RemoteException {
+                        listener.onSubscriptionApproved(contact, mConn.getProviderId(), mConn.getAccountId());
+                        }
+                });
 
-            if (!hadListener)
-                mContext.getStatusBarNotifier().notifySubscriptionApproved(contact, providerId, accountId);
+                if (!hadListener)
+                    mContext.getStatusBarNotifier().notifySubscriptionApproved(contact, providerId, accountId);
+            }
         }
 
         public void onSubscriptionDeclined(final Contact contact, long providerId, long accountId) {
@@ -941,7 +946,10 @@ public class ContactListManagerAdapter extends
         boolean result = false;
         
         Cursor cursor = mResolver.query(mContactUrl, new String[] { Imps.Contacts._ID,},
-                Imps.Contacts.USERNAME + "=? AND " + Imps.Contacts.SUBSCRIPTION_STATUS + "=" + Imps.Contacts.SUBSCRIPTION_STATUS_NONE, new String[] { username }, null);
+                Imps.Contacts.USERNAME + "=?"
+                        + " AND " + Imps.Contacts.SUBSCRIPTION_TYPE + "=" + Imps.Contacts.SUBSCRIPTION_TYPE_BOTH
+                        + " AND " + Imps.Contacts.SUBSCRIPTION_STATUS + "=" + Imps.Contacts.SUBSCRIPTION_STATUS_NONE
+                , new String[] { username }, null);
         if (cursor == null) {
             RemoteImService.debug("query contact " + username + " failed");
             return false;

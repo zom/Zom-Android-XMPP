@@ -6,6 +6,7 @@ import org.awesomeapp.messenger.model.ChatSession;
 import org.awesomeapp.messenger.model.ImErrorInfo;
 import org.awesomeapp.messenger.model.Message;
 import org.awesomeapp.messenger.model.MessageListener;
+import org.awesomeapp.messenger.provider.Imps;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,24 +35,35 @@ public class OtrChatListener implements MessageListener {
 
         boolean result = false;
 
-        String body = msg.getBody();
-        String remoteAddress = msg.getFrom().getAddress();
-        String localAddress = msg.getTo().getAddress();
-
-        if (mOtrChatManager == null) {
-            if (!TextUtils.isEmpty(body)) {
+        if (mOtrChatManager == null || msg.getType() != Imps.MessageType.INCOMING) {
+            if (!TextUtils.isEmpty(msg.getBody())) {
                 result = true;
-                msg.setBody(body);
                 mMessageListener.onIncomingMessage(session, msg);
             } else {
-
-                OtrDebugLogger.log("Decrypted incoming body was null (otrdata?)");
-
+                OtrDebugLogger.log("incoming body was empty");
             }
         }
         else {
+
+            //Do the OTR decryption thing
+
+            String body = msg.getBody();
+            String remoteAddress = msg.getFrom().getAddress();
+            String localAddress = msg.getTo().getAddress();
+
             SessionID sessionID = mOtrChatManager.getSessionId(localAddress, remoteAddress);
             SessionStatus otrStatus = mOtrChatManager.getSessionStatus(sessionID);
+
+            if (otrStatus == SessionStatus.ENCRYPTED) {
+                boolean verified = mOtrChatManager.getKeyManager().isVerified(sessionID);
+
+                if (verified) {
+                    msg.setType(Imps.MessageType.INCOMING_ENCRYPTED_VERIFIED);
+                } else {
+                    msg.setType(Imps.MessageType.INCOMING_ENCRYPTED);
+                }
+
+            }
 
             List<TLV> tlvs = new ArrayList<TLV>();
 
