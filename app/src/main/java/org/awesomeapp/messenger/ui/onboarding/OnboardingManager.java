@@ -171,7 +171,7 @@ public class OnboardingManager {
 
     public static String generateInviteLink (Context context, String username, String fingerprint, String nickname) throws IOException
     {
-        return generateInviteLink(context, username, fingerprint, nickname);
+        return generateInviteLink(context, username, fingerprint, nickname, false);
     }
 
     public static String generateInviteLink (Context context, String username, String fingerprint, String nickname, boolean isMigrateLink) throws IOException
