@@ -1303,9 +1303,8 @@ public class ConversationView {
                 {
                     mActivity.findViewById(R.id.waiting_view).setVisibility(View.VISIBLE);
                 } else if (mSubscriptionStatus == Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING)
-
                 {
-                    Snackbar sb = Snackbar.make(mHistory, mContext.getString(R.string.subscription_prompt, mRemoteNickname), Snackbar.LENGTH_LONG);
+                    Snackbar sb = Snackbar.make(mHistory, mContext.getString(R.string.subscription_prompt, mRemoteNickname), Snackbar.LENGTH_INDEFINITE);
                     sb.setAction(mActivity.getString(R.string.approve_subscription), new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
