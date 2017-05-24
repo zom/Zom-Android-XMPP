@@ -2567,8 +2567,8 @@ public class XmppConnection extends ImConnection {
 
 
                     int subStatus = Imps.ContactsColumns.SUBSCRIPTION_STATUS_NONE;
-                   // if (rEntry.get )
-                     //   subStatus = Imps.ContactsColumns.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING;
+                    if (rEntry.isSubscriptionPending())
+                      subStatus = Imps.ContactsColumns.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING;
 
                     int subType = 0;
                     if (rEntry.getType() == RosterPacket.ItemType.both)
