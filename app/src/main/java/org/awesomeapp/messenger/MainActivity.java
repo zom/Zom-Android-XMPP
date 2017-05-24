@@ -431,10 +431,13 @@ public class MainActivity extends BaseActivity {
             {
 
                 String username = data.getStringExtra(ContactsPickerActivity.EXTRA_RESULT_USERNAME);
-                long providerId = data.getLongExtra(ContactsPickerActivity.EXTRA_RESULT_PROVIDER, -1);
-                long accountId = data.getLongExtra(ContactsPickerActivity.EXTRA_RESULT_ACCOUNT,-1);
 
-                startChat(providerId, accountId, username, false, true);
+                if (username != null) {
+                    long providerId = data.getLongExtra(ContactsPickerActivity.EXTRA_RESULT_PROVIDER, -1);
+                    long accountId = data.getLongExtra(ContactsPickerActivity.EXTRA_RESULT_ACCOUNT,-1);
+
+                    startChat(providerId, accountId, username, true, true);
+                }
 
             }
             else if (requestCode == REQUEST_CHOOSE_CONTACT)
@@ -489,7 +492,7 @@ public class MainActivity extends BaseActivity {
                         }
 
                         if (address != null)
-                            startChat(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), address, false, false);
+                            startChat(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), address, true, true);
 
                         //if they are for a group chat, then add the group
                     }
