@@ -74,6 +74,9 @@ public class Omemo {
         mOmemoManager.setAddOmemoHintBody(false);
         mOmemoManager.initialize();
 
+        mOmemoManager.purgeDevices();
+
+
     }
 
     public void close ()
@@ -230,12 +233,13 @@ public class Omemo {
 
         CachedDeviceList l = mOmemoStore.loadCachedDeviceList(jid);
 
-        for (Integer deviceId : l.getActiveDevices())
+        for (Integer deviceId : l.getAllDevices())
         {
 
             try {
                 OmemoDevice d = new OmemoDevice(jid, deviceId);
                 mOmemoService.buildSessionFromOmemoBundle(d);
+
                 SignalOmemoSession s = (SignalOmemoSession) mOmemoStore.getOmemoSessionOf(d);
                 if(s.getIdentityKey() == null) {
                     Log.d(TAG,"unable to find identity key for: " + jid + " deviceid:" + deviceId);
@@ -269,7 +273,6 @@ public class Omemo {
                 }
             } catch (Exception e) {
                 Log.w(TAG, "error getting device session",e);
-
             }
 
         }

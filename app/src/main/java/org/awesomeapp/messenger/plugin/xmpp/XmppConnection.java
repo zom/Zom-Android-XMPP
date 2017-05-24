@@ -2287,6 +2287,11 @@ public class XmppConnection extends ImConnection {
                     if (session.canOmemo()) {
 
                         try {
+
+                            if (getOmemo().getFingerprints(jidTo.asBareJid(),false).size()==0) {
+                                getOmemo().getManager().requestDeviceListUpdateFor(jidTo.asBareJid());
+                            }
+
                             org.jivesoftware.smack.packet.Message msgEncrypted
                                     = getOmemo().getManager().encrypt(jidTo.asBareJid(), msgXmpp);
 
