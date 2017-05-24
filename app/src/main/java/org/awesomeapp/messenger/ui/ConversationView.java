@@ -1298,8 +1298,8 @@ public class ConversationView {
         mHandler.post(new Runnable() {
 
             public void run () {
-                if (mSubscriptionType == Imps.Contacts.SUBSCRIPTION_TYPE_FROM)
 
+                if (mSubscriptionStatus == Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING)
                 {
                     mActivity.findViewById(R.id.waiting_view).setVisibility(View.VISIBLE);
                 } else if (mSubscriptionStatus == Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING)

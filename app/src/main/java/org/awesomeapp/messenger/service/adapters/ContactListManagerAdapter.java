@@ -595,7 +595,7 @@ public class ContactListManagerAdapter extends
                         boolean exists = updateContact(contact, listId);
 
                         if (!exists)
-                             insertContactContent(contact, listId, contact.getType(),Imps.Contacts.SUBSCRIPTION_TYPE_FROM,Imps.Contacts.SUBSCRIPTION_STATUS_NONE);
+                             insertContactContent(contact, listId, contact.getType(),Imps.Contacts.SUBSCRIPTION_TYPE_FROM,Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING);
                     }
                     notificationText = mContext.getResources().getString(R.string.add_contact_success,
                             contact.getName());
