@@ -20,6 +20,7 @@ package org.awesomeapp.messenger.ui;
 import im.zom.messenger.R;
 
 import org.awesomeapp.messenger.ImUrlActivity;
+import org.awesomeapp.messenger.ui.onboarding.OnboardingManager;
 import org.awesomeapp.messenger.ui.widgets.MessageViewHolder;
 import org.awesomeapp.messenger.util.SecureMediaStore;
 import org.awesomeapp.messenger.ui.legacy.DatabaseUtils;
@@ -120,12 +121,29 @@ public class MessageListItem extends FrameLayout {
 
         @Override
         public void onClick(View widget) {
-            Uri uri = Uri.parse(urlString);
-            Context context = widget.getContext();
-            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-            intent.putExtra(Browser.EXTRA_APPLICATION_ID, context.getPackageName());
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(intent);
+
+            OnboardingManager.DecodedInviteLink diLink = OnboardingManager.decodeInviteLink(urlString);
+
+            //not an invite link, so just send it out
+            if (diLink == null) {
+                Uri uri = Uri.parse(urlString);
+                Context context = widget.getContext();
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                intent.putExtra(Browser.EXTRA_APPLICATION_ID, context.getPackageName());
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(intent);
+            }
+            else
+            {
+                //it is an invite link, so target it back at us!
+                Uri uri = Uri.parse(urlString);
+                Context context = widget.getContext();
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                intent.putExtra(Browser.EXTRA_APPLICATION_ID, context.getPackageName());
+                intent.setPackage(context.getPackageName()); //The package name of the app to which intent is to be sent
+               // intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(intent);
+            }
         }
     }
 
