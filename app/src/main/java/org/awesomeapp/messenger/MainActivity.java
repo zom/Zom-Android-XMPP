@@ -778,8 +778,10 @@ public class MainActivity extends BaseActivity {
     public void startChat (long providerId, long accountId, String username, boolean startCrypto, final boolean openChat)
     {
 
+        //startCrypto is not actually used anymore, as we move to OMEMO
+
         if (username != null)
-            new ChatSessionInitTask(((ImApp)getApplication()),providerId, accountId, Imps.Contacts.TYPE_NORMAL, startCrypto)
+            new ChatSessionInitTask(((ImApp)getApplication()),providerId, accountId, Imps.Contacts.TYPE_NORMAL)
             {
                 @Override
                 protected void onPostExecute(Long chatId) {

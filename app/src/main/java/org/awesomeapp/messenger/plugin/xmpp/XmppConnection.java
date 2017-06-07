@@ -2990,19 +2990,22 @@ public class XmppConnection extends ImConnection {
 
                 mContactListManager.getSubscriptionRequestListener().onSubscriptionApproved(contact, mProviderId, mAccountId);
 
+                ChatSession session = findOrCreateSession(contact.getAddress().toString(), false);
+
+                if (session != null)
+                    session.setSubscribed(true);
+
+                requestPresenceRefresh(contact.getAddress().getBareAddress());
+                qAvatar.push(contact.getAddress().getAddress());
+
+                getOmemo().getManager().requestDeviceListUpdateFor(JidCreate.bareFrom(contact.getAddress().getAddress()));
+
             }
             catch (Exception e) {
                 debug (TAG, "error responding to subscription approval: " + e.getLocalizedMessage());
 
             }
 
-            ChatSession session = findOrCreateSession(contact.getAddress().toString(), false);
-
-            if (session != null)
-                session.setSubscribed(true);
-
-            requestPresenceRefresh(contact.getAddress().getBareAddress());
-            qAvatar.push(contact.getAddress().getAddress());
         }
 
         @Override
@@ -3874,6 +3877,8 @@ public class XmppConnection extends ImConnection {
                 p.setPriority(1000);//max this out to ensure the user shows as online
                 contact.setPresence(p);
 
+                getOmemo().getManager().requestDeviceListUpdateFor(presence.getFrom().asBareJid());
+                //getOmemo().trustOmemoDevice(presence.getFrom().asBareJid(), true);
 
             }
             catch (Exception e)

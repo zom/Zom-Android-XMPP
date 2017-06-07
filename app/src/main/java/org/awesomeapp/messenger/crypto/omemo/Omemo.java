@@ -230,7 +230,6 @@ public class Omemo {
 
     public boolean trustOmemoDevice (BareJid jid, boolean isTrusted)
     {
-
         CachedDeviceList l = mOmemoStore.loadCachedDeviceList(jid);
 
         for (Integer deviceId : l.getAllDevices())

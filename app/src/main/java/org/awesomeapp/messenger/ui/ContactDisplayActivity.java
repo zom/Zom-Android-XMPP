@@ -355,7 +355,7 @@ public class ContactDisplayActivity extends BaseActivity {
     {
         boolean startCrypto = true;
 
-        new ChatSessionInitTask(((ImApp)getApplication()),mProviderId, mAccountId, Imps.Contacts.TYPE_NORMAL, startCrypto)
+        new ChatSessionInitTask(((ImApp)getApplication()),mProviderId, mAccountId, Imps.Contacts.TYPE_NORMAL)
         {
             @Override
             protected void onPostExecute(Long chatId) {

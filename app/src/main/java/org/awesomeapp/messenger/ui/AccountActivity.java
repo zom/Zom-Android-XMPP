@@ -81,13 +81,6 @@ public class AccountActivity extends BaseActivity {
     private static final int ACCOUNT_USERNAME_COLUMN = 2;
     private static final int ACCOUNT_PASSWORD_COLUMN = 3;
 
-    public final static String DEFAULT_SERVER_GOOGLE = "talk.l.google.com";
-    public final static String DEFAULT_SERVER_FACEBOOK = "chat.facebook.com";
-    public final static String DEFAULT_SERVER_JABBERORG = "hermes2.jabber.org";
-    public final static String DEFAULT_SERVER_DUKGO = "dukgo.com";
-    public final static String ONION_JABBERCCC = "okj7xc6j2szr2y75.onion";
-    public final static String ONION_CALYX = "ijeeynrc6x2uy5ob.onion";
-    
     private static final String USERNAME_VALIDATOR = "[^a-z0-9\\.\\-_\\+]";
     //    private static final int ACCOUNT_KEEP_SIGNED_IN_COLUMN = 4;
     //    private static final int ACCOUNT_LAST_LOGIN_STATE = 5;

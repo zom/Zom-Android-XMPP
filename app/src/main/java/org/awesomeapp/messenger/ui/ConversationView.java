@@ -84,6 +84,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import net.java.otr4j.OtrPolicy;
 import net.java.otr4j.session.SessionStatus;
 
 import org.awesomeapp.messenger.ImApp;
@@ -273,64 +274,64 @@ public class ConversationView {
             {
 
                 if (mConn == null)
-                    checkConnection();
+                    if (checkConnection()) {
+                        IContactListManager manager = mConn.getContactListManager();
 
-                IContactListManager manager = mConn.getContactListManager();
+                        Contact contact = manager.getContactByAddress(mRemoteAddress);
 
-                Contact contact = manager.getContactByAddress(mRemoteAddress);
+                        if (contact != null) {
 
-                if (contact != null) {
+                            if (contact.getPresence() != null && contact.getPresence().getStatus() == Presence.AVAILABLE) {
+                                mLastSeen = contact.getPresence().getLastSeen();
+                                mActivity.updateLastSeen(mLastSeen);
+                            }
 
-                    if (contact.getPresence() != null && contact.getPresence().getStatus() == Presence.AVAILABLE) {
-                        mLastSeen = contact.getPresence().getLastSeen();
-                        mActivity.updateLastSeen(mLastSeen);
-                    }
+                            if (!TextUtils.isEmpty(contact.getForwardingAddress())) {
+                                showContactMoved(contact);
+                            }
 
-                    if (!TextUtils.isEmpty(contact.getForwardingAddress()))
-                    {
-                        showContactMoved (contact);
-                    }
+                        }
 
-                }
+                        if ((mLastSessionStatus == null || mLastSessionStatus == SessionStatus.PLAINTEXT)) {
 
-                if ((mLastSessionStatus == null || mLastSessionStatus == SessionStatus.PLAINTEXT)) {
+                            boolean otrPolicyAuto = getOtrPolicy() == OtrPolicy.OPPORTUNISTIC
+                                    || getOtrPolicy() == OtrPolicy.OTRL_POLICY_ALWAYS;
 
-                    //boolean otrPolicyAuto = mActivity.getOtrPolicy() == OtrPolicy.OTRL_POLICY_ALWAYS
-                    //|| this.mNewChatActivity.getOtrPolicy() == OtrPolicy.OPPORTUNISTIC;
-
-                    boolean otrPolicyAuto = true;
-
-                    if (mCurrentChatSession == null)
-                        mCurrentChatSession = getChatSession();
-                    if (mCurrentChatSession == null)
-                        return;
+                            if (mCurrentChatSession == null)
+                                mCurrentChatSession = getChatSession();
+                            if (mCurrentChatSession == null)
+                                return;
 
 
-                    IOtrChatSession otrChatSession = mCurrentChatSession.getDefaultOtrChatSession();
+                            IOtrChatSession otrChatSession = mCurrentChatSession.getDefaultOtrChatSession();
 
-                    if (otrChatSession != null && (!isGroupChat()))
-                    {
-                        String remoteJID = otrChatSession.getRemoteUserId();
+                            if (otrChatSession != null && (!isGroupChat())) {
+                                String remoteJID = otrChatSession.getRemoteUserId();
 
-                        boolean doOtr = (remoteJID != null && (remoteJID.toLowerCase().contains("chatsecure")||remoteJID.toLowerCase().contains("zom")));
+                                boolean doOtr = (remoteJID != null && (remoteJID.toLowerCase().contains("chatsecure") || remoteJID.toLowerCase().contains("zom")));
 
-                        if (!doOtr)
-                            doOtr = OtrAndroidKeyManagerImpl.getInstance(mActivity).hasRemoteFingerprint(remoteJID);
+                                if (!doOtr)
+                                    doOtr = OtrAndroidKeyManagerImpl.getInstance(mActivity).hasRemoteFingerprint(remoteJID);
 
-                        if (otrPolicyAuto && doOtr) //if set to auto, and is chatsecure, then start encryption
-                        {
-                            //automatically attempt to turn on OTR after 1 second
-                            mHandler.postDelayed(new Runnable (){
-                                public void run (){
-                                    setOTRState(true);
-                                    scheduleRequery(DEFAULT_QUERY_INTERVAL);
+                                if (otrPolicyAuto && doOtr) //if set to auto, and is chatsecure, then start encryption
+                                {
+                                    //automatically attempt to turn on OTR after 1 second
+                                    mHandler.postDelayed(new Runnable() {
+                                        public void run() {
+                                            setOTRState(true);
+                                            scheduleRequery(DEFAULT_QUERY_INTERVAL);
 
+                                        }
+                                    }, 100);
                                 }
-                            },100);
+                            }
+
                         }
                     }
-
-                }
+                    else
+                    {
+                        mActivity.finish();
+                    }
 
 
             }
@@ -343,6 +344,27 @@ public class ConversationView {
             sendTypingStatus (false);
         }
 
+    }
+
+    private int getOtrPolicy() {
+
+        int otrPolicy = OtrPolicy.OPPORTUNISTIC;
+
+        String otrModeSelect = Preferences.getOtrMode();
+
+        if (otrModeSelect.equals("auto")) {
+            otrPolicy = OtrPolicy.OPPORTUNISTIC;
+        } else if (otrModeSelect.equals("disabled")) {
+            otrPolicy = OtrPolicy.NEVER;
+
+        } else if (otrModeSelect.equals("force")) {
+            otrPolicy = OtrPolicy.OTRL_POLICY_ALWAYS;
+
+        } else if (otrModeSelect.equals("requested")) {
+            otrPolicy = OtrPolicy.OTRL_POLICY_MANUAL;
+        }
+
+        return otrPolicy;
     }
 
     public void inviteContacts (ArrayList<String> invitees)
@@ -1856,7 +1878,7 @@ public class ConversationView {
 
                         if (mContactType == Imps.Contacts.TYPE_GROUP)
                         {
-                            new ChatSessionInitTask(((ImApp)mActivity.getApplication()),mProviderId, mAccountId, Imps.Contacts.TYPE_GROUP, false)
+                            new ChatSessionInitTask(((ImApp)mActivity.getApplication()),mProviderId, mAccountId, Imps.Contacts.TYPE_GROUP)
                                     .executeOnExecutor(ImApp.sThreadPoolExecutor,remoteAddress);
 
                         }
@@ -3157,7 +3179,7 @@ public class ConversationView {
     {
 
         if (username != null) {
-            new ChatSessionInitTask(((ImApp) mActivity.getApplication()), mProviderId, mAccountId, Imps.Contacts.TYPE_NORMAL, true) {
+            new ChatSessionInitTask(((ImApp) mActivity.getApplication()), mProviderId, mAccountId, Imps.Contacts.TYPE_NORMAL) {
                 @Override
                 protected void onPostExecute(Long chatId) {
 

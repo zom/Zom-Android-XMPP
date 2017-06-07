@@ -2,7 +2,10 @@ package org.awesomeapp.messenger.tasks;
 
 import android.os.AsyncTask;
 
+import net.java.otr4j.OtrPolicy;
+
 import org.awesomeapp.messenger.ImApp;
+import org.awesomeapp.messenger.Preferences;
 import org.awesomeapp.messenger.crypto.IOtrChatSession;
 import org.awesomeapp.messenger.model.ChatSession;
 import org.awesomeapp.messenger.model.ImConnection;
@@ -19,15 +22,13 @@ public class ChatSessionInitTask extends AsyncTask<String, Long, Long> {
     long mProviderId;
     long mAccountId;
     int mContactType;
-    boolean mStartCrypto = false;
 
-    public ChatSessionInitTask (ImApp app, long providerId, long accountId, int contactType, boolean startCrypto)
+    public ChatSessionInitTask (ImApp app, long providerId, long accountId, int contactType)
     {
         mApp = app;
         mProviderId = providerId;
         mAccountId = accountId;
         mContactType = contactType;
-        mStartCrypto = startCrypto;
     }
 
     public Long doInBackground (String... remoteAddresses)
@@ -49,14 +50,7 @@ public class ChatSessionInitTask extends AsyncTask<String, Long, Long> {
 
                     if (session != null && mContactType == Imps.Contacts.TYPE_NORMAL)
                     {
-                        //first check OMEMO
-                        /**
-                        if (!session.isEncrypted()) {
-
-                            //then you can try OTR
-                            session.getDefaultOtrChatSession().startChatEncryption();
-
-                        }**/
+                        //do nothing special
 
                     } else {
 
@@ -89,4 +83,26 @@ public class ChatSessionInitTask extends AsyncTask<String, Long, Long> {
 
 
     }
+
+    private int getOtrPolicy() {
+
+        int otrPolicy = OtrPolicy.OPPORTUNISTIC;
+
+        String otrModeSelect = Preferences.getOtrMode();
+
+        if (otrModeSelect.equals("auto")) {
+            otrPolicy = OtrPolicy.OPPORTUNISTIC;
+        } else if (otrModeSelect.equals("disabled")) {
+            otrPolicy = OtrPolicy.NEVER;
+
+        } else if (otrModeSelect.equals("force")) {
+            otrPolicy = OtrPolicy.OTRL_POLICY_ALWAYS;
+
+        } else if (otrModeSelect.equals("requested")) {
+            otrPolicy = OtrPolicy.OTRL_POLICY_MANUAL;
+        }
+
+        return otrPolicy;
+    }
+
 }
