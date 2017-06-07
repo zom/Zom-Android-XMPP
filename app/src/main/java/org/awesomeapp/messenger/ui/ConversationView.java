@@ -500,8 +500,8 @@ public class ConversationView {
         @Override
         public void onStatusChanged(IChatSession ses) throws RemoteException {
             scheduleRequery(DEFAULT_QUERY_INTERVAL);
-            updatePresenceDisplay();
-            mActivity.findViewById(R.id.waiting_view).setVisibility(View.GONE);
+         //   updatePresenceDisplay();
+            //showSubscriptionUI();
 
         }
 
@@ -721,7 +721,7 @@ public class ConversationView {
                             mLastSeen = c.getPresence().getLastSeen();
                             mActivity.updateLastSeen(mLastSeen);
                         }
-                        updatePresenceDisplay();
+                      //  updatePresenceDisplay();
                     }
 
                     mHandler.post(mUpdateChatCallback);
@@ -1299,10 +1299,12 @@ public class ConversationView {
 
             public void run () {
 
-                if (mSubscriptionStatus == Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING)
+                if (mSubscriptionType == Imps.Contacts.SUBSCRIPTION_TYPE_FROM
+                        && mSubscriptionStatus == Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING)
                 {
                     mActivity.findViewById(R.id.waiting_view).setVisibility(View.VISIBLE);
-                } else if (mSubscriptionStatus == Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING)
+                }
+                else if (mSubscriptionStatus == Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING)
                 {
                     Snackbar sb = Snackbar.make(mHistory, mContext.getString(R.string.subscription_prompt, mRemoteNickname), Snackbar.LENGTH_INDEFINITE);
                     sb.setAction(mActivity.getString(R.string.approve_subscription), new View.OnClickListener() {
@@ -1348,6 +1350,7 @@ public class ConversationView {
         return mRemoteHeader;
     }
 
+    /**
     private void updatePresenceDisplay ()
     {
         if (mRemoteAvatar == null)
@@ -1382,7 +1385,7 @@ public class ConversationView {
 
         default:
         }
-    }
+    }**/
 
 
     private void setGroupTitle() {
@@ -1471,7 +1474,7 @@ public class ConversationView {
 
                 }
 
-                updatePresenceDisplay();
+              //  updatePresenceDisplay();
 
             }
 
