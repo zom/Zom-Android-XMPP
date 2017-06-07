@@ -38,6 +38,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Parcelable;
 import android.os.RemoteException;
+import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.design.widget.AppBarLayout;
@@ -46,6 +47,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -79,6 +81,8 @@ import java.util.Locale;
 import java.util.UUID;
 
 import org.awesomeapp.messenger.service.IChatSession;
+
+import im.zom.messenger.BuildConfig;
 import im.zom.messenger.R;
 
 import org.awesomeapp.messenger.service.IChatSessionManager;
@@ -370,15 +374,6 @@ public class ConversationDetailActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-    private void loadBackdrop() {
-        final ImageView imageView = (ImageView) findViewById(R.id.backdrop);
-
-        if (mConvoView.getHeader()!=null)
-            imageView.setImageDrawable(mConvoView.getHeader());
-
-    }**/
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
@@ -480,10 +475,15 @@ public class ConversationDetailActivity extends BaseActivity {
             }
         }
         else {
+
             // create Intent to take a picture and return control to the calling application
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             File photo = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), "cs_" + new Date().getTime() + ".jpg");
-            mLastPhoto = Uri.fromFile(photo);
+
+            mLastPhoto = FileProvider.getUriForFile(this,
+                    BuildConfig.APPLICATION_ID + ".provider",
+                    photo);
+
             intent.putExtra(MediaStore.EXTRA_OUTPUT,
                     mLastPhoto);
 
