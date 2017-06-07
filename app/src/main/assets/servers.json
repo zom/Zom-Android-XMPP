@@ -12,16 +12,6 @@
       "muc": "conference.zom.im"
     },
     {
-      "domain": "dukgo.com",
-      "server": "xmpp.dukgo.com",
-      "address": "23.21.227.59",
-      "port": 5222,
-      "certificate": "",
-      "logoUrl": "",
-      "country": "US",
-      "muc": "conference.dukgo.com"
-    },
-    {
       "domain": "blah.im",
       "server": "jabber.blah.im",
       "address": "5.9.141.48",
