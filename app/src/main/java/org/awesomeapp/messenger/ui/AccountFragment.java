@@ -36,7 +36,12 @@ import android.widget.TextView;
 
 import com.theartofdev.edmodo.cropper.CropImageView;
 
+import net.java.otr4j.OtrKeyManager;
+
 import org.awesomeapp.messenger.ImApp;
+import org.awesomeapp.messenger.crypto.omemo.Omemo;
+import org.awesomeapp.messenger.crypto.otr.OtrAndroidKeyManagerImpl;
+import org.awesomeapp.messenger.crypto.otr.OtrChatManager;
 import org.awesomeapp.messenger.model.ImConnection;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.service.IImConnection;
@@ -46,6 +51,7 @@ import org.awesomeapp.messenger.ui.onboarding.OnboardingManager;
 import org.awesomeapp.messenger.ui.qr.QrDisplayActivity;
 import org.awesomeapp.messenger.ui.qr.QrShareAsyncTask;
 import org.awesomeapp.messenger.util.SecureMediaStore;
+import org.jivesoftware.smackx.omemo.OmemoManager;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -219,6 +225,41 @@ public class AccountFragment extends Fragment {
             if (mUserKey != null) {
                 tvFingerprint.setText(prettyPrintFingerprint(mUserKey));
             }
+
+            IImConnection conn = mApp.getConnection(mProviderId, mAccountId);
+            try {
+                final List<String> remoteOmemoFingerprints = conn.getFingerprints(mUserAddress);
+
+
+                if (remoteOmemoFingerprints != null && remoteOmemoFingerprints.size() > 0) {
+                    tvFingerprint = (TextView) mView.findViewById(R.id.omemoFingerprint);
+                    tvFingerprint.setText(prettyPrintFingerprint(remoteOmemoFingerprints.get(0)));
+
+                    btnQrShare = (ImageView) mView.findViewById(R.id.omemoqrshare);
+                    btnQrShare.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                            try {
+                                String inviteLink = OnboardingManager.generateInviteLink(getActivity(), mUserAddress, remoteOmemoFingerprints.get(0), mNickname);
+                                new QrShareAsyncTask(getActivity()).execute(inviteLink, mNickname);
+                            } catch (IOException ioe) {
+                                Log.e(ImApp.LOG_TAG, "couldn't generate QR code", ioe);
+                            }
+                        }
+                    });
+                }
+                else
+                {
+                    mView.findViewById(R.id.omemodisplay).setVisibility(View.GONE);
+                }
+            }
+            catch (RemoteException re)
+            {
+
+            }
+
+
 
         }
 

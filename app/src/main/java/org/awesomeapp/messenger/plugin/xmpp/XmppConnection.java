@@ -127,6 +127,7 @@ import org.jxmpp.stringprep.XmppStringprepException;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -415,7 +416,10 @@ public class XmppConnection extends ImConnection {
                     contact.setForwardingAddress(vCard.getJabberId());
 
                 }
-
+                else
+                {
+                    contact.setForwardingAddress(null);
+                }
 
                     // If VCard is loaded, then save the avatar to the personal folder.
                 String avatarHash = vCard.getAvatarHash();
@@ -4137,13 +4141,18 @@ public class XmppConnection extends ImConnection {
     public List getFingerprints (String address)
     {
         try {
-            return getOmemo().getFingerprints(JidCreate.bareFrom(address), false);
-        }
-        catch (Exception xe)
-        {
+            if (address.equals(mUser.getAddress().getBareAddress()))
+            {
+                ArrayList<String> fps = new ArrayList<>();
+                fps.add(getOmemo().getManager().getOurFingerprint());
+                return fps;
+            }
+            else {
+                 return getOmemo().getFingerprints(JidCreate.bareFrom(address), false);
+            }
+        } catch (Exception xe) {
             return null;
         }
     }
-
 
 }

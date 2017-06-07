@@ -22,10 +22,7 @@
 	android:layout_height="match_parent"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	>
-<LinearLayout
-	android:layout_height="match_parent"
-	android:layout_width="wrap_content"
-	android:padding="0dp">
+
 
 	<LinearLayout
 		android:layout_width="match_parent"
@@ -63,7 +60,7 @@
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:orientation="horizontal"
-				android:padding="6dp">
+				>
 			<org.ironrabbit.type.CustomTypefaceTextView android:id="@+id/tvNickname"
 				android:selectAllOnFocus="true"
 				android:layout_width="wrap_content"
@@ -94,7 +91,7 @@
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:orientation="horizontal"
-				android:padding="6dp">
+				>
 			<org.ironrabbit.type.CustomTypefaceTextView android:id="@+id/edtName"
 			                               android:selectAllOnFocus="true"
 			                               android:layout_width="wrap_content"
@@ -115,7 +112,7 @@
 			                               android:layout_width="match_parent"
 			                               android:layout_height="wrap_content"
 			                               android:orientation="horizontal"
-			                               android:padding="6dp">
+			                           >
 			                       <TextView android:id="@+id/edtPass"
 			                               android:layout_width="wrap_content"
 			                               android:layout_height="wrap_content"
@@ -147,16 +144,22 @@
 
 
 
-        </LinearLayout>
 
-
+        <org.ironrabbit.type.CustomTypefaceTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:autoLink="none"
+            android:text="@string/security_code"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="?contactTextSecondary"
+            android:layout_gravity="start"
+            />
 
 	<RelativeLayout
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:orientation="horizontal"
 		android:gravity="left"
-		android:paddingLeft="12dp"
 		>
 
 
@@ -195,6 +198,50 @@
 
 	</RelativeLayout>
 
+		<RelativeLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			android:gravity="left"
+            android:id="@+id/omemodisplay"
+            android:layout_marginTop="6dp"
+			>
+
+
+			<ImageView
+				android:layout_width="64dp"
+				android:layout_height="64dp"
+				android:id="@+id/omemoqrcode"
+				android:background="#dddddd"
+				android:src="@drawable/qr"
+				android:layout_alignParentLeft="true"
+				/>
+
+			<org.ironrabbit.type.CustomTypefaceTextView android:id="@+id/omemoFingerprint"
+				android:selectAllOnFocus="true"
+				android:layout_width="200dp"
+				android:layout_height="wrap_content"
+				android:layout_marginLeft="6dp"
+				android:autoLink="none"
+				android:text=""
+				android:textAppearance="?android:attr/textAppearanceSmall"
+				android:textColor="?contactTextSecondary"
+
+				android:layout_toRightOf="@+id/omemoqrcode"
+				android:layout_centerVertical="true"
+				/>
+			<ImageView
+				android:layout_width="48dp"
+				android:layout_height="48dp"
+				android:id="@+id/omemoqrshare"
+				android:layout_centerVertical="true"
+
+				android:layout_alignParentRight="true"
+				android:src="@android:drawable/ic_menu_share"
+				/>
+
+		</RelativeLayout>
+
 		<!--
 		<LinearLayout
 			android:layout_width="match_parent"
@@ -218,6 +265,6 @@
 		</LinearLayout>
 -->
 
+        </LinearLayout>
 	</LinearLayout>
-</LinearLayout>
 </ScrollView>
