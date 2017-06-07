@@ -1504,6 +1504,10 @@ public class XmppConnection extends ImConnection {
             {
                 vCard.setJabberId(migrateJabberId);
             }
+            else
+            {
+                vCard.setJabberId(mUser.getAddress().getBareAddress());
+            }
 
             if (setAvatar) {
                 byte[] avatar = DatabaseUtils.getAvatarBytesFromAddress(mContext.getContentResolver(), mUser.getAddress().getBareAddress());
@@ -2489,6 +2493,9 @@ public class XmppConnection extends ImConnection {
         // Runs in executor thread
         private void do_loadContactLists() {
 
+            if (mConnection == null)
+                return;
+
             debug(TAG, "load contact lists");
 
             //since we don't show lists anymore, let's just load all entries together
@@ -2503,7 +2510,7 @@ public class XmppConnection extends ImConnection {
                 return;
             }
 
-            LastActivityManager lam = LastActivityManager.getInstanceFor(mConnection);
+           // LastActivityManager lam = LastActivityManager.getInstanceFor(mConnection);
             long now = new Date().getTime();
 
             ContactList cl;
@@ -2977,10 +2984,6 @@ public class XmppConnection extends ImConnection {
                 response.setTo(JidCreate.bareFrom(contact.getAddress().getBareAddress()));
                 sendPacket(response);
 
-//                qNewContact.push(contact);
-          //      mRoster.reload();
-
-                //doAddContactToListAsync(contact, getContactListManager().getDefaultContactList());
                 mContactListManager.getSubscriptionRequestListener().onSubscriptionApproved(contact, mProviderId, mAccountId);
 
             }
@@ -2994,7 +2997,6 @@ public class XmppConnection extends ImConnection {
             if (session != null)
                 session.setSubscribed(true);
 
-          //  sendPresencePacket();
             requestPresenceRefresh(contact.getAddress().getBareAddress());
             qAvatar.push(contact.getAddress().getAddress());
         }
@@ -4102,6 +4104,7 @@ public class XmppConnection extends ImConnection {
                                     {
                                         mRoster.createEntry(jid, contact.getName(), groups);
                                     }
+
 
                                 } catch (XMPPException e) {
 
