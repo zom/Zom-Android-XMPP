@@ -1307,18 +1307,23 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
     public synchronized void setContactTyping (Contact contact, boolean isTyping)
     {
-
-        int N = mRemoteListeners.beginBroadcast();
-        for (int i = 0; i < N; i++) {
-            IChatListener listener = mRemoteListeners.getBroadcastItem(i);
-            try {
-                listener.onContactTyping(ChatSessionAdapter.this,contact, isTyping);
-            } catch (RemoteException e) {
-                // The RemoteCallbackList will take care of removing the
-                // dead listeners.
+        try {
+            int N = mRemoteListeners.beginBroadcast();
+            for (int i = 0; i < N; i++) {
+                IChatListener listener = mRemoteListeners.getBroadcastItem(i);
+                try {
+                    listener.onContactTyping(ChatSessionAdapter.this, contact, isTyping);
+                } catch (RemoteException e) {
+                    // The RemoteCallbackList will take care of removing the
+                    // dead listeners.
+                }
             }
+            mRemoteListeners.finishBroadcast();
         }
-        mRemoteListeners.finishBroadcast();
+        catch (IllegalStateException ise)
+        {
+            //sometimes this broadcast overlaps with others
+        }
     }
 
     public void sendTypingStatus (boolean isTyping)
