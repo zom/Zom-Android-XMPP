@@ -146,12 +146,20 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:gravity="center"
+            android:gravity="center|top"
             android:layout_margin="0dp"
             android:id="@+id/upgrade_view"
             android:background="?colorPrimary"
             android:visibility="gone"
             >
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="X"
+                android:layout_gravity="top|right|end"
+                android:src="@drawable/ic_close_white_24dp"
+                android:id="@+id/upgrade_close"
+                />
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="120dp"

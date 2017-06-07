@@ -3129,6 +3129,7 @@ public class ConversationView {
         ImageView viewImage = (ImageView)mActivity.findViewById(R.id.upgrade_view_image);
         TextView viewDesc = (TextView)mActivity.findViewById(R.id.upgrade_view_text);
         Button buttonAction = (Button)mActivity.findViewById(R.id.upgrade_action);
+        View viewUpgradeClose = mActivity.findViewById(R.id.upgrade_close);
 
         viewNotify.setVisibility(View.VISIBLE);
 
@@ -3140,6 +3141,14 @@ public class ConversationView {
             public void onClick(View view) {
                 viewNotify.setVisibility(View.GONE);
                 startChat(contact.getForwardingAddress());
+            }
+        });
+
+        viewUpgradeClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                viewNotify.setVisibility(View.GONE);
+                contact.setForwardingAddress(null);
             }
         });
     }
