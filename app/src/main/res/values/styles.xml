@@ -156,8 +156,17 @@
 
     <style name="Toolbar.TitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
         <item name="android:textSize">18sp</item>
-        <item name="android:layout_height">10dp</item>
+        <item name="android:layout_height">8dp</item>
     </style>
+
+    <style name="Toolbar.SubtitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Subtitle">
+        <item name="android:textSize">14sp</item>
+        <item name="android:layout_height">8dp</item>
+    </style>
+
+
+
+
     <!--
     
    <style name="DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">

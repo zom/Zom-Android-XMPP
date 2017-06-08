@@ -212,7 +212,6 @@ public class ConversationDetailActivity extends BaseActivity {
         //first set font
         Typeface typeface = CustomTypefaceManager.getCurrentTypeface(this);
 
-
         if (typeface != null) {
             for (int i = 0; i < mToolbar.getChildCount(); i++) {
                 View view = mToolbar.getChildAt(i);
