@@ -522,8 +522,6 @@ public class ConversationView {
         @Override
         public void onStatusChanged(IChatSession ses) throws RemoteException {
             scheduleRequery(DEFAULT_QUERY_INTERVAL);
-         //   updatePresenceDisplay();
-            //showSubscriptionUI();
 
         }
 
@@ -739,11 +737,11 @@ public class ConversationView {
                     {
                         mPresenceStatus = c.getPresence().getStatus();
 
-                        if (mPresenceStatus == Presence.AVAILABLE) {
+                        if (mPresenceStatus != Presence.OFFLINE) {
                             mLastSeen = c.getPresence().getLastSeen();
                             mActivity.updateLastSeen(mLastSeen);
                         }
-                      //  updatePresenceDisplay();
+
                     }
 
                     mHandler.post(mUpdateChatCallback);
@@ -1372,42 +1370,7 @@ public class ConversationView {
         return mRemoteHeader;
     }
 
-    /**
-    private void updatePresenceDisplay ()
-    {
-        if (mRemoteAvatar == null)
-            return;
 
-        switch (mPresenceStatus) {
-        case Presence.AVAILABLE:
-            mRemoteAvatar.setBorderColor(mActivity.getResources().getColor(R.color.holo_green_light));
-            mRemoteAvatar.setAlpha(255);
-            break;
-
-        case Presence.IDLE:
-            mRemoteAvatar.setBorderColor(mActivity.getResources().getColor(R.color.holo_green_dark));
-            mRemoteAvatar.setAlpha(255);
-            break;
-
-        case Presence.AWAY:
-            mRemoteAvatar.setBorderColor(mActivity.getResources().getColor(R.color.holo_orange_light));
-            mRemoteAvatar.setAlpha(255);
-            break;
-
-        case Presence.DO_NOT_DISTURB:
-            mRemoteAvatar.setBorderColor(mActivity.getResources().getColor(R.color.holo_red_dark));
-            mRemoteAvatar.setAlpha(255);
-            break;
-
-        case Presence.OFFLINE:
-            mRemoteAvatar.setBorderColor(mActivity.getResources().getColor(R.color.holo_grey_light));
-            mRemoteAvatar.setAlpha(100);
-            break;
-
-
-        default:
-        }
-    }**/
 
 
     private void setGroupTitle() {
@@ -1496,7 +1459,6 @@ public class ConversationView {
 
                 }
 
-              //  updatePresenceDisplay();
 
             }
 

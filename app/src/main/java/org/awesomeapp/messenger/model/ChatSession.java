@@ -67,10 +67,8 @@ public class ChatSession {
     private void initJid ()
     {
         try {
-            if (mJid == null) {
-                    mJid = JidCreate.from(mParticipant.getAddress().getAddress());
-                    mXa = new XmppAddress(mJid.toString());
-            }
+            mJid = JidCreate.from(mParticipant.getAddress().getAddress());
+            mXa = new XmppAddress(mJid.toString());
 
             if (mJid.hasNoResource()) {
 
@@ -166,6 +164,9 @@ public class ChatSession {
     public int sendMessageAsync(Message message) {
 
         if (mParticipant instanceof Contact) {
+
+            if (mJid.hasNoResource())
+                initJid();
 
             OtrChatManager cm = OtrChatManager.getInstance();
             SessionID sId = cm.getSessionId(message.getFrom().getAddress(), mJid.toString());

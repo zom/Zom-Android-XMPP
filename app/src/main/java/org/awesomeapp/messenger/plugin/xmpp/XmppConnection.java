@@ -2263,13 +2263,13 @@ public class XmppConnection extends ImConnection {
                     msgXmpp = muc.createMessage();
                 } else {
                     msgXmpp = new org.jivesoftware.smack.packet.Message(
-                            jidTo.asBareJid(), org.jivesoftware.smack.packet.Message.Type.chat);
+                            jidTo, org.jivesoftware.smack.packet.Message.Type.chat);
                 }
 
                 if (message.getFrom() == null)
-                    msgXmpp.setFrom(JidCreate.bareFrom(mUser.getAddress().getAddress()));
+                    msgXmpp.setFrom(JidCreate.from(mUser.getAddress().getAddress()));
                 else
-                    msgXmpp.setFrom(JidCreate.bareFrom(message.getFrom().getAddress()));
+                    msgXmpp.setFrom(JidCreate.from(message.getFrom().getAddress()));
 
                 msgXmpp.setBody(message.getBody());
 
