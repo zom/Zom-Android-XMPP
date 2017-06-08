@@ -141,9 +141,11 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
@@ -218,7 +220,7 @@ public class XmppConnection extends ImConnection {
     // Maintains a sequence counting up to the user configured heartbeat interval
     private int heartbeatSequence = 0;
 
-    private LinkedList<String> qAvatar = new LinkedList <String>();
+    private HashMap<String, String> qAvatar = new HashMap <>();
 
     private LinkedList<org.jivesoftware.smack.packet.Presence> qPresence = new LinkedList<org.jivesoftware.smack.packet.Presence>();
     private LinkedList<org.jivesoftware.smack.packet.Stanza> qPacket = new LinkedList<org.jivesoftware.smack.packet.Stanza>();
@@ -375,11 +377,14 @@ public class XmppConnection extends ImConnection {
 
             try
             {
-                while (qAvatar.size()>0)
-                {
+                synchronized (qAvatar) {
+                    Iterator<String> keys = qAvatar.keySet().iterator();
 
-                    loadVCard (resolver, qAvatar.poll());
+                    while (keys.hasNext()) {
+                        loadVCard(resolver, keys.next());
+                    }
 
+                    qAvatar.clear();
                 }
             }
             catch (Exception e) {}
@@ -1128,13 +1133,6 @@ public class XmppConnection extends ImConnection {
         if (mPassword == null)
             mPassword = Imps.Account.getPassword(contentResolver, mAccountId);
 
-        mIsGoogleAuth = false;// mPassword.startsWith(GTalkOAuth2.NAME);
-
-        if (mIsGoogleAuth)
-        {
-            mPassword = mPassword.split(":")[1];
-        }
-
         Cursor cursor = contentResolver.query(Imps.ProviderSettings.CONTENT_URI, new String[]{Imps.ProviderSettings.NAME, Imps.ProviderSettings.VALUE}, Imps.ProviderSettings.PROVIDER + "=?", new String[]{Long.toString(mProviderId)}, null);
 
         if (cursor == null)
@@ -1143,8 +1141,7 @@ public class XmppConnection extends ImConnection {
         Imps.ProviderSettings.QueryMap providerSettings = new Imps.ProviderSettings.QueryMap(
                 cursor, contentResolver, mProviderId, false, null);
 
-        if (mUser == null)
-            mUser = makeUser(providerSettings, contentResolver);
+        mUser = makeUser(providerSettings, contentResolver);
 
         providerSettings.close();
 
@@ -1168,13 +1165,6 @@ public class XmppConnection extends ImConnection {
         if (mPassword == null)
             mPassword = Imps.Account.getPassword(contentResolver, mAccountId);
 
-        mIsGoogleAuth = false;// mPassword.startsWith(GTalkOAuth2.NAME);
-
-        if (mIsGoogleAuth)
-        {
-            mPassword = mPassword.split(":")[1];
-        }
-
         Cursor cursor = contentResolver.query(Imps.ProviderSettings.CONTENT_URI, new String[]{Imps.ProviderSettings.NAME, Imps.ProviderSettings.VALUE}, Imps.ProviderSettings.PROVIDER + "=?", new String[]{Long.toString(mProviderId)}, null);
 
         if (cursor == null)
@@ -1183,8 +1173,7 @@ public class XmppConnection extends ImConnection {
         Imps.ProviderSettings.QueryMap providerSettings = new Imps.ProviderSettings.QueryMap(
                 cursor, contentResolver, mProviderId, false, null);
 
-        if (mUser == null)
-            mUser = makeUser(providerSettings, contentResolver);
+        mUser = makeUser(providerSettings, contentResolver);
 
         providerSettings.close();
 
@@ -2160,6 +2149,9 @@ public class XmppConnection extends ImConnection {
                     session = mSessionManager.createChatSession(participant, false);
                     mContactListManager.refreshPresence(address);
 
+                    qAvatar.put(jid.asBareJid().toString(),"");
+
+
                     /**
                     try {
                         getOmemo().trustOmemoDevice(jid.asBareJid(), true);
@@ -2996,7 +2988,7 @@ public class XmppConnection extends ImConnection {
                     session.setSubscribed(true);
 
                 requestPresenceRefresh(contact.getAddress().getBareAddress());
-                qAvatar.push(contact.getAddress().getAddress());
+                qAvatar.put(contact.getAddress().getAddress(),"");
 
                 getOmemo().getManager().requestDeviceListUpdateFor(JidCreate.bareFrom(contact.getAddress().getAddress()));
 
@@ -3938,8 +3930,36 @@ public class XmppConnection extends ImConnection {
                     boolean hasMatches = DatabaseUtils.doesAvatarHashExist(mContext.getContentResolver(),  Imps.Avatars.CONTENT_URI, contact.getAddress().getBareAddress(), hash);
 
                     if (!hasMatches) //we must reload
-                        qAvatar.push(contact.getAddress().getAddress());
+                        qAvatar.put(contact.getAddress().getAddress(),hash);
 
+                }
+                else
+                {
+                    for (StandardExtensionElement element : o.getElements())
+                    {
+                        if (element.getElementName().equals("photo"))
+                        {
+                            hash = element.getText();
+                            boolean hasMatches = DatabaseUtils.doesAvatarHashExist(mContext.getContentResolver(),  Imps.Avatars.CONTENT_URI, contact.getAddress().getBareAddress(), hash);
+
+                            if (!hasMatches) //we must reload
+                                qAvatar.put(contact.getAddress().getAddress(),hash);
+
+                            break;
+
+                        }
+                    }
+
+
+                }
+            }
+            else
+            {
+                boolean hasAvatar = DatabaseUtils.hasAvatarContact(mContext.getContentResolver(),  Imps.Avatars.CONTENT_URI, contact.getAddress().getBareAddress());
+
+                if (!hasAvatar)
+                {
+                    qAvatar.put(contact.getAddress().getAddress(),"");
                 }
             }
 
