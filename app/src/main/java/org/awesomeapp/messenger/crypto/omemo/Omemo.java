@@ -95,7 +95,7 @@ public class Omemo {
         }
 
         ArrayList<String> fps = new ArrayList<>();
-        for(int id : list.getActiveDevices()) {
+        for(int id : list.getAllDevices()) {
 
             OmemoDevice device =   new OmemoDevice(jid, id);
             if (mOmemoStore.loadOmemoIdentityKey(device)!=null) {

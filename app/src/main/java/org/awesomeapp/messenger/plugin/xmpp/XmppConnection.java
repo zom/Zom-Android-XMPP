@@ -2288,10 +2288,6 @@ public class XmppConnection extends ImConnection {
 
                         try {
 
-                            if (getOmemo().getFingerprints(jidTo.asBareJid(),false).size()==0) {
-                                getOmemo().getManager().requestDeviceListUpdateFor(jidTo.asBareJid());
-                            }
-
                             org.jivesoftware.smack.packet.Message msgEncrypted
                                     = getOmemo().getManager().encrypt(jidTo.asBareJid(), msgXmpp);
 
@@ -2363,7 +2359,16 @@ public class XmppConnection extends ImConnection {
 
             try {
 
-                return getOmemo().resourceSupportsOmemo(jid);
+                if (getOmemo().resourceSupportsOmemo(jid)) {
+
+                    if (getOmemo().getFingerprints(jid.asBareJid(), false).size() == 0) {
+                        getOmemo().getManager().requestDeviceListUpdateFor(jid.asBareJid());
+                        return false;
+                    }
+
+                    return true;
+                }
+
             }
             catch (Exception e)
             {

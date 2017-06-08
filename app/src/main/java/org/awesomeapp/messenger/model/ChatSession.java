@@ -222,6 +222,7 @@ public class ChatSession {
 
                     } else {
 
+                        OtrChatManager.getInstance().startSession(sId);
                         message.setType(Imps.MessageType.QUEUED);
                         return message.getType();
                     }
