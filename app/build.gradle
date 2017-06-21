@@ -11,6 +11,12 @@ def getVersionName = { ->
     return stdout.toString().trim()
 }
 
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+}
+
 android {
     compileSdkVersion project.ext.compileSdkVersion
     buildToolsVersion project.ext.buildToolsVersion
@@ -131,5 +137,8 @@ dependencies {
     //compile 'com.chauthai.swipereveallayout:swipe-reveal-layout:1.4.0'
    // compile 'com.hudomju:swipe-to-dismiss-undo:1.0'
 
-
+   // Needed for Lantern
+   compile(name:'liblantern-arm', ext:'aar')
+   compile(name:'android-sdk-debug', ext:'aar')
+   compile "com.google.android.gms:play-services-analytics:10.2.4"
 }
