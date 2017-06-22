@@ -306,7 +306,11 @@ public class ContactsListFragment extends Fragment {
                     //then hide/archive contact
                     archiveContact(((MainActivity) getActivity()), itemViewHolder.mView.getId(), itemViewHolder.mAddress, itemViewHolder.mProviderId, itemViewHolder.mAccountId, doArchive);
 
-                    Snackbar snack = Snackbar.make(mRecView, getString(R.string.action_archived), Snackbar.LENGTH_LONG);
+                    String action =  getString(R.string.action_archived);
+                    if (!doArchive)
+                        action = getString(R.string.action_active);
+
+                    Snackbar snack = Snackbar.make(mRecView,action, Snackbar.LENGTH_LONG);
                     snack.setAction(R.string.action_undo, new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
