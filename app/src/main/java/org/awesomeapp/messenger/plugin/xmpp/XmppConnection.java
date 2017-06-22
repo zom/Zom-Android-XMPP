@@ -2594,7 +2594,6 @@ public class XmppConnection extends ImConnection {
 
                     /**
                     try {
-
                         LastActivity activity = lam.getLastActivity(JidCreate.from(address));
                         contact.setPresence(new Date(activity.getIdleTime());
                     }
@@ -2606,6 +2605,9 @@ public class XmppConnection extends ImConnection {
                     try {
 
                         mContactListManager.getSubscriptionRequestListener().onSubScriptionChanged(contact, mProviderId, mAccountId, subType, subStatus);
+
+                        handlePresenceChanged(mRoster.getPresence(rEntry.getJid()));
+
                     }
                     catch (RemoteException re)
                     {
@@ -3945,10 +3947,12 @@ public class XmppConnection extends ImConnection {
                         if (element.getElementName().equals("photo"))
                         {
                             hash = element.getText();
-                            boolean hasMatches = DatabaseUtils.doesAvatarHashExist(mContext.getContentResolver(),  Imps.Avatars.CONTENT_URI, contact.getAddress().getBareAddress(), hash);
+                            if (hash != null) {
+                                boolean hasMatches = DatabaseUtils.doesAvatarHashExist(mContext.getContentResolver(), Imps.Avatars.CONTENT_URI, contact.getAddress().getBareAddress(), hash);
 
-                            if (!hasMatches) //we must reload
-                                qAvatar.put(contact.getAddress().getAddress(),hash);
+                                if (!hasMatches) //we must reload
+                                    qAvatar.put(contact.getAddress().getAddress(), hash);
+                            }
 
                             break;
 
