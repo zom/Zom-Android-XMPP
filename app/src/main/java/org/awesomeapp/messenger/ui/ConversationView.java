@@ -753,6 +753,8 @@ public class ConversationView {
         }
     };
 
+
+
     private boolean mIsListening;
 
     static final void log(String msg) {

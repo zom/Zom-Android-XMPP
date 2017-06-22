@@ -64,6 +64,7 @@ import android.widget.Toast;
 import net.java.otr4j.session.SessionStatus;
 
 import org.awesomeapp.messenger.model.Contact;
+import org.awesomeapp.messenger.model.Presence;
 import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
 import org.awesomeapp.messenger.provider.Imps;
 
@@ -124,7 +125,17 @@ public class ConversationDetailActivity extends BaseActivity {
             if (msg.what == 1)
             {
                 if (mConvoView.getLastSeen() != null) {
-                    getSupportActionBar().setSubtitle(mPrettyTime.format(mConvoView.getLastSeen()));
+                        getSupportActionBar().setSubtitle(mPrettyTime.format(mConvoView.getLastSeen()));
+                }
+                else
+                {
+                    if (mConvoView.getRemotePresence() == Presence.AWAY)
+                        getSupportActionBar().setSubtitle(getString(R.string.presence_away));
+                    else if (mConvoView.getRemotePresence() == Presence.OFFLINE)
+                        getSupportActionBar().setSubtitle(getString(R.string.presence_offline));
+                    else if (mConvoView.getRemotePresence() == Presence.DO_NOT_DISTURB)
+                        getSupportActionBar().setSubtitle(getString(R.string.presence_busy));
+
                 }
             }
         }
@@ -203,6 +214,16 @@ public class ConversationDetailActivity extends BaseActivity {
 
         if (mConvoView.getLastSeen() != null) {
             getSupportActionBar().setSubtitle(new PrettyTime().format(mConvoView.getLastSeen()));
+        }
+        else if (mConvoView.getRemotePresence() != -1)
+        {
+            if (mConvoView.getRemotePresence() == Presence.AWAY)
+                getSupportActionBar().setSubtitle(getString(R.string.presence_away));
+            else if (mConvoView.getRemotePresence() == Presence.OFFLINE)
+                getSupportActionBar().setSubtitle(getString(R.string.presence_offline));
+            else if (mConvoView.getRemotePresence() == Presence.DO_NOT_DISTURB)
+                getSupportActionBar().setSubtitle(getString(R.string.presence_busy));
+
         }
         else
         {
