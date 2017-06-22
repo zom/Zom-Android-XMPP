@@ -93,9 +93,9 @@ dependencies {
     compile 'commons-codec:commons-codec:1.9'
     compile 'commons-io:commons-io:2.4'
     compile 'org.thoughtcrime.ssl.pinning:AndroidPinning:1.0.0'
-    compile 'com.android.support:design:25.2.0'
-    compile 'com.android.support:recyclerview-v7:25.2.0'
-    compile 'com.android.support:support-v4:25.2.0'
+    compile 'com.android.support:design:25.3.1'
+    compile 'com.android.support:recyclerview-v7:25.3.1'
+    compile 'com.android.support:support-v4:25.3.1'
     compile project.ext.appcompat
     compile 'info.guardianproject.cacheword:cachewordlib:0.1.1'
     compile 'info.guardianproject.iocipher:IOCipher:0.4'
@@ -122,7 +122,7 @@ dependencies {
     compile 'org.ocpsoft.prettytime:prettytime:4.0.0.Final'
     compile 'com.theartofdev.edmodo:android-image-cropper:2.0.0'
     compile 'de.hdodenhof:circleimageview:2.0.0'
-    compile 'com.github.bumptech.glide:glide:3.5.2'
+    compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'com.github.javiersantos:AppUpdater:2.5.2'
     compile 'com.github.QuadFlask:colorpicker:0.0.10'
 
