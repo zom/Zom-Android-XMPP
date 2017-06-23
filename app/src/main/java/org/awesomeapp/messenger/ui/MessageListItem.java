@@ -194,27 +194,25 @@ public class MessageListItem extends FrameLayout {
             Uri mediaUri = Uri.parse(body);
             lastMessage = "";
 
-            if (mimeType.startsWith("audio"))
-            {
-                mHolder.mAudioButton.setImageResource(R.drawable.media_audio_play);
+            if (mediaUri != null && mediaUri.getScheme() != null) {
+                if (mimeType.startsWith("audio")) {
+                    mHolder.mAudioButton.setImageResource(R.drawable.media_audio_play);
 
-                try {
-                    mHolder.mAudioContainer.setVisibility(View.VISIBLE);
-                    showAudioPlayer(mimeType, mediaUri, id, mHolder);
+                    try {
+                        mHolder.mAudioContainer.setVisibility(View.VISIBLE);
+                        showAudioPlayer(mimeType, mediaUri, id, mHolder);
+                    } catch (Exception e) {
+                        mHolder.mAudioContainer.setVisibility(View.GONE);
+                    }
+
+                } else {
+                    mHolder.mTextViewForMessages.setVisibility(View.GONE);
+
+                    showMediaThumbnail(mimeType, mediaUri, id, mHolder);
+
+                    mHolder.mMediaContainer.setVisibility(View.VISIBLE);
+
                 }
-                catch (Exception e)
-                {
-                    mHolder.mAudioContainer.setVisibility(View.GONE);
-                }
-
-            }
-            else {
-                mHolder.mTextViewForMessages.setVisibility(View.GONE);
-
-                showMediaThumbnail(mimeType, mediaUri, id, mHolder);
-
-                mHolder.mMediaContainer.setVisibility(View.VISIBLE);
-
             }
 
         }

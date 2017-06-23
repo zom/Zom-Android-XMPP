@@ -28,7 +28,10 @@ import org.awesomeapp.messenger.model.Address;
 import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
 import  org.awesomeapp.messenger.service.IChatListener;
 import org.awesomeapp.messenger.service.IDataListener;
+
+import eu.siacs.conversations.Downloader;
 import im.zom.messenger.R;
+import info.guardianproject.iocipher.File;
 
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.model.ChatGroup;
@@ -43,11 +46,15 @@ import org.awesomeapp.messenger.model.ImErrorInfo;
 import org.awesomeapp.messenger.model.MessageListener;
 import org.awesomeapp.messenger.model.Presence;
 import org.awesomeapp.messenger.provider.Imps;
+import org.awesomeapp.messenger.util.SecureMediaStore;
 import org.awesomeapp.messenger.util.SystemServices;
 
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.java.otr4j.OtrEngineListener;
 import net.java.otr4j.session.SessionID;
@@ -618,6 +625,38 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
     }
 
+    // Pattern for recognizing a URL, based off RFC 3986
+    private static final Pattern urlPattern = Pattern.compile(
+            "(?:^|[\\W])((ht|f)tp(s?):\\/\\/|www\\.)"
+                    + "(([\\w\\-]+\\.){1,}?([\\w\\-.~]+\\/?)*"
+                    + "[\\p{Alnum}.,%_=?&#\\-+()\\[\\]\\*$~@!:/{};']*)",
+            Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
+
+    private static final Pattern aesGcmUrlPattern = Pattern.compile(
+            "(?:^|[\\W])(aesgcm:\\/\\/|www\\.)"
+                    + "(([\\w\\-]+\\.){1,}?([\\w\\-.~]+\\/?)*"
+                    + "[\\p{Alnum}.,%_=?&#\\-+()\\[\\]\\*$~@!:/{};']*)",
+            Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
+
+
+    String checkForLinkedMedia (String message, boolean allowWebDownloads)
+    {
+        Matcher matcher = aesGcmUrlPattern.matcher(message);
+
+//        if ((!matcher.find()) && allowWebDownloads)
+  //          matcher = urlPattern.matcher(message);
+
+        if (matcher.find())
+        {
+            int matchStart = matcher.start(1);
+            int matchEnd = matcher.end();
+            return message.substring(matchStart,matchEnd);
+        }
+        else
+            return null;
+
+    }
+
     private long insertOrUpdateGroupContactInDb(ChatGroup group) {
         // Insert a record in contacts table
         ContentValues values = new ContentValues(4);
@@ -787,39 +826,109 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                 return false; //this message is a duplicate
             }
 
-            insertOrUpdateChat(body);
+            boolean allowWebDownloads = true;
+            String mediaLink = checkForLinkedMedia(body,allowWebDownloads);
 
-            boolean wasMessageSeen = false;
+            if (mediaLink == null) {
+                insertOrUpdateChat(body);
 
-            if (msg.getID() == null)
-                insertMessageInDb(nickname, body, time, msg.getType());
-            else
-                 insertMessageInDb(nickname, body, time, msg.getType(),0,msg.getID());
+                boolean wasMessageSeen = false;
 
-            int N = mRemoteListeners.beginBroadcast();
-            for (int i = 0; i < N; i++) {
-                IChatListener listener = mRemoteListeners.getBroadcastItem(i);
-                try {
-                    boolean wasSeen = listener.onIncomingMessage(ChatSessionAdapter.this, msg);
+                if (msg.getID() == null)
+                    insertMessageInDb(nickname, body, time, msg.getType());
+                else
+                    insertMessageInDb(nickname, body, time, msg.getType(), 0, msg.getID());
 
-                    if (wasSeen)
-                        wasMessageSeen = wasSeen;
+                int N = mRemoteListeners.beginBroadcast();
+                for (int i = 0; i < N; i++) {
+                    IChatListener listener = mRemoteListeners.getBroadcastItem(i);
+                    try {
+                        boolean wasSeen = listener.onIncomingMessage(ChatSessionAdapter.this, msg);
 
-                } catch (RemoteException e) {
-                    // The RemoteCallbackList will take care of removing the
-                    // dead listeners.
+                        if (wasSeen)
+                            wasMessageSeen = wasSeen;
+
+                    } catch (RemoteException e) {
+                        // The RemoteCallbackList will take care of removing the
+                        // dead listeners.
+                    }
+                }
+                mRemoteListeners.finishBroadcast();
+
+                // Due to the move to fragments, we could have listeners for ChatViews that are not visible on the screen.
+                // This is for fragments adjacent to the current one.  Therefore we can't use the existence of listeners
+                // as a filter on notifications.
+                if (!wasMessageSeen) {
+                    //reinstated body display here in the notification; perhaps add preferences to turn that off
+                    mStatusBarNotifier.notifyChat(mConnection.getProviderId(), mConnection.getAccountId(),
+                            getId(), bareUsername, nickname, body, false);
                 }
             }
-            mRemoteListeners.finishBroadcast();
-
-            // Due to the move to fragments, we could have listeners for ChatViews that are not visible on the screen.
-            // This is for fragments adjacent to the current one.  Therefore we can't use the existence of listeners
-            // as a filter on notifications.
-            if (!wasMessageSeen)
+            else
             {
-                //reinstated body display here in the notification; perhaps add preferences to turn that off
-                mStatusBarNotifier.notifyChat(mConnection.getProviderId(), mConnection.getAccountId(),
-                        getId(), bareUsername, nickname, body, false);
+                try {
+                    Downloader dl = new Downloader();
+                    File fileDownload = dl.openSecureStorageFile(mContactId+"",mediaLink);
+
+                    OutputStream storageStream = new info.guardianproject.iocipher.FileOutputStream(fileDownload);
+                    boolean downloaded = dl.get(mediaLink, storageStream);
+
+                    if (downloaded) {
+                        String mimeType = dl.getMimeType();
+
+                        try {
+                            boolean isVerified = getDefaultOtrChatSession().isKeyVerified(bareUsername);
+
+                            int type = isVerified ? Imps.MessageType.INCOMING_ENCRYPTED_VERIFIED : Imps.MessageType.INCOMING_ENCRYPTED;
+
+                            Uri vfsUri = SecureMediaStore.vfsUri(fileDownload.getAbsolutePath());
+
+                            insertOrUpdateChat(vfsUri.toString());
+
+                            Uri messageUri = Imps.insertMessageInDb(service.getContentResolver(),
+                                    mIsGroupChat, getId(),
+                                    true, bareUsername,
+                                    vfsUri.toString(), System.currentTimeMillis(), type,
+                                    0, msg.getID(), mimeType);
+
+                            int percent = (int) (100);
+
+                            String[] path = mediaLink.split("/");
+                            String sanitizedPath = SystemServices.sanitize(path[path.length - 1]);
+
+                            final int N = mRemoteListeners.beginBroadcast();
+                            for (int i = 0; i < N; i++) {
+                                IChatListener listener = mRemoteListeners.getBroadcastItem(i);
+                                try {
+                                    listener.onIncomingFileTransferProgress(sanitizedPath, percent);
+                                } catch (RemoteException e) {
+                                    // The RemoteCallbackList will take care of removing the
+                                    // dead listeners.
+                                }
+                            }
+                            mRemoteListeners.finishBroadcast();
+
+                            if (N == 0) {
+
+
+                                mStatusBarNotifier.notifyChat(mConnection.getProviderId(), mConnection.getAccountId(),
+                                        getId(), bareUsername, nickname, service.getString(R.string.file_notify_text, mimeType, nickname), false);
+                            }
+                        } catch (Exception e) {
+                            Log.e(ImApp.LOG_TAG, "Error updating file transfer progress", e);
+                        }
+                    }
+                    else
+                    {
+                        //file doesn't exist... ignore?
+                    }
+
+                }
+                catch (Exception e)
+                {
+                    Log.e(ImApp.LOG_TAG,"error downloading incoming media",e);
+
+                }
             }
 
             mHasUnreadMessages = true;
