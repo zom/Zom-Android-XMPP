@@ -84,6 +84,7 @@ Hier antippen um eines hinzuzufügen!</string>
   <string name="empty_conversation_group">Keine Gespräche offen.\n\nHier antippen, um Unterhaltung zu beginnen!</string>
   <string name="search_label">Kontakt</string>
   <string name="search_hint">Den Namen des Kontakts eingeben, mit dem Sie sich unterhalten möchten.</string>
+<string name="input_contact_label">Gebe den vollen Benutzernamen von deinem Kontakt hier ein (z.B. zomisfun.4x3f5g@zom.im):</string>
   <!--Views: Chat: Single-->
   <string name="contact_online"><xliff:g id="user">%1$s</xliff:g> is verbunden</string>
   <string name="contact_away"><xliff:g id="user">%1$s</xliff:g> ist abwesend</string>
@@ -116,6 +117,10 @@ Zum Einladen antippen.</string>
   <string name="decline_subscription_error">Anmeldung von <xliff:g id="USER">%1$s</xliff:g> kann nicht abgelehnt werden. Bitte versuchen Sie es später erneut.</string>
   <!--Security: OTR-->
   <string name="otr_session_status_finished">Ihr Kontakt hat die verschlüsselte Unterhaltung beendet.</string>
+  <string name="otr_mode_force">Erzwingen / Voraussetzung</string>
+  <string name="otr_mode_auto">Automatisch versuchen</string>
+  <string name="otr_mode_requested">Wenn angefordert</string>
+  <string name="otr_mode_disabled">Ausgeschaltet / Nie</string>
   <!--Security: OTR: Keyring-->
   <string name="detected_Otr_keystore_import">Ein vorhandener OTR-Schlüsselspeicher wurde entdeckt und kann importiert werden. Möchten Sie jetzt das QR-Passwort einlesen?</string>
   <!--Security: OTR: Verification-->
@@ -145,6 +150,7 @@ Zum Einladen antippen.</string>
   <string name="pref_delete_unsecured_media_summary">Nach dem Import eines geteilten Fotos oder einer Datei wird das unverschlüsselte Original gelöscht.</string>
   <!--Actions: Settings: General: Other Tuning-->
   <string name="pref_group_tuning_title">Andere Feineinstellungen</string>
+  <string name="start_on_boot">Starte Zom Automatisch</string>
   <string name="start_on_boot_summary">Start und Anmeldung automatisch in vorher angemeldeten Konten</string>
   <string name="hide_offline_contacts">Getrennte Kontakte ausblenden</string>
   <string name="foreground_service_title">Dienst mit Vordergrundpriorität</string>
@@ -175,6 +181,7 @@ Für die Anmeldung wird eine Datenverbindung (inklusive Hintergrunddaten) benöt
   <string name="notify_groupchat_label">Einladung zur Gruppenunterhaltung</string>
   <string name="group_chat_invite_notify_text">Neue Einladung zur Gruppenunterhaltung von <xliff:g id="user">%s</xliff:g></string>
   <string name="new_messages_notify">Neue Nachricht(en) von</string>
+  <string name="starting_the_chatsecure_service_">Starte den Zom Dienst…</string>
   <string name="app_unlocked">Aktiviert und entsperrt</string>
   <!--Alerts: Exceptions-->
   <string name="error">Achtung</string>
@@ -211,6 +218,9 @@ Für die Anmeldung wird eine Datenverbindung (inklusive Hintergrunddaten) benöt
   <string name="error_suspended_connection">Zom hat die Verbindung zum Netzwerk verloren</string>
   <string name="unable_to_create_or_join_group_chat">Gruppenunterhaltung konnte nicht erstellt oder betreten werden</string>
   <string name="unsupported_incoming_data">Nicht unterstützte eingehende Daten, können nicht freigegeben werden!</string>
+  <!--???-->
+  <string name="swipe_alert">Zom detected that a request was made to remove its task.  Zom will likely crash.  Please use the Sign out all menu item from the account list screen instead.</string>
+  <!--/???-->
   <string name="there_is_no_viewer_available_for_this_file_format">Für dieses Dateiformat ist kein Betrachter vorhanden</string>
   <string name="otr_keysync_warning_message">Bitte die Datei »otr_keystore.ofcaes« von der Desktop-Software »OtrFileConverter« in das Stammverzeichnis des Gerätespeichers kopieren</string>
   <string name="msg_sent_failed">Die Nachricht konnte nicht gesendet werden.</string>
@@ -220,7 +230,26 @@ Für die Anmeldung wird eine Datenverbindung (inklusive Hintergrunddaten) benöt
   <string name="error_account_settings_port">Portnummer muss eine Zahl sein</string>
   <string name="error_welcome_database">Schwerwiegender Fehler: Das Entsperren oder Laden der Datenbank ist fehlgeschlagen. Bitte installieren Sie die App erneut oder wählen Sie »Daten löschen« in Androids App-Einstellungen.</string>
   <string name="account_settings_title">Kontoeinstellungen</string>
-  <!--added 2011/09/01-->
+  <string name="pref_group_protect_data_title">Schütze meine Daten</string>
+  <string name="panic_trigger_app">Panik Trigger App</string>
+  <string name="panic_trigger_app_summary">Ein Panik App kann veranlassen Zom zu sperren (Sende eine Nachricht, entferne Daten, usw.)</string>
+  <string name="panic_setup">Panik Setup</string>
+  <string name="panic_setup_summary">Stelle ein, wie Zom auf Panik Benachrichtigungen reagiert.</string>
+  <string name="panic_app_none">Keine</string>
+  <string name="panic_app_none_summary">Keine Panik Trigger App, ignoriere alle eintreffende Panik Trigger.</string>
+  <string name="panic_app_default">Default</string>
+  <string name="protect_data">Schütze meine Daten</string>
+  <!--???-->
+  <string name="action_done">Done</string>
+  <!--/???-->
+  <string name="lock_app">App sperren</string>
+  <string name="clear_app_data">Lösche alle Daten in dieser App</string>
+  <string name="uninstall_app">App deinstallieren</string>
+  <!--???-->
+  <string name="include_location">Include my location</string>
+  <!--/???-->
+
+   <!--added 2011/09/01-->
   <string name="menu_view_groups">Gruppen</string>
   <string name="buddies">Freunde</string>
   <string name="contacts">Kontakte</string>
@@ -228,6 +257,10 @@ Für die Anmeldung wird eine Datenverbindung (inklusive Hintergrunddaten) benöt
   <string name="loading">Ladevorgang …</string>
   <!--Other-->
   <!--Other: Slide Menu-->
+  <!--???-->
+  <string name="menu_all">Alle</string>
+  <string name="menu_archive">Archive</string>
+  <!--/???-->
   <string name="menu_settings">Einstellungen</string>
   <string name="menu_sign_out">Abmelden</string>
   <!--Other: Provider-->
@@ -301,6 +334,13 @@ Für die Anmeldung wird eine Datenverbindung (inklusive Hintergrunddaten) benöt
   </string-array>
   <string name="this_is_a_group_chat">Dieses ist eine Gruppenunterhaltung</string>
   <string name="unable_to_securely_share_this_file">Das verschlüsselte Teilen der Datei ist fehlgeschlagen.</string>
+  <string name="your_keystore_is_corrupted_please_re_install_chatsecure_or_clear_data_for_the_app">Dein Schlüsselspeicher ist korrupt. Bitte installiere Zom neu oder nutze \'Daten löschen\' für diese App</string>
   <string name="swipe_hint">&lt; Nach Rechts und Links wischen, für mehr Informationen &gt;</string>
+  <string name="no_convos">Zeit um einen Chat zu starten!</string>
+  <!--???-->
+  <string name="title_more">Entdecke</string>
+  <!--//???-->
   <string name="title_me">Ich</string>
+  <string name="no_photos">Geteilte und erhaltene Fotos werden hier erscheinen</string>
+
 </resources>
