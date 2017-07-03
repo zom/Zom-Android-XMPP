@@ -7,9 +7,8 @@ import org.lantern.mobilesdk.StartResult;
 import org.lantern.mobilesdk.LanternNotRunningException;
 
 import android.Session;
-import android.UserConfig;
 
-public class LanternSession implements Session, UserConfig {
+public class LanternSession implements Session {
     private StartResult startResult;
 
     public void setStartResult(StartResult result) {

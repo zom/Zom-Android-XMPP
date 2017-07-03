@@ -252,7 +252,7 @@ public class XmppConnection extends ImConnection {
                     locale, stickyConfig, startTimeoutMillis,
                     analyticsTrackingID, new LanternSession());
             String[] parts = result.getSOCKS5Addr().split(":");
-            this.setProxy("socks5", parts[0], Integer.parseInt(parts[1]));
+            this.setProxy("SOCKS5", parts[0], Integer.parseInt(parts[1]));
         } catch (LanternNotRunningException lnre) {
             throw new RuntimeException("Could not start Lantern");
         }
