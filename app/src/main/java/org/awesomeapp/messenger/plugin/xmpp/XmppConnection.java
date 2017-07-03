@@ -39,6 +39,7 @@ import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.PresenceListener;
+import org.jivesoftware.smack.ReconnectionManager;
 import org.jivesoftware.smack.SASLAuthentication;
 import org.jivesoftware.smack.SmackConfiguration;
 import org.jivesoftware.smack.SmackException;
@@ -47,6 +48,8 @@ import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.chat.Chat;
 import org.jivesoftware.smack.chat.ChatManager;
+import org.jivesoftware.smack.debugger.SmackDebugger;
+import org.jivesoftware.smack.debugger.SmackDebuggerFactory;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.DefaultExtensionElement;
 import org.jivesoftware.smack.packet.ExtensionElement;
@@ -71,9 +74,14 @@ import org.jivesoftware.smackx.chatstates.ChatState;
 import org.jivesoftware.smackx.chatstates.ChatStateManager;
 import org.jivesoftware.smackx.chatstates.provider.ChatStateExtensionProvider;
 import org.jivesoftware.smackx.commands.provider.AdHocCommandDataProvider;
+import org.jivesoftware.smackx.debugger.android.AndroidDebugger;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.disco.provider.DiscoverInfoProvider;
 import org.jivesoftware.smackx.disco.provider.DiscoverItemsProvider;
+import org.jivesoftware.smackx.httpfileupload.HttpFileUploadManager;
+import org.jivesoftware.smackx.httpfileupload.UploadProgressListener;
+import org.jivesoftware.smackx.httpfileupload.UploadService;
+import org.jivesoftware.smackx.httpfileupload.element.Slot;
 import org.jivesoftware.smackx.iqlast.LastActivityManager;
 import org.jivesoftware.smackx.iqlast.packet.LastActivity;
 import org.jivesoftware.smackx.iqprivate.PrivateDataManager;
@@ -91,8 +99,10 @@ import org.jivesoftware.smackx.muc.provider.MUCOwnerProvider;
 import org.jivesoftware.smackx.muc.provider.MUCUserProvider;
 import org.jivesoftware.smackx.offline.packet.OfflineMessageInfo;
 import org.jivesoftware.smackx.offline.packet.OfflineMessageRequest;
+import org.jivesoftware.smackx.omemo.OmemoFingerprint;
 import org.jivesoftware.smackx.omemo.exceptions.CryptoFailedException;
 import org.jivesoftware.smackx.omemo.exceptions.UndecidedOmemoIdentityException;
+import org.jivesoftware.smackx.omemo.internal.CipherAndAuthTag;
 import org.jivesoftware.smackx.omemo.internal.OmemoMessageInformation;
 import org.jivesoftware.smackx.omemo.listener.OmemoMessageListener;
 import org.jivesoftware.smackx.ping.PingManager;
@@ -124,10 +134,18 @@ import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.jid.parts.Resourcepart;
 import org.jxmpp.stringprep.XmppStringprepException;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.io.Writer;
 import java.lang.reflect.Array;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -153,10 +171,14 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 
+import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
 
 import de.duenndns.ssl.MemorizingTrustManager;
+import eu.siacs.conversations.Uploader;
 import im.zom.messenger.R;
 
 public class XmppConnection extends ImConnection {
@@ -167,6 +189,7 @@ public class XmppConnection extends ImConnection {
 
     private XmppContactListManager mContactListManager;
     private Contact mUser;
+    private BareJid mUserJid;
     private boolean mUseTor;
 
     // watch out, this is a different XMPPConnection class than XmppConnection! ;)
@@ -270,6 +293,10 @@ public class XmppConnection extends ImConnection {
         mProviderId = providerId;
         mAccountId = accountId;
         mUser = makeUser(providerSettings, contentResolver);
+        try {
+            mUserJid = JidCreate.bareFrom(mUser.getAddress().getAddress());
+        }
+        catch (Exception e){}
         mUseTor = providerSettings.getUseTor();
 
         providerSettings.close();
@@ -1235,14 +1262,16 @@ public class XmppConnection extends ImConnection {
             ImErrorInfo info = new ImErrorInfo(ImErrorInfo.CANT_CONNECT_TO_SERVER, e.getMessage());
             mRetryLogin = true; // our default behavior is to retry
 
-            if (mConnection != null && mConnection.isConnected() && (!mConnection.isAuthenticated())) {
+            if (mConnection != null && mConnection.isConnected()) {
 
-                debug(TAG, "not authorized - will not retry");
-                info = new ImErrorInfo(ImErrorInfo.INVALID_USERNAME, "invalid user/password");
-                setState(SUSPENDED, info);
-                mRetryLogin = false;
-                mNeedReconnect = false;
-
+                if (!mConnection.isAuthenticated())
+                {
+                    debug(TAG, "not authorized - will not retry");
+                    info = new ImErrorInfo(ImErrorInfo.INVALID_USERNAME, "invalid user/password");
+                    setState(SUSPENDED, info);
+                    mRetryLogin = false;
+                    mNeedReconnect = false;
+                }
 
             }
 
@@ -1281,10 +1310,14 @@ public class XmppConnection extends ImConnection {
     private synchronized Omemo initOmemo (XMPPTCPConnection conn) throws Exception
     {
 
-        if (conn != null && conn.isAuthenticated()) {
+        if (conn != null && conn.isConnected()) {
 
-            mOmemoInstance = new Omemo(conn, mContext);
+            mOmemoInstance = new Omemo(conn, mUserJid, mContext);
             mOmemoInstance.getManager().addOmemoMessageListener(new OmemoMessageListener() {
+                @Override
+                public void onOmemoKeyTransportReceived(CipherAndAuthTag cipherAndAuthTag, org.jivesoftware.smack.packet.Message message, org.jivesoftware.smack.packet.Message message1, OmemoMessageInformation omemoMessageInformation) {
+                    debug(TAG,"omemo key transport received");
+                }
 
                 @Override
                 public void onOmemoMessageReceived(String body, org.jivesoftware.smack.packet.Message message, org.jivesoftware.smack.packet.Message message1, OmemoMessageInformation omemoMessageInformation) {
@@ -1455,6 +1488,14 @@ public class XmppConnection extends ImConnection {
         String migrateMessage = mContext.getString(R.string.migrate_message) + ' ' + newIdentity;
         mUserPresence = new Presence(Presence.AVAILABLE, migrateMessage, Presence.CLIENT_TYPE_MOBILE);
         sendPresencePacket();
+    }
+
+    @Override
+    public String publishFile(String fileName, String mimeType, long fileSize, java.io.InputStream is) {
+
+        UploaderManager uploader = new UploaderManager();
+        String result = uploader.doUpload(fileName, mimeType, fileSize, is);
+        return result;
     }
 
     public void sendVCard ()
@@ -1628,6 +1669,15 @@ public class XmppConnection extends ImConnection {
             mConfig.setHost(server);
 
         mConfig.setDebuggerEnabled(Debug.DEBUG_ENABLED);
+        SmackConfiguration.DEBUG = Debug.DEBUG_ENABLED;
+        SmackConfiguration.setDebuggerFactory(new SmackDebuggerFactory() {
+            @Override
+            public SmackDebugger create(XMPPConnection xmppConnection, Writer writer, Reader reader) throws IllegalArgumentException {
+
+                return new AndroidDebugger(xmppConnection, writer, reader);
+
+            }
+        });
 
         //mConfig.setSASLAuthenticationEnabled(useSASL);
 
@@ -1721,6 +1771,7 @@ public class XmppConnection extends ImConnection {
         XMPPTCPConnection.setUseStreamManagementDefault(true);
 
         mConnection = new XMPPTCPConnection(mConfig.build());
+
 
 
         //debug(TAG,"is secure connection? " + mConnection.isSecureConnection());
@@ -1857,18 +1908,43 @@ public class XmppConnection extends ImConnection {
             public void connected(XMPPConnection connection) {
                 debug(TAG, "connected");
 
-            }
-
-            @Override
-            public void authenticated(XMPPConnection connection, boolean resumed) {
-                debug(TAG, "authenticated: resumed=" + resumed);
-
                 try { initOmemo((XMPPTCPConnection)connection); }
                 catch (Exception e)
                 {
                     debug("OMEMO","There was a problem init'g omemo",e);
                 }
 
+            }
+
+            @Override
+            public void authenticated(XMPPConnection connection, boolean resumed) {
+                debug(TAG, "authenticated: resumed=" + resumed);
+
+                try {
+
+                    mOmemoInstance.getManager().purgeDevices();
+
+                    OmemoFingerprint of = mOmemoInstance.getManager().getOurFingerprint();
+                    if (of != null)
+                        debug(TAG,"got our omemo fingerprint: " + of.toString());
+                    else
+                        debug(TAG,"NO OMEMO FINGERPRINT FOR OUR ACCOUNT!!!");
+                }
+                catch (NullPointerException e)
+                {
+                    debug(TAG,"error purge OMEMO devices... regerating keys",e);
+                    try {
+                        mOmemoInstance.getManager().regenerate();
+                    }
+                    catch (Exception e2)
+                    {
+                        debug(TAG,"error regerating OMEMO devices",e2);
+                    }
+                }
+                catch (Exception e)
+                {
+                    debug(TAG,"error purge OMEMO devices",e);
+                }
 
             }
 
@@ -1913,6 +1989,11 @@ public class XmppConnection extends ImConnection {
         mStreamHandler = new XmppStreamHandler(mConnection, connectionListener);
         Exception xmppConnectException = null;
         AbstractXMPPConnection conn = mConnection.connect();
+
+        ReconnectionManager manager = ReconnectionManager.getInstanceFor(mConnection);
+        manager.enableAutomaticReconnection();
+        manager.setEnabledPerDefault(true);
+      //  manager.setReconnectionPolicy(ReconnectionManager.ReconnectionPolicy.RANDOM_INCREASING_DELAY);
 
     }
 
@@ -2289,7 +2370,7 @@ public class XmppConnection extends ImConnection {
                         try {
 
                             org.jivesoftware.smack.packet.Message msgEncrypted
-                                    = getOmemo().getManager().encrypt(jidTo.asBareJid(), msgXmpp);
+                                    = getOmemo().getManager().encrypt(jidTo.asBareJid(), msgXmpp.getBody());
 
                             msgEncrypted.setStanzaId(msgXmpp.getStanzaId());
                             msgEncrypted.addExtension(new DeliveryReceiptRequest());
@@ -2303,10 +2384,10 @@ public class XmppConnection extends ImConnection {
 
                             //if we are connected, then try again
                             if (mConnection != null && mConnection.isConnected()) {
-                                getOmemo().trustOmemoDevice(msgXmpp.getFrom().asBareJid(), true);
-                                getOmemo().trustOmemoDevice(jidTo.asBareJid(), true);
+                                getOmemo().trustOmemoDevice(msgXmpp.getFrom().asBareJid(), null, true);
+                                getOmemo().trustOmemoDevice(jidTo.asBareJid(), null, true);
                                 org.jivesoftware.smack.packet.Message msgEncrypted
-                                        = getOmemo().getManager().encrypt(jidTo.asBareJid(), msgXmpp);
+                                        = getOmemo().getManager().encrypt(jidTo.asBareJid(), msgXmpp.getBody());
                                 msgEncrypted.addExtension(new DeliveryReceiptRequest());
                                 msgEncrypted.setStanzaId(msgXmpp.getStanzaId());
                                 thisChat.sendMessage(msgEncrypted);
@@ -2363,7 +2444,7 @@ public class XmppConnection extends ImConnection {
 
                     if (getOmemo().getFingerprints(jid.asBareJid(), false).size() == 0) {
                         getOmemo().getManager().requestDeviceListUpdateFor(jid.asBareJid());
-                        return false;
+                    //    return false;
                     }
 
                     return true;
@@ -2997,7 +3078,7 @@ public class XmppConnection extends ImConnection {
                 requestPresenceRefresh(contact.getAddress().getBareAddress());
                 qAvatar.put(contact.getAddress().getAddress(),"");
 
-                getOmemo().getManager().requestDeviceListUpdateFor(JidCreate.bareFrom(contact.getAddress().getAddress()));
+//                getOmemo().getManager().requestDeviceListUpdateFor(JidCreate.bareFrom(contact.getAddress().getAddress()));
 
             }
             catch (Exception e) {
@@ -3219,7 +3300,7 @@ public class XmppConnection extends ImConnection {
             // while trying to log in.  This case is handled in a future heartbeat
             // by checking ping responses.
             clearPing();
-            if (mConnection.isConnected()) {
+            if (mConnection != null && mConnection.isConnected()) {
                 debug(TAG,"reconnect while already connected, assuming good: " + mConnection);
                 mNeedReconnect = false;
                 setState(LOGGED_IN, null);
@@ -3407,6 +3488,8 @@ public class XmppConnection extends ImConnection {
         if (!sdm.includesFeature(DeliveryReceipt.NAMESPACE))
             sdm.addFeature(DeliveryReceipt.NAMESPACE);
 
+        sdm.addFeature(HttpFileUploadManager.NAMESPACE);
+
         DeliveryReceiptManager.getInstanceFor(mConnection).dontAutoAddDeliveryReceiptRequests();
         DeliveryReceiptManager.getInstanceFor(mConnection).setAutoReceiptMode(DeliveryReceiptManager.AutoReceiptMode.disabled);
 
@@ -3487,6 +3570,7 @@ public class XmppConnection extends ImConnection {
                 new OfflineMessageInfo.Provider());
         // Last Activity
         ProviderManager.addIQProvider("query", "jabber:iq:last", new LastActivity.Provider());
+
         // User Search
         ProviderManager.addIQProvider("query", "jabber:iq:search", new UserSearch.Provider());
         // SharedGroupsInfo
@@ -3498,6 +3582,8 @@ public class XmppConnection extends ImConnection {
         // FileTransfer
         ProviderManager.addIQProvider("si", "http://jabber.org/protocol/si",
                 new StreamInitiationProvider());
+
+
         // Privacy
         ProviderManager.addIQProvider("query", "jabber:iq:privacy", new PrivacyProvider());
         ProviderManager.addIQProvider("command", "http://jabber.org/protocol/commands", new AdHocCommandDataProvider());
@@ -3663,7 +3749,7 @@ public class XmppConnection extends ImConnection {
 
         initConnection(providerSettings, username);
 
-        if (mConnection.isConnected() && mConnection.isSecureConnection()) {
+        if (mConnection != null && mConnection.isConnected() && mConnection.isSecureConnection()) {
             org.jivesoftware.smackx.iqregister.AccountManager aMgr = org.jivesoftware.smackx.iqregister.AccountManager.getInstance(mConnection);
 
             if (aMgr.supportsAccountCreation()) {
@@ -3687,7 +3773,10 @@ public class XmppConnection extends ImConnection {
 
             loginSync(accountId, oldPassword, providerId, false);
 
-            if (mConnection.isConnected() && mConnection.isSecureConnection() && mConnection.isAuthenticated()) {
+            if (mConnection != null &&
+                    mConnection.isConnected()
+                    && mConnection.isSecureConnection()
+                    && mConnection.isAuthenticated()) {
                 org.jivesoftware.smackx.iqregister.AccountManager aMgr = org.jivesoftware.smackx.iqregister.AccountManager.getInstance(mConnection);
                 aMgr.changePassword(newPassword);
                 result = true;
@@ -3765,7 +3854,7 @@ public class XmppConnection extends ImConnection {
     private void sendChatState (String to, ChatState currentChatState)
     {
         try {
-            if (mConnection.isConnected())
+            if (mConnection != null && mConnection.isConnected())
             {
                 findOrCreateSession(to, false);
                 Chat thisChat = mChatManager.createChat(JidCreate.from(to).asEntityJidIfPossible());
@@ -4178,7 +4267,7 @@ public class XmppConnection extends ImConnection {
             if (address.equals(mUser.getAddress().getBareAddress()))
             {
                 ArrayList<String> fps = new ArrayList<>();
-                fps.add(getOmemo().getManager().getOurFingerprint());
+                fps.add(getOmemo().getManager().getOurFingerprint().toString());
                 return fps;
             }
             else {
@@ -4189,4 +4278,155 @@ public class XmppConnection extends ImConnection {
         }
     }
 
+    private class UploaderManager {
+
+        boolean mIsDiscovered = false;
+
+        public UploaderManager ()
+        {
+
+            try {
+
+                HttpFileUploadManager manager = HttpFileUploadManager.getInstanceFor(mConnection);
+                mIsDiscovered = manager.discoverUploadService();
+
+            }
+            catch (Exception e)
+            {
+                Log.e(TAG,"error discovering upload service",e);
+            }
+        }
+
+        public String doUpload (String fileName, String mimeType, long fileSize, InputStream is)
+        {
+            HttpFileUploadManager manager = HttpFileUploadManager.getInstanceFor(mConnection);
+
+            try {
+
+                if (!manager.discoverUploadService())
+                    return null;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+
+        //    manager.useTlsSettingsFrom(mConnection.getConfiguration());
+            UploadService upService = manager.getDefaultUploadService();
+
+            if (upService != null) {
+                if (upService.hasMaxFileSizeLimit()) {
+                    if (!upService.acceptsFileOfSize(fileSize))
+                        return null;
+                }
+
+                try {
+
+                    Slot upSlot = manager.requestSlot(fileName, fileSize, mimeType);
+
+                    uploadFile(fileSize, is, upSlot, new UploadProgressListener() {
+                        @Override
+                        public void onUploadProgress(long l, long l1) {
+
+                            //once this is done, send the message
+                        }
+                    });
+
+                    /**
+                     URL urlShare = manager.uploadFile(fileShare, new UploadProgressListener() {
+                    @Override public void onUploadProgress(long l, long l1) {
+
+                    //once complete you can send the message?
+                    }
+                    });**/
+
+                    URL resultUrl = upSlot.getGetUrl();
+                    return resultUrl.toExternalForm();
+
+                } catch (Exception e) {
+                    Log.e(TAG, "error getting upload slot", e);
+
+                }
+            }
+
+            return null;
+        }
+
+        private void uploadFile(long fileSize, InputStream fis, Slot slot, UploadProgressListener listener) throws IOException {
+
+            if(fileSize >= 2147483647L) {
+                throw new IllegalArgumentException("File size " + fileSize + " must be less than " + 2147483647);
+            } else {
+                int fileSizeInt = (int)fileSize;
+                URL putUrl = slot.getPutUrl();
+                HttpURLConnection urlConnection = (HttpURLConnection)putUrl.openConnection();
+                urlConnection.setRequestMethod("PUT");
+                urlConnection.setUseCaches(false);
+                urlConnection.setDoOutput(true);
+                urlConnection.setFixedLengthStreamingMode(fileSizeInt);
+                urlConnection.setRequestProperty("Content-Type", "application/octet-stream;");
+                Iterator tlsSocketFactory = slot.getHeaders().entrySet().iterator();
+
+                while(tlsSocketFactory.hasNext()) {
+                    Map.Entry outputStream = (Map.Entry)tlsSocketFactory.next();
+                    urlConnection.setRequestProperty((String)outputStream.getKey(), (String)outputStream.getValue());
+                }
+
+                SSLSocketFactory tlsSocketFactory1 = (SSLSocketFactory)mConnection.getConfiguration().getSocketFactory();
+                if(tlsSocketFactory1 != null && urlConnection instanceof HttpsURLConnection) {
+                    HttpsURLConnection outputStream1 = (HttpsURLConnection)urlConnection;
+                    outputStream1.setSSLSocketFactory(tlsSocketFactory1);
+                }
+
+                try {
+                    OutputStream outputStream2 = urlConnection.getOutputStream();
+                    long bytesSend = 0L;
+                    if(listener != null) {
+                        listener.onUploadProgress(0L, fileSize);
+                    }
+
+                    BufferedInputStream inputStream = new BufferedInputStream(fis);
+                    byte[] buffer = new byte[4096];
+
+                    int bytesRead;
+                    try {
+                        while((bytesRead = inputStream.read(buffer)) != -1) {
+                            outputStream2.write(buffer, 0, bytesRead);
+                            bytesSend += (long)bytesRead;
+                            if(listener != null) {
+                                listener.onUploadProgress(bytesSend, fileSize);
+                            }
+                        }
+                    } finally {
+                        try {
+                            inputStream.close();
+                        } catch (IOException var34) {
+                         //   LOGGER.log(Level.WARNING, "Exception while closing input stream", var34);
+                        }
+
+                        try {
+                            outputStream2.close();
+                        } catch (IOException var33) {
+                         //   LOGGER.log(Level.WARNING, "Exception while closing output stream", var33);
+                        }
+
+                    }
+
+                    int status = urlConnection.getResponseCode();
+                    switch(status) {
+                        case 200:
+                        case 201:
+                        case 204:
+                            return;
+                        case 202:
+                        case 203:
+                        default:
+                            throw new IOException("Error response " + status + " from server during file upload: " + urlConnection.getResponseMessage() + ", file size: " + fileSize + ", put URL: " + putUrl);
+                    }
+                } finally {
+                    urlConnection.disconnect();
+                }
+            }
+        }
+    }
 }

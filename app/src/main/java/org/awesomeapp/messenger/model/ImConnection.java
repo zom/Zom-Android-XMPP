@@ -17,6 +17,7 @@
 
 package org.awesomeapp.messenger.model;
 
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -264,4 +265,7 @@ public abstract class ImConnection {
     public abstract List getFingerprints (String address);
 
     public abstract void broadcastMigrationIdentity (String newIdentity);
+
+    public abstract String publishFile (String fileName, String mimeType, long fileSize, InputStream is);
+
 }

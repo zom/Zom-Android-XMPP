@@ -1713,7 +1713,9 @@ public class ConversationView {
     public void refreshSession ()
     {
      //   setOTRState(false);
+
         setOTRState(true);
+
     }
 
     public void closeChatSession(boolean doDelete) {

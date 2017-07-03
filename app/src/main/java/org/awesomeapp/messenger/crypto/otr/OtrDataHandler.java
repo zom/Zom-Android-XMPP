@@ -554,8 +554,6 @@ public class OtrDataHandler implements DataHandler {
     public void offerData(String id, Address us, Address them, String localUri, Map<String, String> headers) throws IOException {
 
         // TODO stash localUri and intended recipient
-
-
         long length = -1;
         String hash = null;
 

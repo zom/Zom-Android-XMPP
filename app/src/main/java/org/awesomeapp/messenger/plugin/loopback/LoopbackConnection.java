@@ -16,6 +16,7 @@ import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
 import org.awesomeapp.messenger.provider.Imps;
 import org.jxmpp.jid.Jid;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -339,6 +340,11 @@ public class LoopbackConnection extends ImConnection {
     public void broadcastMigrationIdentity (String newIdentity)
     {
         //nothing to do here
+    }
+
+    @Override
+    public String publishFile(String fileName, String mimeType, long fileSize, InputStream is) {
+        return null;
     }
 
 }

@@ -37,6 +37,7 @@ import org.awesomeapp.messenger.service.RemoteImService;
 import org.awesomeapp.messenger.tasks.ChatSessionInitTask;
 import org.awesomeapp.messenger.util.Debug;
 
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
@@ -497,8 +498,10 @@ public class ImConnectionAdapter extends org.awesomeapp.messenger.service.IImCon
                 try {
                     Collection<ChatSessionAdapter> adapters = mChatSessionManager.mActiveChatSessionAdapters.values();
 
-                    for (ChatSessionAdapter session : adapters) {
-                        session.sendPostponedMessages();
+                    synchronized (adapters) {
+                        for (ChatSessionAdapter session : adapters) {
+                            session.sendPostponedMessages();
+                        }
                     }
                 }
                 catch (ConcurrentModificationException cme)
@@ -636,6 +639,11 @@ public class ImConnectionAdapter extends org.awesomeapp.messenger.service.IImCon
             return mConnection.getFingerprints(address);
         else
             return null;
+    }
+
+    public String publishFile (String fileName, String mimeType, long fileSize, InputStream is)
+    {
+        return mConnection.publishFile(fileName, mimeType, fileSize, is);
     }
 
 }

@@ -49,6 +49,7 @@ import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.util.SecureMediaStore;
 import org.awesomeapp.messenger.util.SystemServices;
 
+import java.io.FileNotFoundException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -72,8 +73,12 @@ import android.net.Uri;
 import android.os.RemoteCallbackList;
 import android.os.RemoteException;
 import android.provider.BaseColumns;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.webkit.MimeTypeMap;
+
+import static cz.msebera.android.httpclient.conn.ssl.SSLConnectionSocketFactory.TAG;
 
 public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSession.Stub {
 
@@ -173,6 +178,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                 }
                 else if (participant instanceof ChatGroup)
                 {
+                    /**
                     ChatGroup group = (ChatGroup)mChatSession.getParticipant();
 
                     for (Contact contact : group.getMembers())
@@ -182,7 +188,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                             OtrChatSessionAdapter adapter = new OtrChatSessionAdapter(mConnection.getLoginUser().getAddress().getAddress(), contact, cm);
                             mOtrChatSessions.put(key, adapter);
                         }
-                    }
+                    }**/
 
                 }
 
@@ -414,39 +420,63 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             return false;
         }
 
-        HashMap<String, String> headers = null;
-        if (type != null) {
-            headers = new HashMap<>();
-            headers.put("Mime-Type", type);
-        }
-
-        try
+        if (mChatSession.canOmemo())
         {
-            Address localUser = mConnection.getLoginUser().getAddress();
+            //TODO do HTTP Upload XEP 363
 
-            if (mChatSession.getParticipant() instanceof Contact) {
+            File fileLocal = new File(url);
 
-                Address remoteUser = new XmppAddress(getDefaultOtrChatSession().getRemoteUserId());
-                mDataHandler.offerData(offerId, localUser, remoteUser, url, headers);
-            }
-            else if (mChatSession.getParticipant() instanceof ChatGroup)
-            {
-                ChatGroup group = (ChatGroup)mChatSession.getParticipant();
+            try {
 
-                for (Contact member : group.getMembers())
+                String fileName = fileLocal.getName();
+                if (!fileName.contains("."))
                 {
-                    mDataHandler.offerData(offerId, localUser, member.getAddress(), url, headers);
+                    fileName += "." + MimeTypeMap.getSingleton().getExtensionFromMimeType(type);
                 }
 
+                mConnection.publishFile(fileName, type, fileLocal.length(), new info.guardianproject.iocipher.FileInputStream(fileLocal));
+
+
+                return true;
+            }
+            catch (FileNotFoundException fe)
+            {
+                Log.w(TAG,"couldn't find file to share",fe);
+            }
+        }
+        else {
+            HashMap<String, String> headers = null;
+            if (type != null) {
+                headers = new HashMap<>();
+                headers.put("Mime-Type", type);
             }
 
-            return true;
+            try {
+                Address localUser = mConnection.getLoginUser().getAddress();
+
+                if (mChatSession.getParticipant() instanceof Contact) {
+
+                    Address remoteUser = new XmppAddress(getDefaultOtrChatSession().getRemoteUserId());
+                    mDataHandler.offerData(offerId, localUser, remoteUser, url, headers);
+                } else if (mChatSession.getParticipant() instanceof ChatGroup) {
+                    /**
+                     ChatGroup group = (ChatGroup)mChatSession.getParticipant();
+
+                     for (Contact member : group.getMembers())
+                     {
+                     mDataHandler.offerData(offerId, localUser, member.getAddress(), url, headers);
+                     }**/
+
+                }
+
+                return true;
+            } catch (Exception ioe) {
+                Log.w(ImApp.LOG_TAG, "unable to offer data", ioe);
+                return false;
+            }
         }
-        catch (Exception ioe)
-        {
-            Log.w(ImApp.LOG_TAG,"unable to offer data",ioe);
-            return false;
-        }
+
+        return false;
     }
 
     /**

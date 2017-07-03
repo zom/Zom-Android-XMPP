@@ -219,8 +219,8 @@ public class ConversationDetailActivity extends BaseActivity {
         {
             if (mConvoView.getRemotePresence() == Presence.AWAY)
                 getSupportActionBar().setSubtitle(getString(R.string.presence_away));
-            else if (mConvoView.getRemotePresence() == Presence.OFFLINE)
-                getSupportActionBar().setSubtitle(getString(R.string.presence_offline));
+         //   else if (mConvoView.getRemotePresence() == Presence.OFFLINE)
+         //       getSupportActionBar().setSubtitle(getString(R.string.presence_offline));
             else if (mConvoView.getRemotePresence() == Presence.DO_NOT_DISTURB)
                 getSupportActionBar().setSubtitle(getString(R.string.presence_busy));
 
@@ -592,8 +592,8 @@ public class ConversationDetailActivity extends BaseActivity {
     public void handleSendDelete(IChatSession session, Uri contentUri, String defaultType, boolean delete, boolean resizeImage, boolean importContent) {
         try {
 
-            if (!session.getDefaultOtrChatSession().isChatEncrypted())
-                session.getDefaultOtrChatSession().startChatEncryption();
+            //if (!session.getDefaultOtrChatSession().isChatEncrypted())
+            //    session.getDefaultOtrChatSession().startChatEncryption();
 
             // import
             SystemServices.FileInfo info = SystemServices.getFileInfoFromURI(this, contentUri);
@@ -628,7 +628,7 @@ public class ConversationDetailActivity extends BaseActivity {
                 // not deleting if not sent
                 return;
             }
-            // autu delete
+            // auto delete
             if (delete) {
                 boolean deleted = delete(contentUri);
                 if (!deleted) {

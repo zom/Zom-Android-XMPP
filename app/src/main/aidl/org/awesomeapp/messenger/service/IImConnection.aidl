@@ -79,4 +79,6 @@ interface IImConnection {
     List getFingerprints (String address);
 
     void broadcastMigrationIdentity (String address);
+
+
 }

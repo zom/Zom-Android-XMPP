@@ -20,6 +20,7 @@ import org.awesomeapp.messenger.Preferences;
  *
  */
 public class HeartbeatService extends Service {
+
     public static final String HEARTBEAT_ACTION = "info.guardianproject.otr.app.im.SERVICE.HEARTBEAT";
     public static final String NETWORK_STATE_ACTION = "info.guardianproject.otr.app.im.SERVICE.NETWORK_STATE";
     public static final String NETWORK_STATE_EXTRA = "state";
@@ -35,7 +36,7 @@ public class HeartbeatService extends Service {
 
     // Our heartbeat interval in seconds.
     // The user controlled preference heartbeat interval is in these units (i.e. minutes).
-    private static final long HEARTBEAT_INTERVAL = 1000 * 60;
+    private static final long HEARTBEAT_INTERVAL = 1000 * 30;
     private long mHeartbeatInterval = HEARTBEAT_INTERVAL;
 
 
@@ -61,8 +62,8 @@ public class HeartbeatService extends Service {
         alarmManager.cancel(mPendingIntent);
         if (interval > 0)
         {
-            //alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + interval, interval, mPendingIntent);
-            alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + interval, interval, mPendingIntent);
+            alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + interval, interval, mPendingIntent);
+            //alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + interval, interval, mPendingIntent);
         }
     }
 

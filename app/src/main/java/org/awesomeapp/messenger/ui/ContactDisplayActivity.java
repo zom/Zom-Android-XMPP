@@ -137,6 +137,7 @@ public class ContactDisplayActivity extends BaseActivity {
 
                 try {
                     mRemoteOmemoFingerprints = mConn.getFingerprints(mUsername);
+
                 }
                 catch (RemoteException re)
                 {
