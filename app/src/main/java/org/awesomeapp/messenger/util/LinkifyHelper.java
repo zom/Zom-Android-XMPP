@@ -31,7 +31,7 @@ public class LinkifyHelper {
 
     /* Right now, if there is no app to handle */
     public static void addLinks(TextView text, SpanConverter<URLSpan, ClickableSpan> converter) {
-        Linkify.addLinks(text, Linkify.ALL);
+//        Linkify.addLinks(text, Linkify.ALL);
         Linkify.addLinks(text, geo, null);
         Linkify.addLinks(text, market, null);
         Linkify.addLinks(text, openpgp4fpr, null);
