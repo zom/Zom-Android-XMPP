@@ -82,8 +82,14 @@ android {
     }
 }
 
+ext {
+    smackVersion="4.2.1-SNAPSHOT"
+}
+
+
+
 dependencies {
-    compile fileTree(include: '*.jar', dir: 'libs')
+   // compile fileTree(include: '*.jar', dir: 'libs')
     compile 'com.android.support:multidex:1.0.1'
     compile 'net.zetetic:android-database-sqlcipher:3.5.4@aar'
     compile project(':otr4jandroid')
@@ -126,10 +132,19 @@ dependencies {
     compile 'com.github.javiersantos:AppUpdater:2.5.2'
     compile 'com.github.QuadFlask:colorpicker:0.0.10'
 
-
     //swipe to reveal code
     //compile 'com.chauthai.swipereveallayout:swipe-reveal-layout:1.4.0'
    // compile 'com.hudomju:swipe-to-dismiss-undo:1.0'
 
+    compile "org.igniterealtime.smack:smack-android:$smackVersion"
+    compile "org.igniterealtime.smack:smack-android-extensions:$smackVersion"
+    compile "org.igniterealtime.smack:smack-omemo-signal:$smackVersion"
+    compile "org.igniterealtime.smack:smack-resolver-minidns:$smackVersion"
+    compile "org.igniterealtime.smack:smack-tcp:$smackVersion"
+    compile "org.igniterealtime.smack:smack-core:$smackVersion"
+    compile "org.igniterealtime.smack:smack-extensions:$smackVersion"
+    compile "org.igniterealtime.smack:smack-experimental:$smackVersion"
+    compile "org.igniterealtime.smack:smack-im:$smackVersion"
+    compile "org.igniterealtime.smack:smack-sasl-provided:$smackVersion"
 
 }
