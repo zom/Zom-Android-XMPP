@@ -111,9 +111,6 @@ public class Downloader {
       //  debug( "openFile: localFilename " + localFilename) ;
         info.guardianproject.iocipher.File fileNew = new info.guardianproject.iocipher.File(localFilename);
         fileNew.getParentFile().mkdirs();
-        //info.guardianproject.iocipher.RandomAccessFile localFile = new info.guardianproject.iocipher.RandomAccessFile(localFilename, "rw");
-        //return ras;
-       // info.guardianproject.iocipher.FileOutputStream fOut = new info.guardianproject.iocipher.FileOutputStream(fileNew);
 
         return fileNew;
     }

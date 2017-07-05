@@ -680,7 +680,12 @@ public class MessageListItem extends FrameLayout {
 
             lastMessage = "";
 
-            Uri mediaUri = Uri.parse( body ) ;
+            String mediaPath = body;
+
+            if (body.contains(" "))
+                mediaPath = body.split(" ")[0];
+
+            Uri mediaUri = Uri.parse( mediaPath ) ;
 
             if (mimeType.startsWith("audio"))
             {

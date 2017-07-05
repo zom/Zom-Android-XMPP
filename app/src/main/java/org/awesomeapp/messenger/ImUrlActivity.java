@@ -740,13 +740,14 @@ public class ImUrlActivity extends Activity {
                         }
 
                         FileInfo info = SystemServices.getFileInfoFromURI(this, vfsUri);
-                        session.offerData(offerId, info.path, mSendType );
+                        boolean canSend  = session.offerData(offerId, info.path, mSendType );
 
-                        Imps.insertMessageInDb(
-                                getContentResolver(), false, session.getId(), true, null, vfsUri.toString(),
-                                System.currentTimeMillis(), Imps.MessageType.OUTGOING_ENCRYPTED, // TODO show verified status
-                                0, offerId, mSendType);
-
+                        if (canSend) {
+                            Imps.insertMessageInDb(
+                                    getContentResolver(), false, session.getId(), true, null, vfsUri.toString(),
+                                    System.currentTimeMillis(), Imps.MessageType.OUTGOING_ENCRYPTED, // TODO show verified status
+                                    0, offerId, mSendType);
+                        }
 
                 } catch (Exception e) {
 

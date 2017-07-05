@@ -389,7 +389,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         if (mConnection.getState() != ImConnection.LOGGED_IN) {
             // connection has been suspended, save the message without send it
             long now = System.currentTimeMillis();
-            insertMessageInDb(null, text, now, Imps.MessageType.QUEUED);
+            insertMessageInDb(null, text, now, Imps.MessageType.QUEUED, null);
             return;
         }
 
@@ -402,7 +402,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         long sendTime = System.currentTimeMillis();
 
         if (!isResend) {
-            insertMessageInDb(null, text, sendTime, msg.getType(), 0, msg.getID());
+            insertMessageInDb(null, text, sendTime, msg.getType(), 0, msg.getID(), null);
             insertOrUpdateChat(text);
         }
 
@@ -416,7 +416,52 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
     }
 
-    public boolean offerData(String offerId, final String url, final String type) {
+    private void sendMediaMessage(String publishUrl, String localUrl, String mimeType) {
+
+        String mediaPath = localUrl + ' ' + publishUrl;
+
+        org.awesomeapp.messenger.model.Message msg = new org.awesomeapp.messenger.model.Message(publishUrl);
+        msg.setID(nextID());
+
+        msg.setFrom(mConnection.getLoginUser().getAddress());
+        msg.setType(Imps.MessageType.QUEUED);
+
+        long sendTime = System.currentTimeMillis();
+
+        insertMessageInDb(null, mediaPath, sendTime, msg.getType(), 0, msg.getID(), mimeType);
+        insertOrUpdateChat(mediaPath);
+
+        int newType = mChatSession.sendMessageAsync(msg);
+
+        if (msg.getDateTime() != null)
+            sendTime = msg.getDateTime().getTime();
+
+        updateMessageInDb(msg.getID(),newType,sendTime);
+
+
+    }
+
+    private void sendUnstoredMessage(String text) {
+
+        if (mConnection.getState() != ImConnection.LOGGED_IN) {
+            return;
+        }
+
+        org.awesomeapp.messenger.model.Message msg = new org.awesomeapp.messenger.model.Message(text);
+        msg.setID(nextID());
+
+        msg.setFrom(mConnection.getLoginUser().getAddress());
+        msg.setType(Imps.MessageType.QUEUED);
+
+        long sendTime = System.currentTimeMillis();
+
+        int newType = mChatSession.sendMessageAsync(msg);
+
+
+    }
+
+    @Override
+    public boolean offerData(String offerId, final String mediaUri, final String mimeType) {
         if (mConnection.getState() == ImConnection.SUSPENDED) {
             // TODO send later
             return false;
@@ -425,26 +470,26 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         if (mChatSession.canOmemo())
         {
             //TODO do HTTP Upload XEP 363
-
-
+            //this is ugly... we need a nice async task!
             new Thread ()
             {
 
                 public void run ()
                 {
-                    File fileLocal = new File(url);
+
+                    File fileLocal = new File(Uri.parse(mediaUri).getPath());
                     String fileName = fileLocal.getName();
                     if (!fileName.contains("."))
                     {
-                        fileName += "." + MimeTypeMap.getSingleton().getExtensionFromMimeType(type);
+                        fileName += "." + MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType);
                     }
 
                     try
                     {
-                        String resultUrl = mConnection.publishFile(fileName, type, fileLocal.length(), new info.guardianproject.iocipher.FileInputStream(fileLocal));
+                        String resultUrl = mConnection.publishFile(fileName, mimeType, fileLocal.length(), new info.guardianproject.iocipher.FileInputStream(fileLocal));
 
                         if (resultUrl != null)
-                            sendMessage(resultUrl, false);
+                            sendMediaMessage(resultUrl, mediaUri, mimeType);
                     }
                     catch (FileNotFoundException fe)
                     {
@@ -458,9 +503,9 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         }
         else {
             HashMap<String, String> headers = null;
-            if (type != null) {
+            if (mimeType != null) {
                 headers = new HashMap<>();
-                headers.put("Mime-Type", type);
+                headers.put("Mime-Type", mimeType);
             }
 
             try {
@@ -469,19 +514,18 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                 if (mChatSession.getParticipant() instanceof Contact) {
 
                     Address remoteUser = new XmppAddress(getDefaultOtrChatSession().getRemoteUserId());
-                    mDataHandler.offerData(offerId, localUser, remoteUser, url, headers);
-                } else if (mChatSession.getParticipant() instanceof ChatGroup) {
-                    /**
-                     ChatGroup group = (ChatGroup)mChatSession.getParticipant();
+                    mDataHandler.offerData(offerId, localUser, remoteUser, Uri.parse(mediaUri).getPath(), headers);
 
-                     for (Contact member : group.getMembers())
-                     {
-                     mDataHandler.offerData(offerId, localUser, member.getAddress(), url, headers);
-                     }**/
+                    insertMessageInDb(null, mediaUri, System.currentTimeMillis(), Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED, 0, offerId, mimeType);
 
+                    return true;
                 }
+                else
+                {
+                    Log.w(ImApp.LOG_TAG, "can't send OTRDATA shares to groups");
 
-                return true;
+                    return false;
+                }
             } catch (Exception ioe) {
                 Log.w(ImApp.LOG_TAG, "unable to offer data", ioe);
                 return false;
@@ -820,9 +864,9 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         }
 
         if (mIsGroupChat) {
-            insertMessageInDb(contact, null, System.currentTimeMillis(), messageType);
+            insertMessageInDb(contact, null, System.currentTimeMillis(), messageType, null);
         } else {
-            insertMessageInDb(null, null, System.currentTimeMillis(), messageType);
+            insertMessageInDb(null, null, System.currentTimeMillis(), messageType, null);
         }
     }
 
@@ -831,8 +875,8 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                 new String[] { Integer.toString(type) });
     }
 
-    Uri insertMessageInDb(String contact, String body, long time, int type) {
-        return insertMessageInDb(contact, body, time, type, 0/*No error*/, nextID());
+    Uri insertMessageInDb(String contact, String body, long time, int type, String mimeType) {
+        return insertMessageInDb(contact, body, time, type, 0/*No error*/, nextID(), mimeType);
     }
 
     /**
@@ -851,7 +895,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         return prefix + Long.toString(id++);
     }
 
-    Uri insertMessageInDb(String contact, String body, long time, int type, int errCode, String id) {
+    Uri insertMessageInDb(String contact, String body, long time, int type, int errCode, String id, String mimeType) {
         boolean isEncrypted = true;
         try {
             isEncrypted = getDefaultOtrChatSession().isChatEncrypted();
@@ -859,7 +903,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             // Leave it as encrypted so it gets stored in memory
             // FIXME(miron)
         }
-        return Imps.insertMessageInDb(mContentResolver, mIsGroupChat, mContactId, isEncrypted, contact, body, time, type, errCode, id, null);
+        return Imps.insertMessageInDb(mContentResolver, mIsGroupChat, mContactId, isEncrypted, contact, body, time, type, errCode, id, mimeType);
     }
 
     int updateMessageInDb(String id, int type, long time) {
@@ -894,9 +938,9 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                 boolean wasMessageSeen = false;
 
                 if (msg.getID() == null)
-                    insertMessageInDb(nickname, body, time, msg.getType());
+                    insertMessageInDb(nickname, body, time, msg.getType(), null);
                 else
-                    insertMessageInDb(nickname, body, time, msg.getType(), 0, msg.getID());
+                    insertMessageInDb(nickname, body, time, msg.getType(), 0, msg.getID(), null);
 
                 int N = mRemoteListeners.beginBroadcast();
                 for (int i = 0; i < N; i++) {
@@ -996,7 +1040,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
         public void onSendMessageError(ChatSession ses, final org.awesomeapp.messenger.model.Message msg, final ImErrorInfo error) {
             insertMessageInDb(null, null, System.currentTimeMillis(), Imps.MessageType.OUTGOING,
-                    error.getCode(), null);
+                    error.getCode(), null, null);
 
             final int N = mRemoteListeners.beginBroadcast();
             for (int i = 0; i < N; i++) {

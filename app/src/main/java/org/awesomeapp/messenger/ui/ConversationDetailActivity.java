@@ -748,14 +748,10 @@ public class ConversationDetailActivity extends BaseActivity {
                         info.type = "application/octet-stream";
 
                 String offerId = UUID.randomUUID().toString();
-                boolean canSend = session.offerData(offerId, info.path, info.type );
+                boolean canSend = session.offerData(offerId, uri.toString(), info.type );
 
                 if (canSend) {
-                    int type = mConvoView.isOtrSessionVerified() ? Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED : Imps.MessageType.OUTGOING_ENCRYPTED;
-                    Imps.insertMessageInDb(
-                            getContentResolver(), false, session.getId(), true, null, uri.toString(),
-                            System.currentTimeMillis(), type,
-                            0, offerId, info.type);
+
                     return true; // sent
                 }
                 else
