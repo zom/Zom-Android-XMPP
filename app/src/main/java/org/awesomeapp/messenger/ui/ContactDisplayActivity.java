@@ -407,6 +407,7 @@ public class ContactDisplayActivity extends BaseActivity {
                     IChatSession session = manager.getChatSession(mUsername);
 
                     if (session != null) {
+
                         IOtrChatSession otrChatSession = session.getDefaultOtrChatSession();
 
                         if (otrChatSession != null) {

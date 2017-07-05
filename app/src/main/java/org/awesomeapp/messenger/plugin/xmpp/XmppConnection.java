@@ -1399,25 +1399,20 @@ public class XmppConnection extends ImConnection {
             mResource = providerSettings.getXmppResource();
 
             mRoster = Roster.getInstanceFor(mConnection);
-            mRoster.setRosterLoadedAtLogin(false);
+            mRoster.setRosterLoadedAtLogin(true);
             mRoster.setSubscriptionMode(subMode);
 
             mChatManager = ChatManager.getInstanceFor(mConnection);
 
             mPingManager = PingManager.getInstanceFor(mConnection) ;
 
-            mConnection.login(mUsername, mPassword, Resourcepart.from(mResource));
-            
-            String fullJid = mConnection.getUser().toString();
-            XmppAddress xa = new XmppAddress(fullJid);
-
             if (mUser == null)
                 mUser = makeUser(providerSettings,mContext.getContentResolver());
 
+            mConnection.login(mUsername, mPassword, Resourcepart.from(mResource));
+
             mStreamHandler.notifyInitialLogin();
             initServiceDiscovery();
-
-            sendPresencePacket();
 
             getContactListManager().listenToRoster(mRoster);
             getContactListManager().loadContactListsAsync();
@@ -1465,7 +1460,10 @@ public class XmppConnection extends ImConnection {
             {
                 public void run ()
                 {
+
+                    sendPresencePacket();
                     sendVCard();
+
                 }
             });
 
@@ -1990,9 +1988,9 @@ public class XmppConnection extends ImConnection {
         Exception xmppConnectException = null;
         AbstractXMPPConnection conn = mConnection.connect();
 
-        ReconnectionManager manager = ReconnectionManager.getInstanceFor(mConnection);
-        manager.enableAutomaticReconnection();
-        manager.setEnabledPerDefault(true);
+    //    ReconnectionManager manager = ReconnectionManager.getInstanceFor(mConnection);
+     //   manager.enableAutomaticReconnection();
+      //  manager.setEnabledPerDefault(true);
       //  manager.setReconnectionPolicy(ReconnectionManager.ReconnectionPolicy.RANDOM_INCREASING_DELAY);
 
     }
@@ -2643,9 +2641,6 @@ public class XmppConnection extends ImConnection {
 
                     }
 
-                 //   if (p != null)
-                   //     contact.setPresence(p);
-
                     if (!cl.containsContact(contact)) {
                         try {
                             cl.addExistingContact(contact);
@@ -2656,8 +2651,11 @@ public class XmppConnection extends ImConnection {
 
 
                     int subStatus = Imps.ContactsColumns.SUBSCRIPTION_STATUS_NONE;
+
                     if (rEntry.isSubscriptionPending())
                       subStatus = Imps.ContactsColumns.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING;
+
+                    rEntry.isApproved();
 
                     int subType = 0;
                     if (rEntry.getType() == RosterPacket.ItemType.both)
@@ -2673,6 +2671,8 @@ public class XmppConnection extends ImConnection {
                     else if (rEntry.getType() == RosterPacket.ItemType.remove)
                         subType = Imps.ContactsColumns.SUBSCRIPTION_TYPE_REMOVE;
 
+                    qPresence.add(mRoster.getPresence(rEntry.getJid()));
+
                     /**
                     try {
                         LastActivity activity = lam.getLastActivity(JidCreate.from(address));
@@ -2683,17 +2683,17 @@ public class XmppConnection extends ImConnection {
                         Log.e("LastActivity","error getting last activity for: " + address,e);
                     }**/
 
+                    /**
                     try {
 
                         mContactListManager.getSubscriptionRequestListener().onSubScriptionChanged(contact, mProviderId, mAccountId, subType, subStatus);
-
                         handlePresenceChanged(mRoster.getPresence(rEntry.getJid()));
 
                     }
                     catch (RemoteException re)
                     {
 
-                    }
+                    }**/
 
 
                 }
@@ -3078,8 +3078,11 @@ public class XmppConnection extends ImConnection {
                 requestPresenceRefresh(contact.getAddress().getBareAddress());
                 qAvatar.put(contact.getAddress().getAddress(),"");
 
-//                getOmemo().getManager().requestDeviceListUpdateFor(JidCreate.bareFrom(contact.getAddress().getAddress()));
-
+                BareJid jid = JidCreate.bareFrom(contact.getAddress().getAddress());
+                if (getOmemo().getManager().contactSupportsOmemo(jid)) {
+                    getOmemo().getManager().requestDeviceListUpdateFor(jid);
+                    getOmemo().getManager().buildSessionsWith(jid);
+                }
             }
             catch (Exception e) {
                 debug (TAG, "error responding to subscription approval: " + e.getLocalizedMessage());
@@ -3919,6 +3922,7 @@ public class XmppConnection extends ImConnection {
             return null; //we may have logged out
 
         Contact contact = mContactListManager.getContact(xaddress.getBareAddress());
+        BareJid jid = presence.getFrom().asBareJid();
 
         if (presence.getFrom().hasResource())
             p.setResource(presence.getFrom().getResourceOrEmpty().toString());
@@ -3956,17 +3960,15 @@ public class XmppConnection extends ImConnection {
                 if (contact == null) {
                     XmppAddress xAddr = new XmppAddress(presence.getFrom().toString());
                     contact = new Contact(xAddr, xAddr.getUser(), Imps.Contacts.TYPE_NORMAL);
-
                 }
 
                 mContactListManager.doAddContactToListAsync(contact,getContactListManager().getDefaultContactList(),false);
                 mContactListManager.getSubscriptionRequestListener().onSubscriptionApproved(contact, mProviderId, mAccountId);
 
-                p.setPriority(1000);//max this out to ensure the user shows as online
-                contact.setPresence(p);
-
-                getOmemo().getManager().requestDeviceListUpdateFor(presence.getFrom().asBareJid());
-                //getOmemo().trustOmemoDevice(presence.getFrom().asBareJid(), true);
+                if (getOmemo().getManager().contactSupportsOmemo(jid)) {
+                    getOmemo().getManager().requestDeviceListUpdateFor(jid);
+                    getOmemo().getManager().buildSessionsWith(jid);
+                }
 
             }
             catch (Exception e)
@@ -4233,6 +4235,13 @@ public class XmppConnection extends ImConnection {
                                     }
 
 
+                                    rEntry = mRoster.getEntry(jid);
+
+                                    org.jivesoftware.smack.packet.Presence request = new org.jivesoftware.smack.packet.Presence(
+                                            org.jivesoftware.smack.packet.Presence.Type.subscribe);
+                                    request.setTo(JidCreate.bareFrom(contact.getAddress().getBareAddress()));
+                                    sendPacket(request);
+
                                 } catch (XMPPException e) {
 
                                     debug(TAG,"error updating remote roster",e);
@@ -4281,13 +4290,14 @@ public class XmppConnection extends ImConnection {
     private class UploaderManager {
 
         boolean mIsDiscovered = false;
+        HttpFileUploadManager manager;
 
         public UploaderManager ()
         {
 
             try {
 
-                HttpFileUploadManager manager = HttpFileUploadManager.getInstanceFor(mConnection);
+                manager = HttpFileUploadManager.getInstanceFor(mConnection);
                 mIsDiscovered = manager.discoverUploadService();
 
             }
@@ -4299,17 +4309,8 @@ public class XmppConnection extends ImConnection {
 
         public String doUpload (String fileName, String mimeType, long fileSize, InputStream is)
         {
-            HttpFileUploadManager manager = HttpFileUploadManager.getInstanceFor(mConnection);
-
-            try {
-
-                if (!manager.discoverUploadService())
-                    return null;
-            }
-            catch (Exception e)
-            {
+            if (!mIsDiscovered)
                 return null;
-            }
 
         //    manager.useTlsSettingsFrom(mConnection.getConfiguration());
             UploadService upService = manager.getDefaultUploadService();
@@ -4322,12 +4323,14 @@ public class XmppConnection extends ImConnection {
 
                 try {
 
-                    Slot upSlot = manager.requestSlot(fileName, fileSize, mimeType);
+                    String defaultType = "application/octet-stream";
+                    Slot upSlot = manager.requestSlot(fileName, fileSize, defaultType);
 
                     uploadFile(fileSize, is, upSlot, new UploadProgressListener() {
                         @Override
                         public void onUploadProgress(long l, long l1) {
 
+                            debug(TAG,"upload complete: " + l + "," + l1);
                             //once this is done, send the message
                         }
                     });

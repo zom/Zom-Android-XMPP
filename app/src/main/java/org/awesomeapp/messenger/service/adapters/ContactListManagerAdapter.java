@@ -761,6 +761,10 @@ public class ContactListManagerAdapter extends
                             ContentUris.parseId(uri), username, nickname);
                 }
             }
+            else
+            {
+                approveSubscription(from);
+            }
         }
 
         public void onUnSubScriptionRequest(final Contact from, long providerId, long accountId) {
@@ -910,6 +914,7 @@ public class ContactListManagerAdapter extends
      */
     Uri insertOrUpdateSubscription(String username, String nickname, int subscriptionType,
             int subscriptionStatus) {
+
         Cursor cursor = mResolver.query(mContactUrl, new String[] { Imps.Contacts._ID },
                 Imps.Contacts.USERNAME + "=?", new String[] { username }, null);
         if (cursor == null) {
@@ -947,8 +952,8 @@ public class ContactListManagerAdapter extends
         
         Cursor cursor = mResolver.query(mContactUrl, new String[] { Imps.Contacts._ID,},
                 Imps.Contacts.USERNAME + "=?"
-                        + " AND " + Imps.Contacts.SUBSCRIPTION_TYPE + "=" + Imps.Contacts.SUBSCRIPTION_TYPE_BOTH
-                        + " AND " + Imps.Contacts.SUBSCRIPTION_STATUS + "=" + Imps.Contacts.SUBSCRIPTION_STATUS_NONE
+                        + " AND (" + Imps.Contacts.SUBSCRIPTION_TYPE + "=" + Imps.Contacts.SUBSCRIPTION_TYPE_BOTH
+                        + " OR " + Imps.Contacts.SUBSCRIPTION_TYPE + "=" + Imps.Contacts.SUBSCRIPTION_TYPE_TO + ")"
                 , new String[] { username }, null);
         if (cursor == null) {
             RemoteImService.debug("query contact " + username + " failed");
