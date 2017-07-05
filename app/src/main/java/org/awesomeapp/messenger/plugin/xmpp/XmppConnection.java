@@ -1493,6 +1493,7 @@ public class XmppConnection extends ImConnection {
 
         UploaderManager uploader = new UploaderManager();
         String result = uploader.doUpload(fileName, mimeType, fileSize, is);
+
         return result;
     }
 
@@ -1920,8 +1921,6 @@ public class XmppConnection extends ImConnection {
 
                 try {
 
-                    mOmemoInstance.getManager().purgeDevices();
-
                     OmemoFingerprint of = mOmemoInstance.getManager().getOurFingerprint();
                     if (of != null)
                         debug(TAG,"got our omemo fingerprint: " + of.toString());
@@ -1930,14 +1929,9 @@ public class XmppConnection extends ImConnection {
                 }
                 catch (NullPointerException e)
                 {
-                    debug(TAG,"error purge OMEMO devices... regerating keys",e);
-                    try {
-                        mOmemoInstance.getManager().regenerate();
-                    }
-                    catch (Exception e2)
-                    {
-                        debug(TAG,"error regerating OMEMO devices",e2);
-                    }
+                    debug(TAG,"error getting OMEMO devices",e);
+
+                    throw new RuntimeException("no keys, no cheese");
                 }
                 catch (Exception e)
                 {
@@ -4323,8 +4317,8 @@ public class XmppConnection extends ImConnection {
 
                 try {
 
-                    String defaultType = "application/octet-stream";
-                    Slot upSlot = manager.requestSlot(fileName, fileSize, defaultType);
+                 //   String defaultType = "application/octet-stream";
+                    Slot upSlot = manager.requestSlot(fileName, fileSize, mimeType);
 
                     uploadFile(fileSize, is, upSlot, new UploadProgressListener() {
                         @Override

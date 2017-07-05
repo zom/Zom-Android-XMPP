@@ -842,6 +842,7 @@ public class ConversationDetailActivity extends BaseActivity {
         if (mMediaRecorder != null && mAudioFilePath != null && mIsAudioRecording) {
 
             try {
+
                 mMediaRecorder.stop();
 
                 mMediaRecorder.reset();
@@ -859,11 +860,11 @@ public class ConversationDetailActivity extends BaseActivity {
             }
             catch (IllegalStateException ise)
             {
-                Log.e(ImApp.LOG_TAG,"error stopping audio recording",ise);
+                Log.w(ImApp.LOG_TAG,"error stopping audio recording: " + ise);
             }
             catch (RuntimeException re) //stop can fail so we should catch this here
             {
-                Log.e(ImApp.LOG_TAG,"error stopping audio recording",re);
+                Log.w(ImApp.LOG_TAG,"error stopping audio recording: " + re);
             }
 
             mIsAudioRecording = false;

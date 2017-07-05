@@ -414,7 +414,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
     }
 
-    public boolean offerData(String offerId, String url, String type) {
+    public boolean offerData(String offerId, final String url, final String type) {
         if (mConnection.getState() == ImConnection.SUSPENDED) {
             // TODO send later
             return false;
@@ -424,25 +424,33 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         {
             //TODO do HTTP Upload XEP 363
 
-            File fileLocal = new File(url);
 
-            try {
-
-                String fileName = fileLocal.getName();
-                if (!fileName.contains("."))
-                {
-                    fileName += "." + MimeTypeMap.getSingleton().getExtensionFromMimeType(type);
-                }
-
-                mConnection.publishFile(fileName, type, fileLocal.length(), new info.guardianproject.iocipher.FileInputStream(fileLocal));
-
-
-                return true;
-            }
-            catch (FileNotFoundException fe)
+            new Thread ()
             {
-                Log.w(TAG,"couldn't find file to share",fe);
-            }
+
+                public void run ()
+                {
+                    File fileLocal = new File(url);
+                    String fileName = fileLocal.getName();
+                    if (!fileName.contains("."))
+                    {
+                        fileName += "." + MimeTypeMap.getSingleton().getExtensionFromMimeType(type);
+                    }
+
+                    try
+                    {
+                        String resultUrl = mConnection.publishFile(fileName, type, fileLocal.length(), new info.guardianproject.iocipher.FileInputStream(fileLocal));
+                        sendMessage(resultUrl, false);
+                    }
+                    catch (FileNotFoundException fe)
+                    {
+                        Log.w(TAG,"couldn't find file to share",fe);
+                    }
+                }
+            }.start();
+
+            return true;
+
         }
         else {
             HashMap<String, String> headers = null;
@@ -476,7 +484,6 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             }
         }
 
-        return false;
     }
 
     /**
