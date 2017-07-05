@@ -7,6 +7,7 @@ import org.awesomeapp.messenger.util.SecureMediaStore;
 import org.awesomeapp.messenger.util.SystemServices;
 import org.bouncycastle.crypto.engines.AESEngine;
 import org.bouncycastle.crypto.io.CipherOutputStream;
+import org.bouncycastle.crypto.io.CipherInputStream;
 import org.bouncycastle.crypto.modes.AEADBlockCipher;
 import org.bouncycastle.crypto.modes.GCMBlockCipher;
 import org.bouncycastle.crypto.params.AEADParameters;
@@ -64,7 +65,21 @@ public class Downloader {
         return mMimeType;
     }
 
-    private static OutputStream setupOutputStream(OutputStream os, String reference) {
+    public static InputStream setupInputStream(InputStream is, byte[] keyAndIv) {
+        if (keyAndIv != null && keyAndIv.length == 48) {
+    //        byte[] keyAndIv = hexToBytes(reference);
+            byte[] key = new byte[32];
+            byte[] iv = new byte[16];
+            System.arraycopy(keyAndIv, 0, iv, 0, 16);
+            System.arraycopy(keyAndIv, 16, key, 0, 32);
+            AEADBlockCipher cipher = new GCMBlockCipher(new AESEngine());
+            cipher.init(false, new AEADParameters(new KeyParameter(key), 128, iv));
+            return new CipherInputStream(is, cipher);
+        } else {
+            return is;
+        }
+    }
+    public static OutputStream setupOutputStream(OutputStream os, String reference) {
         if (reference != null && reference.length() == 96) {
             byte[] keyAndIv = hexToBytes(reference);
             byte[] key = new byte[32];
