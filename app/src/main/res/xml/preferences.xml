@@ -33,11 +33,12 @@
     android:summary="@string/how_encrypted_chats_are_started"
     android:defaultValue="auto" />
 
+       <!--
   <CheckBoxPreference
           android:key="pref_linkify_on_tor"
           android:title="@string/pref_linkify_on_tor_title"
           android:summary="@string/pref_linkify_on_tor_summary"
-          android:defaultValue="false" />
+          android:defaultValue="false" />-->
 
     </PreferenceCategory>
 
@@ -97,12 +98,16 @@
   <CheckBoxPreference
           android:key="pref_start_on_boot"
           android:title="@string/start_on_boot"
-          android:summary="@string/start_on_boot_summary" />
+          android:summary="@string/start_on_boot_summary"
+          android:defaultValue="true"
+      />
   
    <CheckBoxPreference
           android:key="pref_foreground_enable"
           android:title="@string/foreground_service_title"
-          android:summary="@string/foreground_service_summary" />
+          android:summary="@string/foreground_service_summary"
+          android:defaultValue="true"
+       />
 
   <EditTextPreference 
           android:key="pref_heartbeat_interval"
