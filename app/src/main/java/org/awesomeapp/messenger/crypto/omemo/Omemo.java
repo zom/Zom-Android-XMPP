@@ -46,32 +46,25 @@ public class Omemo {
     private final static String TAG = "OMEMO";
 
     private OmemoManager mOmemoManager;
-    private SignalIOCipherOmemoStore mOmemoStore;
+    private OmemoStore mOmemoStore;
 
-    private static boolean mSignalInit = false;
+    private static boolean mOmemoInit = false;
 
     public OmemoManager getManager ()
     {
         return mOmemoManager;
     }
 
-    public Omemo (XMPPTCPConnection connection, BareJid user, Context context) throws Exception
+    public Omemo (XMPPTCPConnection connection, BareJid user) throws Exception
     {
 
         oneTimeSetup();
 
-        File fileOmemoStore = new File("omemo-ks",
-                "zom-" + user.getLocalpartOrNull() + "-" + user.getDomain() + ".oks");
-
-      //  OmemoConfiguration.setFileBasedOmemoStoreDefaultPath(fileOmemoStore);
-        OmemoConfiguration.setAddOmemoHintBody(false);
-        mOmemoStore = new SignalIOCipherOmemoStore (fileOmemoStore);
-
-        mOmemoManager = this.initOMemoManager(connection, user, mOmemoStore);
+        mOmemoManager = this.initOMemoManager(connection, user);
 
     }
 
-    private OmemoManager initOMemoManager(XMPPTCPConnection conn, BareJid altUser, OmemoStore store) {
+    private OmemoManager initOMemoManager(XMPPTCPConnection conn, BareJid altUser) {
         BareJid user;
 
         if (conn.getUser() != null) {
@@ -80,12 +73,12 @@ public class Omemo {
             user = altUser;
         }
 
-        OmemoService.getInstance().setOmemoStoreBackend(store);
-        int defaultDeviceId = store.getDefaultDeviceId(user);
+        mOmemoStore = OmemoService.getInstance().getOmemoStoreBackend();
+        int defaultDeviceId = mOmemoStore.getDefaultDeviceId(user);
 
         if (defaultDeviceId < 1) {
             defaultDeviceId = OmemoManager.randomDeviceId();
-            store.setDefaultDeviceId(user, defaultDeviceId);
+            mOmemoStore.setDefaultDeviceId(user, defaultDeviceId);
         }
 
         return OmemoManager.getInstanceFor(conn, defaultDeviceId);
@@ -93,11 +86,22 @@ public class Omemo {
 
     private static synchronized void oneTimeSetup ()
     {
-        if (!mSignalInit) {
+        if (!mOmemoInit) {
             try {
+                //init sign libraries
                 SignalOmemoService.acknowledgeLicense();
                 SignalOmemoService.setup();
-                mSignalInit = true;
+
+                //configure OMEMO global prefs
+                OmemoConfiguration.setAddOmemoHintBody(false);
+
+                //init IOCipher-based omemo store
+                File fileOmemoStore = new File("omemo-ks","zomomemo.oks");
+                OmemoStore store = new SignalIOCipherOmemoStore (fileOmemoStore);
+                OmemoService.getInstance().setOmemoStoreBackend(store);
+
+                mOmemoInit = true;
+
             } catch (Exception e) {
                 debug(TAG, "onetime omemo setup error: " + e);
                 e.printStackTrace();
@@ -130,7 +134,7 @@ public class Omemo {
         ArrayList<String> fps = new ArrayList<>();
         for(int id : list.getActiveDevices()) {
             OmemoDevice d = new OmemoDevice(jid, id);
-            IdentityKey idk = mOmemoStore.loadOmemoIdentityKey(mOmemoManager, d);
+            IdentityKey idk = (IdentityKey)mOmemoStore.loadOmemoIdentityKey(mOmemoManager, d);
             if(idk == null) {
                 System.out.println("No identityKey for "+d);
             } else {
