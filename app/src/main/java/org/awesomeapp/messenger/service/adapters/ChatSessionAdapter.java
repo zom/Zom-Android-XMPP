@@ -64,6 +64,8 @@ import net.java.otr4j.session.SessionStatus;
 import org.awesomeapp.messenger.service.RemoteImService;
 import org.awesomeapp.messenger.service.StatusBarNotifier;
 import org.jivesoftware.smack.util.StringUtils;
+import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.stringprep.XmppStringprepException;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -440,7 +442,9 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                     try
                     {
                         String resultUrl = mConnection.publishFile(fileName, type, fileLocal.length(), new info.guardianproject.iocipher.FileInputStream(fileLocal));
-                        sendMessage(resultUrl, false);
+
+                        if (resultUrl != null)
+                            sendMessage(resultUrl, false);
                     }
                     catch (FileNotFoundException fe)
                     {
@@ -676,21 +680,39 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
 
 
-    String checkForLinkedMedia (String message, boolean allowWebDownloads)
+    String checkForLinkedMedia (String jid, String message, boolean allowWebDownloads)
     {
         Matcher matcher = aesGcmUrlPattern.matcher(message);
 
-//        if ((!matcher.find()) && allowWebDownloads)
-  //          matcher = urlPattern.matcher(message);
-
+        //if we match the aesgcm crypto pattern, then it is a match
         if (matcher.find())
         {
             int matchStart = matcher.start(1);
             int matchEnd = matcher.end();
             return message.substring(matchStart,matchEnd);
         }
-        else
-            return null;
+        else if (allowWebDownloads)
+        {
+            //if someone sends us a random URL, only get it if it is from the same host as the jabberid
+            matcher = urlPattern.matcher(message);
+            if (matcher.find())
+            {
+                int matchStart = matcher.start(1);
+                int matchEnd = matcher.end();
+                String urlDownload = message.substring(matchStart,matchEnd);
+                try {
+                    String domain = JidCreate.bareFrom(jid).getDomain().toString();
+                    if (urlDownload.contains(domain))
+                        return urlDownload;
+                }
+                catch (XmppStringprepException se)
+                {
+                    //This shouldn't happeN!
+                }
+            }
+        }
+
+        return null;
 
     }
 
@@ -864,7 +886,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             }
 
             boolean allowWebDownloads = true;
-            String mediaLink = checkForLinkedMedia(body,allowWebDownloads);
+            String mediaLink = checkForLinkedMedia(username, body,allowWebDownloads);
 
             if (mediaLink == null) {
                 insertOrUpdateChat(body);
@@ -1069,19 +1091,19 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         public void onIncomingReceipt(ChatSession ses, String id) {
             Imps.updateConfirmInDb(mContentResolver, mContactId, id, true);
 
-            synchronized (mRemoteListeners) {
-                int N = mRemoteListeners.beginBroadcast();
-                for (int i = 0; i < N; i++) {
-                    IChatListener listener = mRemoteListeners.getBroadcastItem(i);
-                    try {
-                        listener.onIncomingReceipt(ChatSessionAdapter.this, id);
-                    } catch (RemoteException e) {
-                        // The RemoteCallbackList will take care of removing the
-                        // dead listeners.
-                    }
+            /**
+            int N = mRemoteListeners.beginBroadcast();
+            for (int i = 0; i < N; i++) {
+                IChatListener listener = mRemoteListeners.getBroadcastItem(i);
+                try {
+                    listener.onIncomingReceipt(ChatSessionAdapter.this, id);
+                } catch (RemoteException e) {
+                    // The RemoteCallbackList will take care of removing the
+                    // dead listeners.
                 }
-                mRemoteListeners.finishBroadcast();
             }
+            mRemoteListeners.finishBroadcast();
+            **/
         }
 
         @Override
