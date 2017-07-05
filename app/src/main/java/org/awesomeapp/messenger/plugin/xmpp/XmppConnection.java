@@ -1312,7 +1312,7 @@ public class XmppConnection extends ImConnection {
 
         if (conn != null && conn.isConnected()) {
 
-            mOmemoInstance = new Omemo(conn, mUserJid, mContext);
+            mOmemoInstance = new Omemo(conn, mUserJid);
             mOmemoInstance.getManager().addOmemoMessageListener(new OmemoMessageListener() {
                 @Override
                 public void onOmemoKeyTransportReceived(CipherAndAuthTag cipherAndAuthTag, org.jivesoftware.smack.packet.Message message, org.jivesoftware.smack.packet.Message message1, OmemoMessageInformation omemoMessageInformation) {
@@ -2224,15 +2224,12 @@ public class XmppConnection extends ImConnection {
 
                     qAvatar.put(jid.asBareJid().toString(),"");
 
-
-                    /**
-                    try {
-                        getOmemo().trustOmemoDevice(jid.asBareJid(), true);
-                    } catch (Exception ioe)
-                    {
-                        debug(TAG, "error fetching omemo devices", ioe);
+                    BareJid bareJid = jid.asBareJid();
+                    if (getOmemo().getManager().contactSupportsOmemo(bareJid)) {
+                        getOmemo().getManager().requestDeviceListUpdateFor(bareJid);
+                        getOmemo().getManager().buildSessionsWith(bareJid);
                     }
-                    **/
+
 
                 }
 
@@ -3062,6 +3059,11 @@ public class XmppConnection extends ImConnection {
                 response.setTo(JidCreate.bareFrom(contact.getAddress().getBareAddress()));
                 sendPacket(response);
 
+                org.jivesoftware.smack.packet.Presence request = new org.jivesoftware.smack.packet.Presence(
+                        org.jivesoftware.smack.packet.Presence.Type.subscribe);
+                request.setTo(JidCreate.bareFrom(contact.getAddress().getBareAddress()));
+                sendPacket(request);
+
                 mContactListManager.getSubscriptionRequestListener().onSubscriptionApproved(contact, mProviderId, mAccountId);
 
                 ChatSession session = findOrCreateSession(contact.getAddress().toString(), false);
@@ -3073,6 +3075,7 @@ public class XmppConnection extends ImConnection {
                 qAvatar.put(contact.getAddress().getAddress(),"");
 
                 BareJid jid = JidCreate.bareFrom(contact.getAddress().getAddress());
+
                 if (getOmemo().getManager().contactSupportsOmemo(jid)) {
                     getOmemo().getManager().requestDeviceListUpdateFor(jid);
                     getOmemo().getManager().buildSessionsWith(jid);
@@ -4369,10 +4372,10 @@ public class XmppConnection extends ImConnection {
                     urlConnection.setRequestProperty((String)outputStream.getKey(), (String)outputStream.getValue());
                 }
 
-                SSLSocketFactory tlsSocketFactory1 = (SSLSocketFactory)mConnection.getConfiguration().getSocketFactory();
-                if(tlsSocketFactory1 != null && urlConnection instanceof HttpsURLConnection) {
-                    HttpsURLConnection outputStream1 = (HttpsURLConnection)urlConnection;
-                    outputStream1.setSSLSocketFactory(tlsSocketFactory1);
+                if(urlConnection instanceof HttpsURLConnection) {
+                    HttpsURLConnection httpsUrlConn = (HttpsURLConnection)urlConnection;
+                    httpsUrlConn.setHostnameVerifier(mMemTrust.wrapHostnameVerifier(new org.apache.http.conn.ssl.StrictHostnameVerifier()));
+                    httpsUrlConn.setSSLSocketFactory(sslContext.getSocketFactory());
                 }
 
                 try {
