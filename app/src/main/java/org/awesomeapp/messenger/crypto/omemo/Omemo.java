@@ -13,6 +13,7 @@ import org.jivesoftware.smackx.omemo.OmemoFingerprint;
 import org.jivesoftware.smackx.omemo.OmemoInitializer;
 import org.jivesoftware.smackx.omemo.OmemoManager;
 import org.jivesoftware.smackx.omemo.OmemoService;
+import org.jivesoftware.smackx.omemo.OmemoStore;
 import org.jivesoftware.smackx.omemo.exceptions.CannotEstablishOmemoSessionException;
 import org.jivesoftware.smackx.omemo.exceptions.CorruptedOmemoKeyException;
 import org.jivesoftware.smackx.omemo.internal.CachedDeviceList;
@@ -45,7 +46,7 @@ public class Omemo {
     private final static String TAG = "OMEMO";
 
     private OmemoManager mOmemoManager;
-    private SignalFileBasedOmemoStore mOmemoStore;
+    private SignalIOCipherOmemoStore mOmemoStore;
 
     private static boolean mSignalInit = false;
 
@@ -59,19 +60,18 @@ public class Omemo {
 
         oneTimeSetup();
 
-        File fileOmemoStore = new File(context.getFilesDir(),
+        File fileOmemoStore = new File("omemo-ks",
                 "zom-" + user.getLocalpartOrNull() + "-" + user.getDomain() + ".oks");
 
-        OmemoConfiguration.setFileBasedOmemoStoreDefaultPath(fileOmemoStore);
+      //  OmemoConfiguration.setFileBasedOmemoStoreDefaultPath(fileOmemoStore);
         OmemoConfiguration.setAddOmemoHintBody(false);
+        mOmemoStore = new SignalIOCipherOmemoStore (fileOmemoStore);
 
-        mOmemoManager = this.initOMemoManager(connection, user);
-        mOmemoStore = (SignalFileBasedOmemoStore) OmemoService.getInstance().getOmemoStoreBackend();
-
+        mOmemoManager = this.initOMemoManager(connection, user, mOmemoStore);
 
     }
 
-    private OmemoManager initOMemoManager(XMPPTCPConnection conn, BareJid altUser) {
+    private OmemoManager initOMemoManager(XMPPTCPConnection conn, BareJid altUser, OmemoStore store) {
         BareJid user;
 
         if (conn.getUser() != null) {
@@ -80,11 +80,12 @@ public class Omemo {
             user = altUser;
         }
 
-        int defaultDeviceId = OmemoService.getInstance().getOmemoStoreBackend().getDefaultDeviceId(user);
+        OmemoService.getInstance().setOmemoStoreBackend(store);
+        int defaultDeviceId = store.getDefaultDeviceId(user);
 
         if (defaultDeviceId < 1) {
             defaultDeviceId = OmemoManager.randomDeviceId();
-            OmemoService.getInstance().getOmemoStoreBackend().setDefaultDeviceId(user, defaultDeviceId);
+            store.setDefaultDeviceId(user, defaultDeviceId);
         }
 
         return OmemoManager.getInstanceFor(conn, defaultDeviceId);
