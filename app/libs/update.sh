@@ -1,5 +1,5 @@
-BASELIB="../../../Smack"
-BASEVERSION="4.3.0-alpha1"
+BASELIB="../../../Smack-4.2"
+BASEVERSION="4.2.1-beta2"
 
 cp $BASELIB/smack-core/build/libs/smack-core-$BASEVERSION-SNAPSHOT.jar .
 cp $BASELIB/smack-tcp/build/libs/smack-tcp-$BASEVERSION-SNAPSHOT.jar .
