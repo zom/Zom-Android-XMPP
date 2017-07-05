@@ -83,13 +83,13 @@ android {
 }
 
 ext {
-    smackVersion="4.2.1-SNAPSHOT"
+    smackVersion="4.2.1-beta1"
 }
 
 
 
 dependencies {
-   // compile fileTree(include: '*.jar', dir: 'libs')
+    compile fileTree(include: '*.jar', dir: 'libs')
     compile 'com.android.support:multidex:1.0.1'
     compile 'net.zetetic:android-database-sqlcipher:3.5.4@aar'
     compile project(':otr4jandroid')
@@ -136,6 +136,7 @@ dependencies {
     //compile 'com.chauthai.swipereveallayout:swipe-reveal-layout:1.4.0'
    // compile 'com.hudomju:swipe-to-dismiss-undo:1.0'
 
+    /**
     compile "org.igniterealtime.smack:smack-android:$smackVersion"
     compile "org.igniterealtime.smack:smack-android-extensions:$smackVersion"
     compile "org.igniterealtime.smack:smack-omemo-signal:$smackVersion"
@@ -144,7 +145,12 @@ dependencies {
     compile "org.igniterealtime.smack:smack-core:$smackVersion"
     compile "org.igniterealtime.smack:smack-extensions:$smackVersion"
     compile "org.igniterealtime.smack:smack-experimental:$smackVersion"
+            {
+                exclude "org.jivesoftw"
+            }
+
     compile "org.igniterealtime.smack:smack-im:$smackVersion"
     compile "org.igniterealtime.smack:smack-sasl-provided:$smackVersion"
+    **/
 
 }
