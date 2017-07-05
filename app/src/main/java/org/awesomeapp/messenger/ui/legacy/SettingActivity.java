@@ -56,7 +56,7 @@ public class SettingActivity extends PreferenceActivity {
     ListPreference mPanicTriggerApp;
     Preference mPanicConfig;
     ListPreference mLanguage;
-    CheckBoxPreference mLinkifyOnTor;
+  //  CheckBoxPreference mLinkifyOnTor;
     CheckBoxPreference mHideOfflineContacts;
     CheckBoxPreference mDeleteUnsecuredMedia;
     CheckBoxPreference mEnableNotification;
@@ -71,7 +71,7 @@ public class SettingActivity extends PreferenceActivity {
     private void setInitialValues() {
         mOtrMode.setValue(Preferences.getOtrMode());
 
-        mLinkifyOnTor.setChecked(Preferences.getLinkifyOnTor());
+//        mLinkifyOnTor.setChecked(Preferences.getDoLinkify());
         mHideOfflineContacts.setChecked(Preferences.getHideOfflineContacts());
         mDeleteUnsecuredMedia.setChecked(Preferences.getDeleteInsecureMedia());
         mEnableNotification.setChecked(Preferences.isNotificationEnabled());
@@ -116,7 +116,7 @@ public class SettingActivity extends PreferenceActivity {
         mPanicTriggerApp = (ListPreference) findPreference("pref_panic_trigger_app");
         mPanicConfig = (Preference) findPreference("pref_panic_config");
         mLanguage = (ListPreference) findPreference("pref_language");
-        mLinkifyOnTor = (CheckBoxPreference) findPreference("pref_linkify_on_tor");
+   //     mLinkifyOnTor = (CheckBoxPreference) findPreference("pref_linkify_on_tor");
         mHideOfflineContacts = (CheckBoxPreference) findPreference("pref_hide_offline_contacts");
         mDeleteUnsecuredMedia = (CheckBoxPreference) findPreference("pref_delete_unsecured_media");
         mEnableNotification = (CheckBoxPreference) findPreference("pref_enable_notification");

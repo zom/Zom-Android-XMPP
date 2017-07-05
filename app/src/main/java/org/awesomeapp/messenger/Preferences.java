@@ -43,11 +43,11 @@ public class Preferences {
     public static final boolean DEFAULT_DELETE_INSECURE_MEDIA = false;
     public static final boolean DEFAULT_FOREGROUND_PRIORITY = true;
     public static final boolean DEFAULT_HIDE_OFFLINE_CONTACTS = false;
-    public static final boolean DEFAULT_LINKIFY_ON_TOR = false;
+    public static final boolean DEFAULT_LINKIFY_DO = false;
     public static final boolean DEFAULT_NOTIFICATION = true;
     public static final boolean DEFAULT_NOTIFICATION_SOUND = true;
     public static final boolean DEFAULT_NOTIFICATION_VIBRATE = true;
-    public static final boolean DEFAULT_START_ON_BOOT = false;
+    public static final boolean DEFAULT_START_ON_BOOT = true;
     public static final boolean DEFAULT_LOCK_APP = true;
     public static final boolean DEFAULT_CLEAR_APP_DATA = false;
     public static final boolean DEFAULT_UNINSTALL_APP = false;
@@ -58,7 +58,7 @@ public class Preferences {
     private static final String HEARTBEAT_INTERVAL = "pref_heartbeat_interval";
     private static final String HIDE_OFFLINE_CONTACTS = "pref_hide_offline_contacts";
     private static final String LANGUAGE = "pref_language";
-    private static final String LINKIFY_ON_TOR = "pref_linkify_on_tor";
+    private static final String LINKIFY_DO = "pref_linkify_do";
     private static final String NOTIFICATION = "pref_enable_notification";
     private static final String NOTIFICATION_SOUND = "pref_notification_sound";
     private static final String NOTIFICATION_VIBRATE = "pref_notification_vibrate";
@@ -106,12 +106,12 @@ public class Preferences {
         preferences.edit().putString(HEARTBEAT_INTERVAL, String.valueOf(minutes)).apply();
     }
 
-    public static boolean getLinkifyOnTor() {
-        return preferences.getBoolean(LINKIFY_ON_TOR, DEFAULT_LINKIFY_ON_TOR);
+    public static boolean getDoLinkify() {
+        return preferences.getBoolean(LINKIFY_DO, DEFAULT_LINKIFY_DO);
     }
 
-    public static void setLinkifyOnTor(boolean linkify) {
-        preferences.edit().putBoolean(LINKIFY_ON_TOR, linkify).apply();
+    public static void setDoLinkify(boolean linkify) {
+        preferences.edit().putBoolean(LINKIFY_DO, linkify).apply();
     }
 
     public static boolean getDeleteInsecureMedia() {
