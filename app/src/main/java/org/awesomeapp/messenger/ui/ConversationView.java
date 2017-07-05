@@ -2682,7 +2682,7 @@ public class ConversationView {
                     return;
 
                 if (mConn != null)
-                    messageView.setLinkify(!mConn.isUsingTor() || Preferences.getLinkifyOnTor());
+                    messageView.setLinkify(!mConn.isUsingTor() || Preferences.getDoLinkify());
 
             } catch (RemoteException e) {
                 e.printStackTrace();
