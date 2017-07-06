@@ -65,7 +65,7 @@ public class GalleryMediaViewHolder extends MediaViewHolder
             if (mContainer.getVisibility() == View.GONE)
                 mContainer.setVisibility(View.VISIBLE);
 
-            Uri mediaUri = Uri.parse( body ) ;
+            Uri mediaUri = Uri.parse( body.split(" ")[0] ) ;
             showMediaThumbnail(mimeType, mediaUri, id);
 
         }
@@ -162,7 +162,8 @@ public class GalleryMediaViewHolder extends MediaViewHolder
                 Log.e(ImApp.LOG_TAG, "unable to load thumbnail: " + e.getMessage());
             }
         }
-        else if (mediaUri.getScheme().equals("asset"))
+        else if (mediaUri.getScheme() != null
+                && mediaUri.getScheme().equals("asset"))
         {
             String assetPath = "file:///android_asset/" + mediaUri.getPath().substring(1);
             Glide.with(context)

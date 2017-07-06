@@ -222,9 +222,11 @@ public class ConversationListItem extends FrameLayout {
 
             if (holder.mLine2 != null)
             {
-                if (SecureMediaStore.isVfsUri(message))
+                String vPath = message.split(" ")[0];
+
+                if (SecureMediaStore.isVfsUri(vPath))
                 {
-                    FileInfo fInfo = SystemServices.getFileInfoFromURI(getContext(), Uri.parse(message));
+                    FileInfo fInfo = SystemServices.getFileInfoFromURI(getContext(), Uri.parse(vPath));
                     
                     if (fInfo.type == null || fInfo.type.startsWith("image"))
                     {
@@ -243,7 +245,7 @@ public class ConversationListItem extends FrameLayout {
 
                             }
 
-                            setThumbnail(getContext().getContentResolver(), holder, Uri.parse(message));
+                            setThumbnail(getContext().getContentResolver(), holder, Uri.parse(vPath));
 
                                     holder.mLine2.setVisibility(View.GONE);
                                     
