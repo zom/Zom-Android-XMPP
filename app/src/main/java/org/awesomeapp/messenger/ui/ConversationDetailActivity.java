@@ -381,9 +381,6 @@ public class ConversationDetailActivity extends BaseActivity {
                 mConvoView.closeChatSession(true);
                 finish();
                 return true;
-            case R.id.menu_refresh_encryption:
-                mConvoView.refreshSession();
-                return true;
             case R.id.menu_verify_or_view:
                 mConvoView.showVerifyDialog();
                 return true;

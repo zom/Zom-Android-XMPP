@@ -121,7 +121,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="10dp"
-            android:id="@+id/listOtr"
+            android:id="@+id/listEncryptionKey"
             android:visibility="gone"
 
             >
@@ -135,9 +135,10 @@
                 android:layout_alignParentLeft="true"
                 />
 
-            <org.ironrabbit.type.CustomTypefaceTextView android:id="@+id/tvFingerprint"
+            <org.ironrabbit.type.CustomTypefaceTextView
+                android:id="@+id/tvFingerprint"
                 android:selectAllOnFocus="true"
-                android:layout_width="200dp"
+                android:layout_width="250dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="6dp"
                 android:autoLink="none"
@@ -152,47 +153,6 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:id="@+id/qrshare"
-                android:layout_alignParentRight="true"
-                android:src="@android:drawable/ic_menu_share"
-                android:padding="6dp"
-                android:layout_margin="1dp"
-                />
-
-        </RelativeLayout>
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:id="@+id/listOmemo"
-            android:visibility="gone"
-            >
-
-            <ImageView
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:id="@+id/qrcodeOmemo"
-                android:background="#dddddd"
-                android:src="@drawable/qr"
-                android:layout_alignParentLeft="true"
-                />
-
-            <org.ironrabbit.type.CustomTypefaceTextView android:id="@+id/tvFingerprintOmemo"
-                android:selectAllOnFocus="true"
-                android:layout_width="200dp"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="6dp"
-                android:autoLink="none"
-                android:text=""
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="?contactTextSecondary"
-
-                android:layout_toRightOf="@+id/qrcodeOmemo"
-                android:layout_centerVertical="true"
-                />
-            <ImageView
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:id="@+id/qrshareOmemo"
                 android:layout_alignParentRight="true"
                 android:src="@android:drawable/ic_menu_share"
                 android:padding="6dp"

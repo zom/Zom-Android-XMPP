@@ -4231,14 +4231,6 @@ public class XmppConnection extends ImConnection {
                                         mRoster.createEntry(jid, contact.getName(), groups);
                                     }
 
-
-                                    rEntry = mRoster.getEntry(jid);
-
-                                    org.jivesoftware.smack.packet.Presence request = new org.jivesoftware.smack.packet.Presence(
-                                            org.jivesoftware.smack.packet.Presence.Type.subscribe);
-                                    request.setTo(JidCreate.bareFrom(contact.getAddress().getBareAddress()));
-                                    sendPacket(request);
-
                                 } catch (XMPPException e) {
 
                                     debug(TAG,"error updating remote roster",e);

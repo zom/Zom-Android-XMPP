@@ -27,11 +27,12 @@
          app:showAsAction="never"
          />
 
+    <!--
     <item android:id="@+id/menu_verify_question"
         android:title="@string/otr_qa_title"
         app:showAsAction="never"
         />
-
+-->
 
     <item android:id="@+id/menu_remove_contact"
         android:title="@string/menu_remove_contact"

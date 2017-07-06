@@ -41,6 +41,7 @@ import org.awesomeapp.messenger.ui.legacy.DatabaseUtils;
 import org.awesomeapp.messenger.ui.onboarding.OnboardingManager;
 import org.awesomeapp.messenger.ui.qr.QrDisplayActivity;
 import org.awesomeapp.messenger.ui.qr.QrShareAsyncTask;
+import org.jivesoftware.smackx.omemo.OmemoManager;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.stringprep.XmppStringprepException;
 
@@ -151,15 +152,17 @@ public class ContactDisplayActivity extends BaseActivity {
             protected void onPostExecute(Boolean success) {
                 super.onPostExecute(success);
 
-                displayOtrFingerprints (mRemoteOtrFingerprint);
-                displayOmemoFingerprints (mRemoteOmemoFingerprints);
+                if (mRemoteOmemoFingerprints.size() == 0)
+                    displayFingerprint (mRemoteOtrFingerprint);
+                else
+                    displayFingerprint (mRemoteOmemoFingerprints.get(mRemoteOmemoFingerprints.size()-1));
             }
         }.execute(remoteFingerprint);
 
 
     }
 
-    private void displayOtrFingerprints (final String remoteFingerprint)
+    private void displayFingerprint (final String remoteFingerprint)
     {
 
         try {
@@ -174,15 +177,9 @@ public class ContactDisplayActivity extends BaseActivity {
 
             if (!TextUtils.isEmpty(remoteFingerprint)) {
 
+                findViewById(R.id.listEncryptionKey).setVisibility(View.VISIBLE);
 
-                if (!fingerprints.contains(remoteFingerprint))
-                {
-                    throw new Exception("Invalid key: " + remoteFingerprint);
-                }
-
-                findViewById(R.id.listOtr).setVisibility(View.VISIBLE);
-
-                tv.setText(prettyPrintFingerprint(remoteFingerprint));
+                tv.setText(remoteFingerprint);
 
                 iv.setOnClickListener(new View.OnClickListener() {
 
@@ -220,9 +217,9 @@ public class ContactDisplayActivity extends BaseActivity {
                     }
                 });
 
-                if (!OtrChatManager.getInstance().isRemoteKeyVerified(mUsername, remoteFingerprint))
-                    btnVerify.setVisibility(View.VISIBLE);
 
+                //if (!OtrChatManager.getInstance().isRemoteKeyVerified(mUsername, remoteFingerprint))
+                 //   btnVerify.setVisibility(View.VISIBLE);
 
             }
 
@@ -234,27 +231,6 @@ public class ContactDisplayActivity extends BaseActivity {
 
 
     }
-
-    private void displayOmemoFingerprints (List<String> omemoFps)
-    {
-        try {
-
-            if (omemoFps != null && omemoFps.size() > 0)
-            {
-                findViewById(R.id.listOmemo).setVisibility(View.VISIBLE);
-
-                TextView tv = (TextView)findViewById(R.id.tvFingerprintOmemo);
-                tv.setText((String)omemoFps.get(0));
-
-            }
-
-        }
-        catch (Exception xe)
-        {
-            Log.e(ImApp.LOG_TAG,"error displaying contact",xe);
-        }
-    }
-
 
 
     public void verifyClicked (View view)
@@ -292,9 +268,10 @@ public class ContactDisplayActivity extends BaseActivity {
             case R.id.menu_verify_or_view:
                 verifyRemoteFingerprint();
                 return true;
+            /**
             case R.id.menu_verify_question:
                 initSmpUI();
-                return true;
+                return true;**/
             case R.id.menu_remove_contact:
                 deleteContact();
                 return true;

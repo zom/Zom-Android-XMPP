@@ -691,10 +691,6 @@ public class ConversationView {
         @Override
         public void onSubscriptionApproved(Contact from, long providerId, long accountId) throws RemoteException {
 
-            if (!mCurrentChatSession.isEncrypted())
-            {
-                refreshSession();
-            }
         }
 
         @Override
@@ -1708,14 +1704,6 @@ public class ConversationView {
 
     private Cursor getMessageCursor() {
         return mMessageAdapter == null ? null : mMessageAdapter.getCursor();
-    }
-
-    public void refreshSession ()
-    {
-     //   setOTRState(false);
-
-        setOTRState(true);
-
     }
 
     public void closeChatSession(boolean doDelete) {

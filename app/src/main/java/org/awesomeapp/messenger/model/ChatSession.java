@@ -179,31 +179,31 @@ public class ChatSession {
             message.setTo(mXa);
             message.setType(Imps.MessageType.QUEUED);
 
-            //try to send ChatSecure Push message regardless of OMEMO or OTR
-            if (isOffline) {
-
-                if (OtrChatManager.getInstance().canDoKnockPushMessage(sId)) {
-                   // if (!mPushSent) {
-                        // ChatSecure-Push: If the remote peer is offline, send them a push
-                        OtrChatManager.getInstance().sendKnockPushMessage(sId);
-                        mPushSent = true;
-                    //}
-                }
-
-                return message.getType();
-
+            if (!mCanOmemo)
+            {
+                //check again!
+                mCanOmemo = mManager.resourceSupportsOmemo(mJid);
             }
-            else {
 
-                if (!mCanOmemo)
-                {
-                    //check again!
-                    mCanOmemo = mManager.resourceSupportsOmemo(mJid);
+            if (mCanOmemo) {
+                mManager.sendMessageAsync(this, message);
+            } else {
+
+                //try to send ChatSecure Push message as a client
+                if (isOffline) {
+
+                    if (OtrChatManager.getInstance().canDoKnockPushMessage(sId)) {
+                        if (!mPushSent) {
+                            // ChatSecure-Push: If the remote peer is offline, send them a push
+                            OtrChatManager.getInstance().sendKnockPushMessage(sId);
+                            mPushSent = true;
+                        }
+
+                        return message.getType();
+                    }
+
                 }
-
-                if (mCanOmemo) {
-                    mManager.sendMessageAsync(this, message);
-                } else {
+                else {
                     //do OTR!
 
                     if (otrStatus == SessionStatus.ENCRYPTED) {
@@ -239,7 +239,6 @@ public class ChatSession {
                     }
                 }
             }
-
 
         }
         else if (mParticipant instanceof ChatGroup)
