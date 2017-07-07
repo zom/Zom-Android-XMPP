@@ -628,7 +628,8 @@ public class MessageListItem extends FrameLayout {
                 Log.w(ImApp.LOG_TAG,"unable to load thumbnail: " + mediaUri.toString());
             }
         }
-        else if (mediaUri.getScheme().equals("asset"))
+        else if (mediaUri.getScheme() != null
+        && mediaUri.getScheme().equals("asset"))
         {
             String assetPath = "file:///android_asset/" + mediaUri.getPath().substring(1);
             Glide.with(context)
