@@ -76,11 +76,10 @@ public class ChatSession {
                 {
                     mJid = JidCreate.from(mParticipant.getAddress().getAddress());
                 }
-                else {
+                else if (mParticipant instanceof Contact) {
                     String resource = ((Contact) mParticipant).getPresence().getResource();
                     if (!TextUtils.isEmpty(resource)) {
                         mJid = JidCreate.from(mParticipant.getAddress().getBareAddress() + '/' + resource);
-                        mXa = new XmppAddress(mJid.toString());
                     }
                 }
 

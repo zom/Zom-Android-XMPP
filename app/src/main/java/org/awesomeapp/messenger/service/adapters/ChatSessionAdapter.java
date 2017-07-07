@@ -467,7 +467,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             return false;
         }
 
-        if (mChatSession.canOmemo())
+        if (getDefaultOtrChatSession() == null)
         {
             //TODO do HTTP Upload XEP 363
             //this is ugly... we need a nice async task!
@@ -896,12 +896,14 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
     }
 
     Uri insertMessageInDb(String contact, String body, long time, int type, int errCode, String id, String mimeType) {
-        boolean isEncrypted = true;
-        try {
-            isEncrypted = getDefaultOtrChatSession().isChatEncrypted();
-        } catch (RemoteException e) {
-            // Leave it as encrypted so it gets stored in memory
-            // FIXME(miron)
+        boolean isEncrypted = false;
+        if (getDefaultOtrChatSession() != null) {
+            try {
+                isEncrypted = getDefaultOtrChatSession().isChatEncrypted();
+            } catch (RemoteException e) {
+                // Leave it as encrypted so it gets stored in memory
+                // FIXME(miron)
+            }
         }
         return Imps.insertMessageInDb(mContentResolver, mIsGroupChat, mContactId, isEncrypted, contact, body, time, type, errCode, id, mimeType);
     }

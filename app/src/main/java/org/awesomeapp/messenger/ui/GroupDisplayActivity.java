@@ -137,15 +137,6 @@ public class GroupDisplayActivity extends BaseActivity {
 
         }
 
-        Button btn = (Button)findViewById(R.id.btnStartChat);
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                startChat();
-
-            }
-        });
 
     }
 

@@ -758,6 +758,7 @@ public class XmppConnection extends ImConnection {
                     Contact mucContact = new Contact(xa,xa.getResource(), Imps.Contacts.TYPE_NORMAL);
                     org.jivesoftware.smack.packet.Presence presence = muc.getOccupantPresence(occupantAddress);
                     if (presence != null) {
+                        /**
                         ExtensionElement packetExtension = presence.getExtension("x", "vcard-temp:x:update");
                         if (packetExtension != null) {
                             DefaultExtensionElement o = (DefaultExtensionElement) packetExtension;
@@ -772,7 +773,7 @@ public class XmppConnection extends ImConnection {
                                 //no avatar, so update it since it will be small!
                               //  qAvatar.push(chatGroup.getAddress().getAddress());
                             }
-                        }
+                        }**/
                     }
                   //  Presence p = new Presence(parsePresence(presence), presence.getStatus(), null, null, Presence.CLIENT_TYPE_DEFAULT);
                   //  mucContact.setPresence(p);
@@ -923,8 +924,10 @@ public class XmppConnection extends ImConnection {
                     Presence p = new Presence(Imps.Presence.AVAILABLE, null, null, null, Presence.CLIENT_TYPE_MOBILE);
                     org.jivesoftware.smack.packet.Presence presence = muc.getOccupantPresence(entityFullJid);
                     if (presence != null) {
+                        /**
                         ExtensionElement packetExtension = presence.getExtension("x", "vcard-temp:x:update");
                         if (packetExtension != null) {
+
                             DefaultExtensionElement o = (DefaultExtensionElement) packetExtension;
                             String hash = o.getValue("photo");
                             if (hash != null) {
@@ -932,7 +935,7 @@ public class XmppConnection extends ImConnection {
                               //  if (!hasMatches) //we must reload
                                 //    qAvatar.push(chatGroup.getAddress().getAddress());
                             }
-                        }
+                        }**/
                     }
                     mucContact.setPresence(p);
                     chatGroup.addMemberAsync(mucContact);
@@ -2274,7 +2277,7 @@ public class XmppConnection extends ImConnection {
                     mChatGroupManager.createChatGroupAsync(address, xmppAddress.getUser(), mUser.getName());
                     participant = mChatGroupManager.getChatGroup(xmppAddress);
                 } catch (Exception e) {
-                    Log.w(TAG, "unable to join group chat: " + e.toString());
+                    Log.w(TAG, "unable to join group chat",e);
                     return null;
                 }
             }
@@ -2366,55 +2369,57 @@ public class XmppConnection extends ImConnection {
                 else
                     message.setID(msgXmpp.getStanzaId());
 
-                Chat thisChat = mChatManager.createChat(jidTo.asEntityJidIfPossible());
+                if (muc != null)
+                {
+                    muc.sendMessage(msgXmpp);
+                }
+                else {
+                    Chat thisChat = mChatManager.createChat(jidTo.asEntityJidIfPossible());
 
-                //this isn't an OTR message, so let's try OMEMO
-                if (message.getType() == Imps.MessageType.QUEUED) {
+                    //this isn't an OTR message, so let's try OMEMO
+                    if (message.getType() == Imps.MessageType.QUEUED) {
 
-                    //if this isn't already OTR encrypted, and the JID can support OMEMO then do it!
-                    if (session.canOmemo()) {
+                        //if this isn't already OTR encrypted, and the JID can support OMEMO then do it!
+                        if (session.canOmemo()) {
 
-                        try {
+                            try {
 
-                            org.jivesoftware.smack.packet.Message msgEncrypted
-                                    = getOmemo().getManager().encrypt(jidTo.asBareJid(), msgXmpp.getBody());
-
-                            msgEncrypted.setStanzaId(msgXmpp.getStanzaId());
-                            msgEncrypted.addExtension(new DeliveryReceiptRequest());
-                            thisChat.sendMessage(msgEncrypted);
-                            message.setType(Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED);
-
-                        } catch (CryptoFailedException cfe) {
-                            debug(TAG, "crypto failed", cfe);
-                        } catch (UndecidedOmemoIdentityException uoie) {
-                            debug(TAG, "crypto failed", uoie);
-
-                            //if we are connected, then try again
-                            if (mConnection != null && mConnection.isConnected()) {
-                                getOmemo().trustOmemoDevice(msgXmpp.getFrom().asBareJid(), null, true);
-                                getOmemo().trustOmemoDevice(jidTo.asBareJid(), null, true);
                                 org.jivesoftware.smack.packet.Message msgEncrypted
                                         = getOmemo().getManager().encrypt(jidTo.asBareJid(), msgXmpp.getBody());
-                                msgEncrypted.addExtension(new DeliveryReceiptRequest());
+
                                 msgEncrypted.setStanzaId(msgXmpp.getStanzaId());
+                                msgEncrypted.addExtension(new DeliveryReceiptRequest());
                                 thisChat.sendMessage(msgEncrypted);
                                 message.setType(Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED);
-                            }
-                        }
 
+                            } catch (CryptoFailedException cfe) {
+                                debug(TAG, "crypto failed", cfe);
+                            } catch (UndecidedOmemoIdentityException uoie) {
+                                debug(TAG, "crypto failed", uoie);
+
+                                //if we are connected, then try again
+                                if (mConnection != null && mConnection.isConnected()) {
+                                    getOmemo().trustOmemoDevice(msgXmpp.getFrom().asBareJid(), null, true);
+                                    getOmemo().trustOmemoDevice(jidTo.asBareJid(), null, true);
+                                    org.jivesoftware.smack.packet.Message msgEncrypted
+                                            = getOmemo().getManager().encrypt(jidTo.asBareJid(), msgXmpp.getBody());
+                                    msgEncrypted.addExtension(new DeliveryReceiptRequest());
+                                    msgEncrypted.setStanzaId(msgXmpp.getStanzaId());
+                                    thisChat.sendMessage(msgEncrypted);
+                                    message.setType(Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED);
+                                }
+                            }
+
+                            return;
+                        } else {
+                            message.setType(Imps.MessageType.QUEUED);
+                            return;
+                        }
+                    } else {
+                        msgXmpp.addExtension(new DeliveryReceiptRequest());
+                        thisChat.sendMessage(msgXmpp);
                         return;
                     }
-                    else
-                    {
-                        message.setType(Imps.MessageType.QUEUED);
-                        return;
-                    }
-                }
-                else
-                {
-                    msgXmpp.addExtension(new DeliveryReceiptRequest());
-                    thisChat.sendMessage(msgXmpp);
-                    return;
                 }
 
             }

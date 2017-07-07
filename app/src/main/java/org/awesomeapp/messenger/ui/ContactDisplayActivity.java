@@ -152,7 +152,8 @@ public class ContactDisplayActivity extends BaseActivity {
             protected void onPostExecute(Boolean success) {
                 super.onPostExecute(success);
 
-                if (mRemoteOmemoFingerprints.size() == 0)
+                if (mRemoteOmemoFingerprints == null ||
+                    mRemoteOmemoFingerprints.size() == 0)
                     displayFingerprint (mRemoteOtrFingerprint);
                 else
                     displayFingerprint (mRemoteOmemoFingerprints.get(mRemoteOmemoFingerprints.size()-1));
