@@ -982,9 +982,11 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                         String mimeType = dl.getMimeType();
 
                         try {
-                            boolean isVerified = getDefaultOtrChatSession().isKeyVerified(bareUsername);
-
-                            int type = isVerified ? Imps.MessageType.INCOMING_ENCRYPTED_VERIFIED : Imps.MessageType.INCOMING_ENCRYPTED;
+                            //boolean isVerified = getDefaultOtrChatSession().isKeyVerified(bareUsername);
+                            //int type = isVerified ? Imps.MessageType.INCOMING_ENCRYPTED_VERIFIED : Imps.MessageType.INCOMING_ENCRYPTED;
+                            int type = Imps.MessageType.INCOMING;
+                            if (mediaLink.startsWith("aesgcm"))
+                                type = Imps.MessageType.INCOMING_ENCRYPTED_VERIFIED;
 
                             Uri vfsUri = SecureMediaStore.vfsUri(fileDownload.getAbsolutePath());
 
