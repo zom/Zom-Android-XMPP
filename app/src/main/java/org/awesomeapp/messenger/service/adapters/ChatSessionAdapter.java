@@ -467,7 +467,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             return false;
         }
 
-        if (getDefaultOtrChatSession() == null)
+        if (mChatSession.canOmemo() || mChatSession.getParticipant() instanceof ChatGroup)
         {
             //TODO do HTTP Upload XEP 363
             //this is ugly... we need a nice async task!
