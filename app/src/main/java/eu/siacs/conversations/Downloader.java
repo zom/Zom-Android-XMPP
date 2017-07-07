@@ -3,6 +3,7 @@ package eu.siacs.conversations;
 import android.webkit.URLUtil;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.awesomeapp.messenger.util.SecureMediaStore;
 import org.awesomeapp.messenger.util.SystemServices;
 import org.bouncycastle.crypto.engines.AESEngine;
@@ -12,6 +13,7 @@ import org.bouncycastle.crypto.modes.AEADBlockCipher;
 import org.bouncycastle.crypto.modes.GCMBlockCipher;
 import org.bouncycastle.crypto.params.AEADParameters;
 import org.bouncycastle.crypto.params.KeyParameter;
+import org.spongycastle.util.encoders.HexEncoder;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -67,13 +69,12 @@ public class Downloader {
 
     public static InputStream setupInputStream(InputStream is, byte[] keyAndIv) {
         if (keyAndIv != null && keyAndIv.length == 48) {
-    //        byte[] keyAndIv = hexToBytes(reference);
             byte[] key = new byte[32];
             byte[] iv = new byte[16];
             System.arraycopy(keyAndIv, 0, iv, 0, 16);
             System.arraycopy(keyAndIv, 16, key, 0, 32);
             AEADBlockCipher cipher = new GCMBlockCipher(new AESEngine());
-            cipher.init(false, new AEADParameters(new KeyParameter(key), 128, iv));
+            cipher.init(true, new AEADParameters(new KeyParameter(key), 128, iv));
             return new CipherInputStream(is, cipher);
         } else {
             return is;
@@ -94,7 +95,21 @@ public class Downloader {
         }
     }
 
-    private static byte[] hexToBytes(String hex) {
+
+    public static String bytesToHex(byte[] keyAndIv) {
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            new HexEncoder().encode(keyAndIv, 0, keyAndIv.length, baos);
+            return baos.toString();
+        }
+        catch (IOException ioe)
+        {
+            ioe.printStackTrace();
+            return null;
+        }
+    }
+
+    public static byte[] hexToBytes(String hex) {
         int len = hex.length();
         byte[] array = new byte[len / 2];
         for (int i = 0; i < len; i += 2) {

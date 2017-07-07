@@ -329,7 +329,7 @@ public class ConversationDetailActivity extends BaseActivity {
         regFilter .addAction(Intent.ACTION_SCREEN_ON);
         registerReceiver(receiver, regFilter);
 
-
+        /**
         if (mConvoView.getOtrSessionStatus() == SessionStatus.ENCRYPTED
                 && (!mConvoView.isOtrSessionVerified())
                 )
@@ -347,7 +347,7 @@ public class ConversationDetailActivity extends BaseActivity {
 
             sb.show();;
 
-        }
+        }**/
 
 
     }

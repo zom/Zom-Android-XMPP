@@ -178,6 +178,7 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 
 import de.duenndns.ssl.MemorizingTrustManager;
+import eu.siacs.conversations.Downloader;
 import eu.siacs.conversations.Uploader;
 import im.zom.messenger.R;
 
@@ -222,7 +223,8 @@ public class XmppConnection extends ImConnection {
 
     private final static String SSLCONTEXT_TYPE = "TLS";
 
-    private static SSLContext sslContext;
+    private SSLContext sslContext;
+    private SecureRandom secureRandom;
     private MemorizingTrustManager mMemTrust;
 
     private final static int SOTIMEOUT = 1000 * 120;
@@ -1702,22 +1704,28 @@ public class XmppConnection extends ImConnection {
         if (mMemTrust == null)
             mMemTrust = new MemorizingTrustManager(mContext);
 
-        if (sslContext == null)
-        {
+        if (sslContext == null) {
 
             sslContext = SSLContext.getInstance(SSLCONTEXT_TYPE);
 
-            SecureRandom secureRandom = new java.security.SecureRandom();
-             sslContext.init(null, MemorizingTrustManager.getInstanceList(mContext), secureRandom);
+            secureRandom = new java.security.SecureRandom();
+            sslContext.init(null, MemorizingTrustManager.getInstanceList(mContext), secureRandom);
 
-            if (Build.VERSION.SDK_INT >= 20) {
+            while (true) {
+                try {
 
-                sslContext.getDefaultSSLParameters().setCipherSuites(XMPPCertPins.SSL_IDEAL_CIPHER_SUITES_API_20);
+                    if (Build.VERSION.SDK_INT >= 20) {
 
-            }
-            else
-            {
-                sslContext.getDefaultSSLParameters().setCipherSuites(XMPPCertPins.SSL_IDEAL_CIPHER_SUITES);
+                        sslContext.getDefaultSSLParameters().setCipherSuites(XMPPCertPins.SSL_IDEAL_CIPHER_SUITES_API_20);
+
+                    } else {
+                        sslContext.getDefaultSSLParameters().setCipherSuites(XMPPCertPins.SSL_IDEAL_CIPHER_SUITES);
+                    }
+                    break;
+                } catch (IllegalStateException e) {
+                    debug(TAG,"error setting cipher suites; waiting for SSLContext to init...");
+                    try { Thread.sleep(1000); } catch (Exception e2){}
+                }
             }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
@@ -4315,7 +4323,7 @@ public class XmppConnection extends ImConnection {
                  //   String defaultType = "application/octet-stream";
                     Slot upSlot = manager.requestSlot(fileName, fileSize, mimeType);
 
-                    uploadFile(fileSize, is, upSlot, new UploadProgressListener() {
+                    String uploadKey = uploadFile(fileSize, is, upSlot, new UploadProgressListener() {
                         @Override
                         public void onUploadProgress(long l, long l1) {
 
@@ -4324,17 +4332,12 @@ public class XmppConnection extends ImConnection {
                         }
                     });
 
-                    /**
-                     URL urlShare = manager.uploadFile(fileShare, new UploadProgressListener() {
-                    @Override public void onUploadProgress(long l, long l1) {
-
-                    //once complete you can send the message?
+                    if (uploadKey != null) {
+                        URL resultUrl = upSlot.getGetUrl();
+                        String shareUrl = resultUrl.toExternalForm() + "#" + uploadKey;
+                        shareUrl = shareUrl.replace("https","aesgcm"); //this indicates it is encrypted
+                        return shareUrl;
                     }
-                    });**/
-
-                    URL resultUrl = upSlot.getGetUrl();
-                    return resultUrl.toExternalForm();
-
                 } catch (Exception e) {
                     Log.e(TAG, "error getting upload slot", e);
 
@@ -4344,18 +4347,20 @@ public class XmppConnection extends ImConnection {
             return null;
         }
 
-        private void uploadFile(long fileSize, InputStream fis, Slot slot, UploadProgressListener listener) throws IOException {
+        private String uploadFile(long fileSize, InputStream fis, Slot slot, UploadProgressListener listener) throws IOException {
+
+            String result = null;
 
             if(fileSize >= 2147483647L) {
                 throw new IllegalArgumentException("File size " + fileSize + " must be less than " + 2147483647);
             } else {
-                int fileSizeInt = (int)fileSize;
+               // int fileSizeInt = (int)fileSize;
                 URL putUrl = slot.getPutUrl();
                 HttpURLConnection urlConnection = (HttpURLConnection)putUrl.openConnection();
                 urlConnection.setRequestMethod("PUT");
                 urlConnection.setUseCaches(false);
                 urlConnection.setDoOutput(true);
-                urlConnection.setFixedLengthStreamingMode(fileSizeInt);
+               // urlConnection.setFixedLengthStreamingMode(fileSizeInt);
                 urlConnection.setRequestProperty("Content-Type", "application/octet-stream;");
                 Iterator tlsSocketFactory = slot.getHeaders().entrySet().iterator();
 
@@ -4372,12 +4377,16 @@ public class XmppConnection extends ImConnection {
 
                 try {
                     OutputStream outputStream2 = urlConnection.getOutputStream();
+
                     long bytesSend = 0L;
                     if(listener != null) {
                         listener.onUploadProgress(0L, fileSize);
                     }
 
-                    BufferedInputStream inputStream = new BufferedInputStream(fis);
+                    byte[] keyAndIv = secureRandom.generateSeed(48);
+                    result = Downloader.bytesToHex(keyAndIv);
+                    InputStream cis = Downloader.setupInputStream(fis,keyAndIv);
+                    BufferedInputStream inputStream = new BufferedInputStream(cis);
                     byte[] buffer = new byte[4096];
 
                     int bytesRead;
@@ -4409,7 +4418,7 @@ public class XmppConnection extends ImConnection {
                         case 200:
                         case 201:
                         case 204:
-                            return;
+                            return result;
                         case 202:
                         case 203:
                         default:
@@ -4418,6 +4427,7 @@ public class XmppConnection extends ImConnection {
                 } finally {
                     urlConnection.disconnect();
                 }
+
             }
         }
     }
