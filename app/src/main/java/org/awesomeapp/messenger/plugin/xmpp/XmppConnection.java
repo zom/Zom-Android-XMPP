@@ -1934,6 +1934,15 @@ public class XmppConnection extends ImConnection {
                         debug(TAG,"got our omemo fingerprint: " + of.toString());
                     else
                         debug(TAG,"NO OMEMO FINGERPRINT FOR OUR ACCOUNT!!!");
+
+                    for (ChatSession session : mSessionManager.getSessions())
+                    {
+                        BareJid jid = JidCreate.bareFrom(session.getParticipant().getAddress().getAddress());
+
+                        if (getOmemo().getManager().contactSupportsOmemo(jid)) {
+                            getOmemo().getManager().buildSessionsWith(jid);
+                        }
+                    }
                 }
                 catch (NullPointerException e)
                 {
@@ -2243,6 +2252,7 @@ public class XmppConnection extends ImConnection {
 
             }
 
+
             return session;
         }
         catch (Exception e)
@@ -2423,6 +2433,10 @@ public class XmppConnection extends ImConnection {
            //     result = mSessions.get(XmppAddress.stripResource(address));
 
             return result;
+        }
+
+        Collection<ChatSession> getSessions () {
+            return mSessions.values();
         }
 
         @Override
