@@ -745,7 +745,7 @@ public class ContactListManagerAdapter extends
             if (!isSubscribed(username)) {
 
                 String nickname = from.getName();
-                queryOrInsertContact(from); // FIXME Miron
+                queryOrInsertContact(from);
                 Uri uri = insertOrUpdateSubscription(username, nickname,
                         Imps.Contacts.SUBSCRIPTION_TYPE_INVITATIONS,
                         Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING);
@@ -763,6 +763,10 @@ public class ContactListManagerAdapter extends
             }
             else
             {
+                try {
+                    Thread.sleep(2000);//wait two seconds
+                }
+                catch(Exception e){}
                 approveSubscription(from);
             }
         }

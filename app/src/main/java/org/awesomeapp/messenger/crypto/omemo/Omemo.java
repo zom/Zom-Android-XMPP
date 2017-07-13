@@ -197,7 +197,7 @@ public class Omemo {
            }
            catch (Exception e2)
            {
-               Log.e(TAG, "error checking if resource supports omemo: " + jid, e2);
+               debug(TAG, "error checking if resource supports omemo: " + jid + ": " + e2.toString());
            }
        }
 

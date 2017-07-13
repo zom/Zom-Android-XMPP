@@ -50,7 +50,7 @@
                     />
             </LinearLayout>
 
-            <TextView android:id="@+id/loginName"
+            <org.ironrabbit.type.CustomTypefaceTextView android:id="@+id/loginName"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:ellipsize="marquee"
                 android:singleLine="true"

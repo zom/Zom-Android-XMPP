@@ -30,11 +30,9 @@ import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.model.Presence;
 import org.awesomeapp.messenger.provider.Imps;
 
-import org.awesomeapp.messenger.ui.widgets.ConversationViewHolder;
 import org.awesomeapp.messenger.ui.widgets.LetterAvatar;
 import org.awesomeapp.messenger.ui.widgets.RoundedAvatarDrawable;
 import org.awesomeapp.messenger.util.LogCleaner;
-import org.ocpsoft.prettytime.PrettyTime;
 
 import android.app.Activity;
 import android.content.Context;

@@ -151,6 +151,7 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -247,9 +248,9 @@ public class XmppConnection extends ImConnection {
 
     private HashMap<String, String> qAvatar = new HashMap <>();
 
-    private LinkedList<org.jivesoftware.smack.packet.Presence> qPresence = new LinkedList<org.jivesoftware.smack.packet.Presence>();
-    private LinkedList<org.jivesoftware.smack.packet.Stanza> qPacket = new LinkedList<org.jivesoftware.smack.packet.Stanza>();
-    private LinkedList<Contact> qNewContact = new LinkedList<Contact>();
+    private ArrayDeque<org.jivesoftware.smack.packet.Presence> qPresence = new ArrayDeque<org.jivesoftware.smack.packet.Presence>();
+    private ArrayDeque<org.jivesoftware.smack.packet.Stanza> qPacket = new ArrayDeque<org.jivesoftware.smack.packet.Stanza>();
+    private ArrayDeque<Contact> qNewContact = new ArrayDeque<Contact>();
 
 
     private final static String DEFAULT_CONFERENCE_SERVER = "conference.zom.im";
@@ -626,6 +627,7 @@ public class XmppConnection extends ImConnection {
 
             // Create a MultiUserChat using a Connection for a room
             MultiUserChatManager mucMgr = MultiUserChatManager.getInstanceFor(mConnection);
+            mucMgr.setAutoJoinOnReconnect(true);
 
             if (chatRoomJid.endsWith("@"))
             {
@@ -1217,8 +1219,12 @@ public class XmppConnection extends ImConnection {
     // Runs in executor thread
     private void do_login() {
 
-        if (getState() == LOGGED_IN || getState() == SUSPENDED || getState() == SUSPENDING )
+        if (getState() == LOGGED_IN
+                || getState() == SUSPENDED
+                || getState() == SUSPENDING ) {
+            mNeedReconnect = false;
             return;
+        }
 
         /*
         if (mConnection != null) {
@@ -1259,10 +1265,8 @@ public class XmppConnection extends ImConnection {
             mNeedReconnect = false;
 
 
-
         } catch (XMPPException e) {
             debug(TAG, "exception thrown on connection",e);
-
 
             ImErrorInfo info = new ImErrorInfo(ImErrorInfo.CANT_CONNECT_TO_SERVER, e.getMessage());
             mRetryLogin = true; // our default behavior is to retry
@@ -1294,14 +1298,23 @@ public class XmppConnection extends ImConnection {
 
         } catch (Exception e) {
 
-            debug(TAG, "login failed",e);
-            mRetryLogin = true;
-            mNeedReconnect = true;
+            debug(TAG, "login failed", e);
 
-            debug(TAG, "will retry");
-            ImErrorInfo info = new ImErrorInfo(ImErrorInfo.UNKNOWN_ERROR, "keymanagement exception");
-            setState(LOGGING_IN, info);
+            if (getState() != SUSPENDED || getState() != SUSPENDING) {
 
+                mRetryLogin = true;
+                mNeedReconnect = true;
+
+                debug(TAG, "will retry");
+
+                ImErrorInfo info = new ImErrorInfo(ImErrorInfo.UNKNOWN_ERROR, "keymanagement exception");
+                setState(LOGGING_IN, info);
+            }
+            else
+            {
+                mRetryLogin = false;
+                mNeedReconnect = true;
+            }
         }
         finally {
             providerSettings.close();
@@ -1821,14 +1834,20 @@ public class XmppConnection extends ImConnection {
             }
         }, new StanzaTypeFilter(org.jivesoftware.smack.packet.Presence.class));
 
-        if (mTimerPackets == null)
-            initPacketProcessor();
-        
-        if (mTimerPresence == null)
-            initPresenceProcessor ();
+        if (mTimerPackets != null)
+            mTimerPackets.cancel();
 
-        if (mTimerNewContacts == null)
-            initNewContactProcessor();
+        initPacketProcessor();
+        
+        if (mTimerPresence != null)
+            mTimerPresence.cancel();
+
+        initPresenceProcessor ();
+
+        if (mTimerNewContacts != null)
+            mTimerNewContacts.cancel();
+
+        initNewContactProcessor();
         
         ConnectionListener connectionListener = new ConnectionListener() {
             /**
@@ -2143,7 +2162,7 @@ public class XmppConnection extends ImConnection {
     // We must release resources here, because we will not be reused
     void disconnected(ImErrorInfo info) {
         debug(TAG, "disconnected");
-        //join();
+        join();
         setState(DISCONNECTED, info);
     }
 
@@ -2175,15 +2194,18 @@ public class XmppConnection extends ImConnection {
     // Runs in executor thread
     private void disconnect() {
 
-        clearPing();
+        if (mConnection != null && mConnection.isConnected()) {
+            clearPing();
 
-        try {
-         //   mStreamHandler.quickShutdown();
-            mConnection.disconnect();
-        } catch (Throwable th) {
-            // ignore
+            try {
+                //   mStreamHandler.quickShutdown();
+                mConnection.disconnect();
+            } catch (Throwable th) {
+                // ignore
+            }
         }
-        mConnection = null;
+
+        //mConnection = null;
         mNeedReconnect = false;
         mRetryLogin = false;
     }
@@ -2206,22 +2228,27 @@ public class XmppConnection extends ImConnection {
     @Override
     public void suspend() {
 
-        setState(SUSPENDED, null);
+        if (getState() != DISCONNECTED) {
 
-        // Do not try to reconnect anymore if we were asked to suspend
-        mNeedReconnect = false;
-        clearPing();
+            setState(SUSPENDED, null);
 
-        /**
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                debug(TAG, "suspend");
+            // Do not try to reconnect anymore if we were asked to suspend
+            mNeedReconnect = false;
+            clearPing();
 
-                //if (mStreamHandler != null)
-                  //  mStreamHandler.quickShutdown();
-            }
-        });**/
+            if (mTimerPackets != null)
+                mTimerPackets.cancel();
+
+            execute(new Runnable() {
+                @Override
+                public void run() {
+                    debug(TAG, "suspend");
+
+                    if (mStreamHandler != null)
+                        mStreamHandler.quickShutdown();
+                }
+            });
+        }
     }
 
     private ChatSession findOrCreateSession(String address, boolean groupChat) {
@@ -3081,15 +3108,40 @@ public class XmppConnection extends ImConnection {
 
 
             try {
-                org.jivesoftware.smack.packet.Presence response = new org.jivesoftware.smack.packet.Presence(
-                        org.jivesoftware.smack.packet.Presence.Type.subscribed);
-                response.setTo(JidCreate.bareFrom(contact.getAddress().getBareAddress()));
-                sendPacket(response);
 
-                org.jivesoftware.smack.packet.Presence request = new org.jivesoftware.smack.packet.Presence(
-                        org.jivesoftware.smack.packet.Presence.Type.subscribe);
-                request.setTo(JidCreate.bareFrom(contact.getAddress().getBareAddress()));
-                sendPacket(request);
+                BareJid bareJid = JidCreate.bareFrom(contact.getAddress().getBareAddress());
+                RosterEntry entry = mRoster.getEntry(bareJid);
+
+                if (entry == null) {
+                    mRoster.createEntry(bareJid, contact.getName(), null);
+                    entry = mRoster.getEntry(bareJid);
+                }
+
+                if (!entry.canSeeMyPresence())
+                {
+                    org.jivesoftware.smack.packet.Presence response = new org.jivesoftware.smack.packet.Presence(
+                            org.jivesoftware.smack.packet.Presence.Type.subscribed);
+                    response.setTo(bareJid);
+
+                    //send now, or queue
+                    if (mConnection != null && mConnection.isAuthenticated())
+                        mConnection.sendStanza(response);
+                    else
+                        sendPacket(response);
+
+                }
+
+                if (!entry.canSeeHisPresence()) {
+
+                    org.jivesoftware.smack.packet.Presence request = new org.jivesoftware.smack.packet.Presence(
+                            org.jivesoftware.smack.packet.Presence.Type.subscribe);
+                    request.setTo(bareJid);
+                    //send now, or queue
+                    if (mConnection != null && mConnection.isAuthenticated())
+                        mConnection.sendStanza(request);
+                    else
+                        sendPacket(request);
+                }
 
                 mContactListManager.getSubscriptionRequestListener().onSubscriptionApproved(contact, mProviderId, mAccountId);
 
@@ -3098,14 +3150,15 @@ public class XmppConnection extends ImConnection {
                 if (session != null)
                     session.setSubscribed(true);
 
-                requestPresenceRefresh(contact.getAddress().getBareAddress());
-                qAvatar.put(contact.getAddress().getAddress(),"");
+                if (entry.canSeeHisPresence()) {
 
-                BareJid jid = JidCreate.bareFrom(contact.getAddress().getAddress());
+                    requestPresenceRefresh(contact.getAddress().getBareAddress());
+                    qAvatar.put(contact.getAddress().getAddress(),"");
 
-                if (getOmemo().getManager().contactSupportsOmemo(jid)) {
-                    getOmemo().getManager().requestDeviceListUpdateFor(jid);
-                    getOmemo().getManager().buildSessionsWith(jid);
+                    if (getOmemo().getManager().contactSupportsOmemo(bareJid)) {
+                        getOmemo().getManager().requestDeviceListUpdateFor(bareJid);
+                        getOmemo().getManager().buildSessionsWith(bareJid);
+                    }
                 }
             }
             catch (Exception e) {
@@ -3237,19 +3290,24 @@ public class XmppConnection extends ImConnection {
     @Override
     public void networkTypeChanged() {
 
+        //this should only be called when the network is back online
+
         super.networkTypeChanged();
 
-        execute(new Runnable() {
-            @Override
-            public void run() {
-                if (mState == SUSPENDED || mState == SUSPENDING) {
-                    debug(TAG, "network type changed");
-                    mNeedReconnect = false;
-                    setState(LOGGING_IN, null);
-                    reconnect();
+        new Thread(new Runnable ()
+                {
+                    public void run ()
+                    {
+                        if (mState == SUSPENDED || mState == SUSPENDING) {
+                            debug(TAG, "network type changed");
+                            mNeedReconnect = true;
+                            setState(LOGGING_IN, null);
+                            reconnect();
+                        }
+                    }
                 }
-            }
-        });
+        ).start();
+
 
     }
 
@@ -3274,6 +3332,7 @@ public class XmppConnection extends ImConnection {
                 mStreamHandler.quickShutdown();
             }
         } catch (Exception e) {
+
             Log.w(TAG, "problem disconnecting on force_reconnect: " + e.getMessage());
         }
 
@@ -3327,7 +3386,7 @@ public class XmppConnection extends ImConnection {
             // while trying to log in.  This case is handled in a future heartbeat
             // by checking ping responses.
             clearPing();
-            if (mConnection != null && mConnection.isConnected()) {
+            if (mConnection != null && mConnection.isAuthenticated()) {
                 debug(TAG,"reconnect while already connected, assuming good: " + mConnection);
                 mNeedReconnect = false;
                 setState(LOGGED_IN, null);
@@ -3341,6 +3400,8 @@ public class XmppConnection extends ImConnection {
                     debug(TAG, "mStreamHandler resume");
                     mConnection.connect();
                     initServiceDiscovery();
+                    initPacketProcessor();
+
                 } else {
                     debug(TAG, "reconnection on network change failed: " + mUser.getAddress().getAddress());
 
@@ -3348,15 +3409,8 @@ public class XmppConnection extends ImConnection {
                     mNeedReconnect = true;
                     setState(LOGGING_IN, new ImErrorInfo(ImErrorInfo.NETWORK_ERROR, null));
 
-                    while (mNeedReconnect)
-                    {
-                        do_login();
-                        
-                        if (mNeedReconnect)
-                            try { Thread.sleep(3000);}
-                            catch (Exception e){}
-                    }
-                    
+                    do_login();
+
                 }
             } catch (Exception e) {
                 if (mStreamHandler != null)
@@ -3368,8 +3422,7 @@ public class XmppConnection extends ImConnection {
                 mNeedReconnect = false;
                 setState(LOGGING_IN, new ImErrorInfo(ImErrorInfo.NETWORK_ERROR, e.getMessage()));
 
-                //while (mNeedReconnect)
-                  //  do_login();
+                do_login();
 
             }
         } else {
@@ -3380,8 +3433,7 @@ public class XmppConnection extends ImConnection {
             setState(LOGGING_IN, new ImErrorInfo(ImErrorInfo.NETWORK_ERROR,
                     "reconnection on network change failed"));
 
-            while (mNeedReconnect)
-                do_login();
+            do_login();
 
         }
     }

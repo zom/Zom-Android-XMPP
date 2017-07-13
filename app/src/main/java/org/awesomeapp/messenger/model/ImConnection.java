@@ -53,7 +53,7 @@ public abstract class ImConnection {
     public static final int CAPABILITY_SESSION_REESTABLISHMENT = 2;
 
     /** The current state of the connection. */
-    protected int mState;
+    protected int mState = DISCONNECTED;
 
     protected CopyOnWriteArrayList<ConnectionListener> mConnectionListeners;
     protected Presence mUserPresence;

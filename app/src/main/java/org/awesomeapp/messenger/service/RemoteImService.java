@@ -107,7 +107,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
     private StatusBarNotifier mStatusBarNotifier;
     private Handler mServiceHandler;
     private int mNetworkType;
-    private boolean mNeedCheckAutoLogin;
+    private boolean mNeedCheckAutoLogin = true;
 
     //private SettingsMonitor mSettingsMonitor;
     private OtrChatManager mOtrChatManager;
@@ -350,7 +350,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
         {
             if (intent.hasExtra(ImServiceConstants.EXTRA_CHECK_AUTO_LOGIN))
                 mNeedCheckAutoLogin = intent.getBooleanExtra(ImServiceConstants.EXTRA_CHECK_AUTO_LOGIN,
-                        false);
+                        true);
 
             if (HeartbeatService.HEARTBEAT_ACTION.equals(intent.getAction())) {
               //  Log.d(TAG, "HEARTBEAT");
@@ -386,8 +386,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
                     networkStateChanged(networkInfo, networkState);
 
                 }
-                
-                return START_REDELIVER_INTENT;
+
             }
 
             if (ImServiceConstants.EXTRA_CHECK_SHUTDOWN.equals((intent.getAction())))
@@ -403,7 +402,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
         if (mNeedCheckAutoLogin && mNetworkState != NetworkConnectivityReceiver.State.NOT_CONNECTED) {
             debug("autoLogin from heartbeat");
-            mNeedCheckAutoLogin = !autoLogin();;
+            mNeedCheckAutoLogin = !autoLogin();
         }
 
         return START_STICKY;
@@ -466,13 +465,6 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
 
     private boolean autoLogin() {
-        /**
-        // Try empty passphrase.  We can't autologin if this fails.
-        if (!Imps.setEmptyPassphrase(this, true)) {
-            debug("Cannot autologin with non-empty passphrase");
-            return false;
-        }
-        */
 
         debug("Scanning accounts and login automatically");
 
@@ -505,11 +497,11 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
                         try {
                             conn.login(null, true, true);
                         } catch (RemoteException e) {
-                            Log.w(TAG, "Logging error while automatically login: " + accountId);
+                            debug("Logging error while automatically login: " + accountId);
                         }
                     }
                 } catch (Exception e) {
-                    Log.d(ImApp.LOG_TAG, "error auto logging into ImConnection: " + accountId);
+                    debug("error auto logging into ImConnection: " + accountId);
                 }
 
                 didAutoLogin = true;
@@ -538,7 +530,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
         HeartbeatService.stopBeating(getApplicationContext());
 
-        Log.w(TAG, "ImService stopped.");
+        debug("ImService stopped.");
         for (ImConnectionAdapter conn : mConnections.values()) {
 
             if (conn.getState() == ImConnection.LOGGED_IN)
@@ -554,7 +546,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
             if (SecureMediaStore.isMounted())
                 SecureMediaStore.unmount();
         } catch (IllegalStateException e) {
-            Log.e(ImApp.LOG_TAG,"there was a problem unmoiunt secure media store: " + e.getMessage());
+            debug("there was a problem unmount secure media store: " + e.getMessage());
         }
 
         if (mCacheWord != null && (!mCacheWord.isLocked())) {
@@ -711,8 +703,19 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
             networkChanged = true;
 
-            for (ImConnectionAdapter conn : mConnections.values())
-                conn.networkTypeChanged();
+            if (isNetworkAvailable()) {
+
+                if (mNeedCheckAutoLogin) {
+                    mNeedCheckAutoLogin = !autoLogin();
+                }
+
+                for (ImConnectionAdapter conn : mConnections.values()) {
+                    conn.networkTypeChanged();
+                }
+
+            } else {
+                suspendConnections();
+            }
 
             //update the notification
             if (mNotifyBuilder != null) {
@@ -739,18 +742,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
         }
 
 
-        if (isNetworkAvailable()) {
-            boolean reConnd = reestablishConnections();
 
-            if (!reConnd) {
-                if (mNeedCheckAutoLogin) {
-                    mNeedCheckAutoLogin = !autoLogin();
-                }
-            }
-
-        } else {
-            suspendConnections();
-        }
     }
 
     // package private for inner class access
@@ -768,8 +760,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
     private void suspendConnections() {
         for (ImConnectionAdapter conn : mConnections.values()) {
-            if (conn.getState() == ImConnection.LOGGED_IN || conn.getState() == ImConnection.LOGGING_IN) {
-
+            if (conn.getState() != ImConnection.DISCONNECTED) {
                 conn.suspend();
             }
         }
