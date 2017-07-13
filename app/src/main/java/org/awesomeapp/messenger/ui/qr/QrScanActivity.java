@@ -168,16 +168,18 @@ implements QrCodeDecoder.ResultCallback {
 		releaseCamera();
 	}
 
-	private void openCamera() {
+	private synchronized void openCamera() {
 		Log.d(TAG, "Opening camera");
-		try {
+		if (camera == null) {
+			try {
 
-			camera = Camera.open();
+				camera = Camera.open();
 
-			cameraView.start(camera, new QrCodeDecoder(this), 0, true);
-		} catch(Exception e) {
-			Log.e(TAG, "Error opening camera", e);
-			
+				cameraView.start(camera, new QrCodeDecoder(this), 0, true);
+			} catch (Exception e) {
+				Log.e(TAG, "Error opening camera", e);
+
+			}
 		}
 	}
 
@@ -186,6 +188,7 @@ implements QrCodeDecoder.ResultCallback {
 		try {
 			cameraView.stop();
 			camera.release();
+			camera = null;
 		} catch(Exception e) {
 			Log.e(TAG, "Error releasing camera", e);
 			

@@ -53,7 +53,7 @@ AutoFocusCallback {
 			{
 				while (camera != null) {
 					try {
-						Thread.sleep(2000);
+						Thread.sleep(1000);
 					}
 					catch (Exception e){}
 					try {
@@ -102,7 +102,6 @@ AutoFocusCallback {
 
             if (camera != null) {
                 camera.stopPreview();
-
             }
 		} catch(Exception e) {
 			Log.e(TAG, "Error stopping camera preview", e);

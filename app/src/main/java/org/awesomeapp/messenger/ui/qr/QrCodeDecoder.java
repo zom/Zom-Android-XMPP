@@ -15,6 +15,9 @@ import com.google.zxing.Result;
 import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.QRCodeReader;
 
+import java.lang.reflect.Array;
+import java.util.ArrayDeque;
+
 @SuppressWarnings("deprecation")
 public class QrCodeDecoder implements PreviewConsumer, PreviewCallback {
 
@@ -26,69 +29,89 @@ public class QrCodeDecoder implements PreviewConsumer, PreviewCallback {
 
 	private boolean stopped = false;
 
+	private ArrayDeque<PreviewFrame> mPreviewArray = new ArrayDeque<>();
+
 	public QrCodeDecoder(ResultCallback callback) {
 		this.callback = callback;
 	}
 
+	private Size previewSize = null;
+    private Camera camera = null;
+
 	public void start(Camera camera) {
 		Log.d(TAG, "Started");
 		stopped = false;
+        this.camera = camera;
 		askForPreviewFrame(camera);
+
+        previewSize = camera.getParameters().getPreviewSize();
+
+		new Thread(new DecoderTask()).start();
 	}
 
 	public void stop() {
 		Log.d(TAG, "Stopped");
 		stopped = true;
+        camera.setPreviewCallback(null);
 	}
 
 	private void askForPreviewFrame(Camera camera) {
-		if(!stopped) camera.setOneShotPreviewCallback(this);
+		if(!stopped) camera.setPreviewCallback(this);
 	}
 
 	public void onPreviewFrame(byte[] data, Camera camera) {
 		if(!stopped) {
-			Size size = camera.getParameters().getPreviewSize();
-			new DecoderTask(camera, data, size.width, size.height).execute();
+			PreviewFrame frame = new PreviewFrame(data, previewSize.width, previewSize.height);
+			mPreviewArray.add(frame);
 		}
 	}
 
-	private class DecoderTask extends AsyncTask<Void, Void, Void> {
-
-		final Camera camera;
+	private class PreviewFrame {
 		final byte[] data;
 		final int width, height;
 
-		DecoderTask(Camera camera, byte[] data, int width, int height) {
-			this.camera = camera;
+		public PreviewFrame(byte[] data, int width, int height)
+		{
 			this.data = data;
 			this.width = width;
 			this.height = height;
 		}
+	}
+
+	private class DecoderTask implements Runnable {
 
 		@Override
-		protected Void doInBackground(Void... params) {
-			long now = System.currentTimeMillis();
-			LuminanceSource src = new PlanarYUVLuminanceSource(data, width,
-					height, 0, 0, width, height, false);
-			BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(src));
-			Result result = null;
-			try {
-				result = reader.decode(bitmap);
-			} catch(ReaderException e) {
-				return null; // No barcode found
-			} finally {
-				reader.reset();
+		public void run ()
+		{
+			PreviewFrame frame = null;
+
+			while (!stopped) {
+				frame = mPreviewArray.poll();
+				if (frame != null) {
+					long now = System.currentTimeMillis();
+					LuminanceSource src = new PlanarYUVLuminanceSource(frame.data, frame.width,
+							frame.height, 0, 0, frame.width, frame.height, false);
+					BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(src));
+					Result result = null;
+					try {
+						result = reader.decode(bitmap);
+					} catch (ReaderException e) {
+						continue;
+					} finally {
+						reader.reset();
+					}
+					long duration = System.currentTimeMillis() - now;
+					Log.d(TAG, "Decoding barcode took " + duration + " ms");
+					callback.handleResult(result);
+				}
+				else
+				{
+					try { Thread.sleep(1000);}catch(Exception e){}
+				}
 			}
-			long duration = System.currentTimeMillis() - now;
-			Log.d(TAG, "Decoding barcode took " + duration + " ms");
-			callback.handleResult(result);
-			return null;
+
 		}
 
-		@Override
-		protected void onPostExecute(Void result) {
-			askForPreviewFrame(camera);
-		}
 	}
 
 	public interface ResultCallback {
