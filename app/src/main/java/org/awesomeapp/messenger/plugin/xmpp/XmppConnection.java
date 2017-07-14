@@ -4008,6 +4008,7 @@ public class XmppConnection extends ImConnection {
             debug(TAG, "got subscribe request: " + presence.getFrom());
 
             try {
+
                 ContactList cList = getContactListManager().getDefaultContactList();
 
                 if (contact == null) {
@@ -4015,10 +4016,13 @@ public class XmppConnection extends ImConnection {
                     contact = new Contact(xAddr, xAddr.getUser(), Imps.Contacts.TYPE_NORMAL);
                     mContactListManager.doAddContactToListAsync(contact, cList, false);
                     contact.setPresence(p);
+
+                    mContactListManager.getSubscriptionRequestListener().onSubScriptionRequest(contact, mProviderId, mAccountId);
                 }
-
-                mContactListManager.getSubscriptionRequestListener().onSubScriptionRequest(contact, mProviderId, mAccountId);
-
+                else
+                {
+                    mContactListManager.approveSubscriptionRequest(contact);
+                }
 
             }
             catch (Exception e)
@@ -4302,6 +4306,8 @@ public class XmppConnection extends ImConnection {
                                         if (rEntry == null) {
 
                                             mRoster.createEntry(jid, contact.getName(), groups);
+
+
                                         }
 
                                     }
