@@ -251,7 +251,7 @@ public class ContactsPickerActivity extends BaseActivity {
         mListView.startActionMode(mActionModeCallback);
 
         if (i != -1)
-            mAdapter.setNewSelection(i, true);
+            mListView.setItemChecked(i, true);
 
         mIsCABDestroyed = false; // mark readiness to switch back to SINGLE CHOICE after the CABis destroyed
 
@@ -260,14 +260,14 @@ public class ContactsPickerActivity extends BaseActivity {
     private void multiFinish (SparseBooleanArray positions)
     {
 
-        ArrayList<String> users = new ArrayList<String>();
-        ArrayList<Integer> providers = new ArrayList<Integer>();
-        ArrayList<Integer> accounts = new ArrayList<Integer>();
+        ArrayList<String> users = new ArrayList<>();
+        ArrayList<Integer> providers = new ArrayList<>();
+        ArrayList<Integer> accounts = new ArrayList<>();
 
         for (int i = 0; i < positions.size(); i++)
         {
             if (positions.valueAt(i)) {
-                Cursor cursor = (Cursor) mAdapter.getItem(i);
+                Cursor cursor = (Cursor) mAdapter.getItem(positions.keyAt(i));
 
                 users.add(cursor.getString(ContactListItem.COLUMN_CONTACT_USERNAME));
                 providers.add((int) cursor.getLong(ContactListItem.COLUMN_CONTACT_PROVIDER));

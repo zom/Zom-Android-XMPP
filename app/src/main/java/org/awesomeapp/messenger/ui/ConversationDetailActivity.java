@@ -184,14 +184,6 @@ public class ConversationDetailActivity extends BaseActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         applyStyleForToolbar();
 
-        /**
-        appBarLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                expandToolbar();
-            }
-        });**/
-
         processIntent(getIntent());
 
         collapseToolbar();
