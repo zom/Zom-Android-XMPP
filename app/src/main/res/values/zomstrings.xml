@@ -101,7 +101,7 @@
 
   <string name="upgrade_complete_action">Done</string>
 
-    <string name="upgrade_progress_action">Working on it...</string>
+    <string name="upgrade_progress_action">Working on it…</string>
 
   <string name="upgrade_failed">The upgrade failed. Please try again later! You can also select \"Migrate Account\" from the account settings menu.</string>
 

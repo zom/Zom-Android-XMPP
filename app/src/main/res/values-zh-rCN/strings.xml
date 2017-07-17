@@ -248,6 +248,8 @@
   <string name="loading">载入中…</string>
   <!--Other-->
   <!--Other: Slide Menu-->
+  <string name="menu_all">所有</string>
+  <string name="menu_archive">档案</string>
   <string name="menu_settings">设置</string>
   <string name="menu_sign_out">退出</string>
   <!--Other: Provider-->
