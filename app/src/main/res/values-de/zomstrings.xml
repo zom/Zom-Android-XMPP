@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
-  <string name="app_name_zom">ChatSecure</string>
+  <string name="app_name_zom">Zom</string>
   <string name="create_an_account">Konto erstellen</string>
   <string name="create_id">Zom-Kennung erstellen</string>
   <string name="advanced">Erweitert</string>
