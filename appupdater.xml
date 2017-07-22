@@ -1,12 +1,12 @@
 <AppUpdater>
   <update>
-    <latestVersion>15.1.0.003</latestVersion>
-    <url>https://github.com/zom/Zom-Android/releases/download/15.1.0-RC-1/Zom-15.1.0-RC-1-zomrelease-release.apk</url>
+    <latestVersion>15.2.0.003</latestVersion>
+    <url>https://github.com/zom/Zom-Android/releases/download/15.2.0-RC-3/Zom-15.2.0-RC-3-zomrelease-release.apk</url>
     <releaseNotes>
-- FIXES: Invite link and QR code crashing
-- FIXES: Frequent, multiple friend requests
-- ADDED: Ability to migrate to new server even when you existing server is offline (Dukgo XMPP ends today!)
-- URGENT: Migration Assistant: Move from Dukgo to Zom.im servers! - NEW: Beta support for enhanced message privacy (OMEMO!) - Many more updates, fixes, and stability improvements
+- UPDATED: Improved private messages upport
+- FIXES: Issues with adding and approving new friends
+- UPDATED: New faster, more reliable photo and voice message sharing
+- UPDATED: Translations from many language
     </releaseNotes>
   </update>
 </AppUpdater>
