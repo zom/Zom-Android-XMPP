@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="150dp">
+
+        <ImageView
+            android:id="@+id/ivAvatar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <ImageView
+            android:id="@+id/qrcode"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_gravity="end|bottom"
+            android:layout_margin="10dp"
+            android:background="#dddddd"
+            android:src="@drawable/qr" />
+    </FrameLayout>
+
+    <!-- Group name-->
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_margin="@dimen/detail_view_padding"
+        android:paddingBottom="10dp">
+
+        <org.ironrabbit.type.CustomTypefaceTextView
+            android:id="@+id/tvGroupName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autoLink="none"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            tools:text="Group Name" />
+
+        <org.ironrabbit.type.CustomTypefaceTextView
+            android:id="@+id/tvGroupAddress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:autoLink="none"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="?contactTextSecondary"
+            tools:text="group.address@domain.com" />
+    </LinearLayout>
+
+    <org.ironrabbit.type.CustomTypefaceTextView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/tvActionShare"
+        style="@style/GroupInfoAction"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/ic_share_black_24dp"
+        android:drawableStart="@drawable/ic_share_black_24dp"
+        android:text="@string/invite_share"
+        />
+
+    <org.ironrabbit.type.CustomTypefaceTextView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/tvActionAddFriends"
+        style="@style/GroupInfoAction"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/ic_person_add_black_24dp"
+        android:drawableStart="@drawable/ic_person_add_black_24dp"
+        android:text="@string/add_friends"
+        />
+
+    <org.ironrabbit.type.CustomTypefaceTextView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/tvActionMute"
+        style="@style/GroupInfoAction"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/ic_volume_off_black_24dp"
+        android:drawableStart="@drawable/ic_volume_off_black_24dp"
+        android:text="@string/action_mute"
+        />
+
+    <org.ironrabbit.type.CustomTypefaceTextView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:autoLink="none"
+        android:gravity="bottom"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="@string/members"
+        android:layout_margin="@dimen/detail_view_padding"
+        android:paddingTop="20dp"
+        />
+</LinearLayout>
