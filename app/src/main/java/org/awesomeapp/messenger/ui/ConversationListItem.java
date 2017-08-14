@@ -49,6 +49,7 @@ import org.awesomeapp.messenger.service.IChatSession;
 import org.awesomeapp.messenger.service.IImConnection;
 import org.awesomeapp.messenger.ui.legacy.DatabaseUtils;
 import org.awesomeapp.messenger.ui.widgets.ConversationViewHolder;
+import org.awesomeapp.messenger.ui.widgets.GroupAvatar;
 import org.awesomeapp.messenger.ui.widgets.LetterAvatar;
 import org.awesomeapp.messenger.ui.widgets.RoundedAvatarDrawable;
 import org.awesomeapp.messenger.util.SecureMediaStore;
@@ -148,15 +149,16 @@ public class ConversationListItem extends FrameLayout {
             if (Imps.Contacts.TYPE_GROUP == contactType) {
 
                 holder.mAvatar.setVisibility(View.VISIBLE);
-
-                if (AVATAR_DEFAULT_GROUP == null)
-                    AVATAR_DEFAULT_GROUP = new RoundedAvatarDrawable(BitmapFactory.decodeResource(getResources(),
-                            R.drawable.group_chat));
-
-
+                try {
+                    String groupId = address.split("@")[0];
+                    Drawable avatar = new GroupAvatar(groupId);
+                    holder.mAvatar.setImageDrawable(avatar);
+                } catch (Exception ignored) {
+                    if (AVATAR_DEFAULT_GROUP == null)
+                        AVATAR_DEFAULT_GROUP = new RoundedAvatarDrawable(BitmapFactory.decodeResource(getResources(),
+                                R.drawable.group_chat));
                     holder.mAvatar.setImageDrawable(AVATAR_DEFAULT_GROUP);
-
-
+                }
             }
          //   else if (cursor.getColumnIndex(Imps.Contacts.AVATAR_DATA)!=-1)
            else {
