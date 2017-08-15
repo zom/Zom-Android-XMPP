@@ -95,6 +95,7 @@ import org.awesomeapp.messenger.crypto.IOtrChatSession;
 import org.awesomeapp.messenger.crypto.otr.OtrAndroidKeyManagerImpl;
 import org.awesomeapp.messenger.crypto.otr.OtrChatManager;
 import org.awesomeapp.messenger.model.Address;
+import org.awesomeapp.messenger.model.ChatGroup;
 import org.awesomeapp.messenger.model.Contact;
 import org.awesomeapp.messenger.model.ImConnection;
 import org.awesomeapp.messenger.model.ImErrorInfo;
@@ -275,6 +276,7 @@ public class ConversationView {
 
                 if (mConn == null)
                     if (checkConnection()) {
+
                         IContactListManager manager = mConn.getContactListManager();
 
                         Contact contact = manager.getContactByAddress(mRemoteAddress);
@@ -1817,8 +1819,10 @@ public class ConversationView {
 
                         if (mContactType == Imps.Contacts.TYPE_GROUP)
                         {
+                            Contact contactGroup = new Contact(new XmppAddress(mRemoteAddress),mRemoteNickname,Imps.Contacts.TYPE_GROUP);
+
                             new ChatSessionInitTask(((ImApp)mActivity.getApplication()),mProviderId, mAccountId, Imps.Contacts.TYPE_GROUP)
-                                    .executeOnExecutor(ImApp.sThreadPoolExecutor,remoteAddress);
+                                    .executeOnExecutor(ImApp.sThreadPoolExecutor,contactGroup);
 
                         }
                         else
@@ -3118,6 +3122,9 @@ public class ConversationView {
     {
 
         if (username != null) {
+
+
+
             new ChatSessionInitTask(((ImApp) mActivity.getApplication()), mProviderId, mAccountId, Imps.Contacts.TYPE_NORMAL) {
                 @Override
                 protected void onPostExecute(Long chatId) {
@@ -3131,7 +3138,7 @@ public class ConversationView {
                     super.onPostExecute(chatId);
                 }
 
-            }.executeOnExecutor(ImApp.sThreadPoolExecutor, username);
+            }.executeOnExecutor(ImApp.sThreadPoolExecutor, new Contact(new XmppAddress(username)));
 
             mActivity.finish();
         }

@@ -301,7 +301,6 @@ public class AccountActivity extends BaseActivity {
 
         mIsNewAccount = getIntent().getBooleanExtra("register", false);
 
-
         mEditUserAccount = (EditText) findViewById(R.id.edtName);
         mEditUserAccount.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override

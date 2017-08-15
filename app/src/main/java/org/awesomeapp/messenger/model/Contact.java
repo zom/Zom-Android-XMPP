@@ -18,6 +18,8 @@
 package org.awesomeapp.messenger.model;
 
 import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
+import org.awesomeapp.messenger.provider.Imps;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -31,6 +33,18 @@ public class Contact extends ImEntity implements Parcelable {
 
     //This is based on the Imps.Contacts.TYPE values
     private int mType;
+
+    public Contact(Address address) {
+        mAddress = address;
+
+        mName = address.getUser();
+
+        mPresence = new Presence();
+
+        mForwardAddress = "";
+
+        mType = Imps.Contacts.TYPE_NORMAL;
+    }
 
     public Contact(Address address, String name, int type) {
         mAddress = address;

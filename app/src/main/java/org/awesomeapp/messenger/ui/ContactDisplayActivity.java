@@ -347,7 +347,7 @@ public class ContactDisplayActivity extends BaseActivity {
 
                 super.onPostExecute(chatId);
             }
-        }.executeOnExecutor(ImApp.sThreadPoolExecutor,mUsername);
+        }.executeOnExecutor(ImApp.sThreadPoolExecutor,new Contact(new XmppAddress(mUsername)));
 
         finish();
 

@@ -38,6 +38,7 @@ import org.awesomeapp.messenger.util.Debug;
 import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.ConnectionListener;
+import org.jivesoftware.smack.MessageListener;
 import org.jivesoftware.smack.PresenceListener;
 import org.jivesoftware.smack.ReconnectionManager;
 import org.jivesoftware.smack.SASLAuthentication;
@@ -762,10 +763,11 @@ public class XmppConnection extends ImConnection {
                 }
 
                 List<Affiliate> mucMembers = muc.getMembers();
+                XmppAddress xa = null;
 
                 for (Affiliate member : mucMembers)
                 {
-                    XmppAddress xa = new XmppAddress(member.getJid().toString());
+                    xa = new XmppAddress(member.getJid().toString());
                     Contact mucContact = mContactListManager.getContact(xa);
                     if (mucContact == null)
                         mucContact = new Contact(xa,xa.getResource(), Imps.Contacts.TYPE_NORMAL);
@@ -775,15 +777,17 @@ public class XmppConnection extends ImConnection {
 
                 List<EntityFullJid> mucOccupant = muc.getOccupants();
 
-                for (EntityFullJid occupantAddress : mucOccupant) {
-
-                    Occupant occupant = muc.getOccupant(occupantAddress);
-                    XmppAddress xa = new XmppAddress(occupant.getJid().toString());
-                    Contact mucContact = mContactListManager.getContact(xa);
-                    if (mucContact == null)
-                        mucContact = new Contact(xa,xa.getResource(), Imps.Contacts.TYPE_NORMAL);
+                for (EntityFullJid occupant : mucOccupant) {
+                    Jid jidSource = muc.getOccupant(occupant).getJid();
+                    if (jidSource != null)
+                        xa = new XmppAddress(jidSource.toString());
+                    else
+                        xa = new XmppAddress(occupant.toString());
+                    Contact mucContact = new Contact(xa,xa.getResource(), Imps.Contacts.TYPE_NORMAL);
+                    org.jivesoftware.smack.packet.Presence presence = muc.getOccupantPresence(occupant);
+                    Presence p = new Presence(parsePresence(presence), null, null, null, Presence.CLIENT_TYPE_MOBILE);
+                    mucContact.setPresence(p);
                     chatGroup.addMemberAsync(mucContact);
-
                 }
 
 
@@ -884,10 +888,11 @@ public class XmppConnection extends ImConnection {
                 mMUCs.put(chatRoomJid, muc);
 
                 List<Affiliate> mucMembers = muc.getMembers();
+                XmppAddress xa = null;
 
                 for (Affiliate member : mucMembers)
                 {
-                    XmppAddress xa = new XmppAddress(member.getJid().toString());
+                    xa = new XmppAddress(member.getJid().toString());
                     Contact mucContact = mContactListManager.getContact(xa);
                     if (mucContact == null)
                         mucContact = new Contact(xa,xa.getResource(), Imps.Contacts.TYPE_NORMAL);
@@ -898,7 +903,11 @@ public class XmppConnection extends ImConnection {
                 List<EntityFullJid> mucOccupant = muc.getOccupants();
 
                 for (EntityFullJid occupant : mucOccupant) {
-                    XmppAddress xa = new XmppAddress(occupant.toString());
+                    Jid jidSource = muc.getOccupant(occupant).getJid();
+                    if (jidSource != null)
+                        xa = new XmppAddress(jidSource.toString());
+                    else
+                        xa = new XmppAddress(occupant.toString());
                     Contact mucContact = new Contact(xa,xa.getResource(), Imps.Contacts.TYPE_NORMAL);
                     org.jivesoftware.smack.packet.Presence presence = muc.getOccupantPresence(occupant);
                     Presence p = new Presence(parsePresence(presence), null, null, null, Presence.CLIENT_TYPE_MOBILE);
@@ -936,27 +945,18 @@ public class XmppConnection extends ImConnection {
 
                 @Override
                 public void joined(EntityFullJid entityFullJid) {
-                    XmppAddress xa = new XmppAddress(entityFullJid.toString());
-                    MultiUserChat muc = mChatGroupManager.getMultiUserChat(xa.getBareAddress());
+
+                    XmppAddress xa = null;
+                    MultiUserChat muc = mChatGroupManager.getMultiUserChat(entityFullJid.asBareJid().toString());
+
+                    Jid jidSource = muc.getOccupant(entityFullJid).getJid();
+                    if (jidSource != null)
+                        xa = new XmppAddress(jidSource.toString());
+                    else
+                        xa = new XmppAddress(entityFullJid.toString());
+
                     ChatGroup chatGroup = mChatGroupManager.getChatGroup(xa);
                     Contact mucContact = new Contact(xa, xa.getResource(), Imps.Contacts.TYPE_NORMAL);
-                    Presence p = new Presence(Imps.Presence.AVAILABLE, null, null, null, Presence.CLIENT_TYPE_MOBILE);
-                    org.jivesoftware.smack.packet.Presence presence = muc.getOccupantPresence(entityFullJid);
-                    if (presence != null) {
-                        /**
-                        ExtensionElement packetExtension = presence.getExtension("x", "vcard-temp:x:update");
-                        if (packetExtension != null) {
-
-                            DefaultExtensionElement o = (DefaultExtensionElement) packetExtension;
-                            String hash = o.getValue("photo");
-                            if (hash != null) {
-                              //  boolean hasMatches = DatabaseUtils.doesAvatarHashExist(mContext.getContentResolver(), Imps.Avatars.CONTENT_URI, chatGroup.getAddress().getAddress(), hash);
-                              //  if (!hasMatches) //we must reload
-                                //    qAvatar.push(chatGroup.getAddress().getAddress());
-                            }
-                        }**/
-                    }
-                    mucContact.setPresence(p);
                     chatGroup.addMemberAsync(mucContact);
                 }
 
@@ -964,6 +964,11 @@ public class XmppConnection extends ImConnection {
                 public void left(EntityFullJid entityFullJid) {
                     XmppAddress xa = new XmppAddress(entityFullJid.toString());
                     MultiUserChat muc = mChatGroupManager.getMultiUserChat(xa.getBareAddress());
+                    Jid jidSource = muc.getOccupant(entityFullJid).getJid();
+                    if (jidSource != null)
+                        xa = new XmppAddress(jidSource.toString());
+                    else
+                        xa = new XmppAddress(entityFullJid.toString());
                     ChatGroup chatGroup = mChatGroupManager.getChatGroup(xa);
                     Contact mucContact = new Contact(xa, xa.getResource(), Imps.Contacts.TYPE_NORMAL);
                     chatGroup.removeMemberAsync(mucContact);
@@ -972,7 +977,16 @@ public class XmppConnection extends ImConnection {
 
                 @Override
                 public void kicked(EntityFullJid entityFullJid, Jid jid, String s) {
-
+                    XmppAddress xa = new XmppAddress(entityFullJid.toString());
+                    MultiUserChat muc = mChatGroupManager.getMultiUserChat(xa.getBareAddress());
+                    Jid jidSource = muc.getOccupant(entityFullJid).getJid();
+                    if (jidSource != null)
+                        xa = new XmppAddress(jidSource.toString());
+                    else
+                        xa = new XmppAddress(entityFullJid.toString());
+                    ChatGroup chatGroup = mChatGroupManager.getChatGroup(xa);
+                    Contact mucContact = new Contact(xa, xa.getResource(), Imps.Contacts.TYPE_NORMAL);
+                    chatGroup.removeMemberAsync(mucContact);
                 }
 
                 @Override
@@ -1043,11 +1057,22 @@ public class XmppConnection extends ImConnection {
                 @Override
                 public void processPresence(org.jivesoftware.smack.packet.Presence presence) {
 
+                    /**
                     XmppAddress xa = new XmppAddress(presence.getFrom().toString());
                     Contact mucContact = new Contact(xa, xa.getResource(), Imps.Contacts.TYPE_NORMAL);
                     Presence p = new Presence(parsePresence(presence), presence.getStatus(), null, null, Presence.CLIENT_TYPE_DEFAULT);
                     mucContact.setPresence(p);
+                    **/
+                }
+            });
 
+            muc.addMessageListener(new MessageListener() {
+                @Override
+                public void processMessage(org.jivesoftware.smack.packet.Message message) {
+                    debug(TAG, "receive message: " + message.getFrom() + " to " + message.getTo());
+
+
+                   // handleMessage(message, false);
                 }
             });
 
@@ -1088,8 +1113,10 @@ public class XmppConnection extends ImConnection {
 
                         String reason = group.getName(); //no reason for now
                         try {
-                            muc.invite(JidCreate.entityBareFrom(invitee.getAddress().getAddress()), reason);
-                            muc.grantMembership(JidCreate.entityBareFrom(invitee.getAddress().getAddress()));
+                            EntityBareJid inviteeJid = JidCreate.entityBareFrom(invitee.getAddress().getAddress());
+                            muc.invite(inviteeJid, reason);
+                            muc.grantMembership(inviteeJid);
+                            group.addMemberAsync(invitee);
                         } catch (Exception nce) {
                             Log.e(ImApp.LOG_TAG, "not connected error trying to add invite", nce);
 

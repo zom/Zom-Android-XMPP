@@ -30,9 +30,12 @@ import info.guardianproject.iocipher.VirtualFileSystem;
  *
  */
 public class SecureMediaStore {
+
     public static final String TAG = SecureMediaStore.class.getName();
     private static String dbFilePath;
     private static final String BLOB_NAME = "media.db";
+
+    private static final int DEFAULT_IMAGE_WIDTH = 1024;
 
     public static void unmount() {
         VirtualFileSystem.get().unmount();
@@ -255,9 +258,8 @@ public class SecureMediaStore {
         String targetPath = "/" + sessionId + "/upload/" + imagePath;
         targetPath = createUniqueFilename(targetPath);
 
-        int defaultImageWidth = 600;
         //load lower-res bitmap
-        Bitmap bmp = getThumbnailFile(context, uri, defaultImageWidth);
+        Bitmap bmp = getThumbnailFile(context, uri, DEFAULT_IMAGE_WIDTH);
 
         File file = new File(targetPath);
         file.getParentFile().mkdirs();

@@ -179,17 +179,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                 }
                 else if (participant instanceof ChatGroup)
                 {
-                    /**
-                    ChatGroup group = (ChatGroup)mChatSession.getParticipant();
 
-                    for (Contact contact : group.getMembers())
-                    {
-                        String key = contact.getAddress().getAddress();
-                        if (!mOtrChatSessions.containsKey(key)) {
-                            OtrChatSessionAdapter adapter = new OtrChatSessionAdapter(mConnection.getLoginUser().getAddress().getAddress(), contact, cm);
-                            mOtrChatSessions.put(key, adapter);
-                        }
-                    }**/
 
                 }
 
@@ -233,6 +223,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
         mContactId = insertOrUpdateGroupContactInDb(group);
         group.addMemberListener(mListenerAdapter);
+        mChatSession.setMessageListener(mListenerAdapter);
 
         try {            
             mChatSessionManager.getChatGroupManager().joinChatGroupAsync(group.getAddress(),group.getName());

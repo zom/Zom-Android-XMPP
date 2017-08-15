@@ -8,6 +8,7 @@ import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.Preferences;
 import org.awesomeapp.messenger.crypto.IOtrChatSession;
 import org.awesomeapp.messenger.model.ChatSession;
+import org.awesomeapp.messenger.model.Contact;
 import org.awesomeapp.messenger.model.ImConnection;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.service.IChatSession;
@@ -16,7 +17,7 @@ import org.awesomeapp.messenger.service.IImConnection;
 /**
  * Created by n8fr8 on 10/23/15.
  */
-public class ChatSessionInitTask extends AsyncTask<String, Long, Long> {
+public class ChatSessionInitTask extends AsyncTask<Contact, Long, Long> {
 
     ImApp mApp;
     long mProviderId;
@@ -31,22 +32,22 @@ public class ChatSessionInitTask extends AsyncTask<String, Long, Long> {
         mContactType = contactType;
     }
 
-    public Long doInBackground (String... remoteAddresses)
+    public Long doInBackground (Contact... contacts)
     {
-        if (mProviderId != -1 && mAccountId != -1 && remoteAddresses != null) {
+        if (mProviderId != -1 && mAccountId != -1 && contacts != null) {
             try {
                 IImConnection conn = mApp.getConnection(mProviderId, mAccountId);
 
                 if (conn == null)
                     return -1L;
 
-                for (String address : remoteAddresses) {
+                for (Contact contact : contacts) {
 
-                    IChatSession session = conn.getChatSessionManager().getChatSession(address);
+                    IChatSession session = conn.getChatSessionManager().getChatSession(contact.getAddress().getAddress());
 
                     //always need to recreate the MUC after login
-                    if (mContactType == Imps.Contacts.TYPE_GROUP)
-                        session = conn.getChatSessionManager().createMultiUserChatSession(address, null, null, false);
+  //                 if (mContactType == Imps.Contacts.TYPE_GROUP)
+    //                    session = conn.getChatSessionManager().createMultiUserChatSession(address, null, null, false);
 
                     if (session != null && mContactType == Imps.Contacts.TYPE_NORMAL)
                     {
@@ -55,9 +56,9 @@ public class ChatSessionInitTask extends AsyncTask<String, Long, Long> {
                     } else {
 
                         if (mContactType == Imps.Contacts.TYPE_GROUP)
-                            session = conn.getChatSessionManager().createMultiUserChatSession(address, null, null, false);
+                            session = conn.getChatSessionManager().createMultiUserChatSession(contact.getAddress().getAddress(), contact.getName(), null, false);
                         else {
-                            session = conn.getChatSessionManager().createChatSession(address, false);
+                            session = conn.getChatSessionManager().createChatSession(contact.getAddress().getAddress(), false);
                          //   session.getDefaultOtrChatSession().startChatEncryption();
                         }
 

@@ -211,16 +211,18 @@ public final class QRCodeEncoder {
         BitMatrix result = writer.encode(contents, format, dimension, dimension, hints);
         int width = result.getWidth();
         int height = result.getHeight();
+        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+
         int[] pixels = new int[width * height];
         // All are 0, or black, by default
         for (int y = 0; y < height; y++) {
             int offset = y * width;
             for (int x = 0; x < width; x++) {
                 pixels[offset + x] = result.get(x, y) ? BLACK : WHITE;
+                //bitmap.setPixel(x,y,result.get(x, y) ? BLACK : WHITE);
             }
         }
 
-        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
         return bitmap;
     }

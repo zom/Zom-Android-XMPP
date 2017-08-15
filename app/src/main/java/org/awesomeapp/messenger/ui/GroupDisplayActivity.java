@@ -2,6 +2,7 @@ package org.awesomeapp.messenger.ui;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -22,6 +23,8 @@ import android.widget.TextView;
 import org.apache.commons.codec.DecoderException;
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.provider.Imps;
+import org.awesomeapp.messenger.service.IChatSession;
+import org.awesomeapp.messenger.service.IChatSessionManager;
 import org.awesomeapp.messenger.service.IImConnection;
 import org.awesomeapp.messenger.ui.legacy.DatabaseUtils;
 import org.awesomeapp.messenger.ui.onboarding.OnboardingManager;
@@ -40,6 +43,7 @@ public class GroupDisplayActivity extends BaseActivity {
     private long mProviderId = -1;
     private long mAccountId = -1;
     private long mLastChatId = -1;
+    private String mLocalAddress = null;
 
     private IImConnection mConn;
 
@@ -51,6 +55,8 @@ public class GroupDisplayActivity extends BaseActivity {
 
     private RecyclerView mRecyclerView;
     private ArrayList<GroupMember> mMembers;
+
+    private final static int REQUEST_PICK_CONTACTS = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +72,8 @@ public class GroupDisplayActivity extends BaseActivity {
         mLastChatId  = getIntent().getLongExtra("chat", -1);
 
         mConn = ((ImApp)getApplication()).getConnection(mProviderId,mAccountId);
+
+        mLocalAddress = Imps.Account.getUserName(getContentResolver(), mAccountId);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.rvRoot);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
@@ -124,7 +132,8 @@ public class GroupDisplayActivity extends BaseActivity {
                     h.actionAddFriends.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-
+                            Intent intent = new Intent(GroupDisplayActivity.this, ContactsPickerActivity.class);
+                            startActivityForResult(intent, REQUEST_PICK_CONTACTS);
                         }
                     });
                     h.actionMute.setOnClickListener(new View.OnClickListener() {
@@ -166,7 +175,15 @@ public class GroupDisplayActivity extends BaseActivity {
                     } else {
                         nickname = nickname.split("@")[0].split("\\.")[0];
                     }
+
+                    if (member.username.equals(mLocalAddress))
+                    {
+                        nickname += " (you)";
+                    }
+
                     h.line1.setText(nickname);
+                    h.line2.setText(member.username);
+
                     //h.line2.setText(member.username);
                     if (member.avatar == null) {
                         padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 12, getResources().getDisplayMetrics());
@@ -195,6 +212,9 @@ public class GroupDisplayActivity extends BaseActivity {
     }
 
     private void updateMembers() {
+
+        mMembers.clear();
+
         Thread threadUpdate = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -227,6 +247,49 @@ public class GroupDisplayActivity extends BaseActivity {
             }
         });
         threadUpdate.start();
+    }
+
+    public void inviteContacts (ArrayList<String> invitees)
+    {
+        if (mConn == null)
+            return;
+
+        try {
+            IChatSessionManager manager = mConn.getChatSessionManager();
+            IChatSession session = manager.getChatSession(mAddress);
+
+            for (String invitee : invitees)
+                session.inviteContact(invitee);
+
+            updateMembers();
+        }
+        catch (Exception e)
+        {
+            Log.e(ImApp.LOG_TAG,"error inviting contacts to group",e);
+        }
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent resultIntent) {
+
+        if (resultCode == RESULT_OK) {
+
+            if (requestCode == REQUEST_PICK_CONTACTS) {
+
+                ArrayList<String> invitees = new ArrayList<String>();
+
+                String username = resultIntent.getStringExtra(ContactsPickerActivity.EXTRA_RESULT_USERNAME);
+
+                if (username != null)
+                    invitees.add(username);
+                else
+                    invitees = resultIntent.getStringArrayListExtra(ContactsPickerActivity.EXTRA_RESULT_USERNAMES);
+
+                inviteContacts(invitees);
+
+            }
+        }
     }
 
     private class HeaderViewHolder extends RecyclerView.ViewHolder {
