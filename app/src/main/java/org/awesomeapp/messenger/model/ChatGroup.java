@@ -93,6 +93,15 @@ public class ChatGroup extends ImEntity {
     }
 
     /**
+     * Gets an unmodifiable collection of the members of the group.
+     *
+     * @return an unmodifiable collection of the members of the group.
+     */
+    public Contact getMember(String jid) {
+        return mMembers.get(jid);
+    }
+
+    /**
      * Adds a member to this group. TODO: more docs on async callbacks.
      *
      * @param contact the member to add.

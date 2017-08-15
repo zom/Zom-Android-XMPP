@@ -151,10 +151,9 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             init((ChatGroup) participant,isNewSession);
         } else {
             init((Contact) participant,isNewSession);
+            initOtrChatSession(participant);
         }
-
-        initOtrChatSession(participant);
-
+        
     }
 
     private void initOtrChatSession (ImEntity participant)

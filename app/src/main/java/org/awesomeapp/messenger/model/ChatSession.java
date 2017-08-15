@@ -86,9 +86,12 @@ public class ChatSession {
                 mXa = new XmppAddress(mJid.toString());
             }
 
-            //if we can't omemo, check it again to be sure
-            if (!mCanOmemo) {
-                mCanOmemo = mManager.resourceSupportsOmemo(mJid);
+            //not for groups yet
+            if (mParticipant instanceof Contact) {
+                //if we can't omemo, check it again to be sure
+                if (!mCanOmemo) {
+                    mCanOmemo = mManager.resourceSupportsOmemo(mJid);
+                }
             }
 
         } catch (XmppStringprepException xe) {
@@ -177,12 +180,6 @@ public class ChatSession {
 
             message.setTo(mXa);
             message.setType(Imps.MessageType.QUEUED);
-
-            if (!mCanOmemo)
-            {
-                //check again!
-                mCanOmemo = mManager.resourceSupportsOmemo(mJid);
-            }
 
             if (mCanOmemo) {
                 mManager.sendMessageAsync(this, message);
