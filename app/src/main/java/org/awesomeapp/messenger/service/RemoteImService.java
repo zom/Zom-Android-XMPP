@@ -62,6 +62,7 @@ import org.awesomeapp.messenger.model.ImException;
 import org.awesomeapp.messenger.plugin.ImPluginInfo;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.service.adapters.ImConnectionAdapter;
+import org.awesomeapp.messenger.tasks.ChatSessionInitTask;
 import org.awesomeapp.messenger.ui.legacy.DummyActivity;
 import org.awesomeapp.messenger.ui.legacy.ImPluginHelper;
 import org.awesomeapp.messenger.service.NetworkConnectivityReceiver.State;
@@ -633,7 +634,6 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
                     cursor, contentResolver, providerId, false, null);
             String userName = Imps.Account.getUserName(contentResolver, accountId);
             String domain = providerSettings.getDomain();
-
 
             providerSettings.close();
 

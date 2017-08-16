@@ -46,23 +46,16 @@ public class ChatSessionInitTask extends AsyncTask<Contact, Long, Long> {
                     IChatSession session = conn.getChatSessionManager().getChatSession(contact.getAddress().getAddress());
 
                     //always need to recreate the MUC after login
-  //                 if (mContactType == Imps.Contacts.TYPE_GROUP)
-    //                    session = conn.getChatSessionManager().createMultiUserChatSession(address, null, null, false);
+                   if (mContactType == Imps.Contacts.TYPE_GROUP)
+                      session = conn.getChatSessionManager().createMultiUserChatSession(contact.getAddress().getAddress(), contact.getName(), null, false);
 
-                    if (session != null && mContactType == Imps.Contacts.TYPE_NORMAL)
+                    if (session == null)
                     {
-                        //do nothing special
-
-                    } else {
-
                         if (mContactType == Imps.Contacts.TYPE_GROUP)
                             session = conn.getChatSessionManager().createMultiUserChatSession(contact.getAddress().getAddress(), contact.getName(), null, false);
                         else {
                             session = conn.getChatSessionManager().createChatSession(contact.getAddress().getAddress(), false);
-                         //   session.getDefaultOtrChatSession().startChatEncryption();
                         }
-
-
 
                     }
 

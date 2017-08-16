@@ -867,10 +867,9 @@ public class XmppConnection extends ImConnection {
             try {
 
                 // Create a MultiUserChat using a Connection for a room
-
                 MultiUserChatManager mucMgr = MultiUserChatManager.getInstanceFor(mConnection);
-                MultiUserChat muc = mucMgr.getMultiUserChat( JidCreate.entityBareFrom(chatRoomJid));
                 mucMgr.setAutoJoinOnReconnect(true);
+                MultiUserChat muc = mucMgr.getMultiUserChat( JidCreate.entityBareFrom(chatRoomJid));
 
                 if (!muc.isJoined())
                     muc.join(Resourcepart.from(nickname));

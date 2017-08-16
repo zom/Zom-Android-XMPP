@@ -17,6 +17,7 @@
 
 package org.awesomeapp.messenger.service.adapters;
 
+import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
 import org.awesomeapp.messenger.service.IChatSessionManager;
 import org.awesomeapp.messenger.service.IConnectionListener;
 import org.awesomeapp.messenger.service.IContactListManager;
@@ -461,10 +462,10 @@ public class ImConnectionAdapter extends org.awesomeapp.messenger.service.IImCon
                                 while (c.moveToNext()) {
                                     int chatType = c.getInt(5);
                                     String remoteAddress = c.getString(3);
-                                    boolean startCrypto = false;
-
-                                    //if (remoteAddress != null)
-                                      //  new ChatSessionInitTask((ImApp) getContext().getApplication(), mProviderId, mAccountId, chatType, startCrypto).executeOnExecutor(ImApp.sThreadPoolExecutor,remoteAddress);
+                                    String nickname = c.getString(4);
+                                    if (remoteAddress != null)
+                                       new ChatSessionInitTask((ImApp) getContext().getApplication(), mProviderId, mAccountId, chatType)
+                                               .executeOnExecutor(ImApp.sThreadPoolExecutor,new Contact(new XmppAddress(remoteAddress),nickname,Imps.Contacts.TYPE_GROUP));
                                 }
                             }
                             c.close();
