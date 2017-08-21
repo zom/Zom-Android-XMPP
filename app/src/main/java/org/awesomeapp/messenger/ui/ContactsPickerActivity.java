@@ -21,6 +21,7 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.DataSetObserver;
 import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.os.Bundle;
@@ -31,10 +32,10 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.ResourceCursorAdapter;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -49,9 +50,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import org.awesomeapp.messenger.ImApp;
-import org.awesomeapp.messenger.Preferences;
 import org.awesomeapp.messenger.provider.Imps;
-
+import org.awesomeapp.messenger.ui.widgets.FlowLayout;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -88,6 +88,7 @@ public class ContactsPickerActivity extends BaseActivity {
     private String mSearchString;
 
     SearchView mSearchView = null;
+    FlowLayout mSelectedContacts;
     ListView mListView = null;
 
     // The loader's unique id. Loader ids are specific to the Activity or
@@ -142,6 +143,8 @@ public class ContactsPickerActivity extends BaseActivity {
         if (getIntent().getData() != null)
             mUri = getIntent().getData();
 
+        mSelectedContacts = (FlowLayout) findViewById(R.id.flSelectedContacts);
+
         mListView = (ListView)findViewById(R.id.contactsList);
         mListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
@@ -156,6 +159,10 @@ public class ContactsPickerActivity extends BaseActivity {
             }
         });
 
+        // Uncomment this to set as list view header instead.
+        //((ViewGroup)mSelectedContacts.getParent()).removeView(mSelectedContacts);
+        //mSelectedContacts.setLayoutParams(new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT, AbsListView.LayoutParams.WRAP_CONTENT));
+        //mListView.addHeaderView(mSelectedContacts);
 
         mListView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
 
@@ -196,11 +203,11 @@ public class ContactsPickerActivity extends BaseActivity {
 
             @Override
             public void onItemCheckedStateChanged(android.view.ActionMode mode, int position, long id, boolean checked) {
-
-                mAdapter.setNewSelection(position, checked);
-
-                if (!checked)
+                if (checked) {
+                    mAdapter.setSelection(position);
+                } else {
                     mAdapter.removeSelection(position);
+                }
             }
 
         });
@@ -221,11 +228,11 @@ public class ContactsPickerActivity extends BaseActivity {
                     boolean newChecked = !mListView.isItemChecked(position);
 
                     mListView.setItemChecked(position, newChecked);
-                    mAdapter.setNewSelection(position, newChecked);
-
-                    if (!newChecked)
+                    if (newChecked) {
+                        mAdapter.setSelection(position);
+                    } else {
                         mAdapter.removeSelection(position);
-
+                    }
                 }
                 else {
                     Cursor cursor = (Cursor) mAdapter.getItem(position);
@@ -386,7 +393,13 @@ public class ContactsPickerActivity extends BaseActivity {
         if (mAdapter == null) {
 
             mAdapter = new ContactAdapter(ContactsPickerActivity.this, R.layout.contact_view);
-
+            mAdapter.registerDataSetObserver(new DataSetObserver() {
+                @Override
+                public void onChanged() {
+                    super.onChanged();
+                    updateTagView();
+                }
+            });
            mListView.setAdapter(mAdapter);
 
             mLoaderCallbacks = new MyLoaderCallbacks();
@@ -423,6 +436,41 @@ public class ContactsPickerActivity extends BaseActivity {
 
     }
 
+    private void updateTagView() {
+        mSelectedContacts.removeAllViews();
+        for (Integer index : mAdapter.getCurrentCheckedPosition()) {
+            View view = createTagViewForIndex(index);
+            mSelectedContacts.addView(view, mSelectedContacts.getChildCount());
+        }
+    }
+
+    private View createTagViewForIndex(int index) {
+        Cursor cursor = (Cursor) mAdapter.getItem(index);
+
+        View view = LayoutInflater.from(mSelectedContacts.getContext()).inflate(R.layout.picked_contact_item, mSelectedContacts, false);
+
+        ContactListItem cli = new ContactListItem(this, null);
+        ContactViewHolder cvh = new ContactViewHolder(cli);
+        cvh.mLine1 = (TextView) view.findViewById(R.id.tvUsername);
+        cvh.mAvatar = (ImageView) view.findViewById(R.id.ivAvatar);
+        cli.bind(cvh, cursor, null,false);
+        View btnClose = view.findViewById(R.id.btnClose);
+        btnClose.setOnClickListener(new View.OnClickListener() {
+            private int index;
+
+            public View.OnClickListener init(int index) {
+                this.index = index;
+                return this;
+            }
+
+            @Override
+            public void onClick(View v) {
+                mAdapter.removeSelection(this.index);
+            }
+        }.init(index));
+        return view;
+    }
+
     private class ContactAdapter extends ResourceCursorAdapter {
 
         private HashMap<Integer, Boolean> mSelection = new HashMap<Integer, Boolean>();
@@ -437,8 +485,8 @@ public class ContactsPickerActivity extends BaseActivity {
             return true;
         }
 
-        public void setNewSelection(int position, boolean value) {
-            mSelection.put(position, value);
+        public void setSelection(int position) {
+            mSelection.put(position, true);
             notifyDataSetChanged();
         }
 
@@ -560,8 +608,4 @@ public class ContactsPickerActivity extends BaseActivity {
         public void openChat (Cursor c);
         public void showProfile (Cursor c);
     }
-
-
-
-
 }

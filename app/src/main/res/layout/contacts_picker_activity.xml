@@ -18,10 +18,27 @@
  */
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-     >
+    android:layout_height="match_parent">
+
+        <org.awesomeapp.messenger.ui.widgets.FlowLayout
+            android:id="@+id/flSelectedContacts"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="10dp"
+            android:layout_margin="10dp"
+            app:itemWidthPadding="4dp"
+            app:itemHeightPadding="4dp"
+            />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="#959595"
+            android:layout_marginBottom="10dp"
+            />
 
         <ListView android:id="@+id/contactsList"
             android:layout_width="match_parent"

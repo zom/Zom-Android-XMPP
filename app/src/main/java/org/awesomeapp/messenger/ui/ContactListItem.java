@@ -217,8 +217,9 @@ public class ContactListItem extends FrameLayout {
             statusText += " | " + getContext().getString(R.string.action_archive);
         }
 
-
-        holder.mLine2.setText(statusText);
+        if (holder.mLine2 != null) {
+            holder.mLine2.setText(statusText);
+        }
 
         if (subType == Imps.ContactsColumns.SUBSCRIPTION_TYPE_INVITATIONS)
         {
@@ -246,8 +247,9 @@ public class ContactListItem extends FrameLayout {
 
         }
         else {
-            holder.mSubBox.setVisibility(View.GONE);
-
+            if (holder.mSubBox != null) {
+                holder.mSubBox.setVisibility(View.GONE);
+            }
         }
 
         holder.mLine1.setVisibility(View.VISIBLE);

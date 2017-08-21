@@ -14,4 +14,8 @@
   <declare-styleable name="CircleColorImageView">
     <attr name="circleColor" format="color"/>
   </declare-styleable>
+  <declare-styleable name="FlowLayout">
+    <attr name="itemWidthPadding" format="dimension"/>
+    <attr name="itemHeightPadding" format="dimension"/>
+  </declare-styleable>
 </resources>
