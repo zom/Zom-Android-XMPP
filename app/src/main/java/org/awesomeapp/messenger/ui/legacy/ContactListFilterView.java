@@ -270,22 +270,13 @@ public class ContactListFilterView extends LinearLayout {
         public View newView(Context context, Cursor cursor, ViewGroup parent) {
             ContactListItem view = (ContactListItem)super.newView(context, cursor, parent);
 
-            ContactViewHolder holder = (ContactViewHolder)view.getTag();
+            ContactViewHolder holder = view.getViewHolder();
 
             if (holder == null) {
                 holder = new ContactViewHolder(view);
-                holder.mLine1 = (TextView) view.findViewById(R.id.line1);
-                holder.mLine2 = (TextView) view.findViewById(R.id.line2);
-
-                holder.mAvatar = (ImageView)view.findViewById(R.id.avatar);
-              //  holder.mStatusIcon = (ImageView)view.findViewById(R.id.statusIcon);
-                //holder.mStatusText = (TextView)view.findViewById(R.id.statusText);
-               // //holder.mEncryptionIcon = (ImageView)view.findViewById(R.id.encryptionIcon);
-
-                holder.mContainer = view.findViewById(R.id.message_container);
 
                 // holder.mMediaThumb = (ImageView)findViewById(R.id.media_thumbnail);
-                view.setTag(holder);
+                view.setViewHolder(holder);
             }
 
 
@@ -295,7 +286,7 @@ public class ContactListFilterView extends LinearLayout {
         @Override
         public void bindView(View view, Context context, Cursor cursor) {
             ContactListItem v = (ContactListItem) view;
-            v.bind((ContactViewHolder)view.getTag(),cursor, mSearchString, true);
+            v.bind(v.getViewHolder(),cursor, mSearchString, true);
         }
         
     }

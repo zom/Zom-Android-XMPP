@@ -94,14 +94,19 @@ public class ContactListItem extends FrameLayout {
         super(context, attrs);
     }
 
+    public ContactViewHolder getViewHolder() {
+        return mHolder;
+    }
+
+    public void setViewHolder(ContactViewHolder viewHolder) {
+        mHolder = viewHolder;
+    }
+
     public void bind(ContactViewHolder holder, Cursor cursor, String underLineText, boolean scrolling) {
         bind(holder, cursor, underLineText, true, scrolling);
     }
 
     public void bind(ContactViewHolder holder, Cursor cursor, String underLineText, boolean showChatMsg, boolean scrolling) {
-
-
-        mHolder = holder;
 
         address = cursor.getString(COLUMN_CONTACT_USERNAME);
         nickname = cursor.getString(COLUMN_CONTACT_NICKNAME);
@@ -217,9 +222,8 @@ public class ContactListItem extends FrameLayout {
             statusText += " | " + getContext().getString(R.string.action_archive);
         }
 
-        if (holder.mLine2 != null) {
-            holder.mLine2.setText(statusText);
-        }
+        if (holder.mLine2 != null)
+        holder.mLine2.setText(statusText);
 
         if (subType == Imps.ContactsColumns.SUBSCRIPTION_TYPE_INVITATIONS)
         {
@@ -229,7 +233,7 @@ public class ContactListItem extends FrameLayout {
                 @Override
                 public void onClick(View v) {
                     approveSubscription();
-                    mHolder.mView.performClick();
+                    mHolder.itemView.performClick();
                 }
 
             });
@@ -251,10 +255,7 @@ public class ContactListItem extends FrameLayout {
                 holder.mSubBox.setVisibility(View.GONE);
             }
         }
-
         holder.mLine1.setVisibility(View.VISIBLE);
-
-
     }
 
 

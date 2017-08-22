@@ -23,6 +23,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+        <LinearLayout
+            android:id="@+id/layoutGroupSelect"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
         <org.awesomeapp.messenger.ui.widgets.FlowLayout
             android:id="@+id/flSelectedContacts"
             android:layout_width="match_parent"
@@ -39,6 +44,44 @@
             android:background="#959595"
             android:layout_marginBottom="10dp"
             />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/layoutContactSelect"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/btnCreateGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="3dp">
+
+                <org.awesomeapp.messenger.ui.CircleColorImageView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_gravity="center"
+                    android:layout_margin="6dp"
+                    android:padding="6dp"
+                    android:src="@drawable/ic_group_add_white_36dp"
+                    app:circleColor="@android:color/holo_green_light" />
+
+                <org.ironrabbit.type.CustomTypefaceTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="64dp"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="6dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/create_group"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+
+                    android:textColor="?contactTextSecondary"
+
+                    />
+        </LinearLayout>
+
+                </LinearLayout>
 
         <ListView android:id="@+id/contactsList"
             android:layout_width="match_parent"

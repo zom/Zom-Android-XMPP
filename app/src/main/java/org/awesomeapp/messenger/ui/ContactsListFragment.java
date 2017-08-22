@@ -304,7 +304,7 @@ public class ContactsListFragment extends Fragment {
                     final boolean doArchive = (itemViewHolder.mType == Imps.Contacts.TYPE_NORMAL ? true : false);
 
                     //then hide/archive contact
-                    archiveContact(((MainActivity) getActivity()), itemViewHolder.mView.getId(), itemViewHolder.mAddress, itemViewHolder.mProviderId, itemViewHolder.mAccountId, doArchive);
+                    archiveContact(((MainActivity) getActivity()), itemViewHolder.itemView.getId(), itemViewHolder.mAddress, itemViewHolder.mProviderId, itemViewHolder.mAccountId, doArchive);
 
                     String action =  getString(R.string.action_archived);
                     if (!doArchive)
@@ -315,7 +315,7 @@ public class ContactsListFragment extends Fragment {
                         @Override
                         public void onClick(View view) {
 
-                            archiveContact(((MainActivity) getActivity()), itemViewHolder.mView.getId(), itemViewHolder.mAddress, itemViewHolder.mProviderId, itemViewHolder.mAccountId, !doArchive);
+                            archiveContact(((MainActivity) getActivity()), itemViewHolder.itemView.getId(), itemViewHolder.mAddress, itemViewHolder.mProviderId, itemViewHolder.mAccountId, !doArchive);
 
                         }
                     });
@@ -436,27 +436,13 @@ public class ContactsListFragment extends Fragment {
                     .inflate(R.layout.contact_view, parent, false);
             view.setBackgroundResource(mBackground);
 
-            ContactViewHolder holder = (ContactViewHolder)view.getTag();
-
+            ContactViewHolder holder = view.getViewHolder();
             if (holder == null) {
                 holder = new ContactViewHolder(view);
-                holder.mLine1 = (TextView) view.findViewById(R.id.line1);
-                holder.mLine2 = (TextView) view.findViewById(R.id.line2);
-
-                holder.mAvatar = (ImageView)view.findViewById(R.id.avatar);
-               // holder.mStatusIcon = (ImageView)view.findViewById(R.id.statusIcon);
-               // holder.mStatusText = (TextView)view.findViewById(R.id.statusText);
-                //holder.mEncryptionIcon = (ImageView)view.findViewById(R.id.encryptionIcon);
-
-                holder.mSubBox = view.findViewById(R.id.subscriptionBox);
-                holder.mButtonSubApprove = (Button)view.findViewById(R.id.btnApproveSubscription);
-                holder.mButtonSubDecline = (Button)view.findViewById(R.id.btnDeclineSubscription);
-
-                holder.mContainer = view.findViewById(R.id.message_container);
                 view.applyStyleColors(holder);
 
                 // holder.mMediaThumb = (ImageView)findViewById(R.id.media_thumbnail);
-                view.setTag(holder);
+                view.setViewHolder(holder);
             }
 
             return holder;
@@ -485,10 +471,11 @@ public class ContactsListFragment extends Fragment {
 
             viewHolder.mNickname = nickname;
 
+            if (viewHolder.itemView instanceof ContactListItem) {
+                ((ContactListItem)viewHolder.itemView).bind(viewHolder, cursor, "", false, false);
+            }
 
-            viewHolder.mView.bind(viewHolder, cursor,"", false, false);
-
-            viewHolder.mView.setOnClickListener(new View.OnClickListener() {
+            viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 

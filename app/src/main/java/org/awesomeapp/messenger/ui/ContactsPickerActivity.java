@@ -89,6 +89,8 @@ public class ContactsPickerActivity extends BaseActivity {
 
     SearchView mSearchView = null;
     FlowLayout mSelectedContacts;
+    View mLayoutContactSelect;
+    View mLayoutGroupSelect;
     ListView mListView = null;
 
     // The loader's unique id. Loader ids are specific to the Activity or
@@ -97,8 +99,6 @@ public class ContactsPickerActivity extends BaseActivity {
 
     // The callbacks through which we will interact with the LoaderManager.
     private LoaderManager.LoaderCallbacks<Cursor> mCallbacks;
-
-    private boolean mIsCABDestroyed= true;
 
     private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
         @Override
@@ -128,13 +128,14 @@ public class ContactsPickerActivity extends BaseActivity {
         @Override
         public void onDestroyActionMode(ActionMode actionMode) {
             mAdapter.clearSelection();
-            mIsCABDestroyed = true;
         }
     };
 
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         ((ImApp)getApplication()).setAppTheme(this);
         
@@ -143,10 +144,20 @@ public class ContactsPickerActivity extends BaseActivity {
         if (getIntent().getData() != null)
             mUri = getIntent().getData();
 
+        mLayoutContactSelect = findViewById(R.id.layoutContactSelect);
+        mLayoutGroupSelect = findViewById(R.id.layoutGroupSelect);
         mSelectedContacts = (FlowLayout) findViewById(R.id.flSelectedContacts);
 
+        View btnCreateGroup = findViewById(R.id.btnCreateGroup);
+        btnCreateGroup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setGroupMode(true);
+            }
+        });
+
         mListView = (ListView)findViewById(R.id.contactsList);
-        mListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        setGroupMode(false);
 
         mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
@@ -197,8 +208,7 @@ public class ContactsPickerActivity extends BaseActivity {
             @Override
             public void onDestroyActionMode(android.view.ActionMode mode) {
                 nr = 0;
-                mAdapter.clearSelection();
-                mIsCABDestroyed = true;
+                //mAdapter.clearSelection();
             }
 
             @Override
@@ -217,12 +227,6 @@ public class ContactsPickerActivity extends BaseActivity {
 
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
-
-                if(mIsCABDestroyed) {
-                    mListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-                    //do your action command  here
-                }
-
                 if (mListView.getChoiceMode() == ListView.CHOICE_MODE_MULTIPLE_MODAL) {
                     //mAdapter.getItem(position);
                     boolean newChecked = !mListView.isItemChecked(position);
@@ -253,15 +257,16 @@ public class ContactsPickerActivity extends BaseActivity {
 
     private void multiStart (int i)
     {
-
-        mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         mListView.startActionMode(mActionModeCallback);
-
+        setGroupMode(true);
         if (i != -1)
-            mListView.setItemChecked(i, true);
+            mAdapter.setSelection(i);
+    }
 
-        mIsCABDestroyed = false; // mark readiness to switch back to SINGLE CHOICE after the CABis destroyed
-
+    private void setGroupMode(boolean groupMode) {
+        mLayoutContactSelect.setVisibility(groupMode ? View.GONE : View.VISIBLE);
+        mLayoutGroupSelect.setVisibility(groupMode ? View.VISIBLE : View.GONE);
+        mListView.setChoiceMode(groupMode ? ListView.CHOICE_MODE_MULTIPLE_MODAL : ListView.CHOICE_MODE_SINGLE);
     }
 
     private void multiFinish (SparseBooleanArray positions)
@@ -365,6 +370,10 @@ public class ContactsPickerActivity extends BaseActivity {
 
         switch (item.getItemId())
         {
+            case android.R.id.home:
+                finish();
+                return true;
+
             case R.id.menu_new_group_chat:
                 multiStart(-1);
              //   getSupportActionBar().startActionMode(mActionModeCallback);
@@ -438,9 +447,9 @@ public class ContactsPickerActivity extends BaseActivity {
 
     private void updateTagView() {
         mSelectedContacts.removeAllViews();
-        for (Integer index : mAdapter.getCurrentCheckedPosition()) {
+        for (Integer index : mAdapter.getCurrentSelection()) {
             View view = createTagViewForIndex(index);
-            mSelectedContacts.addView(view, mSelectedContacts.getChildCount());
+            mSelectedContacts.addView(view);
         }
     }
 
@@ -449,10 +458,10 @@ public class ContactsPickerActivity extends BaseActivity {
 
         View view = LayoutInflater.from(mSelectedContacts.getContext()).inflate(R.layout.picked_contact_item, mSelectedContacts, false);
 
+        // TODO - Feel a little awkward to create a ContactListItem here just to use the binding code.
+        // I guess we should move that somewhere else.
         ContactListItem cli = new ContactListItem(this, null);
-        ContactViewHolder cvh = new ContactViewHolder(cli);
-        cvh.mLine1 = (TextView) view.findViewById(R.id.tvUsername);
-        cvh.mAvatar = (ImageView) view.findViewById(R.id.ivAvatar);
+        ContactViewHolder cvh = new ContactViewHolder(view);
         cli.bind(cvh, cursor, null,false);
         View btnClose = view.findViewById(R.id.btnClose);
         btnClose.setOnClickListener(new View.OnClickListener() {
@@ -473,7 +482,7 @@ public class ContactsPickerActivity extends BaseActivity {
 
     private class ContactAdapter extends ResourceCursorAdapter {
 
-        private HashMap<Integer, Boolean> mSelection = new HashMap<Integer, Boolean>();
+        private ArrayList<Integer> mSelection = new ArrayList<>();
 
         public ContactAdapter(Context context, int view) {
             super(context, view, null,0);
@@ -486,28 +495,34 @@ public class ContactsPickerActivity extends BaseActivity {
         }
 
         public void setSelection(int position) {
-            mSelection.put(position, true);
-            notifyDataSetChanged();
+            if (!mSelection.contains(position)) {
+                mSelection.add(position);
+                notifyDataSetChanged();
+            }
         }
 
         public boolean isPositionChecked(int position) {
-            Boolean result = mSelection.get(position);
-            return result == null ? false : result;
+            return mSelection.contains(position);
         }
 
-        public Set<Integer> getCurrentCheckedPosition() {
-            return mSelection.keySet();
+        public ArrayList<Integer> getCurrentSelection() {
+            return mSelection;
         }
 
         public void removeSelection(int position) {
-            mSelection.remove(position);
-            notifyDataSetChanged();
+            if (mSelection.contains(position)) {
+                mSelection.remove(position);
+                notifyDataSetChanged();
+                if (mSelection.size() == 0) {
+                    setGroupMode(false);
+                }
+            }
         }
 
         public void clearSelection() {
-            mSelection = new HashMap<Integer, Boolean>();
+            mSelection.clear();
             notifyDataSetChanged();
-
+            setGroupMode(false);
         }
 
         @Override
@@ -516,40 +531,23 @@ public class ContactsPickerActivity extends BaseActivity {
             View v = super.getView(position, convertView, parent);//let the adapter handle setting up the row views
             v.setBackgroundColor(getResources().getColor(android.R.color.transparent));
 
-            if (mSelection.get(position) != null) {
+            if (isPositionChecked(position)) {
                 v.setBackgroundColor(getResources().getColor(R.color.holo_blue_light));
             }
 
-            return super.getView(position, convertView, parent);
-
-
+            return v;
         }
 
         @Override
         public void bindView(View view, Context context, Cursor cursor) {
             ContactListItem v = (ContactListItem) view;
 
-            ContactViewHolder holder = (ContactViewHolder)view.getTag();
-
+            ContactViewHolder holder = v.getViewHolder();
             if (holder == null) {
                 holder = new ContactViewHolder(v);
-                holder.mLine1 = (TextView) view.findViewById(R.id.line1);
-                holder.mLine2 = (TextView) view.findViewById(R.id.line2);
-
-                holder.mAvatar = (ImageView)view.findViewById(R.id.avatar);
-
-                holder.mSubBox = view.findViewById(R.id.subscriptionBox);
-                holder.mButtonSubApprove = (Button)view.findViewById(R.id.btnApproveSubscription);
-                holder.mButtonSubDecline = (Button)view.findViewById(R.id.btnDeclineSubscription);
-
-                //holder.mStatusIcon = (ImageView)view.findViewById(R.id.statusIcon);
-                //holder.mStatusText = (TextView)view.findViewById(R.id.statusText);
-                //holder.mEncryptionIcon = (ImageView)view.findViewById(R.id.encryptionIcon);
-
-                holder.mContainer = view.findViewById(R.id.message_container);
 
                 // holder.mMediaThumb = (ImageView)findViewById(R.id.media_thumbnail);
-                view.setTag(holder);
+                v.setViewHolder(holder);
             }
 
 
