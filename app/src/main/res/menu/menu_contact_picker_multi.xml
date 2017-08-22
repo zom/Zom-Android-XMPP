@@ -23,6 +23,7 @@
 
 	<item android:id="@+id/action_start_chat"
 		android:title="@string/ok"
+		android:icon="@drawable/ic_check_white_24dp"
         app:showAsAction="always"
 		 />
 

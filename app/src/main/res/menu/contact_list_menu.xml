@@ -29,11 +29,11 @@
     android:title="@string/search_by_id"/>
 
 
-    <item android:id="@+id/menu_new_group_chat"
+<!--    <item android:id="@+id/menu_new_group_chat"
         android:title="@string/create_group"
         android:icon="@drawable/ic_people_white_36dp"
         app:showAsAction="always"
-        />
+        />-->
 
     <!-- 
 

@@ -18,6 +18,7 @@ public class ContactViewHolder extends RecyclerView.ViewHolder
         mLine1 = (TextView) view.findViewById(R.id.line1);
         mLine2 = (TextView) view.findViewById(R.id.line2);
         mAvatar = (ImageView)view.findViewById(R.id.avatar);
+        mAvatarCheck = (ImageView) view.findViewById(R.id.avatarCheck);
 
         mSubBox = view.findViewById(R.id.subscriptionBox);
         mButtonSubApprove = (Button)view.findViewById(R.id.btnApproveSubscription);
@@ -43,6 +44,7 @@ public class ContactViewHolder extends RecyclerView.ViewHolder
     public TextView mLine2;
     //public TextView mStatusText;
     public ImageView mAvatar;
+    public ImageView mAvatarCheck;
     //public ImageView mStatusIcon;
     public ImageView mMediaThumb;
 

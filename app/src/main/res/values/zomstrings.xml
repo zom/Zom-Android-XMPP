@@ -146,6 +146,6 @@
   <string name="action_add_buddy">Add buddy</string>
   <string name="action_mute">Mute</string>
   <string name="action_leave">Leave</string>
-
+  <string name="add_people">Add People</string>
 
 </resources>

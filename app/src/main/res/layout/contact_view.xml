@@ -122,6 +122,20 @@
 
             />
 
-
+    <ImageView
+        android:id="@+id/avatarCheck"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:layout_gravity="left|top"
+        android:background="@drawable/check_view_background"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_check_white_24dp"
+        android:padding="5dp"
+        android:tint="@android:color/white"
+        android:visibility="gone"
+        />
 
 </view>
