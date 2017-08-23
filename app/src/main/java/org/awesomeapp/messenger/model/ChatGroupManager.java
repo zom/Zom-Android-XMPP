@@ -299,4 +299,10 @@ public abstract class ChatGroupManager {
     }
 
     public abstract String getDefaultGroupChatService ();
+
+    /**
+     * Force the reloading of the group memberships
+     * @param group the group you wont to load
+     */
+    public abstract void loadMembers (ChatGroup group);
 }

@@ -636,6 +636,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         if (mIsGroupChat) {
             
             ChatGroup group = (ChatGroup) participant;
+            /**
             List<Contact> members = group.getMembers();
             for (Contact c : members) {
                 if (username.equals(c.getAddress().getAddress())) {
@@ -643,11 +644,17 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                     return c.getAddress().getResource();
                         
                 }
+            }**/
+            Contact groupMember = group.getMember(username);
+            if (groupMember != null)
+            {
+                return groupMember.getName();
             }
-            
-            // not found, impossible
-            String[] parts = username.split("/");
-            return parts[parts.length-1];
+            else {
+                // not found, impossible
+                String[] parts = username.split("/");
+                return parts[parts.length - 1];
+            }
         } else {
             return ((Contact) participant).getName();
         }
@@ -788,7 +795,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                 mContentResolver.bulkInsert(memberUri, result);
             }
         }
-        
+
         return id;
     }
 
@@ -807,6 +814,17 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
           //  insertMessageInDb(member.getName(), null, System.currentTimeMillis(),
               //      Imps.MessageType.PRESENCE_AVAILABLE);
         }
+    }
+
+    void deleteAllGroupMembers() {
+
+        if (mChatURI != null) {
+            long groupId = ContentUris.parseId(mChatURI);
+            Uri uri = ContentUris.withAppendedId(Imps.GroupMembers.CONTENT_URI, groupId);
+            mContentResolver.delete(uri, null, null);
+        }
+        //  insertMessageInDb(member.getName(), null, System.currentTimeMillis(),
+        //    Imps.MessageType.PRESENCE_UNAVAILABLE);
     }
 
     void deleteGroupMemberInDb(Contact member) {
@@ -984,7 +1002,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
                             Uri messageUri = Imps.insertMessageInDb(service.getContentResolver(),
                                     mIsGroupChat, getId(),
-                                    true, bareUsername,
+                                    true, nickname,
                                     vfsUri.toString(), System.currentTimeMillis(), type,
                                     0, msg.getID(), mimeType);
 
@@ -1062,6 +1080,10 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                 //  insertMessageInDb(member.getName(), null, System.currentTimeMillis(),
                 //      Imps.MessageType.PRESENCE_AVAILABLE);
             }
+        }
+
+        public void onMembersReset () {
+            deleteAllGroupMembers();
         }
 
         public void onMemberJoined(ChatGroup group, final Contact contact) {
@@ -1234,6 +1256,9 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                 mGroupMgr.inviteUserAsync(group, (Contact) mChatSession.getParticipant());
             }
         }
+
+        public void onMembersReset ()
+        {}
 
         public void onMemberJoined(ChatGroup group, Contact contact) {
             if (mChatSession.getParticipant().equals(contact)) {

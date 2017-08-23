@@ -25,10 +25,12 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ChatGroup extends ImEntity {
+
     private ChatGroupManager mManager;
     private Address mAddress;
     private String mName;
     private HashMap<String, Contact> mMembers;
+    private Contact mOwner;
     private CopyOnWriteArrayList<GroupMemberListener> mMemberListeners;
 
     public ChatGroup(Address address, String name, ChatGroupManager manager) {
@@ -45,7 +47,7 @@ public class ChatGroup extends ImEntity {
 
         if (members != null)
             for (Contact contact : members)
-                mMembers.put(contact.getAddress().getAddress(), contact);
+                mMembers.put(contact.getAddress().getBareAddress(), contact);
 
         mMemberListeners = new CopyOnWriteArrayList<GroupMemberListener>();
     }
@@ -130,10 +132,10 @@ public class ChatGroup extends ImEntity {
      */
     void notifyMemberJoined(Contact newContact) {
 
-        Contact contact = mMembers.get(newContact.getAddress().getAddress());
+        Contact contact = mMembers.get(newContact.getAddress().getBareAddress());
 
         if (contact == null) {
-            mMembers.put(newContact.getAddress().getAddress(), newContact);
+            mMembers.put(newContact.getAddress().getBareAddress(), newContact);
             for (GroupMemberListener listener : mMemberListeners) {
                 listener.onMemberJoined(this, newContact);
             }
@@ -152,7 +154,7 @@ public class ChatGroup extends ImEntity {
      * @param contact the contact who has left this group.
      */
     void notifyMemberLeft(Contact contact) {
-        if (mMembers.remove(contact.getAddress().getAddress())!=null) {
+        if (mMembers.remove(contact.getAddress().getBareAddress())!=null) {
             for (GroupMemberListener listener : mMemberListeners) {
                 listener.onMemberLeft(this, contact);
             }
@@ -173,5 +175,39 @@ public class ChatGroup extends ImEntity {
     @Override
     public boolean isGroup() {
         return true;
+    }
+
+    /*
+    clear the list of members
+     */
+    public void clearMembers ()
+    {
+        for (Contact member : mMembers.values())
+        {
+            removeMemberAsync(member);
+        }
+
+        for (GroupMemberListener listener : mMemberListeners) {
+            listener.onMembersReset();
+        }
+    }
+
+    /*
+    set the list of members
+     */
+    public void setMembers (List<Contact> members)
+    {
+        clearMembers();
+
+        for (Contact newContact : members)
+        {
+            addMemberAsync(newContact);
+        }
+
+    }
+
+    public void setOwner (Contact owner)
+    {
+        mOwner = owner;
     }
 }

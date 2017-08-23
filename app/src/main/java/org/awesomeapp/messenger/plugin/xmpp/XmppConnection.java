@@ -88,6 +88,7 @@ import org.jivesoftware.smackx.iqlast.packet.LastActivity;
 import org.jivesoftware.smackx.iqprivate.PrivateDataManager;
 import org.jivesoftware.smackx.muc.Affiliate;
 import org.jivesoftware.smackx.muc.InvitationListener;
+import org.jivesoftware.smackx.muc.MucConfigFormManager;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.smackx.muc.Occupant;
@@ -609,7 +610,11 @@ public class XmppConnection extends ImConnection {
                 //TODO fix this with new smack
                 MultiUserChatManager mucMgr = MultiUserChatManager.getInstanceFor(mConnection);
 
+                if (!mucMgr.providesMucService(JidCreate.domainBareFrom(mUserJid)))
+                    return DEFAULT_CONFERENCE_SERVER;
+
                 Collection<DomainBareJid> servers = mucMgr.getXMPPServiceDomains();
+
 
                 //just grab the first one
                 for (DomainBareJid server : servers)
@@ -618,6 +623,8 @@ public class XmppConnection extends ImConnection {
             }
             catch (Exception xe)
             {
+                Log.w(TAG, "Error discovering MUC server",xe);
+
                 //unable to find conference server
                 return DEFAULT_CONFERENCE_SERVER;
             }
@@ -626,29 +633,17 @@ public class XmppConnection extends ImConnection {
         }
 
         @Override
-        public boolean createChatGroupAsync(String chatRoomJid, String subject, String nickname) throws Exception {
+        public synchronized boolean createChatGroupAsync(String chatRoomJid, String subject, String nickname) throws Exception {
+
+            ChatGroup chatGroup;
+            MultiUserChat muc;
 
             if (mConnection == null || getState() != ImConnection.LOGGED_IN)
                 return false;
-            
-            RoomInfo roomInfo = null;
 
             // Create a MultiUserChat using a Connection for a room
             MultiUserChatManager mucMgr = MultiUserChatManager.getInstanceFor(mConnection);
             mucMgr.setAutoJoinOnReconnect(true);
-
-            if (chatRoomJid.endsWith("@"))
-            {
-                 //let's add a host to that!
-                Collection<DomainBareJid> servers = mucMgr.getXMPPServiceDomains();
-
-                if (servers.iterator().hasNext())
-                    chatRoomJid += servers.iterator().next().toString();
-                else
-                {
-                    chatRoomJid += DEFAULT_CONFERENCE_SERVER;
-                }
-             }
 
             Address address = new XmppAddress (chatRoomJid);
 
@@ -662,36 +657,55 @@ public class XmppConnection extends ImConnection {
             if (TextUtils.isEmpty(nickname))
                 nickname = mUsername;
 
-            try {
+            chatGroup = mGroups.get(chatRoomJid);
+            if (chatGroup != null)
+            {
+                if ((muc = mMUCs.get(chatRoomJid))!=null)
+                {
+                    // Create the room
+                    if (!muc.isJoined()) {
+                        MultiUserChat.MucCreateConfigFormHandle handle = muc.createOrJoin(Resourcepart.from(nickname));
+                    }
+                }
+            }
+            else
+            {
 
-                MultiUserChat muc = mucMgr.getMultiUserChat(JidCreate.entityBareFrom(chatRoomJid));
+                if (chatRoomJid.endsWith("@"))
+                {
+                     //let's add a host to that!
+                    Collection<DomainBareJid> servers = mucMgr.getXMPPServiceDomains();
+
+                    if (servers.iterator().hasNext())
+                        chatRoomJid += servers.iterator().next().toString();
+                    else
+                    {
+                        chatRoomJid += DEFAULT_CONFERENCE_SERVER;
+                    }
+                 }
+
+                muc = mucMgr.getMultiUserChat(JidCreate.entityBareFrom(chatRoomJid));
                 boolean mucCreated = false;
 
-                try
-                {
+                try {
                     // Create the room
                     if (!muc.isJoined()) {
                         MultiUserChat.MucCreateConfigFormHandle handle = muc.createOrJoin(Resourcepart.from(nickname));
                         mucCreated = true;
                     }
 
-                }
-                catch (Exception iae)
-                {
+                } catch (Exception iae) {
 
-                    if (iae.getMessage().contains("Creation failed"))
-                    {
+                    if (iae.getMessage().contains("Creation failed")) {
                         //some server's don't return the proper 201 create code, so we can just assume the room was created!
-                    }
-                    else
-                    {
+                    } else {
 
                         throw iae;
 
                     }
                 }
 
-                ChatGroup chatGroup = mGroups.get(chatRoomJid);
+                chatGroup = mGroups.get(chatRoomJid);
 
                 if (chatGroup == null) {
                     chatGroup = new ChatGroup(address, subject, this);
@@ -700,8 +714,7 @@ public class XmppConnection extends ImConnection {
 
                 mMUCs.put(chatRoomJid, muc);
 
-                if (mucCreated)
-                {
+                if (mucCreated) {
                     try {
                         Form form = muc.getConfigurationForm();
                         Form submitForm = form.createAnswerForm();
@@ -752,6 +765,8 @@ public class XmppConnection extends ImConnection {
                         //                        if (submitForm.getField("muc#maxhistoryfetch") != null)
                         //                            submitForm.setAnswer("muc#maxhistoryfetch", 0);
 
+                        submitForm.setAnswer(MucConfigFormManager.MUC_ROOMCONFIG_MEMBERSONLY, true);
+
                         muc.sendConfigurationForm(submitForm);
                         muc.changeSubject(subject);
 
@@ -761,46 +776,12 @@ public class XmppConnection extends ImConnection {
                     }
 
                 }
-
-                List<Affiliate> mucMembers = muc.getMembers();
-                XmppAddress xa = null;
-
-                for (Affiliate member : mucMembers)
-                {
-                    xa = new XmppAddress(member.getJid().toString());
-                    Contact mucContact = mContactListManager.getContact(xa);
-                    if (mucContact == null)
-                        mucContact = new Contact(xa,xa.getResource(), Imps.Contacts.TYPE_NORMAL);
-                    chatGroup.addMemberAsync(mucContact);
-
-                }
-
-                List<EntityFullJid> mucOccupant = muc.getOccupants();
-
-                for (EntityFullJid occupant : mucOccupant) {
-                    Jid jidSource = muc.getOccupant(occupant).getJid();
-                    if (jidSource != null)
-                        xa = new XmppAddress(jidSource.toString());
-                    else
-                        xa = new XmppAddress(occupant.toString());
-                    Contact mucContact = new Contact(xa,xa.getResource(), Imps.Contacts.TYPE_NORMAL);
-                    org.jivesoftware.smack.packet.Presence presence = muc.getOccupantPresence(occupant);
-                    Presence p = new Presence(parsePresence(presence), null, null, null, Presence.CLIENT_TYPE_MOBILE);
-                    mucContact.setPresence(p);
-                    chatGroup.addMemberAsync(mucContact);
-                }
-
-
-                addMucListeners(muc);
-
-                return true;
-
-            } catch (XMPPException e) {
-
-                debug(TAG,"error creating MUC",e);
-                return false;
             }
 
+
+            addMucListeners(muc);
+
+            return true;
 
         }
 
@@ -814,7 +795,8 @@ public class XmppConnection extends ImConnection {
                 MultiUserChat muc = mMUCs.get(chatRoomJid);
 
                 try {
-                    //muc.destroy("", null);
+
+                    muc.destroy("", null);
 
                     mMUCs.remove(chatRoomJid);
 
@@ -886,33 +868,6 @@ public class XmppConnection extends ImConnection {
 
                 mMUCs.put(chatRoomJid, muc);
 
-                List<Affiliate> mucMembers = muc.getMembers();
-                XmppAddress xa = null;
-
-                for (Affiliate member : mucMembers)
-                {
-                    xa = new XmppAddress(member.getJid().toString());
-                    Contact mucContact = mContactListManager.getContact(xa);
-                    if (mucContact == null)
-                        mucContact = new Contact(xa,xa.getResource(), Imps.Contacts.TYPE_NORMAL);
-                    chatGroup.addMemberAsync(mucContact);
-
-                }
-
-                List<EntityFullJid> mucOccupant = muc.getOccupants();
-
-                for (EntityFullJid occupant : mucOccupant) {
-                    Jid jidSource = muc.getOccupant(occupant).getJid();
-                    if (jidSource != null)
-                        xa = new XmppAddress(jidSource.toString());
-                    else
-                        xa = new XmppAddress(occupant.toString());
-                    Contact mucContact = new Contact(xa,xa.getResource(), Imps.Contacts.TYPE_NORMAL);
-                    org.jivesoftware.smack.packet.Presence presence = muc.getOccupantPresence(occupant);
-                    Presence p = new Presence(parsePresence(presence), null, null, null, Presence.CLIENT_TYPE_MOBILE);
-                    mucContact.setPresence(p);
-                    chatGroup.addMemberAsync(mucContact);
-                }
 
                 addMucListeners(muc);
 
@@ -921,6 +876,62 @@ public class XmppConnection extends ImConnection {
                 debug(TAG,"error joining MUC",e);
             }
 
+        }
+
+        public void loadMembers (ChatGroup chatGroup) {
+            try {
+
+                loadMembers(mMUCs.get(chatGroup.getAddress().getAddress()), chatGroup);
+
+            } catch (Exception e)
+            {
+                debug(TAG,"Could not load members",e);
+            }
+        }
+
+        private void loadMembers (MultiUserChat muc, ChatGroup chatGroup) throws SmackException, XMPPException,InterruptedException
+        {
+            chatGroup.clearMembers();
+
+            XmppAddress xa = null;
+
+            List<Affiliate> mucOwners = muc.getOwners();
+            for (Affiliate member : mucOwners)
+            {
+                xa = new XmppAddress(member.getJid().toString());
+                Contact mucContact = mContactListManager.getContact(xa);
+                if (mucContact == null)
+                    mucContact = new Contact(xa,xa.getResource(), Imps.Contacts.TYPE_NORMAL);
+                chatGroup.addMemberAsync(mucContact);
+                chatGroup.setOwner(mucContact);
+            }
+
+            List<Affiliate> mucMembers = muc.getMembers();
+
+            for (Affiliate member : mucMembers)
+            {
+                xa = new XmppAddress(member.getJid().toString());
+                Contact mucContact = mContactListManager.getContact(xa);
+                if (mucContact == null)
+                    mucContact = new Contact(xa,xa.getResource(), Imps.Contacts.TYPE_NORMAL);
+                chatGroup.addMemberAsync(mucContact);
+
+            }
+
+            List<EntityFullJid> mucOccupant = muc.getOccupants();
+
+            for (EntityFullJid occupant : mucOccupant) {
+                Jid jidSource = muc.getOccupant(occupant).getJid();
+                if (jidSource != null)
+                    xa = new XmppAddress(jidSource.toString());
+                else
+                    xa = new XmppAddress(occupant.toString());
+                Contact mucContact = new Contact(xa,xa.getResource(), Imps.Contacts.TYPE_NORMAL);
+                org.jivesoftware.smack.packet.Presence presence = muc.getOccupantPresence(occupant);
+                Presence p = new Presence(parsePresence(presence), null, null, null, Presence.CLIENT_TYPE_MOBILE);
+                mucContact.setPresence(p);
+                chatGroup.addMemberAsync(mucContact);
+            }
         }
 
         private void addMucListeners (MultiUserChat muc)

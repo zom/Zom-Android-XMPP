@@ -46,4 +46,9 @@ public interface GroupMemberListener {
      * @param subject the new subject
      */
     public void onSubjectChanged(ChatGroup group, String subject);
+
+    /**
+     * Called when group membership is reset
+     */
+    public void onMembersReset ();
 }

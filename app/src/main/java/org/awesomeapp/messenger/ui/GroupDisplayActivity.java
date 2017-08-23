@@ -22,6 +22,9 @@ import android.widget.TextView;
 
 import org.apache.commons.codec.DecoderException;
 import org.awesomeapp.messenger.ImApp;
+import org.awesomeapp.messenger.model.ChatGroup;
+import org.awesomeapp.messenger.model.ChatSession;
+import org.awesomeapp.messenger.model.Contact;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.service.IChatSession;
 import org.awesomeapp.messenger.service.IChatSessionManager;
@@ -333,5 +336,16 @@ public class GroupDisplayActivity extends BaseActivity {
             line2 = (TextView) view.findViewById(R.id.line2);
             avatar = (ImageView) view.findViewById(R.id.avatar);
         }
+    }
+
+    private void changeGroupName (String name)
+    {
+        try {
+            IChatSession session = mConn.getChatSessionManager().getChatSession(mAddress);
+            Contact contact = mConn.getContactListManager().getContactByAddress(mAddress);
+
+        }
+        catch (Exception e) {}
+
     }
 }
