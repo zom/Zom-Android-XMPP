@@ -2,6 +2,7 @@ package org.awesomeapp.messenger.ui;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
@@ -9,12 +10,14 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
+import android.support.v4.widget.TextViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -64,6 +67,9 @@ public class GroupDisplayActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getSupportActionBar().setTitle("");
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         setContentView(R.layout.awesome_activity_group);
 
@@ -98,7 +104,7 @@ public class GroupDisplayActivity extends BaseActivity {
             }
 
             @Override
-            public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+            public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
                 if (holder instanceof HeaderViewHolder) {
                     HeaderViewHolder h = (HeaderViewHolder)holder;
                     GroupAvatar avatar = new GroupAvatar(mAddress.split("@")[0]);
@@ -142,9 +148,15 @@ public class GroupDisplayActivity extends BaseActivity {
                     h.actionMute.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-
+                            setMuted(!isMuted());
+                            mRecyclerView.getAdapter().notifyItemChanged(holder.getAdapterPosition());
                         }
                     });
+                    boolean muted = isMuted();
+                    h.actionMute.setText(muted ? R.string.turn_notifications_on : R.string.turn_notifications_off);
+                    TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(h.actionMute,
+                            muted ? R.drawable.ic_notifications_active_black_24dp : R.drawable.ic_notifications_off_black_24dp,
+                            0, 0, 0);
                 } else if (holder instanceof FooterViewHolder) {
                     FooterViewHolder h = (FooterViewHolder)holder;
 
@@ -274,6 +286,15 @@ public class GroupDisplayActivity extends BaseActivity {
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent resultIntent) {
 
         if (resultCode == RESULT_OK) {
@@ -346,6 +367,31 @@ public class GroupDisplayActivity extends BaseActivity {
 
         }
         catch (Exception e) {}
+    }
 
+    boolean isMuted() {
+        int type = Imps.ChatsColumns.CHAT_TYPE_ACTIVE;
+
+        String[] projection = {Imps.Chats.CHAT_TYPE};
+        Uri chatUri = ContentUris.withAppendedId(Imps.Chats.CONTENT_URI, mLastChatId);
+        ContentResolver cr = getContentResolver();
+        Cursor c = cr.query(chatUri, projection, null, null, null);
+        if (c != null) {
+            int colType = c.getColumnIndex(Imps.Chats.CHAT_TYPE);
+            if (colType != -1 && c.moveToFirst()) {
+                type = c.getInt(colType);
+            }
+            c.close();
+        }
+        return type == Imps.ChatsColumns.CHAT_TYPE_MUTED;
+    }
+
+    public void setMuted(boolean muted) {
+        int type = muted ? Imps.ChatsColumns.CHAT_TYPE_MUTED : Imps.ChatsColumns.CHAT_TYPE_ACTIVE;
+
+        Uri chatUri = ContentUris.withAppendedId(Imps.Chats.CONTENT_URI, mLastChatId);
+        ContentValues values = new ContentValues();
+        values.put(Imps.Chats.CHAT_TYPE,type);
+        getContentResolver().update(chatUri,values,Imps.Chats.CONTACT_ID + "=" + mLastChatId,null);
     }
 }
