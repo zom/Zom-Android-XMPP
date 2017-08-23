@@ -28,6 +28,12 @@
     app:showAsAction="always|collapseActionView"
     android:title="@string/search_by_id"/>
 
+     <item android:id="@+id/action_start_chat"
+         android:title="@string/ok"
+         android:icon="@drawable/ic_check_white_24dp"
+         app:showAsAction="always"
+         />
+
 
 <!--    <item android:id="@+id/menu_new_group_chat"
         android:title="@string/create_group"
