@@ -76,9 +76,9 @@
         style="@style/GroupInfoAction"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:drawableLeft="@drawable/ic_volume_off_black_24dp"
-        android:drawableStart="@drawable/ic_volume_off_black_24dp"
-        android:text="@string/action_mute"
+        android:drawableLeft="@drawable/ic_notifications_active_black_24dp"
+        android:drawableStart="@drawable/ic_notifications_active_black_24dp"
+        android:text="@string/turn_notifications_on"
         />
 
     <org.ironrabbit.type.CustomTypefaceTextView xmlns:android="http://schemas.android.com/apk/res/android"
