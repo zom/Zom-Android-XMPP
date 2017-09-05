@@ -38,6 +38,7 @@ import org.awesomeapp.messenger.util.Debug;
 import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.ConnectionListener;
+import org.jivesoftware.smack.ExceptionCallback;
 import org.jivesoftware.smack.MessageListener;
 import org.jivesoftware.smack.PresenceListener;
 import org.jivesoftware.smack.ReconnectionManager;
@@ -87,6 +88,7 @@ import org.jivesoftware.smackx.iqlast.LastActivityManager;
 import org.jivesoftware.smackx.iqlast.packet.LastActivity;
 import org.jivesoftware.smackx.iqprivate.PrivateDataManager;
 import org.jivesoftware.smackx.muc.Affiliate;
+import org.jivesoftware.smackx.muc.AutoJoinFailedCallback;
 import org.jivesoftware.smackx.muc.InvitationListener;
 import org.jivesoftware.smackx.muc.MucConfigFormManager;
 import org.jivesoftware.smackx.muc.MultiUserChat;
@@ -644,6 +646,13 @@ public class XmppConnection extends ImConnection {
             // Create a MultiUserChat using a Connection for a room
             MultiUserChatManager mucMgr = MultiUserChatManager.getInstanceFor(mConnection);
             mucMgr.setAutoJoinOnReconnect(true);
+            mucMgr.setAutoJoinFailedCallback(new AutoJoinFailedCallback() {
+                @Override
+                public void autoJoinFailed(MultiUserChat multiUserChat, Exception e) {
+                    debug("MUC","There was an error autojoining the group: " + multiUserChat.getRoom().toString(),e);
+                    
+                }
+            });
 
             Address address = new XmppAddress (chatRoomJid);
 
@@ -3171,7 +3180,11 @@ public class XmppConnection extends ImConnection {
 
                 if (entry == null) {
                     mRoster.createEntry(bareJid, contact.getName(), null);
-                    entry = mRoster.getEntry(bareJid);
+
+                    while ((entry = mRoster.getEntry(bareJid)) == null) {
+                        try { Thread.sleep(500);}catch(Exception e){}
+                    }
+
                 }
 
                 if (!entry.canSeeMyPresence())
@@ -4364,13 +4377,21 @@ public class XmppConnection extends ImConnection {
 
                                             mRoster.createEntry(jid, contact.getName(), groups);
 
-
+                                            while ((rEntry = mRoster.getEntry(jid))==null)
+                                            {
+                                                try { Thread.sleep(500);}catch(Exception e){}
+                                            }
                                         }
 
                                     }
                                     else if (rEntry == null)
                                     {
                                         mRoster.createEntry(jid, contact.getName(), groups);
+
+                                        while ((rEntry = mRoster.getEntry(jid))==null)
+                                        {
+                                            try { Thread.sleep(500);}catch(Exception e){}
+                                        }
                                     }
 
                                 } catch (XMPPException e) {
