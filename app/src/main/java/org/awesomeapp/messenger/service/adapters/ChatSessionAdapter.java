@@ -260,8 +260,10 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
         mMessageURI = Imps.Messages.getContentUriByThreadId(mContactId);
 
-
         mContactStatusMap.put(contact.getName(), contact.getPresence().getStatus());
+
+        sendPostponedMessages();
+
     }
 
     public void reInit ()
