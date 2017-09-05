@@ -1152,20 +1152,6 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         @Override
         public void onIncomingReceipt(ChatSession ses, String id) {
             Imps.updateConfirmInDb(mContentResolver, mContactId, id, true);
-
-            /**
-            int N = mRemoteListeners.beginBroadcast();
-            for (int i = 0; i < N; i++) {
-                IChatListener listener = mRemoteListeners.getBroadcastItem(i);
-                try {
-                    listener.onIncomingReceipt(ChatSessionAdapter.this, id);
-                } catch (RemoteException e) {
-                    // The RemoteCallbackList will take care of removing the
-                    // dead listeners.
-                }
-            }
-            mRemoteListeners.finishBroadcast();
-            **/
         }
 
         @Override
