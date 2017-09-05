@@ -658,15 +658,15 @@ public class XmppConnection extends ImConnection {
                 nickname = mUsername;
 
             chatGroup = mGroups.get(chatRoomJid);
-            if (chatGroup != null)
+            muc = mMUCs.get(chatRoomJid);
+
+            if (chatGroup != null && muc !=null)
             {
-                if ((muc = mMUCs.get(chatRoomJid))!=null)
-                {
-                    // Create the room
-                    if (!muc.isJoined()) {
-                        MultiUserChat.MucCreateConfigFormHandle handle = muc.createOrJoin(Resourcepart.from(nickname));
-                    }
+                // Create the room
+                if (!muc.isJoined()) {
+                    MultiUserChat.MucCreateConfigFormHandle handle = muc.createOrJoin(Resourcepart.from(nickname));
                 }
+
             }
             else
             {
