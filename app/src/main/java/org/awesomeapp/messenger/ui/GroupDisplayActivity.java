@@ -153,7 +153,8 @@ public class GroupDisplayActivity extends BaseActivity {
                         }
                     });
                     boolean muted = isMuted();
-                    h.actionMute.setText(muted ? R.string.turn_notifications_on : R.string.turn_notifications_off);
+                   h.actionMute.setText(muted ? R.string.turn_notifications_on : R.string.turn_notifications_off);
+             //       h.actionMute.setText(muted ? "turn on" : " t")
                     TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(h.actionMute,
                             muted ? R.drawable.ic_notifications_active_black_24dp : R.drawable.ic_notifications_off_black_24dp,
                             0, 0, 0);
