@@ -181,6 +181,15 @@ public class ChatSession {
             message.setTo(mXa);
             message.setType(Imps.MessageType.QUEUED);
 
+            //not for groups yet
+            if (mParticipant instanceof Contact) {
+                //if we can't omemo, check it again to be sure
+                if (!mCanOmemo) {
+                    mCanOmemo = mManager.resourceSupportsOmemo(mJid);
+
+                }
+            }
+
             if (mCanOmemo) {
                 mManager.sendMessageAsync(this, message);
             } else {
