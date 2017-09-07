@@ -3177,17 +3177,7 @@ public class XmppConnection extends ImConnection {
 
                 BareJid bareJid = JidCreate.bareFrom(contact.getAddress().getBareAddress());
                 RosterEntry entry = mRoster.getEntry(bareJid);
-
-                if (entry == null) {
-                    mRoster.createEntry(bareJid, contact.getName(), null);
-
-                    while ((entry = mRoster.getEntry(bareJid)) == null) {
-                        try { Thread.sleep(500);}catch(Exception e){}
-                    }
-
-                }
-
-                if (!entry.canSeeMyPresence())
+                if (entry == null || !entry.canSeeMyPresence())
                 {
                     org.jivesoftware.smack.packet.Presence response = new org.jivesoftware.smack.packet.Presence(
                             org.jivesoftware.smack.packet.Presence.Type.subscribed);
@@ -3201,7 +3191,7 @@ public class XmppConnection extends ImConnection {
 
                 }
 
-                if (!entry.canSeeHisPresence()) {
+                if (entry == null || !entry.canSeeHisPresence()) {
 
                     org.jivesoftware.smack.packet.Presence request = new org.jivesoftware.smack.packet.Presence(
                             org.jivesoftware.smack.packet.Presence.Type.subscribe);
@@ -3220,7 +3210,7 @@ public class XmppConnection extends ImConnection {
                 if (session != null)
                     session.setSubscribed(true);
 
-                if (entry.canSeeHisPresence()) {
+                if (entry != null && entry.canSeeHisPresence()) {
 
                     requestPresenceRefresh(contact.getAddress().getBareAddress());
                     qAvatar.put(contact.getAddress().getAddress(),"");
