@@ -187,7 +187,7 @@ public class GroupDisplayActivity extends BaseActivity {
                     h.actionLeave.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-
+                            leaveGroup();
                         }
                     });
                 } else if (holder instanceof MemberViewHolder) {
@@ -451,5 +451,18 @@ public class GroupDisplayActivity extends BaseActivity {
         ContentValues values = new ContentValues();
         values.put(Imps.Chats.CHAT_TYPE,type);
         getContentResolver().update(chatUri,values,Imps.Chats.CONTACT_ID + "=" + mLastChatId,null);
+    }
+
+    private void leaveGroup ()
+    {
+        try {
+            IChatSessionManager manager = mConn.getChatSessionManager();
+            IChatSession session = manager.getChatSession(mAddress);
+            session.leave();
+        }
+        catch (Exception e)
+        {
+            Log.e(ImApp.LOG_TAG,"error inviting contacts to group",e);
+        }
     }
 }
