@@ -20,7 +20,9 @@
             android:layout_gravity="end|bottom"
             android:layout_margin="10dp"
             android:background="#dddddd"
-            android:src="@drawable/qr" />
+            android:src="@drawable/qr"
+            android:visibility="gone"
+            />
     </FrameLayout>
 
     <!-- Group name-->
