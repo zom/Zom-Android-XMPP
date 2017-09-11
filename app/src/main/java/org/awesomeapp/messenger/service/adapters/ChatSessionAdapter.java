@@ -1600,6 +1600,15 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             if (isGroupChatSession()) {
                 ChatGroup group = (ChatGroup)mChatSession.getParticipant();
                 getGroupManager().setGroupSubject(group, subject);
+
+                //update the database
+                ContentValues values1 = new ContentValues(1);
+                values1.put(Imps.Contacts.NICKNAME,subject);
+                ContentValues values = values1;
+
+                Uri uriContact = ContentUris.withAppendedId(Imps.Contacts.CONTENT_URI, mContactId);
+                mContentResolver.update(uriContact, values, null, null);
+
             }
         } catch (Exception e) {
             e.printStackTrace();

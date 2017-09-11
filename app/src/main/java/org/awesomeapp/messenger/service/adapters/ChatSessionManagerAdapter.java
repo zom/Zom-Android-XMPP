@@ -134,7 +134,7 @@ public class ChatSessionManagerAdapter extends
 
             ChatGroup chatGroup = groupMan.getChatGroup(address);
 
-            if (chatGroup != null)
+            if (chatGroup != null && mConnection.getState() == ImConnection.LOGGED_IN)
             {
                 ChatSession session = getChatSessionManager().createChatSession(chatGroup,isNewChat);
                 ChatSessionAdapter adapter = getChatSessionAdapter(session, isNewChat);
