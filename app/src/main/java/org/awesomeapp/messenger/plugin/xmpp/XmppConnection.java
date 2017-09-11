@@ -351,9 +351,11 @@ public class XmppConnection extends ImConnection {
 
     // Execute a runnable only if we are idle
     private boolean executeIfIdle(Runnable runnable) {
-        if (mExecutor.getActiveCount() + mExecutor.getQueue().size() == 0) {
-            return execute(runnable);
-       }
+        if (mExecutor != null) {
+            if (mExecutor.getActiveCount() + mExecutor.getQueue().size() == 0) {
+                return execute(runnable);
+            }
+        }
 
        return false;
     }
@@ -589,17 +591,23 @@ public class XmppConnection extends ImConnection {
         
         public void reconnectAll ()
         {
+            MultiUserChatManager mucMgr = MultiUserChatManager.getInstanceFor(mConnection);
+            mucMgr.setAutoJoinOnReconnect(false);
+
             Enumeration<MultiUserChat> eMuc = mMUCs.elements();
             while (eMuc.hasMoreElements())
             {
                 MultiUserChat muc = eMuc.nextElement();
-                if (!muc.isJoined())
-                {
-                    try {
-                        muc.join(Resourcepart.from(mUser.getName()));
-                    } catch (Exception e) {
-                        Log.w(TAG,"unable to join MUC: " + e.getMessage());
-                    }
+
+                MultiUserChat reMuc = mucMgr.getMultiUserChat(muc.getRoom());
+
+                try {
+                    reMuc.join(Resourcepart.from(mUser.getName()));
+                    mMUCs.put(muc.getRoom().toString(),reMuc);
+                    addMucListeners(reMuc);
+
+                } catch (Exception e) {
+                    Log.w(TAG,"unable to join MUC: " + e.getMessage());
                 }
             }
         }
@@ -645,7 +653,7 @@ public class XmppConnection extends ImConnection {
 
             // Create a MultiUserChat using a Connection for a room
             MultiUserChatManager mucMgr = MultiUserChatManager.getInstanceFor(mConnection);
-            mucMgr.setAutoJoinOnReconnect(true);
+            mucMgr.setAutoJoinOnReconnect(false);
             mucMgr.setAutoJoinFailedCallback(new AutoJoinFailedCallback() {
                 @Override
                 public void autoJoinFailed(MultiUserChat multiUserChat, Exception e) {
@@ -859,7 +867,7 @@ public class XmppConnection extends ImConnection {
 
                 // Create a MultiUserChat using a Connection for a room
                 MultiUserChatManager mucMgr = MultiUserChatManager.getInstanceFor(mConnection);
-                mucMgr.setAutoJoinOnReconnect(true);
+                mucMgr.setAutoJoinOnReconnect(false);
                 MultiUserChat muc = mucMgr.getMultiUserChat( JidCreate.entityBareFrom(chatRoomJid));
 
                 if (!muc.isJoined())
@@ -876,7 +884,6 @@ public class XmppConnection extends ImConnection {
                 }
 
                 mMUCs.put(chatRoomJid, muc);
-
 
                 addMucListeners(muc);
 
@@ -2013,6 +2020,10 @@ public class XmppConnection extends ImConnection {
             public void authenticated(XMPPConnection connection, boolean resumed) {
                 debug(TAG, "authenticated: resumed=" + resumed);
 
+                sendPresencePacket();
+                mChatGroupManager.reconnectAll();
+
+                /**
                 try {
 
                     OmemoFingerprint of = mOmemoInstance.getManager().getOurFingerprint();
@@ -2039,7 +2050,7 @@ public class XmppConnection extends ImConnection {
                 catch (Exception e)
                 {
                     debug(TAG,"error purge OMEMO devices",e);
-                }
+                }**/
 
             }
 
@@ -3517,8 +3528,7 @@ public class XmppConnection extends ImConnection {
         {
             //update and send new presence packet out
             mUserPresence = new Presence(Presence.AVAILABLE, "", Presence.CLIENT_TYPE_MOBILE);
-            sendPresencePacket();
-            mChatGroupManager.reconnectAll();
+
         }
     }    
     
