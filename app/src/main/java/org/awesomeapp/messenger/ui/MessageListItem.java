@@ -68,6 +68,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -208,7 +209,7 @@ public class MessageListItem extends FrameLayout {
                 } else {
                     mHolder.mTextViewForMessages.setVisibility(View.GONE);
 
-                    showMediaThumbnail(mimeType, mediaUri, id, mHolder);
+                    showMediaThumbnail(mimeType, mediaUri, id, mHolder, true);
 
                     mHolder.mMediaContainer.setVisibility(View.VISIBLE);
 
@@ -239,7 +240,7 @@ public class MessageListItem extends FrameLayout {
                     Uri mediaUri = Uri.parse("asset://localhost/" + assetPath);
 
                     //now load the thumbnail
-                    cmdSuccess = showMediaThumbnail(mimeTypeSticker, mediaUri, id, mHolder);
+                    cmdSuccess = showMediaThumbnail(mimeTypeSticker, mediaUri, id, mHolder, false);
                 }
                 catch (Exception e)
                 {
@@ -266,7 +267,7 @@ public class MessageListItem extends FrameLayout {
                     Uri mediaUri = Uri.parse("asset://localhost/" + stickerPath);
 
                     //now load the thumbnail
-                    cmdSuccess = showMediaThumbnail(mimeTypeSticker, mediaUri, id, mHolder);
+                    cmdSuccess = showMediaThumbnail(mimeTypeSticker, mediaUri, id, mHolder, false);
                 } catch (Exception e) {
                     cmdSuccess = false;
                 }
@@ -325,7 +326,7 @@ public class MessageListItem extends FrameLayout {
         LinkifyHelper.addTorSafeLinks(mHolder.mTextViewForMessages);
     }
 
-    private boolean showMediaThumbnail (String mimeType, Uri mediaUri, int id, MessageViewHolder holder)
+    private boolean showMediaThumbnail (String mimeType, Uri mediaUri, int id, MessageViewHolder holder, boolean centerCrop)
     {
         this.mediaUri = mediaUri;
         this.mimeType = mimeType;
@@ -345,6 +346,11 @@ public class MessageListItem extends FrameLayout {
 
         holder.mTextViewForMessages.setText(lastMessage);
         holder.mTextViewForMessages.setVisibility(View.GONE);
+
+        if (centerCrop)
+            holder.mMediaThumbnail.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        else
+            holder.mMediaThumbnail.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
         if( mimeType.startsWith("image/") ) {
             setImageThumbnail( getContext().getContentResolver(), id, holder, mediaUri );
@@ -704,7 +710,7 @@ public class MessageListItem extends FrameLayout {
                 mHolder.mTextViewForMessages.setVisibility(View.GONE);
 
                 mHolder.mMediaContainer.setVisibility(View.VISIBLE);
-                showMediaThumbnail(mimeType, mediaUri, id, mHolder);
+                showMediaThumbnail(mimeType, mediaUri, id, mHolder, true);
 
             }
 
@@ -727,7 +733,7 @@ public class MessageListItem extends FrameLayout {
                     Uri mediaUri = Uri.parse("asset://localhost/" + cmds[1].toLowerCase());
 
                     //now load the thumbnail
-                    cmdSuccess = showMediaThumbnail(mimeTypeSticker, mediaUri, id, mHolder);
+                    cmdSuccess = showMediaThumbnail(mimeTypeSticker, mediaUri, id, mHolder, false);
                 } catch (Exception e) {
                     cmdSuccess = false;
                 }
@@ -751,7 +757,7 @@ public class MessageListItem extends FrameLayout {
                     Uri mediaUri = Uri.parse("asset://localhost/" + stickerPath);
 
                     //now load the thumbnail
-                    cmdSuccess = showMediaThumbnail(mimeTypeSticker, mediaUri, id, mHolder);
+                    cmdSuccess = showMediaThumbnail(mimeTypeSticker, mediaUri, id, mHolder, false);
                 } catch (Exception e) {
                     cmdSuccess = false;
                 }

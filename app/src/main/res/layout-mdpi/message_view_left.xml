@@ -88,7 +88,7 @@
                 android:id="@+id/media_thumbnail"
                 android:layout_width="wrap_content"
                 android:layout_height="200dp"
-                android:scaleType="centerInside"
+                android:scaleType="centerCrop"
                 android:focusableInTouchMode="true"
                 />
 
