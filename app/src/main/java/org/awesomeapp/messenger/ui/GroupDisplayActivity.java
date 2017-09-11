@@ -184,7 +184,7 @@ public class GroupDisplayActivity extends BaseActivity {
                     h.itemView.setPadding(padding, h.itemView.getPaddingTop(), padding, h.itemView.getPaddingBottom());
 
                     int idxMember = position - 1;
-                    GroupMember member = mMembers.get(idxMember);
+                    final GroupMember member = mMembers.get(idxMember);
                     String nickname = member.nickname;
                     if (TextUtils.isEmpty(nickname)) {
                         nickname = member.username.split("@")[0].split("\\.")[0];
@@ -207,6 +207,12 @@ public class GroupDisplayActivity extends BaseActivity {
                     }
                     h.avatar.setImageDrawable(member.avatar);
                     h.avatar.setVisibility(View.VISIBLE);
+                    h.itemView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            showMemberInfo(member);
+                        }
+                    });
                 }
             }
 
@@ -284,6 +290,15 @@ public class GroupDisplayActivity extends BaseActivity {
             Log.e(ImApp.LOG_TAG,"error inviting contacts to group",e);
         }
 
+    }
+
+    public void showMemberInfo(GroupMember member) {
+        Intent intent = new Intent(this, ContactDisplayActivity.class);
+        intent.putExtra("address", member.username);
+        intent.putExtra("nickname", member.nickname);
+        intent.putExtra("provider", mProviderId);
+        intent.putExtra("account", mAccountId);
+        startActivity(intent);
     }
 
     @Override
