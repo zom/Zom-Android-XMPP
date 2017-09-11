@@ -142,6 +142,11 @@ public class GroupDisplayActivity extends BaseActivity {
                         @Override
                         public void onClick(View v) {
                             Intent intent = new Intent(GroupDisplayActivity.this, ContactsPickerActivity.class);
+                            ArrayList<String> usernames = new ArrayList<>(mMembers.size());
+                            for (GroupMember member : mMembers) {
+                                usernames.add(member.username);
+                            }
+                            intent.putExtra(ContactsPickerActivity.EXTRA_EXCLUDED_CONTACTS, usernames);
                             startActivityForResult(intent, REQUEST_PICK_CONTACTS);
                         }
                     });
