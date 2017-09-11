@@ -49,7 +49,9 @@
             android:autoLink="none"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="?contactTextSecondary"
-            tools:text="group.address@domain.com" />
+            tools:text="group.address@domain.com"
+            android:visibility="invisible"
+            />
     </LinearLayout>
 
     <org.ironrabbit.type.CustomTypefaceTextView xmlns:android="http://schemas.android.com/apk/res/android"
