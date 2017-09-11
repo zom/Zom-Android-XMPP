@@ -116,4 +116,10 @@ public class ChatListenerAdapter extends IChatListener.Stub {
 
     }
 
+    @Override
+    public void onGroupSubjectChanged(IChatSession ses) throws RemoteException {
+        if (Log.isLoggable(TAG, Log.DEBUG)) {
+            LogCleaner.debug(TAG, "onGroupSubjectChanged(" + ses + ")");
+        }
+    }
 }

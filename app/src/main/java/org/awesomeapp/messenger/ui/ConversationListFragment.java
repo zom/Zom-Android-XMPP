@@ -133,6 +133,13 @@ public class ConversationListFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mLoaderManager != null)
+            mLoaderManager.restartLoader(mLoaderId, null, mLoaderCallbacks);
+    }
+
     private void setupRecyclerView(RecyclerView recyclerView) {
         recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
 

@@ -81,5 +81,7 @@ interface IChatListener {
 
     /** this is called when the contact is typing on the other end **/
 	void onContactTyping (IChatSession ses, in Contact contact, in boolean isActive);
-	
+
+    /** This is called when a room subject changes **/
+	void onGroupSubjectChanged(IChatSession ses);
 }

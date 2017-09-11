@@ -3,6 +3,7 @@ package org.awesomeapp.messenger.ui;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
@@ -11,6 +12,7 @@ import android.os.Bundle;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.widget.TextViewCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -20,6 +22,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -40,6 +43,7 @@ import org.awesomeapp.messenger.ui.widgets.LetterAvatar;
 
 import java.util.ArrayList;
 
+import im.zom.messenger.BuildConfig;
 import im.zom.messenger.R;
 
 public class GroupDisplayActivity extends BaseActivity {
@@ -163,6 +167,12 @@ public class GroupDisplayActivity extends BaseActivity {
                     TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(h.actionMute,
                             muted ? R.drawable.ic_notifications_active_black_24dp : R.drawable.ic_notifications_off_black_24dp,
                             0, 0, 0);
+                    h.editGroupName.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            editGroupSubject();
+                        }
+                    });
                 } else if (holder instanceof FooterViewHolder) {
                     FooterViewHolder h = (FooterViewHolder)holder;
 
@@ -341,6 +351,7 @@ public class GroupDisplayActivity extends BaseActivity {
         final ImageView avatar;
         final ImageView qr;
         final TextView groupName;
+        final View editGroupName;
         final TextView groupAddress;
         final TextView actionShare;
         final TextView actionAddFriends;
@@ -351,6 +362,7 @@ public class GroupDisplayActivity extends BaseActivity {
             avatar = (ImageView) view.findViewById(R.id.ivAvatar);
             qr = (ImageView) view.findViewById(R.id.qrcode);
             groupName = (TextView) view.findViewById(R.id.tvGroupName);
+            editGroupName = view.findViewById(R.id.edit_group_subject);
             groupAddress = (TextView) view.findViewById(R.id.tvGroupAddress);
             actionShare = (TextView) view.findViewById(R.id.tvActionShare);
             actionAddFriends = (TextView) view.findViewById(R.id.tvActionAddFriends);
@@ -380,12 +392,37 @@ public class GroupDisplayActivity extends BaseActivity {
         }
     }
 
-    private void changeGroupName (String name)
+    private void editGroupSubject() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+        // Set an EditText view to get user input
+        final EditText input = new EditText(this);
+        input.setText(mName);
+        alert.setView(input);
+        alert.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                String newSubject = input.getText().toString();
+                changeGroupSubject(newSubject);
+
+                // Update the UI
+                mName = newSubject;
+                mRecyclerView.getAdapter().notifyItemChanged(0);
+            }
+        });
+
+        alert.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                // Canceled.
+            }
+        });
+        alert.show();
+    }
+
+    private void changeGroupSubject (String subject)
     {
         try {
             IChatSession session = mConn.getChatSessionManager().getChatSession(mAddress);
-            Contact contact = mConn.getContactListManager().getContactByAddress(mAddress);
-
+            session.setGroupChatSubject(subject);
         }
         catch (Exception e) {}
     }
