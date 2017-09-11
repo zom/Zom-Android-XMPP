@@ -366,9 +366,6 @@ public class ConversationDetailActivity extends BaseActivity {
             case android.R.id.home:
                 finish();
                 return true;
-            case R.id.menu_add_person:
-                showAddContact();
-                return true;
             case R.id.menu_end_conversation:
                 mConvoView.closeChatSession(true);
                 finish();
