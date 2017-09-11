@@ -494,6 +494,7 @@ public class ConversationListFragment extends Fragment {
                     buf.append(Imps.Chats.CHAT_TYPE + '=' + Imps.Chats.CHAT_TYPE_ARCHIVED);
                 else
                     buf.append("(" + Imps.Chats.CHAT_TYPE + " IS NULL")
+                            .append(" OR " + Imps.Chats.CHAT_TYPE + '=' + Imps.Chats.CHAT_TYPE_MUTED)
                             .append(" OR " + Imps.Chats.CHAT_TYPE + '=' + Imps.Chats.CHAT_TYPE_ACTIVE + ")");
 
                 loader = new CursorLoader(getActivity(), mUri, CHAT_PROJECTION,
