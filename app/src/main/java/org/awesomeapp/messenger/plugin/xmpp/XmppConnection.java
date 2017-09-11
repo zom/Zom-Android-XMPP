@@ -1594,7 +1594,14 @@ public class XmppConnection extends ImConnection {
     public String publishFile(String fileName, String mimeType, long fileSize, java.io.InputStream is) {
 
         UploaderManager uploader = new UploaderManager();
-        String result = uploader.doUpload(fileName, mimeType, fileSize, is);
+        String result = uploader.doUpload(fileName, mimeType, fileSize, is,  new UploadProgressListener() {
+            @Override
+            public void onUploadProgress(long l, long l1) {
+
+                debug(TAG, "upload complete: " + l + "," + l1);
+                //once this is done, send the message
+            }
+        });
 
         return result;
     }
@@ -4476,7 +4483,7 @@ public class XmppConnection extends ImConnection {
             }
         }
 
-        public String doUpload (String fileName, String mimeType, long fileSize, InputStream is)
+        public String doUpload (String fileName, String mimeType, long fileSize, InputStream is, UploadProgressListener uploadListener)
         {
             if (!mIsDiscovered)
                 return null;
@@ -4490,29 +4497,27 @@ public class XmppConnection extends ImConnection {
                         return null;
                 }
 
-                try {
+                //try up to 3 times!
+                int tryMax = 3;
 
-                 //   String defaultType = "application/octet-stream";
-                    Slot upSlot = manager.requestSlot(fileName, fileSize, mimeType);
+                for (int i = 0; i < tryMax; i++) {
+                    try {
 
-                    String uploadKey = uploadFile(fileSize, is, upSlot, new UploadProgressListener() {
-                        @Override
-                        public void onUploadProgress(long l, long l1) {
+                        //   String defaultType = "application/octet-stream";
+                        Slot upSlot = manager.requestSlot(fileName, fileSize, mimeType);
 
-                            debug(TAG,"upload complete: " + l + "," + l1);
-                            //once this is done, send the message
+                        String uploadKey = uploadFile(fileSize, is, upSlot, uploadListener);
+
+                        if (uploadKey != null) {
+                            URL resultUrl = upSlot.getGetUrl();
+                            String shareUrl = resultUrl.toExternalForm() + "#" + uploadKey;
+                            shareUrl = shareUrl.replace("https", "aesgcm"); //this indicates it is encrypted
+                            return shareUrl;
                         }
-                    });
+                    } catch (Exception e) {
+                        Log.e(TAG, "error getting upload slot", e);
 
-                    if (uploadKey != null) {
-                        URL resultUrl = upSlot.getGetUrl();
-                        String shareUrl = resultUrl.toExternalForm() + "#" + uploadKey;
-                        shareUrl = shareUrl.replace("https","aesgcm"); //this indicates it is encrypted
-                        return shareUrl;
                     }
-                } catch (Exception e) {
-                    Log.e(TAG, "error getting upload slot", e);
-
                 }
             }
 
