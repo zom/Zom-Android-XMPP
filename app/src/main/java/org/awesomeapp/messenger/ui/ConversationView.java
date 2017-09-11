@@ -270,7 +270,7 @@ public class ConversationView {
             updateWarningView();
             mComposeMessage.requestFocus();
             userActionDetected();
-
+            updateGroupTitle();
             try
             {
 
@@ -603,7 +603,13 @@ public class ConversationView {
             mHandler.sendMessage(message);
         }
 
-
+        @Override
+        public void onGroupSubjectChanged(IChatSession ses) throws RemoteException {
+            super.onGroupSubjectChanged(ses);
+            if (getChatSession().getId() == ses.getId()) {
+                updateGroupTitle();
+            }
+        }
     };
 
     private void showPromptForData (final String transferFrom, String filePath)
@@ -1358,45 +1364,41 @@ public class ConversationView {
 
 
 
-    private void setGroupTitle() {
+    private void updateGroupTitle() {
+        if (isGroupChat()) {
 
-        if (mContactType == Imps.Contacts.TYPE_GROUP) {
-
-            StringBuilder buf = new StringBuilder();
-
-            int count = -1;
-
-            try
-            {
-                buf.append(mCurrentChatSession.getName());
-                count = mCurrentChatSession.getParticipants().length;
-            }
-            catch (Exception e){}
-
-            if (count > 0) {
-                buf.append(" (");
-                buf.append(count);
-                buf.append(")");
-            }
-            /*
+            // Update title
             final String[] projection = { Imps.GroupMembers.NICKNAME };
-            Uri memberUri = ContentUris.withAppendedId(Imps.GroupMembers.CONTENT_URI, mLastChatId);
+            Uri contactUri = ContentUris.withAppendedId(Imps.Contacts.CONTENT_URI, mLastChatId);
             ContentResolver cr = mActivity.getContentResolver();
-            Cursor c = cr.query(memberUri, projection, null, null, null);
-            StringBuilder buf = new StringBuilder();
-            buf.append(mActivity.getString(R.string.menu_new_group_chat));
-
+            Cursor c = cr.query(contactUri, projection, null, null, null);
             if (c != null) {
-                buf.append(" (");
-                buf.append(c.getCount());
-                buf.append(")");
+                if (c.moveToFirst()) {
+                    int col = c.getColumnIndex(projection[0]);
+                    mRemoteNickname = c.getString(col);
+                }
                 c.close();
-
-
             }
-            */
 
-            mRemoteNickname = buf.toString();
+            if (mRemoteNickname == null) {
+                StringBuilder buf = new StringBuilder();
+
+                int count = -1;
+
+                try {
+                    buf.append(mCurrentChatSession.getName());
+                    count = mCurrentChatSession.getParticipants().length;
+                } catch (Exception e) {
+                }
+
+                if (count > 0) {
+                    buf.append(" (");
+                    buf.append(count);
+                    buf.append(")");
+                }
+                mRemoteNickname = buf.toString();
+            }
+            mActivity.getSupportActionBar().setTitle(mRemoteNickname);
         }
     }
 
@@ -1458,17 +1460,16 @@ public class ConversationView {
 
             initSession ();
 
-            if (mRemoteNickname == null)
-                if (TextUtils.isEmpty(name))
-                    setGroupTitle();
-                else
+            if (isGroupChat()) {
+                updateGroupTitle();
+            } else {
+                if (mRemoteNickname == null)
                     mRemoteNickname = name;
-
-            try {
-                mRemoteNickname = mRemoteNickname.split("@")[0].split("\\.")[0];
-            }
-            catch (Exception e) {
-                //handle glitches in unicode nicknames
+                try {
+                    mRemoteNickname = mRemoteNickname.split("@")[0].split("\\.")[0];
+                } catch (Exception e) {
+                    //handle glitches in unicode nicknames
+                }
             }
         }
 

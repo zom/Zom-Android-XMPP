@@ -147,5 +147,10 @@ interface IChatSession {
      * is ready to send and receive encyprted messages
      **/
      boolean isEncrypted ();
+
+    /**
+     * Set the subject for a chat room
+     **/
+     void setGroupChatSubject(String subject);
 }
 

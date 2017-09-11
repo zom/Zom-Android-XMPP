@@ -20,7 +20,9 @@
             android:layout_gravity="end|bottom"
             android:layout_margin="10dp"
             android:background="#dddddd"
-            android:src="@drawable/qr" />
+            android:src="@drawable/qr"
+            android:visibility="gone"
+            />
     </FrameLayout>
 
     <!-- Group name-->
@@ -32,13 +34,27 @@
         android:layout_margin="@dimen/detail_view_padding"
         android:paddingBottom="10dp">
 
-        <org.ironrabbit.type.CustomTypefaceTextView
-            android:id="@+id/tvGroupName"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:autoLink="none"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            tools:text="Group Name" />
+            android:orientation="horizontal">
+
+            <org.ironrabbit.type.CustomTypefaceTextView
+                android:id="@+id/tvGroupName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:autoLink="none"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                tools:text="Group Name" />
+
+            <ImageView
+                android:id="@+id/edit_group_subject"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="6dp"
+                android:src="@drawable/ic_mode_edit_black_18dp" />
+        </LinearLayout>
 
         <org.ironrabbit.type.CustomTypefaceTextView
             android:id="@+id/tvGroupAddress"
@@ -47,7 +63,9 @@
             android:autoLink="none"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="?contactTextSecondary"
-            tools:text="group.address@domain.com" />
+            tools:text="group.address@domain.com"
+            android:visibility="invisible"
+            />
     </LinearLayout>
 
     <org.ironrabbit.type.CustomTypefaceTextView xmlns:android="http://schemas.android.com/apk/res/android"

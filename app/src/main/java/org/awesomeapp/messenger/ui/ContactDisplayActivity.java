@@ -342,6 +342,7 @@ public class ContactDisplayActivity extends BaseActivity {
                 if (chatId != -1) {
                     Intent intent = new Intent(ContactDisplayActivity.this, ConversationDetailActivity.class);
                     intent.putExtra("id", chatId);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
                 }
 

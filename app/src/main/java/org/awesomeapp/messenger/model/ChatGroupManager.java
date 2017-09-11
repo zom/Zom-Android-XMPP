@@ -305,4 +305,12 @@ public abstract class ChatGroupManager {
      * @param group the group you wont to load
      */
     public abstract void loadMembers (ChatGroup group);
+
+    /**
+     * Set the subject for a chat room
+     *
+     * @param group   The room to change the subject for
+     * @param subject The new subject
+     */
+    public abstract void setGroupSubject(ChatGroup group, String subject);
 }

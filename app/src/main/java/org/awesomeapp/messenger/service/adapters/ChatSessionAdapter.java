@@ -1079,6 +1079,17 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                 Uri uriContact = ContentUris.withAppendedId(Imps.Contacts.CONTENT_URI, mContactId);
                 mContentResolver.update(uriContact, values, null, null);
 
+                final int N = mRemoteListeners.beginBroadcast();
+                for (int i = 0; i < N; i++) {
+                    IChatListener listener = mRemoteListeners.getBroadcastItem(i);
+                    try {
+                        listener.onGroupSubjectChanged(ChatSessionAdapter.this);
+                    } catch (RemoteException e) {
+                        // The RemoteCallbackList will take care of removing the
+                        // dead listeners.
+                    }
+                }
+                mRemoteListeners.finishBroadcast();
                 //  insertMessageInDb(member.getName(), null, System.currentTimeMillis(),
                 //      Imps.MessageType.PRESENCE_AVAILABLE);
             }
@@ -1583,5 +1594,15 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
     }
 
-
+    @Override
+    public void setGroupChatSubject(String subject) throws RemoteException {
+        try {
+            if (isGroupChatSession()) {
+                ChatGroup group = (ChatGroup)mChatSession.getParticipant();
+                getGroupManager().setGroupSubject(group, subject);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

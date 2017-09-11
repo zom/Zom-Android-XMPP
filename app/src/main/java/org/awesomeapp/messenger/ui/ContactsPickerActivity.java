@@ -82,6 +82,7 @@ public class ContactsPickerActivity extends BaseActivity {
 
     private Handler mHandler = new Handler();
 
+    private ArrayList<String> excludedContacts;
     private String mExcludeClause;
     Uri mData;
 
@@ -143,6 +144,9 @@ public class ContactsPickerActivity extends BaseActivity {
             }
         });
 
+        boolean isGroupOnlyMode = isGroupOnlyMode();
+        excludedContacts = getIntent().getStringArrayListExtra(EXTRA_EXCLUDED_CONTACTS);
+
         View btnCreateGroup = findViewById(R.id.btnCreateGroup);
         btnCreateGroup.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -150,6 +154,7 @@ public class ContactsPickerActivity extends BaseActivity {
                 setGroupMode(true);
             }
         });
+        btnCreateGroup.setVisibility(isGroupOnlyMode ? View.GONE : View.VISIBLE);
 
         View btnAddContact = findViewById(R.id.btnAddFriend);
         btnAddContact.setOnClickListener(new View.OnClickListener() {
@@ -159,6 +164,7 @@ public class ContactsPickerActivity extends BaseActivity {
                 startActivityForResult(i, REQUEST_CODE_ADD_CONTACT);
             }
         });
+        btnAddContact.setVisibility(isGroupOnlyMode ? View.GONE : View.VISIBLE);
 
         // Make sure the tag view can not be more than a third of the screen
         View root = findViewById(R.id.llRoot);
@@ -176,7 +182,7 @@ public class ContactsPickerActivity extends BaseActivity {
         }
 
         mListView = (ListView)findViewById(R.id.contactsList);
-        setGroupMode(false);
+        setGroupMode(isGroupOnlyMode);
 
         mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
@@ -234,6 +240,10 @@ public class ContactsPickerActivity extends BaseActivity {
         if (i != -1) {
             select(i);
         }
+    }
+
+    private boolean isGroupOnlyMode() {
+        return getIntent().hasExtra(EXTRA_EXCLUDED_CONTACTS);
     }
 
     private boolean isGroupMode() {
@@ -359,7 +369,7 @@ public class ContactsPickerActivity extends BaseActivity {
         switch (item.getItemId())
         {
             case android.R.id.home:
-                if (isGroupMode()) {
+                if (isGroupMode() && !isGroupOnlyMode()) {
                     setGroupMode(false);
                 } else {
                     finish();
@@ -375,7 +385,7 @@ public class ContactsPickerActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        if (isGroupMode()) {
+        if (isGroupMode() && !isGroupOnlyMode()) {
             setGroupMode(false);
             return;
         }
@@ -474,8 +484,12 @@ public class ContactsPickerActivity extends BaseActivity {
         long id = mAdapter.getItemId(index);
         if (!isSelected(id)) {
             Cursor cursor = (Cursor) mAdapter.getItem(index);
+            String userName = cursor.getString(ContactListItem.COLUMN_CONTACT_USERNAME);
+            if (excludedContacts != null && excludedContacts.contains(userName)) {
+                return;
+            }
             SelectedContact contact = new SelectedContact(id,
-                    cursor.getString(ContactListItem.COLUMN_CONTACT_USERNAME),
+                    userName,
                     (int) cursor.getLong(ContactListItem.COLUMN_CONTACT_ACCOUNT),
                     (int) cursor.getLong(ContactListItem.COLUMN_CONTACT_PROVIDER));
             mSelection.put(id, contact);
@@ -538,6 +552,13 @@ public class ContactsPickerActivity extends BaseActivity {
             int index = cursor.getPosition();
             long itemId = getItemId(index);
             holder.mAvatarCheck.setVisibility(isSelected(itemId) ? View.VISIBLE : View.GONE);
+            String userName = cursor.getString(ContactListItem.COLUMN_CONTACT_USERNAME);
+            if (excludedContacts != null && excludedContacts.contains(userName)) {
+                holder.mLine1.setTextColor((holder.mLine1.getCurrentTextColor() & 0x00ffffff) | 0x80000000);
+                holder.mLine1.setText(getString(R.string.is_already_in_your_group, holder.mLine1.getText()));
+            } else {
+                holder.mLine1.setTextColor(holder.mLine1.getCurrentTextColor() | 0xff000000);
+            }
         }
     }
 
