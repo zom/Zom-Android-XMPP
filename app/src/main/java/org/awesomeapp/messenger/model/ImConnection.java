@@ -24,6 +24,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import android.content.Context;
 
+import org.jivesoftware.smackx.httpfileupload.UploadProgressListener;
+
 /**
  * An <code>ImConnection</code> is an abstract representation of a connection to
  * the IM server.
@@ -266,6 +268,6 @@ public abstract class ImConnection {
 
     public abstract void broadcastMigrationIdentity (String newIdentity);
 
-    public abstract String publishFile (String fileName, String mimeType, long fileSize, InputStream is);
+    public abstract String publishFile (String fileName, String mimeType, long fileSize, InputStream is, boolean doEncryption, UploadProgressListener listener);
 
 }

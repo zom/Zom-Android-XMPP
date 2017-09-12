@@ -37,6 +37,7 @@ import org.awesomeapp.messenger.service.RemoteImService;
 
 import org.awesomeapp.messenger.tasks.ChatSessionInitTask;
 import org.awesomeapp.messenger.util.Debug;
+import org.jivesoftware.smackx.httpfileupload.UploadProgressListener;
 
 import java.io.InputStream;
 import java.util.Collection;
@@ -642,9 +643,9 @@ public class ImConnectionAdapter extends org.awesomeapp.messenger.service.IImCon
             return null;
     }
 
-    public String publishFile (String fileName, String mimeType, long fileSize, InputStream is)
+    public String publishFile (String fileName, String mimeType, long fileSize, InputStream is, boolean doEncryption, UploadProgressListener listener)
     {
-        return mConnection.publishFile(fileName, mimeType, fileSize, is);
+        return mConnection.publishFile(fileName, mimeType, fileSize, is, doEncryption, listener);
     }
 
 }

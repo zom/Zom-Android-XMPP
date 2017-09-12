@@ -1591,17 +1591,10 @@ public class XmppConnection extends ImConnection {
     }
 
     @Override
-    public String publishFile(String fileName, String mimeType, long fileSize, java.io.InputStream is) {
+    public String publishFile(String fileName, String mimeType, long fileSize, java.io.InputStream is, boolean doEncryption, UploadProgressListener listener) {
 
         UploaderManager uploader = new UploaderManager();
-        String result = uploader.doUpload(fileName, mimeType, fileSize, is,  new UploadProgressListener() {
-            @Override
-            public void onUploadProgress(long l, long l1) {
-
-                debug(TAG, "upload complete: " + l + "," + l1);
-                //once this is done, send the message
-            }
-        });
+        String result = uploader.doUpload(fileName, mimeType, fileSize, is, listener, doEncryption);
 
         return result;
     }
@@ -4483,7 +4476,7 @@ public class XmppConnection extends ImConnection {
             }
         }
 
-        public String doUpload (String fileName, String mimeType, long fileSize, InputStream is, UploadProgressListener uploadListener)
+        public String doUpload (String fileName, String mimeType, long fileSize, InputStream is, UploadProgressListener uploadListener, boolean doEncryption)
         {
             if (!mIsDiscovered)
                 return null;
@@ -4506,12 +4499,17 @@ public class XmppConnection extends ImConnection {
                         //   String defaultType = "application/octet-stream";
                         Slot upSlot = manager.requestSlot(fileName, fileSize, mimeType);
 
-                        String uploadKey = uploadFile(fileSize, is, upSlot, uploadListener);
+                        String uploadKey = uploadFile(fileSize, is, upSlot, uploadListener, doEncryption);
 
                         if (uploadKey != null) {
                             URL resultUrl = upSlot.getGetUrl();
-                            String shareUrl = resultUrl.toExternalForm() + "#" + uploadKey;
-                            shareUrl = shareUrl.replace("https", "aesgcm"); //this indicates it is encrypted
+                            String shareUrl = resultUrl.toExternalForm();
+
+                            if (doEncryption) {
+                                shareUrl += "#" + uploadKey;
+                                shareUrl = shareUrl.replace("https", "aesgcm"); //this indicates it is encrypted
+                            }
+
                             return shareUrl;
                         }
                     } catch (Exception e) {
@@ -4524,7 +4522,7 @@ public class XmppConnection extends ImConnection {
             return null;
         }
 
-        private String uploadFile(long fileSize, InputStream fis, Slot slot, UploadProgressListener listener) throws IOException {
+        private String uploadFile(long fileSize, InputStream fis, Slot slot, UploadProgressListener listener, boolean useEncryption) throws IOException {
 
             String result = null;
 
@@ -4560,10 +4558,20 @@ public class XmppConnection extends ImConnection {
                         listener.onUploadProgress(0L, fileSize);
                     }
 
-                    byte[] keyAndIv = secureRandom.generateSeed(48);
-                    result = Downloader.bytesToHex(keyAndIv);
-                    InputStream cis = Downloader.setupInputStream(fis,keyAndIv);
-                    BufferedInputStream inputStream = new BufferedInputStream(cis);
+                    BufferedInputStream inputStream = null;
+
+                    if (useEncryption) {
+                        byte[] keyAndIv = secureRandom.generateSeed(48);
+                        result = Downloader.bytesToHex(keyAndIv);
+                        InputStream cis = Downloader.setupInputStream(fis, keyAndIv);
+                        inputStream = new BufferedInputStream(cis);
+                    }
+                    else
+                    {
+                        inputStream = new BufferedInputStream(fis);
+                        result = "none";
+                    }
+
                     byte[] buffer = new byte[4096];
 
                     int bytesRead;

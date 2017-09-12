@@ -14,6 +14,7 @@ import org.awesomeapp.messenger.model.Message;
 import org.awesomeapp.messenger.model.Presence;
 import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
 import org.awesomeapp.messenger.provider.Imps;
+import org.jivesoftware.smackx.httpfileupload.UploadProgressListener;
 import org.jxmpp.jid.Jid;
 
 import java.io.InputStream;
@@ -343,7 +344,7 @@ public class LoopbackConnection extends ImConnection {
     }
 
     @Override
-    public String publishFile(String fileName, String mimeType, long fileSize, InputStream is) {
+    public String publishFile(String fileName, String mimeType, long fileSize, InputStream is, boolean doEncryption, UploadProgressListener listener) {
         return null;
     }
 

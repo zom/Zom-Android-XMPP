@@ -64,6 +64,7 @@ import net.java.otr4j.session.SessionStatus;
 import org.awesomeapp.messenger.service.RemoteImService;
 import org.awesomeapp.messenger.service.StatusBarNotifier;
 import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.smackx.httpfileupload.UploadProgressListener;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.stringprep.XmppStringprepException;
 
@@ -145,6 +146,8 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
         mOtrChatSessions = new HashMap<String, OtrChatSessionAdapter>();
 
+        mDataHandlerListener = new DataHandlerListenerImpl();
+
         ImEntity participant = mChatSession.getParticipant();
 
         if (participant instanceof ChatGroup) {
@@ -163,7 +166,6 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             if (mConnection != null)
             {
                 mDataHandler = new OtrDataHandler(mChatSession);
-                mDataHandlerListener = new DataHandlerListenerImpl();
                 mDataHandler.setDataListener(mDataHandlerListener);
 
                 OtrChatManager cm = service.getOtrChatManager();
@@ -478,7 +480,22 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
                     try
                     {
-                        String resultUrl = mConnection.publishFile(fileName, mimeType, fileLocal.length(), new info.guardianproject.iocipher.FileInputStream(fileLocal));
+
+                        boolean doEncryption = !isGroupChatSession();
+
+                        UploadProgressListener listener = new UploadProgressListener() {
+                            @Override
+                            public void onUploadProgress(long sent, long total) {
+                                //debug(TAG, "upload complete: " + l + "," + l1);
+                                //once this is done, send the message
+                                float percentF = ((float)sent)/((float)total)*100f;
+
+                                if (mDataHandlerListener != null)
+                                    mDataHandlerListener.onTransferProgress(true,"","",mediaUri.toString(),percentF);
+                            }
+                        };
+
+                        String resultUrl = mConnection.publishFile(fileName, mimeType, fileLocal.length(), new info.guardianproject.iocipher.FileInputStream(fileLocal), doEncryption, listener);
 
                         if (resultUrl != null)
                             sendMediaMessage(resultUrl, mediaUri, mimeType);
@@ -745,6 +762,11 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                 String urlDownload = message.substring(matchStart,matchEnd);
                 try {
                     String domain = JidCreate.bareFrom(jid).getDomain().toString();
+
+                    //remove the conference subdomain when checking a match to the media upload
+                    if (domain.contains("conference."))
+                        domain = domain.replace("conference.","");
+
                     if (urlDownload.contains(domain))
                         return urlDownload;
                 }

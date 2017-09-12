@@ -548,10 +548,6 @@ public class ConversationView {
         public void onIncomingFileTransferProgress(String file, int percent)
                 throws RemoteException {
 
-            if (percent == 100)
-                scheduleRequery(FAST_QUERY_INTERVAL);
-
-
             /**
             android.os.Message message = android.os.Message.obtain(null, SHOW_DATA_PROGRESS, (int) (mProviderId >> 32),
                     (int) mProviderId, -1);
