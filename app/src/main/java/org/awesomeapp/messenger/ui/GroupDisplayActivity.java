@@ -28,6 +28,7 @@ import android.widget.TextView;
 
 import org.apache.commons.codec.DecoderException;
 import org.awesomeapp.messenger.ImApp;
+import org.awesomeapp.messenger.MainActivity;
 import org.awesomeapp.messenger.model.ChatGroup;
 import org.awesomeapp.messenger.model.ChatSession;
 import org.awesomeapp.messenger.model.Contact;
@@ -459,6 +460,12 @@ public class GroupDisplayActivity extends BaseActivity {
             IChatSessionManager manager = mConn.getChatSessionManager();
             IChatSession session = manager.getChatSession(mAddress);
             session.leave();
+
+            //clear the stack and go back to the main activity
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+
         }
         catch (Exception e)
         {

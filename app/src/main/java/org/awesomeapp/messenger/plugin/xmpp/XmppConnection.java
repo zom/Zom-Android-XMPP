@@ -894,17 +894,21 @@ public class XmppConnection extends ImConnection {
 
         }
 
-        public void setGroupSubject(ChatGroup group, String subject) {
-            String chatRoomJid = group.getAddress().getAddress();
-            if (mMUCs.containsKey(chatRoomJid))
-            {
-                MultiUserChat muc = mMUCs.get(chatRoomJid);
-                try {
-                    muc.changeSubject(subject);
-                } catch (Exception e) {
-                    e.printStackTrace();
+        public void setGroupSubject(final ChatGroup group, final String subject) {
+
+            execute (new Runnable() {
+                public void run() {
+                    String chatRoomJid = group.getAddress().getAddress();
+                    if (mMUCs.containsKey(chatRoomJid)) {
+                        MultiUserChat muc = mMUCs.get(chatRoomJid);
+                        try {
+                            muc.changeSubject(subject);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
-            }
+            });
         }
 
         public void loadMembers (ChatGroup chatGroup) {
