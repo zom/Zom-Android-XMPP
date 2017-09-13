@@ -459,17 +459,23 @@ public class GroupDisplayActivity extends BaseActivity {
         try {
             IChatSessionManager manager = mConn.getChatSessionManager();
             IChatSession session = manager.getChatSession(mAddress);
-            session.leave();
 
-            //clear the stack and go back to the main activity
-            Intent intent = new Intent(this, MainActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
+            if (session == null)
+                session = manager.createChatSession(mAddress,true);
+
+            if (session != null) {
+                session.leave();
+
+                //clear the stack and go back to the main activity
+                Intent intent = new Intent(this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }
 
         }
         catch (Exception e)
         {
-            Log.e(ImApp.LOG_TAG,"error inviting contacts to group",e);
+            Log.e(ImApp.LOG_TAG,"error leaving group",e);
         }
     }
 }
