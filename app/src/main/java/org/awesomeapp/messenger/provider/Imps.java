@@ -2429,7 +2429,9 @@ public class Imps {
 
         ContentValues values = new ContentValues();
         values.put(Imps.Messages.BODY, body);
-        values.put(Imps.Messages.MIME_TYPE, mimeType);
+
+        if (mimeType != null)
+            values.put(Imps.Messages.MIME_TYPE, mimeType);
 
         return resolver.update(builder.build(), values, null, null);
     }

@@ -25,6 +25,7 @@ import org.awesomeapp.messenger.crypto.otr.OtrDataHandler;
 import org.awesomeapp.messenger.crypto.otr.OtrDataHandler.Transfer;
 import org.awesomeapp.messenger.crypto.otr.OtrDebugLogger;
 import org.awesomeapp.messenger.model.Address;
+import org.awesomeapp.messenger.model.Message;
 import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
 import  org.awesomeapp.messenger.service.IChatListener;
 import org.awesomeapp.messenger.service.IDataListener;
@@ -405,16 +406,16 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         if (msg.getDateTime() != null)
             sendTime = msg.getDateTime().getTime();
 
-        updateMessageInDb(msg.getID(),newType,sendTime);
+        updateMessageInDb(msg.getID(),newType,sendTime, null);
 
 
     }
 
-    private void sendMediaMessage(String publishUrl, String localUrl, String mimeType) {
+    private org.awesomeapp.messenger.model.Message storeMediaMessage(String localUrl, String mimeType) {
 
-        String mediaPath = localUrl + ' ' + publishUrl;
+        String mediaPath = localUrl;
 
-        org.awesomeapp.messenger.model.Message msg = new org.awesomeapp.messenger.model.Message(publishUrl);
+        org.awesomeapp.messenger.model.Message msg = new org.awesomeapp.messenger.model.Message(localUrl);
         msg.setID(nextID());
 
         msg.setFrom(mConnection.getLoginUser().getAddress());
@@ -425,12 +426,24 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         insertMessageInDb(null, mediaPath, sendTime, msg.getType(), 0, msg.getID(), mimeType);
         insertOrUpdateChat(mediaPath);
 
+        return msg;
+    }
+
+    private void sendMediaMessage(String localUrl, String publishUrl, org.awesomeapp.messenger.model.Message msg) {
+
+        String mediaPath = localUrl + ' ' + publishUrl;
+
+        long sendTime = System.currentTimeMillis();
+
+        msg.setBody(publishUrl);
+        //insertOrUpdateChat(mediaPath);
+
         int newType = mChatSession.sendMessageAsync(msg);
 
         if (msg.getDateTime() != null)
             sendTime = msg.getDateTime().getTime();
 
-        updateMessageInDb(msg.getID(),newType,sendTime);
+        updateMessageInDb(msg.getID(),newType,sendTime,mediaPath);
 
 
     }
@@ -463,6 +476,8 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
         if (mChatSession.canOmemo() || mChatSession.getParticipant() instanceof ChatGroup)
         {
+            final Message msgMedia = storeMediaMessage(mediaUri, mimeType);
+
             //TODO do HTTP Upload XEP 363
             //this is ugly... we need a nice async task!
             new Thread ()
@@ -495,10 +510,12 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                             }
                         };
 
+
+
                         String resultUrl = mConnection.publishFile(fileName, mimeType, fileLocal.length(), new info.guardianproject.iocipher.FileInputStream(fileLocal), doEncryption, listener);
 
                         if (resultUrl != null)
-                            sendMediaMessage(resultUrl, mediaUri, mimeType);
+                            sendMediaMessage(mediaUri, resultUrl, msgMedia);
                     }
                     catch (FileNotFoundException fe)
                     {
@@ -940,7 +957,10 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         return Imps.insertMessageInDb(mContentResolver, mIsGroupChat, mContactId, isEncrypted, contact, body, time, type, errCode, id, mimeType);
     }
 
-    int updateMessageInDb(String id, int type, long time) {
+    int updateMessageInDb(String id, int type, long time, String body) {
+
+        if (body != null)
+            Imps.updateMessageBody(mContentResolver, id, body, null);
 
         return Imps.updateMessageInDb(mContentResolver, id, type, time, mContactId);
     }
@@ -1189,7 +1209,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
         @Override
         public void onMessagePostponed(ChatSession ses, String id) {
-            updateMessageInDb(id, Imps.MessageType.QUEUED, -1);
+            updateMessageInDb(id, Imps.MessageType.QUEUED, -1, null);
         }
 
         @Override
