@@ -1159,6 +1159,7 @@ public class XmppConnection extends ImConnection {
                             EntityBareJid inviteeJid = JidCreate.entityBareFrom(invitee.getAddress().getAddress());
                             muc.invite(inviteeJid, reason);
                             muc.grantMembership(inviteeJid);
+                            muc.grantAdmin(inviteeJid);
                             group.addMemberAsync(invitee);
                         } catch (Exception nce) {
                             Log.e(ImApp.LOG_TAG, "not connected error trying to add invite", nce);
