@@ -169,6 +169,17 @@ public class OnboardingManager {
 
     }
 
+    public static String generateXmppLink (String username, String fingerprint) throws IOException
+    {
+        StringBuffer inviteUrl = new StringBuffer();
+        inviteUrl.append("xmpp:");
+        inviteUrl.append(username);
+        inviteUrl.append("?subscribe");
+        inviteUrl.append("&otr-fingerprint=").append(fingerprint);
+
+        return inviteUrl.toString();
+    }
+
     public static String generateInviteLink (Context context, String username, String fingerprint, String nickname) throws IOException
     {
         return generateInviteLink(context, username, fingerprint, nickname, false);

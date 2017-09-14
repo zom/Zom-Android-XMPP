@@ -157,32 +157,6 @@ public class AccountFragment extends Fragment {
                 }
             });
 
-            TextView tvFingerprint = (TextView) mView.findViewById(R.id.tvFingerprint);
-
-            ivScan = (ImageView) mView.findViewById(R.id.qrcode);
-
-            ivScan.setOnClickListener(new View.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-
-                    String inviteString;
-                    try {
-                        inviteString = OnboardingManager.generateInviteLink(getActivity(), mUserAddress, mUserKey, mNickname);
-
-                        Intent intent = new Intent(getActivity(), QrDisplayActivity.class);
-                        intent.putExtra(Intent.EXTRA_TEXT, inviteString);
-                        intent.setType("text/plain");
-                        startActivity(intent);
-
-                    } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-
-                }
-
-            });
 
             mIvAvatar = (ImageView) mView.findViewById(R.id.imageAvatar);
             mIvAvatar.setOnClickListener(new View.OnClickListener() {
@@ -192,20 +166,6 @@ public class AccountFragment extends Fragment {
 
                     startAvatarTaker();
 
-                }
-            });
-
-            ImageView btnQrShare = (ImageView) mView.findViewById(R.id.qrshare);
-            btnQrShare.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    try {
-                        String inviteLink = OnboardingManager.generateInviteLink(getActivity(), mUserAddress, mUserKey, mNickname);
-                        new QrShareAsyncTask(getActivity()).execute(inviteLink, mNickname);
-                    } catch (IOException ioe) {
-                        Log.e(ImApp.LOG_TAG, "couldn't generate QR code", ioe);
-                    }
                 }
             });
 
@@ -222,26 +182,38 @@ public class AccountFragment extends Fragment {
             tvUsername.setText(mUserAddress);
             mTvNickname.setText(mNickname);
 
-            if (mUserKey != null) {
-                tvFingerprint.setText(prettyPrintFingerprint(mUserKey));
-            }
-
             IImConnection conn = mApp.getConnection(mProviderId, mAccountId);
+
             try {
                 final List<String> remoteOmemoFingerprints = conn.getFingerprints(mUserAddress);
 
-
                 if (remoteOmemoFingerprints != null && remoteOmemoFingerprints.size() > 0) {
-                    tvFingerprint = (TextView) mView.findViewById(R.id.omemoFingerprint);
+
+                    ImageView btnQrDisplay = (ImageView)mView.findViewById(R.id.omemoqrcode);
+                    btnQrDisplay.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            try {
+                                String xmppLink = OnboardingManager.generateXmppLink(mUserAddress, remoteOmemoFingerprints.get(0));
+                                Intent intent = new Intent(getActivity(),QrDisplayActivity.class);
+                                intent.putExtra(Intent.EXTRA_TEXT,xmppLink);
+                                getActivity().startActivity(intent);
+                                
+                            } catch (IOException ioe) {
+                                Log.e(ImApp.LOG_TAG, "couldn't generate QR code", ioe);
+                            }
+                        }
+                    });
+                    TextView tvFingerprint = (TextView) mView.findViewById(R.id.omemoFingerprint);
                     tvFingerprint.setText(prettyPrintFingerprint(remoteOmemoFingerprints.get(0)));
 
-                    btnQrShare = (ImageView) mView.findViewById(R.id.omemoqrshare);
+                    ImageView btnQrShare = (ImageView) mView.findViewById(R.id.omemoqrshare);
                     btnQrShare.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
 
                             try {
-                                String inviteLink = OnboardingManager.generateInviteLink(getActivity(), mUserAddress, remoteOmemoFingerprints.get(0), mNickname);
+                                String inviteLink = OnboardingManager.generateInviteLink(getActivity(),mUserAddress,remoteOmemoFingerprints.get(0),mNickname);
                                 new QrShareAsyncTask(getActivity()).execute(inviteLink, mNickname);
                             } catch (IOException ioe) {
                                 Log.e(ImApp.LOG_TAG, "couldn't generate QR code", ioe);

@@ -203,14 +203,9 @@ public class AddContactActivity extends BaseActivity {
                 if (hasCameraPermission()) {
                     ImApp app = ((ImApp) getApplication());
 
-                    String nickname = app.getDefaultNickname();
-                    if (nickname == null)
-                        nickname = new XmppAddress(app.getDefaultUsername()).getUser();
-
-                    String inviteString;
                     try {
-                        inviteString = OnboardingManager.generateInviteLink(AddContactActivity.this, app.getDefaultUsername(), app.getDefaultOtrKey(), nickname);
-                        OnboardingManager.inviteScan(AddContactActivity.this, inviteString);
+                        String xmppLink = OnboardingManager.generateXmppLink(app.getDefaultUsername(), app.getDefaultOtrKey());
+                        OnboardingManager.inviteScan(AddContactActivity.this, xmppLink);
                     } catch (IOException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
