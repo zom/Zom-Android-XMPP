@@ -32,6 +32,7 @@ import org.awesomeapp.messenger.MainActivity;
 import org.awesomeapp.messenger.model.ChatGroup;
 import org.awesomeapp.messenger.model.ChatSession;
 import org.awesomeapp.messenger.model.Contact;
+import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.service.IChatSession;
 import org.awesomeapp.messenger.service.IChatSessionManager;
@@ -41,6 +42,7 @@ import org.awesomeapp.messenger.ui.onboarding.OnboardingManager;
 import org.awesomeapp.messenger.ui.qr.QrShareAsyncTask;
 import org.awesomeapp.messenger.ui.widgets.GroupAvatar;
 import org.awesomeapp.messenger.ui.widgets.LetterAvatar;
+import org.jxmpp.jid.Jid;
 
 import java.util.ArrayList;
 
@@ -265,7 +267,7 @@ public class GroupDisplayActivity extends BaseActivity {
                     int colNickname = c.getColumnIndex(Imps.GroupMembers.NICKNAME);
                     while (c.moveToNext()) {
                         GroupMember member = new GroupMember();
-                        member.username = c.getString(colUsername);
+                        member.username = new XmppAddress(c.getString(colUsername)).getBareAddress();
                         member.nickname = c.getString(colNickname);
                         try {
                             member.avatar = DatabaseUtils.getAvatarFromAddress(cr, member.username, ImApp.SMALL_AVATAR_WIDTH, ImApp.SMALL_AVATAR_HEIGHT);

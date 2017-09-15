@@ -684,7 +684,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             Contact groupMember = group.getMember(username);
             if (groupMember != null)
             {
-                return groupMember.getName();
+                return groupMember.getAddress().getAddress();
             }
             else {
                 // not found, impossible

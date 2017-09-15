@@ -198,7 +198,6 @@ public class AccountFragment extends Fragment {
                                 Intent intent = new Intent(getActivity(),QrDisplayActivity.class);
                                 intent.putExtra(Intent.EXTRA_TEXT,xmppLink);
                                 getActivity().startActivity(intent);
-                                
                             } catch (IOException ioe) {
                                 Log.e(ImApp.LOG_TAG, "couldn't generate QR code", ioe);
                             }

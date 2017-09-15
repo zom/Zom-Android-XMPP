@@ -209,7 +209,7 @@ public abstract class ChatGroupManager {
         }
         if (joined != null) {
             for (Contact contact : joined) {
-                notifyMemberJoined(group, contact);
+                notifyMemberJoined(group, contact, null);
             }
         }
         if (left != null) {
@@ -275,8 +275,8 @@ public abstract class ChatGroupManager {
      * @param group the group into which the contact has joined.
      * @param contact the contact who has joined into the group.
      */
-    protected void notifyMemberJoined(ChatGroup group, Contact contact) {
-        group.notifyMemberJoined(contact);
+    protected void notifyMemberJoined(ChatGroup group, Contact contact, String groupAddress) {
+        group.notifyMemberJoined(groupAddress, contact);
     }
 
     /**

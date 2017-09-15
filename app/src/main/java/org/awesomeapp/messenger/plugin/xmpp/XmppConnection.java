@@ -939,7 +939,7 @@ public class XmppConnection extends ImConnection {
                     xa = new XmppAddress(occupant.toString());
 
                 Contact mucContact = findOrCreateContact(xa.getAddress());
-                chatGroup.addMemberAsync(mucContact);
+                chatGroup.notifyMemberJoined(occupant.toString(),mucContact);
             }
 
             List<Affiliate> mucOwners = muc.getOwners();
@@ -947,7 +947,7 @@ public class XmppConnection extends ImConnection {
             {
                 xa = new XmppAddress(member.getJid().toString());
                 Contact mucContact = findOrCreateContact(xa.getAddress());
-                chatGroup.addMemberAsync(mucContact);
+                chatGroup.notifyMemberJoined(member.getAffiliation().toString(),mucContact);
                 chatGroup.setOwner(mucContact);
             }
 
@@ -957,7 +957,7 @@ public class XmppConnection extends ImConnection {
             {
                 xa = new XmppAddress(member.getJid().toString());
                 Contact mucContact = findOrCreateContact(xa.getAddress());
-                chatGroup.addMemberAsync(mucContact);
+                chatGroup.notifyMemberJoined(member.getAffiliation().toString(),mucContact);
 
             }
         }
@@ -996,7 +996,7 @@ public class XmppConnection extends ImConnection {
                         xa = new XmppAddress(entityFullJid.toString());
 
                     Contact mucContact = findOrCreateContact(xa.getAddress());
-                    chatGroup.addMemberAsync(mucContact);
+                    chatGroup.notifyMemberJoined(entityFullJid.toString(),mucContact);
                 }
 
                 @Override
@@ -1012,7 +1012,7 @@ public class XmppConnection extends ImConnection {
                     else
                         xa = new XmppAddress(entityFullJid.toString());
                     Contact mucContact = findOrCreateContact(xa.getAddress());
-                    chatGroup.removeMemberAsync(mucContact);
+                    chatGroup.notifyMemberLeft(mucContact);
 
                 }
 
@@ -1029,7 +1029,7 @@ public class XmppConnection extends ImConnection {
                         xa = new XmppAddress(entityFullJid.toString());
 
                     Contact mucContact = findOrCreateContact(xa.getAddress());
-                    chatGroup.removeMemberAsync(mucContact);
+                    chatGroup.notifyMemberLeft(mucContact);
                 }
 
                 @Override
@@ -1160,7 +1160,7 @@ public class XmppConnection extends ImConnection {
                             muc.invite(inviteeJid, reason);
                             muc.grantMembership(inviteeJid);
                             muc.grantAdmin(inviteeJid);
-                            group.addMemberAsync(invitee);
+                            group.notifyMemberJoined(null, invitee);
                         } catch (Exception nce) {
                             Log.e(ImApp.LOG_TAG, "not connected error trying to add invite", nce);
 

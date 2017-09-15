@@ -30,24 +30,23 @@ public class ChatGroup extends ImEntity {
     private Address mAddress;
     private String mName;
     private HashMap<String, Contact> mMembers;
+    private HashMap<String, Contact> mGroupAddressToContactMap;
     private Contact mOwner;
     private CopyOnWriteArrayList<GroupMemberListener> mMemberListeners;
 
     public ChatGroup(Address address, String name, ChatGroupManager manager) {
-        this(address, name, null, manager);
-    }
-
-    public ChatGroup(Address address, String name, Collection<Contact> members,
-            ChatGroupManager manager) {
 
         mAddress = address;
         mName = name;
         mManager = manager;
-        mMembers = new HashMap<String,Contact>();
+        mMembers = new HashMap<>();
+        mGroupAddressToContactMap = new HashMap<>();
 
+        /**
         if (members != null)
             for (Contact contact : members)
                 mMembers.put(contact.getAddress().getBareAddress(), contact);
+         **/
 
         mMemberListeners = new CopyOnWriteArrayList<GroupMemberListener>();
     }
@@ -100,29 +99,12 @@ public class ChatGroup extends ImEntity {
      * @return an unmodifiable collection of the members of the group.
      */
     public Contact getMember(String jid) {
-        return mMembers.get(jid);
-    }
+        Contact member = mMembers.get(jid);
 
-    /**
-     * Adds a member to this group. TODO: more docs on async callbacks.
-     *
-     * @param contact the member to add.
-     */
-    public synchronized void addMemberAsync(Contact contact) {
-        //mManager.addGroupMemberAsync(this, contact);
+        if (member == null)
+            member = mGroupAddressToContactMap.get(jid);
 
-        notifyMemberJoined(contact);
-    }
-
-    /**
-     * Removes a member from this group. TODO: more docs on async callbacks.
-     *
-     * @param contact the member to remove.
-     */
-    public synchronized void removeMemberAsync(Contact contact) {
-        //mManager.removeGroupMemberAsync(this, contact);
-
-        notifyMemberLeft(contact);
+        return member;
     }
 
     /**
@@ -130,12 +112,16 @@ public class ChatGroup extends ImEntity {
      *
      * @param newContact the {@link Contact} who has joined into the group.
      */
-    void notifyMemberJoined(Contact newContact) {
+    public void notifyMemberJoined(String groupAddress, Contact newContact) {
 
         Contact contact = mMembers.get(newContact.getAddress().getBareAddress());
 
         if (contact == null) {
             mMembers.put(newContact.getAddress().getBareAddress(), newContact);
+
+            if (groupAddress != null)
+                mGroupAddressToContactMap.put(groupAddress, newContact);
+
             for (GroupMemberListener listener : mMemberListeners) {
                 listener.onMemberJoined(this, newContact);
             }
@@ -153,8 +139,16 @@ public class ChatGroup extends ImEntity {
      *
      * @param contact the contact who has left this group.
      */
-    void notifyMemberLeft(Contact contact) {
+    public void notifyMemberLeft(Contact contact) {
         if (mMembers.remove(contact.getAddress().getBareAddress())!=null) {
+
+            for (String groupAddress : mGroupAddressToContactMap.keySet())
+            {
+                Contact member = mGroupAddressToContactMap.get(groupAddress);
+                if (contact.getAddress().equals(member.getAddress()))
+                    mGroupAddressToContactMap.remove(groupAddress);
+            }
+
             for (GroupMemberListener listener : mMemberListeners) {
                 listener.onMemberLeft(this, contact);
             }
@@ -184,7 +178,7 @@ public class ChatGroup extends ImEntity {
     {
         for (Contact member : mMembers.values())
         {
-            removeMemberAsync(member);
+            notifyMemberLeft(member);
         }
 
         for (GroupMemberListener listener : mMemberListeners) {
@@ -201,13 +195,14 @@ public class ChatGroup extends ImEntity {
 
         for (Contact newContact : members)
         {
-            addMemberAsync(newContact);
+            notifyMemberJoined(null, newContact);
         }
 
     }
 
     public void setOwner (Contact owner)
     {
+
         mOwner = owner;
     }
 }
