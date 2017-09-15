@@ -2706,7 +2706,9 @@ public class ConversationView {
 
             int messageType = cursor.getInt(mTypeColumn);
 
-            String nickname = isGroupChat() ? cursor.getString(mNicknameColumn) : mRemoteNickname;
+            String address = isGroupChat() ? cursor.getString(mNicknameColumn)  : mRemoteAddress;
+            String nickname = isGroupChat() ? new XmppAddress(cursor.getString(mNicknameColumn)).getUser() : mRemoteNickname;
+
             String mimeType = cursor.getString(mMimeTypeColumn);
             int id = cursor.getInt(mIdColumn);
             String body = cursor.getString(mBodyColumn);
@@ -2774,7 +2776,7 @@ public class ConversationView {
 
             switch (messageType) {
             case Imps.MessageType.INCOMING:
-                messageView.bindIncomingMessage(viewHolder,id, messageType, mRemoteAddress, nickname, mimeType, body, date, mMarkup, false, encState, isGroupChat(), mPresenceStatus);
+                messageView.bindIncomingMessage(viewHolder,id, messageType, address, nickname, mimeType, body, date, mMarkup, false, encState, isGroupChat(), mPresenceStatus);
 
                 break;
 
