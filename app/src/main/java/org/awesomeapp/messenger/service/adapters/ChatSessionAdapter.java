@@ -745,13 +745,13 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
     // Pattern for recognizing a URL, based off RFC 3986
     private static final Pattern urlPattern = Pattern.compile(
-            "(?:^|[\\W])((ht|f)tp(s?):\\/\\/|www\\.)"
+            "(?:^|[\\W])((ht|f)tp(s?):\\/\\/)"
                     + "(([\\w\\-]+\\.){1,}?([\\w\\-.~]+\\/?)*"
                     + "[\\p{Alnum}.,%_=?&#\\-+()\\[\\]\\*$~@!:/{};']*)",
             Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
 
     private static final Pattern aesGcmUrlPattern = Pattern.compile(
-            "(?:^|[\\W])(aesgcm:\\/\\/|www\\.)"
+            "(?:^|[\\W])(aesgcm:\\/\\/)"
                     + "(([\\w\\-]+\\.){1,}?([\\w\\-.~]+\\/?)*"
                     + "[\\p{Alnum}.,%_=?&#\\-+()\\[\\]\\*$~@!:/{};']*)",
             Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
