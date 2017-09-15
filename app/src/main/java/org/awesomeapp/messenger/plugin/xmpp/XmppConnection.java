@@ -995,8 +995,18 @@ public class XmppConnection extends ImConnection {
                     else
                         xa = new XmppAddress(entityFullJid.toString());
 
-                    Contact mucContact = findOrCreateContact(xa.getAddress());
+                    Contact mucContact = new Contact(xa, xa.getUser(), Imps.Contacts.TYPE_NORMAL);
                     chatGroup.notifyMemberJoined(entityFullJid.toString(),mucContact);
+
+                    try {
+                        //if I am the owner, then grant moderator rights
+                        if (muc.getOwners().size() > 0
+                        && muc.getOwners().get(0).getJid().equals(mUserJid)) {
+                            //try to grant the moderator status
+                            muc.grantModerator(entityFullJid.getResourcepart());
+                        }
+                    }
+                    catch (Exception e) {}
                 }
 
                 @Override
@@ -1011,7 +1021,8 @@ public class XmppConnection extends ImConnection {
                         xa = new XmppAddress(jidSource.toString());
                     else
                         xa = new XmppAddress(entityFullJid.toString());
-                    Contact mucContact = findOrCreateContact(xa.getAddress());
+
+                    Contact mucContact = new Contact(xa, xa.getUser(), Imps.Contacts.TYPE_NORMAL);
                     chatGroup.notifyMemberLeft(mucContact);
 
                 }
@@ -1028,7 +1039,7 @@ public class XmppConnection extends ImConnection {
                     else
                         xa = new XmppAddress(entityFullJid.toString());
 
-                    Contact mucContact = findOrCreateContact(xa.getAddress());
+                    Contact mucContact = new Contact(xa, xa.getUser(), Imps.Contacts.TYPE_NORMAL);
                     chatGroup.notifyMemberLeft(mucContact);
                 }
 
@@ -2497,6 +2508,7 @@ public class XmppConnection extends ImConnection {
                 {
                     if (!muc.isJoined())
                         muc.join(Resourcepart.from(mUser.getName()));
+                    msgXmpp.addExtension(new DeliveryReceiptRequest());
                     muc.sendMessage(msgXmpp);
                 }
                 else {
