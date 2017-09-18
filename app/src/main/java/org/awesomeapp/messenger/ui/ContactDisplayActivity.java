@@ -372,36 +372,54 @@ public class ContactDisplayActivity extends BaseActivity {
 
     private void verifyRemoteFingerprint() {
 
+        new AsyncTask<String, Void, Boolean>()
+        {
+            @Override
+            protected Boolean doInBackground(String... strings) {
 
-        try {
-            if (mConn != null) {
-                IContactListManager listManager = mConn.getContactListManager();
 
-                if (listManager != null)
-                    listManager.approveSubscription(new Contact(new XmppAddress(mUsername), mNickname, Imps.Contacts.TYPE_NORMAL));
+                try {
+                    if (mConn != null) {
+                        IContactListManager listManager = mConn.getContactListManager();
 
-                IChatSessionManager manager = mConn.getChatSessionManager();
+                        if (listManager != null)
+                            listManager.approveSubscription(new Contact(new XmppAddress(mUsername), mNickname, Imps.Contacts.TYPE_NORMAL));
 
-                if (manager != null) {
-                    IChatSession session = manager.getChatSession(mUsername);
+                        IChatSessionManager manager = mConn.getChatSessionManager();
 
-                    if (session != null) {
+                        if (manager != null) {
+                            IChatSession session = manager.getChatSession(mUsername);
 
-                        IOtrChatSession otrChatSession = session.getDefaultOtrChatSession();
+                            if (session != null) {
 
-                        if (otrChatSession != null) {
-                            otrChatSession.verifyKey(otrChatSession.getRemoteUserId());
-                            Snackbar.make(findViewById(R.id.main_content), getString(R.string.action_verified), Snackbar.LENGTH_LONG).show();
+                                IOtrChatSession otrChatSession = session.getDefaultOtrChatSession();
+
+                                if (otrChatSession != null) {
+                                    otrChatSession.verifyKey(otrChatSession.getRemoteUserId());
+                                    Snackbar.make(findViewById(R.id.main_content), getString(R.string.action_verified), Snackbar.LENGTH_LONG).show();
+                                }
+                            }
                         }
+
                     }
+
+                } catch (RemoteException e) {
+                    Log.e(ImApp.LOG_TAG, "error init otr", e);
+
                 }
 
+                return true;
             }
 
-        } catch (RemoteException e) {
-            Log.e(ImApp.LOG_TAG, "error init otr", e);
+            @Override
+            protected void onPostExecute(Boolean success) {
+                super.onPostExecute(success);
 
-        }
+
+            }
+        }.execute();
+
+
 
     }
 

@@ -1314,7 +1314,7 @@ public class ConversationView {
                         @Override
                         public void onClick(View v) {
                             reapproveSubscription();
-                            updateWarningView();
+                           
                         }
                     });
                 }
@@ -1341,24 +1341,43 @@ public class ConversationView {
     private void reapproveSubscription() {
 
 
-        try {
-            if (mConn != null) {
-                IContactListManager listManager = mConn.getContactListManager();
+        new AsyncTask<String, Void, Boolean>()
+        {
+            @Override
+            protected Boolean doInBackground(String... strings) {
 
-                if (listManager != null)
-                    listManager.approveSubscription(new Contact(new XmppAddress(mRemoteAddress), mRemoteNickname, Imps.Contacts.TYPE_NORMAL));
 
-                IChatSessionManager manager = mConn.getChatSessionManager();
 
-                if (manager != null)
-                    mCurrentChatSession = manager.getChatSession(mRemoteAddress);
+                try {
+                    if (mConn != null) {
+                        IContactListManager listManager = mConn.getContactListManager();
 
+                        if (listManager != null)
+                            listManager.approveSubscription(new Contact(new XmppAddress(mRemoteAddress), mRemoteNickname, Imps.Contacts.TYPE_NORMAL));
+
+                        IChatSessionManager manager = mConn.getChatSessionManager();
+
+                        if (manager != null)
+                            mCurrentChatSession = manager.getChatSession(mRemoteAddress);
+
+                    }
+
+                } catch (RemoteException e) {
+                    Log.e(ImApp.LOG_TAG, "error init otr", e);
+
+                }
+
+                return true;
             }
 
-        } catch (RemoteException e) {
-            Log.e(ImApp.LOG_TAG, "error init otr", e);
+            @Override
+            protected void onPostExecute(Boolean success) {
+                super.onPostExecute(success);
 
-        }
+                updateWarningView();
+            }
+        }.execute();
+
 
     }
 
