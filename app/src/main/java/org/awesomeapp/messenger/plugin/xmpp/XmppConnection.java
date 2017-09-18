@@ -938,7 +938,7 @@ public class XmppConnection extends ImConnection {
                 else
                     xa = new XmppAddress(occupant.toString());
 
-                Contact mucContact = findOrCreateContact(xa.getAddress());
+                Contact mucContact = new Contact(xa, xa.getUser(), Imps.Contacts.TYPE_NORMAL);
                 chatGroup.notifyMemberJoined(occupant.toString(),mucContact);
             }
 
@@ -946,7 +946,7 @@ public class XmppConnection extends ImConnection {
             for (Affiliate member : mucOwners)
             {
                 xa = new XmppAddress(member.getJid().toString());
-                Contact mucContact = findOrCreateContact(xa.getAddress());
+                Contact mucContact = new Contact(xa, xa.getUser(), Imps.Contacts.TYPE_NORMAL);
                 chatGroup.notifyMemberJoined(member.getAffiliation().toString(),mucContact);
                 chatGroup.setOwner(mucContact);
             }
@@ -956,7 +956,7 @@ public class XmppConnection extends ImConnection {
             for (Affiliate member : mucMembers)
             {
                 xa = new XmppAddress(member.getJid().toString());
-                Contact mucContact = findOrCreateContact(xa.getAddress());
+                Contact mucContact = new Contact(xa, xa.getUser(), Imps.Contacts.TYPE_NORMAL);
                 chatGroup.notifyMemberJoined(member.getAffiliation().toString(),mucContact);
 
             }
@@ -986,6 +986,15 @@ public class XmppConnection extends ImConnection {
 
                     XmppAddress xa = new XmppAddress(entityFullJid.toString());
                     ChatGroup chatGroup = mChatGroupManager.getChatGroup(xa);
+                    MultiUserChat muc = mChatGroupManager.getMultiUserChat(entityFullJid.asBareJid().toString());
+
+                    try {
+                        loadMembers(muc, chatGroup);
+                    }
+                    catch (Exception e){}
+                    /**
+                    XmppAddress xa = new XmppAddress(entityFullJid.toString());
+                    ChatGroup chatGroup = mChatGroupManager.getChatGroup(xa);
 
                     MultiUserChat muc = mChatGroupManager.getMultiUserChat(entityFullJid.asBareJid().toString());
 
@@ -1007,23 +1016,37 @@ public class XmppConnection extends ImConnection {
                         }
                     }
                     catch (Exception e) {}
+                     **/
                 }
 
                 @Override
                 public void left(EntityFullJid entityFullJid) {
+                    XmppAddress xa = new XmppAddress(entityFullJid.toString());
+                    ChatGroup chatGroup = mChatGroupManager.getChatGroup(xa);
+                    MultiUserChat muc = mChatGroupManager.getMultiUserChat(entityFullJid.asBareJid().toString());
 
+                    try {
+                        loadMembers(muc, chatGroup);
+                    }
+                    catch (Exception e){}
+
+                    /**
                     XmppAddress xa = new XmppAddress(entityFullJid.toString());
                     ChatGroup chatGroup = mChatGroupManager.getChatGroup(xa);
 
                     MultiUserChat muc = mChatGroupManager.getMultiUserChat(xa.getBareAddress());
-                    Jid jidSource = muc.getOccupant(entityFullJid).getJid();
+
+                    Occupant occ = muc.getOccupant(entityFullJid);
+
+                    Jid jidSource = occ.getJid();
                     if (jidSource != null)
                         xa = new XmppAddress(jidSource.toString());
                     else
                         xa = new XmppAddress(entityFullJid.toString());
 
-                    Contact mucContact = new Contact(xa, xa.getUser(), Imps.Contacts.TYPE_NORMAL);
+                    Contact mucContact = chatGroup.getMember(xa.getAddress());
                     chatGroup.notifyMemberLeft(mucContact);
+                     **/
 
                 }
 
@@ -3939,7 +3962,6 @@ public class XmppConnection extends ImConnection {
                 aMgr.createAccount(Localpart.from(username), password, params);
 
                 return true;
-
             }
         }
 

@@ -140,7 +140,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
     public static ImApp sImApp;
 
-    IRemoteImService mImService;
+    private static IRemoteImService mImService;
 
    // HashMap<Long, IImConnection> mConnections;
     MyConnListener mConnectionListener;
@@ -540,7 +540,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
         return mProviders.get(id);
     }
 
-    public IImConnection createConnection(long providerId, long accountId) throws RemoteException {
+    public static IImConnection createConnection(long providerId, long accountId) throws RemoteException {
 
         if (mImService == null) {
             // Service hasn't been connected or has died.
@@ -552,7 +552,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
         return conn;
     }
 
-    public IImConnection getConnection(long providerId,long accountId) {
+    public static IImConnection getConnection(long providerId,long accountId) {
 
         try {
 
@@ -606,7 +606,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
         }
     }
 
-    public void deleteAccount (ContentResolver resolver, long accountId, long providerId)
+    public static void deleteAccount (ContentResolver resolver, long accountId, long providerId)
     {
 
         IImConnection conn = getConnection(providerId, accountId);

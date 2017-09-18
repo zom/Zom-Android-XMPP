@@ -95,12 +95,12 @@ public class MigrateAccountTask extends AsyncTask<String, Void, OnboardingAccoun
         String domain = newDomains[0];
 
         //register account on new domain with same password
-        mNewAccount = registerNewAccount(nickname, username, password, domain);
+        mNewAccount = registerNewAccount(nickname, username, password, domain, null);
 
         if (mNewAccount == null) {
 
             username = username + '.' + fingerprint.substring(fingerprint.length()-8,fingerprint.length()).toLowerCase();
-            mNewAccount = registerNewAccount(nickname, username, password, domain);
+            mNewAccount = registerNewAccount(nickname, username, password, domain, null);
 
             if (mNewAccount == null)
                 return null;
@@ -229,10 +229,10 @@ public class MigrateAccountTask extends AsyncTask<String, Void, OnboardingAccoun
 
     }
 
-    private OnboardingAccount registerNewAccount (String nickname, String username, String password, String domain)
+    private OnboardingAccount registerNewAccount (String nickname, String username, String password, String domain, String server)
     {
         try {
-            OnboardingAccount result = OnboardingManager.registerAccount(mContext, nickname, username, password, domain, 5222);
+            OnboardingAccount result = OnboardingManager.registerAccount(mContext, nickname, username, password, domain, server, 5222);
             return result;
         }
         catch (JSONException jse)

@@ -26,6 +26,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.ListPopupWindow;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -559,6 +560,7 @@ public class OnboardingActivity extends BaseActivity {
         protected OnboardingAccount doInBackground(String... setupValues) {
             try {
 
+                String server = null;
                 String domain = null;
                 String password = null;
 
@@ -568,20 +570,43 @@ public class OnboardingActivity extends BaseActivity {
                 if (setupValues.length > 3)
                     password = setupValues[3];
 
+                if (setupValues.length > 4)
+                    server = setupValues[4];
+
+                if (domain == null)
+                {
+                    Pair<String,String> serverInfo = OnboardingManager.getServerInfo(OnboardingActivity.this,0);
+                    domain = serverInfo.first;
+                    server = serverInfo.second;
+                }
+
                 OtrAndroidKeyManagerImpl keyMan = OtrAndroidKeyManagerImpl.getInstance(OnboardingActivity.this);
                 KeyPair keyPair = keyMan.generateLocalKeyPair();
                 mFingerprint = keyMan.getFingerprint(keyPair.getPublic());
 
                 String nickname = setupValues[0];
-                String username = setupValues[1] + '.' + mFingerprint.substring(mFingerprint.length()-8,mFingerprint.length()).toLowerCase();
+                String username = setupValues[1];
 
-                OnboardingAccount result = OnboardingManager.registerAccount(OnboardingActivity.this, nickname, username, null, domain, 5222);
+                OnboardingAccount result = null;
 
-                if (result != null) {
-                    String jabberId = result.username + '@' + result.domain;
-                    keyMan.storeKeyPair(jabberId,keyPair);
+                while (result == null) {
 
+                    result = OnboardingManager.registerAccount(OnboardingActivity.this, nickname, username, password, domain, server, 5222);
+
+                    if (result == null)
+                    {
+                        //wait one second
+                        try
+                        {Thread.sleep(1000);}
+                        catch (Exception e){}
+
+                        //append key to username
+                        username = setupValues[1] + '.' + mFingerprint.substring(mFingerprint.length()-8,mFingerprint.length()).toLowerCase();
+                    }
                 }
+
+                String jid = result.username + '@' + result.domain;
+                keyMan.storeKeyPair(jid,keyPair);
 
                 return result;
             }
