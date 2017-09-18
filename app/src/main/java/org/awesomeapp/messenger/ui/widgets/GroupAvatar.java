@@ -104,9 +104,13 @@ public class GroupAvatar extends ColorDrawable {
         bottomPath.close();
 
         int[] arrayOfColors = new int[] {
-                0xff58e2c2,
-                0xfff44058,
-                0xfff7e53b
+                0xfff73d54,
+                0xfffff74f,
+                0xffb2142f,
+                0xff4fcaff,
+                0xff86ff76,
+                0xffcc4317,
+                0xff8376ff
         };
 
         colorTop = arrayOfColors[(int)(lcg.random() * arrayOfColors.length)];
