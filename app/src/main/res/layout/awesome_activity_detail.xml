@@ -127,7 +127,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="120dp"
-                android:src="@drawable/olo_waiting"
+                android:src="@drawable/waiting_for_friend"
                 android:id="@+id/waiting_view_image"
                 />
 
@@ -136,11 +136,24 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/message_waiting_for_friend"
-                android:textColor="?colorPrimary"
+                android:textColor="?messageTextSecondary"
                 android:layout_margin="5dp"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:gravity="center"
                 />
+            <LinearLayout
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/rounded_rect_primary"
+                android:gravity="center"
+                >
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_refresh_white_24dp"
+                android:id="@+id/waiting_refresh"
+                /></LinearLayout>
+
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"

@@ -1310,6 +1310,13 @@ public class ConversationView {
                         && mSubscriptionStatus == Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING)
                 {
                     mActivity.findViewById(R.id.waiting_view).setVisibility(View.VISIBLE);
+                    mActivity.findViewById(R.id.waiting_refresh).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            reapproveSubscription();
+                            updateWarningView();
+                        }
+                    });
                 }
                 else if (mSubscriptionStatus == Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING)
                 {
@@ -1328,6 +1335,30 @@ public class ConversationView {
                 }
             }
         });
+
+    }
+
+    private void reapproveSubscription() {
+
+
+        try {
+            if (mConn != null) {
+                IContactListManager listManager = mConn.getContactListManager();
+
+                if (listManager != null)
+                    listManager.approveSubscription(new Contact(new XmppAddress(mRemoteAddress), mRemoteNickname, Imps.Contacts.TYPE_NORMAL));
+
+                IChatSessionManager manager = mConn.getChatSessionManager();
+
+                if (manager != null)
+                    mCurrentChatSession = manager.getChatSession(mRemoteAddress);
+
+            }
+
+        } catch (RemoteException e) {
+            Log.e(ImApp.LOG_TAG, "error init otr", e);
+
+        }
 
     }
 

@@ -112,7 +112,7 @@
 
 <string name="upgrade_old_chats">Your old chats from before you upgraded are stored here</string>
 
-<string name="message_waiting_for_friend">Waiting for your friend to accept you</string>
+<string name="message_waiting_for_friend">Waiting for your friend</string>
 
 
   <string name="message_archive">Some of your Zom friends are upgrading their accounts. Expired accounts will be stored here.</string>
