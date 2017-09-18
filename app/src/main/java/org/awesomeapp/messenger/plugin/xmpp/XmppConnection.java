@@ -72,6 +72,7 @@ import org.jivesoftware.smack.util.dns.HostAddress;
 
 import org.jivesoftware.smackx.address.provider.MultipleAddressesProvider;
 import org.jivesoftware.smackx.bytestreams.socks5.provider.BytestreamsProvider;
+import org.jivesoftware.smackx.chat_markers.ChatMarkersManager;
 import org.jivesoftware.smackx.chatstates.ChatState;
 import org.jivesoftware.smackx.chatstates.ChatStateManager;
 import org.jivesoftware.smackx.chatstates.provider.ChatStateExtensionProvider;
@@ -280,10 +281,6 @@ public class XmppConnection extends ImConnection {
 
         XmppStreamHandler.addExtensionProviders();
 
-       // DeliveryReceipts.addExtensionProviders();
-
-       // ServiceDiscoveryManager.setIdentityName("ChatSecure");
-       // ServiceDiscoveryManager.setIdentityType("phone");
     }
 
     public void initUser(long providerId, long accountId) throws ImException
@@ -1193,7 +1190,7 @@ public class XmppConnection extends ImConnection {
                             EntityBareJid inviteeJid = JidCreate.entityBareFrom(invitee.getAddress().getAddress());
                             muc.invite(inviteeJid, reason);
                             muc.grantMembership(inviteeJid);
-                            muc.grantAdmin(inviteeJid);
+                           // muc.grantAdmin(inviteeJid);
                             group.notifyMemberJoined(null, invitee);
                         } catch (Exception nce) {
                             Log.e(ImApp.LOG_TAG, "not connected error trying to add invite", nce);
@@ -2148,6 +2145,13 @@ public class XmppConnection extends ImConnection {
         Exception xmppConnectException = null;
         AbstractXMPPConnection conn = mConnection.connect();
 
+        /**
+        ChatMarkersManager chatMarkersManager = ChatMarkersManager.getInstanceFor(mConnection);
+        if (chatMarkersManager.isSupportedByServer())
+        {
+
+        }**/
+
     //    ReconnectionManager manager = ReconnectionManager.getInstanceFor(mConnection);
      //   manager.enableAutomaticReconnection();
       //  manager.setEnabledPerDefault(true);
@@ -2262,7 +2266,7 @@ public class XmppConnection extends ImConnection {
     private void sendReceipt(org.jivesoftware.smack.packet.Message msg) {
         debug(TAG, "sending XEP-0184 ack to " + msg.getFrom() + " id=" + msg.getPacketID());
         org.jivesoftware.smack.packet.Message ack = new org.jivesoftware.smack.packet.Message(
-                msg.getFrom(), msg.getType());
+                msg.getFrom().asBareJid(), msg.getType());
         ack.addExtension(new DeliveryReceipt(msg.getStanzaId()));
         sendPacket(ack);
     }
@@ -2532,6 +2536,7 @@ public class XmppConnection extends ImConnection {
                     if (!muc.isJoined())
                         muc.join(Resourcepart.from(mUser.getName()));
                     msgXmpp.addExtension(new DeliveryReceiptRequest());
+                    String deliveryReceiptId = DeliveryReceiptRequest.addTo(msgXmpp);
                     muc.sendMessage(msgXmpp);
                 }
                 else {
