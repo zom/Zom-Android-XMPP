@@ -601,7 +601,9 @@ public class XmppConnection extends ImConnection {
                 try {
                     reMuc.join(Resourcepart.from(mUser.getName()));
                     mMUCs.put(muc.getRoom().toString(),reMuc);
-                    addMucListeners(reMuc);
+                    ChatGroup group = mGroups.get(muc.getRoom().toString());
+
+                    addMucListeners(reMuc, group);
 
                 } catch (Exception e) {
                     Log.w(TAG,"unable to join MUC: " + e.getMessage());
@@ -793,7 +795,7 @@ public class XmppConnection extends ImConnection {
             }
 
 
-            addMucListeners(muc);
+            addMucListeners(muc,chatGroup);
 
             return true;
 
@@ -882,7 +884,7 @@ public class XmppConnection extends ImConnection {
 
                 mMUCs.put(chatRoomJid, muc);
 
-                addMucListeners(muc);
+                addMucListeners(muc, chatGroup);
 
 
             } catch (Exception e) {
@@ -922,8 +924,6 @@ public class XmppConnection extends ImConnection {
 
         private void loadMembers (MultiUserChat muc, ChatGroup chatGroup) throws SmackException, XMPPException,InterruptedException
         {
-            chatGroup.clearMembers();
-
             XmppAddress xa = null;
 
             List<EntityFullJid> mucOccupant = muc.getOccupants();
@@ -939,15 +939,6 @@ public class XmppConnection extends ImConnection {
                 chatGroup.notifyMemberJoined(occupant.toString(),mucContact);
             }
 
-            List<Affiliate> mucOwners = muc.getOwners();
-            for (Affiliate member : mucOwners)
-            {
-                xa = new XmppAddress(member.getJid().toString());
-                Contact mucContact = new Contact(xa, xa.getUser(), Imps.Contacts.TYPE_NORMAL);
-                chatGroup.notifyMemberJoined(member.getAffiliation().toString(),mucContact);
-                chatGroup.setOwner(mucContact);
-            }
-
             List<Affiliate> mucMembers = muc.getMembers();
 
             for (Affiliate member : mucMembers)
@@ -957,9 +948,19 @@ public class XmppConnection extends ImConnection {
                 chatGroup.notifyMemberJoined(member.getAffiliation().toString(),mucContact);
 
             }
+
+            List<Affiliate> mucOwners = muc.getOwners();
+            for (Affiliate member : mucOwners)
+            {
+                xa = new XmppAddress(member.getJid().toString());
+                Contact mucContact = new Contact(xa, xa.getUser(), Imps.Contacts.TYPE_NORMAL);
+                chatGroup.notifyMemberJoined(member.getAffiliation().toString(),mucContact);
+                chatGroup.setOwner(mucContact);
+            }
+
         }
 
-        private void addMucListeners (MultiUserChat muc)
+        private void addMucListeners (final MultiUserChat muc, final ChatGroup group)
         {
 
             muc.addSubjectUpdatedListener(new SubjectUpdatedListener() {
@@ -976,156 +977,7 @@ public class XmppConnection extends ImConnection {
 
             });
 
-            muc.addParticipantStatusListener(new ParticipantStatusListener() {
-
-                @Override
-                public void joined(EntityFullJid entityFullJid) {
-
-                    XmppAddress xa = new XmppAddress(entityFullJid.toString());
-                    ChatGroup chatGroup = mChatGroupManager.getChatGroup(xa);
-                    MultiUserChat muc = mChatGroupManager.getMultiUserChat(entityFullJid.asBareJid().toString());
-
-                    try {
-                        loadMembers(muc, chatGroup);
-                    }
-                    catch (Exception e){}
-                    /**
-                    XmppAddress xa = new XmppAddress(entityFullJid.toString());
-                    ChatGroup chatGroup = mChatGroupManager.getChatGroup(xa);
-
-                    MultiUserChat muc = mChatGroupManager.getMultiUserChat(entityFullJid.asBareJid().toString());
-
-                    Jid jidSource = muc.getOccupant(entityFullJid).getJid();
-                    if (jidSource != null)
-                        xa = new XmppAddress(jidSource.toString());
-                    else
-                        xa = new XmppAddress(entityFullJid.toString());
-
-                    Contact mucContact = new Contact(xa, xa.getUser(), Imps.Contacts.TYPE_NORMAL);
-                    chatGroup.notifyMemberJoined(entityFullJid.toString(),mucContact);
-
-                    try {
-                        //if I am the owner, then grant moderator rights
-                        if (muc.getOwners().size() > 0
-                        && muc.getOwners().get(0).getJid().equals(mUserJid)) {
-                            //try to grant the moderator status
-                            muc.grantModerator(entityFullJid.getResourcepart());
-                        }
-                    }
-                    catch (Exception e) {}
-                     **/
-                }
-
-                @Override
-                public void left(EntityFullJid entityFullJid) {
-                    XmppAddress xa = new XmppAddress(entityFullJid.toString());
-                    ChatGroup chatGroup = mChatGroupManager.getChatGroup(xa);
-                    MultiUserChat muc = mChatGroupManager.getMultiUserChat(entityFullJid.asBareJid().toString());
-
-                    try {
-                        loadMembers(muc, chatGroup);
-                    }
-                    catch (Exception e){}
-
-                    /**
-                    XmppAddress xa = new XmppAddress(entityFullJid.toString());
-                    ChatGroup chatGroup = mChatGroupManager.getChatGroup(xa);
-
-                    MultiUserChat muc = mChatGroupManager.getMultiUserChat(xa.getBareAddress());
-
-                    Occupant occ = muc.getOccupant(entityFullJid);
-
-                    Jid jidSource = occ.getJid();
-                    if (jidSource != null)
-                        xa = new XmppAddress(jidSource.toString());
-                    else
-                        xa = new XmppAddress(entityFullJid.toString());
-
-                    Contact mucContact = chatGroup.getMember(xa.getAddress());
-                    chatGroup.notifyMemberLeft(mucContact);
-                     **/
-
-                }
-
-                @Override
-                public void kicked(EntityFullJid entityFullJid, Jid jid, String s) {
-                    XmppAddress xa = new XmppAddress(entityFullJid.toString());
-                    ChatGroup chatGroup = mChatGroupManager.getChatGroup(xa);
-
-                    MultiUserChat muc = mChatGroupManager.getMultiUserChat(xa.getBareAddress());
-                    Jid jidSource = muc.getOccupant(entityFullJid).getJid();
-                    if (jidSource != null)
-                        xa = new XmppAddress(jidSource.toString());
-                    else
-                        xa = new XmppAddress(entityFullJid.toString());
-
-                    Contact mucContact = new Contact(xa, xa.getUser(), Imps.Contacts.TYPE_NORMAL);
-                    chatGroup.notifyMemberLeft(mucContact);
-                }
-
-                @Override
-                public void voiceGranted(EntityFullJid entityFullJid) {
-
-                }
-
-                @Override
-                public void voiceRevoked(EntityFullJid entityFullJid) {
-
-                }
-
-                @Override
-                public void banned(EntityFullJid entityFullJid, Jid jid, String s) {
-
-                }
-
-                @Override
-                public void membershipGranted(EntityFullJid entityFullJid) {
-
-                }
-
-                @Override
-                public void membershipRevoked(EntityFullJid entityFullJid) {
-
-                }
-
-                @Override
-                public void moderatorGranted(EntityFullJid entityFullJid) {
-
-                }
-
-                @Override
-                public void moderatorRevoked(EntityFullJid entityFullJid) {
-
-                }
-
-                @Override
-                public void ownershipGranted(EntityFullJid entityFullJid) {
-
-                }
-
-                @Override
-                public void ownershipRevoked(EntityFullJid entityFullJid) {
-
-                }
-
-                @Override
-                public void adminGranted(EntityFullJid entityFullJid) {
-
-                }
-
-                @Override
-                public void adminRevoked(EntityFullJid entityFullJid) {
-
-                }
-
-                @Override
-                public void nicknameChanged(EntityFullJid entityFullJid, Resourcepart resourcepart) {
-
-                }
-
-
-
-            });
+            muc.addParticipantStatusListener(new GroupParticipantStatusListener(muc, group));
 
             muc.addParticipantListener(new PresenceListener() {
                 @Override
@@ -1137,6 +989,10 @@ public class XmppConnection extends ImConnection {
                     Presence p = new Presence(parsePresence(presence), presence.getStatus(), null, null, Presence.CLIENT_TYPE_DEFAULT);
                     mucContact.setPresence(p);
                     **/
+
+                    debug("MUC","Got group presence: " + presence.toString());
+
+
                 }
             });
 
@@ -1231,7 +1087,153 @@ public class XmppConnection extends ImConnection {
                 }
         }
 
+        class GroupParticipantStatusListener implements ParticipantStatusListener {
+
+            MultiUserChat muc;
+            ChatGroup group;
+
+            public GroupParticipantStatusListener (MultiUserChat muc, ChatGroup group)
+            {
+                this.muc = muc;
+                this.group = group;
+            }
+
+            @Override
+            public void joined(EntityFullJid entityFullJid) {
+
+
+                try {
+                    loadMembers(muc, group);
+                }
+                catch (Exception e){}
+                /**
+                 XmppAddress xa = new XmppAddress(entityFullJid.toString());
+                 ChatGroup chatGroup = mChatGroupManager.getChatGroup(xa);
+
+                 MultiUserChat muc = mChatGroupManager.getMultiUserChat(entityFullJid.asBareJid().toString());
+
+                 Jid jidSource = muc.getOccupant(entityFullJid).getJid();
+                 if (jidSource != null)
+                 xa = new XmppAddress(jidSource.toString());
+                 else
+                 xa = new XmppAddress(entityFullJid.toString());
+
+                 Contact mucContact = new Contact(xa, xa.getUser(), Imps.Contacts.TYPE_NORMAL);
+                 chatGroup.notifyMemberJoined(entityFullJid.toString(),mucContact);
+
+                 try {
+                 //if I am the owner, then grant moderator rights
+                 if (muc.getOwners().size() > 0
+                 && muc.getOwners().get(0).getJid().equals(mUserJid)) {
+                 //try to grant the moderator status
+                 muc.grantModerator(entityFullJid.getResourcepart());
+                 }
+                 }
+                 catch (Exception e) {}
+                 **/
+            }
+
+            @Override
+            public void left(EntityFullJid entityFullJid) {
+
+                 XmppAddress xa = new XmppAddress(entityFullJid.toString());
+                 ChatGroup chatGroup = mChatGroupManager.getChatGroup(xa);
+
+                 MultiUserChat muc = mChatGroupManager.getMultiUserChat(xa.getBareAddress());
+
+                 Occupant occ = muc.getOccupant(entityFullJid);
+
+                 Jid jidSource = occ.getJid();
+                 if (jidSource != null)
+                 xa = new XmppAddress(jidSource.toString());
+                 else
+                 xa = new XmppAddress(entityFullJid.toString());
+
+                 Contact mucContact = chatGroup.getMember(xa.getAddress());
+                 chatGroup.notifyMemberLeft(mucContact);
+
+            }
+
+            @Override
+            public void kicked(EntityFullJid entityFullJid, Jid jid, String s) {
+                XmppAddress xa = new XmppAddress(entityFullJid.toString());
+                Jid jidSource = muc.getOccupant(entityFullJid).getJid();
+                if (jidSource != null)
+                    xa = new XmppAddress(jidSource.toString());
+                else
+                    xa = new XmppAddress(entityFullJid.toString());
+
+                Contact mucContact = new Contact(xa, xa.getUser(), Imps.Contacts.TYPE_NORMAL);
+                group.notifyMemberLeft(mucContact);
+            }
+
+            @Override
+            public void voiceGranted(EntityFullJid entityFullJid) {
+
+            }
+
+            @Override
+            public void voiceRevoked(EntityFullJid entityFullJid) {
+
+            }
+
+            @Override
+            public void banned(EntityFullJid entityFullJid, Jid jid, String s) {
+
+            }
+
+            @Override
+            public void membershipGranted(EntityFullJid entityFullJid) {
+
+            }
+
+            @Override
+            public void membershipRevoked(EntityFullJid entityFullJid) {
+
+            }
+
+            @Override
+            public void moderatorGranted(EntityFullJid entityFullJid) {
+
+            }
+
+            @Override
+            public void moderatorRevoked(EntityFullJid entityFullJid) {
+
+            }
+
+            @Override
+            public void ownershipGranted(EntityFullJid entityFullJid) {
+
+            }
+
+            @Override
+            public void ownershipRevoked(EntityFullJid entityFullJid) {
+
+            }
+
+            @Override
+            public void adminGranted(EntityFullJid entityFullJid) {
+
+            }
+
+            @Override
+            public void adminRevoked(EntityFullJid entityFullJid) {
+
+            }
+
+            @Override
+            public void nicknameChanged(EntityFullJid entityFullJid, Resourcepart resourcepart) {
+
+            }
+
+
+
+        }
+
     };
+
+
 
     @Override
     public synchronized ChatSessionManager getChatSessionManager() {
@@ -4140,7 +4142,7 @@ public class XmppConnection extends ImConnection {
 
             try {
 
-                ContactList cList = getContactListManager().getDefaultContactList();
+               ContactList cList = getContactListManager().getDefaultContactList();
 
                 if (contact == null) {
                     XmppAddress xAddr = new XmppAddress(presence.getFrom().toString());
