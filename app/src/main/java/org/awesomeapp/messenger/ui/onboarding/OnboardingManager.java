@@ -13,6 +13,8 @@ import org.awesomeapp.messenger.util.LogCleaner;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.security.SecureRandom;
 import java.util.HashMap;
 
@@ -114,7 +116,27 @@ public class OnboardingManager {
         Uri inviteLink = Uri.parse(link);
         String[] code = inviteLink.toString().split("#");
 
-        if (code.length > 1) {
+        if (code.length == 1 && inviteLink.getScheme() != null && inviteLink.getScheme().toLowerCase().equals("xmpp")) {
+
+            diLink = new DecodedInviteLink();
+
+            String parseLink = link.substring(5);
+
+            int idx = -1;
+
+            if ((idx = parseLink.indexOf("?"))!=-1)
+                parseLink = parseLink.substring(0,idx);
+
+            diLink.username = parseLink;
+            diLink.isMigration = false;
+
+            if ((idx = link.indexOf("otr-fingerprint"))!=-1)
+                diLink.fingerprint = link.substring(idx+16);
+
+            diLink.nickname = null;
+
+        }
+        else {
 
             try {
                 String out = new String(Base64.decode(code[1], Base64.URL_SAFE | Base64.NO_WRAP | Base64.NO_PADDING));

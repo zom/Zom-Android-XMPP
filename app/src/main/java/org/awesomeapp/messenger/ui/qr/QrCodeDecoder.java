@@ -100,6 +100,7 @@ public class QrCodeDecoder implements PreviewConsumer, PreviewCallback {
 					} finally {
 						reader.reset();
 					}
+					System.gc();
 					long duration = System.currentTimeMillis() - now;
 					Log.d(TAG, "Decoding barcode took " + duration + " ms");
 					callback.handleResult(result);

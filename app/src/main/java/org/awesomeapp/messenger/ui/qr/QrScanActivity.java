@@ -47,8 +47,7 @@ implements QrCodeDecoder.ResultCallback {
 	private static String TAG = QrScanActivity.class.getPackage().getName();
 
 	private CameraView cameraView = null;
-	private LinearLayout cameraBorder = null;
-	private LinearLayout layoutMain = null;
+	private View layoutMain = null;
 
 	private Camera camera = null;
 	private boolean gotResult = false;
@@ -126,34 +125,19 @@ implements QrCodeDecoder.ResultCallback {
     private void init ()
     {
 
+        setContentView(R.layout.awesome_activity_scan);
+
+        layoutMain = findViewById(R.id.layout_main);
+
 		String qrData = getIntent().getStringExtra(Intent.EXTRA_TEXT);
 
+        LinearLayout cameraBorder = (LinearLayout)findViewById(R.id.camera_box);
 		cameraView = new CameraView(this);
-		cameraBorder = new LinearLayout(this);
-		cameraBorder.setGravity(CENTER);
-		cameraBorder.setBackgroundColor(BLACK);
-		cameraBorder.setLayoutParams(new LayoutParams(MATCH_PARENT,
-				WRAP_CONTENT, 1f));
 		cameraBorder.addView(cameraView);
 
-		ImageView qrCodeView = new ImageView(this);
+		ImageView qrCodeView = (ImageView)findViewById(R.id.qr_box_image);
 
-		qrCodeView.setScaleType(FIT_CENTER);
-		qrCodeView.setBackgroundColor(WHITE);
-		qrCodeView.setLayoutParams(new LayoutParams(MATCH_PARENT,
-				WRAP_CONTENT, 1f));
-
-		Display display = getWindowManager().getDefaultDisplay();
-		boolean portrait = display.getWidth() < display.getHeight();
-		layoutMain = new LinearLayout(this);
-		if(portrait) layoutMain.setOrientation(VERTICAL);
-		else layoutMain.setOrientation(HORIZONTAL);
-		layoutMain.setWeightSum(2);
-		layoutMain.addView(cameraBorder);
-		layoutMain.addView(qrCodeView);
-		setContentView(layoutMain);
-
-		new QrGenAsyncTask(this, qrCodeView, display.getWidth()).executeOnExecutor(ImApp.sThreadPoolExecutor,qrData);
+		new QrGenAsyncTask(this, qrCodeView, 100).executeOnExecutor(ImApp.sThreadPoolExecutor,qrData);
 	}
 
 	@Override

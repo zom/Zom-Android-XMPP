@@ -70,7 +70,7 @@ public class QrDisplayActivity extends BaseActivity {
 		layoutMain.addView(qrCodeView);
 		setContentView(layoutMain);
 
-		new QrGenAsyncTask(this, qrCodeView, display.getWidth()).executeOnExecutor(ImApp.sThreadPoolExecutor,qrData);
+		new QrGenAsyncTask(this, qrCodeView, 240).executeOnExecutor(ImApp.sThreadPoolExecutor,qrData);
 	}
 
 
