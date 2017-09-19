@@ -116,7 +116,9 @@ public class OnboardingManager {
         Uri inviteLink = Uri.parse(link);
         String[] code = inviteLink.toString().split("#");
 
-        if (code.length == 1 && inviteLink.getScheme() != null && inviteLink.getScheme().toLowerCase().equals("xmpp")) {
+        if (code.length == 1
+                && inviteLink.getScheme() != null
+                && inviteLink.getScheme().toLowerCase().equals("xmpp")) {
 
             diLink = new DecodedInviteLink();
 
@@ -136,8 +138,9 @@ public class OnboardingManager {
             diLink.nickname = null;
 
         }
-        else {
+        else if (code[0].contains("/i/#")){
 
+            //this is an invite link
             try {
                 String out = new String(Base64.decode(code[1], Base64.URL_SAFE | Base64.NO_WRAP | Base64.NO_PADDING));
 
