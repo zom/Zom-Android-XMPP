@@ -42,6 +42,7 @@ import org.awesomeapp.messenger.ui.onboarding.OnboardingManager;
 import org.awesomeapp.messenger.ui.qr.QrDisplayActivity;
 import org.awesomeapp.messenger.ui.qr.QrShareAsyncTask;
 import org.jivesoftware.smackx.omemo.OmemoManager;
+import org.jivesoftware.smackx.omemo.util.OmemoKeyUtil;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.stringprep.XmppStringprepException;
 
@@ -180,7 +181,7 @@ public class ContactDisplayActivity extends BaseActivity {
 
                 findViewById(R.id.listEncryptionKey).setVisibility(View.VISIBLE);
 
-                tv.setText(remoteFingerprint);
+                tv.setText(OmemoKeyUtil.prettyFingerprint(remoteFingerprint));
 
                 iv.setOnClickListener(new View.OnClickListener() {
 
