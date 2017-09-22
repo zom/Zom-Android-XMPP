@@ -946,7 +946,7 @@ public class MessageListItem extends FrameLayout {
                 }
                 else
                 {
-                    deliveryText.append("XX");
+                    deliveryText.append("X");
                     spanText = new SpannableString(deliveryText.toString());
                     int len = spanText.length();
                     spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_sent_grey),len-1,len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
