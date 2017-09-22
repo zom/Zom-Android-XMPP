@@ -58,6 +58,10 @@ public class ChatSessionInitTask extends AsyncTask<Contact, Long, Long> {
                         }
 
                     }
+                    else if (session.isGroupChatSession())
+                    {
+
+                    }
 
                     if (session != null)
                         return (session.getId());
