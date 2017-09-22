@@ -996,21 +996,26 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                 else
                     insertMessageInDb(nickname, body, time, msg.getType(), 0, msg.getID(), null);
 
-                int N = mRemoteListeners.beginBroadcast();
-                for (int i = 0; i < N; i++) {
-                    IChatListener listener = mRemoteListeners.getBroadcastItem(i);
-                    try {
-                        boolean wasSeen = listener.onIncomingMessage(ChatSessionAdapter.this, msg);
+                try {
+                    synchronized (mRemoteListeners) {
+                        int N = mRemoteListeners.beginBroadcast();
+                        for (int i = 0; i < N; i++) {
+                            IChatListener listener = mRemoteListeners.getBroadcastItem(i);
+                            try {
+                                boolean wasSeen = listener.onIncomingMessage(ChatSessionAdapter.this, msg);
 
-                        if (wasSeen)
-                            wasMessageSeen = wasSeen;
+                                if (wasSeen)
+                                    wasMessageSeen = wasSeen;
 
-                    } catch (RemoteException e) {
-                        // The RemoteCallbackList will take care of removing the
-                        // dead listeners.
+                            } catch (RemoteException e) {
+                                // The RemoteCallbackList will take care of removing the
+                                // dead listeners.
+                            }
+                        }
+                        mRemoteListeners.finishBroadcast();
                     }
                 }
-                mRemoteListeners.finishBroadcast();
+                catch (Exception e){}
 
                 // Due to the move to fragments, we could have listeners for ChatViews that are not visible on the screen.
                 // This is for fragments adjacent to the current one.  Therefore we can't use the existence of listeners
@@ -1121,19 +1126,22 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                 Uri uriContact = ContentUris.withAppendedId(Imps.Contacts.CONTENT_URI, mContactId);
                 mContentResolver.update(uriContact, values, null, null);
 
-                final int N = mRemoteListeners.beginBroadcast();
-                for (int i = 0; i < N; i++) {
-                    IChatListener listener = mRemoteListeners.getBroadcastItem(i);
-                    try {
-                        listener.onGroupSubjectChanged(ChatSessionAdapter.this);
-                    } catch (RemoteException e) {
-                        // The RemoteCallbackList will take care of removing the
-                        // dead listeners.
+                try {
+                    synchronized (mRemoteListeners) {
+                        final int N = mRemoteListeners.beginBroadcast();
+                        for (int i = 0; i < N; i++) {
+                            IChatListener listener = mRemoteListeners.getBroadcastItem(i);
+                            try {
+                                listener.onGroupSubjectChanged(ChatSessionAdapter.this);
+                            } catch (RemoteException e) {
+                                // The RemoteCallbackList will take care of removing the
+                                // dead listeners.
+                            }
+                        }
+                        mRemoteListeners.finishBroadcast();
                     }
                 }
-                mRemoteListeners.finishBroadcast();
-                //  insertMessageInDb(member.getName(), null, System.currentTimeMillis(),
-                //      Imps.MessageType.PRESENCE_AVAILABLE);
+                catch (Exception e){}
             }
         }
 

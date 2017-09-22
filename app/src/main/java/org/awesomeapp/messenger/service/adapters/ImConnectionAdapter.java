@@ -429,6 +429,10 @@ public class ImConnectionAdapter extends org.awesomeapp.messenger.service.IImCon
         public void onStateChanged(final int state, final ImErrorInfo error) {
 
             synchronized (this) {
+
+                if (state != ImConnection.DISCONNECTED) {
+                    mConnectionState = state;
+                }
                 if (state == ImConnection.LOGGED_IN && mConnectionState == ImConnection.LOGGING_OUT) {
 
                     // A bit tricky here. The engine did login successfully
@@ -455,8 +459,13 @@ public class ImConnectionAdapter extends org.awesomeapp.messenger.service.IImCon
                         builder.appendQueryParameter(Imps.Contacts.PROVIDER,mProviderId+"");
                         builder.appendQueryParameter(Imps.Contacts.ACCOUNT,mAccountId+"");
 
+                        StringBuffer buf = new StringBuffer();
+                        buf.append("(" + Imps.Chats.CHAT_TYPE + " IS NULL")
+                                .append(" OR " + Imps.Chats.CHAT_TYPE + '=' + Imps.Chats.CHAT_TYPE_MUTED)
+                                .append(" OR " + Imps.Chats.CHAT_TYPE + '=' + Imps.Chats.CHAT_TYPE_ACTIVE + ")");
+
                         Uri uriChats = builder.build();
-                        c = getContext().getContentResolver().query(uriChats, CHAT_PROJECTION, null, null, Imps.Contacts.TIME_ORDER);
+                        c = getContext().getContentResolver().query(uriChats, CHAT_PROJECTION, buf.toString(), null, Imps.Contacts.TIME_ORDER);
 
                         if (c != null) {
                             if (c.getCount() > 0) {
@@ -466,7 +475,7 @@ public class ImConnectionAdapter extends org.awesomeapp.messenger.service.IImCon
                                     String nickname = c.getString(4);
                                     if (remoteAddress != null)
                                        new ChatSessionInitTask((ImApp) getContext().getApplication(), mProviderId, mAccountId, chatType)
-                                               .executeOnExecutor(ImApp.sThreadPoolExecutor,new Contact(new XmppAddress(remoteAddress),nickname,Imps.Contacts.TYPE_GROUP));
+                                               .executeOnExecutor(ImApp.sThreadPoolExecutor,new Contact(new XmppAddress(remoteAddress),nickname,chatType));
                                 }
                             }
                             c.close();
@@ -481,9 +490,6 @@ public class ImConnectionAdapter extends org.awesomeapp.messenger.service.IImCon
                     }
                 }
 
-                if (state != ImConnection.DISCONNECTED) {
-                    mConnectionState = state;
-                }
             }
 
             ContentResolver cr = mService.getContentResolver();

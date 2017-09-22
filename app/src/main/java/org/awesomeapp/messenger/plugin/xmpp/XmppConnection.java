@@ -954,25 +954,38 @@ public class XmppConnection extends ImConnection {
                 chatGroup.notifyMemberJoined(occupant.toString(),mucContact);
             }
 
-            List<Affiliate> mucMembers = muc.getMembers();
+            try {
 
-            for (Affiliate member : mucMembers)
+                List<Affiliate> mucMembers = muc.getMembers();
+
+                for (Affiliate member : mucMembers) {
+                    xa = new XmppAddress(member.getJid().toString());
+                    Contact mucContact = new Contact(xa, xa.getUser(), Imps.Contacts.TYPE_NORMAL);
+                    chatGroup.notifyMemberJoined(member.getAffiliation().toString(), mucContact);
+
+                }
+            }
+            catch (Exception e)
             {
-                xa = new XmppAddress(member.getJid().toString());
-                Contact mucContact = new Contact(xa, xa.getUser(), Imps.Contacts.TYPE_NORMAL);
-                chatGroup.notifyMemberJoined(member.getAffiliation().toString(),mucContact);
+                debug("MUC","Couldn't load group members: " + e.getMessage());
 
             }
 
-            List<Affiliate> mucOwners = muc.getOwners();
-            for (Affiliate member : mucOwners)
-            {
-                xa = new XmppAddress(member.getJid().toString());
-                Contact mucContact = new Contact(xa, xa.getUser(), Imps.Contacts.TYPE_NORMAL);
-                chatGroup.notifyMemberJoined(member.getAffiliation().toString(),mucContact);
-                chatGroup.setOwner(mucContact);
-            }
+            try {
 
+                List<Affiliate> mucOwners = muc.getOwners();
+                for (Affiliate member : mucOwners) {
+                    xa = new XmppAddress(member.getJid().toString());
+                    Contact mucContact = new Contact(xa, xa.getUser(), Imps.Contacts.TYPE_NORMAL);
+                    chatGroup.notifyMemberJoined(member.getAffiliation().toString(), mucContact);
+                    chatGroup.setOwner(mucContact);
+                }
+            }
+            catch (Exception e)
+                {
+                    debug("MUC","Couldn't load group owner: " + e.getMessage());
+
+                }
         }
 
         private void addMucListeners (final MultiUserChat muc, final ChatGroup group)
