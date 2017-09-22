@@ -138,7 +138,7 @@ public class Omemo {
             if(idk == null) {
                 System.out.println("No identityKey for "+d);
             } else {
-                fps.add(OmemoKeyUtil.prettyFingerprint(mOmemoStore.keyUtil().getFingerprint(idk)));
+                fps.add(mOmemoStore.keyUtil().getFingerprint(idk).toString());
             }
         }
 
