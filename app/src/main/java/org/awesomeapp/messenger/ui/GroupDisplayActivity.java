@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.RemoteException;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.widget.TextViewCompat;
@@ -59,6 +60,9 @@ public class GroupDisplayActivity extends BaseActivity {
     private String mLocalAddress = null;
 
     private IImConnection mConn;
+    private IChatSession mSession;
+    private Contact mGroupOwner;
+    private boolean mIsOwner = false;
 
     private class GroupMember {
         public String username;
@@ -80,16 +84,33 @@ public class GroupDisplayActivity extends BaseActivity {
 
         setContentView(R.layout.awesome_activity_group);
 
-        mMembers = new ArrayList<>();
         mName = getIntent().getStringExtra("nickname");
         mAddress = getIntent().getStringExtra("address");
         mProviderId = getIntent().getLongExtra("provider", -1);
         mAccountId = getIntent().getLongExtra("account", -1);
-        mLastChatId  = getIntent().getLongExtra("chat", -1);
+        mLastChatId = getIntent().getLongExtra("chat", -1);
 
-        mConn = ((ImApp)getApplication()).getConnection(mProviderId,mAccountId);
+        Cursor cursor = getContentResolver().query(Imps.ProviderSettings.CONTENT_URI, new String[]{Imps.ProviderSettings.NAME, Imps.ProviderSettings.VALUE}, Imps.ProviderSettings.PROVIDER + "=?", new String[]{Long.toString(mProviderId)}, null);
 
-        mLocalAddress = Imps.Account.getUserName(getContentResolver(), mAccountId);
+        if (cursor == null)
+            return; //not going to work
+
+        Imps.ProviderSettings.QueryMap providerSettings = new Imps.ProviderSettings.QueryMap(
+                cursor, getContentResolver(), mProviderId, false, null);
+
+        mMembers = new ArrayList<>();
+        mConn = ((ImApp) getApplication()).getConnection(mProviderId, mAccountId);
+        mLocalAddress = Imps.Account.getUserName(getContentResolver(), mAccountId) + '@' + providerSettings.getDomain();
+
+        providerSettings.close();
+
+        try {
+            mSession = mConn.getChatSessionManager().getChatSession(mAddress);
+            mGroupOwner = mSession.getGroupChatOwner();
+            if (mGroupOwner != null)
+                mIsOwner = mGroupOwner.getAddress().getBareAddress().equals(mLocalAddress);
+        }
+        catch (RemoteException e){}
 
         mRecyclerView = (RecyclerView) findViewById(R.id.rvRoot);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
@@ -145,18 +166,23 @@ public class GroupDisplayActivity extends BaseActivity {
                             }
                         }
                     });
-                    h.actionAddFriends.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent intent = new Intent(GroupDisplayActivity.this, ContactsPickerActivity.class);
-                            ArrayList<String> usernames = new ArrayList<>(mMembers.size());
-                            for (GroupMember member : mMembers) {
-                                usernames.add(member.username);
+
+                    if (!mIsOwner)
+                        h.actionAddFriends.setVisibility(View.GONE);
+                    else {
+                        h.actionAddFriends.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent intent = new Intent(GroupDisplayActivity.this, ContactsPickerActivity.class);
+                                ArrayList<String> usernames = new ArrayList<>(mMembers.size());
+                                for (GroupMember member : mMembers) {
+                                    usernames.add(member.username);
+                                }
+                                intent.putExtra(ContactsPickerActivity.EXTRA_EXCLUDED_CONTACTS, usernames);
+                                startActivityForResult(intent, REQUEST_PICK_CONTACTS);
                             }
-                            intent.putExtra(ContactsPickerActivity.EXTRA_EXCLUDED_CONTACTS, usernames);
-                            startActivityForResult(intent, REQUEST_PICK_CONTACTS);
-                        }
-                    });
+                        });
+                    }
                     h.actionMute.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -170,12 +196,17 @@ public class GroupDisplayActivity extends BaseActivity {
                     TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(h.actionMute,
                             muted ? R.drawable.ic_notifications_active_black_24dp : R.drawable.ic_notifications_off_black_24dp,
                             0, 0, 0);
-                    h.editGroupName.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            editGroupSubject();
-                        }
-                    });
+
+                    if (!mIsOwner)
+                        h.editGroupName.setVisibility(View.GONE);
+                    else {
+                        h.editGroupName.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                editGroupSubject();
+                            }
+                        });
+                    }
                 } else if (holder instanceof FooterViewHolder) {
                     FooterViewHolder h = (FooterViewHolder)holder;
 
@@ -210,9 +241,16 @@ public class GroupDisplayActivity extends BaseActivity {
                         nickname = nickname.split("@")[0].split("\\.")[0];
                     }
 
+
+                    if (mGroupOwner != null
+                    && member.username.equals(mGroupOwner.getAddress().getAddress()))
+                    {
+                        nickname += " (" + getString(R.string.group_admin) + ")";
+                    }
+
                     if (member.username.equals(mLocalAddress))
                     {
-                        nickname += " (you)";
+                        nickname += " (" + getString(R.string.group_you) + ")";
                     }
 
                     h.line1.setText(nickname);

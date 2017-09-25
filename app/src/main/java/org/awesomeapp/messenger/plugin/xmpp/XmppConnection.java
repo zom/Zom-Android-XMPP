@@ -707,7 +707,6 @@ public class XmppConnection extends ImConnection {
 
                 muc = mucMgr.getMultiUserChat(JidCreate.entityBareFrom(chatRoomJid));
                 boolean mucCreated = false;
-
                 try {
                     if (!muc.isJoined()) {
                         DiscussionHistory history = new DiscussionHistory();
@@ -716,7 +715,10 @@ public class XmppConnection extends ImConnection {
                         mucCreated = true;
 
                     }
+                    else
+                    {
 
+                    }
 
                 } catch (Exception iae) {
 
@@ -939,6 +941,8 @@ public class XmppConnection extends ImConnection {
 
         private void loadMembers (MultiUserChat muc, ChatGroup chatGroup) throws SmackException, XMPPException,InterruptedException
         {
+            chatGroup.clearMembers();
+
             XmppAddress xa = null;
 
             List<EntityFullJid> mucOccupant = muc.getOccupants();
@@ -1173,9 +1177,9 @@ public class XmppConnection extends ImConnection {
 
                  Jid jidSource = occ.getJid();
                  if (jidSource != null)
-                 xa = new XmppAddress(jidSource.toString());
+                    xa = new XmppAddress(jidSource.toString());
                  else
-                 xa = new XmppAddress(entityFullJid.toString());
+                    xa = new XmppAddress(entityFullJid.toString());
 
                  Contact mucContact = chatGroup.getMember(xa.getAddress());
                  chatGroup.notifyMemberLeft(mucContact);

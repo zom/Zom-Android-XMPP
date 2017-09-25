@@ -152,5 +152,10 @@ interface IChatSession {
      * Set the subject for a chat room
      **/
      void setGroupChatSubject(String subject);
+
+     /**
+     * Get group chat owner
+     **/
+     Contact getGroupChatOwner();
 }
 

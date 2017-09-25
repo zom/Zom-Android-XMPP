@@ -205,4 +205,9 @@ public class ChatGroup extends ImEntity {
 
         mOwner = owner;
     }
+
+    public Contact getOwner ()
+    {
+        return mOwner;
+    }
 }

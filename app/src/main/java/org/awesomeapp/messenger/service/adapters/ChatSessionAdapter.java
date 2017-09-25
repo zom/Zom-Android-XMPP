@@ -1664,4 +1664,20 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             e.printStackTrace();
         }
     }
+
+    @Override
+    public Contact getGroupChatOwner ()
+    {
+        try {
+            if (isGroupChatSession()) {
+                ChatGroup group = (ChatGroup)mChatSession.getParticipant();
+                return group.getOwner();
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 }
