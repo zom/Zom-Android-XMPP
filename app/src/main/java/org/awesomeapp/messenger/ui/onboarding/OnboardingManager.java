@@ -138,7 +138,7 @@ public class OnboardingManager {
             diLink.nickname = null;
 
         }
-        else if (code[0].contains("/i/#")){
+        else if (code[0].contains("/i/")){
 
             //this is an invite link
             try {
