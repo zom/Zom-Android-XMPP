@@ -106,9 +106,11 @@ public class GroupDisplayActivity extends BaseActivity {
 
         try {
             mSession = mConn.getChatSessionManager().getChatSession(mAddress);
-            mGroupOwner = mSession.getGroupChatOwner();
-            if (mGroupOwner != null)
-                mIsOwner = mGroupOwner.getAddress().getBareAddress().equals(mLocalAddress);
+            if (mSession != null) {
+                mGroupOwner = mSession.getGroupChatOwner();
+                if (mGroupOwner != null)
+                    mIsOwner = mGroupOwner.getAddress().getBareAddress().equals(mLocalAddress);
+            }
         }
         catch (RemoteException e){}
 

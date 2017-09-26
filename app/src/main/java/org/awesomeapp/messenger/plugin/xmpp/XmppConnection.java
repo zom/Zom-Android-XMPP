@@ -754,20 +754,32 @@ public class XmppConnection extends ImConnection {
                             }
                         }
 
-                        // Sets the new owner of the room
-                        if (submitForm.getField("muc#roomconfig_roomowners") != null) {
-                            List owners = new ArrayList();
-                            owners.add(mUser.getAddress().getBareAddress());
-                            submitForm.setAnswer("muc#roomconfig_roomowners", owners);
-                            chatGroup.setOwner(mUser);
+                        if (submitForm.getField("muc#roomconfig_roomowners") == null) {
+                            FormField field = new FormField("muc#roomconfig_roomowners");
+                            field.setType(FormField.Type.jid_multi);
+                            submitForm.addField(field);
                         }
 
+                        // Sets the new owner of the room
+                        List owners = new ArrayList();
+                        owners.add(mUser.getAddress().getBareAddress());
+                        submitForm.setAnswer("muc#roomconfig_roomowners", owners);
+                        chatGroup.setOwner(mUser);
 
-                        if (submitForm.getField("muc#roominfo_description") != null)
-                            submitForm.setAnswer("muc#roominfo_description", subject);
+                        if (submitForm.getField("muc#roominfo_description") == null) {
+                            FormField field =new FormField("muc#roominfo_description");
+                            field.setType(FormField.Type.text_single);
+                            submitForm.addField(field);
+                        }
 
-                        if (submitForm.getField("muc#roomconfig_roomname") != null)
-                            submitForm.setAnswer("muc#roomconfig_roomname", subject);
+                        submitForm.setAnswer("muc#roominfo_description", subject);
+
+                        if (submitForm.getField("muc#roomconfig_roomname") == null) {
+                            FormField field =new FormField("muc#roomconfig_roomname");
+                            field.setType(FormField.Type.text_single);
+                            submitForm.addField(field);
+                        }
+                        submitForm.setAnswer("muc#roomconfig_roomname", subject);
 
                         if (submitForm.getField("muc#roomconfig_roomdesc") != null)
                             submitForm.setAnswer("muc#roomconfig_roomdesc", subject);
@@ -775,30 +787,57 @@ public class XmppConnection extends ImConnection {
                         if (submitForm.getField("muc#roomconfig_changesubject") != null)
                             submitForm.setAnswer("muc#roomconfig_changesubject", true);
 
-                        if (submitForm.getField("muc#roomconfig_anonymity") != null)
-                            submitForm.setAnswer("muc#roomconfig_anonymity", "nonanonymous");
+                        if (submitForm.getField("muc#roomconfig_anonymity") == null) {
+                            FormField field =new FormField("muc#roomconfig_anonymity");
+                            field.setType(FormField.Type.text_single);
+                            submitForm.addField(field);
+                        }
+                        submitForm.setAnswer("muc#roomconfig_anonymity", "nonanonymous");
 
-                        if (submitForm.getField("muc#roomconfig_publicroom") != null)
-                            submitForm.setAnswer("muc#roomconfig_publicroom", false);
+                        if (submitForm.getField("muc#roomconfig_publicroom") == null) {
+                            FormField field =new FormField("muc#roomconfig_publicroom");
+                            field.setType(FormField.Type.bool);
+                            submitForm.addField(field);
+                        }
+                        submitForm.setAnswer("muc#roomconfig_publicroom", false);
 
-                        if (submitForm.getField("muc#roomconfig_persistentroom") != null)
-                            submitForm.setAnswer("muc#roomconfig_persistentroom", true);
+                        if (submitForm.getField("muc#roomconfig_persistentroom") == null) {
+                            FormField field =new FormField("muc#roomconfig_persistentroom");
+                            field.setType(FormField.Type.bool);
+                            submitForm.addField(field);
+                        }
+                        submitForm.setAnswer("muc#roomconfig_persistentroom", true);
 
-                        if (submitForm.getField("muc#roomconfig_whois") != null)
-                            submitForm.setAnswer("muc#roomconfig_whois", Arrays.asList("anyone"));
+                        if (submitForm.getField("muc#roomconfig_whois") == null) {
+                            FormField field =new FormField("muc#roomconfig_whois");
+                            field.setType(FormField.Type.list_single);
+                            submitForm.addField(field);
+                        }
+                        submitForm.setAnswer("muc#roomconfig_whois", Arrays.asList("anyone"));
 
-                        if (submitForm.getField("muc#roomconfig_historylength") != null)
-                            submitForm.setAnswer("muc#roomconfig_historylength", historyFetchMax);
+                        if (submitForm.getField("muc#roomconfig_historylength") == null) {
+                            FormField field =new FormField("muc#roomconfig_historylength");
+                            field.setType(FormField.Type.text_single);
+                            submitForm.addField(field);
+                        }
+                        submitForm.setAnswer("muc#roomconfig_historylength", historyFetchMax);
 
-                        if (submitForm.getField("muc#maxhistoryfetch") != null)
-                            submitForm.setAnswer("muc#maxhistoryfetch", historyFetchMax);
+                        if (submitForm.getField("muc#maxhistoryfetch") == null) {
+                            FormField field =new FormField("muc#maxhistoryfetch");
+                            field.setType(FormField.Type.text_single);
+                            submitForm.addField(field);
+                        }
+                        submitForm.setAnswer("muc#maxhistoryfetch", historyFetchMax);
 
-                        if (submitForm.getField("muc#roomconfig_enablelogging") != null)
-                            submitForm.setAnswer("muc#roomconfig_enablelogging", false);
+                        if (submitForm.getField("muc#roomconfig_enablelogging") == null) {
+                            FormField field =new FormField("muc#roomconfig_enablelogging");
+                            field.setType(FormField.Type.bool);
+                            submitForm.addField(field);
+                        }
+                        submitForm.setAnswer("muc#roomconfig_enablelogging", false);
 
-                        //                        if (submitForm.getField("muc#maxhistoryfetch") != null)
-                        //                            submitForm.setAnswer("muc#maxhistoryfetch", 0);
-
+                        if (submitForm.getField(MucConfigFormManager.MUC_ROOMCONFIG_MEMBERSONLY) == null)
+                            submitForm.addField(new FormField(MucConfigFormManager.MUC_ROOMCONFIG_MEMBERSONLY));
                         submitForm.setAnswer(MucConfigFormManager.MUC_ROOMCONFIG_MEMBERSONLY, true);
 
                         muc.sendConfigurationForm(submitForm);
@@ -1134,11 +1173,6 @@ public class XmppConnection extends ImConnection {
             public void joined(EntityFullJid entityFullJid) {
 
 
-                try {
-                    loadMembers(muc, group);
-                }
-                catch (Exception e){}
-                /**
                  XmppAddress xa = new XmppAddress(entityFullJid.toString());
                  ChatGroup chatGroup = mChatGroupManager.getChatGroup(xa);
 
@@ -1162,7 +1196,7 @@ public class XmppConnection extends ImConnection {
                  }
                  }
                  catch (Exception e) {}
-                 **/
+
             }
 
             @Override
@@ -1170,18 +1204,7 @@ public class XmppConnection extends ImConnection {
 
                  XmppAddress xa = new XmppAddress(entityFullJid.toString());
                  ChatGroup chatGroup = mChatGroupManager.getChatGroup(xa);
-
-                 MultiUserChat muc = mChatGroupManager.getMultiUserChat(xa.getBareAddress());
-
-                 Occupant occ = muc.getOccupant(entityFullJid);
-
-                 Jid jidSource = occ.getJid();
-                 if (jidSource != null)
-                    xa = new XmppAddress(jidSource.toString());
-                 else
-                    xa = new XmppAddress(entityFullJid.toString());
-
-                 Contact mucContact = chatGroup.getMember(xa.getAddress());
+                 Contact mucContact = chatGroup.getMember(entityFullJid.toString());
                  chatGroup.notifyMemberLeft(mucContact);
 
             }

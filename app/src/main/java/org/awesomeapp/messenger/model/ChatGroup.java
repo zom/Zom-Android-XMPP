@@ -112,7 +112,7 @@ public class ChatGroup extends ImEntity {
      *
      * @param newContact the {@link Contact} who has joined into the group.
      */
-    public void notifyMemberJoined(String groupAddress, Contact newContact) {
+    public synchronized void notifyMemberJoined(String groupAddress, Contact newContact) {
 
         Contact contact = mMembers.get(newContact.getAddress().getBareAddress());
 
@@ -128,7 +128,6 @@ public class ChatGroup extends ImEntity {
         }
         else
         {
-
             //just update the presence
             contact.setPresence(newContact.getPresence());
         }
