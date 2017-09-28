@@ -25,7 +25,7 @@
   <string name="lock_screen_create_passphrase">パスワードを設定</string>
   <string name="lock_screen_confirm_passphrase">パスワードを確認</string>
   <string name="lock_screen_passphrase_hint">パスワード</string>
-  <string name="lock_screen_passphrase_not_set_enter">パスワードなしに連絡先やメッセージへアクセスすることを防止するために、オプションで Zom にマスターパスワードを設定することができます:</string>
+  <string name="lock_screen_passphrase_not_set_enter">パスワードなしに連絡先やメッセージへアクセスすることを防止するために、オプションで ChatSecure にマスターパスワードを設定することができます:</string>
   <string name="lock_screen_passphrase_not_set_confirm">新しいパスワードを確認</string>
   <string name="lock_screen_passphrases_not_matching">パスワードが一致しません、再度入力してください</string>
   <string name="lock_screen_skip">スキップ &gt;&gt;</string>
@@ -210,7 +210,7 @@
   <string name="already_logged_in">別のクライアントから既にログインしています。</string>
   <string name="msisdn_error">SIMカードから電話番号を読み取れませんでした。通信事業者にお問い合わせください。</string>
   <string name="not_signed_in">現在ログインしていません。</string>
-  <string name="account_setup_error_server">チャットサーバに接続中 Zom でエラーが発生しました - 設定を確認して、再度実行してください。</string>
+  <string name="account_setup_error_server">チャットサーバに接続中 ChatSecure でエラーが発生しました - 設定を確認して、再度実行してください。</string>
   <string name="error_suspended_connection">ネットワークはオフラインです</string>
   <string name="unable_to_create_or_join_group_chat">グループチャットを作成または参加することができません</string>
   <string name="unsupported_incoming_data">取得したデータはサポートされていません、共有できません!</string>
@@ -327,4 +327,6 @@
   <string name="title_more">探索</string>
   <string name="title_me">自分</string>
   <string name="no_photos">共有と、受信した写真がここに表示されます</string>
+  <string name="group_admin">管理</string>
+  <string name="group_you">自分</string>
 </resources>

@@ -54,7 +54,6 @@
   <string name="empty_conversation_group">စကားစမြည်ပြောထားသည်များမရှိ</string>
   <string name="search_label">အဆက်အသွယ်</string>
   <string name="search_hint">စကားပြောဆိုမည့် အဆက်အသွယ်၏ အမည်ရိုက်ရန်</string>
-  <string name="input_contact_label">အသင့်ဖိတ်ခေါ်လို့သည့် လူ၏ အီးမေးလ်လိပ်စာ -</string>
   <!--Views: Chat: Single-->
   <string name="menu_end_conversation">စကားဝိုင်းဆုံး</string>
   <string name="select_link_title">လင့်ရွေးပါ</string>

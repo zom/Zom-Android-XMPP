@@ -34,7 +34,6 @@
   <string name="empty_conversation_group">Žiadne konverzácie</string>
   <string name="search_label">Kontakt</string>
   <string name="search_hint">zadajte meno kontaktu s ktorým chcete zahájiť komunikáciu</string>
-  <string name="input_contact_label">E-mailovú adresu osoby, ktorej chcete invite:</string>
   <!--Views: Chat: Single-->
   <string name="menu_end_conversation">Ukončiť rozhovor</string>
   <string name="select_link_title">Vyberte odkaz</string>

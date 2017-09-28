@@ -72,12 +72,12 @@
   <string name="menu_contact_nickname">Bijnaam van contact</string>
   <string name="menu_view_blocked">Geblokkeerd</string>
   <string name="nickname">Bijnaam</string>
-  <string name="confirm_delete_contact">Contact \'<xliff:g id="user">%1$s</xliff:g>\' wordt verwijderd.</string>
-  <string name="confirm_block_contact">Contact \'<xliff:g id="user">%1$s</xliff:g>\' wordt geblokkeerd.</string>
-  <string name="add_contact_success">Contact \'<xliff:g id="user">%1$s</xliff:g>\' is toegevoegd.</string>
-  <string name="delete_contact_success">Contact \'<xliff:g id="user">%1$s</xliff:g>\' is verwijderd.</string>
-  <string name="block_contact_success">Contact \'<xliff:g id="user">%1$s</xliff:g>\' is geblokkeerd.</string>
-  <string name="unblock_contact_success">Contact \'<xliff:g id="user">%1$s</xliff:g>\' is gedeblokkeerd.</string>
+  <string name="confirm_delete_contact">Contact <xliff:g id="user">%1$s</xliff:g> wordt verwijderd.</string>
+  <string name="confirm_block_contact">Contact <xliff:g id="user">%1$s</xliff:g> wordt geblokkeerd.</string>
+  <string name="add_contact_success">Contact <xliff:g id="user">%1$s</xliff:g> is toegevoegd.</string>
+  <string name="delete_contact_success">Contact <xliff:g id="user">%1$s</xliff:g> is verwijderd.</string>
+  <string name="block_contact_success">Contact <xliff:g id="user">%1$s</xliff:g> is geblokkeerd.</string>
+  <string name="unblock_contact_success">Contact <xliff:g id="user">%1$s</xliff:g> is gedeblokkeerd.</string>
   <string name="menu_verify">Contact verifiëren</string>
   <string name="empty_conversation_group">Nog geen gesprekken\n\nTik om te beginnen!</string>
   <string name="search_label">Contact</string>
@@ -188,7 +188,7 @@
   <string name="load_contact_list_failed">De lijst met contacten is niet geladen.</string>
   <string name="cant_connect_to_server">Kan geen verbinding maken met de server. Controleer je verbinding.</string>
   <string name="contact_already_exist"><xliff:g id="user">%1$s</xliff:g> staat al in je contacten.</string>
-  <string name="contact_blocked">Contact \'<xliff:g id="user">%1$s</xliff:g>\' is geblokkeerd.</string>
+  <string name="contact_blocked">Contact <xliff:g id="user">%1$s</xliff:g> is geblokkeerd.</string>
   <string name="contact_not_loaded">Je contacten worden geladen.</string>
   <string name="network_error">Er is een netwerkfout opgetreden.</string>
   <string name="wifi_not_connected_error">Wifi is nodig voor deze verbinding.</string>
@@ -325,4 +325,6 @@
   <string name="title_more">Ontdekken</string>
   <string name="title_me">Ik</string>
   <string name="no_photos">Gedeelde en ontvangen foto\'s zullen hier verschijnen</string>
+  <string name="group_admin">beheerder</string>
+  <string name="group_you">jij</string>
 </resources>

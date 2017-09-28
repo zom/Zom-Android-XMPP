@@ -75,12 +75,12 @@ Hemen ikutu  bat gehitzeko!</string>
   <string name="menu_remove_contact">Kontaktua ezabatu</string>
   <string name="menu_contact_nickname">Kontaktuaren ezizena</string>
   <string name="menu_view_blocked">Blokeatuta</string>
-  <string name="confirm_delete_contact">\"<xliff:g id="user">%1$s</xliff:g>\" kontaktua ezabatuko da.</string>
-  <string name="confirm_block_contact">\"<xliff:g id="user">%1$s</xliff:g>\" kontaktua blokeatuko da.</string>
-  <string name="add_contact_success">\"<xliff:g id="user">%1$s</xliff:g>\" kontaktua gehituta.</string>
-  <string name="delete_contact_success">\"<xliff:g id="user">%1$s</xliff:g>\" kontaktua ezabatuta.</string>
-  <string name="block_contact_success">\"<xliff:g id="user">%1$s</xliff:g>\" kontaktua blokeatuta.</string>
-  <string name="unblock_contact_success">\"<xliff:g id="user">%1$s</xliff:g>\" kontaktua desblokeatuta.</string>
+  <string name="confirm_delete_contact">"<xliff:g id="user">%1$s</xliff:g>" kontaktua ezabatuko da.</string>
+  <string name="confirm_block_contact">"<xliff:g id="user">%1$s</xliff:g>" kontaktua blokeatuko da.</string>
+  <string name="add_contact_success">"<xliff:g id="user">%1$s</xliff:g>" kontaktua gehituta.</string>
+  <string name="delete_contact_success">"<xliff:g id="user">%1$s</xliff:g>" kontaktua ezabatuta.</string>
+  <string name="block_contact_success">"<xliff:g id="user">%1$s</xliff:g>" kontaktua blokeatuta.</string>
+  <string name="unblock_contact_success">"<xliff:g id="user">%1$s</xliff:g>" kontaktua desblokeatuta.</string>
   <string name="menu_verify">Gakoa egiaztatu</string>
   <string name="empty_conversation_group">Elkarrizketarik ez</string>
   <string name="search_label">Kontaktua</string>
@@ -170,8 +170,8 @@ Sareko datuen konektibitatea (baita atzeko planoko datuena) beharrezkoa da aplik
   <string name="unblock_contact_failed">Kontaktua ez zegoen desblokeatuta</string>
   <string name="load_contact_list_failed">Kontaktu zerrenda ez da kargatu.</string>
   <string name="cant_connect_to_server">Ezin da zerbitzarira konektatu. Egiaztatu zure konexioa.</string>
-  <string name="contact_already_exist">\"<xliff:g id="user">%1$s</xliff:g>\" dagoeneko zure kontaktu zerrendan dago.</string>
-  <string name="contact_blocked">\"<xliff:g id="user">%1$s</xliff:g>\" kontaktua blokeatua izan da</string>
+  <string name="contact_already_exist">"<xliff:g id="user">%1$s</xliff:g>" dagoeneko zure kontaktu zerrendan dago.</string>
+  <string name="contact_blocked">"<xliff:g id="user">%1$s</xliff:g>" kontaktua blokeatua izan da</string>
   <string name="contact_not_loaded">Mesedez itxaron zure kontaktu zerrenda kargatu bitartean.</string>
   <string name="network_error">Sare akats bat gertatu da.</string>
   <string name="wifi_not_connected_error">Konexio honetarako WiFi-a beharrezkoa da.</string>

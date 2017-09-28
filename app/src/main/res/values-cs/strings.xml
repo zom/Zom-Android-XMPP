@@ -170,7 +170,7 @@ Klikněte pro pozvání.</string>
   <string name="error">Upozornění</string>
   <string name="error_prefix">Chyba:</string>
   <string name="general_error">Kód chyby: <xliff:g id="CODE">%1$d</xliff:g></string>
-  <string name="login_service_failed">Nepodařilo se přihlásit ke službě <xliff:g id="SERVICE">%1$s</xliff:g>. Zkuste to prosím znovu později.\"\n\"(Podrobnosti: <xliff:g id="DESCRIPTION">%2$s</xliff:g>)</string>
+  <string name="login_service_failed">Nepodařilo se přihlásit ke službě <xliff:g id="SERVICE">%1$s</xliff:g>. Zkuste to prosím znovu později."\n"(Podrobnosti: <xliff:g id="DESCRIPTION">%2$s</xliff:g>)</string>
   <string name="add_list_failed">Seznam se nepodařilo přidat.</string>
   <string name="block_contact_failed">Blokování kontaktu se nezdařilo.</string>
   <string name="unblock_contact_failed">Odblokování kontaktu se nezdařilo.</string>

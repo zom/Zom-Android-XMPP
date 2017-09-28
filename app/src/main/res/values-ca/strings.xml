@@ -71,12 +71,12 @@
   <string name="menu_contact_nickname">Àlies del contacte</string>
   <string name="menu_view_blocked">Bloquejat</string>
   <string name="nickname">Àlies</string>
-  <string name="confirm_delete_contact">S\'eliminarà el contacte \"<xliff:g id="user">%1$s</xliff:g>\".</string>
-  <string name="confirm_block_contact">Es blocarà el contacte \"<xliff:g id="user">%1$s</xliff:g>\".</string>
-  <string name="add_contact_success">S\'ha afegit el contacte \"<xliff:g id="user">%1$s</xliff:g>\".</string>
-  <string name="delete_contact_success">S\'ha esborrat el contacte \"<xliff:g id="user">%1$s</xliff:g>\".</string>
-  <string name="block_contact_success">S\'ha blocat el contacte \"<xliff:g id="user">%1$s</xliff:g>\".</string>
-  <string name="unblock_contact_success">S\'ha desblocat el contacte \"<xliff:g id="user">%1$s</xliff:g>\".</string>
+  <string name="confirm_delete_contact">S\'eliminarà el contacte "<xliff:g id="user">%1$s</xliff:g>".</string>
+  <string name="confirm_block_contact">Es blocarà el contacte "<xliff:g id="user">%1$s</xliff:g>".</string>
+  <string name="add_contact_success">S\'ha afegit el contacte "<xliff:g id="user">%1$s</xliff:g>".</string>
+  <string name="delete_contact_success">S\'ha esborrat el contacte "<xliff:g id="user">%1$s</xliff:g>".</string>
+  <string name="block_contact_success">S\'ha blocat el contacte "<xliff:g id="user">%1$s</xliff:g>".</string>
+  <string name="unblock_contact_success">S\'ha desblocat el contacte "<xliff:g id="user">%1$s</xliff:g>".</string>
   <string name="menu_verify">Verifica el contacte</string>
   <string name="empty_conversation_group">No hi ha cap conversa en curs!</string>
   <string name="search_label">Contate</string>

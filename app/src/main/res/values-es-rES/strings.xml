@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <!--General: Names-->
-  <string name="ic_launcher_name">Zom</string>
-  <string name="app_name">Zom</string>
-  <string name="im_label">Zom</string>
+  <string name="ic_launcher_name">ChatSecure</string>
+  <string name="app_name">ChatSecure</string>
+  <string name="im_label">ChatSecure</string>
   <!--General: Permissions-->
   <string name="ro_perm_label">leer mensajes instantáneos</string>
   <string name="ro_perm_desc">Permite a las aplicaciones leer datos desde el proveedor de contenido de mensajería instantánea.    </string>
@@ -22,7 +22,7 @@
   <string name="lock_screen_create_passphrase">Establecer contraseña</string>
   <string name="lock_screen_confirm_passphrase">Confirmar contraseña</string>
   <string name="lock_screen_passphrase_hint">Contraseña</string>
-  <string name="lock_screen_passphrase_not_set_enter">Opcionalmente puede establecer una contraseña maestra para Zom, para evitar el acceso a sus contactos y mensajes sin una contraseña.</string>
+  <string name="lock_screen_passphrase_not_set_enter">Opcionalmente puede establecer una contraseña maestra para ChatSecure, para evitar el acceso a sus contactos y mensajes sin una contraseña.</string>
   <string name="lock_screen_passphrase_not_set_confirm">Confirmar nueva contraseña</string>
   <string name="lock_screen_passphrases_not_matching">La contraseña no coincide, por favor inténtelo de nuevo</string>
   <string name="lock_screen_skip">Omitir &gt;&gt;</string>
@@ -201,8 +201,8 @@ cuentas configuradas.\n\n¡Pulse aquí para añadir una!</string>
   <string name="already_logged_in">ha iniciado sesión desde otro cliente.</string>
   <string name="msisdn_error">No se puede leer el número de teléfono de la tarjeta SIM. Póngase en contacto con su operador para obtener ayuda.</string>
   <string name="not_signed_in">No ha iniciado sesión.</string>
-  <string name="account_setup_error_server">Zom encontró un error mientras se conectaba al servidor de chat - por favor revise su configuración y pruebe de nuevo.</string>
-  <string name="error_suspended_connection">Zom ha perdido la conexión a la red</string>
+  <string name="account_setup_error_server">ChatSecure encontró un error mientras se conectaba al servidor de chat - por favor revise su configuración y pruebe de nuevo.</string>
+  <string name="error_suspended_connection">ChatSecure ha perdido la conexión a la red</string>
   <string name="unable_to_create_or_join_group_chat">Imposible de crear o unirse al chat de grupo</string>
   <string name="unsupported_incoming_data">¡Datos entrantes no soportados, no se pudo compartir!</string>
   <string name="there_is_no_viewer_available_for_this_file_format">No hay ningún visor disponible para este formato de fichero</string>

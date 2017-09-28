@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <!--General: Names-->
-  <string name="ic_launcher_name">Zom</string>
-  <string name="app_name">Zom</string>
-  <string name="im_label">Zom</string>
+  <string name="ic_launcher_name">ChatSecure</string>
+  <string name="app_name">ChatSecure</string>
+  <string name="im_label">ChatSecure</string>
   <!--General: Permissions-->
   <string name="ro_perm_label">lue pikaviestejä</string>
   <string name="ro_perm_desc">
@@ -68,7 +68,6 @@ Sallii tietojen kirjoittamisen pikaviestisovelluksiin.</string>
   <string name="menu_verify">Varmista avain</string>
   <string name="empty_conversation_group">Ei keskusteluita</string>
   <string name="search_label">Yhteystieto</string>
-  <string name="input_contact_label">Kutsuttavan henkilön sähköpostiosoite:</string>
   <!--Views: Chat: Single-->
   <string name="contact_online"><xliff:g id="user">%1$s</xliff:g> on online</string>
   <string name="contact_away"><xliff:g id="user">%1$s</xliff:g> on poissa</string>
@@ -119,7 +118,7 @@ Klikkaa kutsuaksesi.</string>
   <string name="notification_vibrate_summary">Värise pikaviestin saapuessa</string>
   <string name="notification_sound_title">Ääni</string>
   <string name="notification_sound_summary">Soita viestiääni pikaviestin saapuessa</string>
-  <string name="notification_ringtone_title">Käytä muokattua soittoääntä Zomlle</string>
+  <string name="notification_ringtone_title">Käytä muokattua soittoääntä ChatSecurelle</string>
   <!--Actions: Settings: General: Developer-->
   <string name="pref_debug_title">Laita Debug-log päälle</string>
   <string name="pref_debug_summary">Tulosta ohjelman logitiedot oletuskohteeseen/logcatiin debuggausta varten</string>

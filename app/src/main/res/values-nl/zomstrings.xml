@@ -79,7 +79,7 @@
   <string name="contact_migration_notice">Je contact heeft een nieuwe account. Chat met hen op</string>
   <string name="contact_migration_action">Nu chatten</string>
   <string name="upgrade_old_chats">Je gesprekken vanop je oude account worden hier opgeslagen</string>
-  <string name="message_waiting_for_friend">Je vriend heeft je nog niet aanvaard</string>
+  <string name="message_waiting_for_friend">Wachten op je vriend</string>
   <string name="message_archive">Enkele van je Zom-vrienden werken hun accounts bij. Verlopen accounts worden hier opgeslagen.</string>
   <string name="one_moment_please_privacy">Even geduld! We bereiden je privé-Zom voor.</string>
   <string name="action_got_it">Begrepen</string>
@@ -91,4 +91,9 @@
   <string name="action_upgrade_now">Nu bijwerken</string>
   <string name="action_chat_now">Nu chatten</string>
   <string name="action_add_buddy">Vriend toevoegen</string>
+  <string name="action_leave">Verlaten</string>
+  <string name="add_people">Contacten toevoegen</string>
+  <string name="turn_notifications_on">Meldingen inschakelen</string>
+  <string name="turn_notifications_off">Meldingen dempen</string>
+  <string name="is_already_in_your_group">%1$s zit al in je groep</string>
 </resources>

@@ -76,12 +76,12 @@ akun yang dikonfigurasi.
 Ketuk di sini untuk menambah!</string>
   <string name="menu_remove_contact">Hapus kontak</string>
   <string name="menu_view_blocked">Diblokir</string>
-  <string name="confirm_delete_contact">Kontak \"<xliff:g id="user">%1$s</xliff:g>\" akan dihapus.</string>
-  <string name="confirm_block_contact">Kontak \"<xliff:g id="user">%1$s</xliff:g>\" akan diblokir.</string>
-  <string name="add_contact_success">Kontak \"<xliff:g id="user">%1$s</xliff:g>\" ditambahkan.</string>
-  <string name="delete_contact_success">Kontak \"<xliff:g id="user">%1$s</xliff:g>\" dihapus.</string>
-  <string name="block_contact_success">Kontak \"<xliff:g id="user">%1$s</xliff:g>\" diblokir.</string>
-  <string name="unblock_contact_success">Kontak \"<xliff:g id="user">%1$s</xliff:g>\" batal diblokir.</string>
+  <string name="confirm_delete_contact">Kontak "<xliff:g id="user">%1$s</xliff:g>" akan dihapus.</string>
+  <string name="confirm_block_contact">Kontak "<xliff:g id="user">%1$s</xliff:g>" akan diblokir.</string>
+  <string name="add_contact_success">Kontak "<xliff:g id="user">%1$s</xliff:g>" ditambahkan.</string>
+  <string name="delete_contact_success">Kontak "<xliff:g id="user">%1$s</xliff:g>" dihapus.</string>
+  <string name="block_contact_success">Kontak "<xliff:g id="user">%1$s</xliff:g>" diblokir.</string>
+  <string name="unblock_contact_success">Kontak "<xliff:g id="user">%1$s</xliff:g>" batal diblokir.</string>
   <string name="menu_verify">Sahkan Key</string>
   <string name="empty_conversation_group">Tidak terdapat percakapan</string>
   <string name="search_label">Kontak</string>
@@ -168,8 +168,8 @@ Sentuh untuk mengundang.</string>
   <string name="unblock_contact_failed">Kontak tidak dibatalkan blokir.</string>
   <string name="load_contact_list_failed">Daftar kontak tidak dimuat.</string>
   <string name="cant_connect_to_server">Tidak dapat menghubungi server. Silahkan cek koneksi anda.</string>
-  <string name="contact_already_exist">\"<xliff:g id="user">%1$s</xliff:g>\" sudah terdapat di daftar Kontak anda.</string>
-  <string name="contact_blocked">Kontak \"<xliff:g id="user">%1$s</xliff:g>\" telah diblokir.</string>
+  <string name="contact_already_exist">"<xliff:g id="user">%1$s</xliff:g>" sudah terdapat di daftar Kontak anda.</string>
+  <string name="contact_blocked">Kontak "<xliff:g id="user">%1$s</xliff:g>" telah diblokir.</string>
   <string name="contact_not_loaded">Silahkan tunggu sementara daftar Kontak anda dimuat.</string>
   <string name="network_error">Terjadi kesalahan jaringan.</string>
   <string name="wifi_not_connected_error">Koneksi ini memerlukan WiFi.</string>

@@ -46,7 +46,6 @@ Permite que aplicativos enviem dados para o provedor de mensagens instantâneas<
   <string name="unblock_contact_success">Contato "<xliff:g id="USER">%1$s</xliff:g>" desbloqueado.</string>
   <string name="empty_conversation_group">Sem conversas</string>
   <string name="search_label">Contacto</string>
-  <string name="input_contact_label">O endereço de e-mail da pessoa que você deseja convidar:</string>
   <!--Views: Chat: Single-->
   <string name="contact_online"><xliff:g id="USER">%1$s</xliff:g> está on-line</string>
   <string name="contact_away"><xliff:g id="USER">%1$s</xliff:g> está ausente</string>

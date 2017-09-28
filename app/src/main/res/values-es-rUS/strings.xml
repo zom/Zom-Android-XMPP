@@ -25,12 +25,12 @@
   <!--Views: Contact list-->
   <string name="menu_remove_contact">Eliminar contacto</string>
   <string name="menu_view_blocked">Bloqueado</string>
-  <string name="confirm_delete_contact">El contacto \"<xliff:g id="USER">%1$s</xliff:g>\" se eliminará.</string>
-  <string name="confirm_block_contact">El contacto \"<xliff:g id="USER">%1$s</xliff:g>\" se bloqueará.</string>
-  <string name="add_contact_success">Contacto \"<xliff:g id="USER">%1$s</xliff:g>\" agregado.</string>
-  <string name="delete_contact_success">Contacto \"<xliff:g id="USER">%1$s</xliff:g>\" eliminado.</string>
-  <string name="block_contact_success">Contacto \"<xliff:g id="USER">%1$s</xliff:g>\" bloqueado.</string>
-  <string name="unblock_contact_success">Contacto \"<xliff:g id="USER">%1$s</xliff:g>\" desbloqueado.</string>
+  <string name="confirm_delete_contact">El contacto "<xliff:g id="USER">%1$s</xliff:g>" se eliminará.</string>
+  <string name="confirm_block_contact">El contacto "<xliff:g id="USER">%1$s</xliff:g>" se bloqueará.</string>
+  <string name="add_contact_success">Contacto "<xliff:g id="USER">%1$s</xliff:g>" agregado.</string>
+  <string name="delete_contact_success">Contacto "<xliff:g id="USER">%1$s</xliff:g>" eliminado.</string>
+  <string name="block_contact_success">Contacto "<xliff:g id="USER">%1$s</xliff:g>" bloqueado.</string>
+  <string name="unblock_contact_success">Contacto "<xliff:g id="USER">%1$s</xliff:g>" desbloqueado.</string>
   <string name="empty_conversation_group">No hay conversaciones</string>
   <string name="input_contact_label">Dirección de correo electrónico de la persona que deseas invitar:</string>
   <!--Views: Chat: Single-->
@@ -84,14 +84,14 @@
   <!--Alerts: Exceptions-->
   <string name="error">Atención</string>
   <string name="general_error">Código de error <xliff:g id="CODE">%1$d</xliff:g></string>
-  <string name="login_service_failed">No es posible iniciar sesión en el servicio <xliff:g id="SERVICE">%1$s</xliff:g>. Vuelve a intentarlo más tarde.\"\n\"(Detalle:<xliff:g id="DESCRIPTION">%2$s</xliff:g>)</string>
+  <string name="login_service_failed">No es posible iniciar sesión en el servicio <xliff:g id="SERVICE">%1$s</xliff:g>. Vuelve a intentarlo más tarde."\n"(Detalle:<xliff:g id="DESCRIPTION">%2$s</xliff:g>)</string>
   <string name="add_list_failed">La lista no se agregó.</string>
   <string name="block_contact_failed">El contacto no se bloqueó.</string>
   <string name="unblock_contact_failed">El contacto no se desbloqueó.</string>
   <string name="load_contact_list_failed">La lista de contactos no se cargó.</string>
   <string name="cant_connect_to_server">No es posible conectarse al servidor. Verifica tu conexión.</string>
   <string name="contact_already_exist"><xliff:g id="USER">%1$s</xliff:g> ya existe en tu lista de contactos.</string>
-  <string name="contact_blocked">El contacto \"<xliff:g id="USER">%1$s</xliff:g>\" ha sido bloqueado.</string>
+  <string name="contact_blocked">El contacto "<xliff:g id="USER">%1$s</xliff:g>" ha sido bloqueado.</string>
   <string name="contact_not_loaded">Espera mientras se carga tu lista de contactos</string>
   <string name="network_error">Se ha producido un error en la red.</string>
   <string name="service_not_support">El servidor no admite esta funcionalidad.</string>

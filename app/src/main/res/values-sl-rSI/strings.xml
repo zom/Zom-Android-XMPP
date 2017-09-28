@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <!--General: Names-->
-  <string name="ic_launcher_name">Zom</string>
-  <string name="app_name">Zom</string>
-  <string name="im_label">Zom</string>
+  <string name="ic_launcher_name">ChatSecure</string>
+  <string name="app_name">ChatSecure</string>
+  <string name="im_label">ChatSecure</string>
   <!--General: Permissions-->
   <string name="ro_perm_label">bere hipna sporočila</string>
   <string name="ro_perm_desc">Dovoli aplikacijam dostop do podatkov ponudnika vsebin hipnega sporočanja.</string>
@@ -64,7 +64,6 @@ Dotaknite se tu in ga dodajte!</string>
   <string name="empty_conversation_group">Brez pogovoro</string>
   <string name="search_label">Stik</string>
   <string name="search_hint">vpiši ime stika, s katerim želiš začeti pogovor</string>
-  <string name="input_contact_label">E-poštni naslov osebe, ki jo želite povabiti:</string>
   <!--Views: Chat: Single-->
   <string name="contact_online"><xliff:g id="user">%1$s</xliff:g> je povezan</string>
   <string name="contact_away"><xliff:g id="user">%1$s</xliff:g> je odsoten</string>

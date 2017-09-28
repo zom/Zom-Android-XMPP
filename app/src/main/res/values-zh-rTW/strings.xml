@@ -65,7 +65,6 @@
   <string name="empty_conversation_group">沒有對話</string>
   <string name="search_label">聯絡人</string>
   <string name="search_hint">打入聯絡人的名字以便聊天喇賽</string>
-  <string name="input_contact_label">您要邀請的對象電子郵件地址：</string>
   <!--Views: Chat: Single-->
   <string name="contact_online"><xliff:g id="USER">%1$s</xliff:g> 在線上</string>
   <string name="contact_away"><xliff:g id="USER">%1$s</xliff:g> 顯示離開</string>

@@ -76,12 +76,12 @@
   <string name="menu_contact_nickname">Прякор на контакта</string>
   <string name="menu_view_blocked">Блокиран</string>
   <string name="nickname">Прякор</string>
-  <string name="confirm_delete_contact">Контактът \"<xliff:g id="user">%1$s</xliff:g>\" ще бъде премахнат.</string>
-  <string name="confirm_block_contact">Контактът \"<xliff:g id="user">%1$s</xliff:g>\" ще бъде блокиран.</string>
-  <string name="add_contact_success">Контактът \"<xliff:g id="user">%1$s</xliff:g>\" добавен.</string>
-  <string name="delete_contact_success">Контактът \"<xliff:g id="user">%1$s</xliff:g>\" изтрит.</string>
-  <string name="block_contact_success">Контактът \"<xliff:g id="user">%1$s</xliff:g>\" блокиран.</string>
-  <string name="unblock_contact_success">Контактът \"<xliff:g id="user">%1$s</xliff:g>\" разблокиран.</string>
+  <string name="confirm_delete_contact">Контактът "<xliff:g id="user">%1$s</xliff:g>" ще бъде премахнат.</string>
+  <string name="confirm_block_contact">Контактът "<xliff:g id="user">%1$s</xliff:g>" ще бъде блокиран.</string>
+  <string name="add_contact_success">Контактът "<xliff:g id="user">%1$s</xliff:g>" добавен.</string>
+  <string name="delete_contact_success">Контактът "<xliff:g id="user">%1$s</xliff:g>" изтрит.</string>
+  <string name="block_contact_success">Контактът "<xliff:g id="user">%1$s</xliff:g>" блокиран.</string>
+  <string name="unblock_contact_success">Контактът "<xliff:g id="user">%1$s</xliff:g>" разблокиран.</string>
   <string name="menu_verify">Потвърди Ключа</string>
   <string name="empty_conversation_group">Дискусията е празна</string>
   <string name="search_label">Контакт</string>
@@ -184,8 +184,8 @@
   <string name="unblock_contact_failed">Контактът не е разблокиран.</string>
   <string name="load_contact_list_failed">Списъкът с контакти не е зареден.</string>
   <string name="cant_connect_to_server">Неуспешен опит за връзка със сървъра. Моля, провери интернет връзката си.</string>
-  <string name="contact_already_exist">\"<xliff:g id="user">%1$s</xliff:g>\" е в списъка ти с Контакти.</string>
-  <string name="contact_blocked">Контактът \"<xliff:g id="user">%1$s</xliff:g>\" е блокиран.</string>
+  <string name="contact_already_exist">"<xliff:g id="user">%1$s</xliff:g>" е в списъка ти с Контакти.</string>
+  <string name="contact_blocked">Контактът "<xliff:g id="user">%1$s</xliff:g>" е блокиран.</string>
   <string name="contact_not_loaded">Моля, изчакай докато списъка ти с Контакти се зарежда.</string>
   <string name="network_error">Настъпи проблем с интернет връзката.</string>
   <string name="wifi_not_connected_error">WiFi е нужно за тази връзка.</string>

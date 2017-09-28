@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <!--General: Names-->
-  <string name="ic_launcher_name">Zom</string>
-  <string name="app_name">Zom</string>
-  <string name="im_label">Zom</string>
+  <string name="ic_launcher_name">ChatSecure</string>
+  <string name="app_name">ChatSecure</string>
+  <string name="im_label">ChatSecure</string>
   <!--General: Permissions-->
   <!--General: Actions-->
   <string name="confirm">Підтвердити</string>

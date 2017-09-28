@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
-  <string name="app_name_zom">Zom</string>
+  <string name="app_name_zom">ChatSecure</string>
   <string name="send_message">Στείλτε ένα μήνυμα</string>
   <string name="me_title">Εγώ</string>
   <string name="add_account_action">Προσθήκη λογαριασμού</string>

@@ -165,7 +165,7 @@
   <string name="notification_vibrate_summary">在收到即时消息的同时振动</string>
   <string name="notification_sound_title">声音</string>
   <string name="notification_sound_summary">在收到即时消息的同时播放铃声</string>
-  <string name="notification_ringtone_title">使用Zom自定义铃声</string>
+  <string name="notification_ringtone_title">使用ChatSecure自定义铃声</string>
   <!--Actions: Settings: General: Developer-->
   <string name="pref_debug_title">开启纠错记录</string>
   <string name="pref_debug_summary">为纠错将应用的登陆数据导出为标准格式</string>
@@ -212,8 +212,8 @@
   <string name="already_logged_in">您已从另一个客户端登录。</string>
   <string name="msisdn_error">抱歉，无法从您的 SIM 卡读取手机号码。请与运营商联系寻求帮助。</string>
   <string name="not_signed_in">您当前未登录。</string>
-  <string name="account_setup_error_server">Zom连接聊天服务器的时候发生错误，请检查网络连接。</string>
-  <string name="error_suspended_connection">Zom失去网络连接</string>
+  <string name="account_setup_error_server">ChatSecure连接聊天服务器的时候发生错误，请检查网络连接。</string>
+  <string name="error_suspended_connection">ChatSecure失去网络连接</string>
   <string name="unable_to_create_or_join_group_chat">无法创建或加入群聊</string>
   <string name="unsupported_incoming_data">不支援此数据，无法分享！</string>
   <string name="swipe_alert">Zom 检测到删除目前任务的要求。ZOM将会崩溃。请从帐户列表屏幕里使用登出所有的菜单项。</string>

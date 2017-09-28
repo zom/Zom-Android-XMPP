@@ -65,7 +65,7 @@
   <string name="reset_passphrase">Passwort zurücksetzen</string>
   <string name="action_services">Zom Dienst</string>
   <string name="migrate_menu">Account übertragen</string>
-  <string name="migrate_message">"Ich habe einen neuen Account. Kontakte mich hier: </string>
+  <string name="migrate_message">\"Ich habe einen neuen Account. Kontakte mich hier: </string>
   <string name="migrate_notification">Dein Account wird bald nicht mehr vorhanden sein. Öffne die App um zu migrieren.</string>
   <string name="action_undo">Rückgängig</string>
   <string name="message_upgrade">Wir müssen ihren Zom Account auf einen neuen Server übertragen. Wir können dich automatisch übertragen um die beste Performance zu ermöglichen.</string>
@@ -74,12 +74,11 @@
   <string name="upgrade_action">Upgrade Jetzt</string>
   <string name="upgrade_complete">Upgrade fertig! Warte drauf, dass deine Freunde deinen neuen Account akzeptieren.</string>
   <string name="upgrade_complete_action">Fertig</string>
-  <string name="upgrade_progress_action">Wir arbeiten daran...</string>
+  <string name="upgrade_progress_action">Wir arbeiten daran…</string>
   <string name="upgrade_failed">Das Upgrade ist fehlgeschlagen. Bitter versuche es später nochmal! Du kannst auch \"Account migrieren\" im \"Meine Konten\"-Menü nutzen.</string>
   <string name="contact_migration_notice">Dein Kontakt hat einen neuen Account. Du kannst hier mit ihm chatten:</string>
   <string name="contact_migration_action">Jetzt chatten</string>
   <string name="upgrade_old_chats">Dein Chatverlauf von vor deinem Upgrade ist hier gespeichert</string>
-  <string name="message_waiting_for_friend">Warte darauf, dass dich dein Kontakt akzeptiert</string>
   <string name="message_archive">Einige deiner Zom Kontakte wechseln ihre Konten. Alte Konten werden hier gespeichert.</string>
   <string name="one_moment_please_privacy">Einen moment bitte! Wir bereiten dein privates Zom vor.</string>
   <string name="action_got_it">Verstanden</string>

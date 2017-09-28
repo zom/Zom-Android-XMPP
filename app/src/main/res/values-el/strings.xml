@@ -72,12 +72,12 @@
   <string name="menu_remove_contact">Διαγραφή επαφής</string>
   <string name="menu_contact_nickname">Ψευδώνυμο επαφής</string>
   <string name="menu_view_blocked">Αποκλεισμένος/η</string>
-  <string name="confirm_delete_contact">Η επαφή \"<xliff:g id="USER">%1$s</xliff:g>\" θα διαγραφεί.</string>
-  <string name="confirm_block_contact">Θα γίνει αποκλεισμός της επαφής \"<xliff:g id="USER">%1$s</xliff:g>\".</string>
-  <string name="add_contact_success">Έγινε προσθήκη της επαφής \"<xliff:g id="USER">%1$s</xliff:g>\".</string>
-  <string name="delete_contact_success">Η επαφή \"<xliff:g id="USER">%1$s</xliff:g>\" διαγράφηκε.</string>
-  <string name="block_contact_success">Έγινε αποκλεισμός της επαφής \"<xliff:g id="USER">%1$s</xliff:g>\".</string>
-  <string name="unblock_contact_success">Κατάργηση αποκλεισμού της επαφής \"<xliff:g id="USER">%1$s</xliff:g>\".</string>
+  <string name="confirm_delete_contact">Η επαφή "<xliff:g id="USER">%1$s</xliff:g>" θα διαγραφεί.</string>
+  <string name="confirm_block_contact">Θα γίνει αποκλεισμός της επαφής "<xliff:g id="USER">%1$s</xliff:g>".</string>
+  <string name="add_contact_success">Έγινε προσθήκη της επαφής "<xliff:g id="USER">%1$s</xliff:g>".</string>
+  <string name="delete_contact_success">Η επαφή "<xliff:g id="USER">%1$s</xliff:g>" διαγράφηκε.</string>
+  <string name="block_contact_success">Έγινε αποκλεισμός της επαφής "<xliff:g id="USER">%1$s</xliff:g>".</string>
+  <string name="unblock_contact_success">Κατάργηση αποκλεισμού της επαφής "<xliff:g id="USER">%1$s</xliff:g>".</string>
   <string name="menu_verify">Επαλήθευση κλειδιού</string>
   <string name="empty_conversation_group">Δεν υπάρχουν συνομιλίες</string>
   <string name="search_label">Επαφή</string>
@@ -156,14 +156,14 @@
   <!--Alerts: Exceptions-->
   <string name="error">Προσοχή</string>
   <string name="general_error">Κωδικός σφάλματος <xliff:g id="CODE">%1$d</xliff:g></string>
-  <string name="login_service_failed">Δεν είναι δυνατή η σύνδεση στην υπηρεσία <xliff:g id="SERVICE">%1$s</xliff:g>. Δοκιμάστε ξανά αργότερα.\"\n\"(Λεπτομέρειες: <xliff:g id="DESCRIPTION">%2$s</xliff:g>)</string>
+  <string name="login_service_failed">Δεν είναι δυνατή η σύνδεση στην υπηρεσία <xliff:g id="SERVICE">%1$s</xliff:g>. Δοκιμάστε ξανά αργότερα."\n"(Λεπτομέρειες: <xliff:g id="DESCRIPTION">%2$s</xliff:g>)</string>
   <string name="add_list_failed">Δεν έγινε προσθήκη της λίστας.</string>
   <string name="block_contact_failed">Δεν έγινε αποκλεισμός της επαφής.</string>
   <string name="unblock_contact_failed">Δεν έγινε κατάργηση αποκλεισμού της επαφής.</string>
   <string name="load_contact_list_failed">Δεν έγινε φόρτωση της λίστας επαφών.</string>
   <string name="cant_connect_to_server">Δεν είναι δυνατή η σύνδεση με τον διακομιστή. Ελέγξτε τη σύνδεσή σας.</string>
   <string name="contact_already_exist">Ο χρήστης <xliff:g id="USER">%1$s</xliff:g> υπάρχει ήδη στη λίστα επαφών σας.</string>
-  <string name="contact_blocked">Έγινε αποκλεισμός της επαφής \"<xliff:g id="USER">%1$s</xliff:g>\".</string>
+  <string name="contact_blocked">Έγινε αποκλεισμός της επαφής "<xliff:g id="USER">%1$s</xliff:g>".</string>
   <string name="contact_not_loaded">Περιμένετε μέχρι να φορτώσει η λίστα επαφών σας.</string>
   <string name="network_error">Προέκυψε σφάλμα δικτύου.</string>
   <string name="wifi_not_connected_error">Απαιτείται WiFi για αυτήν την συνεδρία</string>

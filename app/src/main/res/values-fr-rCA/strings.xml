@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <!--General: Names-->
-  <string name="ic_launcher_name">Zom</string>
-  <string name="app_name">Zom</string>
-  <string name="im_label">Zom</string>
+  <string name="ic_launcher_name">ChatSecure</string>
+  <string name="app_name">ChatSecure</string>
+  <string name="im_label">ChatSecure</string>
   <!--General: Permissions-->
   <string name="ro_perm_label">lire les messages instantanés</string>
   <string name="ro_perm_desc">Permet aux applications de lire les données du fournisseur de contenu de MI.</string>
@@ -22,7 +22,7 @@
   <string name="lock_screen_create_passphrase">Définir un mot de passe</string>
   <string name="lock_screen_confirm_passphrase">Confirmer le mot de passe</string>
   <string name="lock_screen_passphrase_hint">Mot de passe</string>
-  <string name="lock_screen_passphrase_not_set_enter">En option, vous pouvez définir un mot de passe maître pour Zom afin d\'empêcher l\u2019accès à vos contacts et à vos messages sans mot de passe :</string>
+  <string name="lock_screen_passphrase_not_set_enter">En option, vous pouvez définir un mot de passe maître pour ChatSecure afin d\'empêcher l\u2019accès à vos contacts et à vos messages sans mot de passe :</string>
   <string name="lock_screen_passphrase_not_set_confirm">Confirmer le nouveau mot de passe</string>
   <string name="lock_screen_passphrases_not_matching">Les mots de passe ne correspondent pas, veuillez ressayer</string>
   <string name="lock_screen_skip">Ignorer &gt;&gt;</string>
@@ -200,7 +200,7 @@
   <string name="already_logged_in">vous vous êtes connecté depuis un autre client.</string>
   <string name="msisdn_error">Désolé, le numéro de téléphone ne peut pas être lu de votre carte SIM. Veuillez contacter votre opérateur pour de l\'aide.</string>
   <string name="not_signed_in">Vous n\'êtes actuellement pas connecté.</string>
-  <string name="account_setup_error_server">Zom a rencontré une erreur lors de la connexion au serveur de clavardage - veuillez vérifier votre configuration et ressayer.</string>
+  <string name="account_setup_error_server">ChatSecure a rencontré une erreur lors de la connexion au serveur de clavardage - veuillez vérifier votre configuration et ressayer.</string>
   <string name="error_suspended_connection">Le réseau est hors ligne</string>
   <string name="unable_to_create_or_join_group_chat">Impossible de créer ou de rejoindre un clavardage de groupe</string>
   <string name="unsupported_incoming_data">Données entrantes non prises en charge, partage impossible !</string>

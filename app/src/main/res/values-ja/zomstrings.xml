@@ -79,7 +79,7 @@
   <string name="contact_migration_notice">友人がアップグレードしました。 チャットしてください</string>
   <string name="contact_migration_action">今すぐチャット</string>
   <string name="upgrade_old_chats">アップグレードする前の古いチャットはここに保存されます</string>
-  <string name="message_waiting_for_friend">友だちが承認するのを待っています</string>
+  <string name="message_waiting_for_friend">友達を待っています</string>
   <string name="message_archive">Zom の一部の友だちがアカウントをアップグレードしています。 期限切れのアカウントはここに保存されます。</string>
   <string name="one_moment_please_privacy">しばらくお待ちください! あなたのプライベート Zom を準備しています。</string>
   <string name="action_got_it">了解</string>
@@ -91,4 +91,9 @@
   <string name="action_upgrade_now">今すぐアップグレード</string>
   <string name="action_chat_now">今すぐチャット</string>
   <string name="action_add_buddy">バディを追加</string>
+  <string name="action_leave">離れる</string>
+  <string name="add_people">人を追加</string>
+  <string name="turn_notifications_on">通知をオンにする</string>
+  <string name="turn_notifications_off">通知をミュート</string>
+  <string name="is_already_in_your_group">%1$s はすでにグループにいます</string>
 </resources>

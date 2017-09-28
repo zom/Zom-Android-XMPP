@@ -6,7 +6,7 @@
   <string name="advanced">ཚད་མཐོའི་སྒྲིག་བཟོ།</string>
   <string name="account_congrats">བཀྲ་ཤིས་བདེ་ལེགས། ད་ལྟ་ཁྱེད་ཀྱིས་འཛོམས་བེད་སྤྱོད་གཏོང་ཆོག</string>
   <string name="account_congrats_details">ཁྱེད་ཀྱིས་གསང་གྲངས་དང་ཁ་བྱང་གཉིས་སོ་སོའི་པར་ངོས་ནས་རྙེད་གི་རེད།</string>
-  <string name="invite_friends">གྲོགས་པོ་གསར་སྣོན་བྱོས།</string>
+  <string name="invite_friends">གྲོགས་སྣོན།</string>
   <string name="invite_sms">འཕྲིན་ཐུང་།</string>
   <string name="invite_share">ངོ་སྤྲོད་བྱོས།</string>
   <string name="invite_scan_qr">བཤེར།</string>
@@ -51,6 +51,7 @@
   <string name="color_reset_title">ཁ་དོག་བསྐྱར་དུ་བརྗེས།</string>
   <string name="color_reset_summary">ཐོག་མའི་ཁ་དོག་ལ་ཕར་བསྒྱུར།</string>
   <string name="color_header_title">འགོ་བརྗོད་ཀྱི་ཚོན།</string>
+  <string name="color_header_summary">མགོ་བྱང་། actionbars དང་ toolbars ཀྱི་ཚོན།</string>
   <string name="color_text_title">ཡི་གེའི་ཁ་དོག</string>
   <string name="color_text_summary">འཕྲིན་ཐུང་དང་ཐོ་གཞུང་ནང་གི་ཡི་གེ་ཁ་དོག</string>
   <string name="color_bg_title">རྒྱབ་ལྗོངས་ཀྱི་ཁ་དོག</string>
@@ -63,77 +64,36 @@
   <string name="security_code">བདེ་འཇགས་ངོ་བོ།</string>
   <string name="reset_passphrase">སྒོ་ལྕགས་བསྐྱར་དུ་སྒྲིག་བཟོ།</string>
   <string name="action_services">འཛོམས་ཞབས་ཞུ།</string>
-
-
-
-  <string name="migrate_menu">Migrate Account</string>
-
-  <string name="migrate_message">ངས་མཉེན་ཆས་རིམ་སྤོར་བྱས་ཚར་ཡིན།  ངའི་མཉམ་དུ་སྐད་ཆ་བཤད་ན་འདིར་ཕེབས་རོགས།</string>
-
-  <string name="migrate_notification">Your account is expiring soon. Open the app to upgrade.</string>
-
-  <string name="action_undo">ཕྱིར་སློག</string>
-
-  <string name="upgrade_desc">ད་ལྟ་ང་ཚོ་འདིར་བཟོ་བཅོས་རྒྱག་གི་ཡོད།  རིན་མེད་མཉེན་ཆས་རིམ་སྤོར་འདི་ནས་ལེན་རོགས།</string>
-
-
-  <string name="upgrade_action">མཉེན་ཆས་རིམ་སྤོར་བྱོས།</string>
-
+  <string name="migrate_menu">ཐོ་བྱང་གནས་སྤོ།</string>
+  <string name="migrate_message">ངས་མཉེན་ཆས་རིམ་སྤོར་བྱས་ཚར་ཡིན།  ངའི་མཉམ་དུ་འདིར་མཛོམས་ཤོག།</string>
+  <string name="migrate_notification">ཁྱེད་ཀྱི་ཐོ་བྱང་མགྱོགས་པོ་མེད་པར་འགྱུར་གྱི་རེད། འཛོམས་ཁ་ཕྱེ་ནས་རིམ་སྤོར་བྱོས།</string>
+  <string name="action_undo">སྔོན་དུ་གང་ཡིན་པ་རང་འཇགས་ཞོག</string>
+  <string name="message_upgrade">ང་ཚོས་ཁྱེད་ཀྱི་མཛོམས་ཁ་བྱང་དྲ་གནས་གསར་པ་ཞིག་ལ་རིམ་སྤོར་བྱེད་དགོས་ཀྱི་འདུག ང་ཚོས་ཁྱེད་ཀྱི་མཉེན་ཆས་ཐད་ཀར་རིམ་སྤོར་བྱེད་ཆོག</string>
+  <string name="message_upgrade_more">ང་ཚོས་ཁྱེད་ཀྱི་མཛོམས་ཁ་བྱང་དྲ་གནས་གསར་པ་ཞིག་ལ་རིམ་སྤོར་བྱེད་དགོས་ཀྱི་འདུག ང་ཚོས་ཁྱེད་ཀྱི་མཉེན་ཆས་ཐད་ཀར་རིམ་སྤོར་བྱེད་ཆོག འོན་ཀྱང་གལ་ཏེ་ཁྱེད་གློག་ཀླད་མཁས་པ་ཞིག་ཡིན་ན་རང་གི་དྲ་གནས་མཁོ་སྤྲོད་མཁན་སོ་སོས་གདམ་ཆོག</string>
+  <string name="upgrade_desc">ད་ལྟ་ང་ཚོས་འདིར་བཟོ་བཅོས་རྒྱག་གི་ཡོད།  རིན་མེད་མཉེན་ཆས་རིམ་སྤོར་འདི་ནས་ལེན་རོགས།</string>
+  <string name="upgrade_action">ད་ལྟ་རིམ་སྤོར་བྱོས།</string>
   <string name="upgrade_complete">རིམ་སྤོར་ཚར་སོང་།  ད་ཁྱེད་ཀྱི་རོགས་པ་ཚོས་ངོས་ལེན་བྱེད་པར་སྒུག་བཞིན་ཡོད།</string>
-
-
-  <string name="upgrade_progress_action">ཏོག་ཙམ་སྒུག་རོགས།</string>
-
-
-  <string name="upgrade_failed">The upgrade failed. Please try again later! You can also select \"Migrate Account\" from the account settings menu.</string>
-
-  <string name="contact_migration_notice"> ཁྱེད་ཀྱི་རོགས་པས་མཉེན་ཆས་རིམ་སྤོར་བྱས་ཚར་འདུག   ཁོང་མཉམ་དུ་བཀའ་མོལ་གནང་ན་འདིར་ཕེབས་རོགས།</string>
-
-  <string name="contact_migration_action">Chat Now</string>
-
-
-  <string name="upgrade_old_chats">ཁྱེད་ཀྱི་སྐད་ཆ་རྙིང་པ་རྣམས་འདི་ནང་ཡོད།</string>
-
-  <string name="message_waiting_for_friend">ཁྱེད་ཀྱི་རོགས་པ་གསར་པའི་ལན་ལ་སྒུག་བཞིན་ཡོད།</string>
-
-
-  <string name="message_archive">འཛོམ་བེད་སྤྱོད་བྱེད་མཁན་ཁ་ཤས་མཉེན་ཆས་རིམ་སྤོར་བྱེད་བཞིན་འདུག  མཉེན་ཆས་རྙིང་པ་འདི་ནང་གནས་ཀྱི་རེད།</string>
-
-
-  <string name="one_moment_please_privacy">ཏོག་ཙམ་སྒུག་རོགས།  ང་ཚོས་ཁྱེད་ཀྱི་གསང་བའི་འཛོམ་ས་བཟོ་བཞིན་ཡོད།</string>
-
-
-  <string name="message_upgrade_more">ཁྱེད་ཀྱི་རོགས་པ་གསར་པའི་ལན་ལ་སྒུག་བཞིན་ཡོད།   ང་ཚོས་ཐད་ཀར་ཁྱེད་ཀྱི་མཉེན་ཆས་རིམ་སྤོར་བྱེད་ཆོག   གལ་ཏེ་ཁྱེད་གློག་ཀླད་ཐོག་མཁས་པ་ཞིག་ཡིན་ན་རང་གི་དྲ་གནས་མཁོ་སྤྲོད་མཁན་རང་རང་གིས་འདམ་ཡང་ཆོག</string>
-
-
-  <string name="action_got_it">ཧ་གོ་སོང།</string>
-
-
-
+  <string name="upgrade_complete_action">ཚར་སོང།</string>
+  <string name="upgrade_progress_action">དེའི་ཐོག་ཏུ་ལས་ཀ་བྱེད་བཞིན་པའི་སྒང་ཡིན།</string>
+  <string name="upgrade_failed">རིམ་སྤོར་ལམ་ལྷོང་བྱུང་མ་སོང་། རྗེས་སུ་ཐབས་ཤེས་བྱེད་རོགས། ཡང་ན་ཁྱེད་ཀྱི་ཐོ་བྱང་གི་སྒྲིག་བཟོའི་ཐོ་གཞུང་ནང་ནས་ “ཐོ་བྱང་གནས་སྤོ།” ཞེས་པ་དེ་འདམ་ནའང་གྲིག</string>
+  <string name="contact_migration_notice">ཁྱེད་ཀྱི་རོགས་པས་མཉེན་ཆས་རིམ་སྤོར་བྱས་ཚར་འདུག   ཁོང་ཚོའི་ལྷན་དུ་བཀའ་མོལ་གནང་ན་འདིར་ཕེབས།</string>
+  <string name="contact_migration_action">སྐད་ཆ་ཤོད།</string>
+  <string name="upgrade_old_chats">རིམ་སྤོར་མ་བྱས་སྔོན་གྱི་ཁྱེད་ཀྱི་གླེང་མོལ་རྙིང་པ་རྣམས་འདིར་ཡོད།</string>
+  <string name="message_waiting_for_friend">ཁྱེད་ཀྱི་གྲོགས་པོར་སྒུག་བཞིན་ཡོད།</string>
+  <string name="message_archive">འཛོམས་བེད་སྤྱོད་བྱེད་མཁན་ཁ་ཤས་ཀྱིས་མཉེན་ཆས་རིམ་སྤོར་བྱེད་བཞིན་འདུག  ཁ་བྱང་་རྙིང་པ་ཁག་འདིར་ཉར་གི་རེད།</string>
+  <string name="one_moment_please_privacy">ཏོག་ཙམ་སྒུག་རོགས།  ང་ཚོས་ཁྱེད་ཀྱི་གསང་བའི་འཛོམས་ས་བཟོ་བཞིན་ཡོད།</string>
+  <string name="action_got_it">ཤེས་སོང་།</string>
   <string name="action_inbox">ཡིག་སྒམ།</string>
-
-
-  <string name="action_active">དྲར་ཞུགས་བཞིན་པ།</string>
-
-
-  <string name="action_archive">ཡིག་ཚང།</string>
-
-
-
+  <string name="action_active">དྲ་ཐོག་ན་འདུག</string>
+  <string name="action_archive">ཡིག་མཛོད།</string>
   <string name="title_pending">ངོས་ལེན་ལ་སྒུག་བཞིན་ཡོད།</string>
-
-
   <string name="title_advanced">ཚད་མཐོ་བོ།</string>
-
-
-  <string name="action_upgrade_now">རིམ་སྤོར་བྱོས།</string>
-
-
-
+  <string name="action_upgrade_now">ད་ལྟ་རིམ་སྤོར་བྱོས།</string>
   <string name="action_chat_now">སྐད་ཆ་ཤོད།</string>
-
-
-  <string name="action_add_buddy">གྲོགས་པོ་སྣོན།</string>
-
-
+  <string name="action_add_buddy">གྲོགས་པོ་གསར་སྣོན་བྱོས།</string>
+  <string name="action_leave">ཕྱིར་འབུད།</string>
+  <string name="add_people">མི་ཁ་སྣོན་བྱོས།</string>
+  <string name="turn_notifications_on">བརྡ་གཏོང་དུ་བཅུག</string>
+  <string name="turn_notifications_off">བརྡ་གཏོང་བའི་སྒྲ་མེད་པར་བཟོས།</string>
+  <string name="is_already_in_your_group">%1$s ཁྱེད་ཀྱི་ཚོགས་པའི་ནང་འཛུལ་ཚར་འདུག</string>
 </resources>

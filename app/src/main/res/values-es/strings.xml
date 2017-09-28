@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <!--General: Names-->
-  <string name="ic_launcher_name">Zom</string>
-  <string name="app_name">Zom</string>
-  <string name="im_label">Zom</string>
+  <string name="ic_launcher_name">ChatSecure</string>
+  <string name="app_name">ChatSecure</string>
+  <string name="im_label">ChatSecure</string>
   <!--General: Permissions-->
   <string name="ro_perm_label">leer mensajes </string>
   <string name="ro_perm_desc">\nPermitir a las aplicaciones leer del proveedor de contenido de mensajería instantánea.\n    </string>
@@ -63,7 +63,6 @@
   <string name="empty_conversation_group">Ninguna conversación</string>
   <string name="search_label">Contacto</string>
   <string name="search_hint">escriba el nombre del contacto para comenzar una conversación</string>
-  <string name="input_contact_label">Dirección de correo electrónico de la persona a la que desea invitar:</string>
   <!--Views: Chat: Single-->
   <string name="contact_online"><xliff:g id="USER">%1$s</xliff:g> está conectado</string>
   <string name="contact_away"><xliff:g id="USER">%1$s</xliff:g> está ausente</string>
@@ -158,8 +157,8 @@
   <string name="already_logged_in">ha iniciado sesión desde otro cliente.</string>
   <string name="msisdn_error">No se puede leer el número de teléfono de la tarjeta SIM. Póngase en contacto con su operador para obtener ayuda.</string>
   <string name="not_signed_in">No ha iniciado sesión.</string>
-  <string name="account_setup_error_server">Zom ha detectado un error al conectar con el servidor - por favor revise su configuración y vuelva a intentarlo.</string>
-  <string name="error_suspended_connection">Zom ha perdido la conexión a la red</string>
+  <string name="account_setup_error_server">ChatSecure ha detectado un error al conectar con el servidor - por favor revise su configuración y vuelva a intentarlo.</string>
+  <string name="error_suspended_connection">ChatSecure ha perdido la conexión a la red</string>
   <string name="msg_sent_failed">No se ha podido enviar el mensaje.</string>
   <string name="disconnected_warning">Se ha perdido la conexión con el servidor. Los mensajes se enviarán cuando se restablezca la conexión.</string>
   <string name="account_settings_title">Configuración de la cuenta</string>

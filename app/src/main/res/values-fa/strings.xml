@@ -82,7 +82,6 @@
   <string name="empty_conversation_group">گفتگویی نیست</string>
   <string name="search_label">تماس</string>
   <string name="search_hint">برای گفتگو، نام ارتباط مورد نظر را بنویسید.</string>
-  <string name="input_contact_label">آدرس پست الکترونیک شخصی که میخواهید دعوتش کنید:</string>
   <!--Views: Chat: Single-->
   <string name="contact_online"><xliff:g id="user">%1$s</xliff:g> روی خط است</string>
   <string name="contact_away"><xliff:g id="user">%1$s</xliff:g> دور است</string>

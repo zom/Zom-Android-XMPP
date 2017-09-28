@@ -74,12 +74,12 @@
   <string name="upgrade_action">即刻升级</string>
   <string name="upgrade_complete">升级完成。 等待你的朋友批准你升级的帐户。</string>
   <string name="upgrade_complete_action">完成</string>
-  <string name="upgrade_progress_action">正在努力工作</string>
+  <string name="upgrade_progress_action">正在工作中</string>
   <string name="upgrade_failed">升级失败。请稍后再试。你还可以在账户设置菜单里选择“迁移账户”</string>
   <string name="contact_migration_notice">你的朋友已经升级了。跟他们聊天</string>
   <string name="contact_migration_action">现在聊天</string>
   <string name="upgrade_old_chats">升级前的旧聊天记录会存储在此处</string>
-  <string name="message_waiting_for_friend"> 等待你的朋友接受你。</string>
+  <string name="message_waiting_for_friend">正在等待你的朋友</string>
   <string name="message_archive">你的一些朋友正在已经升级他们的的账户。过期的账户会存储在此处。</string>
   <string name="one_moment_please_privacy">请稍等！ 我们正在准备您的私人众。</string>
   <string name="action_got_it">知道了</string>
@@ -91,4 +91,9 @@
   <string name="action_upgrade_now">即刻升级</string>
   <string name="action_chat_now">现在聊天</string>
   <string name="action_add_buddy">添加好友</string>
+  <string name="action_leave">离线</string>
+  <string name="add_people">添加网友</string>
+  <string name="turn_notifications_on">打开通知</string>
+  <string name="turn_notifications_off">静音／关闭通知 </string>
+  <string name="is_already_in_your_group">%1$s 已经在你的圈里</string>
 </resources>

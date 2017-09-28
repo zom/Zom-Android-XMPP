@@ -1,21 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <!--General: Names-->
-  <string name="ic_launcher_name">ChatSecure</string>
-  <string name="app_name">ChatSecure</string>
-  <string name="im_label">ChatSecure</string>
   <!--General: Permissions-->
-  <string name="ro_perm_label">azonnali üzenetek olvasása</string>
-  <string name="wo_perm_label">azonnali üzenetek írása</string>
   <!--General: Actions-->
-  <string name="ok">Ok</string>
-  <string name="cancel">Mégsem</string>
-  <string name="yes">Ok</string>
-  <string name="no">Mégsem</string>
   <!--Views-->
   <!--Views: Setup-->
-  <string name="menu_about">Rólunk</string>
-  <string name="pass_err_length">Az álatlad megadott jelszó nem elég hosszú</string>
   <!--Views: About: Welcome-->
   <!--Views: About: OTR-->
   <!--Views: About: Security-->
@@ -24,22 +13,17 @@
   <!--Views: Settings: Account-->
   <!--Views: Contact list-->
   <!--Views: Chat: Single-->
-  <string name="menu_end_conversation">Üzenetváltás befejezése</string>
   <!--Views: Chat: Group-->
   <!--Security: OTR-->
   <!--Security: OTR: Keyring-->
   <!--Security: OTR: Verification-->
   <!--Security: OTR: Verification: QA-->
-  <string name="otr_qa_send">Küldés</string>
-  <string name="otr_qa_cancel">Mégsem</string>
   <!--Views: VoIP-->
   <!--Views: Settings: General-->
   <!--Actions: Settings: General: Security and Privacy-->
   <!--Actions: Settings: General: User Interface-->
   <!--Actions: Settings: General: Other Tuning-->
   <!--Actions: Settings: General: Notifications-->
-  <string name="notification_group_title">Értesítések beállítása</string>
-  <string name="notification_vibrate_title">Rezgés</string>
   <!--Actions: Settings: General: Developer-->
   <!--Alerts: Dialogs-->
   <!--Alerts: Notifications-->
@@ -47,12 +31,9 @@
   <!--added 2011/09/01-->
   <!--Other-->
   <!--Other: Slide Menu-->
-  <string name="menu_settings">Beállítások</string>
-  <string name="menu_sign_out">Kijelentkezés</string>
   <!--Other: Provider-->
   <!--Other: Development Strings [Do not localize!]-->
   <!--Other: Presence States-->
-  <string name="presence_busy">Elfoglalt</string>
   <!--Other: Smileys-->
   <!--[Do not localize!]-->
 </resources>

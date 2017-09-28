@@ -17,7 +17,7 @@
   <string name="lock_screen_create_passphrase">Alege Parola</string>
   <string name="lock_screen_confirm_passphrase">Confirma Parola</string>
   <string name="lock_screen_passphrase_hint">Parola</string>
-  <string name="lock_screen_passphrase_not_set_enter">Optional, poti alege o parola principala pentru Zom, ca sa previi accesul la contacte si mesaje fara o parola:</string>
+  <string name="lock_screen_passphrase_not_set_enter">Optional, poti alege o parola principala pentru ChatSecure, ca sa previi accesul la contacte si mesaje fara o parola:</string>
   <string name="lock_screen_passphrase_not_set_confirm">Confirma Parola Noua</string>
   <string name="lock_screen_passphrases_not_matching">Parolele nu coincid, mai incearca o data</string>
   <string name="lock_screen_skip">Sari peste &gt;&gt;</string>

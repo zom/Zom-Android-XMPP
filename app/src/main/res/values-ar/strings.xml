@@ -73,12 +73,12 @@
   <string name="menu_contact_nickname">اﻹسم المستعار لجهة الاتصال</string>
   <string name="menu_view_blocked">محجوب</string>
   <string name="nickname">اسم المستعار</string>
-  <string name="confirm_delete_contact">سيتم حذف \"<xliff:g id="user">%1$s</xliff:g>\"</string>
-  <string name="confirm_block_contact">سيتم حجب \"<xliff:g id="user">%1$s</xliff:g>\"</string>
-  <string name="add_contact_success">تمت إضافة \"<xliff:g id="user">%1$s</xliff:g>\"</string>
-  <string name="delete_contact_success">تم حذف \"<xliff:g id="user">%1$s</xliff:g>\"</string>
-  <string name="block_contact_success">تم حجب \"<xliff:g id="user">%1$s</xliff:g>\"</string>
-  <string name="unblock_contact_success">أزيل الحجب عن \"<xliff:g id="user">%1$s</xliff:g>\"</string>
+  <string name="confirm_delete_contact">سيتم حذف "<xliff:g id="user">%1$s</xliff:g>"</string>
+  <string name="confirm_block_contact">سيتم حجب "<xliff:g id="user">%1$s</xliff:g>"</string>
+  <string name="add_contact_success">تمت إضافة "<xliff:g id="user">%1$s</xliff:g>"</string>
+  <string name="delete_contact_success">تم حذف "<xliff:g id="user">%1$s</xliff:g>"</string>
+  <string name="block_contact_success">تم حجب "<xliff:g id="user">%1$s</xliff:g>"</string>
+  <string name="unblock_contact_success">أزيل الحجب عن "<xliff:g id="user">%1$s</xliff:g>"</string>
   <string name="menu_verify">تحقق من جهة الاتصال</string>
   <string name="empty_conversation_group">لا توجد محادثات\n\n
 أنقر لبدأ الدردشة!</string>
@@ -182,7 +182,7 @@
   <string name="load_contact_list_failed">لم يتم تحميل قائمة الاتصال.</string>
   <string name="cant_connect_to_server">لا يمكن الاتصال بالموقع. يرجى التحقق من اتصالك.</string>
   <string name="contact_already_exist"><xliff:g id="user">%1$s</xliff:g> موجود بقائمة الأسماء لديك.</string>
-  <string name="contact_blocked">تم حجب \"<xliff:g id="user">%1$s</xliff:g>\"</string>
+  <string name="contact_blocked">تم حجب "<xliff:g id="user">%1$s</xliff:g>"</string>
   <string name="contact_not_loaded">الرجاء الانتظار بينما نقوم بتحميل قائمة الاتصال الخاصة بك.</string>
   <string name="network_error">حدث خطأ في الشبكة.</string>
   <string name="wifi_not_connected_error">مطلوب اتصال واي فاي</string>

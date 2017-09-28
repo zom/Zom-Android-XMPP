@@ -42,7 +42,6 @@ Deja que las aplicaciones escriban datos al proveedor de contenido MI. </string>
   <string name="block_contact_success">Contacto "<xliff:g id="USER">%1$s</xliff:g>" bloqueado.</string>
   <string name="unblock_contact_success">Contacto "<xliff:g id="USER">%1$s</xliff:g>" desbloqueado.</string>
   <string name="empty_conversation_group">No hay conversaciones</string>
-  <string name="input_contact_label">Dirección de correo electrónico de la persona que deseas invitar:</string>
   <!--Views: Chat: Single-->
   <string name="contact_online"><xliff:g id="USER">%1$s</xliff:g> está en línea</string>
   <string name="contact_away"><xliff:g id="USER">%1$s</xliff:g> está ausente</string>

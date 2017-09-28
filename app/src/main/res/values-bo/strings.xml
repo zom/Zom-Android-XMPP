@@ -251,6 +251,8 @@
   <string name="loading">ཕབ་ལེན་བྱེད་བཞིན་པ། </string>
   <!--Other-->
   <!--Other: Slide Menu-->
+  <string name="menu_all">ཆ་ཚང་།</string>
+  <string name="menu_archive">ཡིག་མཛོད།</string>
   <string name="menu_settings">སྒྲིག་བཟོ།</string>
   <string name="menu_sign_out">སྒོ་རྒྱོབས།</string>
   <!--Other: Provider-->
