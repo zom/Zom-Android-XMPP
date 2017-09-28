@@ -808,6 +808,27 @@ public class XmppConnection extends ImConnection {
                         }
                         submitForm.setAnswer("muc#roomconfig_persistentroom", true);
 
+                        if (submitForm.getField("muc#roomconfig_getmemberlist") == null) {
+                            FormField field =new FormField("muc#roomconfig_getmemberlist");
+                            field.setType(FormField.Type.list_multi);
+                            submitForm.addField(field);
+                        }
+                        submitForm.setAnswer("muc#roomconfig_getmemberlist", Arrays.asList("participant"));
+
+                        if (submitForm.getField("muc#roomconfig_presencebroadcast") == null) {
+                            FormField field =new FormField("muc#roomconfig_presencebroadcast");
+                            field.setType(FormField.Type.list_multi);
+                            submitForm.addField(field);
+                        }
+                        submitForm.setAnswer("muc#roomconfig_presencebroadcast", Arrays.asList("participant"));
+
+                        if (submitForm.getField("muc#roomconfig_whois") == null) {
+                            FormField field =new FormField("muc#roomconfig_whois");
+                            field.setType(FormField.Type.list_multi);
+                            submitForm.addField(field);
+                        }
+                        submitForm.setAnswer("muc#roomconfig_whois", Arrays.asList("anyone"));
+
                         if (submitForm.getField("muc#roomconfig_whois") == null) {
                             FormField field =new FormField("muc#roomconfig_whois");
                             field.setType(FormField.Type.list_single);
@@ -978,9 +999,12 @@ public class XmppConnection extends ImConnection {
             }
         }
 
-        private void loadMembers (MultiUserChat muc, ChatGroup chatGroup) throws SmackException, XMPPException,InterruptedException
+        private synchronized void loadMembers (MultiUserChat muc, ChatGroup chatGroup) throws SmackException, XMPPException,InterruptedException
         {
             chatGroup.clearMembers();
+
+            //first make sure I am in the room
+            chatGroup.notifyMemberJoined(mUserJid.toString(),mUser);
 
             XmppAddress xa = null;
 
@@ -1117,7 +1141,7 @@ public class XmppConnection extends ImConnection {
                             EntityBareJid inviteeJid = JidCreate.entityBareFrom(invitee.getAddress().getAddress());
                             muc.invite(inviteeJid, reason);
                             muc.grantMembership(inviteeJid);
-                           // muc.grantAdmin(inviteeJid);
+                            muc.grantAdmin(inviteeJid);
                             group.notifyMemberJoined(null, invitee);
                         } catch (Exception nce) {
                             Log.e(ImApp.LOG_TAG, "not connected error trying to add invite", nce);
@@ -1173,6 +1197,7 @@ public class XmppConnection extends ImConnection {
             public void joined(EntityFullJid entityFullJid) {
 
 
+                /**
                  XmppAddress xa = new XmppAddress(entityFullJid.toString());
                  ChatGroup chatGroup = mChatGroupManager.getChatGroup(xa);
 
@@ -1191,22 +1216,37 @@ public class XmppConnection extends ImConnection {
                  //if I am the owner, then grant moderator rights
                  if (muc.getOwners().size() > 0
                  && muc.getOwners().get(0).getJid().equals(mUserJid)) {
-                 //try to grant the moderator status
-                 muc.grantModerator(entityFullJid.getResourcepart());
+                    //try to grant the moderator status
+                   //  muc.grantModerator(entityFullJid.getResourcepart());
+                   //  muc.grantAdmin(jidSource);
                  }
                  }
                  catch (Exception e) {}
+                **/
 
+                try { loadMembers(muc, group);}
+                catch (Exception e)
+                {
+                    debug("MUC","Error loading group",e);
+                }
             }
 
             @Override
             public void left(EntityFullJid entityFullJid) {
 
+                /**
                  XmppAddress xa = new XmppAddress(entityFullJid.toString());
                  ChatGroup chatGroup = mChatGroupManager.getChatGroup(xa);
                  Contact mucContact = chatGroup.getMember(entityFullJid.toString());
-                 chatGroup.notifyMemberLeft(mucContact);
+                 if (mucContact != null)
+                    chatGroup.notifyMemberLeft(mucContact);
+                    **/
 
+                try { loadMembers(muc, group);}
+                catch (Exception e)
+                {
+                    debug("MUC","Error loading group",e);
+                }
             }
 
             @Override
@@ -4092,11 +4132,12 @@ public class XmppConnection extends ImConnection {
     @Override
     public void sendTypingStatus (final String to, final boolean isTyping)
     {
-        mExecutor.execute(new Runnable() {
-            public void run() {
-                sendChatState(to, isTyping ? ChatState.composing : ChatState.inactive);
-            }
-        });
+        if (mExecutor != null)
+            mExecutor.execute(new Runnable() {
+                public void run() {
+                    sendChatState(to, isTyping ? ChatState.composing : ChatState.inactive);
+                }
+            });
     }
 
     private void sendChatState (String to, ChatState currentChatState)

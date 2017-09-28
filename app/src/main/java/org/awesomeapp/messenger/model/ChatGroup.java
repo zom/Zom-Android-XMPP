@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ChatGroup extends ImEntity {
@@ -141,7 +142,9 @@ public class ChatGroup extends ImEntity {
     public void notifyMemberLeft(Contact contact) {
         if (mMembers.remove(contact.getAddress().getBareAddress())!=null) {
 
-            for (String groupAddress : mGroupAddressToContactMap.keySet())
+            Object[] keys = mGroupAddressToContactMap.keySet().toArray();
+
+            for (Object groupAddress : keys)
             {
                 Contact member = mGroupAddressToContactMap.get(groupAddress);
                 if (contact.getAddress().equals(member.getAddress()))
@@ -175,9 +178,10 @@ public class ChatGroup extends ImEntity {
      */
     public void clearMembers ()
     {
-        for (Contact member : mMembers.values())
+        Object[] members = mMembers.values().toArray();
+        for (Object member : members)
         {
-            notifyMemberLeft(member);
+            notifyMemberLeft((Contact)member);
         }
 
         for (GroupMemberListener listener : mMemberListeners) {
