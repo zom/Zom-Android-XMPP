@@ -208,8 +208,9 @@ public class MessageListItem extends FrameLayout {
 
                 } else {
                     mHolder.mTextViewForMessages.setVisibility(View.GONE);
+                    boolean isJpeg = mimeType.contains("jpg")||mimeType.contains("jpeg");
 
-                    showMediaThumbnail(mimeType, mediaUri, id, mHolder, true);
+                    showMediaThumbnail(mimeType, mediaUri, id, mHolder, isJpeg);
 
                     mHolder.mMediaContainer.setVisibility(View.VISIBLE);
 
@@ -431,14 +432,13 @@ public class MessageListItem extends FrameLayout {
 
         if (mimeType.startsWith("image")) {
 
-            if (mimeType.equals("image/jpeg")) {
-                Intent intent = new Intent(context, ImageViewActivity.class);
-                intent.putExtra(ImageViewActivity.URI, mediaUri.toString());
-                intent.putExtra(ImageViewActivity.MIMETYPE, mimeType);
-                intent.putExtra(ImageViewActivity.MIMETYPE, mimeType);
+            Intent intent = new Intent(context, ImageViewActivity.class);
+            intent.putExtra(ImageViewActivity.URI, mediaUri.toString());
+            intent.putExtra(ImageViewActivity.MIMETYPE, mimeType);
+            intent.putExtra(ImageViewActivity.MIMETYPE, mimeType);
 
-                context.startActivity(intent);
-            }
+            context.startActivity(intent);
+
         }
         else if (mimeType.startsWith("audio")) {
 
@@ -710,7 +710,9 @@ public class MessageListItem extends FrameLayout {
                 mHolder.mTextViewForMessages.setVisibility(View.GONE);
 
                 mHolder.mMediaContainer.setVisibility(View.VISIBLE);
-                showMediaThumbnail(mimeType, mediaUri, id, mHolder, true);
+
+                boolean isJpeg = mimeType.contains("jpg")||mimeType.contains("jpeg");
+                showMediaThumbnail(mimeType, mediaUri, id, mHolder, isJpeg);
 
             }
 
