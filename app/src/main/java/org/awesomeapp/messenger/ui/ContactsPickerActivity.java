@@ -485,9 +485,7 @@ public class ContactsPickerActivity extends BaseActivity {
         if (!isSelected(id)) {
             Cursor cursor = (Cursor) mAdapter.getItem(index);
             String userName = cursor.getString(ContactListItem.COLUMN_CONTACT_USERNAME);
-            if (excludedContacts != null && excludedContacts.contains(userName)) {
-                return;
-            }
+
             SelectedContact contact = new SelectedContact(id,
                     userName,
                     (int) cursor.getLong(ContactListItem.COLUMN_CONTACT_ACCOUNT),
