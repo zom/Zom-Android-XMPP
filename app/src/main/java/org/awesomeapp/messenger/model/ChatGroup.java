@@ -43,12 +43,6 @@ public class ChatGroup extends ImEntity {
         mMembers = new HashMap<>();
         mGroupAddressToContactMap = new HashMap<>();
 
-        /**
-        if (members != null)
-            for (Contact contact : members)
-                mMembers.put(contact.getAddress().getBareAddress(), contact);
-         **/
-
         mMemberListeners = new CopyOnWriteArrayList<GroupMemberListener>();
     }
 
@@ -127,11 +121,7 @@ public class ChatGroup extends ImEntity {
                 listener.onMemberJoined(this, newContact);
             }
         }
-        else
-        {
-            //just update the presence
-            contact.setPresence(newContact.getPresence());
-        }
+
     }
 
     /**
@@ -140,6 +130,7 @@ public class ChatGroup extends ImEntity {
      * @param contact the contact who has left this group.
      */
     public void notifyMemberLeft(Contact contact) {
+
         if (mMembers.remove(contact.getAddress().getBareAddress())!=null) {
 
             Object[] keys = mGroupAddressToContactMap.keySet().toArray();
@@ -176,7 +167,7 @@ public class ChatGroup extends ImEntity {
     /*
     clear the list of members
      */
-    public void clearMembers ()
+    public synchronized void clearMembers ()
     {
         Object[] members = mMembers.values().toArray();
         for (Object member : members)

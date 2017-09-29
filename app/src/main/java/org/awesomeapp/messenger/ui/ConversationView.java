@@ -1866,10 +1866,11 @@ public class ConversationView {
 
                         if (mContactType == Imps.Contacts.TYPE_GROUP)
                         {
-                            Contact contactGroup = new Contact(new XmppAddress(mRemoteAddress),mRemoteNickname,Imps.Contacts.TYPE_GROUP);
+                            //Contact contactGroup = new Contact(new XmppAddress(mRemoteAddress),mRemoteNickname,Imps.Contacts.TYPE_GROUP);
+                            session = sessionMgr.createMultiUserChatSession(mRemoteAddress,mRemoteNickname,null,false);
 
-                            new ChatSessionInitTask(((ImApp)mActivity.getApplication()),mProviderId, mAccountId, Imps.Contacts.TYPE_GROUP)
-                                    .executeOnExecutor(ImApp.sThreadPoolExecutor,contactGroup);
+                            //new ChatSessionInitTask(((ImApp)mActivity.getApplication()),mProviderId, mAccountId, Imps.Contacts.TYPE_GROUP)
+                              //      .executeOnExecutor(ImApp.sThreadPoolExecutor,contactGroup);
 
                         }
                         else

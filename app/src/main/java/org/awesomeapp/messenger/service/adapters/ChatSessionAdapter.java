@@ -52,9 +52,11 @@ import org.awesomeapp.messenger.util.SystemServices;
 
 import java.io.FileNotFoundException;
 import java.io.OutputStream;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -79,8 +81,10 @@ import android.os.RemoteException;
 import android.provider.BaseColumns;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
+import android.webkit.URLUtil;
 
 import static cz.msebera.android.httpclient.conn.ssl.SSLConnectionSocketFactory.TAG;
 
@@ -469,94 +473,62 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
     @Override
     public boolean offerData(String offerId, final String mediaUri, final String mimeType) {
-        if (mConnection.getState() == ImConnection.SUSPENDED) {
-            // TODO send later
-            return false;
-        }
 
-        if (mChatSession.canOmemo() || mChatSession.getParticipant() instanceof ChatGroup)
+
+        final Message msgMedia = storeMediaMessage(mediaUri, mimeType);
+
+        //TODO do HTTP Upload XEP 363
+        //this is ugly... we need a nice async task!
+        new Thread ()
         {
-            final Message msgMedia = storeMediaMessage(mediaUri, mimeType);
 
-            //TODO do HTTP Upload XEP 363
-            //this is ugly... we need a nice async task!
-            new Thread ()
+            public void run ()
             {
 
-                public void run ()
+                File fileLocal = new File(Uri.parse(mediaUri).getPath());
+                String fileName = fileLocal.getName();
+                if (!fileName.contains("."))
+                {
+                    fileName += "." + MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType);
+                }
+
+                try
                 {
 
-                    File fileLocal = new File(Uri.parse(mediaUri).getPath());
-                    String fileName = fileLocal.getName();
-                    if (!fileName.contains("."))
+                    boolean doEncryption = !isGroupChatSession();
+
+                    UploadProgressListener listener = new UploadProgressListener() {
+                        @Override
+                        public void onUploadProgress(long sent, long total) {
+                            //debug(TAG, "upload complete: " + l + "," + l1);
+                            //once this is done, send the message
+                            float percentF = ((float)sent)/((float)total)*100f;
+
+                            if (mDataHandlerListener != null)
+                                mDataHandlerListener.onTransferProgress(true,"","",mediaUri.toString(),percentF);
+                        }
+                    };
+
+
+                    String resultUrl = mConnection.publishFile(fileName, mimeType, fileLocal.length(), new info.guardianproject.iocipher.FileInputStream(fileLocal), doEncryption, listener);
+
+                    if (!TextUtils.isEmpty(resultUrl))
+                        sendMediaMessage(mediaUri, resultUrl, msgMedia);
+                    else
                     {
-                        fileName += "." + MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType);
-                    }
-
-                    try
-                    {
-
-                        boolean doEncryption = !isGroupChatSession();
-
-                        UploadProgressListener listener = new UploadProgressListener() {
-                            @Override
-                            public void onUploadProgress(long sent, long total) {
-                                //debug(TAG, "upload complete: " + l + "," + l1);
-                                //once this is done, send the message
-                                float percentF = ((float)sent)/((float)total)*100f;
-
-                                if (mDataHandlerListener != null)
-                                    mDataHandlerListener.onTransferProgress(true,"","",mediaUri.toString(),percentF);
-                            }
-                        };
-
-
-
-                        String resultUrl = mConnection.publishFile(fileName, mimeType, fileLocal.length(), new info.guardianproject.iocipher.FileInputStream(fileLocal), doEncryption, listener);
-
-                        if (resultUrl != null)
-                            sendMediaMessage(mediaUri, resultUrl, msgMedia);
-                    }
-                    catch (FileNotFoundException fe)
-                    {
-                        Log.w(TAG,"couldn't find file to share",fe);
+                        //didn't upload so lets queue it
+                        updateMessageInDb(msgMedia.getID(),Imps.MessageType.QUEUED,new java.util.Date().getTime(),mediaUri);
                     }
                 }
-            }.start();
-
-            return true;
-
-        }
-        else {
-            HashMap<String, String> headers = null;
-            if (mimeType != null) {
-                headers = new HashMap<>();
-                headers.put("Mime-Type", mimeType);
-            }
-
-            try {
-                Address localUser = mConnection.getLoginUser().getAddress();
-
-                if (mChatSession.getParticipant() instanceof Contact) {
-
-                    Address remoteUser = new XmppAddress(getDefaultOtrChatSession().getRemoteUserId());
-                    mDataHandler.offerData(offerId, localUser, remoteUser, Uri.parse(mediaUri).getPath(), headers);
-
-                    insertMessageInDb(null, mediaUri, System.currentTimeMillis(), Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED, 0, offerId, mimeType);
-
-                    return true;
-                }
-                else
+                catch (FileNotFoundException fe)
                 {
-                    Log.w(ImApp.LOG_TAG, "can't send OTRDATA shares to groups");
-
-                    return false;
+                    Log.w(TAG,"couldn't find file to share",fe);
                 }
-            } catch (Exception ioe) {
-                Log.w(ImApp.LOG_TAG, "unable to offer data", ioe);
-                return false;
             }
-        }
+        }.start();
+
+        return true;
+
 
     }
 
@@ -626,8 +598,19 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
                 removeMessageInDb(Imps.MessageType.QUEUED);
 
-                for (String body : messages)
-                    sendMessage(body, false);
+                for (String body : messages) {
+
+                    if (body.startsWith("vfs:/") && (body.split(" ").length == 1))
+                    {
+                        String offerId = UUID.randomUUID().toString();
+                        String mimeType = URLConnection.guessContentTypeFromName(body);
+                        boolean canSend = offerData(offerId, body, mimeType);
+
+                    }
+                    else {
+                        sendMessage(body, false);
+                    }
+                }
             }
 
             c.close();
@@ -843,6 +826,11 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
     void insertGroupMemberInDb(Contact member) {
 
         if (mChatURI != null) {
+
+            //first delete just in case
+            //deleteGroupMemberInDb(member);
+
+            //then add
             ContentValues values1 = new ContentValues(2);
             values1.put(Imps.GroupMembers.USERNAME, member.getAddress().getAddress());
             values1.put(Imps.GroupMembers.NICKNAME, member.getName());
@@ -974,6 +962,14 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             String username = msg.getFrom().getAddress();
             String bareUsername = msg.getFrom().getBareAddress();
             String nickname = getNickName(username);
+            Contact contact = null;
+            try
+            {
+                contact = mConnection.getContactListManager().getContactByAddress(bareUsername);
+                nickname = contact.getName();
+            }
+            catch (Exception e){}
+
             long time = msg.getDateTime().getTime();
 
             if (msg.getID() != null
@@ -1060,17 +1056,22 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                             String[] path = mediaLink.split("/");
                             String sanitizedPath = SystemServices.sanitize(path[path.length - 1]);
 
-                            final int N = mRemoteListeners.beginBroadcast();
-                            for (int i = 0; i < N; i++) {
-                                IChatListener listener = mRemoteListeners.getBroadcastItem(i);
-                                try {
-                                    listener.onIncomingFileTransferProgress(sanitizedPath, percent);
-                                } catch (RemoteException e) {
-                                    // The RemoteCallbackList will take care of removing the
-                                    // dead listeners.
+                            int N = 0;
+
+                            try {
+                                N = mRemoteListeners.beginBroadcast();
+                                for (int i = 0; i < N; i++) {
+                                    IChatListener listener = mRemoteListeners.getBroadcastItem(i);
+                                    try {
+                                        listener.onIncomingFileTransferProgress(sanitizedPath, percent);
+                                    } catch (RemoteException e) {
+                                        // The RemoteCallbackList will take care of removing the
+                                        // dead listeners.
+                                    }
                                 }
+                                mRemoteListeners.finishBroadcast();
                             }
-                            mRemoteListeners.finishBroadcast();
+                            catch (Exception e){}
 
                             if (N == 0) {
 
@@ -1103,17 +1104,20 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             insertMessageInDb(null, null, System.currentTimeMillis(), Imps.MessageType.OUTGOING,
                     error.getCode(), null, null);
 
-            final int N = mRemoteListeners.beginBroadcast();
-            for (int i = 0; i < N; i++) {
-                IChatListener listener = mRemoteListeners.getBroadcastItem(i);
-                try {
-                    listener.onSendMessageError(ChatSessionAdapter.this, msg, error);
-                } catch (RemoteException e) {
-                    // The RemoteCallbackList will take care of removing the
-                    // dead listeners.
+            try {
+                final int N = mRemoteListeners.beginBroadcast();
+                for (int i = 0; i < N; i++) {
+                    IChatListener listener = mRemoteListeners.getBroadcastItem(i);
+                    try {
+                        listener.onSendMessageError(ChatSessionAdapter.this, msg, error);
+                    } catch (RemoteException e) {
+                        // The RemoteCallbackList will take care of removing the
+                        // dead listeners.
+                    }
                 }
+                mRemoteListeners.finishBroadcast();
             }
-            mRemoteListeners.finishBroadcast();
+            catch (Exception e){}
         }
 
         public void onSubjectChanged(ChatGroup group, String subject)
@@ -1152,62 +1156,74 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         public void onMemberJoined(ChatGroup group, final Contact contact) {
             insertGroupMemberInDb(contact);
 
-            final int N = mRemoteListeners.beginBroadcast();
-            for (int i = 0; i < N; i++) {
-                IChatListener listener = mRemoteListeners.getBroadcastItem(i);
-                try {
-                    listener.onContactJoined(ChatSessionAdapter.this, contact);
-                } catch (RemoteException e) {
-                    // The RemoteCallbackList will take care of removing the
-                    // dead listeners.
+            try {
+                final int N = mRemoteListeners.beginBroadcast();
+                for (int i = 0; i < N; i++) {
+                    IChatListener listener = mRemoteListeners.getBroadcastItem(i);
+                    try {
+                        listener.onContactJoined(ChatSessionAdapter.this, contact);
+                    } catch (RemoteException e) {
+                        // The RemoteCallbackList will take care of removing the
+                        // dead listeners.
+                    }
                 }
+                mRemoteListeners.finishBroadcast();
             }
-            mRemoteListeners.finishBroadcast();
+            catch (Exception e){}
         }
 
         public void onMemberLeft(ChatGroup group, final Contact contact) {
             deleteGroupMemberInDb(contact);
 
-            final int N = mRemoteListeners.beginBroadcast();
-            for (int i = 0; i < N; i++) {
-                IChatListener listener = mRemoteListeners.getBroadcastItem(i);
-                try {
-                    listener.onContactLeft(ChatSessionAdapter.this, contact);
-                } catch (RemoteException e) {
-                    // The RemoteCallbackList will take care of removing the
-                    // dead listeners.
+            try {
+                final int N = mRemoteListeners.beginBroadcast();
+                for (int i = 0; i < N; i++) {
+                    IChatListener listener = mRemoteListeners.getBroadcastItem(i);
+                    try {
+                        listener.onContactLeft(ChatSessionAdapter.this, contact);
+                    } catch (RemoteException e) {
+                        // The RemoteCallbackList will take care of removing the
+                        // dead listeners.
+                    }
                 }
+                mRemoteListeners.finishBroadcast();
             }
-            mRemoteListeners.finishBroadcast();
+            catch (Exception e){}
         }
 
         public void onError(ChatGroup group, final ImErrorInfo error) {
             // TODO: insert an error message?
-            final int N = mRemoteListeners.beginBroadcast();
-            for (int i = 0; i < N; i++) {
-                IChatListener listener = mRemoteListeners.getBroadcastItem(i);
-                try {
-                    listener.onInviteError(ChatSessionAdapter.this, error);
-                } catch (RemoteException e) {
-                    // The RemoteCallbackList will take care of removing the
-                    // dead listeners.
+            try {
+                final int N = mRemoteListeners.beginBroadcast();
+                for (int i = 0; i < N; i++) {
+                    IChatListener listener = mRemoteListeners.getBroadcastItem(i);
+                    try {
+                        listener.onInviteError(ChatSessionAdapter.this, error);
+                    } catch (RemoteException e) {
+                        // The RemoteCallbackList will take care of removing the
+                        // dead listeners.
+                    }
                 }
+                mRemoteListeners.finishBroadcast();
             }
-            mRemoteListeners.finishBroadcast();
+            catch (Exception e){}
         }
 
         public void notifyChatSessionConverted() {
-            final int N = mRemoteListeners.beginBroadcast();
-            for (int i = 0; i < N; i++) {
-                IChatListener listener = mRemoteListeners.getBroadcastItem(i);
-                try {
-                    listener.onConvertedToGroupChat(ChatSessionAdapter.this);
-                } catch (RemoteException e) {
-                    // The RemoteCallbackList will take care of removing the
-                    // dead listeners.
+            try {
+                final int N = mRemoteListeners.beginBroadcast();
+                for (int i = 0; i < N; i++) {
+                    IChatListener listener = mRemoteListeners.getBroadcastItem(i);
+                    try {
+                        listener.onConvertedToGroupChat(ChatSessionAdapter.this);
+                    } catch (RemoteException e) {
+                        // The RemoteCallbackList will take care of removing the
+                        // dead listeners.
+                    }
                 }
+                mRemoteListeners.finishBroadcast();
             }
-            mRemoteListeners.finishBroadcast();
+            catch (Exception e){}
         }
 
         @Override
@@ -1238,17 +1254,20 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
         @Override
         public void onStatusChanged(ChatSession session, SessionStatus status) {
-            final int N = mRemoteListeners.beginBroadcast();
-            for (int i = 0; i < N; i++) {
-                IChatListener listener = mRemoteListeners.getBroadcastItem(i);
-                try {
-                    listener.onStatusChanged(ChatSessionAdapter.this);
-                } catch (RemoteException e) {
-                    // The RemoteCallbackList will take care of removing the
-                    // dead listeners.   // TODO Auto-generated method stub
+            try {
+                final int N = mRemoteListeners.beginBroadcast();
+                for (int i = 0; i < N; i++) {
+                    IChatListener listener = mRemoteListeners.getBroadcastItem(i);
+                    try {
+                        listener.onStatusChanged(ChatSessionAdapter.this);
+                    } catch (RemoteException e) {
+                        // The RemoteCallbackList will take care of removing the
+                        // dead listeners.   // TODO Auto-generated method stub
+                    }
                 }
+                mRemoteListeners.finishBroadcast();
             }
-            mRemoteListeners.finishBroadcast();
+            catch (Exception e){}
             mDataHandler.onOtrStatusChanged(status);
             
             if (status == SessionStatus.ENCRYPTED)
@@ -1390,17 +1409,22 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                         String[] path = url.split("/");
                         String sanitizedPath = SystemServices.sanitize(path[path.length - 1]);
 
-                        final int N = mRemoteListeners.beginBroadcast();
-                        for (int i = 0; i < N; i++) {
-                            IChatListener listener = mRemoteListeners.getBroadcastItem(i);
-                            try {
-                                listener.onIncomingFileTransferProgress(sanitizedPath, percent);
-                            } catch (RemoteException e) {
-                                // The RemoteCallbackList will take care of removing the
-                                // dead listeners.
+                        int N = 0;
+
+                        try {
+                            N = mRemoteListeners.beginBroadcast();
+                            for (int i = 0; i < N; i++) {
+                                IChatListener listener = mRemoteListeners.getBroadcastItem(i);
+                                try {
+                                    listener.onIncomingFileTransferProgress(sanitizedPath, percent);
+                                } catch (RemoteException e) {
+                                    // The RemoteCallbackList will take care of removing the
+                                    // dead listeners.
+                                }
                             }
+                            mRemoteListeners.finishBroadcast();
                         }
-                        mRemoteListeners.finishBroadcast();
+                        catch (Exception e){}
 
                         if (N == 0) {
                             String nickname = getNickName(from);
@@ -1447,17 +1471,20 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             String[] path = url.split("/");
             String sanitizedPath = SystemServices.sanitize(path[path.length - 1]);
 
-            final int N = mRemoteListeners.beginBroadcast();
-            for (int i = 0; i < N; i++) {
-                IChatListener listener = mRemoteListeners.getBroadcastItem(i);
-                try {
-                    listener.onIncomingFileTransferError(sanitizedPath, reason);
-                } catch (RemoteException e) {
-                    // The RemoteCallbackList will take care of removing the
-                    // dead listeners.
+            try {
+                final int N = mRemoteListeners.beginBroadcast();
+                for (int i = 0; i < N; i++) {
+                    IChatListener listener = mRemoteListeners.getBroadcastItem(i);
+                    try {
+                        listener.onIncomingFileTransferError(sanitizedPath, reason);
+                    } catch (RemoteException e) {
+                        // The RemoteCallbackList will take care of removing the
+                        // dead listeners.
+                    }
                 }
+                mRemoteListeners.finishBroadcast();
             }
-            mRemoteListeners.finishBroadcast();
+            catch (Exception e){}
         }
 
         @Override
@@ -1483,7 +1510,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             }
             catch (Exception e)
             {
-                Log.e(ImApp.LOG_TAG,"error broadcasting progress",e);
+                Log.w(ImApp.LOG_TAG,"error broadcasting progress: " + e);
             }
             finally
             {

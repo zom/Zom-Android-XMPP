@@ -511,19 +511,22 @@ public class ContactListManagerAdapter extends
         private Vector<StoredContactChange> mDelayedContactChanges = new Vector<StoredContactChange>();
 
         private void broadcast(ContactListBroadcaster callback) {
-            synchronized (mRemoteContactListeners) {
-                final int N = mRemoteContactListeners.beginBroadcast();
-                for (int i = 0; i < N; i++) {
-                    IContactListListener listener = mRemoteContactListeners.getBroadcastItem(i);
-                    try {
-                        callback.broadcast(listener);
-                    } catch (RemoteException e) {
-                        // The RemoteCallbackList will take care of removing the
-                        // dead listeners.
+            try {
+                synchronized (mRemoteContactListeners) {
+                    final int N = mRemoteContactListeners.beginBroadcast();
+                    for (int i = 0; i < N; i++) {
+                        IContactListListener listener = mRemoteContactListeners.getBroadcastItem(i);
+                        try {
+                            callback.broadcast(listener);
+                        } catch (RemoteException e) {
+                            // The RemoteCallbackList will take care of removing the
+                            // dead listeners.
+                        }
                     }
+                    mRemoteContactListeners.finishBroadcast();
                 }
-                mRemoteContactListeners.finishBroadcast();
             }
+            catch (Exception e){}
         }
 
         public void onContactsPresenceUpdate(final Contact[] contacts) {

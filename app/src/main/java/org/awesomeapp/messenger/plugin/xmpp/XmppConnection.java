@@ -785,7 +785,7 @@ public class XmppConnection extends ImConnection {
                             submitForm.setAnswer("muc#roomconfig_roomdesc", subject);
 
                         if (submitForm.getField("muc#roomconfig_changesubject") != null)
-                            submitForm.setAnswer("muc#roomconfig_changesubject", true);
+                            submitForm.setAnswer("muc#roomconfig_changesubject", false);
 
                         if (submitForm.getField("muc#roomconfig_anonymity") == null) {
                             FormField field =new FormField("muc#roomconfig_anonymity");
@@ -813,21 +813,14 @@ public class XmppConnection extends ImConnection {
                             field.setType(FormField.Type.list_multi);
                             submitForm.addField(field);
                         }
-                        submitForm.setAnswer("muc#roomconfig_getmemberlist", Arrays.asList("participant"));
+                        submitForm.setAnswer("muc#roomconfig_getmemberlist", Arrays.asList("moderator","participant","visitor"));
 
                         if (submitForm.getField("muc#roomconfig_presencebroadcast") == null) {
                             FormField field =new FormField("muc#roomconfig_presencebroadcast");
                             field.setType(FormField.Type.list_multi);
                             submitForm.addField(field);
                         }
-                        submitForm.setAnswer("muc#roomconfig_presencebroadcast", Arrays.asList("participant"));
-
-                        if (submitForm.getField("muc#roomconfig_whois") == null) {
-                            FormField field =new FormField("muc#roomconfig_whois");
-                            field.setType(FormField.Type.list_multi);
-                            submitForm.addField(field);
-                        }
-                        submitForm.setAnswer("muc#roomconfig_whois", Arrays.asList("anyone"));
+                        submitForm.setAnswer("muc#roomconfig_presencebroadcast", Arrays.asList("moderator","participant","visitor"));
 
                         if (submitForm.getField("muc#roomconfig_whois") == null) {
                             FormField field =new FormField("muc#roomconfig_whois");
@@ -1023,13 +1016,33 @@ public class XmppConnection extends ImConnection {
 
             try {
 
+                List<Occupant> mucParticipants = muc.getParticipants();
+
+                for (Occupant occupant : mucParticipants) {
+                    Jid jidSource = occupant.getJid();
+                    if (jidSource != null)
+                        xa = new XmppAddress(jidSource.toString());
+                    else
+                        xa = new XmppAddress(occupant.toString());
+
+                    Contact mucContact = new Contact(xa, xa.getUser(), Imps.Contacts.TYPE_NORMAL);
+                    chatGroup.notifyMemberJoined(occupant.getAffiliation().toString(), mucContact);
+                }
+            }
+            catch (Exception e)
+            {
+                debug("MUC","Error loading participants: " + e);
+            }
+
+
+            try {
+
                 List<Affiliate> mucMembers = muc.getMembers();
 
                 for (Affiliate member : mucMembers) {
                     xa = new XmppAddress(member.getJid().toString());
                     Contact mucContact = new Contact(xa, xa.getUser(), Imps.Contacts.TYPE_NORMAL);
                     chatGroup.notifyMemberJoined(member.getAffiliation().toString(), mucContact);
-
                 }
             }
             catch (Exception e)
@@ -1073,20 +1086,24 @@ public class XmppConnection extends ImConnection {
             });
 
             muc.addParticipantStatusListener(new GroupParticipantStatusListener(muc, group));
-
             muc.addParticipantListener(new PresenceListener() {
                 @Override
                 public void processPresence(org.jivesoftware.smack.packet.Presence presence) {
 
-                    /**
-                    XmppAddress xa = new XmppAddress(presence.getFrom().toString());
-                    Contact mucContact = new Contact(xa, xa.getResource(), Imps.Contacts.TYPE_NORMAL);
-                    Presence p = new Presence(parsePresence(presence), presence.getStatus(), null, null, Presence.CLIENT_TYPE_DEFAULT);
-                    mucContact.setPresence(p);
-                    **/
+                    try {
 
-                    debug("MUC","Got group presence: " + presence.toString());
+                        Occupant occupant = muc.getOccupant(presence.getFrom().asEntityFullJidOrThrow());
+                        Jid jidSource = occupant.getJid();
+                        XmppAddress xa = new XmppAddress(jidSource.toString());
+                        Contact mucContact = new Contact(xa, xa.getUser(), Imps.Contacts.TYPE_NORMAL);
+                        group.notifyMemberJoined(presence.getFrom().toString(),mucContact);
 
+                        debug("MUC","Got group presence: " + presence.toString());
+                    }
+                    catch (Exception e)
+                    {
+                        debug("MUC","Error handling group presence: " + e);
+                    }
 
                 }
             });
@@ -1141,7 +1158,6 @@ public class XmppConnection extends ImConnection {
                             EntityBareJid inviteeJid = JidCreate.entityBareFrom(invitee.getAddress().getAddress());
                             muc.invite(inviteeJid, reason);
                             muc.grantMembership(inviteeJid);
-                            muc.grantAdmin(inviteeJid);
                             group.notifyMemberJoined(null, invitee);
                         } catch (Exception nce) {
                             Log.e(ImApp.LOG_TAG, "not connected error trying to add invite", nce);
@@ -1233,6 +1249,7 @@ public class XmppConnection extends ImConnection {
 
             @Override
             public void left(EntityFullJid entityFullJid) {
+
 
                 /**
                  XmppAddress xa = new XmppAddress(entityFullJid.toString());
