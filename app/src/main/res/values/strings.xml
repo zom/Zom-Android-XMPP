@@ -67,7 +67,6 @@
     <string name="btn_create_new_account">Register Account</string>
 
     <string name="account_setup_pers_now_title">Sign In Now</string>
-    <string name="_via_orbot">"Orbot (Tor)"</string>
     <string name="select_domain_new_account">Chat service domain</string>
     <string name="registering_new_account_">Registering new account…</string>
 
@@ -172,10 +171,10 @@
     <!-- Views: Settings: General -->
     <!-- Actions: Settings: General: Security and Privacy -->
     <string name="pref_group_security_title">Security and Privacy</string>
-    <string name="encryption_and_anonymity_title">Encryption and Anonymity</string>
+    <string name="encryption_and_anonymity_title">Network Privacy</string>
     <!-- Actions: Settings: General: User Interface -->
-    <string name="pref_linkify_on_tor_title">Clickable links on Tor</string>
-    <string name="pref_linkify_on_tor_summary">For accounts using Tor, make the links in chats clickable (WARNING, possible privacy leak!)</string>
+    <string name="pref_linkify_on_tor_title">Clickable links</string>
+    <string name="pref_linkify_on_tor_summary">Make the links in chats clickable (WARNING, possible privacy leak!)</string>
     <string name="menu_locale">Language</string>
     <string name="KEY_PREF_LANGUAGE_TITLE">Languages</string>
     <string name="use_system_default">Use system default</string>

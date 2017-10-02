@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
-  <string name="app_name_zom">ChatSecure</string>
+  <string name="app_name_zom">Zom</string>
   <string name="send_message">Mezua bidali</string>
   <string name="me_title">Ni</string>
   <string name="add_account_action">Kontua gehitu</string>

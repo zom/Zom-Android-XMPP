@@ -59,6 +59,21 @@
 			android:enabled="true"
 			android:summary="@string/use_dns_srv_to_find_actual_xmpp_server_from_domain_name"
 			android:defaultValue="true" />
+		</PreferenceCategory>
+	<PreferenceCategory android:title="Proxy Settings">
+
+	<CheckBoxPreference android:key="pref_security_use_proxy"
+			android:title="Use Proxy"
+			android:enabled="true"
+			android:summary="Use SOCKS proxy to connect"
+			android:defaultValue="false" />
+		<EditTextPreference android:key="pref_security_proxy_host"
+			android:title="Proxy Server Host"
+			android:summary="Proxy server host to connect to" />
+		<EditTextPreference android:key="pref_security_proxy_port"
+			android:title="Proxy Server Port"
+			android:summary="Proxy server port to connect to" />
+
 
 	</PreferenceCategory>
 

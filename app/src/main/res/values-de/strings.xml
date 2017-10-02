@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <!--General: Names-->
-  <string name="ic_launcher_name">ChatSecure</string>
-  <string name="app_name">ChatSecure</string>
-  <string name="im_label">ChatSecure</string>
+  <string name="ic_launcher_name">Zom</string>
+  <string name="app_name">Zom</string>
+  <string name="im_label">Zom</string>
   <!--General: Permissions-->
   <string name="ro_perm_label">Sofortnachrichten lesen</string>
   <string name="ro_perm_desc">Erlaubt es Anwendungen, Daten vom Sofortnachrichteninhalteanbieter zu lesen.</string>
@@ -22,7 +22,7 @@
   <string name="lock_screen_create_passphrase">Passwort einstellen</string>
   <string name="lock_screen_confirm_passphrase">Passwort bestätigen</string>
   <string name="lock_screen_passphrase_hint">Passwort</string>
-  <string name="lock_screen_passphrase_not_set_enter">Sie können optional ein Hauptpasswort für ChatSecure einstellen, um den Zugriff auf Ihre Kontakte und Nachrichten zu verhindern:</string>
+  <string name="lock_screen_passphrase_not_set_enter">Sie können optional ein Hauptpasswort für Zom einstellen, um den Zugriff auf Ihre Kontakte und Nachrichten zu verhindern:</string>
   <string name="lock_screen_passphrase_not_set_confirm">Neues Passwort bestätigen</string>
   <string name="lock_screen_passphrases_not_matching">Passwort stimmt nicht überein, bitte versuchen Sie es erneut</string>
   <string name="lock_screen_skip">Überspringen &gt;&gt;</string>
@@ -208,7 +208,7 @@ Für die Anmeldung wird eine Datenverbindung (inklusive Hintergrunddaten) benöt
   <string name="msisdn_error">Die auf der SIM-Karte gespeicherte Telefonnummer kann nicht gelesen werden. Bitte wenden Sie sich an den Netzbetreiber.</string>
   <string name="not_signed_in">Sie sind derzeit nicht angemeldet.</string>
   <string name="account_setup_error_server">Beim Verbinden mit dem Server ist ein Fehler aufgetreten – bitte überprüfen Sie die Server-Konfiguration und versuchen Sie es erneut.</string>
-  <string name="error_suspended_connection">ChatSecure hat die Verbindung zum Netzwerk verloren</string>
+  <string name="error_suspended_connection">Zom hat die Verbindung zum Netzwerk verloren</string>
   <string name="unable_to_create_or_join_group_chat">Gruppenunterhaltung konnte nicht erstellt oder betreten werden</string>
   <string name="unsupported_incoming_data">Nicht unterstützte eingehende Daten, können nicht freigegeben werden!</string>
   <string name="there_is_no_viewer_available_for_this_file_format">Für dieses Dateiformat ist kein Betrachter vorhanden</string>
