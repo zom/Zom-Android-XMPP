@@ -322,7 +322,6 @@ public class OnboardingManager {
             {
                 settings.setServer(null);
                 settings.setDoDnsSrv(true);
-                settings.setUseTor(false);
 
             }
 
@@ -403,10 +402,8 @@ public class OnboardingManager {
                 pCursor, cr, providerId, false /* don't keep updated */, null /* no handler */);
 
         //should check to see if Orbot is installed and running
-        boolean useTor = false;
         boolean doDnsSrvLookup = true;
 
-        settings.setUseTor(useTor);
         settings.setRequireTls(true);
         settings.setTlsCertVerify(true);
         settings.setAllowPlainAuth(false);

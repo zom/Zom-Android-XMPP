@@ -11,7 +11,6 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import org.awesomeapp.messenger.ImApp;
-import org.awesomeapp.messenger.crypto.TorProxyInfo;
 import org.awesomeapp.messenger.crypto.omemo.Omemo;
 import org.awesomeapp.messenger.model.Address;
 import org.awesomeapp.messenger.model.ChatGroup;
@@ -190,6 +189,7 @@ import de.duenndns.ssl.MemorizingTrustManager;
 import eu.siacs.conversations.Downloader;
 import eu.siacs.conversations.Uploader;
 import im.zom.messenger.R;
+import info.guardianproject.netcipher.proxy.OrbotHelper;
 
 public class XmppConnection extends ImConnection {
 
@@ -200,7 +200,6 @@ public class XmppConnection extends ImConnection {
     private XmppContactListManager mContactListManager;
     private Contact mUser;
     private BareJid mUserJid;
-    private boolean mUseTor;
 
     // watch out, this is a different XMPPConnection class than XmppConnection! ;)
     // Synchronized by executor thread
@@ -237,7 +236,7 @@ public class XmppConnection extends ImConnection {
     private MemorizingTrustManager mMemTrust;
 
     private final static int SOTIMEOUT = 1000 * 120;
-    private final static int CONNECT_TIMEOUT = 1000 * 30;
+    private final static int CONNECT_TIMEOUT = 1000 * 60;
 
     private PingManager mPingManager;
 
@@ -304,7 +303,6 @@ public class XmppConnection extends ImConnection {
             mUserJid = JidCreate.bareFrom(mUser.getAddress().getAddress());
         }
         catch (Exception e){}
-        mUseTor = providerSettings.getUseTor();
 
         providerSettings.close();
     }
@@ -1268,6 +1266,7 @@ public class XmppConnection extends ImConnection {
 
             @Override
             public void kicked(EntityFullJid entityFullJid, Jid jid, String s) {
+                /**
                 XmppAddress xa = new XmppAddress(entityFullJid.toString());
                 Jid jidSource = muc.getOccupant(entityFullJid).getJid();
                 if (jidSource != null)
@@ -1277,6 +1276,20 @@ public class XmppConnection extends ImConnection {
 
                 Contact mucContact = new Contact(xa, xa.getUser(), Imps.Contacts.TYPE_NORMAL);
                 group.notifyMemberLeft(mucContact);
+                 **/
+                /**
+                 *  <presence type='unavailable' to='nathantest.5ee1a6cb@home.zom.im/ChatSecureZom-a2fea7b4' from='group8195d640@conference.zom.im/Rosa 🐰'><status>Kicked: recipient unavailable</status><x xmlns='http://jabber.org/protocol/muc#user'><item jid='rosa🐰@home.zom.im/86df4b3f-8995-43b88
+                 -accb-3506158ea797' affiliation='admin' role='none'/></x></presence><presence type='unavailable' to='nathantest.5ee1a6cb@home.zom.im' from='rosa🐰@home.zom.im/86df4b3f-8995-43b8-aa
+                 ccb-3506158ea797'><status>Disconnected: Replaced by new connection</status></presence><presence type='unavailable' to='nathantest.5ee1a6cb@home.zom.im/ChatSecureZom-a2fea7b4' from='groupcd59664c@conference.zom.im/Rosa 🐰'><status>Disconnected: Replaced by new connection</status><x xmlns='http://jabber.org/protocol/muc#user'><item jid='rosa🐰@home.zom.im/866
+                 df4b3f-8995-43b8-accb-3506158ea797' affiliation='admin' role='none'/></x></presence><presence type='unavailable' to='nathantest.5ee1a6cb@home.zom.im/ChatSecureZom-a2fea7b4' from='7c768e7e-8acb-4e6f-bc86-b0ff70958b27@conference.zom.im/Rosa 🐰'><status>Disconnected: Replaced by new connection</status><x xmlns='http://jabber.org/protocol/muc#user'><item jid=''
+                 rosa🐰@home.zom.im/86df4b3f-8995-43b8-accb-3506158ea797' affiliation='owner' role='none'/></x></presence>
+
+                 */
+                try { loadMembers(muc, group);}
+                catch (Exception e)
+                {
+                    debug("MUC","Error loading group",e);
+                }
             }
 
             @Override
@@ -1384,7 +1397,7 @@ public class XmppConnection extends ImConnection {
 
     @Override
     public boolean isUsingTor() {
-        return mUseTor;
+        return false;
     }
 
     @Override
@@ -1531,7 +1544,7 @@ public class XmppConnection extends ImConnection {
 
         } catch (Exception e) {
 
-            debug(TAG, "login failed", e);
+            debug(TAG, "login failed: " + e.getMessage(),e);
 
             if (getState() != SUSPENDED || getState() != SUSPENDING) {
 
@@ -1611,23 +1624,7 @@ public class XmppConnection extends ImConnection {
         } else {
 
             ProxyInfo.ProxyType pType = ProxyInfo.ProxyType.valueOf(type);
-            String username = null;
-            String password = null;
-
-            if (type.equals(TorProxyInfo.PROXY_TYPE) //socks5
-                    && host.equals(TorProxyInfo.PROXY_HOST) //127.0.0.1
-                    && port == TorProxyInfo.PROXY_PORT) //9050
-            {
-                //if the proxy is for Orbot/Tor then generate random usr/pwd to isolate Tor streams
-                if (rndForTorCircuits == null)
-                    rndForTorCircuits = new SecureRandom();
-
-                username = rndForTorCircuits.nextInt(100000)+"";
-                password = rndForTorCircuits.nextInt(100000)+"";
-
-            }
-
-            mProxyInfo = new ProxyInfo(pType, host, port, username, password);
+            mProxyInfo = new ProxyInfo(pType, host, port, null, null);
 
         }
     }
@@ -1821,7 +1818,7 @@ public class XmppConnection extends ImConnection {
        // boolean tlsCertVerify = providerSettings.getTlsCertVerify();
 
        // boolean useSASL = true;//!allowPlainAuth;
-        boolean useTor = providerSettings.getUseTor();
+       // boolean useProxy = providerSettings.getUseTor();
         String domain = providerSettings.getDomain();
 
         mPriority = providerSettings.getXmppResourcePrio();
@@ -1836,34 +1833,8 @@ public class XmppConnection extends ImConnection {
             server = "dukgo.com";
         }
 
-
-
-        /**
-         * //need to move this to the new NetCipher BroadcastReceiver API
-        try {
-            //if Orbot is on and running, we should use it
-            if (OrbotHelper.isOrbotInstalled(mContext) && OrbotHelper.isOrbotRunning(mContext)
-                    && (server != null && (!doDnsSrv)))
-                useTor = true;
-        }
-        catch (Exception e)
-        {
-            debug(TAG,"There was an error checking Orbot: " + e.getMessage());
-        }*/
-
         debug(TAG, "TLS required? " + requireTls);
 
-        if (useTor) {
-            setProxy(TorProxyInfo.PROXY_TYPE, TorProxyInfo.PROXY_HOST,
-                    TorProxyInfo.PROXY_PORT);
-        }
-        else
-        {
-            setProxy(null, null, -1);
-        }
-
-        if (mProxyInfo == null)
-            mProxyInfo = null;
 
         // If user did not specify a server, and SRV requested then lookup SRV
         if (doDnsSrv) {
@@ -1883,24 +1854,6 @@ public class XmppConnection extends ImConnection {
             }
         }
 
-        /**
-        if (server != null && server.contains("google.com"))
-        {
-            mUsername = userName + '@' + domain;
-        }
-        else if (domain.contains("gmail.com"))
-        {
-            mUsername = userName + '@' + domain;
-        }
-        else if (mIsGoogleAuth)
-        {
-            mUsername = userName + '@' + domain;
-        }
-        else
-        {
-            mUsername = userName;
-        }**/
-
 
         if (serverPort == 0) //if serverPort is set to 0 then use 5222 as default
             serverPort = 5222;
@@ -1913,14 +1866,54 @@ public class XmppConnection extends ImConnection {
         mConfig.setCompressionEnabled(true);
         mConfig.setConnectTimeout(CONNECT_TIMEOUT);
 
+        if (providerSettings.getUseProxy())
+        {
+            if (!TextUtils.isEmpty(providerSettings.getProxyHost())
+                && providerSettings.getProxyPort()!=-1)
+                setProxy("SOCKS4",providerSettings.getProxyHost(),providerSettings.getProxyPort());
+            else
+                mProxyInfo = null;
+        }
+        else
+        {
+            mProxyInfo = null;
+        }
         // No server requested and SRV lookup wasn't requested or returned nothing - use domain
         if (server == null)
             mConfig.setHost(domain);
         else {
             mConfig.setHost(server);
+
+            try {
+
+
+                String[] addressParts = server.split("\\.");
+                if (Integer.parseInt(addressParts[0]) != -1) {
+                    byte[] parts = new byte[addressParts.length];
+                    for (int i = 0; i < 4; i++)
+                        parts[i] = (byte)Integer.parseInt(addressParts[i]);
+
+                    byte[] ipAddr = new byte[]{parts[0],parts[1],parts[2],parts[3]};
+                    InetAddress addr = InetAddress.getByAddress(ipAddr);
+                    mConfig.setHostAddress(addr);
+
+                }
+                else
+                {
+                    mConfig.setHostAddress(InetAddress.getByName(server));
+                }
+            }
+            catch (Exception e){
+                debug(TAG,"error parsing server as IP address; using as hostname instead");
+                mConfig.setHostAddress(InetAddress.getByName(server));
+
+            }
+
             mConfig.setHostAddress(InetAddress.getByName(server));
             mConfig.setXmppDomain(domain);
         }
+
+        mConfig.setProxyInfo(mProxyInfo);
 
         mConfig.setDebuggerEnabled(Debug.DEBUG_ENABLED);
         SmackConfiguration.DEBUG = Debug.DEBUG_ENABLED;

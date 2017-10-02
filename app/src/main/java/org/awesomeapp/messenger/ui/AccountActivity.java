@@ -571,19 +571,6 @@ public class AccountActivity extends BaseActivity {
         Imps.ProviderSettings.QueryMap settings = new Imps.ProviderSettings.QueryMap(
                pCursor, cr, mProviderId, false /* don't keep updated */, null /* no handler */);
 
-        if (useTor)
-        {
-            //Toast.makeText(this, "Orbot app is not installed. Please install from Google Play or from https://guardianproject.info/releases", Toast.LENGTH_LONG).show();
-
-           // orbotHelper.promptToInstall(this);
-
-           // mUseTor.setChecked(false);
-            settings.setUseTor(false);
-        }
-        else
-        {
-            settings.setUseTor(useTor);
-        }
 
         settingsForDomain(settings.getDomain(),settings.getPort(),settings);
         settings.close();
@@ -680,21 +667,6 @@ public class AccountActivity extends BaseActivity {
         settings.setDomain(domain);
         settings.setPort(port);
 
-        //if use Tor, turn off DNS resolution, and set Server manually from Domain
-        if (settings.getUseTor())
-        {
-            settings.setDoDnsSrv(false);
-
-            //if Tor is off, and the user has not provided any values here, set to the @domain
-            if (settings.getServer() == null || settings.getServer().length() == 0)
-                settings.setServer(domain);
-        }
-        else if (settings.getServer() == null || settings.getServer().length() == 0)
-        {
-            //if Tor is off, and the user has not provided any values here, then reset to nothing
-            settings.setDoDnsSrv(true);
-            settings.setServer("");
-        }
 
 
 
@@ -920,7 +892,6 @@ public class AccountActivity extends BaseActivity {
                        pCursor, cr, mProviderId, false /* don't keep updated */, null /* no handler */);
 
                 try {
-                    settings.setUseTor(useTor);
                     settingsForDomain(mDomain, mPort, settings);
 
                     HashMap<String,String> aParams = new HashMap<String,String>();

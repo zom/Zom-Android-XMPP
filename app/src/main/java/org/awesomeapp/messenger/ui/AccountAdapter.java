@@ -182,7 +182,6 @@ public class AccountAdapter extends CursorAdapter implements AccountListItem.Sig
                     as.domain = settings.getDomain();
                     as.host = settings.getServer();
                     as.port = settings.getPort();
-                    as.isTor = settings.getUseTor();
 
                     /**
                     IImConnection conn = mApp.getConnection(ai.providerId,settings.get);

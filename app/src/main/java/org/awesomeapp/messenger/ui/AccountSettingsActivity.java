@@ -38,6 +38,7 @@ import android.preference.EditTextPreference;
 import android.preference.PreferenceActivity;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -56,9 +57,13 @@ public class AccountSettingsActivity extends PreferenceActivity implements
     private EditTextPreference mXmppResourcePrio;
     private EditTextPreference mPort;
     private EditTextPreference mServer;
+    private EditTextPreference mProxyPort;
+    private EditTextPreference mProxyServer;
     private CheckBoxPreference mAllowPlainAuth;
     private CheckBoxPreference mRequireTls;
     private CheckBoxPreference mDoDnsSrv;
+    private CheckBoxPreference mUseProxy;
+
 
     private void setInitialValues() {
         ContentResolver cr = getContentResolver();
@@ -84,12 +89,25 @@ public class AccountSettingsActivity extends PreferenceActivity implements
         }
         text = settings.getServer();
         mServer.setText(text);
-        if (text != null) {
+        if (!TextUtils.isEmpty(text)) {
             mServer.setSummary(text);
         }
+        text = settings.getProxyHost();
+        mProxyServer.setText(text);
+        if (!TextUtils.isEmpty(text)) {
+            mProxyServer.setSummary(text);
+        }
+        int port = settings.getProxyPort();
+        mProxyPort.setText(port+"");
+        if (port != -1) {
+            mProxyPort.setSummary(port+"");
+        }
+
         mAllowPlainAuth.setChecked(settings.getAllowPlainAuth());
         mRequireTls.setChecked(settings.getRequireTls());
         mDoDnsSrv.setChecked(settings.getDoDnsSrv());
+        mUseProxy.setChecked(settings.getUseProxy());
+
 
         settings.close();
     }
@@ -253,6 +271,24 @@ public class AccountSettingsActivity extends PreferenceActivity implements
         } else if (key.equals("pref_security_do_dns_srv")) {
             settings.setDoDnsSrv(prefs.getBoolean(key, true));
         }
+        else if (key.equals("pref_security_use_proxy")||key.equals("pref_security_proxy_host")||key.equals("pref_security_proxy_port")) {
+            String proxyHost = prefs.getString("pref_security_proxy_host",null);
+            int proxyPort = -1;
+
+            try
+            {
+                proxyPort = Integer.parseInt(prefs.getString("pref_security_proxy_port","-1"));
+            }
+            catch (Exception e){}
+
+            settings.setUseProxy(prefs.getBoolean("pref_security_use_proxy", false),proxyHost, proxyPort);
+            mProxyServer.setText(proxyHost);
+            mProxyServer.setSummary(proxyHost);
+            if (proxyPort != -1) {
+                mProxyPort.setText(proxyPort + "");
+                mProxyPort.setSummary(proxyPort + "");
+            }
+        }
 
         settings.setShowMobileIndicator(true);
         settings.close();
@@ -283,6 +319,10 @@ public class AccountSettingsActivity extends PreferenceActivity implements
         mAllowPlainAuth = (CheckBoxPreference) findPreference(("pref_security_allow_plain_auth"));
         mRequireTls = (CheckBoxPreference) findPreference(("pref_security_require_tls"));
         mDoDnsSrv = (CheckBoxPreference) findPreference(("pref_security_do_dns_srv"));
+        mUseProxy = (CheckBoxPreference) findPreference(("pref_security_use_proxy"));
+        mProxyServer = (EditTextPreference) findPreference(("pref_security_proxy_host"));
+        mProxyPort = (EditTextPreference) findPreference(("pref_security_proxy_port"));
+
     }
 
     @Override

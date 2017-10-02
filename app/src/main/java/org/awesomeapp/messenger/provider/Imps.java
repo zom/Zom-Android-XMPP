@@ -1400,7 +1400,18 @@ public class Imps {
         public static final String TLS_CERT_VERIFY = "pref_security_tls_cert_verify";
 
         /** boolean to specify whether to use Tor proxying or not */
-        public static final String USE_TOR = "pref_security_use_tor";
+//        public static final String USE_TOR = "pref_security_use_tor";
+
+        /** boolean to specify whether to use Tor proxying or not */
+        public static final String USE_PROXY = "pref_security_use_proxy";
+
+        /** string to specify whether to use Tor proxying or not */
+        public static final String PROXY_HOST = "pref_security_proxy_host";
+
+        /** string to specify whether to use Tor proxying or not */
+        public static final String PROXY_PORT = "pref_security_proxy_port";
+
+
 
         /**
          * boolean to control whether DNS SRV lookups are used to find the
@@ -1737,10 +1748,14 @@ public class Imps {
          * @param cr The ContentResolver to use to access the settings table
          * @param providerId used to identify the set of settings for a given
          *            provider
-         * @param useTor
          */
-        public static void setUseTor(ContentResolver cr, long providerId, boolean useTor) {
-            putBooleanValue(cr, providerId, USE_TOR, useTor);
+        public static void setUseProxy(ContentResolver cr, long providerId, boolean useProxy, String host, int port) {
+            putBooleanValue(cr, providerId, USE_PROXY, useProxy);
+
+            if  (useProxy) {
+                putStringValue(cr, providerId, PROXY_HOST, host);
+                putIntValue(cr, providerId, PROXY_PORT, port);
+            }
         }
 
         /**
@@ -1968,12 +1983,20 @@ public class Imps {
                 return getBoolean(TLS_CERT_VERIFY, true /* by default try to verify the TLS Cert */);
             }
 
-            public void setUseTor(boolean value) {
-                ProviderSettings.setUseTor(mContentResolver, mProviderId, value);
+            public void setUseProxy(boolean value, String host, int port) {
+                ProviderSettings.setUseProxy(mContentResolver, mProviderId, value, host, port);
             }
 
-            public boolean getUseTor() {
-                return getBoolean(USE_TOR, false /* by default do not use Tor */);
+            public boolean getUseProxy() {
+                return getBoolean(USE_PROXY, false /* by default do not use Tor */);
+            }
+
+            public String getProxyHost() {
+                return getString(PROXY_HOST,"" /* by default do not use Tor */);
+            }
+
+            public int getProxyPort() {
+                return getInteger(PROXY_PORT,-1 /* by default do not use Tor */);
             }
 
             public void setDoDnsSrv(boolean value) {

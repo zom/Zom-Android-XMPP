@@ -358,12 +358,6 @@ public class AccountListItem extends LinearLayout {
             secondRowTextBuffer.append(':').append(settings.getPort());
 
 
-        if (settings.getUseTor())
-        {
-            secondRowTextBuffer.append(" - ");
-            secondRowTextBuffer.append(r.getString(R.string._via_orbot));
-        }
-
         secondRowText = secondRowTextBuffer.toString();
         return secondRowText;
     }

@@ -410,7 +410,6 @@ public class AccountViewFragment extends Fragment {
                 final boolean rememberPass = true;
                 final boolean isActive = false; // TODO(miron) does this ever need to be true?
                 ContentResolver cr = getActivity().getContentResolver();
-                final boolean useTor =  false;
 
                 if (mIsNewAccount)
                 {
@@ -456,7 +455,7 @@ public class AccountViewFragment extends Fragment {
                     {
                         setAccountKeepSignedIn(rememberPass);
 
-                        createNewAccount(mUserName, pass, mAccountId, useTor);
+                        createNewAccount(mUserName, pass, mAccountId, false);
 
                     }
                     else
@@ -571,33 +570,6 @@ public class AccountViewFragment extends Fragment {
         super.onDestroy();
     }*/
 
-    private void updateUseTor(boolean useTor) {
-        checkUserChanged();
-
-        ContentResolver cr = getActivity().getContentResolver();
-        Cursor pCursor = cr.query(Imps.ProviderSettings.CONTENT_URI,new String[] {Imps.ProviderSettings.NAME, Imps.ProviderSettings.VALUE},Imps.ProviderSettings.PROVIDER + "=?",new String[] { Long.toString(mProviderId)},null);
-
-        Imps.ProviderSettings.QueryMap settings = new Imps.ProviderSettings.QueryMap(
-               pCursor, cr, mProviderId, false /* don't keep updated */, null /* no handler */);
-
-        if (useTor && (!OrbotHelper.isOrbotInstalled(getActivity())))
-        {
-            //Toast.makeText(this, "Orbot app is not installed. Please install from Google Play or from https://guardianproject.info/releases", Toast.LENGTH_LONG).show();
-
-            Intent intentInstallTor = OrbotHelper.getOrbotInstallIntent(getActivity());
-            getActivity().startActivity(intentInstallTor);
-
-            //mUseTor.setChecked(false);
-            settings.setUseTor(false);
-        }
-        else
-        {
-            settings.setUseTor(useTor);
-        }
-
-        settingsForDomain(settings.getDomain(),settings.getPort(),settings);
-        settings.close();
-    }
 /*
     private void getOTRKeyInfo() {
 
@@ -718,22 +690,6 @@ public class AccountViewFragment extends Fragment {
 
         settings.setDomain(domain);
         settings.setPort(port);
-
-        //if use Tor, turn off DNS resolution, and set Server manually from Domain
-        if (settings.getUseTor())
-        {
-            settings.setDoDnsSrv(false);
-
-            //if Tor is off, and the user has not provided any values here, set to the @domain
-            if (settings.getServer() == null || settings.getServer().length() == 0)
-                settings.setServer(domain);
-        }
-        else if (settings.getServer() == null || settings.getServer().length() == 0)
-        {
-            //if Tor is off, and the user has not provided any values here, then reset to nothing
-            settings.setDoDnsSrv(true);
-            settings.setServer("");
-        }
 
         settings.requery();
     }
@@ -894,7 +850,6 @@ public class AccountViewFragment extends Fragment {
                        pCursor, cr, mProviderId, false /* don't keep updated */, null /* no handler */);
 
                 try {
-                    settings.setUseTor(useTor);
                     settingsForDomain(mDomain, mPort, settings);
 
                     HashMap<String,String> aParams = new HashMap<String,String>();
