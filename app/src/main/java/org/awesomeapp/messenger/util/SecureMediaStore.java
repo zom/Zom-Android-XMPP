@@ -17,6 +17,7 @@ import org.awesomeapp.messenger.ImApp;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.UUID;
 
 import info.guardianproject.iocipher.File;
 import info.guardianproject.iocipher.FileInputStream;
@@ -209,16 +210,15 @@ public class SecureMediaStore {
      * All imported content is stored under /SESSION_NAME/
      * The original full path is retained to facilitate browsing
      * The session content can be deleted when the session is over
-     * @param sourcePath
+     * @param sourceFile
      * @return vfs uri
      * @throws IOException
      */
-    public static Uri importContent(String sessionId, String sourcePath) throws IOException {
+    public static Uri importContent(String sessionId, java.io.File sourceFile) throws IOException {
         //list("/");
-        File sourceFile = new File(sourcePath);
-        String targetPath = "/" + sessionId + "/upload/" + sourceFile.getName();
+        String targetPath = "/" + sessionId + "/upload/" + UUID.randomUUID().toString() + "/" + sourceFile.getName();
         targetPath = createUniqueFilename(targetPath);
-        copyToVfs( sourcePath, targetPath );
+        copyToVfs( sourceFile, targetPath );
         //list("/");
         return vfsUri(targetPath);
     }
@@ -234,7 +234,7 @@ public class SecureMediaStore {
      */
     public static Uri importContent(String sessionId, String fileName, InputStream sourceStream) throws IOException {
         //list("/");
-        String targetPath = "/" + sessionId + "/upload/" + fileName;
+        String targetPath = "/" + sessionId + "/upload/" + UUID.randomUUID().toString() + '/' + fileName;
         targetPath = createUniqueFilename(targetPath);
         copyToVfs( sourceStream, targetPath );
         //list("/");
@@ -254,18 +254,30 @@ public class SecureMediaStore {
      */
     public static Uri resizeAndImportImage(Context context, String sessionId, Uri uri, String mimeType)
             throws IOException {
-        String imagePath = uri.getPath();
-        String targetPath = "/" + sessionId + "/upload/" + imagePath;
-        targetPath = createUniqueFilename(targetPath);
+
+        String originalImagePath = uri.getPath();
+        String targetPath = "/" + sessionId + "/upload/" + UUID.randomUUID().toString() + "/image";
+        boolean savePNG = false;
+
+        if (originalImagePath.endsWith(".png") || (mimeType != null && mimeType.contains("png"))
+                || originalImagePath.endsWith(".gif") || (mimeType != null && mimeType.contains("gif"))
+                ) {
+            savePNG = true;
+            targetPath += ".png";
+        }
+        else
+        {
+            targetPath += ".jpg";
+        }
 
         //load lower-res bitmap
         Bitmap bmp = getThumbnailFile(context, uri, DEFAULT_IMAGE_WIDTH);
 
         File file = new File(targetPath);
         file.getParentFile().mkdirs();
-        FileOutputStream out = new FileOutputStream(file);
+        FileOutputStream out = new info.guardianproject.iocipher.FileOutputStream(file);
         
-        if (imagePath.endsWith(".png") || (mimeType != null && mimeType.contains("png"))) //preserve alpha channel
+        if (savePNG)
             bmp.compress(Bitmap.CompressFormat.PNG, 100, out);
         else
             bmp.compress(Bitmap.CompressFormat.JPEG, 90, out);
@@ -327,12 +339,15 @@ public class SecureMediaStore {
     }
 
     public static void copyToVfs(String sourcePath, String targetPath) throws IOException {
+       copyToVfs(new java.io.File(sourcePath), targetPath);
+    }
+
+    public static void copyToVfs(java.io.File sourceFile, String targetPath) throws IOException {
         // create the target directories tree
         mkdirs( targetPath );
         // copy
         java.io.InputStream fis = null;
-        java.io.File file = new java.io.File(sourcePath);
-        fis  = new java.io.FileInputStream(file);
+        fis  = new java.io.FileInputStream(sourceFile);
 
         FileOutputStream fos = new FileOutputStream(new File(targetPath), false);
 

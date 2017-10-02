@@ -100,7 +100,7 @@ public class SystemServices {
     }
 
     public static class FileInfo {
-        public String path;
+        public File file;
         public String type;
     }
     
@@ -125,82 +125,94 @@ public class SystemServices {
         return type;
     }
 
+
     public static FileInfo getFileInfoFromURI(Context aContext, Uri uri) throws IllegalArgumentException {
         FileInfo info = new FileInfo();
-        info.path = uri.toString();
+        info.file = new File(uri.toString());
         
         if (SecureMediaStore.isVfsUri(uri)) {
-            info.path = uri.getPath();
+            info.file = new info.guardianproject.iocipher.File(uri.getPath());
             info.type = getMimeType(uri.toString());
             return info;
         }
         if (uri.getScheme() != null && uri.getScheme().equals("file")) {
-            info.path = uri.getPath();
+            info.file = new File(uri.getPath());
             info.type = getMimeType(uri.toString());
             return info;
         }
 
         if (uri.toString().startsWith("content://org.openintents.filemanager/")) {
             // Work around URI escaping brokenness
-            info.path = uri.toString().replaceFirst("content://org.openintents.filemanager", "");
+            info.file = new File(uri.toString().replaceFirst("content://org.openintents.filemanager", ""));
             info.type = getMimeType(uri.toString());
             return info;
         }
 
         Cursor cursor = aContext.getContentResolver().query(uri, null, null, null, null);
 
-        if (cursor != null && cursor.getCount() > 0)
-        {
-            cursor.moveToFirst();
+        try {
+            if (cursor != null && cursor.getCount() > 0) {
+                cursor.moveToFirst();
 
-            //need to check columns for different types
-            int dataIdx = cursor.getColumnIndex(MediaStore.Images.Media.DATA);
-            if (dataIdx != -1)
-            {
-                info.path = cursor.getString(dataIdx);
-                info.type = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.MIME_TYPE));
-
-            }
-            else
-            {
-                dataIdx = cursor.getColumnIndex(MediaStore.Video.Media.DATA);
-
-                if (dataIdx != -1)
-                {
-                    info.path = cursor.getString(dataIdx);
-                    info.type = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.MIME_TYPE));
-                }
-                else
-                {
-                    dataIdx = cursor.getColumnIndex(MediaStore.Audio.Media.DATA);
-
-                    if (dataIdx != -1)
-                    {
-                        info.path = cursor.getString(dataIdx);
-                        info.type = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.MIME_TYPE));
+                //need to check columns for different types
+                int dataIdx = cursor.getColumnIndex(MediaStore.Images.Media.DATA);
+                if (dataIdx != -1) {
+                    String data = cursor.getString(dataIdx);
+                    if (data != null) {
+                        info.file = new File(data);
+                        info.type = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.MIME_TYPE));
                     }
                     else
                     {
                         dataIdx = cursor.getColumnIndex(MediaStore.MediaColumns.DATA);
 
-                        if (dataIdx != -1)
-                        {
-                            info.path = cursor.getString(dataIdx);
-                            info.type = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.MIME_TYPE));
-
+                        if (dataIdx != -1) {
+                            data = cursor.getString(dataIdx);
+                            if (data != null) {
+                                info.file = new File(data);
+                                info.type = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.MIME_TYPE));
+                            }
                         }
                     }
+
+
+                } else {
+                    dataIdx = cursor.getColumnIndex(MediaStore.Video.Media.DATA);
+
+                    if (dataIdx != -1) {
+                        info.file = new File(cursor.getString(dataIdx));
+                        info.type = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.MIME_TYPE));
+                    } else {
+                        dataIdx = cursor.getColumnIndex(MediaStore.Audio.Media.DATA);
+
+                        if (dataIdx != -1) {
+                            info.file = new File(cursor.getString(dataIdx));
+                            info.type = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.MIME_TYPE));
+                        } else {
+                            dataIdx = cursor.getColumnIndex(MediaStore.MediaColumns.DATA);
+
+                            if (dataIdx != -1) {
+                                info.file = new File(cursor.getString(dataIdx));
+                                info.type = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.MIME_TYPE));
+
+                            }
+                        }
+                    }
+
+
                 }
-
-
             }
+        }
+        catch (Exception e)
+        {
+            Log.e("SystemService","Error retrieving file info: " + uri,e);
         }
 
         if (cursor != null)
             cursor.close();
 
         if (info.type == null)
-            info.type = getMimeType(info.path);
+            info.type = getMimeType(uri.getLastPathSegment());
 
         return info;
     }
@@ -219,7 +231,7 @@ public class SystemServices {
             String targetPath = "/" + pathSegments.get(pathSegments.size() - 1) + ".vcf";
             SecureMediaStore.copyToVfs(buf, targetPath);
             FileInfo info = new FileInfo();
-            info.path = SecureMediaStore.vfsUri(targetPath).toString();
+            info.file = new info.guardianproject.iocipher.File(SecureMediaStore.vfsUri(targetPath).getPath());
             info.type = "text/vcard";
             return info;
         } catch (Exception e) {

@@ -609,7 +609,9 @@ public class MessageListItem extends FrameLayout {
     private void setImageThumbnail(final ContentResolver contentResolver, final int id, final MessageViewHolder aHolder, final Uri mediaUri) {
 
         //if the same URI, we don't need to reload
-        if (aHolder.mMediaUri != null && aHolder.mMediaUri.getPath().equals(mediaUri.getPath()))
+        if (aHolder.mMediaUri != null
+                && aHolder.mMediaUri.getPath() != null
+                && aHolder.mMediaUri.getPath().equals(mediaUri.getPath()))
             return;
 
         // pair this holder to the uri. if the holder is recycled, the pairing is broken

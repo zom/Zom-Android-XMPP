@@ -474,7 +474,6 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
     @Override
     public boolean offerData(String offerId, final String mediaUri, final String mimeType) {
 
-
         final Message msgMedia = storeMediaMessage(mediaUri, mimeType);
 
         //TODO do HTTP Upload XEP 363
@@ -485,44 +484,67 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             public void run ()
             {
 
-                File fileLocal = new File(Uri.parse(mediaUri).getPath());
+                Uri uri = Uri.parse(mediaUri);
+                if (uri == null || uri.getPath() == null)
+                    return;
+
+                java.io.File fileLocal;
+                java.io.InputStream fis;
+
+                if (uri.getScheme() != null &&
+                        uri.getScheme().equals("vfs")) {
+                    fileLocal = new File(uri.getPath());
+                    try {
+                        fis = new info.guardianproject.iocipher.FileInputStream((info.guardianproject.iocipher.File) fileLocal);
+                    }
+                    catch (FileNotFoundException fe)
+                    {
+                        Log.w(TAG,"encrypted file not found on import: " + mediaUri);
+                        return;
+                    }
+                }
+                else {
+                    fileLocal = new java.io.File(uri.getPath());
+                    try
+                    {
+                        fis = new java.io.FileInputStream(fileLocal);
+                    }
+                    catch (FileNotFoundException fe)
+                    {
+                        Log.w(TAG,"file system file not found on import: " + mediaUri);
+                        return;
+                    }
+                }
+
                 String fileName = fileLocal.getName();
                 if (!fileName.contains("."))
                 {
                     fileName += "." + MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType);
                 }
 
-                try
-                {
+                boolean doEncryption = !isGroupChatSession();
 
-                    boolean doEncryption = !isGroupChatSession();
+                UploadProgressListener listener = new UploadProgressListener() {
+                    @Override
+                    public void onUploadProgress(long sent, long total) {
+                        //debug(TAG, "upload complete: " + l + "," + l1);
+                        //once this is done, send the message
+                        float percentF = ((float)sent)/((float)total)*100f;
 
-                    UploadProgressListener listener = new UploadProgressListener() {
-                        @Override
-                        public void onUploadProgress(long sent, long total) {
-                            //debug(TAG, "upload complete: " + l + "," + l1);
-                            //once this is done, send the message
-                            float percentF = ((float)sent)/((float)total)*100f;
-
-                            if (mDataHandlerListener != null)
-                                mDataHandlerListener.onTransferProgress(true,"","",mediaUri.toString(),percentF);
-                        }
-                    };
-
-
-                    String resultUrl = mConnection.publishFile(fileName, mimeType, fileLocal.length(), new info.guardianproject.iocipher.FileInputStream(fileLocal), doEncryption, listener);
-
-                    if (!TextUtils.isEmpty(resultUrl))
-                        sendMediaMessage(mediaUri, resultUrl, msgMedia);
-                    else
-                    {
-                        //didn't upload so lets queue it
-                        updateMessageInDb(msgMedia.getID(),Imps.MessageType.QUEUED,new java.util.Date().getTime(),mediaUri);
+                        if (mDataHandlerListener != null)
+                            mDataHandlerListener.onTransferProgress(true,"","",mediaUri.toString(),percentF);
                     }
-                }
-                catch (FileNotFoundException fe)
+                };
+
+
+                String resultUrl = mConnection.publishFile(fileName, mimeType, fileLocal.length(), fis, doEncryption, listener);
+
+                if (!TextUtils.isEmpty(resultUrl))
+                    sendMediaMessage(mediaUri, resultUrl, msgMedia);
+                else
                 {
-                    Log.w(TAG,"couldn't find file to share",fe);
+                    //didn't upload so lets queue it
+                    updateMessageInDb(msgMedia.getID(),Imps.MessageType.QUEUED,new java.util.Date().getTime(),mediaUri);
                 }
             }
         }.start();

@@ -578,9 +578,6 @@ public class ConversationDetailActivity extends BaseActivity {
     public void handleSendDelete(IChatSession session, Uri contentUri, String defaultType, boolean delete, boolean resizeImage, boolean importContent) {
         try {
 
-            //if (!session.getDefaultOtrChatSession().isChatEncrypted())
-            //    session.getDefaultOtrChatSession().startChatEncryption();
-
             // import
             SystemServices.FileInfo info = SystemServices.getFileInfoFromURI(this, contentUri);
 
@@ -595,13 +592,13 @@ public class ConversationDetailActivity extends BaseActivity {
             else if (importContent) {
 
                 if (contentUri.getScheme() == null || contentUri.getScheme().equals("assets"))
-                    vfsUri = SecureMediaStore.importContent(sessionId, info.path,getResources().getAssets().open(info.path));
+                    vfsUri = SecureMediaStore.importContent(sessionId, info.file.getName(),getResources().getAssets().open(info.file.getParent()));
                 else if (contentUri.getScheme().startsWith("http"))
                 {
                     vfsUri = SecureMediaStore.importContent(sessionId,contentUri.getLastPathSegment(), new URL(contentUri.toString()).openConnection().getInputStream());
                 }
                 else
-                    vfsUri = SecureMediaStore.importContent(sessionId, info.path);
+                    vfsUri = SecureMediaStore.importContent(sessionId, info.file);
             }
             else
             {
@@ -695,7 +692,7 @@ public class ConversationDetailActivity extends BaseActivity {
                 }
                 boolean deleteFile = false;
                 boolean resizeImage = false;
-                boolean importContent = false;
+                boolean importContent = true;
 
                 handleSendDelete(uri, null, deleteFile, resizeImage, importContent);
             }

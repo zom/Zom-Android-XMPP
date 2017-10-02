@@ -578,7 +578,11 @@ public class ContactsPickerActivity extends BaseActivity {
                 buf.append(" AND ");
             }
 
+            buf.append('(');
             buf.append(Imps.Contacts.TYPE).append('=').append(Imps.Contacts.TYPE_NORMAL);
+            buf.append(" OR ");
+            buf.append(Imps.Contacts.TYPE).append('=').append(Imps.Contacts.TYPE_GROUP);
+            buf.append(')');
 
             CursorLoader loader = new CursorLoader(ContactsPickerActivity.this, mUri, ContactListItem.CONTACT_PROJECTION,
                     buf == null ? null : buf.toString(), null, Imps.Contacts.MODE_AND_ALPHA_SORT_ORDER);

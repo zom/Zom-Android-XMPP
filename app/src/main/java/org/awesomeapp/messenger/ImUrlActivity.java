@@ -62,6 +62,8 @@ import java.util.UUID;
 
 import im.zom.messenger.R;
 
+import static org.awesomeapp.messenger.ui.ContactsPickerActivity.EXTRA_EXCLUDED_CONTACTS;
+
 public class ImUrlActivity extends Activity {
     private static final String TAG = "ImUrlActivity";
 
@@ -632,8 +634,8 @@ public class ImUrlActivity extends Activity {
              } else {
                  info = SystemServices.getFileInfoFromURI(ImUrlActivity.this, data);
              }
-             if (info != null && !TextUtils.isEmpty(info.path)) {
-                 mSendUri = Uri.fromFile(new File(info.path));
+             if (info != null && info.file.exists()) {
+                 mSendUri = Uri.fromFile(info.file);
                  mSendType = type != null ? type : info.type;
                  startContactPicker();
                  return;
@@ -714,7 +716,7 @@ public class ImUrlActivity extends Activity {
 
             if (mSendText != null)
                 session.sendMessage(mSendText,false);
-            else if (mSendUri != null && session.getDefaultOtrChatSession() != null)
+            else if (mSendUri != null)
             {
 
                 try {
@@ -724,36 +726,32 @@ public class ImUrlActivity extends Activity {
                       //  Log.i(TAG, "mSendUrl " +mSendUrl);
                         Uri vfsUri = null;
 
-                        if (SecureMediaStore.isVfsUri(mSendUri))
+                        if (SecureMediaStore.isVfsUri(mSendUri)) {
                             vfsUri = mSendUri;
+                            session.offerData(offerId, vfsUri.toString(),mSendType );
+
+                        }
                         else
                         {
                             InputStream is = getContentResolver().openInputStream(mSendUri);
                             String fileName = mSendUri.getLastPathSegment();
                             FileInfo importInfo = SystemServices.getFileInfoFromURI(this, mSendUri);
+                            if (importInfo.file != null)
+                                fileName = importInfo.file.getName();
 
                             if (importInfo.type != null && importInfo.type.startsWith("image"))
                                 vfsUri = SecureMediaStore.resizeAndImportImage(this, session.getId() + "", mSendUri, importInfo.type);
                             else
                                 vfsUri = SecureMediaStore.importContent(session.getId() + "", fileName, is);
 
+                            session.offerData(offerId, vfsUri.toString(), importInfo.type );
                         }
 
-                        FileInfo info = SystemServices.getFileInfoFromURI(this, vfsUri);
-                        boolean canSend  = session.offerData(offerId, info.path, mSendType );
-
-                        if (canSend) {
-                            Imps.insertMessageInDb(
-                                    getContentResolver(), false, session.getId(), true, null, vfsUri.toString(),
-                                    System.currentTimeMillis(), Imps.MessageType.OUTGOING_ENCRYPTED, // TODO show verified status
-                                    0, offerId, mSendType);
-                        }
 
                 } catch (Exception e) {
 
                     Toast.makeText(this, R.string.unable_to_securely_share_this_file, Toast.LENGTH_LONG).show();
-
-                    e.printStackTrace();
+                    Log.e(TAG,"error sending external file",e);
                 }
 
             }
@@ -783,40 +781,33 @@ public class ImUrlActivity extends Activity {
 
     private void startContactPicker() {
 
-        boolean noOnlineConnections = true;
-        Uri.Builder builder = Imps.Contacts.CONTENT_URI.buildUpon();
+        Uri.Builder builder = Imps.Contacts.CONTENT_URI_CHAT_CONTACTS_BY.buildUpon();
+
         Collection<IImConnection> listConns = ((ImApp)getApplication()).getActiveConnections();
 
         for (IImConnection conn : listConns)
         {
-            try
-            {
-                if (conn.getState() == ImConnection.LOGGED_IN)
-                {
-                    try {
-                        mChatSessionManager = conn.getChatSessionManager();
-                        long mProviderId = conn.getProviderId();
-                        long mAccountId = conn.getAccountId();
+            try {
+                mChatSessionManager = conn.getChatSessionManager();
+                long mProviderId = conn.getProviderId();
+                long mAccountId = conn.getAccountId();
 
-                        ContentUris.appendId(builder,  mProviderId);
-                        ContentUris.appendId(builder,  mAccountId);
-                        Uri data = builder.build();
+                ContentUris.appendId(builder,  mProviderId);
+                ContentUris.appendId(builder,  mAccountId);
+                Uri data = builder.build();
 
-                        Intent i = new Intent(Intent.ACTION_PICK, data);
-                        startActivityForResult(i, REQUEST_PICK_CONTACTS);
-                        noOnlineConnections = false;
-                        break;
+                Intent i = new Intent(this, ContactsPickerActivity.class);
+                i.setData(data);
+                ArrayList<String> extras = new ArrayList<>();
+                extras.add("");
+                i.putExtra(EXTRA_EXCLUDED_CONTACTS,extras);
+                startActivityForResult(i, REQUEST_PICK_CONTACTS);
 
-                    } catch (RemoteException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
+                break;
+
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
             }
-            catch (RemoteException re){}
-        }
-        if (noOnlineConnections) {
-            Toast.makeText(this, R.string.no_connection_for_sending, Toast.LENGTH_LONG).show();
-            finish(); // quit this Activity, nothing online
         }
     }
 
