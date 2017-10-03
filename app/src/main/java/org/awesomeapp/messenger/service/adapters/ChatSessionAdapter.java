@@ -493,25 +493,38 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
                 if (uri.getScheme() != null &&
                         uri.getScheme().equals("vfs")) {
-                    fileLocal = new File(uri.getPath());
-                    try {
-                        fis = new info.guardianproject.iocipher.FileInputStream((info.guardianproject.iocipher.File) fileLocal);
+                    fileLocal = new info.guardianproject.iocipher.File(uri.getPath());
+                    if (fileLocal.exists()) {
+                        try {
+                            fis = new info.guardianproject.iocipher.FileInputStream((info.guardianproject.iocipher.File) fileLocal);
+                        } catch (FileNotFoundException fe) {
+                            Log.w(TAG, "encrypted file not found on import: " + mediaUri);
+                            deleteMessageInDb(msgMedia.getID());
+                            return;
+                        }
                     }
-                    catch (FileNotFoundException fe)
+                    else
                     {
-                        Log.w(TAG,"encrypted file not found on import: " + mediaUri);
+                        Log.w(TAG, "encrypted file not found on import: " + mediaUri);
+                        deleteMessageInDb(msgMedia.getID());
                         return;
                     }
                 }
                 else {
                     fileLocal = new java.io.File(uri.getPath());
-                    try
-                    {
-                        fis = new java.io.FileInputStream(fileLocal);
+                    if (fileLocal.exists()) {
+                        try {
+                            fis = new java.io.FileInputStream(fileLocal);
+                        } catch (FileNotFoundException fe) {
+                            Log.w(TAG, "file system file not found on import: " + mediaUri);
+                            deleteMessageInDb(msgMedia.getID());
+                            return;
+                        }
                     }
-                    catch (FileNotFoundException fe)
+                    else
                     {
-                        Log.w(TAG,"file system file not found on import: " + mediaUri);
+                        Log.w(TAG, "file system file not found on import: " + mediaUri);
+                        deleteMessageInDb(msgMedia.getID());
                         return;
                     }
                 }
@@ -973,6 +986,12 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             Imps.updateMessageBody(mContentResolver, id, body, null);
 
         return Imps.updateMessageInDb(mContentResolver, id, type, time, mContactId);
+    }
+
+    int deleteMessageInDb (String id) {
+
+        return Imps.deleteMessageInDb(mContentResolver, id);
+
     }
 
 

@@ -37,6 +37,7 @@ import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.service.IChatSession;
 import org.awesomeapp.messenger.service.IChatSessionManager;
+import org.awesomeapp.messenger.service.IContactListManager;
 import org.awesomeapp.messenger.service.IImConnection;
 import org.awesomeapp.messenger.ui.legacy.DatabaseUtils;
 import org.awesomeapp.messenger.ui.onboarding.OnboardingManager;
@@ -68,6 +69,7 @@ public class GroupDisplayActivity extends BaseActivity {
         public String username;
         public String nickname;
         public Drawable avatar;
+        public boolean online = false;
     }
 
     private RecyclerView mRecyclerView;
@@ -223,7 +225,7 @@ public class GroupDisplayActivity extends BaseActivity {
                     h.actionLeave.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            leaveGroup();
+                            confirmLeaveGroup();
                         }
                     });
                 } else if (holder instanceof MemberViewHolder) {
@@ -243,20 +245,21 @@ public class GroupDisplayActivity extends BaseActivity {
                         nickname = nickname.split("@")[0].split("\\.")[0];
                     }
 
+                    h.line1.setText(nickname);
 
                     if (mGroupOwner != null
-                    && member.username.equals(mGroupOwner.getAddress().getAddress()))
-                    {
-                        nickname += " (" + getString(R.string.group_admin) + ")";
-                    }
+                            && member.username.equals(mGroupOwner.getAddress().getAddress()))
+                        h.line2.setText("👑 " + member.username);
+                    else
+                        h.line2.setText(member.username);
 
-                    if (member.username.equals(mLocalAddress))
+                    /**
+                    if (!member.online)
                     {
-                        nickname += " (" + getString(R.string.group_you) + ")";
-                    }
-
-                    h.line1.setText(nickname);
-                    h.line2.setText(member.username);
+                        h.line1.setEnabled(false);
+                        h.line2.setEnabled(false);
+                        h.avatar.setBackgroundColor(getResources().getColor(R.color.holo_grey_light));
+                     }**/
 
                     //h.line2.setText(member.username);
                     if (member.avatar == null) {
@@ -298,6 +301,16 @@ public class GroupDisplayActivity extends BaseActivity {
         Thread threadUpdate = new Thread(new Runnable() {
             @Override
             public void run() {
+
+                IContactListManager contactManager = null;
+
+                try {
+                    if (mConn != null) {
+                        contactManager = mConn.getContactListManager();
+                    }
+                }
+                catch (RemoteException re){}
+
                 String[] projection = {Imps.GroupMembers.USERNAME, Imps.GroupMembers.NICKNAME};
                 Uri memberUri = ContentUris.withAppendedId(Imps.GroupMembers.CONTENT_URI, mLastChatId);
                 ContentResolver cr = getContentResolver();
@@ -305,6 +318,7 @@ public class GroupDisplayActivity extends BaseActivity {
                 if (c != null) {
                     int colUsername = c.getColumnIndex(Imps.GroupMembers.USERNAME);
                     int colNickname = c.getColumnIndex(Imps.GroupMembers.NICKNAME);
+
                     while (c.moveToNext()) {
                         GroupMember member = new GroupMember();
                         member.username = new XmppAddress(c.getString(colUsername)).getBareAddress();
@@ -314,6 +328,17 @@ public class GroupDisplayActivity extends BaseActivity {
                         } catch (DecoderException e) {
                             e.printStackTrace();
                         }
+
+                        /**
+                        try {
+                            if (contactManager != null) {
+                                Contact contact = contactManager.getContactByAddress(member.username);
+                                if (contact != null)
+                                    member.online = contact.getPresence().isOnline();
+                            }
+                        }
+                        catch (RemoteException re){}**/
+
                         mMembers.add(member);
                     }
                     c.close();
@@ -338,10 +363,22 @@ public class GroupDisplayActivity extends BaseActivity {
             IChatSessionManager manager = mConn.getChatSessionManager();
             IChatSession session = manager.getChatSession(mAddress);
 
-            for (String invitee : invitees)
+            for (String invitee : invitees) {
                 session.inviteContact(invitee);
+                GroupMember member = new GroupMember();
+                XmppAddress address = new XmppAddress(invitee);
+                member.username = address.getBareAddress();
+                member.nickname = address.getUser();
+                try {
+                    member.avatar = DatabaseUtils.getAvatarFromAddress(getContentResolver(), member.username, ImApp.SMALL_AVATAR_WIDTH, ImApp.SMALL_AVATAR_HEIGHT);
+                } catch (DecoderException e) {
+                    e.printStackTrace();
+                }
+                mMembers.add(member);
+            }
 
-            updateMembers();
+            mRecyclerView.getAdapter().notifyDataSetChanged();
+
         }
         catch (Exception e)
         {
@@ -494,6 +531,25 @@ public class GroupDisplayActivity extends BaseActivity {
         ContentValues values = new ContentValues();
         values.put(Imps.Chats.CHAT_TYPE,type);
         getContentResolver().update(chatUri,values,Imps.Chats.CONTACT_ID + "=" + mLastChatId,null);
+    }
+
+    private void confirmLeaveGroup ()
+    {
+        new android.support.v7.app.AlertDialog.Builder(this)
+                .setTitle(getString(R.string.action_leave))
+                .setMessage(getString(R.string.confirm))
+                .setPositiveButton(getString(R.string.confirm_leave_group), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        leaveGroup();
+                    }
+                })
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // do nothing
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
     }
 
     private void leaveGroup ()

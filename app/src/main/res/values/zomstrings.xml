@@ -149,4 +149,6 @@
   <string name="turn_notifications_on">Turn notifications on</string>
   <string name="turn_notifications_off">Mute notifications</string>
   <string name="is_already_in_your_group">%1$s ✔️</string>
+
+  <string name="confirm_leave_group">Are you sure you want to leave the group?</string>
 </resources>

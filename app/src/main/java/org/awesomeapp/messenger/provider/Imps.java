@@ -2459,6 +2459,21 @@ public class Imps {
         return resolver.update(builder.build(), values, null, null);
     }
 
+    public static int deleteMessageInDb(ContentResolver resolver, String id) {
+
+        Uri.Builder builder = Imps.Messages.OTR_MESSAGES_CONTENT_URI_BY_PACKET_ID.buildUpon();
+        builder.appendPath(id);
+
+        int result = resolver.delete(builder.build(), null, null);
+        if (result <= 0)
+        {
+            builder = Imps.Messages.CONTENT_URI_MESSAGES_BY_PACKET_ID.buildUpon();
+            builder.appendPath(id);
+            result = resolver.delete(builder.build(), null, null);
+        }
+        return result;
+    }
+
     public static int updateMessageInDb(ContentResolver resolver, String id, int type, long time, long contactId) {
 
         Uri.Builder builder = Imps.Messages.OTR_MESSAGES_CONTENT_URI_BY_PACKET_ID.buildUpon();
