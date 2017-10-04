@@ -418,15 +418,15 @@ public class XmppConnection extends ImConnection {
 
             try
             {
-                synchronized (qAvatar) {
-                    Iterator<String> keys = qAvatar.keySet().iterator();
 
-                    while (keys.hasNext()) {
-                        loadVCard(resolver, keys.next());
+                    Object[] keys = qAvatar.keySet().toArray();
+                    qAvatar.clear();
+
+                    for (Object key : keys)
+                    {
+                        loadVCard(resolver, (String)key);
                     }
 
-                    qAvatar.clear();
-                }
             }
             catch (Exception e) {}
 
@@ -954,7 +954,7 @@ public class XmppConnection extends ImConnection {
 
                 addMucListeners(muc, chatGroup);
 
-
+                loadMembers(muc, chatGroup);
             } catch (Exception e) {
                 debug(TAG,"error joining MUC",e);
             }
@@ -990,7 +990,7 @@ public class XmppConnection extends ImConnection {
             }
         }
 
-        private synchronized void loadMembers (MultiUserChat muc, ChatGroup chatGroup) throws SmackException, XMPPException,InterruptedException
+        private void loadMembers (MultiUserChat muc, ChatGroup chatGroup) throws SmackException, XMPPException,InterruptedException
         {
           //  chatGroup.clearMembers();
 
@@ -1304,11 +1304,7 @@ public class XmppConnection extends ImConnection {
 
             @Override
             public void voiceGranted(EntityFullJid entityFullJid) {
-                try { loadMembers(muc, group);}
-                catch (Exception e)
-                {
-                    debug("MUC","Error loading group",e);
-                }
+
             }
 
             @Override
@@ -1323,11 +1319,7 @@ public class XmppConnection extends ImConnection {
 
             @Override
             public void membershipGranted(EntityFullJid entityFullJid) {
-                try { loadMembers(muc, group);}
-                catch (Exception e)
-                {
-                    debug("MUC","Error loading group",e);
-                }
+
             }
 
             @Override
@@ -1367,11 +1359,7 @@ public class XmppConnection extends ImConnection {
 
             @Override
             public void nicknameChanged(EntityFullJid entityFullJid, Resourcepart resourcepart) {
-                try { loadMembers(muc, group);}
-                catch (Exception e)
-                {
-                    debug("MUC","Error loading group",e);
-                }
+
             }
 
 
