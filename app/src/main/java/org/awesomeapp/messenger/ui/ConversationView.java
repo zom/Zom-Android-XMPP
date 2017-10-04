@@ -1898,20 +1898,18 @@ public class ConversationView {
 
         try {
 
-            if ( checkConnection ()) {
+            if (mConn != null)
+            {
+                IChatSessionManager sessionMgr = mConn.getChatSessionManager();
+                if (sessionMgr != null) {
 
-                if (mConn != null)
-                {
-                    IChatSessionManager sessionMgr = mConn.getChatSessionManager();
-                    if (sessionMgr != null) {
+                        IChatSession session = sessionMgr.getChatSession(mRemoteAddress);
 
-                            IChatSession session = sessionMgr.getChatSession(mRemoteAddress);
+                        return session;
 
-                            return session;
-
-                    }
                 }
             }
+
 
         } catch (Exception e) {
 

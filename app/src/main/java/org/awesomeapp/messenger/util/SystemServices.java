@@ -134,7 +134,7 @@ public class SystemServices {
         info.file = new File(uri.toString());
 
         if (uri.toString().contains("photos")||uri.toString().contains("gallery"))
-            info.type="image/jpg"; //assume a jpeg
+            info.type="image/jpeg"; //assume a jpeg
 
         if (SecureMediaStore.isVfsUri(uri)) {
             info.file = new info.guardianproject.iocipher.File(uri.getPath());

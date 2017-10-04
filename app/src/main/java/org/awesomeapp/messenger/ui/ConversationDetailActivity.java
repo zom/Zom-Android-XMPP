@@ -662,22 +662,6 @@ public class ConversationDetailActivity extends BaseActivity {
                     return ;
                 }
 
-                /**
-                if (uri.getHost().equals("com.google.android.apps.photos.contentprovider"))
-                {
-
-                    try {
-                        String uriActual = URLDecoder.decode(uri.getPath(), "UTF-8");
-                        uriActual = uriActual.substring(uriActual.indexOf("content://"));
-                        uri = Uri.parse(uriActual);
-                    }
-                    catch (Exception e)
-                    {
-                        Log.e(ImApp.LOG_TAG,"error parsing photos app URI",e);
-                    }
-
-                }*/
-
 
                 boolean deleteFile = false;
                 boolean resizeImage = true;
@@ -716,31 +700,11 @@ public class ConversationDetailActivity extends BaseActivity {
 
     public boolean handleSendData(IChatSession session, Uri uri, String mimeType) {
         try {
-            SystemServices.FileInfo info = SystemServices.getFileInfoFromURI(this, uri);
-
-            if (mimeType != null)
-                info.type = mimeType;
-
-            //if (info != null && info.path != null && SecureMediaStore.exists(info.path))
 
             if (session != null) {
-                if (info.type == null)
-                    if (mimeType != null)
-                        info.type = mimeType;
-                    else
-                        info.type = "application/octet-stream";
 
                 String offerId = UUID.randomUUID().toString();
-                boolean canSend = session.offerData(offerId, uri.toString(), info.type );
-
-                if (canSend) {
-
-                    return true; // sent
-                }
-                else
-                {
-                    return false;
-                }
+                return session.offerData(offerId, uri.toString(), mimeType );
             }
 
         } catch (RemoteException e) {
