@@ -474,7 +474,6 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
     @Override
     public boolean offerData(String offerId, final String mediaUri, final String mimeType) {
 
-        final Message msgMedia = storeMediaMessage(mediaUri, mimeType);
 
         //TODO do HTTP Upload XEP 363
         //this is ugly... we need a nice async task!
@@ -499,14 +498,12 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                             fis = new info.guardianproject.iocipher.FileInputStream((info.guardianproject.iocipher.File) fileLocal);
                         } catch (FileNotFoundException fe) {
                             Log.w(TAG, "encrypted file not found on import: " + mediaUri);
-                            deleteMessageInDb(msgMedia.getID());
                             return;
                         }
                     }
                     else
                     {
                         Log.w(TAG, "encrypted file not found on import: " + mediaUri);
-                        deleteMessageInDb(msgMedia.getID());
                         return;
                     }
                 }
@@ -517,17 +514,18 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                             fis = new java.io.FileInputStream(fileLocal);
                         } catch (FileNotFoundException fe) {
                             Log.w(TAG, "file system file not found on import: " + mediaUri);
-                            deleteMessageInDb(msgMedia.getID());
                             return;
                         }
                     }
                     else
                     {
                         Log.w(TAG, "file system file not found on import: " + mediaUri);
-                        deleteMessageInDb(msgMedia.getID());
                         return;
                     }
                 }
+
+                final Message msgMedia = storeMediaMessage(mediaUri, mimeType);
+
 
                 String fileName = fileLocal.getName();
                 if (!fileName.contains("."))
@@ -639,6 +637,9 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                     {
                         String offerId = UUID.randomUUID().toString();
                         String mimeType = URLConnection.guessContentTypeFromName(body);
+                        if (mimeType == null)
+                            mimeType = "image/jpg";
+
                         boolean canSend = offerData(offerId, body, mimeType);
 
                     }
@@ -990,10 +991,10 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
     int deleteMessageInDb (String id) {
 
-        return Imps.deleteMessageInDb(mContentResolver, id);
+        return mContentResolver.delete(mMessageURI, Imps.Messages.PACKET_ID + "=?",
+                new String[] { id });
 
     }
-
 
 
     class ListenerAdapter implements MessageListener, GroupMemberListener, OtrEngineListener {

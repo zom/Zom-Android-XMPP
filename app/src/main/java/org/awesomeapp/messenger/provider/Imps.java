@@ -2461,7 +2461,7 @@ public class Imps {
 
     public static int deleteMessageInDb(ContentResolver resolver, String id) {
 
-        Uri.Builder builder = Imps.Messages.OTR_MESSAGES_CONTENT_URI_BY_PACKET_ID.buildUpon();
+        Uri.Builder builder = Imps.Messages.OTR_MESSAGES_CONTENT_URI.buildUpon();
         builder.appendPath(id);
 
         int result = resolver.delete(builder.build(), null, null);
