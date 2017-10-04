@@ -397,9 +397,17 @@ public class ConversationListFragment extends Fragment {
                 long lastMsgDate = cursor.getLong(ConversationListItem.COLUMN_LAST_MESSAGE_DATE);
                 final int presence = cursor.getInt(ConversationListItem.COLUMN_CONTACT_PRESENCE_STATUS);
 
+                String lastMsgType = null;
+                if (!TextUtils.isEmpty(lastMsg)) {
+                    if (lastMsg.endsWith(".jpg") || lastMsg.endsWith(".png") || lastMsg.endsWith(".gif"))
+                        lastMsgType = "image/*";
+                    else if (lastMsg.endsWith(".m4a") || lastMsg.endsWith(".3gp") || lastMsg.endsWith(".mp3"))
+                        lastMsgType = "audio/*";
+                }
+
                 ConversationListItem clItem = ((ConversationListItem)viewHolder.itemView.findViewById(R.id.convoitemview));
 
-                clItem.bind(viewHolder, chatId, providerId, accountId, address, nickname, type, lastMsg, lastMsgDate, presence, null, true, false);
+                clItem.bind(viewHolder, chatId, providerId, accountId, address, nickname, type, lastMsg, lastMsgDate, lastMsgType, presence, null, true, false);
 
                 clItem.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -420,11 +428,12 @@ public class ConversationListFragment extends Fragment {
                 final String address = cursor.getString(cursor.getColumnIndexOrThrow(Imps.Messages.CONTACT));
                 final String body = cursor.getString(cursor.getColumnIndexOrThrow(Imps.Messages.BODY));
                 final long messageDate = cursor.getLong(cursor.getColumnIndexOrThrow(Imps.Messages.DATE));
+                final String messageType = cursor.getString(cursor.getColumnIndexOrThrow(Imps.Messages.MIME_TYPE));
 
                 if (address != null) {
 
                     if (viewHolder.itemView instanceof  ConversationListItem) {
-                        ((ConversationListItem) viewHolder.itemView).bind(viewHolder, chatId, -1, -1, address, nickname, -1, body, messageDate, -1, mSearchString, true, false);
+                        ((ConversationListItem) viewHolder.itemView).bind(viewHolder, chatId, -1, -1, address, nickname, -1, body, messageDate, messageType, -1, mSearchString, true, false);
 
                         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                             @Override

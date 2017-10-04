@@ -71,7 +71,7 @@ public class ConversationListItem extends FrameLayout {
                                                 Imps.Presence.PRESENCE_STATUS,
                                                 Imps.Presence.PRESENCE_CUSTOM_STATUS,
                                                 Imps.Chats.LAST_MESSAGE_DATE,
-                                                Imps.Chats.LAST_UNREAD_MESSAGE,
+                                                Imps.Chats.LAST_UNREAD_MESSAGE
 
     };
 
@@ -103,7 +103,7 @@ public class ConversationListItem extends FrameLayout {
     }
 */
 
-    public void bind(ConversationViewHolder holder, long contactId, long providerId, long accountId, String address, String nickname, int contactType, String message, long messageDate, int presence, String underLineText, boolean showChatMsg, boolean scrolling) {
+    public void bind(ConversationViewHolder holder, long contactId, long providerId, long accountId, String address, String nickname, int contactType, String message, long messageDate, String messageType, int presence, String underLineText, boolean showChatMsg, boolean scrolling) {
 
 
         //applyStyleColors(holder);
@@ -215,16 +215,15 @@ public class ConversationListItem extends FrameLayout {
 
                 if (SecureMediaStore.isVfsUri(vPath))
                 {
-                    FileInfo fInfo = SystemServices.getFileInfoFromURI(getContext(), Uri.parse(vPath));
-                    
-                    if (fInfo.type == null || fInfo.type.startsWith("image"))
+
+                    if (messageType == null || messageType.startsWith("image"))
                     {
                         
                         if (holder.mMediaThumb != null)
                         {
                             holder.mMediaThumb.setVisibility(View.VISIBLE);
 
-                            if (fInfo.type != null && fInfo.type.equals("image/png"))
+                            if (messageType != null && messageType.equals("image/png"))
                             {
                                 holder.mMediaThumb.setScaleType(ImageView.ScaleType.FIT_CENTER);
                             }

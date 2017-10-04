@@ -20,8 +20,11 @@ import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
+
+import org.w3c.dom.Text;
 
 /**
  *
@@ -129,15 +132,23 @@ public class SystemServices {
     public static FileInfo getFileInfoFromURI(Context aContext, Uri uri) throws IllegalArgumentException {
         FileInfo info = new FileInfo();
         info.file = new File(uri.toString());
-        
+
+        if (uri.toString().contains("photos")||uri.toString().contains("gallery"))
+            info.type="image/jpg"; //assume a jpeg
+
         if (SecureMediaStore.isVfsUri(uri)) {
             info.file = new info.guardianproject.iocipher.File(uri.getPath());
-            info.type = getMimeType(uri.toString());
+            String type = getMimeType(uri.toString());
+            if (!TextUtils.isEmpty(type))
+                info.type = type;
             return info;
         }
+
         if (uri.getScheme() != null && uri.getScheme().equals("file")) {
             info.file = new File(uri.getPath());
-            info.type = getMimeType(uri.toString());
+            String type = getMimeType(uri.toString());
+            if (!TextUtils.isEmpty(type))
+                info.type = type;
             return info;
         }
 

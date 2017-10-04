@@ -474,6 +474,49 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
     @Override
     public boolean offerData(String offerId, final String mediaUri, final String mimeType) {
 
+        if (TextUtils.isEmpty(mimeType))
+            return false;
+
+        Uri uri = Uri.parse(mediaUri);
+        if (uri == null || uri.getPath() == null)
+            return false;
+
+        final java.io.File fileLocal;
+        final java.io.InputStream fis;
+
+        if (uri.getScheme() != null &&
+                uri.getScheme().equals("vfs")) {
+            fileLocal = new info.guardianproject.iocipher.File(uri.getPath());
+            if (fileLocal.exists()) {
+                try {
+                    fis = new info.guardianproject.iocipher.FileInputStream((info.guardianproject.iocipher.File) fileLocal);
+                } catch (FileNotFoundException fe) {
+                    Log.w(TAG, "encrypted file not found on import: " + mediaUri);
+                    return false;
+                }
+            }
+            else
+            {
+                Log.w(TAG, "encrypted file not found on import: " + mediaUri);
+                return false;
+            }
+        }
+        else {
+            fileLocal = new java.io.File(uri.getPath());
+            if (fileLocal.exists()) {
+                try {
+                    fis = new java.io.FileInputStream(fileLocal);
+                } catch (FileNotFoundException fe) {
+                    Log.w(TAG, "file system file not found on import: " + mediaUri);
+                    return false;
+                }
+            }
+            else
+            {
+                Log.w(TAG, "file system file not found on import: " + mediaUri);
+                return false;
+            }
+        }
 
         //TODO do HTTP Upload XEP 363
         //this is ugly... we need a nice async task!
@@ -483,46 +526,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             public void run ()
             {
 
-                Uri uri = Uri.parse(mediaUri);
-                if (uri == null || uri.getPath() == null)
-                    return;
 
-                java.io.File fileLocal;
-                java.io.InputStream fis;
-
-                if (uri.getScheme() != null &&
-                        uri.getScheme().equals("vfs")) {
-                    fileLocal = new info.guardianproject.iocipher.File(uri.getPath());
-                    if (fileLocal.exists()) {
-                        try {
-                            fis = new info.guardianproject.iocipher.FileInputStream((info.guardianproject.iocipher.File) fileLocal);
-                        } catch (FileNotFoundException fe) {
-                            Log.w(TAG, "encrypted file not found on import: " + mediaUri);
-                            return;
-                        }
-                    }
-                    else
-                    {
-                        Log.w(TAG, "encrypted file not found on import: " + mediaUri);
-                        return;
-                    }
-                }
-                else {
-                    fileLocal = new java.io.File(uri.getPath());
-                    if (fileLocal.exists()) {
-                        try {
-                            fis = new java.io.FileInputStream(fileLocal);
-                        } catch (FileNotFoundException fe) {
-                            Log.w(TAG, "file system file not found on import: " + mediaUri);
-                            return;
-                        }
-                    }
-                    else
-                    {
-                        Log.w(TAG, "file system file not found on import: " + mediaUri);
-                        return;
-                    }
-                }
 
                 final Message msgMedia = storeMediaMessage(mediaUri, mimeType);
 
@@ -637,11 +641,9 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                     {
                         String offerId = UUID.randomUUID().toString();
                         String mimeType = URLConnection.guessContentTypeFromName(body);
-                        if (mimeType == null)
-                            mimeType = "image/jpg";
-
-                        boolean canSend = offerData(offerId, body, mimeType);
-
+                        if (mimeType != null) {
+                            offerData(offerId, body, mimeType);
+                        }
                     }
                     else {
                         sendMessage(body, false);

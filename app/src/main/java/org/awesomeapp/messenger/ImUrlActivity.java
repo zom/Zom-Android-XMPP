@@ -50,6 +50,7 @@ import org.awesomeapp.messenger.util.LogCleaner;
 import org.awesomeapp.messenger.util.SecureMediaStore;
 import org.awesomeapp.messenger.util.SystemServices;
 import org.awesomeapp.messenger.util.SystemServices.FileInfo;
+import org.bouncycastle.crypto.tls.TlsExtensionsUtils;
 
 import java.io.File;
 import java.io.InputStream;
@@ -728,8 +729,10 @@ public class ImUrlActivity extends Activity {
 
                         if (SecureMediaStore.isVfsUri(mSendUri)) {
                             vfsUri = mSendUri;
-                            session.offerData(offerId, vfsUri.toString(),mSendType );
+                            boolean sent = session.offerData(offerId, vfsUri.toString(),mSendType );
 
+                            if (sent)
+                                return;
                         }
                         else
                         {
@@ -739,26 +742,31 @@ public class ImUrlActivity extends Activity {
                             if (importInfo.file != null)
                                 fileName = importInfo.file.getName();
 
-                            if (importInfo.type != null && importInfo.type.startsWith("image"))
-                                vfsUri = SecureMediaStore.resizeAndImportImage(this, session.getId() + "", mSendUri, importInfo.type);
-                            else
-                                vfsUri = SecureMediaStore.importContent(session.getId() + "", fileName, is);
+                            if (!TextUtils.isEmpty(importInfo.type)) {
+                                if (importInfo.type.startsWith("image"))
+                                    vfsUri = SecureMediaStore.resizeAndImportImage(this, session.getId() + "", mSendUri, importInfo.type);
+                                else
+                                    vfsUri = SecureMediaStore.importContent(session.getId() + "", fileName, is);
 
-                            session.offerData(offerId, vfsUri.toString(), importInfo.type );
+                                boolean sent = session.offerData(offerId, vfsUri.toString(), importInfo.type);
+                                if (sent)
+                                    return;
+                            }
                         }
 
 
                 } catch (Exception e) {
 
-                    Toast.makeText(this, R.string.unable_to_securely_share_this_file, Toast.LENGTH_LONG).show();
                     Log.e(TAG,"error sending external file",e);
                 }
+
+                Toast.makeText(this, R.string.unable_to_securely_share_this_file, Toast.LENGTH_LONG).show();
 
             }
         }
         catch (RemoteException e)
         {
-            e.printStackTrace();
+            Log.e(TAG,"Error sending data",e);
         }
 
     }
