@@ -537,8 +537,8 @@ public class GroupDisplayActivity extends BaseActivity {
     {
         new android.support.v7.app.AlertDialog.Builder(this)
                 .setTitle(getString(R.string.action_leave))
-                .setMessage(getString(R.string.confirm))
-                .setPositiveButton(getString(R.string.confirm_leave_group), new DialogInterface.OnClickListener() {
+                .setMessage(getString(R.string.confirm_leave_group))
+                .setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         leaveGroup();
                     }
