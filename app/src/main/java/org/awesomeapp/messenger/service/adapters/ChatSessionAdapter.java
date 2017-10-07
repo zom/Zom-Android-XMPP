@@ -937,13 +937,6 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             whereClause += Imps.GroupMembers.USERNAME + "=?";
             selection.add(username);
         }
-        long groupId = ContentUris.parseId(mChatURI);
-        if (whereClause.length() > 0) {
-            whereClause = "(" + whereClause + ") AND " + Imps.GroupMembers.GROUP + "=?";
-        } else {
-            whereClause = Imps.GroupMembers.GROUP + "=?";
-        }
-        selection.add(String.valueOf(groupId));
         return new AbstractMap.SimpleEntry<String, String[]>(whereClause, selection.toArray(new String[0]));
     }
 
