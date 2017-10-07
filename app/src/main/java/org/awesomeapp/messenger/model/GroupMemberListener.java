@@ -51,4 +51,14 @@ public interface GroupMemberListener {
      * Called when group membership is reset
      */
     public void onMembersReset ();
+
+    /**
+     * Notifies that information about a contact has changed.
+     *
+     * @param oldContact the old contact information
+     * @param newContact the new contact information
+     */
+    void onMemberChanged(ChatGroup chatGroup, Contact oldContact, Contact newContact);
+
+    void onMemberRoleChanged(ChatGroup chatGroup, Contact contact, String role, String affiliation);
 }

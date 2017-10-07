@@ -53,6 +53,7 @@ import android.database.CursorWindow;
 import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 /** A content provider for IM */
@@ -99,7 +100,7 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
     private static final String ENCRYPTED_DATABASE_NAME = "impsenc.db";
     private static final String UNENCRYPTED_DATABASE_NAME = "imps.db";
 
-    private static final int DATABASE_VERSION = 108;
+    private static final int DATABASE_VERSION = 109;
 
     protected static final int MATCH_PROVIDERS = 1;
     protected static final int MATCH_PROVIDERS_BY_ID = 2;
@@ -448,7 +449,7 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
 
             db.execSQL("create TABLE " + TABLE_S2D_RMQ_IDS + " (" + "_id INTEGER PRIMARY KEY,"
                        + "rmq_id INTEGER" + ");");
-         
+
             //DELETE FROM cache WHERE id IN (SELECT cache.id FROM cache LEFT JOIN main ON cache.id=main.id WHERE main.id IS NULL);
 
             // ChatSecure-Push tables
@@ -667,7 +668,7 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
                 } finally {
                     db.endTransaction();
                 }
-
+            case 108:
 
                 return;
             case 1:
@@ -933,9 +934,7 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
                        + "status INTEGER" + ");");
 
             // group chat members
-            db.execSQL("CREATE TABLE IF NOT EXISTS " + cpDbName + TABLE_GROUP_MEMBERS + " ("
-                       + "_id INTEGER PRIMARY KEY," + "groupId INTEGER," + "username TEXT,"
-                       + "nickname TEXT" + ");");
+            updateOrCreateGroupMembersTable(db, cpDbName);
 
             db.execSQL("CREATE TABLE IF NOT EXISTS " + cpDbName + TABLE_ACCOUNT_STATUS + " ("
                        + "_id INTEGER PRIMARY KEY," + "account INTEGER UNIQUE,"
@@ -978,6 +977,17 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
 
         }
 
+        private void updateOrCreateGroupMembersTable(SQLiteDatabase db, String cpDbName) {
+            db.execSQL("CREATE TABLE IF NOT EXISTS " + cpDbName + TABLE_GROUP_MEMBERS + " ("
+                        + "_id INTEGER PRIMARY KEY," + "groupId INTEGER," + "username TEXT,"
+                        + "nickname TEXT," + "role TEXT," + "affiliation TEXT" + ");");
+            if (!columnExists(db, cpDbName + TABLE_GROUP_MEMBERS, "role")) {
+                // Role not added, add that together with affiliation!
+                db.execSQL("ALTER TABLE " + cpDbName + TABLE_GROUP_MEMBERS + " ADD COLUMN role TEXT");
+                db.execSQL("ALTER TABLE " + cpDbName + TABLE_GROUP_MEMBERS + " ADD COLUMN affiliation TEXT");
+            }
+        }
+
         @Override
         public synchronized void close() {
 
@@ -988,6 +998,25 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
                 dbWrite.close();
 
             super.close();
+        }
+
+        public boolean columnExists(SQLiteDatabase db, String tableName, String column) {
+            Cursor cursor = null;
+            try {
+                cursor = db.rawQuery("PRAGMA table_info(" + tableName + ")", null);
+                int nameColumnIndex = cursor.getColumnIndexOrThrow("name");
+                while (cursor.moveToNext()) {
+                    String name = cursor.getString(nameColumnIndex);
+                    if (name.equals(column)) {
+                        return true;
+                    }
+                }
+                return false;
+            } finally {
+                if (cursor != null) {
+                    cursor.close();
+                }
+            }
         }
     }
 
@@ -3909,6 +3938,12 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
         case MATCH_INVITATION:
             tableToChange = TABLE_INVITATIONS;
             changedItemId = url.getPathSegments().get(1);
+            break;
+
+        case MATCH_GROUP_MEMBERS_BY_GROUP:
+            tableToChange = TABLE_GROUP_MEMBERS;
+            String groupId = url.getPathSegments().get(1);
+            appendWhere(whereClause, "groupId", "=", groupId);
             break;
 
         case MATCH_SESSIONS:

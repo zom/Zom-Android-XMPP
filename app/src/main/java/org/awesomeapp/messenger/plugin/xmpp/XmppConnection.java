@@ -99,6 +99,7 @@ import org.jivesoftware.smackx.muc.ParticipantStatusListener;
 import org.jivesoftware.smackx.muc.RoomInfo;
 import org.jivesoftware.smackx.muc.SubjectUpdatedListener;
 import org.jivesoftware.smackx.muc.packet.GroupChatInvitation;
+import org.jivesoftware.smackx.muc.packet.MUCItem;
 import org.jivesoftware.smackx.muc.packet.MUCUser;
 import org.jivesoftware.smackx.muc.provider.MUCAdminProvider;
 import org.jivesoftware.smackx.muc.provider.MUCOwnerProvider;
@@ -995,85 +996,75 @@ public class XmppConnection extends ImConnection {
           //  chatGroup.clearMembers();
 
             //first make sure I am in the room
-            if (chatGroup.getMember(mUserJid.toString()) == null)
-                chatGroup.notifyMemberJoined(mUserJid.toString(),mUser);
+            //if (chatGroup.getMember(mUserJid.toString()) == null)
+            //    chatGroup.notifyMemberJoined(mUser);
 
-            XmppAddress xa = null;
+            ArrayList<String> nicks = new ArrayList<>();
+            ArrayList<Jid> jids = new ArrayList<>();
 
-            List<EntityFullJid> mucOccupant = muc.getOccupants();
-
-            for (EntityFullJid occupant : mucOccupant) {
-                Jid jidSource = muc.getOccupant(occupant).getJid();
-                if (jidSource != null)
-                    xa = new XmppAddress(jidSource.toString());
-                else
-                    xa = new XmppAddress(occupant.toString());
-
-                if (chatGroup.getMember(xa.getBareAddress()) == null) {
-                    Contact mucContact = new Contact(xa, xa.getUser(), Imps.Contacts.TYPE_NORMAL);
-                    chatGroup.notifyMemberJoined(occupant.toString(), mucContact);
-                }
+            // Occupants
+            for (EntityFullJid enitityFullJid : muc.getOccupants()) {
+                Occupant occupant = muc.getOccupant(enitityFullJid);
+                jids.add(occupant.getJid());
+                nicks.add((occupant.getNick() != null) ? occupant.getNick().toString() : null);
             }
 
-            try {
+            // Participants
+            for (Occupant occupant : muc.getParticipants()) {
+                jids.add(occupant.getJid());
+                nicks.add((occupant.getNick() != null) ? occupant.getNick().toString() : null);
+            }
 
-                List<Occupant> mucParticipants = muc.getParticipants();
+            // Members
+            for (Affiliate member : muc.getMembers()) {
+                jids.add(member.getJid());
+                nicks.add((member.getNick() != null) ? member.getNick().toString() : null);
+            }
 
-                for (Occupant occupant : mucParticipants) {
-                    Jid jidSource = occupant.getJid();
-                    if (jidSource != null)
-                        xa = new XmppAddress(jidSource.toString());
-                    else
-                        xa = new XmppAddress(occupant.toString());
+            // Owners
+            for (Affiliate member :  muc.getOwners()) {
+                jids.add(member.getJid());
+                nicks.add((member.getNick() != null) ? member.getNick().toString() : null);
+            }
 
-                    if (chatGroup.getMember(xa.getBareAddress()) == null) {
-                        Contact mucContact = new Contact(xa, xa.getUser(), Imps.Contacts.TYPE_NORMAL);
-                        chatGroup.notifyMemberJoined(occupant.getAffiliation().toString(), mucContact);
+            HashMap<String, Jid> nickMapToJid = new HashMap<>();
+            ArrayList<String> unmappedJids = new ArrayList<>();
+
+            for (int i = 0; i < nicks.size(); i++) {
+                String nick = nicks.get(i);
+                Jid jid = jids.get(i);
+                if (!jid.asBareJid().equals(chatGroup.getAddress().getBareAddress())) {
+                    // Real jid, strip resource
+                    jid = jid.asBareJid();
+                }
+
+                if (nick != null) {
+                    if (nickMapToJid.containsKey(nick)) {
+                        Jid previousJid = nickMapToJid.get(nick);
+                        if (previousJid.asBareJid().equals(chatGroup.getAddress().getBareAddress())) {
+                            nickMapToJid.put(nick, jid);
+                        }
+                    } else {
+                        if (unmappedJids.contains(jid.toString())) {
+                            unmappedJids.remove(jid.toString());
+                        }
+                        nickMapToJid.put(nick, jid);
                     }
+                } else if (!nickMapToJid.containsValue(jid) && !unmappedJids.contains(jid.toString())) {
+                    unmappedJids.add(jid.toString());
                 }
             }
-            catch (Exception e)
-            {
-                debug("MUC","Error loading participants: " + e);
+
+            ArrayList<Contact> contacts = new ArrayList<>();
+            for (String nick : nickMapToJid.keySet()) {
+                Contact c = new Contact(new XmppAddress(nickMapToJid.get(nick).toString()), nick, Imps.Contacts.TYPE_NORMAL);
+                contacts.add(c);
             }
-
-
-            try {
-
-                List<Affiliate> mucMembers = muc.getMembers();
-
-                for (Affiliate member : mucMembers) {
-                    xa = new XmppAddress(member.getJid().toString());
-                    if (chatGroup.getMember(xa.getBareAddress()) == null) {
-                        Contact mucContact = new Contact(xa, xa.getUser(), Imps.Contacts.TYPE_NORMAL);
-                        chatGroup.notifyMemberJoined(member.getAffiliation().toString(), mucContact);
-                    }
-                }
+            for (String jid : unmappedJids) {
+                Contact c = new Contact(new XmppAddress(jid), "", Imps.Contacts.TYPE_NORMAL);
+                contacts.add(c);
             }
-            catch (Exception e)
-            {
-                debug("MUC","Couldn't load group members: " + e.getMessage());
-
-            }
-
-            try {
-
-                List<Affiliate> mucOwners = muc.getOwners();
-                for (Affiliate member : mucOwners) {
-                    xa = new XmppAddress(member.getJid().toString());
-                    Contact mucContact = new Contact(xa, xa.getUser(), Imps.Contacts.TYPE_NORMAL);
-                    if (chatGroup.getMember(xa.getBareAddress()) == null) {
-                        chatGroup.notifyMemberJoined(member.getAffiliation().toString(), mucContact);
-                    }
-                    chatGroup.setOwner(mucContact);
-
-                }
-            }
-            catch (Exception e)
-                {
-                    debug("MUC","Couldn't load group owner: " + e.getMessage());
-
-                }
+            chatGroup.setMembers(contacts);
         }
 
         private void addMucListeners (final MultiUserChat muc, final ChatGroup group)
@@ -1099,13 +1090,20 @@ public class XmppConnection extends ImConnection {
                 public void processPresence(org.jivesoftware.smack.packet.Presence presence) {
 
                     try {
-
-                        Occupant occupant = muc.getOccupant(presence.getFrom().asEntityFullJidOrThrow());
-                        Jid jidSource = occupant.getJid();
+                        MUCUser mucUser = presence.getExtension("x", "http://jabber.org/protocol/muc#user");
+                        MUCItem item = mucUser.getItem();
+                        Jid jidSource = presence.getFrom();
+                        if (item != null && item.getJid() != null) {
+                            jidSource = item.getJid();
+                        }
+                        if (!jidSource.asBareJid().equals(group.getAddress().getBareAddress())) {
+                            // Real jid
+                            jidSource = jidSource.asBareJid();
+                        }
                         XmppAddress xa = new XmppAddress(jidSource.toString());
-                        Contact mucContact = new Contact(xa, xa.getUser(), Imps.Contacts.TYPE_NORMAL);
-                        group.notifyMemberJoined(presence.getFrom().toString(),mucContact);
-
+                        Contact mucContact = new Contact(xa, presence.getFrom().getResourceOrThrow().toString(), Imps.Contacts.TYPE_NORMAL);
+                        group.notifyMemberJoined(mucContact);
+                        group.notifyMemberRoleChanged(mucContact, item.getRole().name(), item.getAffiliation().name());
                         debug("MUC","Got group presence: " + presence.toString());
                     }
                     catch (Exception e)
@@ -1166,7 +1164,7 @@ public class XmppConnection extends ImConnection {
                             EntityBareJid inviteeJid = JidCreate.entityBareFrom(invitee.getAddress().getAddress());
                             muc.invite(inviteeJid, reason);
                             muc.grantMembership(inviteeJid);
-                            group.notifyMemberJoined(null, invitee);
+                            group.notifyMemberJoined(invitee);
                         } catch (Exception nce) {
                             Log.e(ImApp.LOG_TAG, "not connected error trying to add invite", nce);
 
