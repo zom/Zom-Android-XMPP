@@ -4026,10 +4026,10 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
             if (value != null) {
                 DatabaseUtils.appendValueToSql(newCond, value);
             }
-            newCond.append(" AND ");
+            newCond.append(" AND (");
 
             where.insert(0,newCond.toString());
-
+            where.append(")");
         }
         else {
             where.append(columnName).append(condition);
