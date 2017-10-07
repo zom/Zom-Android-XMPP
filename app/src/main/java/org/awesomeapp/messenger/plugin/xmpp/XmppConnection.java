@@ -939,7 +939,6 @@ public class XmppConnection extends ImConnection {
 
                 DiscussionHistory history = new DiscussionHistory();
                 history.setMaxStanzas(20);
-                muc.join(Resourcepart.from(mUser.getName()), null, history, SmackConfiguration.getDefaultPacketReplyTimeout());
 
                 if (TextUtils.isEmpty(subject))
                     subject = room;
@@ -952,10 +951,10 @@ public class XmppConnection extends ImConnection {
                 }
 
                 mMUCs.put(chatRoomJid, muc);
-
-                addMucListeners(muc, chatGroup);
-
+                chatGroup.clearMembers();
                 loadMembers(muc, chatGroup);
+                muc.join(Resourcepart.from(mUser.getName()), null, history, SmackConfiguration.getDefaultPacketReplyTimeout());
+                addMucListeners(muc, chatGroup);
             } catch (Exception e) {
                 debug(TAG,"error joining MUC",e);
             }
@@ -1002,6 +1001,18 @@ public class XmppConnection extends ImConnection {
             ArrayList<String> nicks = new ArrayList<>();
             ArrayList<Jid> jids = new ArrayList<>();
 
+            // Members
+            for (Affiliate member : muc.getMembers()) {
+                jids.add(member.getJid());
+                nicks.add((member.getNick() != null) ? member.getNick().toString() : null);
+            }
+
+            // Owners
+            for (Affiliate member :  muc.getOwners()) {
+                jids.add(member.getJid());
+                nicks.add((member.getNick() != null) ? member.getNick().toString() : null);
+            }
+
             // Occupants
             for (EntityFullJid enitityFullJid : muc.getOccupants()) {
                 Occupant occupant = muc.getOccupant(enitityFullJid);
@@ -1013,18 +1024,6 @@ public class XmppConnection extends ImConnection {
             for (Occupant occupant : muc.getParticipants()) {
                 jids.add(occupant.getJid());
                 nicks.add((occupant.getNick() != null) ? occupant.getNick().toString() : null);
-            }
-
-            // Members
-            for (Affiliate member : muc.getMembers()) {
-                jids.add(member.getJid());
-                nicks.add((member.getNick() != null) ? member.getNick().toString() : null);
-            }
-
-            // Owners
-            for (Affiliate member :  muc.getOwners()) {
-                jids.add(member.getJid());
-                nicks.add((member.getNick() != null) ? member.getNick().toString() : null);
             }
 
             HashMap<String, Jid> nickMapToJid = new HashMap<>();
@@ -1123,7 +1122,6 @@ public class XmppConnection extends ImConnection {
                    // handleMessage(message, false);
                 }
             });
-
         }
 
         @Override
@@ -3677,7 +3675,12 @@ public class XmppConnection extends ImConnection {
             //update and send new presence packet out
             mUserPresence = new Presence(Presence.AVAILABLE, "", Presence.CLIENT_TYPE_MOBILE);
 
+        } else if (state == DISCONNECTED || state == SUSPENDED) {
+            for (ChatGroup group : getChatGroupManager().getAllChatGroups()) {
+                group.clearMembers();
+            }
         }
+
     }
 
     public void debug(String tag, String msg) {

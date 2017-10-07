@@ -211,18 +211,20 @@ public class ChatGroup extends ImEntity {
     }
 
     /*
-    clear the list of members
+    clear the list of members, i.e. mark all as role "none" in the db
      */
     public synchronized void clearMembers ()
     {
+/*
         Object[] members = mMembers.values().toArray();
         for (Object member : members)
         {
             notifyMemberLeft((Contact)member);
         }
 
+*/
         for (GroupMemberListener listener : mMemberListeners) {
-            listener.onMembersReset();
+            listener.onMembersReset(this);
         }
     }
 

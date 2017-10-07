@@ -50,7 +50,7 @@ public interface GroupMemberListener {
     /**
      * Called when group membership is reset
      */
-    public void onMembersReset ();
+    public void onMembersReset (ChatGroup group);
 
     /**
      * Notifies that information about a contact has changed.

@@ -911,13 +911,15 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         }
     }
 
-
+    /** Note - this does not delete members from the DB, it just marks people as role "none"! */
     void deleteAllGroupMembers() {
 
         if (mChatURI != null) {
             long groupId = ContentUris.parseId(mChatURI);
             Uri uri = ContentUris.withAppendedId(Imps.GroupMembers.CONTENT_URI, groupId);
-            mContentResolver.delete(uri, null, null);
+            ContentValues values = new ContentValues(4);
+            values.put(Imps.GroupMembers.ROLE, "none");
+            mContentResolver.update(uri, values, null, null);
         }
         //  insertMessageInDb(member.getName(), null, System.currentTimeMillis(),
         //    Imps.MessageType.PRESENCE_UNAVAILABLE);
@@ -1240,8 +1242,32 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             }
         }
 
-        public void onMembersReset () {
-            deleteAllGroupMembers();
+        public void onMembersReset (ChatGroup group) {
+            if (mChatURI != null) {
+                // Re-fetch everything from the DB
+                long groupId = ContentUris.parseId(mChatURI);
+                Uri uri = ContentUris.withAppendedId(Imps.GroupMembers.CONTENT_URI, groupId);
+
+                Cursor c = mContentResolver.query(uri, null, null, null, null);
+                if (c != null) {
+                    int colIndexUser = c.getColumnIndex(Imps.GroupMembers.USERNAME);
+                    int colIndexNick = c.getColumnIndex(Imps.GroupMembers.NICKNAME);
+                    int colIndexRole = c.getColumnIndex(Imps.GroupMembers.ROLE);
+                    int colIndexAffiliation = c.getColumnIndex(Imps.GroupMembers.AFFILIATION);
+                    if (c.moveToFirst()) {
+                        do {
+                            String user = c.getString(colIndexUser);
+                            String nick = c.getString(colIndexNick);
+                            String role = c.getString(colIndexRole);
+                            String affiliation = c.getString(colIndexAffiliation);
+                            Contact contact = new Contact(new XmppAddress(user), nick, Imps.Contacts.TYPE_NORMAL);
+                            group.notifyMemberJoined(contact);
+                            onMemberRoleChanged(group, contact, "none", affiliation);
+                        } while (c.moveToNext());
+                    }
+                    c.close();
+                }
+            }
         }
 
         public void onMemberJoined(ChatGroup group, final Contact contact) {
@@ -1457,7 +1483,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         }
 
         @Override
-        public void onMembersReset() {
+        public void onMembersReset(ChatGroup group) {
         }
 
         public void onMemberJoined(ChatGroup group, Contact contact) {
