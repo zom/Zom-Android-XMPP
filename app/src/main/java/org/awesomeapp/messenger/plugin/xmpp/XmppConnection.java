@@ -998,38 +998,26 @@ public class XmppConnection extends ImConnection {
             if (chatGroup.getMember(mUserJid.toString()) == null)
                 chatGroup.notifyMemberJoined(mUserJid.toString(),mUser);
 
-            XmppAddress xa = null;
+            XmppAddress xa;
 
-            List<EntityFullJid> mucOccupant = muc.getOccupants();
-
-            for (EntityFullJid occupant : mucOccupant) {
-                Jid jidSource = muc.getOccupant(occupant).getJid();
-                if (jidSource != null)
+            try {
+                for (EntityFullJid occupant : muc.getOccupants()) {
+                    Jid jidSource = muc.getOccupant(occupant).getJid();
                     xa = new XmppAddress(jidSource.toString());
-                else
-                    xa = new XmppAddress(occupant.toString());
-
-                if (chatGroup.getMember(xa.getBareAddress()) == null) {
                     Contact mucContact = new Contact(xa, xa.getUser(), Imps.Contacts.TYPE_NORMAL);
-                    chatGroup.notifyMemberJoined(occupant.toString(), mucContact);
+                    chatGroup.notifyMemberJoined(jidSource.toString(), mucContact);
                 }
+            }
+            catch (Exception e) {
+                debug("MUC", "Error loading occupants: " + e);
             }
 
             try {
-
-                List<Occupant> mucParticipants = muc.getParticipants();
-
-                for (Occupant occupant : mucParticipants) {
+                for (Occupant occupant : muc.getParticipants()) {
                     Jid jidSource = occupant.getJid();
-                    if (jidSource != null)
-                        xa = new XmppAddress(jidSource.toString());
-                    else
-                        xa = new XmppAddress(occupant.toString());
-
-                    if (chatGroup.getMember(xa.getBareAddress()) == null) {
-                        Contact mucContact = new Contact(xa, xa.getUser(), Imps.Contacts.TYPE_NORMAL);
-                        chatGroup.notifyMemberJoined(occupant.getAffiliation().toString(), mucContact);
-                    }
+                    xa = new XmppAddress(jidSource.toString());
+                    Contact mucContact = new Contact(xa, xa.getUser(), Imps.Contacts.TYPE_NORMAL);
+                    chatGroup.notifyMemberJoined(jidSource.toString(), mucContact);
                 }
             }
             catch (Exception e)
@@ -1039,15 +1027,10 @@ public class XmppConnection extends ImConnection {
 
 
             try {
-
-                List<Affiliate> mucMembers = muc.getMembers();
-
-                for (Affiliate member : mucMembers) {
+                for (Affiliate member : muc.getMembers()) {
                     xa = new XmppAddress(member.getJid().toString());
-                    if (chatGroup.getMember(xa.getBareAddress()) == null) {
-                        Contact mucContact = new Contact(xa, xa.getUser(), Imps.Contacts.TYPE_NORMAL);
-                        chatGroup.notifyMemberJoined(member.getAffiliation().toString(), mucContact);
-                    }
+                    Contact mucContact = new Contact(xa, xa.getUser(), Imps.Contacts.TYPE_NORMAL);
+                    chatGroup.notifyMemberJoined(null, mucContact);
                 }
             }
             catch (Exception e)
@@ -1057,16 +1040,11 @@ public class XmppConnection extends ImConnection {
             }
 
             try {
-
-                List<Affiliate> mucOwners = muc.getOwners();
-                for (Affiliate member : mucOwners) {
+                for (Affiliate member : muc.getOwners()) {
                     xa = new XmppAddress(member.getJid().toString());
                     Contact mucContact = new Contact(xa, xa.getUser(), Imps.Contacts.TYPE_NORMAL);
-                    if (chatGroup.getMember(xa.getBareAddress()) == null) {
-                        chatGroup.notifyMemberJoined(member.getAffiliation().toString(), mucContact);
-                    }
+                    chatGroup.notifyMemberJoined(null, mucContact);
                     chatGroup.setOwner(mucContact);
-
                 }
             }
             catch (Exception e)
