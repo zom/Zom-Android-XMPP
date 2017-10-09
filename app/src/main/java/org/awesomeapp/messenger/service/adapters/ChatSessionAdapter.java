@@ -875,17 +875,10 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                     databaseId = c.getLong(c.getColumnIndex("_id"));
                 }
                 c.close();
-                c = mContentResolver.query(uri, null, null, null, null);
-                if (c != null) {
-                    DatabaseUtils.dumpCursor(c);
-                    c.close();
-                }
             }
             if (databaseId > 0) {
-                Log.d("GROUPSTUFF", "Update " + groupId + " " + username + " with nick " + nickname);
                 mContentResolver.update(uri, values, "_id=?", new String[] { String.valueOf(databaseId) });
             } else {
-                Log.d("GROUPSTUFF", "Insert " + groupId + " " + username + " with nick " + nickname);
                 values.put(Imps.GroupMembers.ROLE, "none");
                 values.put(Imps.GroupMembers.AFFILIATION, "none");
                 mContentResolver.insert(uri, values);
@@ -908,7 +901,6 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             Uri uri = ContentUris.withAppendedId(Imps.GroupMembers.CONTENT_URI, groupId);
 
             Map.Entry<String, String[]> whereEntry = getGroupMemberWhereClause(username, nickname);
-            Log.d("GROUPSTUFF", "Update " + groupId + " " + member.getAddress().getAddress() + " with nick " + member.getName() + " to role " + role + " affiliation " + affiliation);
             mContentResolver.update(uri, values, whereEntry.getKey(), whereEntry.getValue());
         }
     }

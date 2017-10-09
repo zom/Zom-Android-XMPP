@@ -369,8 +369,6 @@ public class GroupDisplayActivity extends BaseActivity {
                     int colRole = c.getColumnIndex(Imps.GroupMembers.ROLE);
                     int colAffiliation = c.getColumnIndex(Imps.GroupMembers.AFFILIATION);
 
-                    android.database.DatabaseUtils.dumpCursor(c);
-
                     while (c.moveToNext()) {
                         GroupMemberDisplay member = new GroupMemberDisplay();
                         member.username = new XmppAddress(c.getString(colUsername)).getBareAddress();
