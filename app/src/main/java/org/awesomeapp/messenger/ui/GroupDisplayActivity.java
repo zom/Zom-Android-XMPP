@@ -10,7 +10,6 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.os.RemoteException;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
@@ -32,10 +31,7 @@ import android.widget.TextView;
 import org.apache.commons.codec.DecoderException;
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.MainActivity;
-import org.awesomeapp.messenger.model.Address;
 import org.awesomeapp.messenger.model.Contact;
-import org.awesomeapp.messenger.model.ImErrorInfo;
-import org.awesomeapp.messenger.model.Message;
 import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.service.IChatListener;
@@ -147,7 +143,7 @@ public class GroupDisplayActivity extends BaseActivity {
                     case VIEW_TYPE_FOOTER:
                         return new FooterViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.awesome_activity_group_footer, parent, false));
                 }
-                return new MemberViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.contact_view, parent, false));
+                return new MemberViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.group_member_view, parent, false));
             }
 
             @Override
@@ -266,11 +262,12 @@ public class GroupDisplayActivity extends BaseActivity {
                     boolean hasRoleNone = TextUtils.isEmpty(member.role) || "none".equalsIgnoreCase(member.role);
                     h.line1.setTextColor(hasRoleNone ? Color.GRAY : colorTextPrimary);
 
-                    if (mGroupOwner != null
-                            && member.username.equals(mGroupOwner.getAddress().getAddress()))
-                        h.line2.setText("👑 " + member.username);
-                    else
-                        h.line2.setText(member.username);
+                    h.line2.setText(member.username);
+                    if (member.affiliation.contentEquals("owner") || member.affiliation.contentEquals("admin")) {
+                        h.avatarCrown.setVisibility(View.VISIBLE);
+                    } else {
+                        h.avatarCrown.setVisibility(View.GONE);
+                    }
 
                     /**
                     if (!member.online)
@@ -519,12 +516,14 @@ public class GroupDisplayActivity extends BaseActivity {
         final TextView line1;
         final TextView line2;
         final ImageView avatar;
+        final ImageView avatarCrown;
 
         MemberViewHolder(View view) {
             super(view);
             line1 = (TextView) view.findViewById(R.id.line1);
             line2 = (TextView) view.findViewById(R.id.line2);
             avatar = (ImageView) view.findViewById(R.id.avatar);
+            avatarCrown = (ImageView) view.findViewById(R.id.avatarCrown);
         }
     }
 
