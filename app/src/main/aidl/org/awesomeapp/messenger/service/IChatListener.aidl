@@ -84,4 +84,9 @@ interface IChatListener {
 
     /** This is called when a room subject changes **/
 	void onGroupSubjectChanged(IChatSession ses);
+
+	/**
+     * This method is called when a contact has a new role or affiliation
+     */
+    void onContactRoleChanged(IChatSession ses, in Contact contact);
 }

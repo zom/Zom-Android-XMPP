@@ -193,6 +193,10 @@ public abstract class ChatGroupManager {
         return mGroups.get(address.getBareAddress());
     }
 
+    public ChatGroup[] getAllChatGroups() {
+        return mGroups.values().toArray(new ChatGroup[0]);
+    }
+
     /**
      * Notifies the {@link GroupListener}s that a {@link ChatGroup} has changed.
      *

@@ -1037,6 +1037,13 @@ public class Imps {
 
         /** The nick name of this member. <p>Type: TEXT</p> */
         String NICKNAME = "nickname";
+
+        /** The role of this member. <p>Type: TEXT</p> */
+        String ROLE = "role";
+
+        /** The affiliation of this member. <p>Type: TEXT</p> */
+        String AFFILIATION = "affiliation";
+
     }
 
     public final static class GroupMembers implements GroupMemberColumns {
