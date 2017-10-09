@@ -6,6 +6,7 @@ import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -30,25 +31,23 @@ import android.widget.TextView;
 import org.apache.commons.codec.DecoderException;
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.MainActivity;
-import org.awesomeapp.messenger.model.ChatGroup;
-import org.awesomeapp.messenger.model.ChatSession;
 import org.awesomeapp.messenger.model.Contact;
 import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
 import org.awesomeapp.messenger.provider.Imps;
+import org.awesomeapp.messenger.service.IChatListener;
 import org.awesomeapp.messenger.service.IChatSession;
 import org.awesomeapp.messenger.service.IChatSessionManager;
 import org.awesomeapp.messenger.service.IContactListManager;
 import org.awesomeapp.messenger.service.IImConnection;
 import org.awesomeapp.messenger.ui.legacy.DatabaseUtils;
+import org.awesomeapp.messenger.ui.legacy.adapter.ChatListenerAdapter;
 import org.awesomeapp.messenger.ui.onboarding.OnboardingManager;
 import org.awesomeapp.messenger.ui.qr.QrShareAsyncTask;
 import org.awesomeapp.messenger.ui.widgets.GroupAvatar;
 import org.awesomeapp.messenger.ui.widgets.LetterAvatar;
-import org.jxmpp.jid.Jid;
 
 import java.util.ArrayList;
 
-import im.zom.messenger.BuildConfig;
 import im.zom.messenger.R;
 
 public class GroupDisplayActivity extends BaseActivity {
@@ -64,16 +63,19 @@ public class GroupDisplayActivity extends BaseActivity {
     private IChatSession mSession;
     private Contact mGroupOwner;
     private boolean mIsOwner = false;
+    private Thread mThreadUpdate;
 
-    private class GroupMember {
+    private class GroupMemberDisplay {
         public String username;
         public String nickname;
+        public String role;
+        public String affiliation;
         public Drawable avatar;
         public boolean online = false;
     }
 
     private RecyclerView mRecyclerView;
-    private ArrayList<GroupMember> mMembers;
+    private ArrayList<GroupMemberDisplay> mMembers;
 
     private final static int REQUEST_PICK_CONTACTS = 100;
 
@@ -124,6 +126,15 @@ public class GroupDisplayActivity extends BaseActivity {
             private static final int VIEW_TYPE_HEADER = 1;
             private static final int VIEW_TYPE_FOOTER = 2;
 
+            private int colorTextPrimary = 0xff000000;
+
+            public RecyclerView.Adapter init() {
+                TypedValue out = new TypedValue();
+                getTheme().resolveAttribute(R.attr.contactTextPrimary, out, true);
+                colorTextPrimary = out.data;
+                return this;
+            }
+
             @Override
             public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
                 switch (viewType) {
@@ -132,7 +143,7 @@ public class GroupDisplayActivity extends BaseActivity {
                     case VIEW_TYPE_FOOTER:
                         return new FooterViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.awesome_activity_group_footer, parent, false));
                 }
-                return new MemberViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.contact_view, parent, false));
+                return new MemberViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.group_member_view, parent, false));
             }
 
             @Override
@@ -179,7 +190,7 @@ public class GroupDisplayActivity extends BaseActivity {
                             public void onClick(View v) {
                                 Intent intent = new Intent(GroupDisplayActivity.this, ContactsPickerActivity.class);
                                 ArrayList<String> usernames = new ArrayList<>(mMembers.size());
-                                for (GroupMember member : mMembers) {
+                                for (GroupMemberDisplay member : mMembers) {
                                     usernames.add(member.username);
                                 }
                                 intent.putExtra(ContactsPickerActivity.EXTRA_EXCLUDED_CONTACTS, usernames);
@@ -237,7 +248,8 @@ public class GroupDisplayActivity extends BaseActivity {
                     h.itemView.setPadding(padding, h.itemView.getPaddingTop(), padding, h.itemView.getPaddingBottom());
 
                     int idxMember = position - 1;
-                    final GroupMember member = mMembers.get(idxMember);
+                    final GroupMemberDisplay member = mMembers.get(idxMember);
+
                     String nickname = member.nickname;
                     if (TextUtils.isEmpty(nickname)) {
                         nickname = member.username.split("@")[0].split("\\.")[0];
@@ -247,11 +259,15 @@ public class GroupDisplayActivity extends BaseActivity {
 
                     h.line1.setText(nickname);
 
-                    if (mGroupOwner != null
-                            && member.username.equals(mGroupOwner.getAddress().getAddress()))
-                        h.line2.setText("👑 " + member.username);
-                    else
-                        h.line2.setText(member.username);
+                    boolean hasRoleNone = TextUtils.isEmpty(member.role) || "none".equalsIgnoreCase(member.role);
+                    h.line1.setTextColor(hasRoleNone ? Color.GRAY : colorTextPrimary);
+
+                    h.line2.setText(member.username);
+                    if (member.affiliation.contentEquals("owner") || member.affiliation.contentEquals("admin")) {
+                        h.avatarCrown.setVisibility(View.VISIBLE);
+                    } else {
+                        h.avatarCrown.setVisibility(View.GONE);
+                    }
 
                     /**
                     if (!member.online)
@@ -290,17 +306,45 @@ public class GroupDisplayActivity extends BaseActivity {
                     return VIEW_TYPE_FOOTER;
                 return VIEW_TYPE_MEMBER;
             }
-        });
+        }.init());
         updateMembers();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mSession != null) {
+            try {
+                mSession.registerChatListener(mChatListener);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+        updateMembers();
+    }
+
+    @Override
+    protected void onPause() {
+        if (mSession != null) {
+            try {
+                mSession.unregisterChatListener(mChatListener);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+        super.onPause();
+    }
+
     private void updateMembers() {
-
-        mMembers.clear();
-
-        Thread threadUpdate = new Thread(new Runnable() {
+        if (mThreadUpdate != null) {
+            mThreadUpdate.interrupt();
+            mThreadUpdate = null;
+        }
+        mThreadUpdate = new Thread(new Runnable() {
             @Override
             public void run() {
+
+                final ArrayList<GroupMemberDisplay> members = new ArrayList<>();
 
                 IContactListManager contactManager = null;
 
@@ -311,18 +355,24 @@ public class GroupDisplayActivity extends BaseActivity {
                 }
                 catch (RemoteException re){}
 
-                String[] projection = {Imps.GroupMembers.USERNAME, Imps.GroupMembers.NICKNAME};
+                String[] projection = {Imps.GroupMembers.USERNAME, Imps.GroupMembers.NICKNAME, Imps.GroupMembers.ROLE, Imps.GroupMembers.AFFILIATION};
                 Uri memberUri = ContentUris.withAppendedId(Imps.GroupMembers.CONTENT_URI, mLastChatId);
                 ContentResolver cr = getContentResolver();
                 Cursor c = cr.query(memberUri, projection, null, null, null);
                 if (c != null) {
                     int colUsername = c.getColumnIndex(Imps.GroupMembers.USERNAME);
                     int colNickname = c.getColumnIndex(Imps.GroupMembers.NICKNAME);
+                    int colRole = c.getColumnIndex(Imps.GroupMembers.ROLE);
+                    int colAffiliation = c.getColumnIndex(Imps.GroupMembers.AFFILIATION);
+
+                    android.database.DatabaseUtils.dumpCursor(c);
 
                     while (c.moveToNext()) {
-                        GroupMember member = new GroupMember();
+                        GroupMemberDisplay member = new GroupMemberDisplay();
                         member.username = new XmppAddress(c.getString(colUsername)).getBareAddress();
                         member.nickname = c.getString(colNickname);
+                        member.role = c.getString(colRole);
+                        member.affiliation = c.getString(colAffiliation);
                         try {
                             member.avatar = DatabaseUtils.getAvatarFromAddress(cr, member.username, ImApp.SMALL_AVATAR_WIDTH, ImApp.SMALL_AVATAR_HEIGHT);
                         } catch (DecoderException e) {
@@ -339,19 +389,22 @@ public class GroupDisplayActivity extends BaseActivity {
                         }
                         catch (RemoteException re){}**/
 
-                        mMembers.add(member);
+                        members.add(member);
                     }
                     c.close();
                 }
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mRecyclerView.getAdapter().notifyDataSetChanged();
-                    }
-                });
+                if (!Thread.currentThread().isInterrupted()) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mMembers = members;
+                            mRecyclerView.getAdapter().notifyDataSetChanged();
+                        }
+                    });
+                }
             }
         });
-        threadUpdate.start();
+        mThreadUpdate.start();
     }
 
     public void inviteContacts (ArrayList<String> invitees)
@@ -365,7 +418,7 @@ public class GroupDisplayActivity extends BaseActivity {
 
             for (String invitee : invitees) {
                 session.inviteContact(invitee);
-                GroupMember member = new GroupMember();
+                GroupMemberDisplay member = new GroupMemberDisplay();
                 XmppAddress address = new XmppAddress(invitee);
                 member.username = address.getBareAddress();
                 member.nickname = address.getUser();
@@ -387,7 +440,7 @@ public class GroupDisplayActivity extends BaseActivity {
 
     }
 
-    public void showMemberInfo(GroupMember member) {
+    public void showMemberInfo(GroupMemberDisplay member) {
         Intent intent = new Intent(this, ContactDisplayActivity.class);
         intent.putExtra("address", member.username);
         intent.putExtra("nickname", member.nickname);
@@ -463,12 +516,14 @@ public class GroupDisplayActivity extends BaseActivity {
         final TextView line1;
         final TextView line2;
         final ImageView avatar;
+        final ImageView avatarCrown;
 
         MemberViewHolder(View view) {
             super(view);
             line1 = (TextView) view.findViewById(R.id.line1);
             line2 = (TextView) view.findViewById(R.id.line2);
             avatar = (ImageView) view.findViewById(R.id.avatar);
+            avatarCrown = (ImageView) view.findViewById(R.id.avatarCrown);
         }
     }
 
@@ -576,4 +631,24 @@ public class GroupDisplayActivity extends BaseActivity {
             Log.e(ImApp.LOG_TAG,"error leaving group",e);
         }
     }
+
+    private final IChatListener mChatListener = new ChatListenerAdapter() {
+        @Override
+        public void onContactJoined(IChatSession ses, Contact contact) {
+            super.onContactJoined(ses, contact);
+            updateMembers();
+        }
+
+        @Override
+        public void onContactLeft(IChatSession ses, Contact contact) {
+            super.onContactLeft(ses, contact);
+            updateMembers();
+        }
+
+        @Override
+        public void onContactChanged(IChatSession ses, Contact contact) {
+            super.onContactChanged(ses, contact);
+            updateMembers();
+        }
+    };
 }

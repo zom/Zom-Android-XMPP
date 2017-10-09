@@ -193,6 +193,10 @@ public abstract class ChatGroupManager {
         return mGroups.get(address.getBareAddress());
     }
 
+    public ChatGroup[] getAllChatGroups() {
+        return mGroups.values().toArray(new ChatGroup[0]);
+    }
+
     /**
      * Notifies the {@link GroupListener}s that a {@link ChatGroup} has changed.
      *
@@ -209,7 +213,7 @@ public abstract class ChatGroupManager {
         }
         if (joined != null) {
             for (Contact contact : joined) {
-                notifyMemberJoined(group, contact, null);
+                notifyMemberJoined(group, contact);
             }
         }
         if (left != null) {
@@ -275,8 +279,8 @@ public abstract class ChatGroupManager {
      * @param group the group into which the contact has joined.
      * @param contact the contact who has joined into the group.
      */
-    protected void notifyMemberJoined(ChatGroup group, Contact contact, String groupAddress) {
-        group.notifyMemberJoined(groupAddress, contact);
+    protected void notifyMemberJoined(ChatGroup group, Contact contact) {
+        group.notifyMemberJoined(contact);
     }
 
     /**

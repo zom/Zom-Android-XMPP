@@ -56,6 +56,11 @@ interface IChatListener {
     void onContactLeft(IChatSession ses, in Contact contact);
 
     /**
+     * This method is called when a contact in this ChatSession has updated role, affiliation or jid.
+     */
+    void onContactChanged(IChatSession ses, in Contact contact);
+
+    /**
      * This method is called when an error is found to invite a contact to join
      * this ChatSession.
      */

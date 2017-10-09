@@ -17,6 +17,8 @@
 
 package org.awesomeapp.messenger.model;
 
+import android.text.TextUtils;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -32,6 +34,8 @@ public class ChatGroup extends ImEntity {
     private String mName;
     private HashMap<String, Contact> mMembers;
     private HashMap<String, Contact> mGroupAddressToContactMap;
+    private HashMap<String, Contact> mRealAddressToContactMap;
+    private HashMap<String, Contact> mNicknameToContactMap;
     private Contact mOwner;
     private CopyOnWriteArrayList<GroupMemberListener> mMemberListeners;
 
@@ -42,6 +46,8 @@ public class ChatGroup extends ImEntity {
         mManager = manager;
         mMembers = new HashMap<>();
         mGroupAddressToContactMap = new HashMap<>();
+        mRealAddressToContactMap = new HashMap<>();
+        mNicknameToContactMap = new HashMap<>();
 
         mMemberListeners = new CopyOnWriteArrayList<GroupMemberListener>();
     }
@@ -102,26 +108,66 @@ public class ChatGroup extends ImEntity {
         return member;
     }
 
+    private boolean isGroupAddress(Address address) {
+        return address.getBareAddress().equals(mAddress.getBareAddress());
+    }
+
     /**
      * Notifies that a contact has joined into this group.
      *
      * @param newContact the {@link Contact} who has joined into the group.
      */
-    public synchronized void notifyMemberJoined(String groupAddress, Contact newContact) {
-
-        Contact contact = mMembers.get(newContact.getAddress().getBareAddress());
-
+    public synchronized void notifyMemberJoined(Contact newContact) {
+        Contact contact = mMembers.get(newContact.getAddress().getAddress());
         if (contact == null) {
-            mMembers.put(newContact.getAddress().getBareAddress(), newContact);
+            if (isGroupAddress(newContact.getAddress())) {
+                // This is a group address
+                contact = mGroupAddressToContactMap.get(newContact.getAddress().getAddress());
+            } else {
+                contact = mRealAddressToContactMap.get(newContact.getAddress().getBareAddress());
+            }
+        }
+        if (contact == null && newContact.getName() != null) {
+            // Try to find by nickname
+            contact = mNicknameToContactMap.get(newContact.getName());
+        }
 
-            if (groupAddress != null)
-                mGroupAddressToContactMap.put(groupAddress, newContact);
-
+        if (contact != null) {
+            if (isGroupAddress(contact.getAddress()) && !isGroupAddress(newContact.getAddress())) {
+                mMembers.remove(contact.getAddress().getAddress());
+                mGroupAddressToContactMap.remove(contact.getAddress().getAddress());
+                if (!TextUtils.isEmpty(contact.getName()))
+                    mNicknameToContactMap.remove(contact.getName());
+                mMembers.put(newContact.getAddress().getBareAddress(), newContact);
+                mRealAddressToContactMap.put(newContact.getAddress().getBareAddress(), newContact);
+                if (!TextUtils.isEmpty(newContact.getName())) {
+                    mNicknameToContactMap.put(newContact.getName(), newContact);
+                } else if (!TextUtils.isEmpty(contact.getName())) {
+                    // Reuse old nick
+                    mNicknameToContactMap.put(contact.getName(), newContact);
+                }
+                for (GroupMemberListener listener : mMemberListeners) {
+                    listener.onMemberChanged(this, contact, newContact);
+                }
+            }
+        } else {
+            mMembers.put(newContact.getAddress().getAddress(), newContact);
+            if (isGroupAddress(newContact.getAddress())) {
+                // This is a group address
+                mGroupAddressToContactMap.put(newContact.getAddress().getAddress(), newContact);
+            } else {
+                mRealAddressToContactMap.put(newContact.getAddress().getBareAddress(), newContact);
+            }
+            if (!TextUtils.isEmpty(newContact.getName())) {
+                mNicknameToContactMap.put(newContact.getName(), newContact);
+            }
+            if (!TextUtils.isEmpty(newContact.getName())) {
+                mNicknameToContactMap.put(newContact.getName(), newContact);
+            }
             for (GroupMemberListener listener : mMemberListeners) {
                 listener.onMemberJoined(this, newContact);
             }
         }
-
     }
 
     /**
@@ -165,18 +211,20 @@ public class ChatGroup extends ImEntity {
     }
 
     /*
-    clear the list of members
+    clear the list of members, i.e. mark all as role "none" in the db
      */
     public synchronized void clearMembers ()
     {
+/*
         Object[] members = mMembers.values().toArray();
         for (Object member : members)
         {
             notifyMemberLeft((Contact)member);
         }
 
+*/
         for (GroupMemberListener listener : mMemberListeners) {
-            listener.onMembersReset();
+            listener.onMembersReset(this);
         }
     }
 
@@ -185,11 +233,10 @@ public class ChatGroup extends ImEntity {
      */
     public void setMembers (List<Contact> members)
     {
-        clearMembers();
-
+        //clearMembers();
         for (Contact newContact : members)
         {
-            notifyMemberJoined(null, newContact);
+            notifyMemberJoined(newContact);
         }
 
     }
@@ -203,5 +250,11 @@ public class ChatGroup extends ImEntity {
     public Contact getOwner ()
     {
         return mOwner;
+    }
+
+    public void notifyMemberRoleChanged(Contact contact, String role, String affiliation) {
+        for (GroupMemberListener listener : mMemberListeners) {
+            listener.onMemberRoleChanged(this, contact, role, affiliation);
+        }
     }
 }
