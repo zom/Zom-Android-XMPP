@@ -159,6 +159,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
         if (participant instanceof ChatGroup) {
             init((ChatGroup) participant,isNewSession);
+            mChatSessionManager.getChatGroupManager().loadMembers((ChatGroup) participant);
         } else {
             init((Contact) participant,isNewSession);
             initOtrChatSession(participant);
