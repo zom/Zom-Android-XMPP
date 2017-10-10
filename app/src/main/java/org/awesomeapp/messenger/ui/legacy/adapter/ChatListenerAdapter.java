@@ -43,6 +43,12 @@ public class ChatListenerAdapter extends IChatListener.Stub {
         }
     }
 
+    public void onContactRoleChanged(IChatSession ses, Contact contact) {
+        if (Log.isLoggable(TAG, Log.DEBUG)) {
+            LogCleaner.debug(TAG, "onContactRoleUpdate(" + ses + ", " + contact + ")");
+        }
+    }
+
     public boolean onIncomingMessage(IChatSession ses, Message msg) {
         if (Log.isLoggable(TAG, Log.DEBUG)) {
             LogCleaner.debug(TAG, "onIncomingMessage(" + ses + ", " + msg + ")");

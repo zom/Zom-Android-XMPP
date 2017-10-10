@@ -109,6 +109,11 @@ public class ChatGroup extends ImEntity {
      */
     public synchronized void notifyMemberJoined(String groupAddress, Contact newContact) {
 
+        // Clear the DB on first join
+        if (mMembers.size() == 0) {
+            clearMembers(true);
+        }
+
         Contact contact = mMembers.get(newContact.getAddress().getBareAddress());
 
         if (contact == null) {
@@ -119,6 +124,18 @@ public class ChatGroup extends ImEntity {
 
             for (GroupMemberListener listener : mMemberListeners) {
                 listener.onMemberJoined(this, newContact);
+            }
+        } else {
+            if (groupAddress != null)
+                mGroupAddressToContactMap.put(groupAddress, contact);
+        }
+    }
+
+    public synchronized void notifyMemberRoleUpdate(Contact newContact, String role, String affiliation) {
+        Contact contact = mMembers.get(newContact.getAddress().getBareAddress());
+        if (contact != null) {
+            for (GroupMemberListener listener : mMemberListeners) {
+                listener.onMemberRoleChanged(this, contact, role, affiliation);
             }
         }
 
@@ -167,16 +184,19 @@ public class ChatGroup extends ImEntity {
     /*
     clear the list of members
      */
-    public synchronized void clearMembers ()
-    {
+    public synchronized void clearMembers (boolean deleteFromDB) {
         Object[] members = mMembers.values().toArray();
-        for (Object member : members)
-        {
-            notifyMemberLeft((Contact)member);
+        for (Object member : members) {
+            if (deleteFromDB) {
+                notifyMemberLeft((Contact) member);
+            } else {
+                notifyMemberRoleUpdate((Contact) member, "none", null);
+            }
         }
-
-        for (GroupMemberListener listener : mMemberListeners) {
-            listener.onMembersReset();
+        if (deleteFromDB) {
+            for (GroupMemberListener listener : mMemberListeners) {
+                listener.onMembersReset();
+            }
         }
     }
 
@@ -185,7 +205,7 @@ public class ChatGroup extends ImEntity {
      */
     public void setMembers (List<Contact> members)
     {
-        clearMembers();
+        clearMembers(true);
 
         for (Contact newContact : members)
         {

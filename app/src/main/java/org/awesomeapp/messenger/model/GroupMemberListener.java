@@ -49,6 +49,16 @@ public interface GroupMemberListener {
 
     /**
      * Called when group membership is reset
-     */
+     * */
     public void onMembersReset ();
+
+    /**
+     * Notifies that a contact in this group has a changed role or affiliation
+     *
+     * @param contact the contact who has changed.
+     * @param role new role of the contact.
+     * @param affiliation new affiliation of the contact.
+     */
+    public void onMemberRoleChanged(ChatGroup group, Contact contact, String role, String affiliation);
+
 }
