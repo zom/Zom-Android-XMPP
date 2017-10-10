@@ -990,7 +990,7 @@ public class XmppConnection extends ImConnection {
             }
         }
 
-        private void loadMembers (MultiUserChat muc, ChatGroup chatGroup) throws SmackException, XMPPException,InterruptedException
+        private synchronized void loadMembers (MultiUserChat muc, ChatGroup chatGroup) throws SmackException, XMPPException,InterruptedException
         {
           //  chatGroup.clearMembers();
 
