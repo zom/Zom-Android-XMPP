@@ -580,6 +580,10 @@ public class XmppConnection extends ImConnection {
     {
 
         private Hashtable<String,MultiUserChat> mMUCs = new Hashtable<String,MultiUserChat>();
+        private SubjectUpdatedListener mSubjectUpdateListener;
+        private GroupParticipantStatusListener mParticipantStatusListener;
+        private PresenceListener mParticipantListener;
+        private MessageListener mMessageListener;
 
         public MultiUserChat getMultiUserChat (String chatRoomJid)
         {
@@ -863,7 +867,6 @@ public class XmppConnection extends ImConnection {
                 }
             }
 
-
             addMucListeners(muc,chatGroup);
 
             return true;
@@ -953,8 +956,6 @@ public class XmppConnection extends ImConnection {
                 mMUCs.put(chatRoomJid, muc);
 
                 addMucListeners(muc, chatGroup);
-
-                loadMembers(muc, chatGroup);
             } catch (Exception e) {
                 debug(TAG,"error joining MUC",e);
             }
@@ -995,8 +996,9 @@ public class XmppConnection extends ImConnection {
           //  chatGroup.clearMembers();
 
             //first make sure I am in the room
-            if (chatGroup.getMember(mUserJid.toString()) == null)
-                chatGroup.notifyMemberJoined(mUserJid.toString(),mUser);
+            if (chatGroup.getMember(mUserJid.toString()) == null) {
+                chatGroup.notifyMemberJoined(null, mUser);
+            }
 
             XmppAddress xa;
 
@@ -1006,28 +1008,13 @@ public class XmppConnection extends ImConnection {
                     Jid jidSource = occupant.getJid();
                     xa = new XmppAddress(jidSource.toString());
                     Contact mucContact = new Contact(xa, xa.getUser(), Imps.Contacts.TYPE_NORMAL);
-                    chatGroup.notifyMemberJoined(jidSource.toString(), mucContact);
+                    chatGroup.notifyMemberJoined(entity.toString(), mucContact);
                     chatGroup.notifyMemberRoleUpdate(mucContact, occupant.getRole().toString(), occupant.getAffiliation().toString());
                 }
             }
             catch (Exception e) {
                 debug("MUC", "Error loading occupants: " + e);
             }
-
-            try {
-                for (Occupant occupant : muc.getParticipants()) {
-                    Jid jidSource = occupant.getJid();
-                    xa = new XmppAddress(jidSource.toString());
-                    Contact mucContact = new Contact(xa, xa.getUser(), Imps.Contacts.TYPE_NORMAL);
-                    chatGroup.notifyMemberJoined(jidSource.toString(), mucContact);
-                    chatGroup.notifyMemberRoleUpdate(mucContact, occupant.getRole().toString(), occupant.getAffiliation().toString());
-                }
-            }
-            catch (Exception e)
-            {
-                debug("MUC","Error loading participants: " + e);
-            }
-
 
             try {
                 for (Affiliate member : muc.getMembers()) {
@@ -1055,63 +1042,92 @@ public class XmppConnection extends ImConnection {
                     debug("MUC","Couldn't load group owner: " + e.getMessage());
 
                 }
+
+            try {
+                for (Affiliate member : muc.getAdmins()) {
+                    xa = new XmppAddress(member.getJid().toString());
+                    Contact mucContact = new Contact(xa, xa.getUser(), Imps.Contacts.TYPE_NORMAL);
+                    chatGroup.notifyMemberJoined(null, mucContact);
+                    chatGroup.setOwner(mucContact);
+                }
+            }
+            catch (Exception e)
+            {
+                debug("MUC","Couldn't load group owner: " + e.getMessage());
+
+            }
         }
 
         private void addMucListeners (final MultiUserChat muc, final ChatGroup group)
         {
+            if (mSubjectUpdateListener == null) {
+                mSubjectUpdateListener = new SubjectUpdatedListener() {
 
-            muc.addSubjectUpdatedListener(new SubjectUpdatedListener() {
+                    @Override
+                    public void subjectUpdated(String subject, EntityFullJid from) {
 
-                @Override
-                public void subjectUpdated(String subject, EntityFullJid from) {
+                        XmppAddress xa = new XmppAddress(from.toString());
+                        MultiUserChat muc = mChatGroupManager.getMultiUserChat(xa.getBareAddress());
+                        ChatGroup chatGroup = mChatGroupManager.getChatGroup(xa);
+                        chatGroup.setName(subject);
+                    }
+                };
+            }
+            // Remove and re-add (to make sure it's set only once)
+            muc.removeSubjectUpdatedListener(mSubjectUpdateListener);
+            muc.addSubjectUpdatedListener(mSubjectUpdateListener);
 
-                    XmppAddress xa = new XmppAddress(from.toString());
-                    MultiUserChat muc = mChatGroupManager.getMultiUserChat(xa.getBareAddress());
-                    ChatGroup chatGroup = mChatGroupManager.getChatGroup(xa);
-                    chatGroup.setName(subject);
+            if (mParticipantStatusListener == null) {
+                mParticipantStatusListener = new GroupParticipantStatusListener();
+            }
 
-                }
+            // Remove and re-add (to make sure it's set only once)
+            muc.removeParticipantStatusListener(mParticipantStatusListener);
+            muc.addParticipantStatusListener(mParticipantStatusListener);
 
-            });
+            if (mParticipantListener == null) {
+                mParticipantListener = new PresenceListener() {
+                    @Override
+                    public void processPresence(org.jivesoftware.smack.packet.Presence presence) {
 
-            muc.addParticipantStatusListener(new GroupParticipantStatusListener(muc, group));
-            muc.addParticipantListener(new PresenceListener() {
-                @Override
-                public void processPresence(org.jivesoftware.smack.packet.Presence presence) {
-
-                    try {
-
-                        Occupant occupant = muc.getOccupant(presence.getFrom().asEntityFullJidOrThrow());
-                        XmppAddress xa = null;
-
-                        if (occupant != null) {
-                            Jid jidSource = occupant.getJid();
-                            xa = new XmppAddress(jidSource.toString());
+                        try {
+                            EntityFullJid entity = presence.getFrom().asEntityFullJidOrThrow();
+                            Occupant occupant = muc.getOccupant(entity);
+                            Jid jidSource = (occupant != null) ? occupant.getJid() : presence.getFrom();
+                            XmppAddress xa = new XmppAddress(jidSource.toString());
                             Contact mucContact = new Contact(xa, xa.getUser(), Imps.Contacts.TYPE_NORMAL);
-                            group.notifyMemberJoined(presence.getFrom().toString(), mucContact);
-                            group.notifyMemberRoleUpdate(mucContact, occupant.getRole().toString(), occupant.getAffiliation().toString());
+                            if (occupant != null) {
+                                notifyMemberJoined(group, mucContact, entity.toString());
+                                group.notifyMemberRoleUpdate(mucContact, occupant.getRole().toString(), occupant.getAffiliation().toString());
+                            }
+                            debug("MUC", "Got group presence: " + presence.toString());
+                        } catch (Exception e) {
+                            debug("MUC", "Error handling group presence: " + e);
                         }
-                        debug("MUC", "Got group presence: " + presence.toString());
-
-                    }
-                    catch (Exception e)
-                    {
-                        debug("MUC","Error handling group presence: " + e);
                     }
 
-                }
-            });
+                };
+            }
 
-            muc.addMessageListener(new MessageListener() {
-                @Override
-                public void processMessage(org.jivesoftware.smack.packet.Message message) {
-                    debug(TAG, "receive message: " + message.getFrom() + " to " + message.getTo());
+            // Remove and re-add (to make sure it's set only once)
+            muc.removeParticipantListener(mParticipantListener);
+            muc.addParticipantListener(mParticipantListener);
+
+            if (mMessageListener == null) {
+                mMessageListener = new MessageListener() {
+                    @Override
+                    public void processMessage(org.jivesoftware.smack.packet.Message message) {
+                        debug(TAG, "receive message: " + message.getFrom() + " to " + message.getTo());
 
 
-                   // handleMessage(message, false);
-                }
-            });
+                        // handleMessage(message, false);
+                    }
+                };
+            }
 
+            // Remove and re-add (to make sure it's set only once)
+            muc.removeMessageListener(mMessageListener);
+            muc.addMessageListener(mMessageListener);
         }
 
         @Override
@@ -1194,14 +1210,8 @@ public class XmppConnection extends ImConnection {
         }
 
         class GroupParticipantStatusListener implements ParticipantStatusListener {
-
-            MultiUserChat muc;
-            ChatGroup group;
-
-            public GroupParticipantStatusListener (MultiUserChat muc, ChatGroup group)
+            public GroupParticipantStatusListener ()
             {
-                this.muc = muc;
-                this.group = group;
             }
 
             @Override
@@ -1210,8 +1220,8 @@ public class XmppConnection extends ImConnection {
                  ChatGroup chatGroup = mChatGroupManager.getChatGroup(xa);
                  MultiUserChat muc = mChatGroupManager.getMultiUserChat(entityFullJid.asBareJid().toString());
 
-                Occupant occupant = muc.getOccupant(entityFullJid);
-                 Jid jidSource = occupant.getJid();
+                 Occupant occupant = muc.getOccupant(entityFullJid);
+                 Jid jidSource = (occupant != null) ? occupant.getJid() : null;
                  if (jidSource != null)
                  xa = new XmppAddress(jidSource.toString());
                  else
@@ -1219,8 +1229,9 @@ public class XmppConnection extends ImConnection {
 
                  Contact mucContact = new Contact(xa, xa.getUser(), Imps.Contacts.TYPE_NORMAL);
                  chatGroup.notifyMemberJoined(entityFullJid.toString(),mucContact);
-                 chatGroup.notifyMemberRoleUpdate(mucContact, occupant.getRole().name(), occupant.getAffiliation().toString());
-
+                if (occupant != null) {
+                    chatGroup.notifyMemberRoleUpdate(mucContact, occupant.getRole().name(), occupant.getAffiliation().toString());
+                }
             }
 
             @Override
@@ -1234,31 +1245,7 @@ public class XmppConnection extends ImConnection {
 
             @Override
             public void kicked(EntityFullJid entityFullJid, Jid jid, String s) {
-                /**
-                XmppAddress xa = new XmppAddress(entityFullJid.toString());
-                Jid jidSource = muc.getOccupant(entityFullJid).getJid();
-                if (jidSource != null)
-                    xa = new XmppAddress(jidSource.toString());
-                else
-                    xa = new XmppAddress(entityFullJid.toString());
-
-                Contact mucContact = new Contact(xa, xa.getUser(), Imps.Contacts.TYPE_NORMAL);
-                group.notifyMemberLeft(mucContact);
-                 **/
-                /**
-                 *  <presence type='unavailable' to='nathantest.5ee1a6cb@home.zom.im/ChatSecureZom-a2fea7b4' from='group8195d640@conference.zom.im/Rosa 🐰'><status>Kicked: recipient unavailable</status><x xmlns='http://jabber.org/protocol/muc#user'><item jid='rosa🐰@home.zom.im/86df4b3f-8995-43b88
-                 -accb-3506158ea797' affiliation='admin' role='none'/></x></presence><presence type='unavailable' to='nathantest.5ee1a6cb@home.zom.im' from='rosa🐰@home.zom.im/86df4b3f-8995-43b8-aa
-                 ccb-3506158ea797'><status>Disconnected: Replaced by new connection</status></presence><presence type='unavailable' to='nathantest.5ee1a6cb@home.zom.im/ChatSecureZom-a2fea7b4' from='groupcd59664c@conference.zom.im/Rosa 🐰'><status>Disconnected: Replaced by new connection</status><x xmlns='http://jabber.org/protocol/muc#user'><item jid='rosa🐰@home.zom.im/866
-                 df4b3f-8995-43b8-accb-3506158ea797' affiliation='admin' role='none'/></x></presence><presence type='unavailable' to='nathantest.5ee1a6cb@home.zom.im/ChatSecureZom-a2fea7b4' from='7c768e7e-8acb-4e6f-bc86-b0ff70958b27@conference.zom.im/Rosa 🐰'><status>Disconnected: Replaced by new connection</status><x xmlns='http://jabber.org/protocol/muc#user'><item jid=''
-                 rosa🐰@home.zom.im/86df4b3f-8995-43b8-accb-3506158ea797' affiliation='owner' role='none'/></x></presence>
-
-                 */
-                /**
-                try { loadMembers(muc, group);}
-                catch (Exception e)
-                {
-                    debug("MUC","Error loading group",e);
-                }**/
+               //TODO figure out what to do here
             }
 
             @Override
@@ -3639,7 +3626,6 @@ public class XmppConnection extends ImConnection {
         {
             //update and send new presence packet out
             mUserPresence = new Presence(Presence.AVAILABLE, "", Presence.CLIENT_TYPE_MOBILE);
-
         } else if (state == DISCONNECTED || state == SUSPENDED) {
             for (ChatGroup group : getChatGroupManager().getAllChatGroups()) {
                 group.clearMembers(false);
