@@ -255,7 +255,7 @@ public class XmppConnection extends ImConnection {
 
     private HashMap<String, String> qAvatar = new HashMap <>();
 
-    private ArrayDeque<org.jivesoftware.smack.packet.Presence> qPresence = new ArrayDeque<org.jivesoftware.smack.packet.Presence>();
+   // private ArrayDeque<org.jivesoftware.smack.packet.Presence> qPresence = new ArrayDeque<org.jivesoftware.smack.packet.Presence>();
     private ArrayDeque<org.jivesoftware.smack.packet.Stanza> qPacket = new ArrayDeque<org.jivesoftware.smack.packet.Stanza>();
     private ArrayDeque<Contact> qNewContact = new ArrayDeque<Contact>();
 
@@ -1082,13 +1082,17 @@ public class XmppConnection extends ImConnection {
                     try {
 
                         Occupant occupant = muc.getOccupant(presence.getFrom().asEntityFullJidOrThrow());
-                        Jid jidSource = occupant.getJid();
-                        XmppAddress xa = new XmppAddress(jidSource.toString());
-                        Contact mucContact = new Contact(xa, xa.getUser(), Imps.Contacts.TYPE_NORMAL);
-                        group.notifyMemberJoined(presence.getFrom().toString(),mucContact);
-                        group.notifyMemberRoleUpdate(mucContact,occupant.getRole().toString(),occupant.getAffiliation().toString());
+                        XmppAddress xa = null;
 
-                        debug("MUC","Got group presence: " + presence.toString());
+                        if (occupant != null) {
+                            Jid jidSource = occupant.getJid();
+                            xa = new XmppAddress(jidSource.toString());
+                            Contact mucContact = new Contact(xa, xa.getUser(), Imps.Contacts.TYPE_NORMAL);
+                            group.notifyMemberJoined(presence.getFrom().toString(), mucContact);
+                            group.notifyMemberRoleUpdate(mucContact, occupant.getRole().toString(), occupant.getAffiliation().toString());
+                        }
+                        debug("MUC", "Got group presence: " + presence.toString());
+
                     }
                     catch (Exception e)
                     {
@@ -1204,7 +1208,6 @@ public class XmppConnection extends ImConnection {
             public void joined(EntityFullJid entityFullJid) {
                  XmppAddress xa = new XmppAddress(entityFullJid.toString());
                  ChatGroup chatGroup = mChatGroupManager.getChatGroup(xa);
-
                  MultiUserChat muc = mChatGroupManager.getMultiUserChat(entityFullJid.asBareJid().toString());
 
                 Occupant occupant = muc.getOccupant(entityFullJid);
@@ -1217,18 +1220,7 @@ public class XmppConnection extends ImConnection {
                  Contact mucContact = new Contact(xa, xa.getUser(), Imps.Contacts.TYPE_NORMAL);
                  chatGroup.notifyMemberJoined(entityFullJid.toString(),mucContact);
                  chatGroup.notifyMemberRoleUpdate(mucContact, occupant.getRole().name(), occupant.getAffiliation().toString());
-                /*
-                 try {
-                 //if I am the owner, then grant moderator rights
-                 if (muc.getOwners().size() > 0
-                 && muc.getOwners().get(0).getJid().equals(mUserJid)) {
-                    //try to grant the moderator status
-                   //  muc.grantModerator(entityFullJid.getResourcepart());
-                   //  muc.grantAdmin(jidSource);
-                 }
-                 }
-                 catch (Exception e) {}
-                **/
+
             }
 
             @Override
@@ -1261,11 +1253,12 @@ public class XmppConnection extends ImConnection {
                  rosa🐰@home.zom.im/86df4b3f-8995-43b8-accb-3506158ea797' affiliation='owner' role='none'/></x></presence>
 
                  */
+                /**
                 try { loadMembers(muc, group);}
                 catch (Exception e)
                 {
                     debug("MUC","Error loading group",e);
-                }
+                }**/
             }
 
             @Override
@@ -1285,12 +1278,12 @@ public class XmppConnection extends ImConnection {
 
             @Override
             public void membershipGranted(EntityFullJid entityFullJid) {
-
+                    joined(entityFullJid);
             }
 
             @Override
             public void membershipRevoked(EntityFullJid entityFullJid) {
-
+                    left(entityFullJid);
             }
 
             @Override
@@ -2029,6 +2022,7 @@ public class XmppConnection extends ImConnection {
             }
         }, new StanzaTypeFilter(org.jivesoftware.smack.packet.Message.class));
 
+        /**
         mConnection.addAsyncStanzaListener(new StanzaListener() {
 
             @Override
@@ -2039,16 +2033,17 @@ public class XmppConnection extends ImConnection {
 
             }
         }, new StanzaTypeFilter(org.jivesoftware.smack.packet.Presence.class));
+         **/
 
         if (mTimerPackets != null)
             mTimerPackets.cancel();
 
         initPacketProcessor();
 
-        if (mTimerPresence != null)
-            mTimerPresence.cancel();
+      //  if (mTimerPresence != null)
+       //     mTimerPresence.cancel();
 
-        initPresenceProcessor ();
+        //initPresenceProcessor ();
 
         if (mTimerNewContacts != null)
             mTimerNewContacts.cancel();
@@ -2688,10 +2683,10 @@ public class XmppConnection extends ImConnection {
 
                 if (getOmemo().resourceSupportsOmemo(jid)) {
 
-                    if (getOmemo().getFingerprints(jid.asBareJid(), false).size() == 0) {
-                        getOmemo().getManager().requestDeviceListUpdateFor(jid.asBareJid());
+              //      if (getOmemo().getFingerprints(jid.asBareJid(), false).size() == 0) {
+                   //     getOmemo().getManager().requestDeviceListUpdateFor(jid.asBareJid());
                     //    return false;
-                    }
+                //    }
 
                     return true;
                 }
@@ -2821,7 +2816,8 @@ public class XmppConnection extends ImConnection {
         // Runs in executor thread
         private void do_loadContactLists() {
 
-            if (mConnection == null)
+            if (mConnection == null
+                || (!mConnection.isAuthenticated()))
                 return;
 
             debug(TAG, "load contact lists");
@@ -2829,7 +2825,6 @@ public class XmppConnection extends ImConnection {
             //since we don't show lists anymore, let's just load all entries together
 
             try {
-
                 mRoster.reloadAndWait();
             }
             catch (Exception e)
@@ -2839,7 +2834,7 @@ public class XmppConnection extends ImConnection {
             }
 
            // LastActivityManager lam = LastActivityManager.getInstanceFor(mConnection);
-            long now = new Date().getTime();
+           // long now = new Date().getTime();
 
             ContactList cl;
 
@@ -2919,7 +2914,7 @@ public class XmppConnection extends ImConnection {
                     else if (rEntry.getType() == RosterPacket.ItemType.remove)
                         subType = Imps.ContactsColumns.SUBSCRIPTION_TYPE_REMOVE;
 
-                    qPresence.add(mRoster.getPresence(rEntry.getJid()));
+                  //  qPresence.add(mRoster.getPresence(rEntry.getJid()));
 
                     /**
                     try {
@@ -3078,8 +3073,8 @@ public class XmppConnection extends ImConnection {
             @Override
             public void presenceChanged(org.jivesoftware.smack.packet.Presence presence) {
 
-         //       qPresence.push(presence);
-
+               // qPresence.push(presence);
+                handlePresenceChanged(presence);
             }
 
             @Override
@@ -4349,6 +4344,7 @@ public class XmppConnection extends ImConnection {
         return contact;
     }
 
+    /**
     private void initPresenceProcessor ()
     {
         mTimerPresence = new Timer();
@@ -4408,7 +4404,7 @@ public class XmppConnection extends ImConnection {
              }
 
           }, 500, 500);
-    }
+    }**/
 
     Timer mTimerPackets = null;
 
