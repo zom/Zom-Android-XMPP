@@ -489,10 +489,18 @@ public class AccountFragment extends Fragment {
     public Uri getPickImageResultUri(Intent data) {
         boolean isCamera = true;
         if (data != null) {
-            String action = data.getAction();
-            isCamera = action != null && action.equals(MediaStore.ACTION_IMAGE_CAPTURE);
+
+            if (data.getData() == null)
+                return getCaptureImageOutputUri();
+            else {
+                String action = data.getAction();
+                isCamera = action != null && action.equals(MediaStore.ACTION_IMAGE_CAPTURE);
+                return isCamera ? getCaptureImageOutputUri() : data.getData();
+            }
+
         }
-        return isCamera ? getCaptureImageOutputUri() : data.getData();
+        else
+            return getCaptureImageOutputUri();
     }
 
 
