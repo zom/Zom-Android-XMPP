@@ -69,27 +69,26 @@ public final class Presence implements Parcelable {
     private String mResource;
     private int mPriority = 0;
     private Map<String, String> mExtendedInfo;
-    private Date mLastSeen = new Date();
+    private Date mLastSeen = null;
 
     public Presence() {
         this(Presence.OFFLINE, null, null, null, CLIENT_TYPE_DEFAULT, null, null);
     }
 
+    /**
     public Presence(Date lastSeen) {
         this(Presence.OFFLINE, null, null, null, CLIENT_TYPE_DEFAULT, null, null);
-        mLastSeen = lastSeen;
-    }
-
-
+    }**/
+    
     public Presence(int status, String statusText, int clientType) {
         this(status, statusText, null, null, clientType);
-
     }
 
+    /**
     public Presence(int status, String statusText, int clientType, Date lastSeen) {
         this(status, statusText, null, null, clientType);
         this.mLastSeen = lastSeen;
-    }
+    }**/
 
     public Presence(int status, String statusText, byte[] avatarData, String avatarType,
             int clientType) {
@@ -122,7 +121,13 @@ public final class Presence implements Parcelable {
 
         //this may not exist for older persisted presence data
         if (source.dataAvail() > 0)
-            mResource = source.readString();        
+            mResource = source.readString();
+
+        if (source.dataAvail() > 0) {
+            long timeLastSeen = source.readLong();
+            if (timeLastSeen != -1)
+                mLastSeen = new Date(timeLastSeen);
+        }
     }
 
     public Date getLastSeen ()
@@ -180,6 +185,9 @@ public final class Presence implements Parcelable {
             throw new IllegalArgumentException("invalid presence status value");
         }
         mStatus = status;
+
+        if (mStatus == AVAILABLE || mStatus == AWAY)
+            mLastSeen = new Date();
     }
 
     public String getStatusText() {
@@ -213,6 +221,11 @@ public final class Presence implements Parcelable {
         dest.writeInt(mClientType);
         dest.writeMap(mExtendedInfo);
         dest.writeString(mResource);
+
+        if (mLastSeen != null)
+            dest.writeLong(mLastSeen.getTime());
+        else
+            dest.writeLong(-1);
     }
 
     @Override

@@ -255,10 +255,9 @@ public class XmppConnection extends ImConnection {
 
     private HashMap<String, String> qAvatar = new HashMap <>();
 
-   // private ArrayDeque<org.jivesoftware.smack.packet.Presence> qPresence = new ArrayDeque<org.jivesoftware.smack.packet.Presence>();
+    private ArrayDeque<org.jivesoftware.smack.packet.Presence> qPresence = new ArrayDeque<org.jivesoftware.smack.packet.Presence>();
     private ArrayDeque<org.jivesoftware.smack.packet.Stanza> qPacket = new ArrayDeque<org.jivesoftware.smack.packet.Stanza>();
     private ArrayDeque<Contact> qNewContact = new ArrayDeque<Contact>();
-
 
     private final static String DEFAULT_CONFERENCE_SERVER = "conference.zom.im";
 
@@ -2009,7 +2008,6 @@ public class XmppConnection extends ImConnection {
             }
         }, new StanzaTypeFilter(org.jivesoftware.smack.packet.Message.class));
 
-        /**
         mConnection.addAsyncStanzaListener(new StanzaListener() {
 
             @Override
@@ -2020,17 +2018,17 @@ public class XmppConnection extends ImConnection {
 
             }
         }, new StanzaTypeFilter(org.jivesoftware.smack.packet.Presence.class));
-         **/
+
 
         if (mTimerPackets != null)
             mTimerPackets.cancel();
 
         initPacketProcessor();
 
-      //  if (mTimerPresence != null)
-       //     mTimerPresence.cancel();
+        if (mTimerPresence != null)
+           mTimerPresence.cancel();
 
-        //initPresenceProcessor ();
+        initPresenceProcessor ();
 
         if (mTimerNewContacts != null)
             mTimerNewContacts.cancel();
@@ -2901,7 +2899,7 @@ public class XmppConnection extends ImConnection {
                     else if (rEntry.getType() == RosterPacket.ItemType.remove)
                         subType = Imps.ContactsColumns.SUBSCRIPTION_TYPE_REMOVE;
 
-                  //  qPresence.add(mRoster.getPresence(rEntry.getJid()));
+                    qPresence.add(mRoster.getPresence(rEntry.getJid()));
 
                     /**
                     try {
@@ -3002,7 +3000,7 @@ public class XmppConnection extends ImConnection {
             try {
                 org.jivesoftware.smack.packet.Presence presence = mRoster.getPresence(JidCreate.bareFrom(address));
                 if (presence != null) {
-                    handlePresenceChanged(presence);
+                    qPresence.add(presence);
                 }
             }
             catch (XmppStringprepException xe)
@@ -3060,8 +3058,7 @@ public class XmppConnection extends ImConnection {
             @Override
             public void presenceChanged(org.jivesoftware.smack.packet.Presence presence) {
 
-               // qPresence.push(presence);
-                handlePresenceChanged(presence);
+                qPresence.push(presence);
             }
 
             @Override
@@ -4330,7 +4327,7 @@ public class XmppConnection extends ImConnection {
         return contact;
     }
 
-    /**
+
     private void initPresenceProcessor ()
     {
         mTimerPresence = new Timer();
@@ -4390,7 +4387,7 @@ public class XmppConnection extends ImConnection {
              }
 
           }, 500, 500);
-    }**/
+    }
 
     Timer mTimerPackets = null;
 

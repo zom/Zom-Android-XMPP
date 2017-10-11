@@ -275,66 +275,63 @@ public class ConversationView {
             {
 
                 if (mConn == null)
-                    if (checkConnection()) {
+                    if (!checkConnection())
+                        return;
 
-                        IContactListManager manager = mConn.getContactListManager();
+                IContactListManager manager = mConn.getContactListManager();
 
-                        Contact contact = manager.getContactByAddress(mRemoteAddress);
+                Contact contact = manager.getContactByAddress(mRemoteAddress);
 
-                        if (contact != null) {
+                if (contact != null) {
 
-                            if (contact.getPresence() != null) {
-                                mLastSeen = contact.getPresence().getLastSeen();
-                                if (mLastSeen != null)
-                                    mActivity.updateLastSeen(mLastSeen);
-                            }
+                    if (contact.getPresence() != null) {
+                        mLastSeen = contact.getPresence().getLastSeen();
+                        if (mLastSeen != null)
+                            mActivity.updateLastSeen(mLastSeen);
+                    }
 
-                            if (!TextUtils.isEmpty(contact.getForwardingAddress())) {
-                                showContactMoved(contact);
-                            }
+                    if (!TextUtils.isEmpty(contact.getForwardingAddress())) {
+                        showContactMoved(contact);
+                    }
 
-                        }
+                }
 
-                        if ((mLastSessionStatus == null || mLastSessionStatus == SessionStatus.PLAINTEXT)) {
+                if ((mLastSessionStatus == null || mLastSessionStatus == SessionStatus.PLAINTEXT)) {
 
-                            boolean otrPolicyAuto = getOtrPolicy() == OtrPolicy.OPPORTUNISTIC
-                                    || getOtrPolicy() == OtrPolicy.OTRL_POLICY_ALWAYS;
+                    boolean otrPolicyAuto = getOtrPolicy() == OtrPolicy.OPPORTUNISTIC
+                            || getOtrPolicy() == OtrPolicy.OTRL_POLICY_ALWAYS;
 
-                            if (mCurrentChatSession == null)
-                                mCurrentChatSession = getChatSession();
-                            if (mCurrentChatSession == null)
-                                return;
+                    if (mCurrentChatSession == null)
+                        mCurrentChatSession = getChatSession();
+                    if (mCurrentChatSession == null)
+                        return;
 
 
-                            IOtrChatSession otrChatSession = mCurrentChatSession.getDefaultOtrChatSession();
+                    IOtrChatSession otrChatSession = mCurrentChatSession.getDefaultOtrChatSession();
 
-                            if (otrChatSession != null && (!isGroupChat())) {
-                                String remoteJID = otrChatSession.getRemoteUserId();
+                    if (otrChatSession != null && (!isGroupChat())) {
+                        String remoteJID = otrChatSession.getRemoteUserId();
 
-                                boolean doOtr = (remoteJID != null && (remoteJID.toLowerCase().contains("chatsecure") || remoteJID.toLowerCase().contains("zom")));
+                        boolean doOtr = (remoteJID != null && (remoteJID.toLowerCase().contains("chatsecure") || remoteJID.toLowerCase().contains("zom")));
 
-                                if (!doOtr)
-                                    doOtr = OtrAndroidKeyManagerImpl.getInstance(mActivity).hasRemoteFingerprint(remoteJID);
+                        if (!doOtr)
+                            doOtr = OtrAndroidKeyManagerImpl.getInstance(mActivity).hasRemoteFingerprint(remoteJID);
 
-                                if (otrPolicyAuto && doOtr) //if set to auto, and is chatsecure, then start encryption
-                                {
-                                    //automatically attempt to turn on OTR after 1 second
-                                    mHandler.postDelayed(new Runnable() {
-                                        public void run() {
-                                            setOTRState(true);
-                                            scheduleRequery(DEFAULT_QUERY_INTERVAL);
+                        if (otrPolicyAuto && doOtr) //if set to auto, and is chatsecure, then start encryption
+                        {
+                            //automatically attempt to turn on OTR after 1 second
+                            mHandler.postDelayed(new Runnable() {
+                                public void run() {
+                                    setOTRState(true);
+                                    scheduleRequery(DEFAULT_QUERY_INTERVAL);
 
-                                        }
-                                    }, 100);
                                 }
-                            }
-
+                            }, 100);
                         }
                     }
-                    else
-                    {
-                        mActivity.finish();
-                    }
+
+                }
+
 
 
             }
