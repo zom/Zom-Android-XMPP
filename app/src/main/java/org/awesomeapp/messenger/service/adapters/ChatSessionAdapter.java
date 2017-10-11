@@ -1109,9 +1109,17 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                 // This is for fragments adjacent to the current one.  Therefore we can't use the existence of listeners
                 // as a filter on notifications.
                 if (!wasMessageSeen) {
-                    //reinstated body display here in the notification; perhaps add preferences to turn that off
-                    mStatusBarNotifier.notifyChat(mConnection.getProviderId(), mConnection.getAccountId(),
-                            getId(), bareUsername, nickname, body, false);
+
+                    if (isGroupChatSession())
+                    {
+                        mStatusBarNotifier.notifyGroupChat(mConnection.getProviderId(), mConnection.getAccountId(),
+                                getId(), bareUsername, nickname, body, false);
+                    }
+                    else {
+                        //reinstated body display here in the notification; perhaps add preferences to turn that off
+                        mStatusBarNotifier.notifyChat(mConnection.getProviderId(), mConnection.getAccountId(),
+                                getId(), bareUsername, nickname, body, false);
+                    }
                 }
             }
             else

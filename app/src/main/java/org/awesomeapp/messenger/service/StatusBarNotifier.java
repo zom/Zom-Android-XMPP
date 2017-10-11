@@ -65,18 +65,18 @@ public class StatusBarNotifier {
         mNotificationManager = (NotificationManager) context
                 .getSystemService(Context.NOTIFICATION_SERVICE);
         mHandler = new Handler();
-        mNotificationInfos = new HashMap<String, NotificationInfo>();
+        mNotificationInfos = new HashMap<>();
     }
 
     public void notifyChat(long providerId, long accountId, long chatId, String username,
-            String nickname, String msg, boolean lightWeightNotify) {
+                           String nickname, String msg, boolean lightWeightNotify) {
         if (!Preferences.isNotificationEnabled()) {
             if (DBG)
                 log("notification for chat " + username + " is not enabled");
             return;
         }
 
-       // msg = html2text(msg); // strip tags for html client inbound msgs
+        //msg = html2text(msg); // strip tags for html client inbound msgs
         Bitmap avatar = null;
 
 
@@ -92,6 +92,19 @@ public class StatusBarNotifier {
         intent.setDataAndType(ContentUris.withAppendedId(Imps.Chats.CONTENT_URI, chatId),Imps.Chats.CONTENT_ITEM_TYPE);
         intent.addCategory(ImApp.IMPS_CATEGORY);
         notify(username, title, snippet, msg, providerId, accountId, intent, lightWeightNotify, R.drawable.ic_discuss, avatar);
+    }
+
+    public void notifyGroupChat(long providerId, long accountId, long chatId, String groupname,
+            String nickname, String msg, boolean lightWeightNotify) {
+
+        Bitmap avatar = null;
+
+        String snippet = mContext.getString(R.string.new_messages_notify) + ' ' + nickname;// + ": " + msg;
+        Intent intent = getDefaultIntent(accountId, providerId);//new Intent(Intent.ACTION_VIEW);
+        intent.setAction(Intent.ACTION_VIEW);
+        intent.setDataAndType(ContentUris.withAppendedId(Imps.Chats.CONTENT_URI, chatId),Imps.Chats.CONTENT_ITEM_TYPE);
+        intent.addCategory(ImApp.IMPS_CATEGORY);
+        notify(groupname, nickname, snippet, msg, providerId, accountId, intent, lightWeightNotify, R.drawable.ic_discuss, avatar);
     }
 
     public void notifyError(String username, String error) {
