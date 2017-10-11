@@ -206,7 +206,7 @@ public class ConversationView {
     private boolean mIsVerified = false;
 
     private ConversationRecyclerViewAdapter mMessageAdapter;
-    private boolean isServiceUp;
+ //   private boolean isServiceUp;
     private IChatSession mCurrentChatSession;
 
     long mLastChatId=-1;
@@ -1220,21 +1220,8 @@ public class ConversationView {
     }
 
     public void startListening() {
-        if (!isServiceUp)
-            return;
-        mIsListening = true;
 
-        /*
-        if (mViewType == VIEW_TYPE_CHAT) {
-            Cursor cursor = getMessageCursor();
-            if (cursor == null) {
-                long chatId = getChatId();
-                if (chatId != -1)
-                    startQuery(chatId);
-            } else {
-                //requeryCursor();
-            }
-        }*/
+        mIsListening = true;
 
         registerChatListener();
         registerForConnEvents();
@@ -1534,11 +1521,6 @@ public class ConversationView {
 
                 if (mCurrentChatSession == null)
                     mCurrentChatSession = createChatSession();
-
-                if (mCurrentChatSession != null) {
-                    isServiceUp = true;
-                }
-
 
                 mHandler.post(mUpdateChatCallback);
 
@@ -2041,11 +2023,12 @@ public class ConversationView {
             log("registerChatListener " + mLastChatId);
         }
         try {
+
+            checkConnection();
+
             if (getChatSession() != null) {
                 getChatSession().registerChatListener(mChatListener);
             }
-
-            checkConnection();
 
             if (mConn != null)
             {
@@ -2955,13 +2938,11 @@ public class ConversationView {
         return mComposeMessage;
     }
 
+    /**
     public void onServiceConnected() {
-        if (!isServiceUp) {
             bindChat(mLastChatId, null, null);
             startListening();
-        }
-
-    }
+    }**/
 
     private void toggleAttachMenu ()
     {

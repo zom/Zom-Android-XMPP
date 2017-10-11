@@ -79,7 +79,7 @@ public final class Presence implements Parcelable {
     public Presence(Date lastSeen) {
         this(Presence.OFFLINE, null, null, null, CLIENT_TYPE_DEFAULT, null, null);
     }**/
-    
+
     public Presence(int status, String statusText, int clientType) {
         this(status, statusText, null, null, clientType);
     }
