@@ -1285,9 +1285,9 @@ public class Imps {
          */
         String CHAT_TYPE = "chat_type";
 
-        public final static int CHAT_TYPE_ACTIVE = -1;
-        public final static int CHAT_TYPE_MUTED = 1;
-        public final static int CHAT_TYPE_ARCHIVED = 2;
+        int CHAT_TYPE_ACTIVE = -1;
+        int CHAT_TYPE_MUTED = 1;
+        int CHAT_TYPE_ARCHIVED = 2;
 
     }
 

@@ -1112,8 +1112,10 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
                     if (isGroupChatSession())
                     {
-                        mStatusBarNotifier.notifyGroupChat(mConnection.getProviderId(), mConnection.getAccountId(),
-                                getId(), bareUsername, nickname, body, false);
+                        if (!isMuted()) {
+                            mStatusBarNotifier.notifyGroupChat(mConnection.getProviderId(), mConnection.getAccountId(),
+                                    getId(), bareUsername, nickname, body, false);
+                        }
                     }
                     else {
                         //reinstated body display here in the notification; perhaps add preferences to turn that off
@@ -1832,4 +1834,20 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
         return null;
     }
+
+    boolean isMuted() {
+        int type = Imps.ChatsColumns.CHAT_TYPE_ACTIVE;
+
+        String[] projection = {Imps.Chats.CHAT_TYPE};
+        Cursor c = mContentResolver.query(mChatURI, projection, null, null, null);
+        if (c != null) {
+            int colType = c.getColumnIndex(Imps.Chats.CHAT_TYPE);
+            if (colType != -1 && c.moveToFirst()) {
+                type = c.getInt(colType);
+            }
+            c.close();
+        }
+        return type == Imps.ChatsColumns.CHAT_TYPE_MUTED;
+    }
+
 }
