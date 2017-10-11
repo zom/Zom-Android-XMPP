@@ -565,29 +565,20 @@ public class GroupDisplayActivity extends BaseActivity {
     }
 
     boolean isMuted() {
-        int type = Imps.ChatsColumns.CHAT_TYPE_ACTIVE;
-
-        String[] projection = {Imps.Chats.CHAT_TYPE};
-        Uri chatUri = ContentUris.withAppendedId(Imps.Chats.CONTENT_URI, mLastChatId);
-        ContentResolver cr = getContentResolver();
-        Cursor c = cr.query(chatUri, projection, null, null, null);
-        if (c != null) {
-            int colType = c.getColumnIndex(Imps.Chats.CHAT_TYPE);
-            if (colType != -1 && c.moveToFirst()) {
-                type = c.getInt(colType);
-            }
-            c.close();
+        try {
+            return mSession.isMuted();
         }
-        return type == Imps.ChatsColumns.CHAT_TYPE_MUTED;
+        catch (RemoteException re)
+        {
+            return false;
+        }
     }
 
     public void setMuted(boolean muted) {
-        int type = muted ? Imps.ChatsColumns.CHAT_TYPE_MUTED : Imps.ChatsColumns.CHAT_TYPE_ACTIVE;
-
-        Uri chatUri = ContentUris.withAppendedId(Imps.Chats.CONTENT_URI, mLastChatId);
-        ContentValues values = new ContentValues();
-        values.put(Imps.Chats.CHAT_TYPE,type);
-        getContentResolver().update(chatUri,values,Imps.Chats.CONTACT_ID + "=" + mLastChatId,null);
+        try {
+            mSession.setMuted(muted);
+        }
+        catch (RemoteException re){}
     }
 
     private void confirmLeaveGroup ()

@@ -138,6 +138,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
 
     private long mContactId;
+    private boolean mIsMuted = false;
 
     public ChatSessionAdapter(ChatSession chatSession, ImConnectionAdapter connection, boolean isNewSession) {
 
@@ -164,6 +165,8 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             init((Contact) participant,isNewSession);
             initOtrChatSession(participant);
         }
+
+        initMuted();
         
     }
 
@@ -1836,19 +1839,31 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         return null;
     }
 
-    boolean isMuted() {
+    public void setMuted (boolean muted)
+    {
+        int newChatType = muted ? Imps.ChatsColumns.CHAT_TYPE_MUTED : Imps.ChatsColumns.CHAT_TYPE_ACTIVE;
+        ContentValues values = new ContentValues();
+        values.put(Imps.Chats.CHAT_TYPE,newChatType);
+        mContentResolver.update(mChatURI,values,null,null);
+        mIsMuted = muted;
+    }
+
+    public boolean isMuted() {
+        return mIsMuted;
+    }
+
+    private void initMuted () {
         int type = Imps.ChatsColumns.CHAT_TYPE_ACTIVE;
 
         String[] projection = {Imps.Chats.CHAT_TYPE};
         Cursor c = mContentResolver.query(mChatURI, projection, null, null, null);
         if (c != null) {
-            int colType = c.getColumnIndex(Imps.Chats.CHAT_TYPE);
-            if (colType != -1 && c.moveToFirst()) {
-                type = c.getInt(colType);
+            if (c.moveToFirst()) {
+                type = c.getInt(0);
             }
             c.close();
         }
-        return type == Imps.ChatsColumns.CHAT_TYPE_MUTED;
+        mIsMuted = type == Imps.ChatsColumns.CHAT_TYPE_MUTED;
     }
 
 }

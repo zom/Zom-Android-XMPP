@@ -157,5 +157,12 @@ interface IChatSession {
      * Get group chat owner
      **/
      Contact getGroupChatOwner();
+
+     /**
+     * Set muted
+     **/
+     void setMuted (boolean muted);
+
+     boolean isMuted ();
 }
 
