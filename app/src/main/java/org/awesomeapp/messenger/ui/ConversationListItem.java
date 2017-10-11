@@ -71,7 +71,8 @@ public class ConversationListItem extends FrameLayout {
                                                 Imps.Presence.PRESENCE_STATUS,
                                                 Imps.Presence.PRESENCE_CUSTOM_STATUS,
                                                 Imps.Chats.LAST_MESSAGE_DATE,
-                                                Imps.Chats.LAST_UNREAD_MESSAGE
+                                                Imps.Chats.LAST_UNREAD_MESSAGE,
+                                                Imps.Chats.CHAT_TYPE
 
     };
 
@@ -88,6 +89,8 @@ public class ConversationListItem extends FrameLayout {
     public static final int COLUMN_CONTACT_CUSTOM_STATUS = 9;
     public static final int COLUMN_LAST_MESSAGE_DATE = 10;
     public static final int COLUMN_LAST_MESSAGE = 11;
+    public static final int COLUMN_CHAT_TYPE = 12;
+
 
     static Drawable AVATAR_DEFAULT_GROUP = null;
     private PrettyTime sPrettyTime = null;
@@ -105,7 +108,6 @@ public class ConversationListItem extends FrameLayout {
 
     public void bind(ConversationViewHolder holder, long contactId, long providerId, long accountId, String address, String nickname, int contactType, String message, long messageDate, String messageType, int presence, String underLineText, boolean showChatMsg, boolean scrolling) {
 
-
         //applyStyleColors(holder);
 
         if (nickname == null)
@@ -117,11 +119,12 @@ public class ConversationListItem extends FrameLayout {
             nickname = nickname.split("@")[0].split("\\.")[0];
         }
 
+        /**
         if (Imps.Contacts.TYPE_GROUP == contactType) {
 
             String groupCountString = getGroupCount(getContext().getContentResolver(), contactId);
             nickname += groupCountString;
-        }
+        }**/
 
         if (!TextUtils.isEmpty(underLineText)) {
             // highlight/underline the word being searched 
