@@ -116,7 +116,7 @@ public class Omemo {
 
     public ArrayList<String> getFingerprints (BareJid jid, boolean autoload) throws CorruptedOmemoKeyException, SmackException, XMPPException.XMPPErrorException, InterruptedException
     {
-        mOmemoManager.requestDeviceListUpdateFor(jid);
+//        mOmemoManager.requestDeviceListUpdateFor(jid);
 
         try {
             mOmemoManager.buildSessionsWith(jid);
