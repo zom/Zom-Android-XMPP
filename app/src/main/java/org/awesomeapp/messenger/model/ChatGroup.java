@@ -111,7 +111,7 @@ public class ChatGroup extends ImEntity {
 
         // Clear the DB on first join
         if (mMembers.size() == 0) {
-            clearMembers(true);
+            //clearMembers(true);
         }
 
         Contact contact = mMembers.get(newContact.getAddress().getBareAddress());
