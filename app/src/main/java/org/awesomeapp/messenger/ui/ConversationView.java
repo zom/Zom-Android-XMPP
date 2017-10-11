@@ -283,9 +283,10 @@ public class ConversationView {
 
                         if (contact != null) {
 
-                            if (contact.getPresence() != null && contact.getPresence().getStatus() == Presence.AVAILABLE) {
+                            if (contact.getPresence() != null) {
                                 mLastSeen = contact.getPresence().getLastSeen();
-                                mActivity.updateLastSeen(mLastSeen);
+                                if (mLastSeen != null)
+                                    mActivity.updateLastSeen(mLastSeen);
                             }
 
                             if (!TextUtils.isEmpty(contact.getForwardingAddress())) {
@@ -338,6 +339,8 @@ public class ConversationView {
 
             }
             catch (RemoteException re){}
+
+            mApp.dismissChatNotification(mProviderId, mRemoteAddress);
 
         }
         else
