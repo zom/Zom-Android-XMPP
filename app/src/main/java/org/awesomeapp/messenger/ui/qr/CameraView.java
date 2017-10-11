@@ -85,8 +85,12 @@ AutoFocusCallback {
 				params.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
 			}
 
-			params.setPictureSize(320,240);
-			params.setPreviewSize(320,240);
+			List<Size> previewSizes = camera.getParameters().getSupportedPreviewSizes();
+
+			List<Size> pictureSizes = camera.getParameters().getSupportedPictureSizes();
+
+            params.setPreviewSize(previewSizes.get(1).width,previewSizes.get(1).height);
+			params.setPictureSize(pictureSizes.get(1).width,pictureSizes.get(1).height);
 			camera.setParameters(params);
 
 			camera.setPreviewDisplay(holder);

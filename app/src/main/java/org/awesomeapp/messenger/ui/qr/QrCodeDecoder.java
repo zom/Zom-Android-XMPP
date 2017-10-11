@@ -100,6 +100,10 @@ public class QrCodeDecoder implements PreviewConsumer, PreviewCallback {
 					} catch (OutOfMemoryError e2) {
 						continue;
 					}
+					catch (NullPointerException e3) {
+						continue;
+					}
+
 					finally {
 						reader.reset();
 					}
