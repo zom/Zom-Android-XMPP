@@ -1,66 +1,45 @@
 sudo: required
-
-install:
-  - echo y | android update sdk -u -a -t tools
-  - echo y | android update sdk -u -a -t platform-tools
-  - echo y | android update sdk -u -a -t build-tools-25.0.2
-  - echo y | android update sdk -u -a -t android-25
-  - echo y | android update sdk -u -a -t extra-google-m2repository
-  - echo y | android update sdk -u -a -t extra-android-m2repository
-
 language: android
+jdk: oraclejdk8
 
 env:
   global:
-    # switch glibc to a memory conserving mode
-    - MALLOC_ARENA_MAX=2
-  matrix:
-    - ANDROID_EMULATOR="android-25" ANDROID_ABI="google_apis/armeabi-v7a" ANDROID_PKGS="addon-google_apis-google-25,sys-img-armeabi-v7a-google_apis-25"
-
-
-jdk:
-  # the release build infrastructure uses OpenJDK from Debian
-  #- openjdk7
-  # many developers use the Oracle JDK
-  # (disabled because Travis cannot reliably start the emulator with these)
-  - oraclejdk8
-  #- oraclejdk7
+    - QEMU_AUDIO_DRV=none # sometimes the emulator audio causes trouble
+    - ADB_INSTALL_TIMEOUT=5 # minutes
 
 android:
   components:
-    - tools
+    - tools # to get the new `repository-11.xml`
+    - tools # see https://github.com/travis-ci/travis-ci/issues/6040#issuecomment-219367943)
     - platform-tools
-    - extra-android-m2repository
-    - build-tools-25.0.2
-    - android-sdk-license-c81a61d9
+    - build-tools-25.0.0
+    - android-22
     - android-25
     - extra-android-m2repository
     - extra-google-m2repository
-    - extra-android-support
     - extra-google-google_play_services
+    - addon-google_apis-google-25
+    - sys-img-armeabi-v7a-android-22
   licenses:
-    # only approve the non-Google licenses
-    - android-sdk-license-c81a61d9
     - 'android-sdk-preview-license-52d11cd2'
     - 'android-sdk-license-.+'
-
-cache: false
+    - 'google-gdk-license-.+'
 
 before_install:
-  - bash .travis-android-license-bugfix.sh
-  - echo y | android update sdk --no-ui --all --filter ${ANDROID_EMULATOR},${ANDROID_PKGS},build-tools-25.0.2
+  - mkdir -p "$ANDROID_HOME/licenses"
+  - echo -e "\n8933bad161af4178b1185d1a37fbf41ea5269c55" > "$ANDROID_HOME/licenses/android-sdk-license"
+  - echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > "$ANDROID_HOME/licenses/android-sdk-preview-license"
+  - chmod +x gradlew
+  - ./gradlew dependencies || true
 
-before_script:
-  - echo no | android create avd --force -n test -t "${ANDROID_EMULATOR}" --abi "${ANDROID_ABI}"
+script:
+  - ./gradlew build -PdisablePreDex
+  - echo no | android create avd --force -n test -t android-22 --abi armeabi-v7a
   - emulator -avd test -no-audio -no-window &
   - android-wait-for-emulator
   - adb shell input keyevent 82 &
+  - ./gradlew connectedCheck -PdisablePreDex
 
-script:
-  # 'assemble' everything and run all checks that do not require a device/emulator
-  - ./gradlew build -PdisablePreDex
 
 after_failure:
   - find * -name lint-results.xml | xargs cat
-
-
