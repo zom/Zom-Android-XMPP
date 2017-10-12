@@ -7,6 +7,16 @@ env:
     - QEMU_AUDIO_DRV=none # sometimes the emulator audio causes trouble
     - ADB_INSTALL_TIMEOUT=5 # minutes
 
+addons:
+  apt:
+    sources:
+      - sourceline: 'ppa:fdroid/fdroidserver'
+    packages:
+      - fdroidserver
+      - openssh-client
+      - python3-qrcode
+      - rsync
+
 android:
   components:
     - tools # to get the new `repository-11.xml`
@@ -40,6 +50,9 @@ script:
   - adb shell input keyevent 82 &
   - ./gradlew connectedCheck -PdisablePreDex
 
+after_success:
+  - "test -z \"$DEBUG_KEYSTORE\" && exit"
+  - ./nightly/deploy
 
 after_failure:
   - find * -name lint-results.xml | xargs cat

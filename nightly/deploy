@@ -1,0 +1,71 @@
+#!/bin/bash
+
+set -e
+set -x
+
+major=`sed -n 's,.*versionCode *\([0-9][0-9]*\).*,\1,p' app/build.gradle | cut -b1-3`
+count=`git rev-list --first-parent --count HEAD`
+sed -i "s,versionCode *[0-9][0-9]*.*,versionCode `printf '%d%05d' $major $count`," app/build.gradle
+
+repo_git_base=${TRAVIS_REPO_SLUG}-nightly
+repo_base=https://github.com/${repo_git_base}
+repo_url=https://raw.githubusercontent.com/${repo_git_base}/master/fdroid/repo
+archive_url=https://raw.githubusercontent.com/${repo_git_base}/master/fdroid/archive
+mkdir -p $HOME/.android
+keystore=$HOME/.android/debug.keystore
+chmod 0600 nightly/config.py
+echo "repo_name = '$repo_git_base'"              >> nightly/config.py
+echo "repo_url = '$repo_url'"                    >> nightly/config.py
+echo "archive_name = '$repo_git_base archive'"   >> nightly/config.py
+echo "archive_url = '$archive_url'"              >> nightly/config.py
+echo "servergitmirrors = 'git@github.com:$repo_git_base'" >> nightly/config.py
+echo "keystore = '$keystore'" >> nightly/config.py
+
+set +x # do not show contents of secret variables!
+echo $DEBUG_KEYSTORE | base64 --decode --ignore-garbage > $keystore
+set -x
+
+mkdir nightly/repo/
+mv app/build/outputs/apk/Zom-*zomrelease-debug.apk  nightly/repo/
+cd nightly
+
+pw=android
+alias=androiddebugkey
+keytool -v -importkeystore \
+        -srckeystore $keystore -srcalias $alias -srcstorepass $pw -srckeypass $pw \
+        -destkeystore keystore.p12 -destalias $alias -deststorepass $pw -destkeypass $pw -deststoretype PKCS12
+
+ssh_private_key=$HOME/.ssh/id_rsa
+mkdir -p $(dirname $ssh_private_key)
+openssl pkcs12 -in keystore.p12 -out key.pem -passin pass:$pw -passout pass:$pw
+openssl rsa -in key.pem -out ${ssh_private_key} -passin pass:$pw
+chmod 600 ${ssh_private_key}
+ssh-keygen -y -f ${ssh_private_key} > ${ssh_private_key}.pub
+echo "SSH public deploy key:"
+cat  ${ssh_private_key}.pub
+eval $(ssh-agent -s)
+ssh-add ${ssh_private_key}
+
+if git clone $repo_base git-mirror; then
+    cd git-mirror
+    git remote rm origin
+    qr $repo_url > qr.png
+    echo "#  $repo_git_base" > README.md
+    echo "[![$repo_url](qr.png)]($repo_url)" >> README.md
+    printf "\n\nLast updated: " >> README.md
+    date >> README.md
+    git add README.md
+    git config user.email "$TRAVIS_REPO_SLUG"
+    git config user.name "$TRAVIS_REPO_SLUG"
+    git commit README.md -m README
+    cd ..
+fi
+if [ -d git-mirror/fdroid/repo ]; then
+    rsync -axv git-mirror/fdroid/repo/ repo/
+fi
+
+fdroid update --rename-apks --create-metadata
+
+ssh-add -l
+echo -e "Host *\n\tStrictHostKeyChecking no\n\n" >> ~/.ssh/config
+fdroid server update --verbose
