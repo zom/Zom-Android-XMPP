@@ -1,12 +1,10 @@
 <AppUpdater>
   <update>
-    <latestVersion>15.2.0.003</latestVersion>
-    <url>https://github.com/zom/Zom-Android/releases/download/15.2.0-RC-3/Zom-15.2.0-RC-3-zomrelease-release.apk</url>
+    <latestVersion>15.3.0.006</latestVersion>
+    <url>https://github.com/zom/Zom-Android/releases/download/15.3.0-beta-6/Zom-15.3.0-beta-6-zomrelease-release.apk</url>
     <releaseNotes>
-- UPDATED: Improved private messages upport
+- UPDATED: Improved group support
 - FIXES: Issues with adding and approving new friends
-- UPDATED: New faster, more reliable photo and voice message sharing
-- UPDATED: Translations from many language
     </releaseNotes>
   </update>
 </AppUpdater>
