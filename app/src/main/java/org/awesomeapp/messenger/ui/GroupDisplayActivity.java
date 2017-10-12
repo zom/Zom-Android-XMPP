@@ -566,7 +566,10 @@ public class GroupDisplayActivity extends BaseActivity {
 
     boolean isMuted() {
         try {
-            return mSession.isMuted();
+            if (mSession != null)
+                return mSession.isMuted();
+            else
+                return false;
         }
         catch (RemoteException re)
         {

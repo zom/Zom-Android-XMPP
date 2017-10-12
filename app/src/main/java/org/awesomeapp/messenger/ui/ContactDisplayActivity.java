@@ -22,6 +22,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.MainActivity;
@@ -172,8 +173,6 @@ public class ContactDisplayActivity extends BaseActivity {
             ImageView btnQrShare = (ImageView) findViewById(R.id.qrshare);
             ImageView iv = (ImageView)findViewById(R.id.qrcode);
             TextView tv = (TextView)findViewById(R.id.tvFingerprint);
-
-            Button btnVerify = (Button)findViewById(R.id.btnVerify);
 
             ArrayList<String> fingerprints = OtrChatManager.getInstance().getRemoteKeyFingerprints(mUsername);
 
@@ -333,7 +332,24 @@ public class ContactDisplayActivity extends BaseActivity {
 
     public void startChat ()
     {
-        boolean startCrypto = true;
+        try {
+            IChatSessionManager manager = mConn.getChatSessionManager();
+            IChatSession session = manager.getChatSession(mUsername);
+            if (session != null)
+            {
+                Intent intent = new Intent(ContactDisplayActivity.this, ConversationDetailActivity.class);
+                intent.putExtra("id", mContactId);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+                finish();
+                return;
+            }
+            else
+            {
+                Toast.makeText(this,getString(R.string.message_waiting_for_friend),Toast.LENGTH_LONG).show();
+            }
+        }
+        catch (RemoteException re){}
 
         new ChatSessionInitTask(((ImApp)getApplication()),mProviderId, mAccountId, Imps.Contacts.TYPE_NORMAL)
         {
@@ -345,13 +361,15 @@ public class ContactDisplayActivity extends BaseActivity {
                     intent.putExtra("id", chatId);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
+                    finish();
                 }
+
 
                 super.onPostExecute(chatId);
             }
         }.executeOnExecutor(ImApp.sThreadPoolExecutor,new Contact(new XmppAddress(mUsername)));
 
-        finish();
+
 
     }
 

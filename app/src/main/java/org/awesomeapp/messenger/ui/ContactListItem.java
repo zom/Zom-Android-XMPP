@@ -248,6 +248,11 @@ public class ContactListItem extends FrameLayout {
         }
         else if (subStatus == Imps.ContactsColumns.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING)
         {
+            holder.mLine2.setText(getContext().getString(R.string.title_pending));
+        }
+        else if (subType == Imps.ContactsColumns.SUBSCRIPTION_TYPE_NONE || subType == Imps.ContactsColumns.SUBSCRIPTION_TYPE_REMOVE)
+        {
+            holder.mLine2.setText(getContext().getString(R.string.recipient_blocked_the_user));
 
         }
         else {
@@ -352,7 +357,6 @@ public class ContactListItem extends FrameLayout {
 
     void declineSubscription() {
 
-
         ImApp app = ((ImApp)((Activity)getContext()).getApplication());
         IImConnection mConn = app.getConnection(mHolder.mProviderId, mHolder.mAccountId);
 
@@ -361,6 +365,7 @@ public class ContactListItem extends FrameLayout {
             try {
                 IContactListManager manager = mConn.getContactListManager();
                 manager.declineSubscription(new Contact(new XmppAddress(address),nickname, Imps.Contacts.TYPE_NORMAL));
+                manager.removeContact(address);
             } catch (RemoteException e) {
                 // mHandler.showServiceErrorAlert(e.getLocalizedMessage());
                 LogCleaner.error(ImApp.LOG_TAG, "decline sub error",e);

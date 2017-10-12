@@ -111,6 +111,7 @@ import org.awesomeapp.messenger.service.IContactListManager;
 import org.awesomeapp.messenger.service.IImConnection;
 import org.awesomeapp.messenger.service.ISubscriptionListener;
 import org.awesomeapp.messenger.service.ImServiceConstants;
+import org.awesomeapp.messenger.tasks.AddContactAsyncTask;
 import org.awesomeapp.messenger.tasks.ChatSessionInitTask;
 import org.awesomeapp.messenger.ui.MessageListItem.DeliveryState;
 import org.awesomeapp.messenger.ui.MessageListItem.EncryptionState;
@@ -1293,15 +1294,16 @@ public class ConversationView {
 
             public void run () {
 
-                if (mSubscriptionType == Imps.Contacts.SUBSCRIPTION_TYPE_FROM
-                        && mSubscriptionStatus == Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING)
+                if (mSubscriptionType == Imps.Contacts.SUBSCRIPTION_TYPE_NONE
+                || (mSubscriptionType == Imps.Contacts.SUBSCRIPTION_TYPE_FROM
+                        && mSubscriptionStatus == Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING))
                 {
                     mActivity.findViewById(R.id.waiting_view).setVisibility(View.VISIBLE);
                     mActivity.findViewById(R.id.waiting_refresh).setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            reapproveSubscription();
-
+                           // reapproveSubscription();
+                            resendFriendRequest();
                         }
                     });
                 }
@@ -1322,6 +1324,12 @@ public class ConversationView {
                 }
             }
         });
+
+    }
+
+    private void resendFriendRequest ()
+    {
+        new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).execute(mRemoteAddress, null, null);
 
     }
 
@@ -2135,7 +2143,7 @@ public class ConversationView {
                 }
 
 
-                mActivity.findViewById(R.id.waiting_view).setVisibility(View.GONE);
+    //            mActivity.findViewById(R.id.waiting_view).setVisibility(View.GONE);
 
 
             }

@@ -75,9 +75,6 @@ public class AddContactAsyncTask extends AsyncTask<String, Void, Integer> {
                     OtrAndroidKeyManagerImpl.getInstance(mApp).verifyUser(address, otrFingperint);
                 }
 
-                //Contact contact = new Contact(new XmppAddress(address),address);
-                //IContactListManager contactListMgr = conn.getContactListManager();
-                //contactListMgr.approveSubscription(contact);
             }
 
         } catch (RemoteException re) {
