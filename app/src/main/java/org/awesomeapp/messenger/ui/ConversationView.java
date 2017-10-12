@@ -1290,6 +1290,9 @@ public class ConversationView {
     private void showSubscriptionUI ()
     {
 
+        if (isGroupChat())
+            return;
+        
         mHandler.post(new Runnable() {
 
             public void run () {
