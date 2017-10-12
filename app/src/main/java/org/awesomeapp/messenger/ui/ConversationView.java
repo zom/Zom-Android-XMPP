@@ -1292,7 +1292,7 @@ public class ConversationView {
 
         if (isGroupChat())
             return;
-        
+
         mHandler.post(new Runnable() {
 
             public void run () {
