@@ -1181,7 +1181,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
                             if (N == 0) {
 
-
+                                if (!isMuted())
                                 mStatusBarNotifier.notifyChat(mConnection.getProviderId(), mConnection.getAccountId(),
                                         getId(), bareUsername, nickname, service.getString(R.string.file_notify_text, mimeType, nickname), false);
                             }
@@ -1559,8 +1559,8 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
                         if (N == 0) {
                             String nickname = getNickName(from);
-
-                            mStatusBarNotifier.notifyChat(mConnection.getProviderId(), mConnection.getAccountId(),
+                            if (!isMuted())
+                                mStatusBarNotifier.notifyChat(mConnection.getProviderId(), mConnection.getAccountId(),
                                     getId(), from, nickname,service.getString(R.string.file_notify_text,mimeType,nickname) , false);
                         }
                     }
@@ -1704,7 +1704,8 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                         String nickname = getNickName(from);
 
                         //reinstated body display here in the notification; perhaps add preferences to turn that off
-                        mStatusBarNotifier.notifyChat(mConnection.getProviderId(), mConnection.getAccountId(),
+                        if (!isMuted())
+                            mStatusBarNotifier.notifyChat(mConnection.getProviderId(), mConnection.getAccountId(),
                                 getId(), from, nickname, "Incoming file request", false);
                     }
                 }
