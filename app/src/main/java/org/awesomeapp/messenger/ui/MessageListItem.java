@@ -176,6 +176,9 @@ public class MessageListItem extends FrameLayout {
     public void bindIncomingMessage(MessageViewHolder holder, int id, int messageType, String address, String nickname, final String mimeType, final String body, Date date, Markup smileyRes,
             boolean scrolling, EncryptionState encryption, boolean showContact, int presenceStatus) {
 
+        if (mAudioPlayer != null)
+            mAudioPlayer.stop();
+
         mHolder = holder;
         applyStyleColors();
         mHolder.mTextViewForMessages.setVisibility(View.VISIBLE);
@@ -673,6 +676,9 @@ public class MessageListItem extends FrameLayout {
     public void bindOutgoingMessage(MessageViewHolder holder, int id, int messageType, String address, final String mimeType, final String body, Date date, Markup smileyRes, boolean scrolling,
             DeliveryState delivery, EncryptionState encryption) {
 
+        if (mAudioPlayer != null)
+            mAudioPlayer.stop();
+
         mHolder = holder;
         applyStyleColors();
 
@@ -1134,4 +1140,6 @@ public class MessageListItem extends FrameLayout {
             return getResources().getConfiguration().locale;
         }
     }
+
+
 }
