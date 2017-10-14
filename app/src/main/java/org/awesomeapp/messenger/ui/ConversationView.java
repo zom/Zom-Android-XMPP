@@ -1332,7 +1332,9 @@ public class ConversationView {
 
     private void resendFriendRequest ()
     {
-        new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).execute(mRemoteAddress, null, null);
+        //if not group chat, then send the contact another friend request
+        if (!isGroupChat())
+            new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).execute(mRemoteAddress, null, null);
 
     }
 
