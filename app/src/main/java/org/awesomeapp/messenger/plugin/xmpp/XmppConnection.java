@@ -93,6 +93,7 @@ import org.jivesoftware.smackx.muc.DiscussionHistory;
 import org.jivesoftware.smackx.muc.InvitationListener;
 import org.jivesoftware.smackx.muc.MucConfigFormManager;
 import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.jivesoftware.smackx.muc.MultiUserChatException;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.smackx.muc.Occupant;
 import org.jivesoftware.smackx.muc.ParticipantStatusListener;
@@ -584,6 +585,8 @@ public class XmppConnection extends ImConnection {
         private PresenceListener mParticipantListener;
         private MessageListener mMessageListener;
 
+
+
         public MultiUserChat getMultiUserChat (String chatRoomJid)
         {
             return mMUCs.get(chatRoomJid);
@@ -684,8 +687,8 @@ public class XmppConnection extends ImConnection {
 
                 if (!muc.isJoined()) {
                     DiscussionHistory history = new DiscussionHistory();
-                    history.setMaxStanzas(20);
                     muc.createOrJoin(Resourcepart.from(nickname), null, history, SmackConfiguration.getDefaultPacketReplyTimeout());
+                    loadOldMessages(muc);
                 }
 
 
@@ -711,10 +714,9 @@ public class XmppConnection extends ImConnection {
                 try {
                     if (!muc.isJoined()) {
                         DiscussionHistory history = new DiscussionHistory();
-                        history.setMaxStanzas(20);
                         muc.createOrJoin(Resourcepart.from(nickname), null, history, SmackConfiguration.getDefaultPacketReplyTimeout());
                         mucCreated = true;
-
+                        loadOldMessages(muc);
                     }
                     else
                     {
@@ -939,8 +941,8 @@ public class XmppConnection extends ImConnection {
                 MultiUserChat muc = mucMgr.getMultiUserChat( JidCreate.entityBareFrom(chatRoomJid));
 
                 DiscussionHistory history = new DiscussionHistory();
-                history.setMaxStanzas(20);
                 muc.join(Resourcepart.from(mUser.getName()), null, history, SmackConfiguration.getDefaultPacketReplyTimeout());
+                loadOldMessages(muc);
 
                 if (TextUtils.isEmpty(subject))
                     subject = room;
@@ -960,6 +962,7 @@ public class XmppConnection extends ImConnection {
             }
 
         }
+
 
         public void setGroupSubject(final ChatGroup group, final String subject) {
 
@@ -2575,8 +2578,8 @@ public class XmppConnection extends ImConnection {
                 {
                     if (!muc.isJoined()) {
                         DiscussionHistory history = new DiscussionHistory();
-                        history.setMaxStanzas(20);
                         muc.join(Resourcepart.from(mUser.getName()), null, history, SmackConfiguration.getDefaultPacketReplyTimeout());
+                        loadOldMessages(muc);
                     }
 
                     msgXmpp.addExtension(new DeliveryReceiptRequest());
@@ -4707,5 +4710,12 @@ public class XmppConnection extends ImConnection {
 
             }
         }
+    }
+
+    public void loadOldMessages (MultiUserChat muc) throws MultiUserChatException, InterruptedException
+    {
+        org.jivesoftware.smack.packet.Message oldMessage = null;
+        while ((oldMessage = muc.nextMessage(2000)) != null)
+            handleMessage(oldMessage, false);
     }
 }
