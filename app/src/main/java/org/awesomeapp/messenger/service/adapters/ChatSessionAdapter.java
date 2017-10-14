@@ -1117,8 +1117,16 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                     if (isGroupChatSession())
                     {
                         if (!isMuted()) {
+                            ChatGroup group = (ChatGroup)ses.getParticipant();
+                            try
+                            {
+                                contact = mConnection.getContactListManager().getContactByAddress(nickname);
+                                nickname = contact.getName();
+                            }
+                            catch (Exception e){}
+
                             mStatusBarNotifier.notifyGroupChat(mConnection.getProviderId(), mConnection.getAccountId(),
-                                    getId(), bareUsername, nickname, body, false);
+                                    getId(), group.getName(), nickname, body, false);
                         }
                     }
                     else {

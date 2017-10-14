@@ -680,6 +680,15 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
         }
     }
 
+    public void dismissNotification(long providerId) {
+        if (mImService != null) {
+            try {
+                mImService.dismissNotifications(providerId);
+            } catch (RemoteException e) {
+            }
+        }
+    }
+
     /**
     private void fetchActiveConnections() {
         if (mImService != null)

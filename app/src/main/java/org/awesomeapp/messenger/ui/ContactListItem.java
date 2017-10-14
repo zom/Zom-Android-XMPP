@@ -365,6 +365,7 @@ public class ContactListItem extends FrameLayout {
             try {
                 IContactListManager manager = mConn.getContactListManager();
                 manager.declineSubscription(new Contact(new XmppAddress(address),nickname, Imps.Contacts.TYPE_NORMAL));
+                app.dismissChatNotification(mHolder.mProviderId,address);
                 manager.removeContact(address);
             } catch (RemoteException e) {
                 // mHandler.showServiceErrorAlert(e.getLocalizedMessage());

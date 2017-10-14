@@ -74,7 +74,6 @@ public abstract class ContactListManager {
     /**
      * Creates a new ContactListManager.
      *
-     * @param conn The underlying protocol connection.
      */
     protected ContactListManager() {
         mContactLists = new Vector<ContactList>();
@@ -180,7 +179,7 @@ public abstract class ContactListManager {
      * Creates a temporary contact. It's usually used when we want to create a
      * chat with someone not in the list.
      *
-     * @param address the address of the temporary contact.
+     * @param addresses the address of the temporary contact.
      * @return the created temporary contact
      */
     public abstract Contact[] createTemporaryContacts(String[] addresses);

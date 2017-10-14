@@ -29,6 +29,7 @@ import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.ui.legacy.DatabaseUtils;
 import org.awesomeapp.messenger.util.SystemServices;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.awesomeapp.messenger.MainActivity;
@@ -45,6 +46,7 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
+import android.text.TextUtils;
 
 public class StatusBarNotifier {
     private static final boolean DBG = false;
@@ -57,7 +59,7 @@ public class StatusBarNotifier {
     private NotificationManager mNotificationManager;
 
     private Handler mHandler;
-    private HashMap<String, NotificationInfo> mNotificationInfos;
+    private ArrayList<NotificationInfo> mNotificationInfos;
     private long mLastSoundPlayedMs;
 
     public StatusBarNotifier(Context context) {
@@ -65,7 +67,7 @@ public class StatusBarNotifier {
         mNotificationManager = (NotificationManager) context
                 .getSystemService(Context.NOTIFICATION_SERVICE);
         mHandler = new Handler();
-        mNotificationInfos = new HashMap<>();
+        mNotificationInfos = new ArrayList<>();
     }
 
     public void notifyChat(long providerId, long accountId, long chatId, String username,
@@ -99,12 +101,12 @@ public class StatusBarNotifier {
 
         Bitmap avatar = null;
 
-        String snippet = mContext.getString(R.string.new_messages_notify) + ' ' + nickname;// + ": " + msg;
+        String snippet = mContext.getString(R.string.new_messages_notify) + ' ' + groupname;// + ": " + msg;
         Intent intent = getDefaultIntent(accountId, providerId);//new Intent(Intent.ACTION_VIEW);
         intent.setAction(Intent.ACTION_VIEW);
         intent.setDataAndType(ContentUris.withAppendedId(Imps.Chats.CONTENT_URI, chatId),Imps.Chats.CONTENT_ITEM_TYPE);
         intent.addCategory(ImApp.IMPS_CATEGORY);
-        notify(groupname, nickname, snippet, msg, providerId, accountId, intent, lightWeightNotify, R.drawable.ic_discuss, avatar);
+        notify(groupname, groupname, snippet, nickname + ": " + msg, providerId, accountId, intent, lightWeightNotify, R.drawable.ic_discuss, avatar);
     }
 
     public void notifyError(String username, String error) {
@@ -201,37 +203,25 @@ public class StatusBarNotifier {
 
     public void dismissNotifications(long providerId) {
 
-        synchronized (mNotificationInfos) {
-            NotificationInfo info = mNotificationInfos.get(providerId);
-            if (info != null) {
+        Object[] infos = mNotificationInfos.toArray();
+
+        for (Object nInfo : infos) {
+            NotificationInfo info = (NotificationInfo)nInfo;
+            if (info.mProviderId == providerId) {
                 mNotificationManager.cancel(info.computeNotificationId());
-                mNotificationInfos.remove(providerId);
+                mNotificationInfos.remove(info);
             }
         }
     }
 
     public void dismissChatNotification(long providerId, String username) {
-        NotificationInfo info;
-        boolean removed;
-        synchronized (mNotificationInfos) {
-            info = mNotificationInfos.get(username);
-            if (info == null) {
-                return;
-            }
-            removed = info.removeItem(username);
-        }
+        Object[] infos = mNotificationInfos.toArray();
 
-        if (removed) {
-            if (info.getMessage() == null) {
-                if (DBG)
-                    log("dismissChatNotification: removed notification for " + providerId);
+        for (Object nInfo : infos) {
+            NotificationInfo info = (NotificationInfo)nInfo;
+            if (info.getSender() != null && info.getSender().equals(username)) {
                 mNotificationManager.cancel(info.computeNotificationId());
-            } else {
-                if (DBG) {
-                    log("cancelNotify: new notification" + " mTitle=" + info.getTitle()
-                        + " mMessage=" + info.getMessage() + " mIntent=" + info.getIntent());
-                }
-                mNotificationManager.cancel(info.computeNotificationId());
+                mNotificationInfos.remove(info);
             }
         }
     }
@@ -243,7 +233,7 @@ public class StatusBarNotifier {
 
         NotificationInfo info;
                 info = new NotificationInfo(-1, -1);
-            info.addItem("", title, message, intent);
+            info.setInfo("", title, message, null, intent);
 
         mNotificationManager.notify(info.computeNotificationId(),
                 info.createNotification(tickerText, lightWeightNotify, R.drawable.ic_stat_status, null, intent));
@@ -262,15 +252,35 @@ public class StatusBarNotifier {
 
         intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP|Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-        NotificationInfo info;
+        NotificationInfo info = null;
+
+        StringBuffer sbMessage = new StringBuffer();
 
         synchronized (mNotificationInfos) {
-            info = mNotificationInfos.get(sender);
+
+            for (NotificationInfo nInfo : mNotificationInfos)
+            {
+                if (nInfo.getSender() != null && nInfo.getSender().equals(sender))
+                {
+                    info = nInfo;
+                    if (info.getBigMessage() != null)
+                        sbMessage.append(info.getBigMessage()+'\n');
+                    else
+                        sbMessage.append(info.getMessage()+'\n');
+                    break;
+                }
+            }
+
             if (info == null) {
                 info = new NotificationInfo(providerId, accountId);
-                mNotificationInfos.put(sender, info);
+                mNotificationInfos.add(info);
+                info.setInfo(sender, title, message, null, intent);
+
             }
-            info.addItem(sender, title, message, intent);
+            else {
+                sbMessage.append(message);
+                info.setInfo(sender, title, message, sbMessage.toString(), intent);
+            }
         }
 
         mNotificationManager.notify(info.computeNotificationId(),
@@ -311,77 +321,37 @@ public class StatusBarNotifier {
     private static int UNIQUE_INT_PER_CALL = 10000;
 
     class NotificationInfo {
-        class Item {
-            String mTitle;
-            String mMessage;
-            Intent mIntent;
 
-            public Item(String title, String message, Intent intent) {
-                mTitle = title;
-                mMessage = message;
-                mIntent = intent;
-            }
-        }
-
-
-      // private HashMap<String, Item> mItems;
-
-        private Item lastItem;
         private long mProviderId;
         private long mAccountId;
+        private String mTitle;
+        private String mMessage;
+        private String mBigMessage;
+        private Intent mIntent;
+        private String mSender;
 
         public NotificationInfo(long providerId, long accountId) {
             mProviderId = providerId;
             mAccountId = accountId;
-           // mItems = new HashMap<String, Item>();
         }
 
         public int computeNotificationId() {
-            if (lastItem == null)
+            if (mTitle == null)
                 return (int)mProviderId;
-            return lastItem.mTitle.hashCode();
+            return (mSender).hashCode();
         }
 
-        public synchronized void addItem(String sender, String title, String message, Intent intent) {
-            /*
-            Item item = mItems.get(sender);
-            if (item == null) {
-                item = new Item(title, message, intent);
-                mItems.put(sender, item);
-            } else {
-                item.mTitle = title;
-                item.mMessage = message;
-                item.mIntent = intent;
-            }*/
-            lastItem = new Item(title, message, intent);
+        public void setInfo(String sender, String title, String message, String bigMessage, Intent intent) {
+            mTitle = title;
+            mMessage = message;
+            mIntent = intent;
+            mSender = sender;
+            mBigMessage = bigMessage;
         }
 
-        public synchronized boolean removeItem(String sender) {
-            /*
-            Item item = mItems.remove(sender);
-            if (item != null) {
-                return true;
-            }*/
-            return true;
-        }
 
         public Notification createNotification(String tickerText, boolean lightWeightNotify, int icon, Bitmap largeIcon, Intent intent) {
             NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext);
-
-         //   Intent intent = getDefaultIntent();
-/**
-            if (lastItem.mIntent != null)
-            {
-                intent.setAction(lastItem.mIntent.getAction());
-                intent.setDataAndType(lastItem.mIntent.getData(), lastItem.mIntent.getType());
-
-                if (lastItem.mIntent.getExtras() != null)
-                    intent.putExtras(lastItem.mIntent.getExtras());
-
-                intent.setFlags(lastItem.mIntent.getFlags());
-
-            }*/
-
 
             builder
                 .setSmallIcon(icon)
@@ -392,6 +362,19 @@ public class StatusBarNotifier {
                 .setContentText(getMessage())
                 .setContentIntent(PendingIntent.getActivity(mContext, UNIQUE_INT_PER_CALL++, intent, PendingIntent.FLAG_UPDATE_CURRENT))
                 .setAutoCancel(true);
+
+            if (!TextUtils.isEmpty(mBigMessage))
+            {
+                /*
+         * Sets the big view "big text" style and supplies the
+         * text (the user's reminder message) that will be displayed
+         * in the detail area of the expanded notification.
+         * These calls are ignored by the support library for
+         * pre-4.1 devices.
+         */
+                builder.setStyle(new NotificationCompat.BigTextStyle()
+                    .bigText(mBigMessage));
+            }
 
             if (largeIcon != null)
                 builder.setLargeIcon(largeIcon);
@@ -415,49 +398,27 @@ public class StatusBarNotifier {
             return intent;
         }
 
+        public String getSender () {
+            return mSender;
+        }
+
         public String getTitle() {
-            /*
-            int count = mItems.size();
-            if (count == 0) {
-                return null;
-            } else if (count == 1) {
-                Item item = mItems.values().iterator().next();
-                return item.mTitle;
-            } else {
-                return mContext.getString(R.string.newMessages_label, Imps.Provider
-                        .getProviderNameForId(mContext.getContentResolver(), mProviderId));
-            }*/
-            return lastItem.mTitle;
+                        return mTitle;
+        }
+
+        public String getBigMessage ()
+        {
+            return mBigMessage;
         }
 
         public String getMessage() {
-            /*
-            int count = mItems.size();
-            if (count == 0) {
-                return null;
-            } else if (count == 1) {
-                Item item = mItems.values().iterator().next();
-                return item.mMessage;
-            } else {
-                return mContext.getString(R.string.num_unread_chats, count);
-            }*/
 
-            return lastItem.mMessage;
+            return mMessage;
         }
 
         public Intent getIntent() {
-            /*
-            int count = mItems.size();
-            if (count == 0) {
-                return getDefaultIntent();
-            } else if (count == 1) {
-                Item item = mItems.values().iterator().next();
-                return item.mIntent;
-            } else {
-                return getMultipleNotificationIntent();
-            }*/
 
-            return lastItem.mIntent;
+            return mIntent;
         }
     }
 
