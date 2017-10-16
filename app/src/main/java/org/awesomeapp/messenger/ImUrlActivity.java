@@ -809,6 +809,7 @@ public class ImUrlActivity extends Activity {
                 ArrayList<String> extras = new ArrayList<>();
                 extras.add("");
                 i.putExtra(EXTRA_EXCLUDED_CONTACTS,extras);
+                i.putExtra(ContactsPickerActivity.EXTRA_SHOW_GROUPS,true);
                 startActivityForResult(i, REQUEST_PICK_CONTACTS);
 
                 break;

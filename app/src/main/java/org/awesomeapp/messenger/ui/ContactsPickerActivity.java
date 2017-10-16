@@ -63,6 +63,7 @@ import im.zom.messenger.R;
 public class ContactsPickerActivity extends BaseActivity {
 
     public final static String EXTRA_EXCLUDED_CONTACTS = "excludes";
+    public final static String EXTRA_SHOW_GROUPS = "show_groups";
 
     public final static String EXTRA_RESULT_USERNAME = "result";
     public final static String EXTRA_RESULT_USERNAMES = "results";
@@ -85,6 +86,7 @@ public class ContactsPickerActivity extends BaseActivity {
     private ArrayList<String> excludedContacts;
     private String mExcludeClause;
     Uri mData;
+    private boolean mShowGroups = false;
 
     private String mSearchString;
 
@@ -146,6 +148,7 @@ public class ContactsPickerActivity extends BaseActivity {
 
         boolean isGroupOnlyMode = isGroupOnlyMode();
         excludedContacts = getIntent().getStringArrayListExtra(EXTRA_EXCLUDED_CONTACTS);
+        mShowGroups = getIntent().getBooleanExtra(EXTRA_SHOW_GROUPS,false);
 
         View btnCreateGroup = findViewById(R.id.btnCreateGroup);
         btnCreateGroup.setOnClickListener(new View.OnClickListener() {
@@ -580,8 +583,12 @@ public class ContactsPickerActivity extends BaseActivity {
 
             buf.append('(');
             buf.append(Imps.Contacts.TYPE).append('=').append(Imps.Contacts.TYPE_NORMAL);
-            buf.append(" OR ");
-            buf.append(Imps.Contacts.TYPE).append('=').append(Imps.Contacts.TYPE_GROUP);
+
+            if (mShowGroups) {
+                buf.append(" OR ");
+                buf.append(Imps.Contacts.TYPE).append('=').append(Imps.Contacts.TYPE_GROUP);
+            }
+
             buf.append(')');
 
             CursorLoader loader = new CursorLoader(ContactsPickerActivity.this, mUri, ContactListItem.CONTACT_PROJECTION,
