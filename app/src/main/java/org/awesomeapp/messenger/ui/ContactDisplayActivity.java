@@ -126,42 +126,40 @@ public class ContactDisplayActivity extends BaseActivity {
         });
 
 
-        new AsyncTask<String, Void, Boolean>()
-        {
-            @Override
-            protected Boolean doInBackground(String... strings) {
+        if (mConn != null) {
+            new AsyncTask<String, Void, Boolean>() {
+                @Override
+                protected Boolean doInBackground(String... strings) {
 
-                mRemoteOtrFingerprint = strings[0];
+                    mRemoteOtrFingerprint = strings[0];
 
-                if (mRemoteOtrFingerprint == null) {
-                    mRemoteOtrFingerprint = OtrChatManager.getInstance().getRemoteKeyFingerprint(mUsername);
+                    if (mRemoteOtrFingerprint == null) {
+                        mRemoteOtrFingerprint = OtrChatManager.getInstance().getRemoteKeyFingerprint(mUsername);
+                    }
+
+
+                    try {
+                        mRemoteOmemoFingerprints = mConn.getFingerprints(mUsername);
+
+                    } catch (RemoteException re) {
+
+                    }
+
+                    return true;
                 }
 
+                @Override
+                protected void onPostExecute(Boolean success) {
+                    super.onPostExecute(success);
 
-                try {
-                    mRemoteOmemoFingerprints = mConn.getFingerprints(mUsername);
-
+                    if (mRemoteOmemoFingerprints == null ||
+                            mRemoteOmemoFingerprints.size() == 0)
+                        displayFingerprint(mRemoteOtrFingerprint);
+                    else
+                        displayFingerprint(mRemoteOmemoFingerprints.get(mRemoteOmemoFingerprints.size() - 1));
                 }
-                catch (RemoteException re)
-                {
-
-                }
-
-                return true;
-            }
-
-            @Override
-            protected void onPostExecute(Boolean success) {
-                super.onPostExecute(success);
-
-                if (mRemoteOmemoFingerprints == null ||
-                    mRemoteOmemoFingerprints.size() == 0)
-                    displayFingerprint (mRemoteOtrFingerprint);
-                else
-                    displayFingerprint (mRemoteOmemoFingerprints.get(mRemoteOmemoFingerprints.size()-1));
-            }
-        }.execute(remoteFingerprint);
-
+            }.execute(remoteFingerprint);
+        }
 
     }
 
