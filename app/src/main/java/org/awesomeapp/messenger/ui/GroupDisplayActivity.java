@@ -80,6 +80,7 @@ public class GroupDisplayActivity extends BaseActivity {
 
     private RecyclerView mRecyclerView;
     private ArrayList<GroupMemberDisplay> mMembers;
+    private View mActionAddFriends = null;
 
     private final static int REQUEST_PICK_CONTACTS = 100;
 
@@ -186,22 +187,9 @@ public class GroupDisplayActivity extends BaseActivity {
                         }
                     });
 
-                    if (!mIsOwner)
-                        h.actionAddFriends.setVisibility(View.GONE);
-                    else {
-                        h.actionAddFriends.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Intent intent = new Intent(GroupDisplayActivity.this, ContactsPickerActivity.class);
-                                ArrayList<String> usernames = new ArrayList<>(mMembers.size());
-                                for (GroupMemberDisplay member : mMembers) {
-                                    usernames.add(member.username);
-                                }
-                                intent.putExtra(ContactsPickerActivity.EXTRA_EXCLUDED_CONTACTS, usernames);
-                                startActivityForResult(intent, REQUEST_PICK_CONTACTS);
-                            }
-                        });
-                    }
+                    mActionAddFriends = h.actionAddFriends;
+                    showAddFriends ();
+
                     h.actionMute.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -380,6 +368,13 @@ public class GroupDisplayActivity extends BaseActivity {
                         } catch (DecoderException e) {
                             e.printStackTrace();
                         }
+
+                        if (member.affiliation.contentEquals("owner") || member.affiliation.contentEquals("admin"))
+                        {
+                            if (member.username.equals(mLocalAddress))
+                                mIsOwner = true;
+                        }
+
 
                         /**
                         try {
@@ -647,4 +642,26 @@ public class GroupDisplayActivity extends BaseActivity {
             updateMembers();
         }
     };
+
+    private void showAddFriends ()
+    {
+        if (mActionAddFriends != null) {
+            if (!mIsOwner)
+                mActionAddFriends.setVisibility(View.GONE);
+            else {
+                mActionAddFriends.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(GroupDisplayActivity.this, ContactsPickerActivity.class);
+                        ArrayList<String> usernames = new ArrayList<>(mMembers.size());
+                        for (GroupMemberDisplay member : mMembers) {
+                            usernames.add(member.username);
+                        }
+                        intent.putExtra(ContactsPickerActivity.EXTRA_EXCLUDED_CONTACTS, usernames);
+                        startActivityForResult(intent, REQUEST_PICK_CONTACTS);
+                    }
+                });
+            }
+        }
+    }
 }
