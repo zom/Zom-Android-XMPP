@@ -246,10 +246,11 @@ public class ContactListItem extends FrameLayout {
                 });
 
             } else if (subStatus == Imps.ContactsColumns.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING) {
-                holder.mLine2.setText(getContext().getString(R.string.title_pending));
+                if (holder.mLine2 != null)
+                    holder.mLine2.setText(getContext().getString(R.string.title_pending));
             } else if (subType == Imps.ContactsColumns.SUBSCRIPTION_TYPE_NONE || subType == Imps.ContactsColumns.SUBSCRIPTION_TYPE_REMOVE) {
-                holder.mLine2.setText(getContext().getString(R.string.recipient_blocked_the_user));
-
+                if (holder.mLine2 != null)
+                    holder.mLine2.setText(getContext().getString(R.string.recipient_blocked_the_user));
             } else {
                 if (holder.mSubBox != null) {
                     holder.mSubBox.setVisibility(View.GONE);
