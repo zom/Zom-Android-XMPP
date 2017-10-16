@@ -96,7 +96,7 @@ public class StatusBarNotifier {
         notify(username, title, snippet, msg, providerId, accountId, intent, lightWeightNotify, R.drawable.ic_discuss, avatar);
     }
 
-    public void notifyGroupChat(long providerId, long accountId, long chatId, String groupname,
+    public void notifyGroupChat(long providerId, long accountId, long chatId, String remoteAddress, String groupname,
             String nickname, String msg, boolean lightWeightNotify) {
 
         Bitmap avatar = null;
@@ -106,7 +106,7 @@ public class StatusBarNotifier {
         intent.setAction(Intent.ACTION_VIEW);
         intent.setDataAndType(ContentUris.withAppendedId(Imps.Chats.CONTENT_URI, chatId),Imps.Chats.CONTENT_ITEM_TYPE);
         intent.addCategory(ImApp.IMPS_CATEGORY);
-        notify(groupname, groupname, snippet, nickname + ": " + msg, providerId, accountId, intent, lightWeightNotify, R.drawable.ic_discuss, avatar);
+        notify(remoteAddress, groupname, snippet, nickname + ": " + msg, providerId, accountId, intent, lightWeightNotify, R.drawable.ic_discuss, avatar);
     }
 
     public void notifyError(String username, String error) {

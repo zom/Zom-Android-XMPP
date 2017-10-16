@@ -1128,7 +1128,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                             nickname = nickname.split("@")[0];
 
                             mStatusBarNotifier.notifyGroupChat(mConnection.getProviderId(), mConnection.getAccountId(),
-                                    getId(), group.getName(), nickname, body, false);
+                                    getId(), group.getAddress().getBareAddress(), group.getName(), nickname, body, false);
                         }
                     }
                     else {

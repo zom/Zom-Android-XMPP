@@ -272,6 +272,13 @@ public class ConversationView {
             mComposeMessage.requestFocus();
             userActionDetected();
             updateGroupTitle();
+
+            try {
+                mApp.dismissChatNotification(mProviderId,XmppAddress.stripResource(mRemoteAddress));
+                mCurrentChatSession.markAsRead();
+            }
+            catch (Exception e){}
+
             try
             {
 
@@ -337,8 +344,6 @@ public class ConversationView {
 
             }
             catch (RemoteException re){}
-
-            mApp.dismissChatNotification(mProviderId, mRemoteAddress);
 
         }
         else

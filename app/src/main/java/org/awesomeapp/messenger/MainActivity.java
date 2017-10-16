@@ -396,7 +396,6 @@ public class MainActivity extends BaseActivity {
           if (data != null && Imps.Chats.CONTENT_ITEM_TYPE.equals(type)) {
 
                 long chatId = ContentUris.parseId(data);
-
                 Intent intentChat = new Intent(this, ConversationDetailActivity.class);
                 intentChat.putExtra("id", chatId);
                 startActivity(intentChat);
