@@ -212,10 +212,7 @@ public class ContactListItem extends FrameLayout {
             }
         }
 
-     //   holder.mStatusText.setText("");
-
         statusText = address;
-
 
         if (type == Imps.Contacts.TYPE_HIDDEN)
         {
@@ -223,43 +220,43 @@ public class ContactListItem extends FrameLayout {
         }
 
         if (holder.mLine2 != null)
-        holder.mLine2.setText(statusText);
+            holder.mLine2.setText(statusText);
 
-        if (subType == Imps.ContactsColumns.SUBSCRIPTION_TYPE_INVITATIONS)
+        if (Imps.Contacts.TYPE_NORMAL == type)
         {
-            holder.mSubBox.setVisibility(View.VISIBLE);
 
-            holder.mButtonSubApprove.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    approveSubscription();
-                    mHolder.itemView.performClick();
+            if (subType == Imps.ContactsColumns.SUBSCRIPTION_TYPE_INVITATIONS)
+            {
+                holder.mSubBox.setVisibility(View.VISIBLE);
+
+                holder.mButtonSubApprove.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        approveSubscription();
+                        mHolder.itemView.performClick();
+                    }
+
+                });
+
+                holder.mButtonSubDecline.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        declineSubscription();
+                    }
+                });
+
+            } else if (subStatus == Imps.ContactsColumns.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING) {
+                holder.mLine2.setText(getContext().getString(R.string.title_pending));
+            } else if (subType == Imps.ContactsColumns.SUBSCRIPTION_TYPE_NONE || subType == Imps.ContactsColumns.SUBSCRIPTION_TYPE_REMOVE) {
+                holder.mLine2.setText(getContext().getString(R.string.recipient_blocked_the_user));
+
+            } else {
+                if (holder.mSubBox != null) {
+                    holder.mSubBox.setVisibility(View.GONE);
                 }
-
-            });
-
-            holder.mButtonSubDecline.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    declineSubscription();
-                }
-            });
-
-        }
-        else if (subStatus == Imps.ContactsColumns.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING)
-        {
-            holder.mLine2.setText(getContext().getString(R.string.title_pending));
-        }
-        else if (subType == Imps.ContactsColumns.SUBSCRIPTION_TYPE_NONE || subType == Imps.ContactsColumns.SUBSCRIPTION_TYPE_REMOVE)
-        {
-            holder.mLine2.setText(getContext().getString(R.string.recipient_blocked_the_user));
-
-        }
-        else {
-            if (holder.mSubBox != null) {
-                holder.mSubBox.setVisibility(View.GONE);
             }
         }
+
         holder.mLine1.setVisibility(View.VISIBLE);
     }
 
