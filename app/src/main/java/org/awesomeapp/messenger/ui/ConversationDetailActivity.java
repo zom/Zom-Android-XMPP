@@ -164,15 +164,9 @@ public class ConversationDetailActivity extends BaseActivity {
 
         setContentView(R.layout.awesome_activity_detail);
 
-        Intent intent = getIntent();
         mApp = (ImApp)getApplication();
 
-        mChatId = intent.getLongExtra("id", -1);
-        mAddress = intent.getStringExtra("address");
-        mNickname = intent.getStringExtra("nickname");
-
         mConvoView = new ConversationView(this);
-
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
       //  appBarLayout = (AppBarLayout)findViewById(R.id.appbar);
@@ -184,7 +178,8 @@ public class ConversationDetailActivity extends BaseActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         applyStyleForToolbar();
 
-        processIntent(getIntent());
+        Intent intent = getIntent();
+        processIntent(intent);
 
         collapseToolbar();
 
@@ -287,7 +282,10 @@ public class ConversationDetailActivity extends BaseActivity {
 
         mApp = (ImApp)getApplication();
 
-        mChatId = intent.getLongExtra("id", -1);
+        mChatId = intent.getIntExtra("id", -1);
+        if (mChatId == -1)
+            mChatId = intent.getLongExtra("id",-1);
+
         mAddress = intent.getStringExtra("address");
         mNickname = intent.getStringExtra("nickname");
 

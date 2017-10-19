@@ -337,38 +337,24 @@ public class ContactDisplayActivity extends BaseActivity {
             IChatSessionManager manager = mConn.getChatSessionManager();
             if (manager != null) {
                 IChatSession session = manager.getChatSession(mUsername);
-                if (session != null) {
-                    Intent intent = new Intent(ContactDisplayActivity.this, ConversationDetailActivity.class);
-                    intent.putExtra("id", mContactId);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(intent);
-                    finish();
-                    return;
-                } else {
+                if (session == null) {
+                    new ChatSessionInitTask(((ImApp)getApplication()),mProviderId, mAccountId, Imps.Contacts.TYPE_NORMAL)
+                    {
+                        @Override
+                        protected void onPostExecute(Long chatId) {
+                            super.onPostExecute(chatId);
+                        }
+                    }.executeOnExecutor(ImApp.sThreadPoolExecutor,new Contact(new XmppAddress(mUsername)));
                     Toast.makeText(this, getString(R.string.message_waiting_for_friend), Toast.LENGTH_LONG).show();
                 }
             }
         }
         catch (RemoteException re){}
 
-        new ChatSessionInitTask(((ImApp)getApplication()),mProviderId, mAccountId, Imps.Contacts.TYPE_NORMAL)
-        {
-            @Override
-            protected void onPostExecute(Long chatId) {
-
-                if (chatId != -1) {
-                    Intent intent = new Intent(ContactDisplayActivity.this, ConversationDetailActivity.class);
-                    intent.putExtra("id", chatId);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(intent);
-                    finish();
-                }
-
-
-                super.onPostExecute(chatId);
-            }
-        }.executeOnExecutor(ImApp.sThreadPoolExecutor,new Contact(new XmppAddress(mUsername)));
-
+        Intent intent = new Intent(this, ConversationDetailActivity.class);
+        intent.putExtra("id", mContactId);
+        startActivity(intent);
+        finish();
 
 
     }
