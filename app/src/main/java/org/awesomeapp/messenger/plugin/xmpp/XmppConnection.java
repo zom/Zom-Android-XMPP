@@ -927,7 +927,7 @@ public class XmppConnection extends ImConnection {
 
 
         @Override
-        public void joinChatGroupAsync(Address address, String subject) {
+        public void joinChatGroupAsync(Address address, String reason) {
 
             String chatRoomJid = address.getBareAddress();
             String[] parts = chatRoomJid.split("@");
@@ -942,10 +942,12 @@ public class XmppConnection extends ImConnection {
 
                 DiscussionHistory history = new DiscussionHistory();
                 muc.join(Resourcepart.from(mUser.getName()), null, history, SmackConfiguration.getDefaultPacketReplyTimeout());
-                loadOldMessages(muc);
+                String subject = muc.getSubject();
 
                 if (TextUtils.isEmpty(subject))
                     subject = room;
+
+                loadOldMessages(muc);
 
                 ChatGroup chatGroup = mGroups.get(chatRoomJid);
 
