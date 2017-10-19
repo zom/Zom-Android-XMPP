@@ -291,12 +291,14 @@ public class ConversationDetailActivity extends BaseActivity {
         mAddress = intent.getStringExtra("address");
         mNickname = intent.getStringExtra("nickname");
 
-        mConvoView.bindChat(mChatId, mAddress, mNickname);
-        mConvoView.startListening();
-        //loadBackdrop();
-
-
-        applyStyleForToolbar();
+        if (mChatId != -1) {
+            mConvoView.bindChat(mChatId, mAddress, mNickname);
+            mConvoView.startListening();
+            applyStyleForToolbar();
+        }
+        else {
+            finish ();
+        }
 
     }
 

@@ -330,7 +330,7 @@ public class ContactDisplayActivity extends BaseActivity {
 
     public void startChat ()
     {
-        if (mConn == null)
+        if (mConn == null || mContactId == -1)
             return;
 
         try {
