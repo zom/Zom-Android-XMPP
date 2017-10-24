@@ -51,8 +51,6 @@ import org.awesomeapp.messenger.model.ImConnection;
 import org.awesomeapp.messenger.model.ImErrorInfo;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.provider.ImpsProvider;
-import org.awesomeapp.messenger.push.PushManager;
-import org.awesomeapp.messenger.push.model.PersistedAccount;
 import org.awesomeapp.messenger.service.Broadcaster;
 import org.awesomeapp.messenger.service.IChatSession;
 import org.awesomeapp.messenger.service.IChatSessionManager;
@@ -88,11 +86,8 @@ import info.guardianproject.cacheword.ICacheWordSubscriber;
 import info.guardianproject.cacheword.PRNGFixes;
 import info.guardianproject.iocipher.VirtualFileSystem;
 import im.zom.messenger.R;
-import timber.log.Timber;
 
 import org.awesomeapp.messenger.util.Languages;
-import org.chatsecure.pushsecure.PushSecureClient;
-import org.chatsecure.pushsecure.response.Account;
 import org.ironrabbit.type.CustomTypefaceManager;
 import org.jivesoftware.smackx.omemo.OmemoInitializer;
 
@@ -157,11 +152,6 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
     /** A flag indicates that we have called tomServiceStarted start the service. */
 //    private boolean mServiceStarted;
     private Context mApplicationContext;
-
-
-    PushManager mPushManager;
-
-    boolean mSupportPushReceive = false;
 
     private CacheWordHandler mCacheWord;
 
@@ -1062,94 +1052,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
     }
 
-    public void setupChatSecurePush() {
-        // Setup logging for ChatSecure-Push SDK
-        if (BuildConfig.DEBUG) {
-            Timber.plant(new Timber.DebugTree());
-        }
-        Timber.d("SetupChatSecurePush");
 
-        mPushManager = new PushManager(this);
-
-        if (mSupportPushReceive) {
-
-            PersistedAccount chatSecurePushAccount = mPushManager.getPersistedAccount();
-            if (chatSecurePushAccount == null) {
-                Log.d(LOG_TAG, "No ChatSecure-Push Account is persisted. Creating new");
-            } else {
-                Log.d(LOG_TAG, "ChatSecure-Push Account is persisted with username: " + chatSecurePushAccount.username);
-            }
-
-            // Use the existing account credentials if available, else a new random username & password
-            final String username = isCspAccountValid(chatSecurePushAccount, mPushManager.getProviderUrl()) ?
-                    chatSecurePushAccount.username :
-                    UUID.randomUUID().toString().substring(0, 30); // ChatSecure-Push usernames are 30 characters max
-
-            final String password = isCspAccountValid(chatSecurePushAccount, mPushManager.getProviderUrl()) ?
-                    chatSecurePushAccount.pasword :
-                    UUID.randomUUID().toString();
-
-            final Object authLock = new Object();
-            final AtomicBoolean authenticated = new AtomicBoolean();
-
-            // Continue trying to authenticate until we have success
-            // Our free Heroku plan sometimes gives ya a SocketTimeout
-            while (!authenticated.get()) {
-
-                PushSecureClient.RequestCallback<Account> authCallback = new PushSecureClient.RequestCallback<Account>() {
-                    @Override
-                    public void onSuccess(@NonNull Account response) {
-                        Log.d(LOG_TAG, "Registered ChatSecure-Push account!");
-                        if (mCacheWord != null) {
-                            mCacheWord.disconnectFromService();
-                            mCacheWord = null;
-                        }
-                        authenticated.set(true);
-                        synchronized (authLock) {
-                            authLock.notify();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(@NonNull Throwable t) {
-                        Log.e(LOG_TAG, "Failed to register ChatSecure-Push account!", t);
-                        synchronized (authLock) {
-                            authLock.notify();
-                        }
-                    }
-                };
-
-                // authenticateAccount will persist the account to our secure database if auth is successful
-                mPushManager.authenticateAccount(username, password, authCallback);
-
-                synchronized (authLock) {
-                    try {
-                        authLock.wait();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-    }
-
-    public PushManager getPushManager() {
-        return mPushManager;
-    }
-
-    /**
-     * Reports whether the persisted ChatSecure-Push account is valid.
-     *
-     * @param account              the persisted ChatSecure-Push account
-     * @param requestedProviderUrl the URL describing the desired ChatSecure-Push server instance
-     *                             where the user's account should be registered
-     * @return true if the given account is valid, false if a new account should be registered.
-     */
-    private static boolean isCspAccountValid(PersistedAccount account,
-                                             @NonNull String requestedProviderUrl) {
-
-        return account != null && account.providerUrl.equals(requestedProviderUrl);
-    }
 
     @Override
     public void onCacheWordUninitialized() {
@@ -1173,7 +1076,6 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
                 Log.d(LOG_TAG, "ImpsProvider ready");
                 // setupChatSecurePush will disconnect the CacheWordHandler when it's done
-                setupChatSecurePush();
             }
         }).start();
     }

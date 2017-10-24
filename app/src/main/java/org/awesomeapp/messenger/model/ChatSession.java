@@ -144,19 +144,6 @@ public class ChatSession {
         sendMessageAsync(message);
     }*/
 
-    public boolean sendKnock (String from) {
-        if (mParticipant instanceof Contact) {
-            OtrChatManager cm = OtrChatManager.getInstance();
-            SessionID sId = cm.getSessionId(from, mParticipant.getAddress().getAddress());
-            SessionStatus otrStatus = cm.getSessionStatus(sId);
-            if (OtrChatManager.getInstance().canDoKnockPushMessage(sId)) {
-                OtrChatManager.getInstance().sendKnockPushMessage(sId);
-                return true;
-            }
-        }
-
-        return false;
-    }
     /**
      * Sends a message to other participant(s) in this session asynchronously
      * and adds the message to the history. TODO: more docs on async callbacks.
@@ -197,15 +184,6 @@ public class ChatSession {
                 //try to send ChatSecure Push message as a client
                 if (isOffline) {
 
-                    if (OtrChatManager.getInstance().canDoKnockPushMessage(sId)) {
-                        if (!mPushSent) {
-                            // ChatSecure-Push: If the remote peer is offline, send them a push
-                            OtrChatManager.getInstance().sendKnockPushMessage(sId);
-                            mPushSent = true;
-                        }
-
-                        return message.getType();
-                    }
 
                 }
                 else {
@@ -213,11 +191,6 @@ public class ChatSession {
 
                     if (otrStatus == SessionStatus.ENCRYPTED) {
 
-                        if (!OtrChatManager.getInstance().canDoKnockPushMessage(sId)) {
-                            // ChatSecure-Push : If OTR session is available when sending peer message,
-                            // ensure we have exchanged Push Whitelist tokens with that peer
-                            cm.maybeBeginPushWhitelistTokenExchange(sId);
-                        }
 
                         if (verified) {
                             message.setType(Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED);

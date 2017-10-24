@@ -94,7 +94,6 @@ dependencies {
     compile 'net.zetetic:android-database-sqlcipher:3.5.4@aar'
     compile project(':otr4jandroid')
     compile project(':tibetanTextLibrary')
-    compile project(':chatsecure-push:sdk')
     compile 'com.google.zxing:core:3.3.0'
     compile 'commons-codec:commons-codec:1.9'
     compile 'commons-io:commons-io:2.4'
@@ -152,5 +151,8 @@ dependencies {
     compile "org.igniterealtime.smack:smack-im:$smackVersion"
     compile "org.igniterealtime.smack:smack-sasl-provided:$smackVersion"
     **/
+
+    // https://mvnrepository.com/artifact/com.google.code.gson/gson
+    compile group: 'com.google.code.gson', name: 'gson', version: '2.3.1'
 
 }

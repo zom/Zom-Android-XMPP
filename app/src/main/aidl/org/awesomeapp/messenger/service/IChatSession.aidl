@@ -93,11 +93,6 @@ interface IChatSession {
      */
     boolean offerData(String offerId, String localUri, String type);
 
-/**
-*  Send knock to wake up remote user
-**/
-    boolean sendKnock ();
-
     /**
      * Mark this chat session as read.
      */

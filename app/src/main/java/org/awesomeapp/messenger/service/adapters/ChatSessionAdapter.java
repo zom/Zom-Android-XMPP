@@ -382,11 +382,6 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
       //  }
     }
 
-    public boolean sendKnock () {
-
-        return mChatSession.sendKnock(mConnection.getLoginUser().getAddress().getAddress());
-    }
-
     public void sendMessage(String text, boolean isResend) {
 
         if (mConnection.getState() != ImConnection.LOGGED_IN) {
