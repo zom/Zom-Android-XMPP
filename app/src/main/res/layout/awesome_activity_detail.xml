@@ -122,7 +122,7 @@
             android:layout_margin="0dp"
             android:id="@+id/waiting_view"
             android:visibility="gone"
-            android:background="@android:color/white"
+            android:background="@color/holo_grey_light"
             >
             <ImageView
                 android:layout_width="wrap_content"
@@ -149,7 +149,7 @@
                 >
             <ImageView
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:src="@drawable/ic_refresh_white_24dp"
                 android:id="@+id/waiting_refresh"
                 /></LinearLayout>
@@ -289,7 +289,6 @@
                     android:layout_height="64dp"
                     />
 
-<!--
                 <org.awesomeapp.messenger.ui.CircleColorImageView
                     android:id="@+id/btnAttachFile"
                     android:src="@drawable/ic_insert_drive_file_white_36dp"
@@ -298,7 +297,7 @@
                     app:circleColor="@android:color/holo_red_light"
                     android:layout_width="64dp"
                     android:layout_height="64dp"
-                    />-->
+                    />
             </LinearLayout>
         </HorizontalScrollView>
 
