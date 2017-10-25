@@ -369,10 +369,11 @@ public class GroupDisplayActivity extends BaseActivity {
                             e.printStackTrace();
                         }
 
-                        if (member.affiliation.contentEquals("owner") || member.affiliation.contentEquals("admin"))
-                        {
-                            if (member.username.equals(mLocalAddress))
-                                mIsOwner = true;
+                        if (member.affiliation != null) {
+                            if (member.affiliation.contentEquals("owner") || member.affiliation.contentEquals("admin")) {
+                                if (member.username.equals(mLocalAddress))
+                                    mIsOwner = true;
+                            }
                         }
 
 
