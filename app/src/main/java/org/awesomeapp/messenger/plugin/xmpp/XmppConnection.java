@@ -605,12 +605,14 @@ public class XmppConnection extends ImConnection {
                 MultiUserChat reMuc = mucMgr.getMultiUserChat(muc.getRoom());
 
                 try {
-                    reMuc.join(Resourcepart.from(mUser.getName()));
+                    DiscussionHistory history = new DiscussionHistory();
+                    reMuc.join(Resourcepart.from(mUser.getName()), null, history, SmackConfiguration.getDefaultPacketReplyTimeout());
                     mMUCs.put(muc.getRoom().toString(),reMuc);
                     ChatGroup group = mGroups.get(muc.getRoom().toString());
 
                     addMucListeners(reMuc, group);
 
+                    loadOldMessages(muc);
                 } catch (Exception e) {
                     Log.w(TAG,"unable to join MUC: " + e.getMessage());
                 }
@@ -947,7 +949,7 @@ public class XmppConnection extends ImConnection {
                 if (TextUtils.isEmpty(subject))
                     subject = room;
 
-                loadOldMessages(muc);
+
 
                 ChatGroup chatGroup = mGroups.get(chatRoomJid);
 
@@ -959,6 +961,9 @@ public class XmppConnection extends ImConnection {
                 mMUCs.put(chatRoomJid, muc);
 
                 addMucListeners(muc, chatGroup);
+
+                loadOldMessages(muc);
+
             } catch (Exception e) {
                 debug(TAG,"error joining MUC",e);
             }
