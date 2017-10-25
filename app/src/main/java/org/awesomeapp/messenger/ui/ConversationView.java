@@ -1302,15 +1302,13 @@ public class ConversationView {
 
             public void run () {
 
-                if (mSubscriptionType == Imps.Contacts.SUBSCRIPTION_TYPE_NONE
-                || (mSubscriptionType == Imps.Contacts.SUBSCRIPTION_TYPE_FROM
+                if ((mSubscriptionType == Imps.Contacts.SUBSCRIPTION_TYPE_FROM
                         && mSubscriptionStatus == Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING))
                 {
                     mActivity.findViewById(R.id.waiting_view).setVisibility(View.VISIBLE);
                     mActivity.findViewById(R.id.waiting_refresh).setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                           // reapproveSubscription();
                             resendFriendRequest();
                         }
                     });
