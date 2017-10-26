@@ -17,7 +17,7 @@ android {
 
     defaultConfig {
         applicationId 'im.zom.messenger'
-        versionCode 1510041
+        versionCode 1510042
         versionName getVersionName()
         archivesBaseName = "Zom-$versionName"
         minSdkVersion project.ext.minSdkVersion
@@ -130,10 +130,6 @@ dependencies {
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'com.github.javiersantos:AppUpdater:2.5.2'
     compile 'com.github.QuadFlask:colorpicker:0.0.10'
-
-    //swipe to reveal code
-    //compile 'com.chauthai.swipereveallayout:swipe-reveal-layout:1.4.0'
-   // compile 'com.hudomju:swipe-to-dismiss-undo:1.0'
 
     /**
     compile "org.igniterealtime.smack:smack-android:$smackVersion"
