@@ -8,9 +8,10 @@ buildscript {
         mavenCentral()
         jcenter()
         maven { url "https://jitpack.io" }
+        google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.3'
+        classpath 'com.android.tools.build:gradle:3.0.0'
         classpath files('libs/gradle-witness.jar')
     }
 }
@@ -25,6 +26,7 @@ allprojects {
         }
         mavenCentral()
 
+        google()
     }
     project.ext {
         // these are common variables used in */build.gradle
