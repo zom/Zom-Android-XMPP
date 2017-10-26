@@ -556,12 +556,20 @@ public class ConversationDetailActivity extends BaseActivity {
         }
         else {
 
+            // ACTION_OPEN_DOCUMENT is the intent to choose a file via the system's file
+            // browser.
+            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
 
-            Intent selectFile = new Intent(Intent.ACTION_GET_CONTENT);
-            Intent intentChooser = Intent.createChooser(selectFile, "Select File");
+            // Filter to only show results that can be "opened", such as a
+            // file (as opposed to a list of contacts or timezones)
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            // Filter to show only images, using the image MIME data type.
+            // If one wanted to search for ogg vorbis files, the type would be "audio/ogg".
+            // To search for all documents available via installed storage providers,
+            // it would be "*/*".
+            intent.setType("*/*");
 
-            if (intentChooser != null)
-                startActivityForResult(Intent.createChooser(selectFile, "Select File"), REQUEST_SEND_FILE);
+            startActivityForResult(Intent.createChooser(intent, "Select File"), REQUEST_SEND_FILE);
         }
     }
 
@@ -675,11 +683,14 @@ public class ConversationDetailActivity extends BaseActivity {
                 if( uri == null ) {
                     return;
                 }
+
+                String defaultType = resultIntent.getType();
+
                 boolean deleteFile = false;
                 boolean resizeImage = false;
                 boolean importContent = true;
 
-                handleSendDelete(uri, null, deleteFile, resizeImage, importContent);
+                handleSendDelete(uri, defaultType, deleteFile, resizeImage, importContent);
             }
             else if (requestCode == REQUEST_TAKE_PICTURE)
             {

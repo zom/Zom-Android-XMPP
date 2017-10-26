@@ -852,7 +852,7 @@ public class ConversationView {
 
         });
 
-        /**
+
         mActivity.findViewById(R.id.btnAttachFile).setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -860,7 +860,7 @@ public class ConversationView {
                 mActivity.startFilePicker();
             }
 
-        });*/
+        });
 
         mActivity.findViewById(R.id.btnAttachSticker).setOnClickListener(new View.OnClickListener() {
 
