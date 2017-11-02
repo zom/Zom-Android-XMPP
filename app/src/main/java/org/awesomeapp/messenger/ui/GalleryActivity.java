@@ -56,6 +56,7 @@ import org.awesomeapp.messenger.util.SystemServices;
 import org.awesomeapp.messenger.util.XmppUriHelper;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -189,16 +190,20 @@ public class GalleryActivity extends BaseActivity {
 
             if (requestCode == ConversationDetailActivity.REQUEST_TAKE_PICTURE)
             {
-                if (mLastPhoto != null)
-                    importPhoto ();
-
+                try {
+                    if (mLastPhoto != null)
+                        importPhoto();
+                }
+                catch (IOException ioe)
+                {
+                    Log.e(getClass().getName(),"unable to import photo",ioe);
+                }
             }
 
         }
     }
 
-    private void importPhoto ()
-    {
+    private void importPhoto () throws FileNotFoundException {
 
         // import
         SystemServices.FileInfo info = SystemServices.getFileInfoFromURI(this, mLastPhoto);

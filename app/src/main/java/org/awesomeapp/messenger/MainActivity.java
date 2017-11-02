@@ -92,6 +92,7 @@ import org.awesomeapp.messenger.util.XmppUriHelper;
 import org.ironrabbit.type.CustomTypefaceManager;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -464,9 +465,15 @@ public class MainActivity extends BaseActivity {
             }
             else if (requestCode == ConversationDetailActivity.REQUEST_TAKE_PICTURE)
             {
-                if (mLastPhoto != null)
-                    importPhoto ();
+                try {
+                    if (mLastPhoto != null)
+                        importPhoto();
+                }
+                catch (Exception e)
+                {
+                    Log.w(ImApp.LOG_TAG, "error importing photo",e);
 
+                }
             }
             else if (requestCode == OnboardingManager.REQUEST_SCAN) {
 
@@ -546,8 +553,7 @@ public class MainActivity extends BaseActivity {
             mLastPhoto = Uri.parse(lastPhotoPath);
     }
 
-    private void importPhoto ()
-    {
+    private void importPhoto () throws FileNotFoundException {
 
         // import
         SystemServices.FileInfo info = SystemServices.getFileInfoFromURI(this, mLastPhoto);

@@ -67,6 +67,7 @@ import android.text.style.URLSpan;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+import android.webkit.MimeTypeMap;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -377,9 +378,8 @@ public class MessageListItem extends FrameLayout {
                 Log.e(ImApp.LOG_TAG,"unable to load thumbnail",e);
             }
             holder.mMediaThumbnail.setImageResource(R.drawable.ic_file); // generic file icon
-            holder.mTextViewForMessages.setText(mediaUri.getLastPathSegment());
+            holder.mTextViewForMessages.setText(mediaUri.getLastPathSegment() + " (" + mimeType + ")");
             holder.mTextViewForMessages.setVisibility(View.VISIBLE);
-
         }
 
         holder.mMediaContainer.setVisibility(View.VISIBLE);
@@ -565,7 +565,7 @@ public class MessageListItem extends FrameLayout {
     {
         if (mimeType != null && mediaUri != null) {
             java.io.File exportPath = SecureMediaStore.exportPath(mimeType, mediaUri);
-            exportMediaFile(mimeType, mediaUri, exportPath);
+            exportMediaFile(mimeType, mediaUri, exportPath, true);
         }
         else
         {
@@ -578,17 +578,27 @@ public class MessageListItem extends FrameLayout {
 
     };
 
-    private void exportMediaFile (String mimeType, Uri mediaUri, java.io.File exportPath)
+    private void exportMediaFile (String mimeType, Uri mediaUri, java.io.File exportPath, boolean doView)
     {
         try {
 
             SecureMediaStore.exportContent(mimeType, mediaUri, exportPath);
             Intent shareIntent = new Intent();
-            shareIntent.setAction(Intent.ACTION_SEND);
-            shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(exportPath));
-            shareIntent.setType(mimeType);
-            context.startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.export_media)));
-        } catch (Exception e) {
+
+            if (doView) {
+                shareIntent.setDataAndType(Uri.fromFile(exportPath),mimeType);
+                shareIntent.setAction(Intent.ACTION_VIEW);
+                context.startActivity(shareIntent);
+            }
+            else
+            {
+                shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(exportPath));
+                shareIntent.setType(mimeType);
+                shareIntent.setAction(Intent.ACTION_SEND);
+                context.startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.export_media)));
+
+            }
+            } catch (Exception e) {
             Toast.makeText(getContext(), "Export Failed " + e.getMessage(), Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }

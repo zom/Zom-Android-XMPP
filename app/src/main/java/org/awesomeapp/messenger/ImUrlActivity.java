@@ -626,6 +626,7 @@ public class ImUrlActivity extends Activity {
             startContactPicker();
             return;
         }
+        /**
         else  if (data.toString().startsWith(OtrDataHandler.URI_PREFIX_OTR_IN_BAND))
         {
              String localUrl = data.toString().replaceFirst(OtrDataHandler.URI_PREFIX_OTR_IN_BAND, "");
@@ -641,7 +642,7 @@ public class ImUrlActivity extends Activity {
                  startContactPicker();
                  return;
              }
-        }
+        }**/
         
         Toast.makeText(this, R.string.unsupported_incoming_data, Toast.LENGTH_LONG).show();
         finish(); // make sure not to show this Activity's blank white screen
@@ -739,8 +740,6 @@ public class ImUrlActivity extends Activity {
                             InputStream is = getContentResolver().openInputStream(mSendUri);
                             String fileName = mSendUri.getLastPathSegment();
                             FileInfo importInfo = SystemServices.getFileInfoFromURI(this, mSendUri);
-                            if (importInfo.file != null)
-                                fileName = importInfo.file.getName();
 
                             if (!TextUtils.isEmpty(importInfo.type)) {
                                 if (importInfo.type.startsWith("image"))

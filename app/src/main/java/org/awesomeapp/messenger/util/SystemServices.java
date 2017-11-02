@@ -6,6 +6,10 @@ package org.awesomeapp.messenger.util;
 import im.zom.messenger.R;
 
 import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.List;
@@ -19,6 +23,7 @@ import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.text.TextUtils;
@@ -104,7 +109,8 @@ public class SystemServices {
     }
 
     public static class FileInfo {
-        public File file;
+       // public File file;
+        public InputStream stream;
         public String type;
     }
     
@@ -176,35 +182,37 @@ public class SystemServices {
     }
 **/
 
-    public static FileInfo getFileInfoFromURI(Context aContext, Uri uri) throws IllegalArgumentException {
+    public static FileInfo getFileInfoFromURI(Context aContext, Uri uri) throws IllegalArgumentException, FileNotFoundException {
         FileInfo info = new FileInfo();
-        info.file = new File(uri.toString());
-
-        if (uri.toString().contains("photos")||uri.toString().contains("gallery"))
-            info.type="image/jpeg"; //assume a jpeg
 
         if (SecureMediaStore.isVfsUri(uri)) {
-            info.file = new info.guardianproject.iocipher.File(uri.getPath());
+            info.stream = new info.guardianproject.iocipher.FileInputStream(uri.getPath());
             String type = getMimeType(uri.toString());
-            if (!TextUtils.isEmpty(type))
+            if (!TextUtils.isEmpty(type)) {
                 info.type = type;
-            return info;
+                return info;
+            }
+        }
+        else if (new File(uri.toString()).exists()) {
+            info.stream = new FileInputStream(new File(uri.toString()));
+            String type = getMimeType(uri.toString());
+            if (!TextUtils.isEmpty(type)) {
+                info.type = type;
+                return info;
+            }
+        }
+        else
+        {
+            info.stream = aContext.getContentResolver().openInputStream(uri);
         }
 
-        if (uri.getScheme() != null && uri.getScheme().equals("file")) {
-            info.file = new File(uri.getPath());
-            String type = getMimeType(uri.toString());
-            if (!TextUtils.isEmpty(type))
-                info.type = type;
+        MimeTypeMap mime = MimeTypeMap.getSingleton();
+        info.type = aContext.getContentResolver().getType(uri);
+        if (!TextUtils.isEmpty(info.type))
             return info;
-        }
 
-        if (uri.toString().startsWith("content://org.openintents.filemanager/")) {
-            // Work around URI escaping brokenness
-            info.file = new File(uri.toString().replaceFirst("content://org.openintents.filemanager", ""));
-            info.type = getMimeType(uri.toString());
-            return info;
-        }
+        if (uri.toString().contains("photos")||uri.toString().contains("images"))
+            info.type="image/jpeg"; //assume a jpeg
 
         Cursor cursor = aContext.getContentResolver().query(uri, null, null, null, null);
 
@@ -217,7 +225,6 @@ public class SystemServices {
                 if (dataIdx != -1) {
                     String data = cursor.getString(dataIdx);
                     if (data != null) {
-                        info.file = new File(data);
                         info.type = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.MIME_TYPE));
                     }
                     else
@@ -227,7 +234,6 @@ public class SystemServices {
                         if (dataIdx != -1) {
                             data = cursor.getString(dataIdx);
                             if (data != null) {
-                                info.file = new File(data);
                                 info.type = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.MIME_TYPE));
                             }
                         }
@@ -235,23 +241,25 @@ public class SystemServices {
 
 
                 } else {
+
                     dataIdx = cursor.getColumnIndex(MediaStore.Video.Media.DATA);
 
                     if (dataIdx != -1) {
-                        info.file = new File(cursor.getString(dataIdx));
                         info.type = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.MIME_TYPE));
                     } else {
                         dataIdx = cursor.getColumnIndex(MediaStore.Audio.Media.DATA);
 
                         if (dataIdx != -1) {
-                            info.file = new File(cursor.getString(dataIdx));
                             info.type = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.MIME_TYPE));
                         } else {
                             dataIdx = cursor.getColumnIndex(MediaStore.MediaColumns.DATA);
 
                             if (dataIdx != -1) {
-                                info.file = new File(cursor.getString(dataIdx));
                                 info.type = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.MIME_TYPE));
+
+                            }
+                            else
+                            {
 
                             }
                         }
@@ -289,7 +297,7 @@ public class SystemServices {
             String targetPath = "/" + pathSegments.get(pathSegments.size() - 1) + ".vcf";
             SecureMediaStore.copyToVfs(buf, targetPath);
             FileInfo info = new FileInfo();
-            info.file = new info.guardianproject.iocipher.File(SecureMediaStore.vfsUri(targetPath).getPath());
+            info.stream = new info.guardianproject.iocipher.FileInputStream(SecureMediaStore.vfsUri(targetPath).getPath());
             info.type = "text/vcard";
             return info;
         } catch (Exception e) {
