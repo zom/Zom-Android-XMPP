@@ -2449,7 +2449,10 @@ public class Imps {
         values.put(Imps.Messages.MIME_TYPE, mimeType);
         values.put(Imps.Messages.PACKET_ID, id);
 
-        return resolver.insert(isEncrypted ? Messages.getOtrMessagesContentUriByThreadId(contactId) : Messages.getContentUriByThreadId(contactId), values);
+//        return resolver.insert(isEncrypted ? Messages.getOtrMessagesContentUriByThreadId(contactId) : Messages.getContentUriByThreadId(contactId), values);
+
+        return resolver.insert(Messages.getOtrMessagesContentUriByThreadId(contactId), values);
+
     }
 
     public static int updateMessageBody(ContentResolver resolver, String id, String body, String mimeType) {
@@ -2468,7 +2471,7 @@ public class Imps {
 
     public static int deleteMessageInDb(ContentResolver resolver, String id) {
 
-        Uri.Builder builder = Imps.Messages.OTR_MESSAGES_CONTENT_URI.buildUpon();
+        Uri.Builder builder = Messages.OTR_MESSAGES_CONTENT_URI_BY_PACKET_ID.buildUpon();
         builder.appendPath(id);
 
         int result = resolver.delete(builder.build(), null, null);

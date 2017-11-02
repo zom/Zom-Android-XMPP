@@ -37,11 +37,12 @@ public class OtrChatListener implements MessageListener {
 
         if (mOtrChatManager == null || msg.getType() != Imps.MessageType.INCOMING) {
             if (!TextUtils.isEmpty(msg.getBody())) {
-                result = true;
-                mMessageListener.onIncomingMessage(session, msg);
+                result = mMessageListener.onIncomingMessage(session, msg);
             } else {
                 OtrDebugLogger.log("incoming body was empty");
             }
+
+            return result;
         }
         else {
 
@@ -72,9 +73,8 @@ public class OtrChatListener implements MessageListener {
                 body = mOtrChatManager.decryptMessage(localAddress, remoteAddress, body, tlvs);
 
                 if (!TextUtils.isEmpty(body)) {
-                    result = true;
                     msg.setBody(body);
-                    mMessageListener.onIncomingMessage(session, msg);
+                    result = mMessageListener.onIncomingMessage(session, msg);
                 } else {
 
                     OtrDebugLogger.log("Decrypted incoming body was null (otrdata?)");
@@ -115,9 +115,9 @@ public class OtrChatListener implements MessageListener {
                 OtrDebugLogger.log("OTR status changed from: " + otrStatus + " to " + newStatus);
                 mMessageListener.onStatusChanged(session, newStatus);
             }
-        }
 
-        return result;
+            return result;
+        }
     }
 
     @Override

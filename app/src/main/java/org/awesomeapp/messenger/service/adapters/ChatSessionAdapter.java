@@ -1018,16 +1018,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
     }
 
     Uri insertMessageInDb(String contact, String body, long time, int type, int errCode, String id, String mimeType) {
-        boolean isEncrypted = false;
-        if (getDefaultOtrChatSession() != null) {
-            try {
-                isEncrypted = getDefaultOtrChatSession().isChatEncrypted();
-            } catch (RemoteException e) {
-                // Leave it as encrypted so it gets stored in memory
-                // FIXME(miron)
-            }
-        }
-        return Imps.insertMessageInDb(mContentResolver, mIsGroupChat, mContactId, isEncrypted, contact, body, time, type, errCode, id, mimeType);
+        return Imps.insertMessageInDb(mContentResolver, mIsGroupChat, mContactId, false, contact, body, time, type, errCode, id, mimeType);
     }
 
     int updateMessageInDb(String id, int type, long time, String body) {
@@ -1078,10 +1069,15 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
                 boolean wasMessageSeen = false;
 
+                Uri messageUri = null;
+
                 if (msg.getID() == null)
-                    insertMessageInDb(nickname, body, time, msg.getType(), null);
+                    messageUri = insertMessageInDb(nickname, body, time, msg.getType(), null);
                 else
-                    insertMessageInDb(nickname, body, time, msg.getType(), 0, msg.getID(), null);
+                    messageUri = insertMessageInDb(nickname, body, time, msg.getType(), 0, msg.getID(), null);
+
+                if (messageUri == null) //couldn't write to the database, so return false
+                    return false;
 
                 try {
                     synchronized (mRemoteListeners) {
