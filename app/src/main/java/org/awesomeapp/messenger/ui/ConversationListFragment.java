@@ -27,6 +27,7 @@ import android.database.DatabaseUtils;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -44,6 +45,7 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
@@ -414,10 +416,12 @@ public class ConversationListFragment extends Fragment {
 
                 clItem.bind(viewHolder, chatId, providerId, accountId, address, nickname, type, lastMsg, lastMsgDate, lastMsgType, presence, null, true, false);
                 if (lastReadDate < lastMsgDate) {
-                    SpannableStringBuilder ssb = new SpannableStringBuilder(viewHolder.mLine2.getText());
+                    SpannableStringBuilder ssb = new SpannableStringBuilder(viewHolder.mLine1.getText());
                     StyleSpan bold = new StyleSpan(Typeface.BOLD);
+                    ForegroundColorSpan black = new ForegroundColorSpan(Color.BLACK);
                     ssb.setSpan(bold, 0, ssb.length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
-                    viewHolder.mLine2.setText(ssb);
+                    ssb.setSpan(black, 0, ssb.length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+                    viewHolder.mLine1.setText(ssb);
                 }
 
                 clItem.setOnClickListener(new View.OnClickListener() {
