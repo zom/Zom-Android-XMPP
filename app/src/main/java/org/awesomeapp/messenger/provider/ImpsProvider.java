@@ -99,7 +99,7 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
     private static final String ENCRYPTED_DATABASE_NAME = "impsenc.db";
     private static final String UNENCRYPTED_DATABASE_NAME = "imps.db";
 
-    private static final int DATABASE_VERSION = 109;
+    private static final int DATABASE_VERSION = 110;
 
     protected static final int MATCH_PROVIDERS = 1;
     protected static final int MATCH_PROVIDERS_BY_ID = 2;
@@ -642,6 +642,8 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
                         // Wouldn't we want all applicable upgrades?
             case 106:
             case 107:
+            case 108:
+             case 109:
 
                 try {
                     db.beginTransaction();
@@ -652,6 +654,11 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
                         db.execSQL("ALTER TABLE " + TABLE_CHATS
                                 + " ADD COLUMN chat_type INTEGER;");
                     }
+                    if (c.getColumnIndex("last_read_date")==-1)
+                    {
+                        db.execSQL("ALTER TABLE " + TABLE_CHATS
+                                + " ADD COLUMN last_read_date INTEGER;");
+                    }
                     c.close();
 
                     db.setTransactionSuccessful();
@@ -660,7 +667,6 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
                 } finally {
                     db.endTransaction();
                 }
-            case 108:
 
                 return;
             case 1:
@@ -838,7 +844,8 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
             buf.append("last_message_date INTEGER,"); // in seconds
             buf.append("unsent_composed_message TEXT,"); // a composed, but not sent message
             buf.append("shortcut INTEGER,"); // which of 10 slots (if any) this chat occupies
-            buf.append("chat_type INTEGER);"); // chat type for filtering
+            buf.append("chat_type INTEGER,"); // chat type for filtering
+            buf.append("last_read_date INTEGER);"); // in seconds
 
 
             // chat sessions, including single person chats and group chats
@@ -1081,6 +1088,8 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
                 "chats.last_unread_message AS last_unread_message");
         sContactsProjectionMap.put(Imps.Contacts.LAST_MESSAGE_DATE,
                 "chats.last_message_date AS last_message_date");
+        sContactsProjectionMap.put(Imps.Contacts.LAST_READ_DATE,
+                "chats.last_read_date AS last_read_date");
         sContactsProjectionMap.put(Imps.Contacts.UNSENT_COMPOSED_MESSAGE,
                 "chats.unsent_composed_message AS unsent_composed_message");
         sContactsProjectionMap.put(Imps.Contacts.SHORTCUT, "chats.SHORTCUT AS shortcut");

@@ -28,6 +28,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -40,7 +41,10 @@ import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
+import android.text.style.StyleSpan;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.ActionMode;
@@ -396,6 +400,7 @@ public class ConversationListFragment extends Fragment {
 
                 long lastMsgDate = cursor.getLong(ConversationListItem.COLUMN_LAST_MESSAGE_DATE);
                 final int presence = cursor.getInt(ConversationListItem.COLUMN_CONTACT_PRESENCE_STATUS);
+                long lastReadDate = cursor.getLong(ConversationListItem.COLUMN_LAST_READ_DATE);
 
                 String lastMsgType = null;
                 if (!TextUtils.isEmpty(lastMsg)) {
@@ -408,6 +413,12 @@ public class ConversationListFragment extends Fragment {
                 ConversationListItem clItem = ((ConversationListItem)viewHolder.itemView.findViewById(R.id.convoitemview));
 
                 clItem.bind(viewHolder, chatId, providerId, accountId, address, nickname, type, lastMsg, lastMsgDate, lastMsgType, presence, null, true, false);
+                if (lastReadDate < lastMsgDate) {
+                    SpannableStringBuilder ssb = new SpannableStringBuilder(viewHolder.mLine2.getText());
+                    StyleSpan bold = new StyleSpan(Typeface.BOLD);
+                    ssb.setSpan(bold, 0, ssb.length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+                    viewHolder.mLine2.setText(ssb);
+                }
 
                 clItem.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -560,6 +571,7 @@ public class ConversationListFragment extends Fragment {
                 Imps.Presence.PRESENCE_CUSTOM_STATUS,
                 Imps.Chats.LAST_MESSAGE_DATE,
                 Imps.Chats.LAST_UNREAD_MESSAGE,
+                Imps.Chats.LAST_READ_DATE,
                 Imps.Chats.CHAT_TYPE
       //          Imps.Contacts.AVATAR_HASH,
         //        Imps.Contacts.AVATAR_DATA
