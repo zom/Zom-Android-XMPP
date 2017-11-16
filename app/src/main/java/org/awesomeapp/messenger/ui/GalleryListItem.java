@@ -88,54 +88,54 @@ public class GalleryListItem extends FrameLayout {
     private final static char DELIVERED_FAIL = '\u2718';
     private final static String LOCK_CHAR = "Secure";
 
-
-
-    @Override
-    protected void onFinishInflate() {
-        super.onFinishInflate();
-
-
-    }
+//
+//
+//    @Override
+//    protected void onFinishInflate() {
+//        super.onFinishInflate();
+//
+//
+//    }
 /**
     public void setMessageBackground (Drawable d) {
         mHolder.mContainer.setBackgroundDrawable(d);
     }
 */
 
-    public String getLastMessage () {
-        return lastMessage.toString();
-    }
+//    public String getLastMessage () {
+//        return lastMessage.toString();
+//    }
+//
+//
+//
+//    private boolean isSameDay (Date date1, Date date2)
+//    {
+//        return FMT_SAME_DAY.format(date1).equals(FMT_SAME_DAY.format(date2));
+//    }
+//
+//    protected String convertMediaUriToPath(Uri uri) {
+//        String path = null;
+//
+//        String [] proj={MediaStore.Images.Media.DATA};
+//        Cursor cursor = getContext().getContentResolver().query(uri, proj,  null, null, null);
+//        if (cursor != null && (!cursor.isClosed()))
+//        {
+//            if (cursor.isBeforeFirst())
+//            {
+//                int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+//                cursor.moveToFirst();
+//                path = cursor.getString(column_index);
+//            }
+//
+//            cursor.close();
+//        }
+//
+//        return path;
+//    }
+//
+//    private MediaPlayer mMediaPlayer = null;
 
-
-
-    private boolean isSameDay (Date date1, Date date2)
-    {
-        return FMT_SAME_DAY.format(date1).equals(FMT_SAME_DAY.format(date2));
-    }
-
-    protected String convertMediaUriToPath(Uri uri) {
-        String path = null;
-
-        String [] proj={MediaStore.Images.Media.DATA};
-        Cursor cursor = getContext().getContentResolver().query(uri, proj,  null, null, null);
-        if (cursor != null && (!cursor.isClosed()))
-        {
-            if (cursor.isBeforeFirst())
-            {
-                int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-                cursor.moveToFirst();
-                path = cursor.getString(column_index);
-            }
-
-            cursor.close();
-        }
-
-        return path;
-    }
-
-    private MediaPlayer mMediaPlayer = null;
-
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+/*    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     protected void onClickMediaIcon(String mimeType, Uri mediaUri) {
 
         if (SecureMediaStore.isVfsUri(mediaUri)) {
@@ -199,113 +199,113 @@ public class GalleryListItem extends FrameLayout {
                 Toast.makeText(getContext(), R.string.there_is_no_viewer_available_for_this_file_format, Toast.LENGTH_LONG).show();
             }
         }
-    }
+    }*/
 
-    private void reshareMediaFile (String mimeType, Uri mediaUri)
-    {
-        Intent shareIntent = new Intent(context, ImUrlActivity.class);
-        shareIntent.setAction(Intent.ACTION_SEND);
-        shareIntent.setDataAndType(mediaUri,mimeType);
-        context.startActivity(shareIntent);
+//    private void reshareMediaFile (String mimeType, Uri mediaUri)
+//    {
+//        Intent shareIntent = new Intent(context, ImUrlActivity.class);
+//        shareIntent.setAction(Intent.ACTION_SEND);
+//        shareIntent.setDataAndType(mediaUri,mimeType);
+//        context.startActivity(shareIntent);
+//
+//    }
 
-    }
+//    private void exportMediaFile (String mimeType, Uri mediaUri, java.io.File exportPath)
+//    {
+//        try {
+//
+//            SecureMediaStore.exportContent(mimeType, mediaUri, exportPath);
+//            Intent shareIntent = new Intent();
+//            shareIntent.setAction(Intent.ACTION_SEND);
+//            shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(exportPath));
+//            shareIntent.setType(mimeType);
+//            context.startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.export_media)));
+//        } catch (IOException e) {
+//            Toast.makeText(getContext(), "Export Failed " + e.getMessage(), Toast.LENGTH_LONG).show();
+//            e.printStackTrace();
+//        }
+//    }
 
-    private void exportMediaFile (String mimeType, Uri mediaUri, java.io.File exportPath)
-    {
-        try {
+//    public static boolean isIntentAvailable(Context context, Intent intent) {
+//        final PackageManager packageManager = context.getPackageManager();
+//        List<ResolveInfo> list =
+//                packageManager.queryIntentActivities(intent,
+//                        PackageManager.MATCH_DEFAULT_ONLY);
+//        return list.size() > 0;
+//    }
+//
 
-            SecureMediaStore.exportContent(mimeType, mediaUri, exportPath);
-            Intent shareIntent = new Intent();
-            shareIntent.setAction(Intent.ACTION_SEND);
-            shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(exportPath));
-            shareIntent.setType(mimeType);
-            context.startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.export_media)));
-        } catch (IOException e) {
-            Toast.makeText(getContext(), "Export Failed " + e.getMessage(), Toast.LENGTH_LONG).show();
-            e.printStackTrace();
-        }
-    }
-
-    public static boolean isIntentAvailable(Context context, Intent intent) {
-        final PackageManager packageManager = context.getPackageManager();
-        List<ResolveInfo> list =
-                packageManager.queryIntentActivities(intent,
-                        PackageManager.MATCH_DEFAULT_ONLY);
-        return list.size() > 0;
-    }
-
-
-
-
-    private String formatMessage (String body)
-    {
-        if (body != null)
-            return android.text.Html.fromHtml(body).toString();
-        else
-            return null;
-    }
-
-
-
-    private SpannableString formatTimeStamp(Date date, int messageType, DateFormat format, GalleryListItem.DeliveryState delivery, EncryptionState encryptionState) {
+//
+//
+//    private String formatMessage (String body)
+//    {
+//        if (body != null)
+//            return android.text.Html.fromHtml(body).toString();
+//        else
+//            return null;
+//    }
+//
 
 
-        StringBuilder deliveryText = new StringBuilder();
-        deliveryText.append(format.format(date));
-        deliveryText.append(' ');
-
-        if (delivery != null)
-        {
-            //this is for delivery
-            if (delivery == DeliveryState.DELIVERED) {
-
-                deliveryText.append(DELIVERED_SUCCESS);
-
-            } else if (delivery == DeliveryState.UNDELIVERED) {
-
-                deliveryText.append(DELIVERED_FAIL);
-            }
-        }
-        
-        if (messageType != Imps.MessageType.QUEUED)
-            deliveryText.append(DELIVERED_SUCCESS);//this is for sent, so we know show 2 checks like WhatsApp!
-
-        SpannableString spanText = null;
-
-        if (encryptionState == EncryptionState.ENCRYPTED)
-        {
-            deliveryText.append('X');
-            spanText = new SpannableString(deliveryText.toString());
-            int len = spanText.length();
-
-            spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_lock_outline_black_18dp), len-1,len,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-        }
-        else if (encryptionState == EncryptionState.ENCRYPTED_AND_VERIFIED)
-        {
-            deliveryText.append('X');
-            spanText = new SpannableString(deliveryText.toString());
-            int len = spanText.length();
-
-            spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_lock_outline_black_18dp), len-1,len,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-        }
-        else
-        {
-            spanText = new SpannableString(deliveryText.toString());
-            int len = spanText.length();
-
-        }
-
-     //   spanText.setSpan(new StyleSpan(Typeface.SANS_SERIF), 0, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-       // spanText.setSpan(new RelativeSizeSpan(0.8f), 0, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-    //    spanText.setSpan(new ForegroundColorSpan(R.color.soft_grey),
-      //        0, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-        return spanText;
-    }
-
+//    private SpannableString formatTimeStamp(Date date, int messageType, DateFormat format, GalleryListItem.DeliveryState delivery, EncryptionState encryptionState) {
+//
+//
+//        StringBuilder deliveryText = new StringBuilder();
+//        deliveryText.append(format.format(date));
+//        deliveryText.append(' ');
+//
+//        if (delivery != null)
+//        {
+//            //this is for delivery
+//            if (delivery == DeliveryState.DELIVERED) {
+//
+//                deliveryText.append(DELIVERED_SUCCESS);
+//
+//            } else if (delivery == DeliveryState.UNDELIVERED) {
+//
+//                deliveryText.append(DELIVERED_FAIL);
+//            }
+//        }
+//
+//        if (messageType != Imps.MessageType.QUEUED)
+//            deliveryText.append(DELIVERED_SUCCESS);//this is for sent, so we know show 2 checks like WhatsApp!
+//
+//        SpannableString spanText = null;
+//
+//        if (encryptionState == EncryptionState.ENCRYPTED)
+//        {
+//            deliveryText.append('X');
+//            spanText = new SpannableString(deliveryText.toString());
+//            int len = spanText.length();
+//
+//            spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_lock_outline_black_18dp), len-1,len,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+//
+//        }
+//        else if (encryptionState == EncryptionState.ENCRYPTED_AND_VERIFIED)
+//        {
+//            deliveryText.append('X');
+//            spanText = new SpannableString(deliveryText.toString());
+//            int len = spanText.length();
+//
+//            spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_lock_outline_black_18dp), len-1,len,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+//
+//        }
+//        else
+//        {
+//            spanText = new SpannableString(deliveryText.toString());
+//            int len = spanText.length();
+//
+//        }
+//
+//     //   spanText.setSpan(new StyleSpan(Typeface.SANS_SERIF), 0, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+//
+//       // spanText.setSpan(new RelativeSizeSpan(0.8f), 0, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+//    //    spanText.setSpan(new ForegroundColorSpan(R.color.soft_grey),
+//      //        0, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+//
+//        return spanText;
+//    }
+//
 
 
 }

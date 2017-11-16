@@ -1,47 +1,62 @@
 package org.awesomeapp.messenger.ui.widgets;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Point;
+import android.graphics.RectF;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.Display;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.ImUrlActivity;
 import org.awesomeapp.messenger.util.SecureMediaStore;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import im.zom.messenger.R;
 import info.guardianproject.iocipher.File;
 import info.guardianproject.iocipher.FileInputStream;
-import im.zom.messenger.R;
 
-import java.io.IOException;
+public class ImageViewActivity extends AppCompatActivity implements PZSImageView.PSZImageViewImageMatrixListener {
 
-public class ImageViewActivity extends AppCompatActivity {
+    public static final String URIS = "uris";
+    public static final String MIME_TYPES = "mime_types";
+    public static final String CURRENT_INDEX = "current_index";
 
-    public static final String URI = "uri";
-    public static final String MIMETYPE = "mimetype";
+    private ConditionallyEnabledViewPager viewPagerPhotos;
+    private RectF tempRect = new RectF();
 
-    private Uri mediaUri;
-    private String mimeType;
+    private ArrayList<Uri> uris;
+    private ArrayList<String> mimeTypes;
+
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,13 +66,56 @@ public class ImageViewActivity extends AppCompatActivity {
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         //getSupportActionBar().setElevation(0);
 
-        setContentView(R.layout.image_view_activity);
+        viewPagerPhotos = new ConditionallyEnabledViewPager(this);
+        setContentView(viewPagerPhotos);
+        //setContentView(R.layout.image_view_activity);
         getSupportActionBar().show();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         setTitle("");
 
+        //viewPagerPhotos = (ViewPager) findViewById(R.id.viewPagerPhotos);
+        viewPagerPhotos.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                updateTitle();
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+            }
+        });
+
+        viewPagerPhotos.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                if ((right - left) > 0 && (bottom - top) > 0 && viewPagerPhotos.getAdapter() == null) {
+                    uris = getIntent().getParcelableArrayListExtra(URIS);
+                    mimeTypes = getIntent().getStringArrayListExtra(MIME_TYPES);
+                    if (uris != null && mimeTypes != null && uris.size() > 0 && uris.size() == mimeTypes.size()) {
+                        viewPagerPhotos.setAdapter(new PhotosPagerAdapter(ImageViewActivity.this, uris));
+                        int currentIndex = getIntent().getIntExtra(CURRENT_INDEX, 0);
+                        viewPagerPhotos.setCurrentItem(currentIndex);
+                        updateTitle();
+                    }
+                }
+            }
+        });
+
+        /*viewPagerPhotos.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (!viewPagerPhotosEnabled) {
+                    return true;
+                }
+                return false;
+            }
+        });*/
        // getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         /**
         getWindow().getDecorView().setSystemUiVisibility(
@@ -69,6 +127,14 @@ public class ImageViewActivity extends AppCompatActivity {
                         | View.SYSTEM_UI_FLAG_IMMERSIVE);*/
     }
 
+    private void updateTitle() {
+        if (viewPagerPhotos.getAdapter() != null && viewPagerPhotos.getAdapter().getCount() > 0) {
+            String title = "" + (viewPagerPhotos.getCurrentItem() + 1) + "/" + viewPagerPhotos.getAdapter().getCount();
+            setTitle(title);
+        } else {
+            setTitle("");
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -89,6 +155,9 @@ public class ImageViewActivity extends AppCompatActivity {
             case R.id.menu_message_share:
                 exportMediaFile();
                 return true;
+            case R.id.menu_message_resend:
+                resendMediaFile();
+                return true;
             /**
             case R.id.menu_message_delete:
                 deleteMediaFile();
@@ -99,102 +168,13 @@ public class ImageViewActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        mediaUri = Uri.parse(getIntent().getStringExtra(URI));
-        mimeType = getIntent().getStringExtra(MIMETYPE);
-
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                display(mediaUri.getPath());
-            }
-        });
-    }
-
-    private void display( String filename ) {
-        try {
-
-            PZSImageView imageView = (PZSImageView) findViewById(R.id.pzs_image_view);
-
-            if (mimeType.equals("image/gif")) {
-                if (SecureMediaStore.isVfsUri(mediaUri)) {
-                    try {
-                        Glide.with(this)
-                                .load(new info.guardianproject.iocipher.FileInputStream(new java.io.File(mediaUri.getPath()).getPath()))
-                                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                                .into(imageView);
-                    } catch (Exception e) {
-                        Log.e(ImApp.LOG_TAG, "unable to load thumbnail", e);
-                    }
-                } else {
-                    Glide.with(this)
-                            .load(mediaUri)
-                            .into(imageView);
-                }
-            }
-            else
-            {
-                imageView.setImageBitmap(fitToScreen(filename));
-            }
-
-//            imageView.setImageBitmap(bitmap);
-        } catch (Throwable t) { // may run Out Of Memory
-            findViewById(R.id.pzs_image_view).setVisibility(View.INVISIBLE);
-            findViewById(R.id.pzs_broken_image_view).setVisibility(View.VISIBLE);
-        }
-    }
-
-    private Bitmap fitToScreen( String filename ) throws IOException {
-        // read in dimensions only
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        options.inInputShareable = true;
-        options.inPurgeable = true;
-
-        FileInputStream fis = new FileInputStream(new File(filename));
-        BitmapFactory.decodeStream(fis, null, options);
-        fis.close();
-
-        if ((options.outWidth <= 0) || (options.outHeight <= 0))
-            throw new IOException( "Image dimensions unknown");
-
-        // calculate down sampling ratio to fit screen
-        int imageWidth = options.outWidth;
-        int imageHeight = options.outHeight;
-
-        options = new BitmapFactory.Options();
-        Point screenDimensions = getScreenDimensions();
-        if (imageHeight > imageWidth) {
-            options.inSampleSize = imageHeight / screenDimensions.y;
-        } else {
-            options.inSampleSize = imageWidth / screenDimensions.x;
-        }
-
-        // read in downsampled image
-        fis = new FileInputStream(new File(filename));
-        Bitmap scaledBitmap = BitmapFactory.decodeStream(fis, null, options);
-        fis.close();
-        return scaledBitmap;
-    }
-
-    @SuppressLint("NewApi")
-    private Point getScreenDimensions() {
-        Display display = getWindowManager().getDefaultDisplay();
-        if (Build.VERSION.SDK_INT >= 13) {
-            Point size = new Point();
-            display.getSize(size);
-            return size;
-        }
-        return new Point( display.getWidth(), display.getHeight());
-    }
-
     public void exportMediaFile ()
     {
-        java.io.File exportPath = SecureMediaStore.exportPath(mimeType, mediaUri);
-        exportMediaFile(mimeType, mediaUri, exportPath);
-
+        int currentItem = viewPagerPhotos.getCurrentItem();
+        if (currentItem >= 0 && currentItem < uris.size()) {
+            java.io.File exportPath = SecureMediaStore.exportPath(mimeTypes.get(currentItem), uris.get(currentItem));
+            exportMediaFile(mimeTypes.get(currentItem), uris.get(currentItem), exportPath);
+        }
     };
 
     private void exportMediaFile (String mimeType, Uri mediaUri, java.io.File exportPath)
@@ -215,28 +195,139 @@ public class ImageViewActivity extends AppCompatActivity {
 
     private void forwardMediaFile ()
     {
-
-        String resharePath = mediaUri.toString();
-        Intent shareIntent = new Intent(this, ImUrlActivity.class);
-        shareIntent.setAction(Intent.ACTION_SEND);
-        shareIntent.setDataAndType(Uri.parse(resharePath), mimeType);
-        startActivity(shareIntent);
-
+        int currentItem = viewPagerPhotos.getCurrentItem();
+        if (currentItem >= 0 && currentItem < uris.size()) {
+            String resharePath = uris.get(currentItem).toString();
+            Intent shareIntent = new Intent(this, ImUrlActivity.class);
+            shareIntent.setAction(Intent.ACTION_SEND);
+            shareIntent.setDataAndType(Uri.parse(resharePath), mimeTypes.get(currentItem));
+            startActivity(shareIntent);
+        }
     }
 
     private void resendMediaFile ()
     {
-
-        String resharePath = mediaUri.toString();
-        Intent shareIntent = new Intent(this, ImUrlActivity.class);
-        shareIntent.setAction(Intent.ACTION_SEND);
-        shareIntent.setDataAndType(Uri.parse(resharePath), mimeType);
-        startActivity(shareIntent);
-
+        int currentItem = viewPagerPhotos.getCurrentItem();
+        if (currentItem >= 0 && currentItem < uris.size()) {
+            String resharePath = uris.get(currentItem).toString();
+            Intent shareIntent = new Intent(this, ImUrlActivity.class);
+            shareIntent.setAction(Intent.ACTION_SEND);
+            shareIntent.setDataAndType(Uri.parse(resharePath), mimeTypes.get(currentItem));
+            startActivity(shareIntent);
+        }
     }
 
     private void deleteMediaFile ()
     {
         Toast.makeText(this,"Feature not quite ready yet!",Toast.LENGTH_SHORT).show();
     }
+
+    public class PhotosPagerAdapter extends PagerAdapter {
+        private final RequestOptions imageRequestOptions;
+
+        Context context;
+        List<Uri> photos;
+
+        public PhotosPagerAdapter(Context context, List<Uri> photos)
+        {
+            super();
+            this.context = context;
+            this.photos = photos;
+            imageRequestOptions = new RequestOptions().centerInside().diskCacheStrategy(DiskCacheStrategy.NONE).error(R.drawable.broken_image_large);
+        }
+
+        @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+            PZSImageView imageView = new PZSImageView(context);
+            imageView.setBackgroundColor(0xff333333);
+            imageView.setId(position);
+            container.addView(imageView);
+
+            Uri mediaUri = photos.get(position);
+
+            try {
+                imageView.setMatrixListener(ImageViewActivity.this);
+                if (SecureMediaStore.isVfsUri(mediaUri)) {
+                    Glide.with(context)
+                                .asBitmap()
+                                .apply(imageRequestOptions)
+                                .load(new info.guardianproject.iocipher.FileInputStream(new java.io.File(mediaUri.getPath()).getPath()))
+                                .into(imageView);
+                } else {
+                    Glide.with(context)
+                            .asBitmap()
+                            .apply(imageRequestOptions)
+                            .load(mediaUri)
+                            .into(imageView);
+                }
+            }
+            catch (Throwable t) { // may run Out Of Memory
+                Log.e(ImApp.LOG_TAG, "unable to load thumbnail", t);
+            }
+            return imageView;
+        }
+
+        @Override
+        public int getCount() {
+            return photos.size();
+        }
+
+        @Override
+        public boolean isViewFromObject(View arg0, Object arg1) {
+            return arg0 == arg1;
+        }
+
+        @Override
+        public void destroyItem(ViewGroup collection, int position, Object arg2) {
+            collection.removeView((View) arg2);
+        }
+    }
+
+    @Override
+    public void onImageMatrixSet(PZSImageView view, int imageWidth, int imageHeight, Matrix imageMatrix) {
+        if (view.getId() != viewPagerPhotos.getCurrentItem()) {
+            return;
+        }
+        if (imageMatrix != null) {
+            tempRect.set(0, 0, imageWidth, imageHeight);
+            imageMatrix.mapRect(tempRect);
+            int width = view.getWidth() - view.getPaddingLeft() - view.getPaddingRight();
+            int height = view.getHeight() - view.getPaddingTop() - view.getPaddingBottom();
+            if (tempRect.width() > width || tempRect.height() > height) {
+                viewPagerPhotos.enableSwiping = false;
+                return;
+            }
+        }
+        viewPagerPhotos.enableSwiping = true;
+    }
+
+    class ConditionallyEnabledViewPager extends ViewPager {
+        public boolean enableSwiping = true;
+
+        public ConditionallyEnabledViewPager(Context context) {
+            super(context);
+        }
+
+        @Override
+        public boolean onInterceptTouchEvent(MotionEvent ev) {
+            if (!enableSwiping) {
+                return false;
+            }
+            return super.onInterceptTouchEvent(ev);
+        }
+
+        @Override
+        public boolean onTouchEvent(MotionEvent ev) {
+            if (!enableSwiping) {
+                return true;
+            }
+            return super.onTouchEvent(ev);
+        }
+
+        @Override
+        public boolean performClick() {
+            return !enableSwiping || super.performClick();
+        }
+    };
+
 }

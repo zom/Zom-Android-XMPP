@@ -12,6 +12,7 @@ import android.view.View;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.ImageViewTarget;
 
 import org.awesomeapp.messenger.ImApp;
@@ -29,9 +30,12 @@ import im.zom.messenger.R;
  */
 public class GalleryMediaViewHolder extends MediaViewHolder
 {
-    private Context context;
+    public interface GalleryMediaViewHolderListener {
+        void onImageClicked(GalleryMediaViewHolder viewHolder, Uri image);
+    }
 
-    private ImageViewTarget<Bitmap> mTarget;
+    private Context context;
+    private GalleryMediaViewHolderListener listener;
 
     public GalleryMediaViewHolder (View view, Context context)
     {
@@ -39,6 +43,10 @@ public class GalleryMediaViewHolder extends MediaViewHolder
         this.context = context;
 
 
+    }
+
+    public void setListener(GalleryMediaViewHolderListener listener) {
+        this.listener = listener;
     }
 
     public void setOnClickListenerMediaThumbnail( final String mimeType, final Uri mediaUri ) {
@@ -136,26 +144,16 @@ public class GalleryMediaViewHolder extends MediaViewHolder
      */
     private void setThumbnail(ContentResolver contentResolver, Uri mediaUri) {
 
-        if (mTarget != null)
-            Glide.clear(mTarget);
-
-        mTarget = new ImageViewTarget<Bitmap>(mMediaThumbnail) {
-            @Override
-            protected void setResource(Bitmap resource) {
-
-                mMediaThumbnail.setImageBitmap(resource);
-            }
-        };
+        RequestOptions options = new RequestOptions().diskCacheStrategy(DiskCacheStrategy.NONE).placeholder(R.drawable.ic_photo_library_white_36dp);
 
         if(SecureMediaStore.isVfsUri(mediaUri))
         {
             try {
                 Glide.with(context)
-                        .load(new info.guardianproject.iocipher.FileInputStream(new File(mediaUri.getPath()).getPath()))
                         .asBitmap()
-                        .placeholder(R.drawable.ic_photo_library_white_36dp)
-                        .diskCacheStrategy(DiskCacheStrategy.NONE)
-                        .into(mTarget);
+                        .load(new info.guardianproject.iocipher.FileInputStream(new File(mediaUri.getPath()).getPath()))
+                        .apply(options)
+                        .into(mMediaThumbnail);
             }
             catch (Exception e)
             {
@@ -167,19 +165,18 @@ public class GalleryMediaViewHolder extends MediaViewHolder
         {
             String assetPath = "file:///android_asset/" + mediaUri.getPath().substring(1);
             Glide.with(context)
-                    .load(assetPath)
                     .asBitmap()
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-                   .into(mTarget);
+                    .load(assetPath)
+                    .apply(options)
+                   .into(mMediaThumbnail);
         }
         else
         {
             Glide.with(context)
-                    .load(mediaUri)
                     .asBitmap()
-                    .placeholder(R.drawable.ic_photo_library_white_36dp)
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .into(mTarget);
+                    .load(mediaUri)
+                    .apply(options)
+                    .into(mMediaThumbnail);
         }
 
     }
@@ -189,11 +186,9 @@ public class GalleryMediaViewHolder extends MediaViewHolder
 
 
         if (mimeType.startsWith("image")) {
-            Intent intent = new Intent(context, ImageViewActivity.class);
-            intent.putExtra( ImageViewActivity.URI, mediaUri.toString());
-            intent.putExtra( ImageViewActivity.MIMETYPE, mimeType);
-
-            context.startActivity(intent);
+            if (listener != null) {
+                listener.onImageClicked(this, mediaUri);
+            }
         }
     }
 
