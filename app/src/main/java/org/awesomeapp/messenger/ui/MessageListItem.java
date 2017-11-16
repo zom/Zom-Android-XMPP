@@ -22,6 +22,7 @@ import im.zom.messenger.R;
 import org.awesomeapp.messenger.ImUrlActivity;
 import org.awesomeapp.messenger.ui.onboarding.OnboardingManager;
 import org.awesomeapp.messenger.ui.widgets.MessageViewHolder;
+import org.awesomeapp.messenger.util.GlideUtils;
 import org.awesomeapp.messenger.util.SecureMediaStore;
 import org.awesomeapp.messenger.ui.legacy.DatabaseUtils;
 import org.awesomeapp.messenger.ImApp;
@@ -35,6 +36,7 @@ import org.awesomeapp.messenger.util.LinkifyHelper;
 import org.ocpsoft.prettytime.PrettyTime;
 
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -364,19 +366,6 @@ public class MessageListItem extends FrameLayout {
         }
         else
         {
-
-            Glide.clear(holder.mMediaThumbnail);
-
-            try {
-                Glide.with(context)
-                        .load(R.drawable.ic_file)
-                        .diskCacheStrategy(DiskCacheStrategy.NONE)
-                        .into(holder.mMediaThumbnail);
-            }
-            catch (Exception e)
-            {
-                Log.e(ImApp.LOG_TAG,"unable to load thumbnail",e);
-            }
             holder.mMediaThumbnail.setImageResource(R.drawable.ic_file); // generic file icon
             holder.mTextViewForMessages.setText(mediaUri.getLastPathSegment() + " (" + mimeType + ")");
             holder.mTextViewForMessages.setVisibility(View.VISIBLE);
@@ -436,10 +425,9 @@ public class MessageListItem extends FrameLayout {
         if (mimeType.startsWith("image")) {
 
             Intent intent = new Intent(context, ImageViewActivity.class);
-            intent.putExtra(ImageViewActivity.URI, mediaUri.toString());
-            intent.putExtra(ImageViewActivity.MIMETYPE, mimeType);
-            intent.putExtra(ImageViewActivity.MIMETYPE, mimeType);
-
+            ArrayList<Uri> urisToShow = new ArrayList<>();
+            urisToShow.add(mediaUri); // TODO - add all in thread!
+            intent.putExtra(ImageViewActivity.URIS, urisToShow);
             context.startActivity(intent);
 
         }
@@ -631,41 +619,7 @@ public class MessageListItem extends FrameLayout {
         aHolder.mMediaUri = mediaUri;
         // if a content uri - already scanned
 
-        Glide.clear(aHolder.mMediaThumbnail);
-        if(SecureMediaStore.isVfsUri(mediaUri))
-        {
-            try {
-                info.guardianproject.iocipher.File fileImage = new info.guardianproject.iocipher.File(mediaUri.getPath());
-                if (fileImage.exists())
-                {
-                    Glide.with(context)
-                            .load(new info.guardianproject.iocipher.FileInputStream(fileImage))
-                            .diskCacheStrategy(DiskCacheStrategy.NONE)
-                            .into(aHolder.mMediaThumbnail);
-                }
-            }
-            catch (Exception e)
-            {
-                Log.w(ImApp.LOG_TAG,"unable to load thumbnail: " + mediaUri.toString());
-            }
-        }
-        else if (mediaUri.getScheme() != null
-        && mediaUri.getScheme().equals("asset"))
-        {
-            String assetPath = "file:///android_asset/" + mediaUri.getPath().substring(1);
-            Glide.with(context)
-                    .load(assetPath)
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .into(aHolder.mMediaThumbnail);
-        }
-        else
-        {
-            Glide.with(context)
-                    .load(mediaUri)
-                    .into(aHolder.mMediaThumbnail);
-        }
-
-
+        GlideUtils.loadImageFromUri(context, mediaUri, aHolder.mMediaThumbnail);
     }
 
 
