@@ -461,10 +461,6 @@
             ></activity>
         <activity android:name="org.awesomeapp.messenger.ui.GroupDisplayActivity"></activity>
 
-        <meta-data
-            android:name="org.awesomeapp.messenger.tasks.GlideVFSModule"
-            android:value="GlideModule" />
-
         <activity
             android:name="org.awesomeapp.messenger.ui.AccountsActivity"
             android:label="@string/accounts"></activity>

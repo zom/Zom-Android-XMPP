@@ -133,7 +133,10 @@ dependencies {
     compile 'org.ocpsoft.prettytime:prettytime:4.0.0.Final'
     compile 'com.theartofdev.edmodo:android-image-cropper:2.0.0'
     compile 'de.hdodenhof:circleimageview:2.0.0'
-    compile 'com.github.bumptech.glide:glide:3.7.0'
+
+    compile 'com.github.bumptech.glide:glide:4.3.1'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.3.1'
+
     compile 'com.github.javiersantos:AppUpdater:2.5.2'
     compile 'com.github.QuadFlask:colorpicker:0.0.10'
 
