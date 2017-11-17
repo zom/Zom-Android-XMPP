@@ -1266,6 +1266,9 @@ public class Imps {
         /** The last message timestamp <P>Type: INT</P> */
         String LAST_MESSAGE_DATE = "last_message_date";
 
+        /** The last read timestamp <P>Type: INT</P> */
+        String LAST_READ_DATE = "last_read_date";
+
         /**
          * A message that is being composed. This indicates that there was a
          * message being composed when the chat screen was shutdown, and what
