@@ -87,7 +87,7 @@ interface IContactListManager {
          * @param address the address of the contact to hide.
          * @return ILLEGAL_CONTACT_LIST_MANAGER_STATE if contact lists is not loaded.
          */
-     int hideContact(String address, boolean isHidden);
+     int archiveContact(String address, int contactType, boolean setArchive);
 
     /**
      * Blocks a contact. The ContactListListener will be notified when the contact is blocked

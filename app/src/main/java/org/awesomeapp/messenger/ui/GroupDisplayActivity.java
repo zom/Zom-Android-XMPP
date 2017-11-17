@@ -602,20 +602,49 @@ public class GroupDisplayActivity extends BaseActivity {
     private void confirmLeaveGroup ()
     {
         new android.support.v7.app.AlertDialog.Builder(this)
-                .setTitle(getString(R.string.action_leave))
+                .setTitle(getString(R.string.confirm_leave_group_title))
                 .setMessage(getString(R.string.confirm_leave_group))
-                .setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
+                .setPositiveButton(getString(R.string.action_leave), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         leaveGroup();
                     }
                 })
-                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                .setNeutralButton(getString(R.string.action_archive), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        archiveGroup();
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         // do nothing
                     }
                 })
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
+    }
+
+    private void archiveGroup ()
+    {
+        try {
+
+
+            Uri chatUri = ContentUris.withAppendedId(Imps.Chats.CONTENT_URI, mLastChatId);
+            ContentValues values = new ContentValues();
+            values.put(Imps.Chats.CHAT_TYPE,Imps.Chats.CHAT_TYPE_ARCHIVED);
+            getContentResolver().update(chatUri,values,Imps.Chats.CONTACT_ID + "=" + mLastChatId,null);
+
+            //clear the stack and go back to the main activity
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+
+
+        }
+        catch (Exception e)
+        {
+            Log.e(ImApp.LOG_TAG,"error leaving group",e);
+        }
     }
 
     private void leaveGroup ()

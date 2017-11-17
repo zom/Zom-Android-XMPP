@@ -197,12 +197,24 @@ public class ConversationListFragment extends Fragment {
                myself to get a context outside an Activity class -
                feel free to use your own method */
 
-                        icon = BitmapFactory.decodeResource(
-                                getActivity().getResources(), R.drawable.ic_archive_white_24dp);
 
-            /* Set your color for positive displacement */
-                        p.setARGB(255, 150, 150, 150);
+                        if (mChatType == Imps.Chats.CHAT_TYPE_ARCHIVED)
+                        {
+                            icon = BitmapFactory.decodeResource(
+                                    getActivity().getResources(), R.drawable.ic_unarchive_white_24dp);
 
+                            p.setColor(getResources().getColor(R.color.holo_green_dark));
+
+
+                        }
+                        else
+                        {
+                            icon = BitmapFactory.decodeResource(
+                                    getActivity().getResources(), R.drawable.ic_archive_white_24dp);
+
+                            p.setARGB(255, 150, 150, 150);
+
+                        }
 
 
                         // Draw Rect with varying right side, equal to displacement dX
@@ -253,21 +265,26 @@ public class ConversationListFragment extends Fragment {
                 // callback for swipe to dismiss, removing item from data and adapter
                 int position = viewHolder.getAdapterPosition();
 
-                //delete / endchat
-                //items.remove(viewHolder.getAdapterPosition());
                 final long itemId = mAdapter.getItemId(position);
 
-                archiveConversation(itemId);
+                if (mChatType == Imps.Chats.CHAT_TYPE_ACTIVE) {
+                    archiveConversation(itemId);
 
-                Snackbar snack = Snackbar.make(mRecView, getString(R.string.action_archived), Snackbar.LENGTH_LONG);
-                snack.setAction(R.string.action_undo, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        unarchiveConversation(itemId);
-                    }
-                });
-                snack.show();
-
+                    Snackbar snack = Snackbar.make(mRecView, getString(R.string.action_archived), Snackbar.LENGTH_LONG);
+                    snack.setAction(R.string.action_undo, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            unarchiveConversation(itemId);
+                        }
+                    });
+                    snack.show();
+                }
+                else
+                {
+                    unarchiveConversation(itemId);
+                    Snackbar snack = Snackbar.make(mRecView, getString(R.string.action_unarchived), Snackbar.LENGTH_SHORT);
+                    snack.show();
+                }
             }
 
             @Override

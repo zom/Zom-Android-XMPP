@@ -176,7 +176,7 @@ public class ContactsListFragment extends Fragment {
         }
 
         // init swipe to dismiss logic
-    /**
+
         ItemTouchHelper swipeToDismissTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(
                 ItemTouchHelper.RIGHT, ItemTouchHelper.RIGHT) {
 
@@ -216,12 +216,11 @@ public class ContactsListFragment extends Fragment {
 
                     if (dX > 0) {
 
-                        if (contactType == Imps.Contacts.TYPE_HIDDEN)
+                        if (contactType == Imps.Contacts.TYPE_HIDDEN || contactType == Imps.Contacts.TYPE_HIDDEN_GROUP)
                         {
                             icon = BitmapFactory.decodeResource(
                                     getActivity().getResources(), R.drawable.ic_unarchive_white_24dp);
 
-                            //p.setARGB(255, 150, 255, 150);
                             p.setColor(getResources().getColor(R.color.holo_green_dark));
 
 
@@ -297,36 +296,36 @@ public class ContactsListFragment extends Fragment {
                     //itemViewHolder.onItemClear();
 
                     final boolean doArchive = (itemViewHolder.mType == Imps.Contacts.TYPE_NORMAL);
+                    final int contactType = itemViewHolder.mType;
                     final int id = itemViewHolder.itemView.getId();
                     final String address = itemViewHolder.mAddress;
                     final long providerId = itemViewHolder.mProviderId;
                     final long accountId = itemViewHolder.mAccountId;
 
-                    //then hide/archive contact
-                    archiveContact(((MainActivity) getActivity()), itemViewHolder.itemView.getId(), itemViewHolder.mAddress, itemViewHolder.mProviderId, itemViewHolder.mAccountId, doArchive);
+                    if (doArchive) {
+                        Snackbar snack = Snackbar.make(mRecView, getString(R.string.are_you_sure), Snackbar.LENGTH_LONG);
+                        snack.setAction(R.string.yes, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                archiveContact(getActivity(), id, address, contactType, providerId, accountId);
+                            }
+                        });
 
-                    String action =  getString(R.string.action_archived);
-                    if (!doArchive)
-                        action = getString(R.string.action_active);
+                        snack.show();
+                    }
+                    else
+                    {
+                        Snackbar snack = Snackbar.make(mRecView, getString(R.string.action_unarchived), Snackbar.LENGTH_SHORT);
+                        unarchiveContact(getActivity(), id, address, contactType, providerId, accountId);
+                        snack.show();
 
-                    Snackbar snack = Snackbar.make(mRecView,action, Snackbar.LENGTH_LONG);
-                    snack.setAction(R.string.action_undo, new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-
-                            archiveContact(((MainActivity) getActivity()),id, address, providerId, accountId, !doArchive);
-
-                        }
-                    });
-
-                    snack.show();
-
+                    }
                 }
             }
 
             @Override
             public boolean isLongPressDragEnabled() {
-                return false;
+                return true;
             }
 
             @Override
@@ -335,13 +334,13 @@ public class ContactsListFragment extends Fragment {
             }
         });
         swipeToDismissTouchHelper.attachToRecyclerView(recyclerView);
-        **/
+
 
 
 
     }
 
-    private static void archiveContact (Activity activity, long itemId, String address, long providerId, long accountId, boolean isArchived)
+    private static void archiveContact (Activity activity, long itemId, String address, int contactType, long providerId, long accountId)
     {
 
         try {
@@ -349,18 +348,37 @@ public class ContactsListFragment extends Fragment {
             IImConnection mConn;
             ImApp app = ((ImApp)activity.getApplication());
             mConn = app.getConnection(providerId, accountId);
-
-            //first leave, delete an existing chat session
-            IChatSessionManager sessionMgr = mConn.getChatSessionManager();
-            if (sessionMgr != null) {
-                IChatSession session = sessionMgr.getChatSession(Address.stripResource(address));
-
-            }
-
             //then delete the contact from our list
             IContactListManager manager = mConn.getContactListManager();
 
-            int res = manager.hideContact(address,isArchived);
+            int res = manager.archiveContact(address,contactType,true);
+            if (res != ImErrorInfo.NO_ERROR) {
+                //mHandler.showAlert(R.string.error,
+                //      ErrorResUtils.getErrorRes(getResources(), res, address));
+            }
+
+
+        }
+        catch (RemoteException re)
+        {
+
+        }
+
+
+    }
+
+    private static void unarchiveContact (Activity activity, long itemId, String address, int contactType, long providerId, long accountId)
+    {
+
+        try {
+
+            IImConnection mConn;
+            ImApp app = ((ImApp)activity.getApplication());
+            mConn = app.getConnection(providerId, accountId);
+            //then delete the contact from our list
+            IContactListManager manager = mConn.getContactListManager();
+
+            int res = manager.archiveContact(address,contactType,false);
             if (res != ImErrorInfo.NO_ERROR) {
                 //mHandler.showAlert(R.string.error,
                 //      ErrorResUtils.getErrorRes(getResources(), res, address));
@@ -547,12 +565,11 @@ public class ContactsListFragment extends Fragment {
                 buf.append(" LIKE ");
                 DatabaseUtils.appendValueToSql(buf, "%" + mSearchString + "%");
                 buf.append(')');
-               // buf.append(" AND ");
+                buf.append(" AND ");
             }
-            else {
-                buf.append(Imps.Contacts.TYPE).append('=').append(mType);
-            }
-            
+
+            buf.append(Imps.Contacts.TYPE).append('=').append(mType);
+
             CursorLoader loader = new CursorLoader(getActivity(), mUri, CHAT_PROJECTION,
                     buf == null ? null : buf.toString(), null, Imps.Contacts.SUB_AND_ALPHA_SORT_ORDER);
 

@@ -236,9 +236,14 @@ public class ContactListManagerAdapter extends
         mAdaptee.declineSubscriptionRequest(address);
     }
 
-    public int hideContact(String address, boolean isHidden) {
+    public int archiveContact(String address, int contactType, boolean doArchive) {
 
-        boolean result = updateContactType(address, isHidden ? Imps.Contacts.TYPE_HIDDEN : Imps.Contacts.TYPE_NORMAL);
+        boolean result = false;
+
+        if (contactType == Imps.Contacts.TYPE_NORMAL || contactType == Imps.Contacts.TYPE_HIDDEN)
+            updateContactType(address, doArchive ? Imps.Contacts.TYPE_HIDDEN : Imps.Contacts.TYPE_NORMAL);
+        else if (contactType == Imps.Contacts.TYPE_GROUP || contactType == Imps.Contacts.TYPE_HIDDEN_GROUP)
+            updateContactType(address, doArchive ? Imps.Contacts.TYPE_HIDDEN_GROUP : Imps.Contacts.TYPE_GROUP);
 
         if (result)
             return ImErrorInfo.NO_ERROR;

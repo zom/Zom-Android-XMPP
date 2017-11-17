@@ -161,8 +161,9 @@ public class MigrateAccountTask extends AsyncTask<String, Void, OnboardingAccoun
 
                         session.sendMessage(migrateMessage, false);
 
+
                         //archive existing contact
-                        clManager.hideContact(contact, true);
+                        clManager.archiveContact(contact,session.isGroupChatSession() ? Imps.Contacts.TYPE_NORMAL : Imps.Contacts.TYPE_GROUP, true);
                     }
 
                 }
@@ -173,7 +174,7 @@ public class MigrateAccountTask extends AsyncTask<String, Void, OnboardingAccoun
 
                 for (String address : offlineAddresses) {
                     mContacts.add(address);
-                    clManager.hideContact(address, true);
+                    clManager.archiveContact(address, Imps.Contacts.TYPE_NORMAL, true);
                 }
             }
 

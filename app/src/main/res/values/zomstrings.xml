@@ -42,7 +42,9 @@
   <string name="menu_refresh">Refresh Session</string>
 
   <string name="action_archived">Archived</string>
-  <string name="action_verified">Verified</string>
+    <string name="action_unarchived">Unarchived</string>
+
+    <string name="action_verified">Verified</string>
 
   <string name="action_theme">Change Theme</string>
   <string name="action_stickers">Sticker Share</string>
@@ -150,7 +152,8 @@
   <string name="turn_notifications_off">Mute notifications</string>
   <string name="is_already_in_your_group">%1$s ✔️</string>
 
-  <string name="confirm_leave_group">Are you sure you want to leave the group?</string>
+    <string name="confirm_leave_group_title">Leave Group?</string>
+  <string name="confirm_leave_group">Your group chat history will be wiped away. To keep these chats, archive the group instead.</string>
 
   <string name="pref_enable_advanced_network_features">Advanced Networking</string>
   <string name="pref_enable_advanced_network_features_summary">Enable advanced protection against network threats</string>
@@ -161,4 +164,5 @@
     <string name="pref_proxy_server_port_title">Proxy Server Port</string>
     <string name="pref_proxy_server_port_summary">Port of SOCKS proxy</string>
 
+    <string name="are_you_sure">Are you sure?</string>
 </resources>

@@ -377,8 +377,10 @@ public class Imps {
          * a chat session with this contact.
          */
         int TYPE_TEMPORARY = 1;
-        /** temporary contact created for group chat. */
+
+        /** contact created for group chat. */
         int TYPE_GROUP = 2;
+
         /** blocked contact. */
         int TYPE_BLOCKED = 3;
         /**
@@ -391,6 +393,9 @@ public class Imps {
          * to the user.
          */
         int TYPE_PINNED = 5;
+
+        int TYPE_HIDDEN_GROUP = 6;
+
 
         /** Contact subscription status <P>Type: INTEGER</P> */
         String SUBSCRIPTION_STATUS = "subscriptionStatus";
