@@ -112,6 +112,7 @@ public class SystemServices {
        // public File file;
         public InputStream stream;
         public String type;
+        public String name;
     }
     
     public final static String MIME_TYPE_JPEG = "image/jpeg";
@@ -182,10 +183,12 @@ public class SystemServices {
     }
 **/
 
-    public static FileInfo getFileInfoFromURI(Context aContext, Uri uri) throws IllegalArgumentException, FileNotFoundException {
+    public static FileInfo getFileInfoFromURI(Context aContext, Uri uri) throws IllegalArgumentException, FileNotFoundException, UnsupportedEncodingException {
         FileInfo info = new FileInfo();
+        MimeTypeMap mime = MimeTypeMap.getSingleton();
 
         if (SecureMediaStore.isVfsUri(uri)) {
+            info.name = URLEncoder.encode(uri.getLastPathSegment(),"UTF-8");
             info.stream = new info.guardianproject.iocipher.FileInputStream(uri.getPath());
             String type = getMimeType(uri.toString());
             if (!TextUtils.isEmpty(type)) {
@@ -194,7 +197,9 @@ public class SystemServices {
             }
         }
         else if (new File(uri.toString()).exists()) {
-            info.stream = new FileInputStream(new File(uri.toString()));
+            File file = new File(uri.toString());
+            info.name =  file.getName();
+            info.stream = new FileInputStream(file);
             String type = getMimeType(uri.toString());
             if (!TextUtils.isEmpty(type)) {
                 info.type = type;
@@ -203,10 +208,10 @@ public class SystemServices {
         }
         else
         {
+            info.name = URLEncoder.encode(uri.getLastPathSegment(),"UTF-8");
             info.stream = aContext.getContentResolver().openInputStream(uri);
         }
 
-        MimeTypeMap mime = MimeTypeMap.getSingleton();
         info.type = aContext.getContentResolver().getType(uri);
         if (!TextUtils.isEmpty(info.type))
             return info;

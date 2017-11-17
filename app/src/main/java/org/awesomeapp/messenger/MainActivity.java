@@ -94,6 +94,7 @@ import org.ironrabbit.type.CustomTypefaceManager;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -553,7 +554,7 @@ public class MainActivity extends BaseActivity {
             mLastPhoto = Uri.parse(lastPhotoPath);
     }
 
-    private void importPhoto () throws FileNotFoundException {
+    private void importPhoto () throws FileNotFoundException, UnsupportedEncodingException {
 
         // import
         SystemServices.FileInfo info = SystemServices.getFileInfoFromURI(this, mLastPhoto);

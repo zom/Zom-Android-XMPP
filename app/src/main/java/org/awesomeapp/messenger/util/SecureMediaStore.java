@@ -10,7 +10,6 @@ import android.net.Uri;
 import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
-import android.webkit.MimeTypeMap;
 
 import org.apache.commons.io.IOUtils;
 import org.awesomeapp.messenger.ImApp;

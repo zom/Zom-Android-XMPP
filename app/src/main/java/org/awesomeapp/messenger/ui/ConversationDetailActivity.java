@@ -595,21 +595,19 @@ public class ConversationDetailActivity extends BaseActivity {
 
             String sessionId = mConvoView.getChatId()+"";
 
-            String fileName = contentUri.getLastPathSegment();
-
             Uri vfsUri;
             if (resizeImage)
                 vfsUri = SecureMediaStore.resizeAndImportImage(this, sessionId, contentUri, info.type);
             else if (importContent) {
 
                 if (contentUri.getScheme() == null || contentUri.getScheme().equals("assets"))
-                    vfsUri = SecureMediaStore.importContent(sessionId,fileName, info.stream);
+                    vfsUri = SecureMediaStore.importContent(sessionId,info.name, info.stream);
                 else if (contentUri.getScheme().startsWith("http"))
                 {
-                    vfsUri = SecureMediaStore.importContent(sessionId,fileName, new URL(contentUri.toString()).openConnection().getInputStream());
+                    vfsUri = SecureMediaStore.importContent(sessionId,info.name, new URL(contentUri.toString()).openConnection().getInputStream());
                 }
                 else
-                    vfsUri = SecureMediaStore.importContent(sessionId,fileName, info.stream);
+                    vfsUri = SecureMediaStore.importContent(sessionId,info.name, info.stream);
             }
             else
             {
