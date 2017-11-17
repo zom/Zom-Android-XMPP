@@ -20,6 +20,8 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -321,6 +323,12 @@ public class ConversationDetailActivity extends BaseActivity {
         regFilter .addAction(Intent.ACTION_SCREEN_ON);
         registerReceiver(receiver, regFilter);
 
+        // Set last read date now!
+        if (mChatId != -1) {
+            ContentValues values = new ContentValues(1);
+            values.put(Imps.Chats.LAST_READ_DATE, System.currentTimeMillis());
+            getContentResolver().update(ContentUris.withAppendedId(Imps.Chats.CONTENT_URI, mChatId), values, null, null);
+        }
 
         /**
         if (mConvoView.getOtrSessionStatus() == SessionStatus.ENCRYPTED
@@ -352,6 +360,13 @@ public class ConversationDetailActivity extends BaseActivity {
         mConvoView.setSelected(false);
 
         unregisterReceiver(receiver);
+
+        // Set last read date now!
+        if (mChatId != -1) {
+            ContentValues values = new ContentValues(1);
+            values.put(Imps.Chats.LAST_READ_DATE, System.currentTimeMillis());
+            getContentResolver().update(ContentUris.withAppendedId(Imps.Chats.CONTENT_URI, mChatId), values, null, null);
+        }
     }
 
     @Override

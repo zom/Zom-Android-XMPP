@@ -114,47 +114,7 @@
         android:layout_marginTop="0dp"
         android:paddingTop="0dp"
         />
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:layout_margin="0dp"
-            android:id="@+id/waiting_view"
-            android:visibility="gone"
-            android:background="@color/holo_grey_light"
-            >
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="120dp"
-                android:src="@drawable/waiting_for_friend"
-                android:id="@+id/waiting_view_image"
-                />
 
-            <org.ironrabbit.type.CustomTypefaceTextView
-                android:id="@+id/waiting_view_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/message_waiting_for_friend"
-                android:textColor="?messageTextSecondary"
-                android:layout_margin="5dp"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:gravity="center"
-                />
-            <LinearLayout
-                android:layout_width="80dp"
-                android:layout_height="wrap_content"
-                android:background="@drawable/rounded_rect_primary"
-                android:gravity="center"
-                >
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_refresh_white_24dp"
-                android:id="@+id/waiting_refresh"
-                /></LinearLayout>
-
-        </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -488,5 +448,52 @@
 
 
     </LinearLayout>
+
+        <!-- Waiting for friend view, covers the whole container -->
+        <LinearLayout
+            android:id="@+id/waiting_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="0dp"
+            android:background="@color/holo_grey_light"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/waiting_view_image"
+                android:layout_width="wrap_content"
+                android:layout_height="120dp"
+                android:src="@drawable/waiting_for_friend" />
+
+            <org.ironrabbit.type.CustomTypefaceTextView
+                android:id="@+id/waiting_view_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:gravity="center"
+                android:text="@string/message_waiting_for_friend"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="?messageTextSecondary" />
+
+            <LinearLayout
+                android:id="@+id/waiting_refresh_background"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/rounded_rect_primary"
+                android:padding="10dp"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/waiting_refresh"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:src="@drawable/ic_refresh_white_24dp" />
+            </LinearLayout>
+
+        </LinearLayout>
+
     </FrameLayout>
 </LinearLayout>

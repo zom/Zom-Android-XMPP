@@ -51,6 +51,8 @@ import org.awesomeapp.messenger.ui.widgets.GroupAvatar;
 import org.awesomeapp.messenger.ui.widgets.LetterAvatar;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import im.zom.messenger.R;
 
@@ -344,8 +346,8 @@ public class GroupDisplayActivity extends BaseActivity {
                     if (mConn != null) {
                         contactManager = mConn.getContactListManager();
                     }
+                } catch (RemoteException re) {
                 }
-                catch (RemoteException re){}
 
                 String[] projection = {Imps.GroupMembers.USERNAME, Imps.GroupMembers.NICKNAME, Imps.GroupMembers.ROLE, Imps.GroupMembers.AFFILIATION};
                 Uri memberUri = ContentUris.withAppendedId(Imps.GroupMembers.CONTENT_URI, mLastChatId);
@@ -378,20 +380,37 @@ public class GroupDisplayActivity extends BaseActivity {
 
 
                         /**
-                        try {
-                            if (contactManager != null) {
-                                Contact contact = contactManager.getContactByAddress(member.username);
-                                if (contact != null)
-                                    member.online = contact.getPresence().isOnline();
-                            }
-                        }
-                        catch (RemoteException re){}**/
+                         try {
+                         if (contactManager != null) {
+                         Contact contact = contactManager.getContactByAddress(member.username);
+                         if (contact != null)
+                         member.online = contact.getPresence().isOnline();
+                         }
+                         }
+                         catch (RemoteException re){}**/
 
                         members.add(member);
                     }
                     c.close();
                 }
                 if (!Thread.currentThread().isInterrupted()) {
+
+                    // Sort members by name, but keep owners at the top
+                    Collections.sort(members, new Comparator<GroupMemberDisplay>() {
+                        @Override
+                        public int compare(GroupMemberDisplay member1, GroupMemberDisplay member2) {
+                            boolean member1isImportant = (member1.affiliation.contentEquals("owner") || member1.affiliation.contentEquals("admin"));
+                            boolean member2isImportant = (member2.affiliation.contentEquals("owner") || member2.affiliation.contentEquals("admin"));
+                            if (member1isImportant != member2isImportant) {
+                                if (member1isImportant) {
+                                    return -1;
+                                } else {
+                                    return 1;
+                                }
+                            }
+                            return member1.nickname.compareTo(member2.nickname);
+                        }
+                    });
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {

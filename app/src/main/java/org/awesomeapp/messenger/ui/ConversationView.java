@@ -48,8 +48,11 @@ import android.os.RemoteException;
 import android.provider.Browser;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.graphics.drawable.DrawableCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
@@ -72,6 +75,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -1306,10 +1312,40 @@ public class ConversationView {
                         && mSubscriptionStatus == Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING))
                 {
                     mActivity.findViewById(R.id.waiting_view).setVisibility(View.VISIBLE);
-                    mActivity.findViewById(R.id.waiting_refresh).setOnClickListener(new View.OnClickListener() {
+                    final View buttonRefresh = mActivity.findViewById(R.id.waiting_refresh_background);
+                    final ImageView iconRefresh = (ImageView) mActivity.findViewById(R.id.waiting_refresh);
+                    buttonRefresh.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+                            Animation rotate = new RotateAnimation(0,360,Animation.RELATIVE_TO_SELF,0.5f,Animation.RELATIVE_TO_SELF,0.5f);
+                            rotate.setRepeatCount(4);
+                            rotate.setInterpolator(new LinearInterpolator());
+                            rotate.setDuration(800);
+                            rotate.setAnimationListener(new Animation.AnimationListener() {
+                                @Override
+                                public void onAnimationStart(Animation animation) {
+
+                                }
+
+                                @Override
+                                public void onAnimationEnd(Animation animation) {
+                                    iconRefresh.clearAnimation();
+                                    Drawable check = ContextCompat.getDrawable(iconRefresh.getContext(), R.drawable.ic_check_white_24dp).mutate();
+                                    DrawableCompat.setTint(check, ContextCompat.getColor(iconRefresh.getContext(), R.color.zom_primary));
+                                    iconRefresh.setImageDrawable(check);
+                                    Drawable back = buttonRefresh.getBackground().mutate();
+                                    DrawableCompat.setTint(back, Color.WHITE);
+                                    ViewCompat.setBackground(buttonRefresh, back);
+                                    buttonRefresh.setEnabled(false);
+                                }
+
+                                @Override
+                                public void onAnimationRepeat(Animation animation) {
+
+                                }
+                            });
                             resendFriendRequest();
+                            iconRefresh.startAnimation(rotate);
                         }
                     });
                 }

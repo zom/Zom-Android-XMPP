@@ -298,10 +298,14 @@ public class ContactsListFragment extends Fragment {
 
                 if (viewHolder instanceof ContactViewHolder) {
                     // Tell the view holder it's time to restore the idle state
-                    final ContactViewHolder itemViewHolder = (ContactViewHolder) viewHolder;
+                    ContactViewHolder itemViewHolder = (ContactViewHolder) viewHolder;
                     //itemViewHolder.onItemClear();
 
-                    final boolean doArchive = (itemViewHolder.mType == Imps.Contacts.TYPE_NORMAL ? true : false);
+                    final boolean doArchive = (itemViewHolder.mType == Imps.Contacts.TYPE_NORMAL);
+                    final int id = itemViewHolder.itemView.getId();
+                    final String address = itemViewHolder.mAddress;
+                    final long providerId = itemViewHolder.mProviderId;
+                    final long accountId = itemViewHolder.mAccountId;
 
                     //then hide/archive contact
                     archiveContact(((MainActivity) getActivity()), itemViewHolder.itemView.getId(), itemViewHolder.mAddress, itemViewHolder.mProviderId, itemViewHolder.mAccountId, doArchive);
@@ -315,7 +319,7 @@ public class ContactsListFragment extends Fragment {
                         @Override
                         public void onClick(View view) {
 
-                            archiveContact(((MainActivity) getActivity()), itemViewHolder.itemView.getId(), itemViewHolder.mAddress, itemViewHolder.mProviderId, itemViewHolder.mAccountId, !doArchive);
+                            archiveContact(((MainActivity) getActivity()),id, address, providerId, accountId, !doArchive);
 
                         }
                     });
