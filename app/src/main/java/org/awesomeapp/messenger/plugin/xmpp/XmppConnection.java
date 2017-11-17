@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import org.awesomeapp.messenger.ImApp;
+import org.awesomeapp.messenger.Preferences;
 import org.awesomeapp.messenger.crypto.omemo.Omemo;
 import org.awesomeapp.messenger.model.Address;
 import org.awesomeapp.messenger.model.ChatGroup;
@@ -1831,21 +1832,19 @@ public class XmppConnection extends ImConnection {
         mConfig.setCompressionEnabled(true);
         mConfig.setConnectTimeout(CONNECT_TIMEOUT);
 
-       // setProxy("SOCKS5","127.0.0.1",31059);
-        /**
-        if (providerSettings.getUseProxy())
+        if (!TextUtils.isEmpty(Preferences.getProxyServerHost()))
         {
-            if (!TextUtils.isEmpty(providerSettings.getProxyHost())
-                && providerSettings.getProxyPort()!=-1)
-                setProxy("SOCKS4",providerSettings.getProxyHost(),providerSettings.getProxyPort());
-            else
-                mProxyInfo = null;
+            setProxy("SOCKS5",Preferences.getProxyServerHost(),Preferences.getProxyServerPort());
+        }
+        else if (Preferences.useAdvancedNetworking())
+        {
+            setProxy("SOCKS5","127.0.0.1",31059);
         }
         else
         {
             mProxyInfo = null;
-        }**/
-
+        }
+        
         // No server requested and SRV lookup wasn't requested or returned nothing - use domain
         if (server == null)
             mConfig.setHost(domain);

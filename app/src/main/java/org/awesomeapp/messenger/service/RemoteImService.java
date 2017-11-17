@@ -614,7 +614,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
         }
     }
-    
+
     private IImConnection do_createConnection(long providerId, long accountId) {
 
         if (providerId == -1)
