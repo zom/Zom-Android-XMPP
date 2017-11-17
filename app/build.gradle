@@ -156,5 +156,6 @@ dependencies {
 
     // https://mvnrepository.com/artifact/com.google.code.gson/gson
     compile group: 'com.google.code.gson', name: 'gson', version: '2.3.1'
+    compile 'com.jrummyapps:android-shell:1.0.1'
 
 }
