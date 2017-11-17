@@ -189,7 +189,7 @@
         android:key="prefAdvancedNetworking"
         android:title="@string/pref_enable_advanced_network_features"
         android:summary="@string/pref_enable_advanced_network_features_summary"
-        android:defaultValue="true"
+        android:defaultValue="false"
         />
 
     <EditTextPreference
