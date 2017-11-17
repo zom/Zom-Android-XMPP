@@ -1844,7 +1844,7 @@ public class XmppConnection extends ImConnection {
         {
             mProxyInfo = null;
         }
-        
+
         // No server requested and SRV lookup wasn't requested or returned nothing - use domain
         if (server == null)
             mConfig.setHost(domain);

@@ -176,7 +176,7 @@ public class ContactsListFragment extends Fragment {
         }
 
         // init swipe to dismiss logic
-
+    /**
         ItemTouchHelper swipeToDismissTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(
                 ItemTouchHelper.RIGHT, ItemTouchHelper.RIGHT) {
 
@@ -215,16 +215,12 @@ public class ContactsListFragment extends Fragment {
                     Bitmap icon;
 
                     if (dX > 0) {
-            /* Note, ApplicationManager is a helper class I created
-               myself to get a context outside an Activity class -
-               feel free to use your own method */
 
                         if (contactType == Imps.Contacts.TYPE_HIDDEN)
                         {
                             icon = BitmapFactory.decodeResource(
                                     getActivity().getResources(), R.drawable.ic_unarchive_white_24dp);
 
-                    /* Set your color for positive displacement */
                             //p.setARGB(255, 150, 255, 150);
                             p.setColor(getResources().getColor(R.color.holo_green_dark));
 
@@ -235,7 +231,6 @@ public class ContactsListFragment extends Fragment {
                             icon = BitmapFactory.decodeResource(
                                     getActivity().getResources(), R.drawable.ic_archive_white_24dp);
 
-                /* Set your color for positive displacement */
                             p.setARGB(255, 150, 150, 150);
 
                         }
@@ -336,7 +331,7 @@ public class ContactsListFragment extends Fragment {
             }
         });
         swipeToDismissTouchHelper.attachToRecyclerView(recyclerView);
-
+        **/
 
 
 
