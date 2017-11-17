@@ -185,6 +185,25 @@
         android:defaultValue="true"
         />
 
+    <CheckBoxPreference
+        android:key="prefAdvancedNetworking"
+        android:title="@string/pref_enable_advanced_network_features"
+        android:summary="@string/pref_enable_advanced_network_features_summary"
+        android:defaultValue="true"
+        />
 
+    <EditTextPreference
+        android:key="pref_proxy_server_host"
+        android:title="@string/pref_proxy_server_host_title"
+        android:summary="@string/pref_proxy_server_host_summary"
+         />
+
+
+    <EditTextPreference
+        android:key="pref_proxy_server_port"
+        android:title="@string/pref_proxy_server_port_title"
+        android:summary="@string/pref_proxy_server_port_summary"
+        android:numeric="integer"
+        android:maxLength="5" />
 
 </PreferenceScreen>

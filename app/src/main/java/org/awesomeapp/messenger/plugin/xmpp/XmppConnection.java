@@ -1831,6 +1831,8 @@ public class XmppConnection extends ImConnection {
         mConfig.setCompressionEnabled(true);
         mConfig.setConnectTimeout(CONNECT_TIMEOUT);
 
+       // setProxy("SOCKS5","127.0.0.1",31059);
+        /**
         if (providerSettings.getUseProxy())
         {
             if (!TextUtils.isEmpty(providerSettings.getProxyHost())
@@ -1842,7 +1844,8 @@ public class XmppConnection extends ImConnection {
         else
         {
             mProxyInfo = null;
-        }
+        }**/
+
         // No server requested and SRV lookup wasn't requested or returned nothing - use domain
         if (server == null)
             mConfig.setHost(domain);

@@ -42,6 +42,9 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.jrummyapps.android.shell.CommandResult;
+import com.jrummyapps.android.shell.Shell;
+
 import net.java.otr4j.OtrEngineListener;
 import net.java.otr4j.OtrKeyManagerListener;
 import net.java.otr4j.OtrPolicy;
@@ -66,10 +69,13 @@ import org.awesomeapp.messenger.tasks.ChatSessionInitTask;
 import org.awesomeapp.messenger.ui.legacy.DummyActivity;
 import org.awesomeapp.messenger.ui.legacy.ImPluginHelper;
 import org.awesomeapp.messenger.service.NetworkConnectivityReceiver.State;
+import org.awesomeapp.messenger.util.BinaryInstaller;
 import org.awesomeapp.messenger.util.Debug;
 import org.awesomeapp.messenger.util.LogCleaner;
 import org.awesomeapp.messenger.util.SecureMediaStore;
 
+import java.io.File;
+import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -265,8 +271,11 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         startForeground(notifyId, getForegroundNotification());
 
+        installTransports();
 
     }
+
+
 
     private void checkUpgrade ()
     {
@@ -589,12 +598,30 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
         }, delay);
     }
 
+    private void installTransports ()
+    {
+        //restart transports if needed
+        if (Preferences.useAdvancedNetworking())
+        {
+            if (aNetworking != null)
+            {
+                aNetworking.stopTransport();
+            }
+
+            aNetworking = new AdvancedNetworking();
+            aNetworking.installTransport(this,"ss");
+            aNetworking.startTransport();
+
+        }
+    }
+    
     private IImConnection do_createConnection(long providerId, long accountId) {
 
         if (providerId == -1)
             return null;
 
         Map<String, String> settings = loadProviderSettings(providerId);
+
 
         //make sure OTR is init'd before you create your first connection
         initOtrChatManager();
@@ -745,8 +772,24 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
     }
 
+    private AdvancedNetworking aNetworking;
+
     // package private for inner class access
     boolean reestablishConnections() {
+
+        //restart transports if needed
+        if (Preferences.useAdvancedNetworking())
+        {
+            if (aNetworking != null)
+            {
+                aNetworking.stopTransport();
+            }
+
+            aNetworking = new AdvancedNetworking();
+            aNetworking.installTransport(this,"ss");
+            aNetworking.startTransport();
+
+        }
 
         for (ImConnectionAdapter conn : mConnections.values()) {
             int connState = conn.getState();

@@ -533,7 +533,20 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                 String fileName = fileLocal.getName();
                 if (!fileName.contains("."))
                 {
-                    fileName += "." + MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType);
+                    String fileExt = MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType);
+
+                    if (!TextUtils.isEmpty(fileExt))
+                        fileName += "." + fileExt;
+                    else if (mimeType.equals("audio/mp4"))
+                    {
+                        fileName += ".mp4";
+                    }
+                    else if (mimeType.equals("audio/mp4"))
+                    {
+                        fileName += ".mp4";
+                    }
+
+
                 }
 
                 boolean doEncryption = !isGroupChatSession();

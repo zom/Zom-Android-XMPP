@@ -69,6 +69,10 @@ public class Preferences {
     private static final String CLEAR_APP_DATA = "clear_app_data";
     private static final String UNINSTALL_APP = "uninstall_app";
     private static final String USE_TIBETAN_DICTIONARY = "prefEnableTibetanDictionary";
+    private static final String ADVANCED_NETWORKING = "prefAdvancedNetworking";
+
+    private final static String PROXY_SERVER_HOST = "pref_proxy_server_host";
+    private final static String PROXY_SERVER_PORT = "pref_proxy_server_port";
 
     private static Context context;
     private static SharedPreferences preferences;
@@ -260,4 +264,23 @@ public class Preferences {
     public static boolean getUseTibetanDictionary() {
         return preferences.getBoolean(USE_TIBETAN_DICTIONARY, true);
     }
+
+    public static boolean useAdvancedNetworking ()
+    {
+        return preferences.getBoolean(ADVANCED_NETWORKING,false);
+    }
+
+    public static String getProxyServerHost ()
+    {
+        return preferences.getString(PROXY_SERVER_HOST,null);
+    }
+
+    public static int getProxyServerPort ()
+    {
+        return preferences.getInt(PROXY_SERVER_HOST,-1);
+    }
+
+
+
+
 }
