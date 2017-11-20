@@ -25,6 +25,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -156,7 +157,7 @@ public class GroupDisplayActivity extends BaseActivity {
             @Override
             public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
                 if (holder instanceof HeaderViewHolder) {
-                    HeaderViewHolder h = (HeaderViewHolder)holder;
+                    final HeaderViewHolder h = (HeaderViewHolder)holder;
                     GroupAvatar avatar = new GroupAvatar(mAddress.split("@")[0]);
                     avatar.setRounded(false);
                     h.avatar.setImageDrawable(avatar);
@@ -192,19 +193,14 @@ public class GroupDisplayActivity extends BaseActivity {
                     mActionAddFriends = h.actionAddFriends;
                     showAddFriends ();
 
-                    h.actionMute.setOnClickListener(new View.OnClickListener() {
+                    h.actionNotifications.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            setMuted(!isMuted());
-                            mRecyclerView.getAdapter().notifyItemChanged(holder.getAdapterPosition());
+                            setNotificationsEnabled(!areNotificationsEnabled());
+                            h.checkNotifications.setChecked(areNotificationsEnabled());
                         }
                     });
-                    boolean muted = isMuted();
-                   h.actionMute.setText(muted ? R.string.turn_notifications_on : R.string.turn_notifications_off);
-             //       h.actionMute.setText(muted ? "turn on" : " t")
-                    TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(h.actionMute,
-                            muted ? R.drawable.ic_notifications_active_black_24dp : R.drawable.ic_notifications_off_black_24dp,
-                            0, 0, 0);
+                    h.checkNotifications.setChecked(areNotificationsEnabled());
 
                     if (!mIsOwner)
                         h.editGroupName.setVisibility(View.GONE);
@@ -505,7 +501,8 @@ public class GroupDisplayActivity extends BaseActivity {
         final TextView groupAddress;
         final TextView actionShare;
         final TextView actionAddFriends;
-        final TextView actionMute;
+        final View actionNotifications;
+        final CheckBox checkNotifications;
 
         HeaderViewHolder(View view) {
             super(view);
@@ -516,7 +513,8 @@ public class GroupDisplayActivity extends BaseActivity {
             groupAddress = (TextView) view.findViewById(R.id.tvGroupAddress);
             actionShare = (TextView) view.findViewById(R.id.tvActionShare);
             actionAddFriends = (TextView) view.findViewById(R.id.tvActionAddFriends);
-            actionMute = (TextView) view.findViewById(R.id.tvActionMute);
+            actionNotifications = view.findViewById(R.id.tvActionNotifications);
+            checkNotifications = (CheckBox) view.findViewById(R.id.chkNotifications);
         }
     }
 
@@ -579,24 +577,26 @@ public class GroupDisplayActivity extends BaseActivity {
         catch (Exception e) {}
     }
 
-    boolean isMuted() {
+    boolean areNotificationsEnabled() {
         try {
             if (mSession != null)
-                return mSession.isMuted();
+                return !mSession.isMuted();
             else
-                return false;
+                return true;
         }
         catch (RemoteException re)
         {
-            return false;
+            return true;
         }
     }
 
-    public void setMuted(boolean muted) {
+    public void setNotificationsEnabled(boolean enabled) {
         try {
-            mSession.setMuted(muted);
+            if (mSession != null) {
+                mSession.setMuted(!enabled);
+            }
         }
-        catch (RemoteException re){}
+        catch (Exception ignored){}
     }
 
     private void confirmLeaveGroup ()

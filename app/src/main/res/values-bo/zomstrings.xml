@@ -93,7 +93,5 @@
   <string name="action_add_buddy">གྲོགས་པོ་གསར་སྣོན་བྱོས།</string>
   <string name="action_leave">ཕྱིར་འབུད།</string>
   <string name="add_people">མི་ཁ་སྣོན་བྱོས།</string>
-  <string name="turn_notifications_on">བརྡ་གཏོང་དུ་བཅུག</string>
-  <string name="turn_notifications_off">བརྡ་གཏོང་བའི་སྒྲ་མེད་པར་བཟོས།</string>
   <string name="is_already_in_your_group">%1$s ཁྱེད་ཀྱི་ཚོགས་པའི་ནང་འཛུལ་ཚར་འདུག</string>
 </resources>

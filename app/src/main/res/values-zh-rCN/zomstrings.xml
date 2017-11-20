@@ -93,7 +93,5 @@
   <string name="action_add_buddy">添加好友</string>
   <string name="action_leave">离线</string>
   <string name="add_people">添加网友</string>
-  <string name="turn_notifications_on">打开通知</string>
-  <string name="turn_notifications_off">静音／关闭通知 </string>
   <string name="is_already_in_your_group">%1$s 已经在你的圈里</string>
 </resources>

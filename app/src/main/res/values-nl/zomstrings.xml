@@ -93,7 +93,5 @@
   <string name="action_add_buddy">Vriend toevoegen</string>
   <string name="action_leave">Verlaten</string>
   <string name="add_people">Contacten toevoegen</string>
-  <string name="turn_notifications_on">Meldingen inschakelen</string>
-  <string name="turn_notifications_off">Meldingen dempen</string>
   <string name="is_already_in_your_group">%1$s zit al in je groep</string>
 </resources>
