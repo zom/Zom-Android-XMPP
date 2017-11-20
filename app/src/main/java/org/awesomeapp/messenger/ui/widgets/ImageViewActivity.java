@@ -1,29 +1,26 @@
 package org.awesomeapp.messenger.ui.widgets;
 
+import android.animation.Animator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Matrix;
-import android.graphics.Point;
 import android.graphics.RectF;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Display;
-import android.view.LayoutInflater;
+import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.VelocityTracker;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Toast;
@@ -41,8 +38,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import im.zom.messenger.R;
-import info.guardianproject.iocipher.File;
-import info.guardianproject.iocipher.FileInputStream;
 
 public class ImageViewActivity extends AppCompatActivity implements PZSImageView.PSZImageViewImageMatrixListener {
 
@@ -67,6 +62,7 @@ public class ImageViewActivity extends AppCompatActivity implements PZSImageView
         //getSupportActionBar().setElevation(0);
 
         viewPagerPhotos = new ConditionallyEnabledViewPager(this);
+        viewPagerPhotos.setBackgroundColor(0xff333333);
         setContentView(viewPagerPhotos);
         //setContentView(R.layout.image_view_activity);
         getSupportActionBar().show();
@@ -303,9 +299,55 @@ public class ImageViewActivity extends AppCompatActivity implements PZSImageView
 
     class ConditionallyEnabledViewPager extends ViewPager {
         public boolean enableSwiping = true;
+        private GestureDetector gestureDetector;
+        private final VelocityTracker velocityTracker;
+        private boolean inSwipeToCloseGesture = false;
+        private boolean isClosing = false;
+        private float startingY = 0;
 
         public ConditionallyEnabledViewPager(Context context) {
             super(context);
+            gestureDetector = new GestureDetector(context, new CloseOnFlingListener(context));
+            velocityTracker = VelocityTracker.obtain();
+        }
+
+        @Override
+        public boolean dispatchTouchEvent(MotionEvent ev) {
+            if (inSwipeToCloseGesture) {
+                if (!isClosing) {
+                    velocityTracker.addMovement(ev);
+                    if (ev.getAction() == MotionEvent.ACTION_CANCEL || ev.getAction() == MotionEvent.ACTION_UP) {
+                        velocityTracker.computeCurrentVelocity(1000); // Pixels per second
+                        float velocityY = velocityTracker.getYVelocity();
+                        if (Math.abs(velocityY) > ViewConfiguration.get(getContext()).getScaledMinimumFlingVelocity()) {
+                            closeByFling(ev.getY() - startingY, Math.abs(viewPagerPhotos.getHeight() / velocityY));
+                        } else {
+                            // Reset all children. Lazy approach, instead of keeping count of "current photo" which
+                            // might have changed during the motion event.
+                            for (int i = 0; i < viewPagerPhotos.getChildCount(); i++) {
+                                View child = viewPagerPhotos.getChildAt(i);
+                                if (child.getTranslationY() != 0) {
+                                    child.animate().translationY(0).alpha(1.0f).rotation(0).start();
+                                }
+                            }
+                        }
+                        inSwipeToCloseGesture = false;
+                    } else {
+                        gestureDetector.onTouchEvent(ev);
+                    }
+                }
+                return true;
+            } else if (enableSwiping && gestureDetector.onTouchEvent(ev)) {
+                inSwipeToCloseGesture = true;
+                velocityTracker.clear();
+                velocityTracker.addMovement(ev);
+                return true;
+            }
+            if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+                startingY = ev.getY();
+                gestureDetector.onTouchEvent(ev); // Send DOWN to gesture listener, so it can reset state
+            }
+            return super.dispatchTouchEvent(ev);
         }
 
         @Override
@@ -324,9 +366,82 @@ public class ImageViewActivity extends AppCompatActivity implements PZSImageView
             return super.onTouchEvent(ev);
         }
 
+        void closeByFling(float dy, float seconds) {
+
+            seconds = Math.min(seconds, 0.7f); // Upper limit on animation time!
+
+            isClosing = true; // No further touches
+            View currentPhoto = viewPagerPhotos.findViewById(viewPagerPhotos.getCurrentItem());
+            if (currentPhoto != null) {
+                currentPhoto.setPivotX(0.8f * currentPhoto.getWidth());
+                currentPhoto.setTranslationY(dy);
+                currentPhoto.setAlpha(Math.max(0, 1 - Math.abs(dy) / (viewPagerPhotos.getHeight() / 3)));
+                currentPhoto.setRotation(30 * (Math.abs(dy) / (viewPagerPhotos.getHeight() / 2)));
+                currentPhoto.animate().rotation(30).translationY(Math.signum(dy) * currentPhoto.getHeight()).alpha(0).setDuration((long)(1000 * seconds)).setListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        finish();
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+
+                    }
+                }).start();
+            } else {
+                // Hm, no animation, just close
+                finish();
+            }
+        }
+
         @Override
         public boolean performClick() {
             return !enableSwiping || super.performClick();
+        }
+
+        private class CloseOnFlingListener extends GestureDetector.SimpleOnGestureListener {
+            private final float minDistance;
+            private boolean disabled;
+
+            public CloseOnFlingListener(Context context) {
+                super();
+                minDistance = ViewConfiguration.get(context).getScaledTouchSlop();
+            }
+
+            @Override
+            public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+                float dy = e2.getY() - e1.getY();
+                float dx = e2.getX() - e1.getX();
+                if (Math.abs(dy) > minDistance && !disabled) {
+                    View currentPhoto = viewPagerPhotos.findViewById(viewPagerPhotos.getCurrentItem());
+                    if (currentPhoto != null) {
+                        currentPhoto.setPivotX(0.8f * currentPhoto.getWidth());
+                        currentPhoto.setTranslationY(dy);
+                        currentPhoto.setAlpha(Math.max(0, 1 - Math.abs(dy) / (viewPagerPhotos.getHeight() / 3)));
+                        currentPhoto.setRotation(30 * (dy / (viewPagerPhotos.getHeight() / 2)));
+                    }
+                    return true;
+                } else if (Math.abs(dx) > minDistance) {
+                    disabled = true; // Looks like we have a horizontal movement, disable "swipe-to-close"
+                }
+                return false;
+            }
+
+            @Override
+            public boolean onDown(MotionEvent e) {
+                disabled = false;
+                return super.onDown(e);
+            }
         }
     };
 
