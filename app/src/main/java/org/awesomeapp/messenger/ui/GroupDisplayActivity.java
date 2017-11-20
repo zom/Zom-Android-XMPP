@@ -18,6 +18,7 @@ import android.support.v4.widget.TextViewCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SwitchCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
@@ -502,7 +503,7 @@ public class GroupDisplayActivity extends BaseActivity {
         final TextView actionShare;
         final TextView actionAddFriends;
         final View actionNotifications;
-        final CheckBox checkNotifications;
+        final SwitchCompat checkNotifications;
 
         HeaderViewHolder(View view) {
             super(view);
@@ -514,7 +515,7 @@ public class GroupDisplayActivity extends BaseActivity {
             actionShare = (TextView) view.findViewById(R.id.tvActionShare);
             actionAddFriends = (TextView) view.findViewById(R.id.tvActionAddFriends);
             actionNotifications = view.findViewById(R.id.tvActionNotifications);
-            checkNotifications = (CheckBox) view.findViewById(R.id.chkNotifications);
+            checkNotifications = (SwitchCompat) view.findViewById(R.id.chkNotifications);
         }
     }
 

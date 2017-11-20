@@ -99,14 +99,14 @@
         style="@style/GroupInfoAction"
         android:focusable="false"
         android:focusableInTouchMode="false"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:drawableLeft="@drawable/ic_notifications_black_24dp"
         android:drawableStart="@drawable/ic_notifications_black_24dp"
         android:text="@string/notifications"
-        android:layout_weight="1"
+        android:layout_weight="0"
         />
-        <CheckBox
+        <android.support.v7.widget.SwitchCompat
             android:id="@+id/chkNotifications"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

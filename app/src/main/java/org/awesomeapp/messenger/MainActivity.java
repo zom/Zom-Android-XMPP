@@ -695,7 +695,6 @@ public class MainActivity extends BaseActivity {
         else
             mContactList.setArchiveFilter(false);
 
-
         setToolbarTitle(mTabLayout.getSelectedTabPosition());
 
     }
