@@ -130,6 +130,7 @@ import org.awesomeapp.messenger.ui.stickers.StickerGroup;
 import org.awesomeapp.messenger.ui.stickers.StickerManager;
 import org.awesomeapp.messenger.ui.stickers.StickerPagerAdapter;
 import org.awesomeapp.messenger.ui.stickers.StickerSelectListener;
+import org.awesomeapp.messenger.ui.widgets.ImageViewActivity;
 import org.awesomeapp.messenger.ui.widgets.MessageViewHolder;
 import org.awesomeapp.messenger.ui.widgets.RoundedAvatarDrawable;
 import org.awesomeapp.messenger.util.Debug;
@@ -2653,7 +2654,7 @@ public class ConversationView {
     }
 
     public class ConversationRecyclerViewAdapter
-            extends CursorRecyclerViewAdapter<MessageViewHolder> {
+            extends CursorRecyclerViewAdapter<MessageViewHolder> implements MessageViewHolder.OnImageClickedListener {
 
         private int mScrollState;
         private boolean mNeedRequeryCursor;
@@ -2777,6 +2778,7 @@ public class ConversationView {
             });
 
             MessageViewHolder mvh = new MessageViewHolder(view);
+            mvh.setOnImageClickedListener(this);
             view.applyStyleColors();
             return mvh;
         }
@@ -2978,6 +2980,39 @@ public class ConversationView {
 
             }
         };
+
+        @Override
+        public void onImageClicked(MessageViewHolder viewHolder, Uri image) {
+            Cursor c = getCursor();
+            if (c != null && c.moveToFirst()) {
+                ArrayList<Uri> urisToShow = new ArrayList<>(c.getCount());
+                ArrayList<String> mimeTypesToShow = new ArrayList<>(c.getCount());
+                do {
+                    try {
+                        String mime = c.getString(mMimeTypeColumn);
+                        if (!TextUtils.isEmpty(mime) && mime.startsWith("image")) {
+                            Uri uri = Uri.parse(c.getString(mBodyColumn));
+                            urisToShow.add(uri);
+                            mimeTypesToShow.add(mime);
+                        }
+                    } catch (Exception ignored) {
+                    }
+                } while (c.moveToNext());
+
+                Intent intent = new Intent(mContext, ImageViewActivity.class);
+
+                // These two are parallel arrays
+                intent.putExtra(ImageViewActivity.URIS, urisToShow);
+                intent.putExtra(ImageViewActivity.MIME_TYPES, mimeTypesToShow);
+
+                int indexOfCurrent = urisToShow.indexOf(image);
+                if (indexOfCurrent == -1) {
+                    indexOfCurrent = 0;
+                }
+                intent.putExtra(ImageViewActivity.CURRENT_INDEX, indexOfCurrent);
+                mContext.startActivity(intent);
+            }
+        }
     }
 
     public Cursor getMessageAtPosition(int position) {

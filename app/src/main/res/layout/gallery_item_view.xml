@@ -17,8 +17,7 @@
  * limitations under the License.
  */
 -->
-<view xmlns:android="http://schemas.android.com/apk/res/android"
-    class="org.awesomeapp.messenger.ui.GalleryListItem"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="0dp"
@@ -74,4 +73,4 @@
             />
     </LinearLayout>-->
 
-</view>
+</FrameLayout>

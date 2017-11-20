@@ -398,7 +398,7 @@
             android:noHistory="true"
             android:stateNotNeeded="true"
             android:theme="@android:style/Theme.NoDisplay" />
-        <activity android:name="org.awesomeapp.messenger.ui.widgets.ImageViewActivity" />
+        <activity android:name="org.awesomeapp.messenger.ui.widgets.ImageViewActivity" android:theme="@style/AppTheme.Transparent" />
         <activity android:name="org.awesomeapp.messenger.ui.widgets.SecureCameraActivity" />
         <activity
             android:name="org.awesomeapp.messenger.MainActivity"
@@ -460,10 +460,6 @@
             android:theme="@style/AppThemeNoAction"
             ></activity>
         <activity android:name="org.awesomeapp.messenger.ui.GroupDisplayActivity"></activity>
-
-        <meta-data
-            android:name="org.awesomeapp.messenger.tasks.GlideVFSModule"
-            android:value="GlideModule" />
 
         <activity
             android:name="org.awesomeapp.messenger.ui.AccountsActivity"

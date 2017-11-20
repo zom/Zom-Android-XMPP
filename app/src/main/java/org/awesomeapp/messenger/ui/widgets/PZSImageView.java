@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.graphics.RectF;
+import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.util.FloatMath;
 import android.view.MotionEvent;
@@ -16,9 +17,13 @@ import android.widget.ImageView;
  * @author huewu.yang
  * @date 2012. 08. 23
  */
-public class PZSImageView extends ImageView {
+public class PZSImageView extends AppCompatImageView {
 
 	private static final String TAG = "GalleryImageView";	//debug tag.
+
+	public interface PSZImageViewImageMatrixListener {
+		void onImageMatrixSet(PZSImageView view, int imageWidth, int imageHeight, Matrix imageMatrix);
+	}
 
 	//wrapped motion event code.
 	protected static final int PZS_ACTION_INIT = 100;
@@ -43,6 +48,8 @@ public class PZSImageView extends ImageView {
 	private boolean mIsFirstDraw = true;	//check flag to calculate necessary init values.
 	private int mImageWidth;	//current set image width
 	private int mImageHeight;	//current set image height
+
+	private PSZImageViewImageMatrixListener mMatrixListener;
 
 	/**
 	 * constructor
@@ -71,6 +78,10 @@ public class PZSImageView extends ImageView {
 		init();
 	}
 
+	public void setMatrixListener(PSZImageViewImageMatrixListener listener) {
+		this.mMatrixListener = listener;
+	}
+
 	private void init() {
 		//should use matrix scale type.
 		setScaleType(ScaleType.MATRIX);
@@ -86,8 +97,13 @@ public class PZSImageView extends ImageView {
 		super.setImageBitmap(bm);
 
 		mIsFirstDraw = true;
-		mImageWidth = bm.getWidth();
-		mImageHeight = bm.getHeight();
+		if (bm != null) {
+			mImageWidth = bm.getWidth();
+			mImageHeight = bm.getHeight();
+		} else {
+			mImageWidth = 0;
+			mImageHeight = 0;
+		}
 	}
 
 	@Override
@@ -353,4 +369,11 @@ public class PZSImageView extends ImageView {
 		point.set(x / 2, y / 2);
 	}
 
+	@Override
+	public void setImageMatrix(Matrix matrix) {
+		super.setImageMatrix(matrix);
+		if (mMatrixListener != null) {
+			mMatrixListener.onImageMatrixSet(this, mImageWidth, mImageHeight, matrix);
+		}
+	}
 }//end of class

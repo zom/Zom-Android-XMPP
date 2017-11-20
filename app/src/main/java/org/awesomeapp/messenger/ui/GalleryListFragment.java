@@ -38,8 +38,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import org.awesomeapp.messenger.provider.Imps;
+import org.awesomeapp.messenger.ui.widgets.ImageViewActivity;
 
 import java.sql.Date;
+import java.util.ArrayList;
 
 import im.zom.messenger.R;
 
@@ -118,7 +120,7 @@ public class GalleryListFragment extends Fragment {
     }
 
     public static class MessageListRecyclerViewAdapter
-            extends CursorRecyclerViewAdapter<GalleryMediaViewHolder> {
+            extends CursorRecyclerViewAdapter<GalleryMediaViewHolder> implements GalleryMediaViewHolder.GalleryMediaViewHolderListener {
 
         private final TypedValue mTypedValue = new TypedValue();
         private int mBackground;
@@ -146,19 +148,9 @@ public class GalleryListFragment extends Fragment {
 
         @Override
         public GalleryMediaViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            GalleryListItem view = (GalleryListItem)LayoutInflater.from(parent.getContext())
+            View view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.gallery_item_view, parent, false);
-            //view.setBackgroundResource(mBackground);
-
-            GalleryMediaViewHolder viewHolder = (GalleryMediaViewHolder)view.getTag();
-
-            if (viewHolder == null)
-            {
-                viewHolder =  new GalleryMediaViewHolder(view,view.getContext());
-                view.setTag(viewHolder);
-            }
-
-            return viewHolder;
+            return new GalleryMediaViewHolder(view, view.getContext());
         }
 
         @Override
@@ -171,9 +163,38 @@ public class GalleryListFragment extends Fragment {
             java.util.Date ts = new Date(cursor.getLong(3));
 
             viewHolder.bind(id, mimeType, body, ts);
-
+            viewHolder.setListener(this);
         }
 
+        @Override
+        public void onImageClicked(GalleryMediaViewHolder viewHolder, Uri image) {
+            Cursor c = getCursor();
+            if (c != null && c.moveToFirst()) {
+                ArrayList<Uri> urisToShow = new ArrayList<>(c.getCount());
+                ArrayList<String> mimeTypesToShow = new ArrayList<>(c.getCount());
+                do {
+                    try {
+                        Uri uri = Uri.parse(c.getString(2));
+                        urisToShow.add(uri);
+                        mimeTypesToShow.add("image/jpeg");
+                    } catch (Exception ignored) {
+                    }
+                } while (c.moveToNext());
+
+                Intent intent = new Intent(mContext, ImageViewActivity.class);
+
+                // These two are parallel arrays
+                intent.putExtra(ImageViewActivity.URIS, urisToShow);
+                intent.putExtra(ImageViewActivity.MIME_TYPES, mimeTypesToShow);
+
+                int indexOfCurrent = urisToShow.indexOf(image);
+                if (indexOfCurrent == -1) {
+                    indexOfCurrent = 0;
+                }
+                intent.putExtra(ImageViewActivity.CURRENT_INDEX, indexOfCurrent);
+                mContext.startActivity(intent);
+            }
+        }
     }
 
     class MyLoaderCallbacks implements LoaderManager.LoaderCallbacks<Cursor> {

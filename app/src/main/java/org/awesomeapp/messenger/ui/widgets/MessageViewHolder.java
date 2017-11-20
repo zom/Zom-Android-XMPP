@@ -5,6 +5,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.awesomeapp.messenger.ui.GalleryMediaViewHolder;
 import org.awesomeapp.messenger.ui.MediaViewHolder;
 import org.awesomeapp.messenger.ui.MessageListItem;
 
@@ -15,6 +16,10 @@ import im.zom.messenger.R;
  */
 public class MessageViewHolder extends MediaViewHolder
 {
+    public interface OnImageClickedListener {
+        void onImageClicked(MessageViewHolder viewHolder, Uri image);
+    }
+
     public TextView mTextViewForMessages;
     public TextView mTextViewForTimestamp;
     public ImageView mAvatar;
@@ -25,6 +30,8 @@ public class MessageViewHolder extends MediaViewHolder
     public ImageView mAudioButton;
     // save the media uri while the MediaScanner is creating the thumbnail
     // if the holder was reused, the pair is broken
+
+    private OnImageClickedListener onImageClickedListener;
 
     public MessageViewHolder(View view) {
         super(view);
@@ -42,6 +49,9 @@ public class MessageViewHolder extends MediaViewHolder
         //mContainer.setBackgroundResource(R.drawable.message_view_rounded_light);
     }
 
+    public void setOnImageClickedListener(OnImageClickedListener listener) {
+        this.onImageClickedListener = listener;
+    }
 
     public void setOnClickListenerMediaThumbnail( final String mimeType, final Uri mediaUri ) {
 
@@ -59,7 +69,13 @@ public class MessageViewHolder extends MediaViewHolder
             mMediaThumbnail.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ((MessageListItem)itemView).onClickMediaIcon(mimeType, mediaUri);
+                    if (mimeType.startsWith("image")) {
+                     if (onImageClickedListener != null) {
+                         onImageClickedListener.onImageClicked(MessageViewHolder.this, mediaUri);
+                     }
+                    } else {
+                        ((MessageListItem) itemView).onClickMediaIcon(mimeType, mediaUri);
+                    }
                 }
             });
 

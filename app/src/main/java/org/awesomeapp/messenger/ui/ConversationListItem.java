@@ -41,6 +41,7 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.model.Presence;
@@ -52,6 +53,7 @@ import org.awesomeapp.messenger.ui.widgets.ConversationViewHolder;
 import org.awesomeapp.messenger.ui.widgets.GroupAvatar;
 import org.awesomeapp.messenger.ui.widgets.LetterAvatar;
 import org.awesomeapp.messenger.ui.widgets.RoundedAvatarDrawable;
+import org.awesomeapp.messenger.util.GlideUtils;
 import org.awesomeapp.messenger.util.SecureMediaStore;
 import org.awesomeapp.messenger.util.SystemServices;
 import org.awesomeapp.messenger.util.SystemServices.FileInfo;
@@ -433,41 +435,7 @@ public class ConversationListItem extends FrameLayout {
             return;
 
         mLastMediaUri = mediaUri;
-
-        Glide.clear(aHolder.mMediaThumb);
-
-        if(SecureMediaStore.isVfsUri(mediaUri))
-        {
-            info.guardianproject.iocipher.File fileMedia = new info.guardianproject.iocipher.File(mediaUri.getPath());
-            if (fileMedia.exists())
-            {
-                try {
-                    Glide.with(getContext())
-                            .load(new info.guardianproject.iocipher.FileInputStream(fileMedia))
-                            .diskCacheStrategy(DiskCacheStrategy.NONE)
-                            .into(aHolder.mMediaThumb);
-                }
-                catch (Exception e)
-                {
-                    Log.e(ImApp.LOG_TAG,"unable to load thumbnail",e);
-                }
-            }
-        }
-        else if (mediaUri.getScheme().equals("asset"))
-        {
-            String assetPath = "file:///android_asset/" + mediaUri.getPath().substring(1);
-            Glide.with(getContext())
-                    .load(assetPath)
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .into(aHolder.mMediaThumb);
-        }
-        else
-        {
-            Glide.with(getContext())
-                    .load(mediaUri)
-                    .into(aHolder.mMediaThumb);
-        }
-
+        GlideUtils.loadImageFromUri(getContext(), mediaUri, aHolder.mMediaThumb);
     }
 
     private String getGroupCount(ContentResolver resolver, long groupId) {
