@@ -62,7 +62,7 @@ public class ImageViewActivity extends AppCompatActivity implements PZSImageView
         //getSupportActionBar().setElevation(0);
 
         viewPagerPhotos = new ConditionallyEnabledViewPager(this);
-        viewPagerPhotos.setBackgroundColor(0xff333333);
+        viewPagerPhotos.setBackgroundColor(0x33333333);
         setContentView(viewPagerPhotos);
         //setContentView(R.layout.image_view_activity);
         getSupportActionBar().show();
@@ -299,7 +299,8 @@ public class ImageViewActivity extends AppCompatActivity implements PZSImageView
 
     class ConditionallyEnabledViewPager extends ViewPager {
         public boolean enableSwiping = true;
-        private GestureDetector gestureDetector;
+        private final GestureDetector gestureDetector;
+        private final SwipeToCloseListener gestureDetectorListener;
         private final VelocityTracker velocityTracker;
         private boolean inSwipeToCloseGesture = false;
         private boolean isClosing = false;
@@ -307,7 +308,8 @@ public class ImageViewActivity extends AppCompatActivity implements PZSImageView
 
         public ConditionallyEnabledViewPager(Context context) {
             super(context);
-            gestureDetector = new GestureDetector(context, new CloseOnFlingListener(context));
+            gestureDetectorListener = new SwipeToCloseListener(context);
+            gestureDetector = new GestureDetector(context, gestureDetectorListener);
             velocityTracker = VelocityTracker.obtain();
         }
 
@@ -319,8 +321,10 @@ public class ImageViewActivity extends AppCompatActivity implements PZSImageView
                     if (ev.getAction() == MotionEvent.ACTION_CANCEL || ev.getAction() == MotionEvent.ACTION_UP) {
                         velocityTracker.computeCurrentVelocity(1000); // Pixels per second
                         float velocityY = velocityTracker.getYVelocity();
-                        if (Math.abs(velocityY) > ViewConfiguration.get(getContext()).getScaledMinimumFlingVelocity()) {
-                            closeByFling(ev.getY() - startingY, Math.abs(viewPagerPhotos.getHeight() / velocityY));
+                        float dy = ev.getY() - startingY;
+                        ViewConfiguration vc = ViewConfiguration.get(getContext());
+                        if (Math.abs(dy) > vc.getScaledTouchSlop() && Math.abs(velocityY) > vc.getScaledMinimumFlingVelocity()) {
+                            closeByFling(dy, Math.abs(viewPagerPhotos.getHeight() / velocityY));
                         } else {
                             // Reset all children. Lazy approach, instead of keeping count of "current photo" which
                             // might have changed during the motion event.
@@ -343,9 +347,11 @@ public class ImageViewActivity extends AppCompatActivity implements PZSImageView
                 velocityTracker.addMovement(ev);
                 return true;
             }
-            if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+            if (ev.getActionMasked() == MotionEvent.ACTION_DOWN) {
                 startingY = ev.getY();
-                gestureDetector.onTouchEvent(ev); // Send DOWN to gesture listener, so it can reset state
+                gestureDetectorListener.setDisabled(false);
+            } else if (ev.getActionMasked() == MotionEvent.ACTION_POINTER_DOWN) {
+                gestureDetectorListener.setDisabled(true); // More than one finger, disable swipe to close
             }
             return super.dispatchTouchEvent(ev);
         }
@@ -409,11 +415,12 @@ public class ImageViewActivity extends AppCompatActivity implements PZSImageView
             return !enableSwiping || super.performClick();
         }
 
-        private class CloseOnFlingListener extends GestureDetector.SimpleOnGestureListener {
+        private class SwipeToCloseListener extends GestureDetector.SimpleOnGestureListener {
             private final float minDistance;
             private boolean disabled;
+            private boolean inGesture;
 
-            public CloseOnFlingListener(Context context) {
+            public SwipeToCloseListener(Context context) {
                 super();
                 minDistance = ViewConfiguration.get(context).getScaledTouchSlop();
             }
@@ -430,17 +437,17 @@ public class ImageViewActivity extends AppCompatActivity implements PZSImageView
                         currentPhoto.setAlpha(Math.max(0, 1 - Math.abs(dy) / (viewPagerPhotos.getHeight() / 3)));
                         currentPhoto.setRotation(30 * (dy / (viewPagerPhotos.getHeight() / 2)));
                     }
+                    inGesture = true;
                     return true;
-                } else if (Math.abs(dx) > minDistance) {
+                } else if (Math.abs(dx) > minDistance && !inGesture) {
                     disabled = true; // Looks like we have a horizontal movement, disable "swipe-to-close"
                 }
                 return false;
             }
 
-            @Override
-            public boolean onDown(MotionEvent e) {
-                disabled = false;
-                return super.onDown(e);
+            public void setDisabled(boolean disabled) {
+                this.disabled = disabled;
+                inGesture = false;
             }
         }
     };

@@ -398,7 +398,7 @@
             android:noHistory="true"
             android:stateNotNeeded="true"
             android:theme="@android:style/Theme.NoDisplay" />
-        <activity android:name="org.awesomeapp.messenger.ui.widgets.ImageViewActivity" />
+        <activity android:name="org.awesomeapp.messenger.ui.widgets.ImageViewActivity" android:theme="@style/AppTheme.Transparent" />
         <activity android:name="org.awesomeapp.messenger.ui.widgets.SecureCameraActivity" />
         <activity
             android:name="org.awesomeapp.messenger.MainActivity"

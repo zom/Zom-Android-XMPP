@@ -74,10 +74,9 @@
 
     </style>
 
-    <style name="AppTheme" parent="@style/Theme.AppCompat.Light" >    
+    <style name="AppTheme" parent="@style/Theme.AppCompat.Light" >
 
-
-           <!-- colorPrimary is used for the default action bar background -->
+    <!-- colorPrimary is used for the default action bar background -->
     <item name="colorPrimary">@color/zom_primary</item>
 
     <!-- colorPrimaryDark is used for the status bar -->
@@ -113,6 +112,11 @@
 
         <item name="windowActionModeOverlay">true</item>
 
+    </style>
+
+    <style name="AppTheme.Transparent" parent="AppTheme">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
     </style>
 
     <style name="LStyled.ActionMode" parent="@style/Widget.AppCompat.ActionMode">
