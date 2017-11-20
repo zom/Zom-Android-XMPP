@@ -129,7 +129,7 @@ public class ImageViewActivity extends AppCompatActivity implements PZSImageView
 
     private void updateTitle() {
         if (viewPagerPhotos.getAdapter() != null && viewPagerPhotos.getAdapter().getCount() > 0) {
-            String title = "" + (viewPagerPhotos.getCurrentItem() + 1) + "/" + viewPagerPhotos.getAdapter().getCount();
+            String title = getString(R.string.photo_x_of_y, viewPagerPhotos.getCurrentItem() + 1, viewPagerPhotos.getAdapter().getCount());
             setTitle(title);
         } else {
             setTitle("");
