@@ -381,9 +381,9 @@ public class ImageViewActivity extends AppCompatActivity implements PZSImageView
             if (currentPhoto != null) {
                 currentPhoto.setPivotX(0.8f * currentPhoto.getWidth());
                 currentPhoto.setTranslationY(dy);
-                currentPhoto.setAlpha(Math.max(0, 1 - Math.abs(dy) / (viewPagerPhotos.getHeight() / 3)));
-                currentPhoto.setRotation(30 * (Math.abs(dy) / (viewPagerPhotos.getHeight() / 2)));
-                currentPhoto.animate().rotation(30).translationY(Math.signum(dy) * currentPhoto.getHeight()).alpha(0).setDuration((long)(1000 * seconds)).setListener(new Animator.AnimatorListener() {
+                currentPhoto.setAlpha(Math.max(0, 1 - Math.abs(dy) / (viewPagerPhotos.getHeight() / 2)));
+                currentPhoto.setRotation(30 * (dy / (viewPagerPhotos.getHeight() / 2)));
+                currentPhoto.animate().rotation(Math.signum(dy) * 30).translationY(Math.signum(dy) * currentPhoto.getHeight()).alpha(0).setDuration((long)(1000 * seconds)).setListener(new Animator.AnimatorListener() {
                     @Override
                     public void onAnimationStart(Animator animation) {
 
@@ -434,7 +434,7 @@ public class ImageViewActivity extends AppCompatActivity implements PZSImageView
                     if (currentPhoto != null) {
                         currentPhoto.setPivotX(0.8f * currentPhoto.getWidth());
                         currentPhoto.setTranslationY(dy);
-                        currentPhoto.setAlpha(Math.max(0, 1 - Math.abs(dy) / (viewPagerPhotos.getHeight() / 3)));
+                        currentPhoto.setAlpha(Math.max(0, 1 - Math.abs(dy) / (viewPagerPhotos.getHeight() / 2)));
                         currentPhoto.setRotation(30 * (dy / (viewPagerPhotos.getHeight() / 2)));
                     }
                     inGesture = true;
