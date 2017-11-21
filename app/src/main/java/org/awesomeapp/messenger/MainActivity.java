@@ -27,6 +27,8 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -189,10 +191,8 @@ public class MainActivity extends BaseActivity {
             public void onTabSelected(TabLayout.Tab tab) {
 
                 mViewPager.setCurrentItem(tab.getPosition());
-
                 setToolbarTitle(tab.getPosition());
                 applyStyleColors ();
-                checkConnection();
             }
 
             @Override
@@ -344,7 +344,14 @@ public class MainActivity extends BaseActivity {
         try {
 
             if (mSbStatus != null)
-                mSbStatus.dismiss();;
+                mSbStatus.dismiss();
+
+            if (!isNetworkAvailable())
+            {
+                mSbStatus = Snackbar.make(mViewPager, "No Internet", Snackbar.LENGTH_INDEFINITE);
+                mSbStatus.show();
+                return false;
+            }
 
             if (mApp.getDefaultProviderId() != -1) {
                 IImConnection conn = mApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
@@ -383,6 +390,13 @@ public class MainActivity extends BaseActivity {
             return false;
         }
 
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
     @Override
