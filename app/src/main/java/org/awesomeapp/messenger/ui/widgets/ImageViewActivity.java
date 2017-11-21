@@ -244,11 +244,24 @@ public class ImageViewActivity extends AppCompatActivity implements PZSImageView
             try {
                 imageView.setMatrixListener(ImageViewActivity.this);
                 if (SecureMediaStore.isVfsUri(mediaUri)) {
-                    Glide.with(context)
+
+                    info.guardianproject.iocipher.File fileMedia = new info.guardianproject.iocipher.File(mediaUri.getPath());
+
+                    if (fileMedia.exists()) {
+                        Glide.with(context)
                                 .asBitmap()
                                 .apply(imageRequestOptions)
-                                .load(new info.guardianproject.iocipher.FileInputStream(new java.io.File(mediaUri.getPath()).getPath()))
+                                .load(new info.guardianproject.iocipher.FileInputStream(fileMedia))
                                 .into(imageView);
+                    }
+                    else
+                    {
+                        Glide.with(context)
+                                .asBitmap()
+                                .apply(imageRequestOptions)
+                                .load(R.drawable.broken_image_large)
+                                .into(imageView);
+                    }
                 } else {
                     Glide.with(context)
                             .asBitmap()
@@ -258,7 +271,7 @@ public class ImageViewActivity extends AppCompatActivity implements PZSImageView
                 }
             }
             catch (Throwable t) { // may run Out Of Memory
-                Log.e(ImApp.LOG_TAG, "unable to load thumbnail", t);
+                Log.w(ImApp.LOG_TAG, "unable to load thumbnail: " + t);
             }
             return imageView;
         }

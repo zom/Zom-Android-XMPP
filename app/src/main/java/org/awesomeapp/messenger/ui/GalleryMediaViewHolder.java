@@ -149,11 +149,25 @@ public class GalleryMediaViewHolder extends MediaViewHolder
         if(SecureMediaStore.isVfsUri(mediaUri))
         {
             try {
-                Glide.with(context)
-                        .asBitmap()
-                        .load(new info.guardianproject.iocipher.FileInputStream(new File(mediaUri.getPath()).getPath()))
-                        .apply(options)
-                        .into(mMediaThumbnail);
+                info.guardianproject.iocipher.File fileMedia = new info.guardianproject.iocipher.File(mediaUri.getPath());
+                if (fileMedia.exists()) {
+                    Log.d("Gallery","VFS loading: " + mediaUri.toString());
+
+                    Glide.with(context)
+                            .asBitmap()
+                            .load(new info.guardianproject.iocipher.FileInputStream(fileMedia))
+                            .apply(options)
+                            .into(mMediaThumbnail);
+                }
+                else
+                {
+                    Log.d("Gallery","VFS file not found: " + mediaUri.toString());
+                    Glide.with(context)
+                            .asBitmap()
+                            .load(R.drawable.broken_image_large)
+                            .apply(options)
+                            .into(mMediaThumbnail);
+                }
             }
             catch (Exception e)
             {

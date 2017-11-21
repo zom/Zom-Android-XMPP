@@ -17,6 +17,7 @@ import org.awesomeapp.messenger.ImApp;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Date;
 import java.util.UUID;
 
 import info.guardianproject.iocipher.File;
@@ -45,15 +46,15 @@ public class SecureMediaStore {
     public static void list(String parent) {
         File file = new File(parent);
         String[] list = file.list();
-     //  Log.e(TAG, file.getAbsolutePath());
+
+        Log.d(TAG, "Dir=" + file.isDirectory() + ";" + file.getAbsolutePath() + ";last=" + new Date(file.lastModified()));
+
         for (int i = 0 ; i < list.length ; i++) {
-            String fullname = parent + list[i];
-            File child = new File(fullname);
-            if (child.isDirectory()) {
-                list(fullname+"/");
+            File fileChild = new File(parent,list[i]);
+            if (fileChild.isDirectory()) {
+                list(fileChild.getAbsolutePath());
             } else {
-                File full = new File(fullname);
-         //       Log.e(TAG, fullname + " " + full.length());
+                Log.d(TAG, "Dir=" + fileChild.isDirectory() + ";" + fileChild.getAbsolutePath()+ ";last=" + new Date(fileChild.lastModified()));
             }
         }
     }
@@ -185,6 +186,7 @@ public class SecureMediaStore {
 
         try {
             vfs.mount(dbFilePath, key);
+       //     list("/");
         }
         catch (Exception e)
         {

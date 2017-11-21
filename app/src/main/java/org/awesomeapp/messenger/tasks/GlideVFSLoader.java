@@ -16,6 +16,7 @@ import com.bumptech.glide.load.model.MultiModelLoaderFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
+import java.util.Date;
 
 import info.guardianproject.iocipher.FileInputStream;
 
@@ -31,12 +32,12 @@ public class GlideVFSLoader implements ModelLoader<info.guardianproject.iocipher
 
     @Nullable
     @Override
-    public LoadData<InputStream> buildLoadData(FileInputStream model, int width, int height, Options options) {
-        return new LoadData<>(new GlideNullCacheKey(), new VFSDataFetcher(model));
+    public LoadData<InputStream> buildLoadData(info.guardianproject.iocipher.FileInputStream model, int width, int height, Options options) {
+        return new LoadData<>(new GlideVFSCacheKey(model), new VFSDataFetcher(model));
     }
 
     @Override
-    public boolean handles(FileInputStream model) {
+    public boolean handles(info.guardianproject.iocipher.FileInputStream model) {
         return true;
     }
 
@@ -52,12 +53,36 @@ public class GlideVFSLoader implements ModelLoader<info.guardianproject.iocipher
     }
 }
 
-class GlideNullCacheKey implements Key {
-    public GlideNullCacheKey() {
+class GlideVFSCacheKey implements Key {
+    FileInputStream fis;
+
+    public GlideVFSCacheKey(FileInputStream fis) {
+        this.fis = fis;
     }
 
     @Override
     public void updateDiskCacheKey(MessageDigest messageDigest) {
+      //  Log.d(getClass().getName(),"updateDiskCacheKey=" + messageDigest.toString());
+    }
+
+    @Override
+    public int hashCode() {
+        try {
+            int hashCode = fis.getFD().hashCode();
+         //   Log.d("GlideKey","HashCode="+hashCode);
+            return hashCode;
+
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return ((GlideVFSCacheKey) obj).hashCode() == (hashCode());
     }
 }
 

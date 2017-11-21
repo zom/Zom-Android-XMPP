@@ -326,7 +326,6 @@ public class ConversationListFragment extends Fragment {
     {
         mFilterArchive = filterAchive;
 
-
         if (mFilterArchive)
             mChatType = Imps.Chats.CHAT_TYPE_ARCHIVED;
         else
@@ -421,6 +420,9 @@ public class ConversationListFragment extends Fragment {
                 final int presence = cursor.getInt(ConversationListItem.COLUMN_CONTACT_PRESENCE_STATUS);
                 long lastReadDate = cursor.getLong(ConversationListItem.COLUMN_LAST_READ_DATE);
 
+                int chatType = cursor.getInt(ConversationListItem.COLUMN_CHAT_TYPE);
+                boolean isMuted = chatType == Imps.Chats.CHAT_TYPE_MUTED;
+
                 String lastMsgType = null;
                 if (!TextUtils.isEmpty(lastMsg)) {
                     if (lastMsg.endsWith(".jpg") || lastMsg.endsWith(".png") || lastMsg.endsWith(".gif"))
@@ -431,7 +433,7 @@ public class ConversationListFragment extends Fragment {
 
                 ConversationListItem clItem = ((ConversationListItem)viewHolder.itemView.findViewById(R.id.convoitemview));
 
-                clItem.bind(viewHolder, chatId, providerId, accountId, address, nickname, type, lastMsg, lastMsgDate, lastMsgType, presence, null, true, false);
+                clItem.bind(viewHolder, chatId, providerId, accountId, address, nickname, type, lastMsg, lastMsgDate, lastMsgType, presence, null, true, false, isMuted);
                 if (lastReadDate < lastMsgDate) {
                     SpannableStringBuilder ssb = new SpannableStringBuilder(viewHolder.mLine1.getText());
                     StyleSpan bold = new StyleSpan(Typeface.BOLD);
@@ -462,10 +464,12 @@ public class ConversationListFragment extends Fragment {
                 final long messageDate = cursor.getLong(cursor.getColumnIndexOrThrow(Imps.Messages.DATE));
                 final String messageType = cursor.getString(cursor.getColumnIndexOrThrow(Imps.Messages.MIME_TYPE));
 
+                boolean isMuted = false;
+
                 if (address != null) {
 
                     if (viewHolder.itemView instanceof  ConversationListItem) {
-                        ((ConversationListItem) viewHolder.itemView).bind(viewHolder, chatId, -1, -1, address, nickname, -1, body, messageDate, messageType, -1, mSearchString, true, false);
+                        ((ConversationListItem) viewHolder.itemView).bind(viewHolder, chatId, -1, -1, address, nickname, -1, body, messageDate, messageType, -1, mSearchString, true, false, isMuted);
 
                         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                             @Override
