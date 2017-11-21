@@ -799,9 +799,27 @@ public class ConversationView {
      //   mDeliveryIcon = (ImageView) mActivity.findViewById(R.id.deliveryIcon);
        // mTitle = (TextView) mActivity.findViewById(R.id.title);
         mHistory = (RecyclerView) mActivity.findViewById(R.id.history);
-        LinearLayoutManager llm = new LinearLayoutManager(mHistory.getContext());
+        final LinearLayoutManager llm = new LinearLayoutManager(mHistory.getContext());
         llm.setStackFromEnd(true);
         mHistory.setLayoutManager(llm);
+        mHistory.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+
+                int visibleItemCount = llm.getChildCount();
+                int totalItemCount = llm.getItemCount();
+                int pastVisibleItems = llm.findFirstVisibleItemPosition();
+                if (pastVisibleItems + visibleItemCount >= totalItemCount) {
+                    //End of list
+                    mMessageAdapter.onScrollStateChanged(null,RecyclerView.SCROLL_STATE_IDLE);
+
+                }
+                else
+                    mMessageAdapter.onScrollStateChanged(null,RecyclerView.SCROLL_STATE_DRAGGING);
+
+            }
+        });
 
         mComposeMessage = (EditText) mActivity.findViewById(R.id.composeMessage);
         mSendButton = (ImageButton) mActivity.findViewById(R.id.btnSend);
@@ -1695,6 +1713,7 @@ public class ConversationView {
 
                 newCursor.setNotificationUri(mActivity.getApplicationContext().getContentResolver(), mUri);
                 mMessageAdapter.swapCursor(new DeltaCursor(newCursor));
+
 
                 if (!mMessageAdapter.isScrolling()) {
 
@@ -2887,7 +2906,7 @@ public class ConversationView {
 
         }
 
-        public void onScrollStateChanged(AbsListView view, int scrollState) {
+        public void onScrollStateChanged(AbsListView viewNew, int scrollState) {
             int oldState = mScrollState;
             mScrollState = scrollState;
 
@@ -2912,7 +2931,7 @@ public class ConversationView {
         }
 
         boolean isScrolling() {
-            return mScrollState == AbsListView.OnScrollListener.SCROLL_STATE_FLING;
+            return mScrollState != RecyclerView.SCROLL_STATE_IDLE;
         }
 
         void setNeedRequeryCursor(boolean requeryCursor) {
