@@ -42,6 +42,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.theartofdev.edmodo.cropper.CropImageView;
@@ -66,6 +67,8 @@ import java.io.InputStream;
 import java.security.KeyPair;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import im.zom.messenger.R;
 import org.awesomeapp.messenger.util.Languages;
@@ -741,14 +744,37 @@ public class OnboardingActivity extends BaseActivity {
         String username = ((TextView)findViewById(R.id.edtName)).getText().toString();
         String password = ((TextView)findViewById(R.id.edtPass)).getText().toString();
 
-        findViewById(R.id.progressExistingUser).setVisibility(View.VISIBLE);
-        findViewById(R.id.progressExistingImage).setVisibility(View.VISIBLE);
+        if (verifyJabberID(username)) {
+            findViewById(R.id.progressExistingUser).setVisibility(View.VISIBLE);
+            findViewById(R.id.progressExistingImage).setVisibility(View.VISIBLE);
 
-        if (mExistingAccountTask == null) {
-            mExistingAccountTask = new ExistingAccountTask();
-            mExistingAccountTask.execute(username, password);
+            if (mExistingAccountTask == null) {
+                mExistingAccountTask = new ExistingAccountTask();
+                mExistingAccountTask.execute(username, password);
+            }
+        }
+        else
+        {
+            Toast.makeText(this,getString(R.string.account_setup_example_email_address),Toast.LENGTH_SHORT).show();
         }
     }
+
+    public static boolean verifyJabberID(String jid) {
+        if (jid != null) {
+            Pattern p = Pattern
+                    .compile("(?i)[a-z0-9\\-_\\.]++@[a-z0-9\\-_]++(\\.[a-z0-9\\-_]++)++");
+            Matcher m = p.matcher(jid);
+
+            if (!m.matches()) {
+                return false;
+            }
+        } else {
+            return false;
+        }
+
+        return true;
+    }
+
 
     private class ExistingAccountTask extends AsyncTask<String, Void, OnboardingAccount> {
         @Override
