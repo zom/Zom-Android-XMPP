@@ -244,6 +244,11 @@ public class MainActivity extends BaseActivity {
         installRingtones ();
 
         applyStyle();
+
+        if (mApp.getDefaultAccountId() == -1)
+        {
+            startActivity(new Intent(this,OnboardingActivity.class));
+        }
     }
 
     private void installRingtones ()
