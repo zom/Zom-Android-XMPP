@@ -218,7 +218,7 @@ public class SecureMediaStore {
      */
     public static Uri importContent(String sessionId, java.io.File sourceFile) throws IOException {
         //list("/");
-        String targetPath = "/" + sessionId + "/upload/" + UUID.randomUUID().toString() + "/" + sourceFile.getName();
+        String targetPath = "/" + sessionId + "/upload/" + UUID.randomUUID().toString() + "/" + sourceFile.getName().replaceAll("[^a-zA-Z0-9\\.\\-]", "_");
         targetPath = createUniqueFilename(targetPath);
         copyToVfs( sourceFile, targetPath );
         //list("/");
@@ -236,7 +236,7 @@ public class SecureMediaStore {
      */
     public static Uri importContent(String sessionId, String fileName, InputStream sourceStream) throws IOException {
         //list("/");
-        String targetPath = "/" + sessionId + "/upload/" + UUID.randomUUID().toString() + '/' + fileName;
+        String targetPath = "/" + sessionId + "/upload/" + UUID.randomUUID().toString() + '/' + fileName.replaceAll("[^a-zA-Z0-9\\.\\-]", "_");
         targetPath = createUniqueFilename(targetPath);
         copyToVfs( sourceStream, targetPath );
         //list("/");
@@ -415,6 +415,7 @@ public class SecureMediaStore {
     }
 
     private static String createUniqueFilename( String filename ) {
+
         if (!exists(filename)) {
             return filename;
         }
@@ -444,7 +445,7 @@ public class SecureMediaStore {
     }
 
     public static String getDownloadFilename(String sessionId, String filenameFromUrl) {
-        String filename = "/" + sessionId + "/download/" + filenameFromUrl;
+        String filename = "/" + sessionId + "/download/" + filenameFromUrl.replaceAll("[^a-zA-Z0-9\\.\\-]", "_");
         String uniqueFilename = createUniqueFilename(filename);
         return uniqueFilename;
     }
