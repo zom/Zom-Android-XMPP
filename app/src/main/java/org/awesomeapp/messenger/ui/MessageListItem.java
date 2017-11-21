@@ -21,6 +21,7 @@ import im.zom.messenger.R;
 
 import org.awesomeapp.messenger.ImUrlActivity;
 import org.awesomeapp.messenger.ui.onboarding.OnboardingManager;
+import org.awesomeapp.messenger.ui.widgets.AudioWife;
 import org.awesomeapp.messenger.ui.widgets.MessageViewHolder;
 import org.awesomeapp.messenger.util.GlideUtils;
 import org.awesomeapp.messenger.util.SecureMediaStore;
@@ -53,6 +54,7 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.preference.PreferenceManager;
@@ -68,7 +70,9 @@ import android.text.style.StyleSpan;
 import android.text.style.URLSpan;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -179,9 +183,6 @@ public class MessageListItem extends FrameLayout {
     public void bindIncomingMessage(MessageViewHolder holder, int id, int messageType, String address, String nickname, final String mimeType, final String body, Date date, Markup smileyRes,
             boolean scrolling, EncryptionState encryption, boolean showContact, int presenceStatus) {
 
-        if (mAudioPlayer != null)
-            mAudioPlayer.stop();
-
         mHolder = holder;
         applyStyleColors();
         mHolder.mTextViewForMessages.setVisibility(View.VISIBLE);
@@ -203,11 +204,11 @@ public class MessageListItem extends FrameLayout {
 
             if (mediaUri != null && mediaUri.getScheme() != null) {
                 if (mimeType.startsWith("audio")) {
-                    mHolder.mAudioButton.setImageResource(R.drawable.media_audio_play);
+                 //   mHolder.mAudioButton.setImageResource(R.drawable.media_audio_play);
 
                     try {
                         mHolder.mAudioContainer.setVisibility(View.VISIBLE);
-                        showAudioPlayer(mimeType, mediaUri, id, mHolder);
+                        showAudioPlayer(mimeType, mediaUri, id, mHolder, mHolder.mLayoutInflater);
                     } catch (Exception e) {
                         mHolder.mAudioContainer.setVisibility(View.GONE);
                     }
@@ -378,7 +379,7 @@ public class MessageListItem extends FrameLayout {
 
     }
 
-    private void showAudioPlayer (String mimeType, Uri mediaUri, int id, MessageViewHolder holder) throws Exception
+    private void showAudioPlayer (String mimeType, Uri mediaUri, int id, MessageViewHolder holder, LayoutInflater inflater) throws Exception
     {
         /* Guess the MIME type in case we received a file that we can display or play*/
         if (TextUtils.isEmpty(mimeType) || mimeType.startsWith("application")) {
@@ -391,10 +392,27 @@ public class MessageListItem extends FrameLayout {
             }
         }
 
+        mHolder.mTextViewForMessages.setText("");
+
+        /**
         holder.setOnClickListenerMediaThumbnail(mimeType, mediaUri);
         mHolder.mTextViewForMessages.setText("");
         mAudioPlayer = new AudioPlayer(getContext(), mediaUri.getPath(), mimeType, mHolder.mVisualizerView,mHolder.mTextViewForMessages);
         holder.mContainer.setBackgroundResource(android.R.color.transparent);
+         **/
+
+        if (holder.mAudioWife != null)
+        {
+            holder.mAudioWife.release();
+        }
+
+        holder.mAudioContainer.removeAllViews();
+        // when done playing, release the resources
+
+        holder.mAudioWife = new AudioWife();
+        holder.mAudioWife.init(context, mediaUri, mimeType)
+                .useDefaultUi(holder.mAudioContainer, inflater);
+
     }
 
     protected String convertMediaUriToPath(Uri uri) {
@@ -417,8 +435,6 @@ public class MessageListItem extends FrameLayout {
         return path;
     }
 
-    private AudioPlayer mAudioPlayer;
-
     public void onClickMediaIcon(String mimeType, Uri mediaUri) {
 
 
@@ -429,24 +445,6 @@ public class MessageListItem extends FrameLayout {
             urisToShow.add(mediaUri); // TODO - add all in thread!
             intent.putExtra(ImageViewActivity.URIS, urisToShow);
             context.startActivity(intent);
-
-        }
-        else if (mimeType.startsWith("audio")) {
-
-                if (mAudioPlayer.getDuration() != -1)
-                    mHolder.mTextViewForMessages.setText((mAudioPlayer.getDuration()/1000) + "secs");
-
-                if (mAudioPlayer.isPlaying())
-                {
-                    mHolder.mAudioButton.setImageResource(R.drawable.media_audio_play);
-                    mAudioPlayer.pause();
-                }
-                else
-                {
-                    mHolder.mAudioButton.setImageResource(R.drawable.media_audio_pause);
-                    mAudioPlayer.play();
-                }
-
 
         }
         else
@@ -640,16 +638,12 @@ public class MessageListItem extends FrameLayout {
     public void bindOutgoingMessage(MessageViewHolder holder, int id, int messageType, String address, final String mimeType, final String body, Date date, Markup smileyRes, boolean scrolling,
             DeliveryState delivery, EncryptionState encryption) {
 
-        if (mAudioPlayer != null)
-            mAudioPlayer.stop();
-
         mHolder = holder;
         applyStyleColors();
 
         mHolder.mTextViewForMessages.setVisibility(View.VISIBLE);
         mHolder.mAudioContainer.setVisibility(View.GONE);
         mHolder.mMediaContainer.setVisibility(View.GONE);
-        mHolder.mAudioButton.setImageResource(R.drawable.media_audio_play);
 
         mHolder.resetOnClickListenerMediaThumbnail();
 
@@ -670,7 +664,7 @@ public class MessageListItem extends FrameLayout {
             {
                 try {
                     mHolder.mAudioContainer.setVisibility(View.VISIBLE);
-                    showAudioPlayer(mimeType, mediaUri, id, mHolder);
+                    showAudioPlayer(mimeType, mediaUri, id, mHolder, mHolder.mLayoutInflater);
                 }
                 catch (Exception e)
                 {

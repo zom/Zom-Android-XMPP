@@ -2776,12 +2776,13 @@ public class ConversationView {
         @Override
         public MessageViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             MessageListItem view = null;
+            LayoutInflater inflater = LayoutInflater.from(parent.getContext());
 
             if (viewType == 0)
-                view = (MessageListItem)LayoutInflater.from(parent.getContext())
+                view = (MessageListItem)inflater
                     .inflate(R.layout.message_view_left, parent, false);
             else
-                view = (MessageListItem)LayoutInflater.from(parent.getContext())
+                view = (MessageListItem)inflater
                         .inflate(R.layout.message_view_right, parent, false);
 
             view.setOnLongClickListener(new View.OnLongClickListener() {
@@ -2801,6 +2802,7 @@ public class ConversationView {
             });
 
             MessageViewHolder mvh = new MessageViewHolder(view);
+            mvh.setLayoutInflater(inflater);
             mvh.setOnImageClickedListener(this);
             view.applyStyleColors();
             return mvh;

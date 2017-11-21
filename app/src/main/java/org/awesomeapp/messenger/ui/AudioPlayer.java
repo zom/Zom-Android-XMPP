@@ -240,7 +240,7 @@ public class AudioPlayer {
         });
 
 
-        mediaPlayer.prepareAsync();
+      //  mediaPlayer.prepareAsync();
 
     }
 

@@ -1,7 +1,9 @@
 package org.awesomeapp.messenger.ui.widgets;
 
 import android.net.Uri;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -24,14 +26,17 @@ public class MessageViewHolder extends MediaViewHolder
     public TextView mTextViewForTimestamp;
     public ImageView mAvatar;
 
-    public View mMediaContainer;
-    public View mAudioContainer;
-    public VisualizerView mVisualizerView;
-    public ImageView mAudioButton;
+    public ViewGroup mMediaContainer;
+    public ViewGroup mAudioContainer;
+   // public VisualizerView mVisualizerView;
+   // public ImageView mAudioButton;
+
+    public LayoutInflater mLayoutInflater;
     // save the media uri while the MediaScanner is creating the thumbnail
     // if the holder was reused, the pair is broken
 
     private OnImageClickedListener onImageClickedListener;
+    public AudioWife mAudioWife;
 
     public MessageViewHolder(View view) {
         super(view);
@@ -39,10 +44,10 @@ public class MessageViewHolder extends MediaViewHolder
         mTextViewForMessages = (TextView) view.findViewById(R.id.message);
         mTextViewForTimestamp = (TextView) view.findViewById(R.id.messagets);
         mAvatar = (ImageView) view.findViewById(R.id.avatar);
-        mMediaContainer = view.findViewById(R.id.media_thumbnail_container);
-        mAudioContainer = view.findViewById(R.id.audio_container);
-        mVisualizerView = (VisualizerView) view.findViewById(R.id.audio_view);
-        mAudioButton = (ImageView) view.findViewById(R.id.audio_button);
+        mMediaContainer = (ViewGroup)view.findViewById(R.id.media_thumbnail_container);
+        mAudioContainer = (ViewGroup)view.findViewById(R.id.audio_container);
+       // mVisualizerView = (VisualizerView) view.findViewById(R.id.audio_view);
+       // mAudioButton = (ImageView) view.findViewById(R.id.audio_button);
 
         // disable built-in autoLink so we can add custom ones
         mTextViewForMessages.setAutoLinkMask(0);
@@ -89,4 +94,9 @@ public class MessageViewHolder extends MediaViewHolder
     }
 
     long mTimeDiff = -1;
+
+    public void setLayoutInflater (LayoutInflater layoutInflater)
+    {
+        mLayoutInflater = layoutInflater;
+    }
 }
