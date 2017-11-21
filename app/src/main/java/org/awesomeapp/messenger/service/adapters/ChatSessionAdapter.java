@@ -1164,7 +1164,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                     Log.e(TAG,"error saving message to the db: " + msg.getID());
                     return false; //couldn't write to database
                 }
-                
+
                 try {
                     synchronized (mRemoteListeners) {
                         int N = mRemoteListeners.beginBroadcast();
