@@ -2,6 +2,8 @@ package org.awesomeapp.messenger.ui;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.ComponentName;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -33,6 +35,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.theartofdev.edmodo.cropper.CropImageView;
 
@@ -61,6 +64,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import im.zom.messenger.R;
+
+import static android.content.Context.CLIPBOARD_SERVICE;
 
 
 public class AccountFragment extends Fragment {
@@ -127,6 +132,16 @@ public class AccountFragment extends Fragment {
             mTvNickname = (TextView) mView.findViewById(R.id.tvNickname);
 
             TextView tvUsername = (TextView) mView.findViewById(R.id.edtName);
+            tvUsername.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(CLIPBOARD_SERVICE);
+                    ClipData clip = ClipData.newPlainText(getActivity().getString(R.string.app_name), mUserAddress);
+                    clipboard.setPrimaryClip(clip);
+                    Toast.makeText(getActivity(),R.string.action_copied,Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+            });
             mTvPassword = (TextView) mView.findViewById(R.id.edtPass);
             mTvPassword.setText(DEFAULT_PASSWORD_TEXT);
 
