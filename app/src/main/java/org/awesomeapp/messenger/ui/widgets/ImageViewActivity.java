@@ -136,6 +136,8 @@ public class ImageViewActivity extends AppCompatActivity implements PZSImageView
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_message_context, menu);
 
+        menu.findItem(R.id.menu_message_copy).setVisible(false);
+
         return true;
     }
 
@@ -151,9 +153,15 @@ public class ImageViewActivity extends AppCompatActivity implements PZSImageView
             case R.id.menu_message_share:
                 exportMediaFile();
                 return true;
+                /**
+            case R.id.menu_message_copy:
+                exportMediaFile();
+                return true;**/
+                /**
             case R.id.menu_message_resend:
                 resendMediaFile();
                 return true;
+                 **/
             /**
             case R.id.menu_message_delete:
                 deleteMediaFile();

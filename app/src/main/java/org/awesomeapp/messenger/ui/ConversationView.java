@@ -22,6 +22,8 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
@@ -145,6 +147,8 @@ import java.util.Collection;
 import java.util.Date;
 
 import im.zom.messenger.R;
+
+import static android.content.Context.CLIPBOARD_SERVICE;
 
 public class ConversationView {
     // This projection and index are set for the query of active chats
@@ -2975,9 +2979,18 @@ public class ConversationView {
                         ((MessageListItem)mLastSelectedView).forwardMediaFile();
                         mode.finish(); // Action picked, so close the CAB
                         return true;
+                        /**
                     case R.id.menu_message_resend:
                         sendMessageAsync(((MessageListItem)mLastSelectedView).getLastMessage());
                         mode.finish(); // Action picked, so close the CAB
+                        return true;**/
+                    case R.id.menu_message_copy:
+                        String messageText = ((MessageListItem)mLastSelectedView).getLastMessage();
+                        ClipboardManager clipboard = (ClipboardManager) mActivity.getSystemService(CLIPBOARD_SERVICE);
+                        ClipData clip = ClipData.newPlainText(mActivity.getString(R.string.app_name), messageText);
+                        clipboard.setPrimaryClip(clip);
+                        mode.finish();
+                        Toast.makeText(mActivity, R.string.action_copied,Toast.LENGTH_SHORT).show();
                         return true;
 
                     default:

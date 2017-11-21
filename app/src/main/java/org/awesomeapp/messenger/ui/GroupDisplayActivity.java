@@ -405,6 +405,9 @@ public class GroupDisplayActivity extends BaseActivity {
                     Collections.sort(members, new Comparator<GroupMemberDisplay>() {
                         @Override
                         public int compare(GroupMemberDisplay member1, GroupMemberDisplay member2) {
+                            if (member1.affiliation == null || member2.affiliation == null)
+                                return 1;
+                            
                             boolean member1isImportant = (member1.affiliation.contentEquals("owner") || member1.affiliation.contentEquals("admin"));
                             boolean member2isImportant = (member2.affiliation.contentEquals("owner") || member2.affiliation.contentEquals("admin"));
                             if (member1isImportant != member2isImportant) {
