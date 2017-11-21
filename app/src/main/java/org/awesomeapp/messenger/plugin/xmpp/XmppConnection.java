@@ -613,7 +613,6 @@ public class XmppConnection extends ImConnection {
 
                     addMucListeners(reMuc, group);
 
-                    loadOldMessages(muc);
                 } catch (Exception e) {
                     Log.w(TAG,"unable to join MUC: " + e.getMessage());
                 }
@@ -691,8 +690,8 @@ public class XmppConnection extends ImConnection {
                 if (!muc.isJoined()) {
                     DiscussionHistory history = new DiscussionHistory();
                     muc.createOrJoin(Resourcepart.from(nickname), null, history, SmackConfiguration.getDefaultPacketReplyTimeout());
-                    loadOldMessages(muc);
                 }
+
 
 
             }
@@ -719,11 +718,6 @@ public class XmppConnection extends ImConnection {
                         DiscussionHistory history = new DiscussionHistory();
                         muc.createOrJoin(Resourcepart.from(nickname), null, history, SmackConfiguration.getDefaultPacketReplyTimeout());
                         mucCreated = true;
-                        loadOldMessages(muc);
-                    }
-                    else
-                    {
-
                     }
 
                 } catch (Exception iae) {
@@ -963,7 +957,6 @@ public class XmppConnection extends ImConnection {
 
                 addMucListeners(muc, chatGroup);
 
-                loadOldMessages(muc);
 
             } catch (Exception e) {
                 debug(TAG,"error joining MUC",e);
@@ -2588,8 +2581,8 @@ public class XmppConnection extends ImConnection {
                     if (!muc.isJoined()) {
                         DiscussionHistory history = new DiscussionHistory();
                         muc.join(Resourcepart.from(mUser.getName()), null, history, SmackConfiguration.getDefaultPacketReplyTimeout());
-                        loadOldMessages(muc);
                     }
+
 
                     msgXmpp.addExtension(new DeliveryReceiptRequest());
                     String deliveryReceiptId = DeliveryReceiptRequest.addTo(msgXmpp);
@@ -4721,10 +4714,11 @@ public class XmppConnection extends ImConnection {
         }
     }
 
+    /**
     public void loadOldMessages (MultiUserChat muc) throws MultiUserChatException, InterruptedException
     {
         org.jivesoftware.smack.packet.Message oldMessage = null;
-        while ((oldMessage = muc.nextMessage(2000)) != null)
+        while ((oldMessage = muc.nextMessage(30000)) != null)
             handleMessage(oldMessage, false);
-    }
+    }**/
 }
