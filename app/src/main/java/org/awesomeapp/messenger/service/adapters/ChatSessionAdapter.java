@@ -817,8 +817,9 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                     if (domain.contains("conference."))
                         domain = domain.replace("conference.","");
 
-                    if (urlDownload.contains(domain))
+                    if (urlDownload.contains(domain)) {
                         return urlDownload;
+                    }
                 }
                 catch (XmppStringprepException se)
                 {
@@ -1058,98 +1059,34 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             String bareUsername = msg.getFrom().getBareAddress();
             String nickname = getNickName(username);
             Contact contact = null;
-            try
-            {
+            try {
                 contact = mConnection.getContactListManager().getContactByAddress(bareUsername);
                 nickname = contact.getName();
+            } catch (Exception e) {
             }
-            catch (Exception e){}
 
             long time = msg.getDateTime().getTime();
 
             if (msg.getID() != null
-                &&
-                Imps.messageExists(mContentResolver, msg.getID()))
-            {
+                    &&
+                    Imps.messageExists(mContentResolver, msg.getID())) {
                 return false; //this message is a duplicate
             }
 
             boolean allowWebDownloads = true;
-            String mediaLink = checkForLinkedMedia(username, body,allowWebDownloads);
+            String mediaLink = checkForLinkedMedia(username, body, allowWebDownloads);
+            boolean downloaded = false;
 
-            if (mediaLink == null) {
-                insertOrUpdateChat(body);
+            boolean wasMessageSeen = false;
 
-                boolean wasMessageSeen = false;
+            Uri messageUri = null;
 
-                Uri messageUri = null;
-
-                if (msg.getID() == null)
-                    messageUri = insertMessageInDb(nickname, body, time, msg.getType(), null);
-                else
-                    messageUri = insertMessageInDb(nickname, body, time, msg.getType(), 0, msg.getID(), null);
-
-                if (messageUri == null) //couldn't write to the database, so return false
-                    return false;
-
-                try {
-                    synchronized (mRemoteListeners) {
-                        int N = mRemoteListeners.beginBroadcast();
-                        for (int i = 0; i < N; i++) {
-                            IChatListener listener = mRemoteListeners.getBroadcastItem(i);
-                            try {
-                                boolean wasSeen = listener.onIncomingMessage(ChatSessionAdapter.this, msg);
-
-                                if (wasSeen)
-                                    wasMessageSeen = wasSeen;
-
-                            } catch (RemoteException e) {
-                                // The RemoteCallbackList will take care of removing the
-                                // dead listeners.
-                            }
-                        }
-                        mRemoteListeners.finishBroadcast();
-                    }
-                }
-                catch (Exception e){}
-
-                // Due to the move to fragments, we could have listeners for ChatViews that are not visible on the screen.
-                // This is for fragments adjacent to the current one.  Therefore we can't use the existence of listeners
-                // as a filter on notifications.
-                if (!wasMessageSeen) {
-
-                    if (isGroupChatSession())
-                    {
-                        if (!isMuted()) {
-                            ChatGroup group = (ChatGroup)ses.getParticipant();
-                            try
-                            {
-                                contact = mConnection.getContactListManager().getContactByAddress(nickname);
-                                nickname = contact.getName();
-                            }
-                            catch (Exception e){}
-
-                            nickname = nickname.split("@")[0];
-
-                            mStatusBarNotifier.notifyGroupChat(mConnection.getProviderId(), mConnection.getAccountId(),
-                                    getId(), group.getAddress().getBareAddress(), group.getName(), nickname, body, false);
-                        }
-                    }
-                    else {
-                        //reinstated body display here in the notification; perhaps add preferences to turn that off
-                        mStatusBarNotifier.notifyChat(mConnection.getProviderId(), mConnection.getAccountId(),
-                                getId(), bareUsername, nickname, body, false);
-                    }
-                }
-            }
-            else
-            {
+            if (mediaLink != null) {
                 try {
                     Downloader dl = new Downloader();
-                    File fileDownload = dl.openSecureStorageFile(mContactId+"",mediaLink);
-
+                    File fileDownload = dl.openSecureStorageFile(mContactId + "", mediaLink);
                     OutputStream storageStream = new info.guardianproject.iocipher.FileOutputStream(fileDownload);
-                    boolean downloaded = dl.get(mediaLink, storageStream);
+                    downloaded = dl.get(mediaLink, storageStream);
 
                     if (downloaded) {
                         String mimeType = dl.getMimeType();
@@ -1165,12 +1102,18 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
                             insertOrUpdateChat(vfsUri.toString());
 
-                            Uri messageUri = Imps.insertMessageInDb(service.getContentResolver(),
+                            messageUri = Imps.insertMessageInDb(service.getContentResolver(),
                                     mIsGroupChat, getId(),
                                     true, nickname,
                                     vfsUri.toString(), System.currentTimeMillis(), type,
                                     0, msg.getID(), mimeType);
 
+                            if (messageUri == null) //error writing to database
+                            {
+                                Log.e(TAG,"error saving message to the db: " + msg.getID());
+
+                                return false;
+                            }
                             int percent = (int) (100);
 
                             String[] path = mediaLink.split("/");
@@ -1190,31 +1133,83 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                                     }
                                 }
                                 mRemoteListeners.finishBroadcast();
-                            }
-                            catch (Exception e){}
+                            } catch (Exception e) {
+                                Log.e(TAG,"error notifying of new messages",e);
 
-                            if (N == 0) {
-
-                                if (!isMuted())
-                                mStatusBarNotifier.notifyChat(mConnection.getProviderId(), mConnection.getAccountId(),
-                                        getId(), bareUsername, nickname, service.getString(R.string.file_notify_text, mimeType, nickname), false);
                             }
+
                         } catch (Exception e) {
                             Log.e(ImApp.LOG_TAG, "Error updating file transfer progress", e);
                         }
-                    }
-                    else
-                    {
-                        //file doesn't exist... ignore?
+
+
                     }
 
-                }
-                catch (Exception e)
-                {
-                    Log.e(ImApp.LOG_TAG,"error downloading incoming media",e);
+                } catch (Exception e) {
+                    Log.e(ImApp.LOG_TAG, "error downloading incoming media", e);
 
                 }
             }
+
+            //if it wasn't a media file or we had an issue downloading, then it is chat
+            if (!downloaded) {
+                insertOrUpdateChat(body);
+
+                if (msg.getID() == null)
+                    messageUri = insertMessageInDb(nickname, body, time, msg.getType(), null);
+                else
+                    messageUri = insertMessageInDb(nickname, body, time, msg.getType(), 0, msg.getID(), null);
+
+                if (messageUri == null) {
+                    Log.e(TAG,"error saving message to the db: " + msg.getID());
+                    return false; //couldn't write to database
+                }
+                
+                try {
+                    synchronized (mRemoteListeners) {
+                        int N = mRemoteListeners.beginBroadcast();
+                        for (int i = 0; i < N; i++) {
+                            IChatListener listener = mRemoteListeners.getBroadcastItem(i);
+                            try {
+                                wasMessageSeen = listener.onIncomingMessage(ChatSessionAdapter.this, msg);
+                            } catch (RemoteException e) {
+                                // The RemoteCallbackList will take care of removing the
+                                // dead listeners.
+                            }
+                        }
+                        mRemoteListeners.finishBroadcast();
+                    }
+                } catch (Exception e) {
+                    Log.e(TAG,"error notifying of new messages",e);
+                }
+            }
+
+            // Due to the move to fragments, we could have listeners for ChatViews that are not visible on the screen.
+            // This is for fragments adjacent to the current one.  Therefore we can't use the existence of listeners
+            // as a filter on notifications.
+            if (!wasMessageSeen) {
+
+                if (isGroupChatSession()) {
+                    if (!isMuted()) {
+                        ChatGroup group = (ChatGroup) ses.getParticipant();
+                        try {
+                            contact = mConnection.getContactListManager().getContactByAddress(nickname);
+                            nickname = contact.getName();
+                        } catch (Exception e) {
+                        }
+
+                        nickname = nickname.split("@")[0];
+
+                        mStatusBarNotifier.notifyGroupChat(mConnection.getProviderId(), mConnection.getAccountId(),
+                                getId(), group.getAddress().getBareAddress(), group.getName(), nickname, body, false);
+                    }
+                } else {
+                    //reinstated body display here in the notification; perhaps add preferences to turn that off
+                    mStatusBarNotifier.notifyChat(mConnection.getProviderId(), mConnection.getAccountId(),
+                            getId(), bareUsername, nickname, body, false);
+                }
+            }
+
 
             mHasUnreadMessages = true;
             return true;

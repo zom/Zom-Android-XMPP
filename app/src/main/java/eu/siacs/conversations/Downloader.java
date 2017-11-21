@@ -42,20 +42,27 @@ public class Downloader {
                 urlString = urlString.replace("aesgcm","https");
 
             final URL url = new URL(urlString);
-            OutputStream os = setupOutputStream(storageStream, url.getRef());
             final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             InputStream inputStream = connection.getInputStream();
             connection.connect();
             mMimeType = connection.getContentType();
 
-            byte[] buffer = new byte[4096];
-            int count;
-            while ((count = inputStream.read(buffer)) != -1) {
-                os.write(buffer, 0, count);
+            if (mMimeType != null && (!mMimeType.startsWith("text"))) {
+                OutputStream os = setupOutputStream(storageStream, url.getRef());
+                byte[] buffer = new byte[4096];
+                int count;
+                while ((count = inputStream.read(buffer)) != -1) {
+                    os.write(buffer, 0, count);
+                }
+                os.flush();
+                os.close();
+                return true;
             }
-            os.flush();
-            os.close();
-            return true;
+            else {
+                storageStream.close();
+                return false;
+            }
+
         } catch (Exception e) {
 
             return false;
