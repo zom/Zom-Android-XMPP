@@ -56,9 +56,11 @@ public class Downloader {
                 }
                 os.flush();
                 os.close();
+                connection.disconnect();
                 return true;
             }
             else {
+                connection.disconnect();
                 storageStream.close();
                 return false;
             }

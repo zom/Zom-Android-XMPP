@@ -73,6 +73,8 @@ public class HttpMediaStreamer {
                     sb.append("Content-Type: " + mimeType + "\r\n");
                     sb.append("Content-Length: " + fileStream.length() + "\r\n\r\n");
 
+                    Log.d(TAG, "sharing content of length: " + fileStream.length());
+
                     BufferedOutputStream bos = new BufferedOutputStream(socket.getOutputStream());
 
                     bos.write(sb.toString().getBytes());

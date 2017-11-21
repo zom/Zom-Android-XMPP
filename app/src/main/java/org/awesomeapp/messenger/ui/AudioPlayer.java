@@ -5,12 +5,14 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.media.AudioManager;
+import android.media.MediaDataSource;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.media.audiofx.Visualizer;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.TextView;
@@ -19,6 +21,13 @@ import android.widget.Toast;
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.ui.widgets.VisualizerView;
 import org.awesomeapp.messenger.util.HttpMediaStreamer;
+
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.channels.SeekableByteChannel;
+
+import info.guardianproject.iocipher.File;
+import info.guardianproject.iocipher.RandomAccessFile;
 
 public class AudioPlayer {
     private static final String TAG = "AudioPlayer";
@@ -133,7 +142,7 @@ public class AudioPlayer {
 
     public void initPlayer() throws Exception {
 
-        info.guardianproject.iocipher.File fileStream = new info.guardianproject.iocipher.File(mFileName);
+        final File fileStream = new File(mFileName);
 
         if (mediaPlayer != null)
         {
@@ -148,9 +157,45 @@ public class AudioPlayer {
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
         if (fileStream.exists()) {
-            streamer = new HttpMediaStreamer(fileStream, mMimeType);
-            Uri uri = streamer.getUri();
-            mediaPlayer.setDataSource(mContext, uri);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                mediaPlayer.setDataSource(new MediaDataSource() {
+
+                    info.guardianproject.iocipher.RandomAccessFile fis;
+
+                    @Override
+                    public int readAt(long position, byte[] buffer, int offset, int size) throws IOException {
+                        if (fis == null)
+                            fis = new info.guardianproject.iocipher.RandomAccessFile(fileStream,"r");
+
+                        if (position > getSize())
+                            return -1;
+
+                        fis.seek(position);
+                        byte[] outBuffer = new byte[size];
+                        int readSize = fis.read(outBuffer,0,size);
+                        System.arraycopy(outBuffer,0,buffer,offset,size);
+                        return readSize;
+                    }
+
+                    @Override
+                    public long getSize() throws IOException {
+                        return fileStream.length();
+                    }
+
+                    @Override
+                    public void close() throws IOException {
+                        if (fis != null)
+                            fis.close();
+                    }
+                });
+            }
+            else
+            {
+                streamer = new HttpMediaStreamer(fileStream, mMimeType);
+                Uri uri = streamer.getUri();
+                mediaPlayer.setDataSource(mContext, uri);
+            }
         }
         else
         {
