@@ -192,6 +192,7 @@ public class MainActivity extends BaseActivity {
 
                 setToolbarTitle(tab.getPosition());
                 applyStyleColors ();
+                checkConnection();
             }
 
             @Override
@@ -337,8 +338,14 @@ public class MainActivity extends BaseActivity {
 
     }
 
+    private Snackbar mSbStatus;
+
     private boolean checkConnection() {
         try {
+
+            if (mSbStatus != null)
+                mSbStatus.dismiss();;
+
             if (mApp.getDefaultProviderId() != -1) {
                 IImConnection conn = mApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
 
@@ -346,27 +353,28 @@ public class MainActivity extends BaseActivity {
                         || conn.getState() == ImConnection.SUSPENDED
                         || conn.getState() == ImConnection.SUSPENDING) {
 
-                    Snackbar sb = Snackbar.make(mViewPager, R.string.error_suspended_connection, Snackbar.LENGTH_LONG);
-                    sb.setAction(getString(R.string.connect), new View.OnClickListener() {
+                    mSbStatus = Snackbar.make(mViewPager, R.string.error_suspended_connection, Snackbar.LENGTH_INDEFINITE);
+                    mSbStatus.setAction(getString(R.string.connect), new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
+                            mSbStatus.dismiss();
                             Intent i = new Intent(MainActivity.this, AccountsActivity.class);
                             startActivity(i);
                         }
                     });
-                    sb.show();
+                    mSbStatus.show();
 
                     return false;
                 }
                 else if (conn.getState() == ImConnection.LOGGING_IN)
                 {
-                    Snackbar sb = Snackbar.make(mViewPager, R.string.signing_in_wait, Snackbar.LENGTH_LONG);
-                    sb.show();
+                    mSbStatus = Snackbar.make(mViewPager, R.string.signing_in_wait, Snackbar.LENGTH_LONG);
+                    mSbStatus.show();
                 }
                 else if (conn.getState() == ImConnection.LOGGING_OUT)
                 {
-                    Snackbar sb = Snackbar.make(mViewPager, R.string.signing_out_wait, Snackbar.LENGTH_LONG);
-                    sb.show();
+                    mSbStatus = Snackbar.make(mViewPager, R.string.signing_out_wait, Snackbar.LENGTH_LONG);
+                    mSbStatus.show();
                 }
             }
 

@@ -539,11 +539,11 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                         fileName += "." + fileExt;
                     else if (mimeType.equals("audio/mp4"))
                     {
-                        fileName += ".mp4";
+                        fileName += ".m4a";
                     }
                     else if (mimeType.equals("audio/mp4"))
                     {
-                        fileName += ".mp4";
+                        fileName += ".m4a";
                     }
 
 
