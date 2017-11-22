@@ -124,20 +124,21 @@ public class ConversationDetailActivity extends BaseActivity {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
 
-            if (msg.what == 1)
-            {
-                if (mConvoView.getLastSeen() != null) {
+            if (msg.what == 1) {
+                if (!mConvoView.isGroupChat()) {
+                    if (mConvoView.getLastSeen() != null) {
                         getSupportActionBar().setSubtitle(mPrettyTime.format(mConvoView.getLastSeen()));
-                }
-                else
-                {
-                    if (mConvoView.getRemotePresence() == Presence.AWAY)
-                        getSupportActionBar().setSubtitle(getString(R.string.presence_away));
-                    else if (mConvoView.getRemotePresence() == Presence.OFFLINE)
-                        getSupportActionBar().setSubtitle(getString(R.string.presence_offline));
-                    else if (mConvoView.getRemotePresence() == Presence.DO_NOT_DISTURB)
-                        getSupportActionBar().setSubtitle(getString(R.string.presence_busy));
+                    } else {
+                        if (mConvoView.getRemotePresence() == Presence.AWAY)
+                            getSupportActionBar().setSubtitle(getString(R.string.presence_away));
+                        else if (mConvoView.getRemotePresence() == Presence.OFFLINE)
+                            getSupportActionBar().setSubtitle(getString(R.string.presence_offline));
+                        else if (mConvoView.getRemotePresence() == Presence.DO_NOT_DISTURB)
+                            getSupportActionBar().setSubtitle(getString(R.string.presence_busy));
+                        else
+                            getSupportActionBar().setSubtitle(getString(R.string.presence_available));
 
+                    }
                 }
             }
         }
@@ -201,22 +202,27 @@ public class ConversationDetailActivity extends BaseActivity {
 
         getSupportActionBar().setTitle(mConvoView.getTitle());
 
-        if (mConvoView.getLastSeen() != null) {
-            getSupportActionBar().setSubtitle(new PrettyTime().format(mConvoView.getLastSeen()));
-        }
-        else if (mConvoView.getRemotePresence() != -1)
-        {
-            if (mConvoView.getRemotePresence() == Presence.AWAY)
-                getSupportActionBar().setSubtitle(getString(R.string.presence_away));
-         //   else if (mConvoView.getRemotePresence() == Presence.OFFLINE)
-         //       getSupportActionBar().setSubtitle(getString(R.string.presence_offline));
-            else if (mConvoView.getRemotePresence() == Presence.DO_NOT_DISTURB)
-                getSupportActionBar().setSubtitle(getString(R.string.presence_busy));
+        if (!mConvoView.isGroupChat()) {
+            if (mConvoView.getLastSeen() != null) {
+                getSupportActionBar().setSubtitle(new PrettyTime().format(mConvoView.getLastSeen()));
+            } else if (mConvoView.getRemotePresence() != -1) {
+                if (mConvoView.getRemotePresence() == Presence.AWAY)
+                    getSupportActionBar().setSubtitle(getString(R.string.presence_away));
+                else if (mConvoView.getRemotePresence() == Presence.OFFLINE)
+                    getSupportActionBar().setSubtitle(getString(R.string.presence_offline));
+                else if (mConvoView.getRemotePresence() == Presence.DO_NOT_DISTURB)
+                    getSupportActionBar().setSubtitle(getString(R.string.presence_busy));
+                else
+                    getSupportActionBar().setSubtitle(getString(R.string.presence_available));
 
+            } else {
+                getSupportActionBar().setSubtitle(mConvoView.getSubtitle());
+            }
         }
         else
         {
-            getSupportActionBar().setSubtitle(mConvoView.getSubtitle());
+            getSupportActionBar().setSubtitle("");
+
         }
 
         //first set font

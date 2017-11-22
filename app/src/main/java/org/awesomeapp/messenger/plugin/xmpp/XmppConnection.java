@@ -2549,7 +2549,7 @@ public class XmppConnection extends ImConnection {
                 //can't send for now
                 return;
             }
-            
+
             MultiUserChat muc = null;
 
             org.jivesoftware.smack.packet.Message msgXmpp = null;
@@ -2665,6 +2665,21 @@ public class XmppConnection extends ImConnection {
         public ChatSession createChatSession(ImEntity participant, boolean isNewSession) {
             ChatSession session = super.createChatSession(participant,isNewSession);
             mSessions.put(participant.getAddress().getAddress(),session);
+
+            try {
+                LastActivity activity = mLastActivityManager.getLastActivity(JidCreate.bareFrom(participant.getAddress().getBareAddress()));
+
+                if (activity != null) {
+                    Presence presence = new Presence();
+                    Date now = new Date();
+                    presence.setLastSeen(new Date(now.getTime() - (activity.getIdleTime() * 1000)));
+                    ((Contact)participant).setPresence(presence);
+                }
+
+            } catch (Exception e) {
+                Log.e("LastActivity", "error getting last activity for: " + participant.getAddress(), e);
+            }
+
             return session;
         }
 
@@ -2906,21 +2921,6 @@ public class XmppConnection extends ImConnection {
 
                     if (!rEntry.isSubscriptionPending()) {
                         qPresence.add(mRoster.getPresence(rEntry.getJid()));
-
-                        try {
-                         //   if (mLastActivityManager.isLastActivitySupported(rEntry.getJid())) {
-                                LastActivity activity = mLastActivityManager.getLastActivity(rEntry.getJid());
-
-                                if (activity != null) {
-                                    Presence presence = new Presence();
-                                    Date now = new Date();
-                                    presence.setLastSeen(new Date(now.getTime() - (activity.getIdleTime() * 1000)));
-                                    contact.setPresence(presence);
-                                }
-                         //   }
-                        } catch (Exception e) {
-                            Log.e("LastActivity", "error getting last activity for: " + address, e);
-                        }
                     }
 
                 }
@@ -2932,6 +2932,7 @@ public class XmppConnection extends ImConnection {
         }
 
      // Runs in executor thread
+        /**
         public void addContactsToList(Collection<String> addresses) {
 
             debug(TAG, "add contacts to lists");
@@ -2991,7 +2992,7 @@ public class XmppConnection extends ImConnection {
             notifyContactListLoaded(cl);
             notifyContactListsLoaded();
 
-        }
+        }**/
 
         public void refreshPresence (String address)
         {
@@ -4064,8 +4065,11 @@ public class XmppConnection extends ImConnection {
             p = new Presence(Presence.AVAILABLE, "", null, null,
                     Presence.CLIENT_TYPE_MOBILE);
             p.setLastSeen(new Date());
-
-
+        }
+        else if (chatStateXml.contains(ChatState.inactive.toString())) {
+            p = new Presence(Presence.AWAY, "", null, null,
+                    Presence.CLIENT_TYPE_MOBILE);
+            p.setLastSeen(new Date());
         }
         else if (chatStateXml.contains(ChatState.composing.toString())) {
             p = new Presence(Presence.AVAILABLE, "", null, null,
