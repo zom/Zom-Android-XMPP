@@ -130,6 +130,11 @@ public final class Presence implements Parcelable {
         }
     }
 
+    public void setLastSeen (Date lastSeen)
+    {
+        mLastSeen = lastSeen;
+    }
+
     public Date getLastSeen ()
     {
         return mLastSeen;
@@ -186,7 +191,7 @@ public final class Presence implements Parcelable {
         }
         mStatus = status;
 
-        if (mStatus == AVAILABLE || mStatus == AWAY)
+        if (mStatus == AVAILABLE)
             mLastSeen = new Date();
     }
 

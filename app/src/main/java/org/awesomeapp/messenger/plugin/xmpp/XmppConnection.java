@@ -200,6 +200,8 @@ public class XmppConnection extends ImConnection {
     private final static boolean PING_ENABLED = true;
 
     private XmppContactListManager mContactListManager;
+    private LastActivityManager mLastActivityManager;
+
     private Contact mUser;
     private BareJid mUserJid;
 
@@ -2547,7 +2549,7 @@ public class XmppConnection extends ImConnection {
                 //can't send for now
                 return;
             }
-
+            
             MultiUserChat muc = null;
 
             org.jivesoftware.smack.packet.Message msgXmpp = null;
@@ -2823,8 +2825,8 @@ public class XmppConnection extends ImConnection {
                 return;
             }
 
-           // LastActivityManager lam = LastActivityManager.getInstanceFor(mConnection);
-           // long now = new Date().getTime();
+            mLastActivityManager = LastActivityManager.getInstanceFor(mConnection);
+            mLastActivityManager.enable();
 
             ContactList cl;
 
@@ -2888,8 +2890,6 @@ public class XmppConnection extends ImConnection {
                     if (rEntry.isSubscriptionPending())
                       subStatus = Imps.ContactsColumns.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING;
 
-                    rEntry.isApproved();
-
                     int subType = 0;
                     if (rEntry.getType() == RosterPacket.ItemType.both)
                         subType = Imps.ContactsColumns.SUBSCRIPTION_TYPE_BOTH;
@@ -2904,30 +2904,24 @@ public class XmppConnection extends ImConnection {
                     else if (rEntry.getType() == RosterPacket.ItemType.remove)
                         subType = Imps.ContactsColumns.SUBSCRIPTION_TYPE_REMOVE;
 
-                    qPresence.add(mRoster.getPresence(rEntry.getJid()));
+                    if (!rEntry.isSubscriptionPending()) {
+                        qPresence.add(mRoster.getPresence(rEntry.getJid()));
 
-                    /**
-                    try {
-                        LastActivity activity = lam.getLastActivity(JidCreate.from(address));
-                        contact.setPresence(new Date(activity.getIdleTime());
+                        try {
+                         //   if (mLastActivityManager.isLastActivitySupported(rEntry.getJid())) {
+                                LastActivity activity = mLastActivityManager.getLastActivity(rEntry.getJid());
+
+                                if (activity != null) {
+                                    Presence presence = new Presence();
+                                    Date now = new Date();
+                                    presence.setLastSeen(new Date(now.getTime() - (activity.getIdleTime() * 1000)));
+                                    contact.setPresence(presence);
+                                }
+                         //   }
+                        } catch (Exception e) {
+                            Log.e("LastActivity", "error getting last activity for: " + address, e);
+                        }
                     }
-                    catch (Exception e)
-                    {
-                        Log.e("LastActivity","error getting last activity for: " + address,e);
-                    }**/
-
-                    /**
-                    try {
-
-                        mContactListManager.getSubscriptionRequestListener().onSubScriptionChanged(contact, mProviderId, mAccountId, subType, subStatus);
-                        handlePresenceChanged(mRoster.getPresence(rEntry.getJid()));
-
-                    }
-                    catch (RemoteException re)
-                    {
-
-                    }**/
-
 
                 }
             }
@@ -4063,9 +4057,14 @@ public class XmppConnection extends ImConnection {
         boolean isTyping = false;
 
         //handle is-typing, probably some indication on screen
-        if (chatStateXml.contains(ChatState.active.toString())) {
+        if (chatStateXml.contains("'error'")||chatStateXml.contains("'cancel'")) {
+            //do nothing
+        }
+        else if (chatStateXml.contains(ChatState.active.toString())) {
             p = new Presence(Presence.AVAILABLE, "", null, null,
                     Presence.CLIENT_TYPE_MOBILE);
+            p.setLastSeen(new Date());
+
 
         }
         else if (chatStateXml.contains(ChatState.composing.toString())) {
@@ -4073,6 +4072,8 @@ public class XmppConnection extends ImConnection {
                     Presence.CLIENT_TYPE_MOBILE);
 
             isTyping = true;
+            p.setLastSeen(new Date());
+
 
         }
         else if (chatStateXml.contains(ChatState.inactive.toString())||chatStateXml.contains(ChatState.paused.toString())) {
@@ -4141,6 +4142,11 @@ public class XmppConnection extends ImConnection {
 
         if (from.hasResource())
             p.setResource(from.getResourceOrEmpty().toString());
+
+        if (presenceType == Presence.AVAILABLE)
+            p.setLastSeen(new Date());
+        else if (contact.getPresence() != null)
+            p.setLastSeen(contact.getPresence().getLastSeen());
 
         contact.setPresence(p);
         Collection<Contact> contactsUpdate = new ArrayList<Contact>();
@@ -4268,6 +4274,10 @@ public class XmppConnection extends ImConnection {
             if (contact.getPresence() != null) {
                 Presence pOld = contact.getPresence();
 
+                if (pOld != null && pOld.getLastSeen() != null
+                        && p.getLastSeen() == null)
+                    p.setLastSeen(pOld.getLastSeen());
+
                 if (pOld == null || pOld.getResource() == null) {
                     contact.setPresence(p);
                 } else if (pOld.getResource() != null && pOld.getResource().equals(p.getResource())) //if the same resource as the existing one, then update it
@@ -4280,7 +4290,6 @@ public class XmppConnection extends ImConnection {
             }
             else
                 contact.setPresence(p);
-
 
             ExtensionElement packetExtension=presence.getExtension("x","vcard-temp:x:update");
             if (packetExtension != null) {
