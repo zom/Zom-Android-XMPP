@@ -365,6 +365,13 @@ public class MessageListItem extends FrameLayout {
             holder.mMediaThumbnail.setBackgroundResource(android.R.color.transparent);
 
         }
+        else if (mimeType.startsWith("video/")) {
+            //setVideoThumbnail( getContext().getContentResolver(), id, holder, mediaUri );
+            //holder.mMediaThumbnail.setBackgroundResource(android.R.color.transparent);
+            holder.mMediaThumbnail.setImageResource(R.drawable.video256); // generic file icon
+            holder.mTextViewForMessages.setText(mediaUri.getLastPathSegment() + " (" + mimeType + ")");
+            holder.mTextViewForMessages.setVisibility(View.VISIBLE);
+        }
         else
         {
             holder.mMediaThumbnail.setImageResource(R.drawable.ic_file); // generic file icon
@@ -598,7 +605,27 @@ public class MessageListItem extends FrameLayout {
         return list.size() > 0;
     }
 
+    /**
+     * @param contentResolver
+     * @param id
+     * @param aHolder
+     * @param mediaUri
+     */
+    private void setVideoThumbnail(final ContentResolver contentResolver, final int id, final MessageViewHolder aHolder, final Uri mediaUri) {
 
+        //if the same URI, we don't need to reload
+        if (aHolder.mMediaUri != null
+                && aHolder.mMediaUri.getPath() != null
+                && aHolder.mMediaUri.getPath().equals(mediaUri.getPath()))
+            return;
+
+        // pair this holder to the uri. if the holder is recycled, the pairing is broken
+        aHolder.mMediaUri = mediaUri;
+        // if a content uri - already scanned
+
+        GlideUtils.loadVideoFromUri(context, mediaUri, aHolder.mMediaThumbnail);
+
+    }
     /**
      * @param contentResolver
      * @param id
@@ -618,6 +645,7 @@ public class MessageListItem extends FrameLayout {
         // if a content uri - already scanned
 
         GlideUtils.loadImageFromUri(context, mediaUri, aHolder.mMediaThumbnail);
+
     }
 
 

@@ -182,7 +182,7 @@ public class Omemo {
            }
            else
            {
-               return getFingerprints(jid.asBareJid(),true).size() > 0;
+               return false;//getFingerprints(jid.asBareJid(),true).size() > 0;
            }
        }
        catch (Exception e) {

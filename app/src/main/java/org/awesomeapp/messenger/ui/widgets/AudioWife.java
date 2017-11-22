@@ -671,8 +671,6 @@ public class AudioWife {
             mMediaPlayer.prepare();
         } catch (IllegalStateException e) {
             e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }

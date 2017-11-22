@@ -225,10 +225,10 @@ public class ConversationListItem extends FrameLayout {
             {
                 String vPath = message.split(" ")[0];
 
-                if (SecureMediaStore.isVfsUri(vPath))
+                if (SecureMediaStore.isVfsUri(vPath) && messageType != null)
                 {
 
-                    if (messageType == null || messageType.startsWith("image"))
+                    if (messageType.startsWith("image"))
                     {
                         
                         if (holder.mMediaThumb != null)
@@ -253,7 +253,8 @@ public class ConversationListItem extends FrameLayout {
                     }
                     else
                     {
-                        holder.mLine2.setText("");
+                        holder.mMediaThumb.setVisibility(View.GONE);
+                        holder.mLine2.setText(messageType);
                     }
 
                 }
@@ -272,6 +273,7 @@ public class ConversationListItem extends FrameLayout {
                         holder.mLine2.setVisibility(View.GONE);
 
                         holder.mMediaThumb.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                        holder.mMediaThumb.setVisibility(View.VISIBLE);
 
 
                     }
@@ -440,6 +442,7 @@ public class ConversationListItem extends FrameLayout {
             return;
 
         mLastMediaUri = mediaUri;
+        aHolder.mMediaThumb.setVisibility(View.VISIBLE);
         GlideUtils.loadImageFromUri(getContext(), mediaUri, aHolder.mMediaThumb);
     }
 

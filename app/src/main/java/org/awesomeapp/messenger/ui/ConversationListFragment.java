@@ -424,17 +424,25 @@ public class ConversationListFragment extends Fragment {
                 boolean isMuted = chatType == Imps.Chats.CHAT_TYPE_MUTED;
 
                 String lastMsgType = null;
-                if (!TextUtils.isEmpty(lastMsg)) {
+
+                if ((!TextUtils.isEmpty(lastMsg)) && lastMsg.startsWith("vfs:")) {
                     if (lastMsg.endsWith(".jpg") || lastMsg.endsWith(".png") || lastMsg.endsWith(".gif"))
                         lastMsgType = "image/*";
                     else if (lastMsg.endsWith(".m4a") || lastMsg.endsWith(".3gp") || lastMsg.endsWith(".mp3"))
                         lastMsgType = "audio/*";
+                    else if (lastMsg.endsWith("mp4"))
+                        lastMsgType = "video/*";
+                    else if (lastMsg.endsWith("apk"))
+                        lastMsgType = "application/apk";
+                    else if (lastMsg.endsWith("pdf"))
+                        lastMsgType = "application/pdf";
                 }
 
                 ConversationListItem clItem = ((ConversationListItem)viewHolder.itemView.findViewById(R.id.convoitemview));
 
                 clItem.bind(viewHolder, chatId, providerId, accountId, address, nickname, type, lastMsg, lastMsgDate, lastMsgType, presence, null, true, false, isMuted);
-                if (lastReadDate < lastMsgDate) {
+
+                if (lastReadDate != -1 && lastReadDate < lastMsgDate) {
                     SpannableStringBuilder ssb = new SpannableStringBuilder(viewHolder.mLine1.getText());
                     StyleSpan bold = new StyleSpan(Typeface.BOLD);
                     ForegroundColorSpan black = new ForegroundColorSpan(Color.BLACK);
