@@ -47,6 +47,13 @@ android {
         }
     }
 
+    /* set the versionCode to a UNIX timestamp on any debug build */
+    applicationVariants.all { variant ->
+        if (variant.buildType.isDebuggable()) {
+            variant.mergedFlavor.versionCode = new Date().getTime() / 1000
+        }
+    }
+
     // Specifies two flavor dimensions.
     flavorDimensions "free"
 
