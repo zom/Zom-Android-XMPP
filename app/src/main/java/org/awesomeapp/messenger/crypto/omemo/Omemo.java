@@ -116,7 +116,6 @@ public class Omemo {
 
     public ArrayList<String> getFingerprints (BareJid jid, boolean autoload) throws CorruptedOmemoKeyException, SmackException, XMPPException.XMPPErrorException, InterruptedException
     {
-//        mOmemoManager.requestDeviceListUpdateFor(jid);
 
         try {
             mOmemoManager.buildSessionsWith(jid);
@@ -178,7 +177,17 @@ public class Omemo {
        {
            if (jid.hasResource())
            {
-               return mOmemoManager.resourceSupportsOmemo(jid.asFullJidIfPossible());
+               if (mOmemoManager.resourceSupportsOmemo(jid.asFullJidIfPossible()))
+               {
+                   try {
+                       mOmemoManager.buildSessionsWith(jid.asBareJid());
+                       return true;
+                   }
+                   catch (CannotEstablishOmemoSessionException e)
+                   {
+                       debug(TAG,"couldn't establish omemo session: " + e);
+                   }
+               }
            }
            else
            {
@@ -187,7 +196,6 @@ public class Omemo {
        }
        catch (Exception e) {
            Log.w(TAG, "error checking if resource supports omemo, will check for local fingerprints");
-           ;
 
            try {
                mOmemoManager.requestDeviceListUpdateFor(jid.asBareJid());
