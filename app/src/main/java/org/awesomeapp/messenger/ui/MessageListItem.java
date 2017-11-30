@@ -163,6 +163,19 @@ public class MessageListItem extends FrameLayout {
     }
 
     @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+
+
+        if (mHolder.mAudioWife != null)
+        {
+            mHolder.mAudioWife.release();
+
+        }
+
+    }
+
+    @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
     }

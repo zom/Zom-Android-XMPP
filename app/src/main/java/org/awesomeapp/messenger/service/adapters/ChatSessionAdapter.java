@@ -556,23 +556,19 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                     public void onUploadProgress(long sent, long total) {
                         //debug(TAG, "upload complete: " + l + "," + l1);
                         //once this is done, send the message
-                        float percentF = ((float)sent)/((float)total)*100f;
+                        float percentF = ((float)sent)/((float)total);
 
                         if (mDataHandlerListener != null)
                             mDataHandlerListener.onTransferProgress(true,"","",mediaUri.toString(),percentF);
                     }
                 };
 
-
                 String resultUrl = mConnection.publishFile(fileName, mimeType, fileLocal.length(), fis, doEncryption, listener);
 
+                //make sure result is valid and starts with https, if so, send it!
                 if (!TextUtils.isEmpty(resultUrl))
                     sendMediaMessage(mediaUri, resultUrl, msgMedia);
-                else
-                {
-                    //didn't upload so lets queue it
-                    updateMessageInDb(msgMedia.getID(),Imps.MessageType.QUEUED,new java.util.Date().getTime(),mediaUri);
-                }
+
             }
         }.start();
 

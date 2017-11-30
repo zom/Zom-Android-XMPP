@@ -32,6 +32,7 @@ import org.awesomeapp.messenger.model.Presence;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.provider.ImpsErrorInfo;
 import org.awesomeapp.messenger.service.IChatSession;
+import org.awesomeapp.messenger.service.IImConnection;
 import org.awesomeapp.messenger.service.adapters.ChatSessionAdapter;
 import org.awesomeapp.messenger.ui.legacy.DatabaseUtils;
 import org.awesomeapp.messenger.util.Debug;
@@ -1715,6 +1716,9 @@ public class XmppConnection extends ImConnection {
     public void sendVCard (String migrateJabberId)
     {
 
+        if (mConnection == null)
+            return;
+
         try {
             String jid = mUser.getAddress().getBareAddress();
 
@@ -2666,19 +2670,9 @@ public class XmppConnection extends ImConnection {
             ChatSession session = super.createChatSession(participant,isNewSession);
             mSessions.put(participant.getAddress().getAddress(),session);
 
-            try {
-                LastActivity activity = mLastActivityManager.getLastActivity(JidCreate.bareFrom(participant.getAddress().getBareAddress()));
+            if (participant instanceof Contact)
+                getLastSeen ((Contact)participant);
 
-                if (activity != null) {
-                    Presence presence = new Presence();
-                    Date now = new Date();
-                    presence.setLastSeen(new Date(now.getTime() - (activity.getIdleTime() * 1000)));
-                    ((Contact)participant).setPresence(presence);
-                }
-
-            } catch (Exception e) {
-                Log.e("LastActivity", "error getting last activity for: " + participant.getAddress(), e);
-            }
 
             return session;
         }
@@ -4161,6 +4155,25 @@ public class XmppConnection extends ImConnection {
 
     }
 
+    private void getLastSeen (Contact contact)
+    {
+        if (getState() == ImConnection.LOGGED_IN) {
+            try {
+                LastActivity activity = mLastActivityManager.getLastActivity(JidCreate.bareFrom(contact.getAddress().getBareAddress()));
+
+                if (activity != null) {
+                    Presence presence = new Presence();
+                    Date now = new Date();
+                    presence.setLastSeen(new Date(now.getTime() - (activity.getIdleTime() * 1000)));
+                    contact.setPresence(presence);
+                }
+
+            } catch (Exception e) {
+                debug("LastActivity", "error getting last activity for: " + contact.getAddress().getAddress());
+            }
+        }
+    }
+
     private Contact handlePresenceChanged(org.jivesoftware.smack.packet.Presence presence) {
 
         if (presence == null) //our presence isn't really valid
@@ -4272,8 +4285,7 @@ public class XmppConnection extends ImConnection {
         //this is typical presence, let's get the latest/highest priority
         debug(TAG,"got presence: " + presence.getFrom() + "=" + presence.getType());
 
-        if (contact != null)
-        {
+        if (contact != null) {
 
             if (contact.getPresence() != null) {
                 Presence pOld = contact.getPresence();
@@ -4291,9 +4303,15 @@ public class XmppConnection extends ImConnection {
                 {
                     contact.setPresence(p);
                 }
-            }
-            else
+
+
+            } else
                 contact.setPresence(p);
+
+            if (contact.getPresence().getLastSeen() == null)
+            {
+                getLastSeen(contact);
+            }
 
             ExtensionElement packetExtension=presence.getExtension("x","vcard-temp:x:update");
             if (packetExtension != null) {
@@ -4591,6 +4609,9 @@ public class XmppConnection extends ImConnection {
             if (!mIsDiscovered)
                 return null;
 
+            if (getState() != ImConnection.LOGGED_IN)
+                return null;
+
         //    manager.useTlsSettingsFrom(mConnection.getConfiguration());
             UploadService upService = manager.getDefaultUploadService();
 
@@ -4600,33 +4621,29 @@ public class XmppConnection extends ImConnection {
                         return null;
                 }
 
-                //try up to 3 times!
-                int tryMax = 3;
+                try {
 
-                for (int i = 0; i < tryMax; i++) {
-                    try {
+                    //   String defaultType = "application/octet-stream";
+                    Slot upSlot = manager.requestSlot(fileName, fileSize, mimeType);
 
-                        //   String defaultType = "application/octet-stream";
-                        Slot upSlot = manager.requestSlot(fileName, fileSize, mimeType);
+                    String uploadKey = uploadFile(fileSize, is, upSlot, uploadListener, doEncryption);
 
-                        String uploadKey = uploadFile(fileSize, is, upSlot, uploadListener, doEncryption);
+                    if (uploadKey != null) {
+                        URL resultUrl = upSlot.getGetUrl();
+                        String shareUrl = resultUrl.toExternalForm();
 
-                        if (uploadKey != null) {
-                            URL resultUrl = upSlot.getGetUrl();
-                            String shareUrl = resultUrl.toExternalForm();
-
-                            if (doEncryption) {
-                                shareUrl += "#" + uploadKey;
-                                shareUrl = shareUrl.replace("https", "aesgcm"); //this indicates it is encrypted
-                            }
-
-                            return shareUrl;
+                        if (doEncryption) {
+                            shareUrl += "#" + uploadKey;
+                            shareUrl = shareUrl.replace("https", "aesgcm"); //this indicates it is encrypted
                         }
-                    } catch (Exception e) {
-                        Log.e(TAG, "error getting upload slot", e);
 
+                        return shareUrl;
                     }
+                } catch (Exception e) {
+                    Log.e(TAG, "error getting upload slot", e);
+
                 }
+
             }
 
             return null;
