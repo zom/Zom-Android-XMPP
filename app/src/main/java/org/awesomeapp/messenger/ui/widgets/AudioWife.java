@@ -712,7 +712,8 @@ public class AudioWife {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                mMediaPlayer.seekTo(seekBar.getProgress());
+                if (mMediaPlayer != null)
+                    mMediaPlayer.seekTo(seekBar.getProgress());
 
                 // if the audio is paused and seekbar is moved,
                 // update the play time in the UI.
