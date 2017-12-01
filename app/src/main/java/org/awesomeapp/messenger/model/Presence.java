@@ -229,8 +229,8 @@ public final class Presence implements Parcelable {
 
         if (mLastSeen != null)
             dest.writeLong(mLastSeen.getTime());
-        else
-            dest.writeLong(-1);
+    //    else
+      //      dest.writeLong(-1);
     }
 
     @Override
