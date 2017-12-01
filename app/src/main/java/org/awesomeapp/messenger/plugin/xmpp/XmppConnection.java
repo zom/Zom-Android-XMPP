@@ -1609,7 +1609,7 @@ public class XmppConnection extends ImConnection {
             mResource = providerSettings.getXmppResource();
 
             mRoster = Roster.getInstanceFor(mConnection);
-            mRoster.setRosterLoadedAtLogin(true);
+            mRoster.setRosterLoadedAtLogin(false);
             mRoster.setSubscriptionMode(subMode);
 
             mChatManager = ChatManager.getInstanceFor(mConnection);
