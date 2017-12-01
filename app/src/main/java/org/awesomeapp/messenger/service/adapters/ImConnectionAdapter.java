@@ -67,7 +67,7 @@ public class ImConnectionAdapter extends org.awesomeapp.messenger.service.IImCon
     private ConnectionListenerAdapter mConnectionListener;
     private InvitationListenerAdapter mInvitationListener;
 
-    final RemoteCallbackList<IConnectionListener> mRemoteConnListeners = new RemoteCallbackList<IConnectionListener>();
+    final RemoteCallbackList<IConnectionListener> mRemoteConnListeners;
 
     ChatSessionManagerAdapter mChatSessionManager;
     ContactListManagerAdapter mContactListManager;
@@ -95,6 +95,8 @@ public class ImConnectionAdapter extends org.awesomeapp.messenger.service.IImCon
 
         mChatSessionManager = new ChatSessionManagerAdapter(this);
         mContactListManager = new ContactListManagerAdapter(this);
+        mRemoteConnListeners = new RemoteCallbackList<>();
+
     }
 
     public ImConnection getAdaptee() {
@@ -443,6 +445,25 @@ public class ImConnectionAdapter extends org.awesomeapp.messenger.service.IImCon
                     return;
                 }
 
+                updateAccountStatusInDb();
+
+                synchronized (mRemoteConnListeners) {
+
+                    final int N = mRemoteConnListeners.beginBroadcast();
+                    for (int i = 0; i < N; i++) {
+                        IConnectionListener listener = mRemoteConnListeners.getBroadcastItem(i);
+                        try {
+                            listener.onStateChanged(ImConnectionAdapter.this, state, error);
+                        } catch (RemoteException e) {
+                            // The RemoteCallbackList will take care of removing the
+                            // dead listeners.
+                        }
+                    }
+
+                    mRemoteConnListeners.finishBroadcast();
+                }
+
+
                 if (state == ImConnection.LOGGED_IN)
                 {
                     //we need to reinit all group chat sessions here
@@ -536,22 +557,7 @@ public class ImConnectionAdapter extends org.awesomeapp.messenger.service.IImCon
 
             }
 
-            updateAccountStatusInDb();
 
-            synchronized (mRemoteConnListeners) {
-
-                final int N = mRemoteConnListeners.beginBroadcast();
-                for (int i = 0; i < N; i++) {
-                    IConnectionListener listener = mRemoteConnListeners.getBroadcastItem(i);
-                    try {
-                        listener.onStateChanged(ImConnectionAdapter.this, state, error);
-                    } catch (RemoteException e) {
-                        // The RemoteCallbackList will take care of removing the
-                        // dead listeners.
-                    }
-                }
-                mRemoteConnListeners.finishBroadcast();
-            }
 
             if (state == ImConnection.DISCONNECTED) {
                 // NOTE: if this logic is changed, the logic in ImApp.MyConnListener must be changed to match

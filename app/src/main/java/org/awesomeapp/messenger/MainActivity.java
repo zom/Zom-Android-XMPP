@@ -34,9 +34,13 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.IBinder;
+import android.os.IInterface;
+import android.os.Parcel;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
@@ -66,10 +70,12 @@ import com.github.javiersantos.appupdater.enums.UpdateFrom;
 
 import org.awesomeapp.messenger.model.Contact;
 import org.awesomeapp.messenger.model.ImConnection;
+import org.awesomeapp.messenger.model.ImErrorInfo;
 import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.service.IChatSession;
 import org.awesomeapp.messenger.service.IChatSessionManager;
+import org.awesomeapp.messenger.service.IConnectionListener;
 import org.awesomeapp.messenger.service.IImConnection;
 import org.awesomeapp.messenger.service.ImServiceConstants;
 import org.awesomeapp.messenger.tasks.AddContactAsyncTask;
@@ -94,6 +100,7 @@ import org.awesomeapp.messenger.util.XmppUriHelper;
 import org.ironrabbit.type.CustomTypefaceManager;
 
 import java.io.File;
+import java.io.FileDescriptor;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -109,7 +116,7 @@ import info.guardianproject.iocipher.VirtualFileSystem;
 /**
  * TODO
  */
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity implements IConnectionListener {
 
     private ViewPager mViewPager;
     private TabLayout mTabLayout;
@@ -127,8 +134,11 @@ public class MainActivity extends BaseActivity {
     private MoreFragment mMoreFragment;
     private AccountFragment mAccountFragment;
 
+    private IImConnection mConn;
+
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
 
@@ -245,10 +255,7 @@ public class MainActivity extends BaseActivity {
 
         applyStyle();
 
-        if (mApp.getDefaultAccountId() == -1)
-        {
-            startActivity(new Intent(this,OnboardingActivity.class));
-        }
+        onResume();
     }
 
     private void installRingtones ()
@@ -319,7 +326,7 @@ public class MainActivity extends BaseActivity {
 
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
 
         applyStyleColors ();
@@ -331,15 +338,34 @@ public class MainActivity extends BaseActivity {
 
         } else {
             ImApp app = (ImApp) getApplication();
-
             mApp.maybeInit(this);
             mApp.initAccountInfo();
-
         }
+
 
         handleIntent();
 
-        checkConnection();
+
+        if (mApp.getDefaultAccountId() == -1)
+        {
+            startActivity(new Intent(this,OnboardingActivity.class));
+        }
+        else {
+            if (mConn == null) {
+                mConn = mApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
+                if (mConn != null) {
+                    try {
+                        mConn.registerConnectionListener(this);
+                    } catch (Exception e) {
+                        Log.e(ImApp.LOG_TAG, "unable to register connection listener", e);
+                    }
+
+                }
+            }
+
+            checkConnection();
+
+        }
 
     }
 
@@ -361,6 +387,8 @@ public class MainActivity extends BaseActivity {
             if (mApp.getDefaultProviderId() != -1) {
                 IImConnection conn = mApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
 
+
+
                 if (conn.getState() == ImConnection.DISCONNECTED
                         || conn.getState() == ImConnection.SUSPENDED
                         || conn.getState() == ImConnection.SUSPENDING) {
@@ -378,14 +406,18 @@ public class MainActivity extends BaseActivity {
 
                     return false;
                 }
+                else if (conn.getState() == ImConnection.LOGGED_IN)
+                {
+                    //do nothing
+                }
                 else if (conn.getState() == ImConnection.LOGGING_IN)
                 {
-                    mSbStatus = Snackbar.make(mViewPager, R.string.signing_in_wait, Snackbar.LENGTH_LONG);
+                    mSbStatus = Snackbar.make(mViewPager, R.string.signing_in_wait, Snackbar.LENGTH_INDEFINITE);
                     mSbStatus.show();
                 }
                 else if (conn.getState() == ImConnection.LOGGING_OUT)
                 {
-                    mSbStatus = Snackbar.make(mViewPager, R.string.signing_out_wait, Snackbar.LENGTH_LONG);
+                    mSbStatus = Snackbar.make(mViewPager, R.string.signing_out_wait, Snackbar.LENGTH_INDEFINITE);
                     mSbStatus.show();
                 }
             }
@@ -773,6 +805,26 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+    @Override
+    public void onStateChanged(IImConnection connection, int state, ImErrorInfo error) throws RemoteException {
+        checkConnection();
+    }
+
+    @Override
+    public void onUserPresenceUpdated(IImConnection connection) throws RemoteException {
+
+    }
+
+    @Override
+    public void onUpdatePresenceError(IImConnection connection, ImErrorInfo error) throws RemoteException {
+
+    }
+
+    @Override
+    public IBinder asBinder() {
+        return mConn.asBinder();
+    }
+
     static class Adapter extends FragmentPagerAdapter {
         private final List<Fragment> mFragments = new ArrayList<>();
         private final List<String> mFragmentTitles = new ArrayList<>();
@@ -1034,7 +1086,20 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onPause() {
         super.onPause();
-    //    UpdateManager.unregister();
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if (mConn != null) {
+            try {
+                mConn.unregisterConnectionListener(this);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void checkForUpdates() {
