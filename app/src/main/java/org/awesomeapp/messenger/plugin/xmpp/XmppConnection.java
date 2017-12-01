@@ -455,6 +455,7 @@ public class XmppConnection extends ImConnection {
                     {
                         contact.setName(vCard.getNickName());
                         mContactListManager.doSetContactName(contact.getAddress().getBareAddress(), contact.getName());
+
                     }
 
                 }
@@ -3377,6 +3378,9 @@ public class XmppConnection extends ImConnection {
 
         @Override
         protected void doSetContactName(String address, String name) throws ImException {
+
+            Contact[] contacts = {getContact(address)};
+            notifyContactsPresenceUpdated(contacts);
 
             // set name
             try {
