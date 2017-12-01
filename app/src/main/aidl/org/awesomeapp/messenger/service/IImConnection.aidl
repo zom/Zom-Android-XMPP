@@ -80,5 +80,5 @@ interface IImConnection {
 
     void broadcastMigrationIdentity (String address);
 
-
+    void changeNickname (String name);
 }

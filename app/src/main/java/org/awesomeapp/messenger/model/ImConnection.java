@@ -270,4 +270,5 @@ public abstract class ImConnection {
 
     public abstract String publishFile (String fileName, String mimeType, long fileSize, InputStream is, boolean doEncryption, UploadProgressListener listener);
 
+    public abstract void changeNickname (String nickname);
 }

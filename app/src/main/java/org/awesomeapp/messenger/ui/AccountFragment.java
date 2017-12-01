@@ -84,6 +84,9 @@ public class AccountFragment extends Fragment {
     String mNickname;
     String mUserKey;
 
+    IImConnection mConn;
+
+
     private final static String DEFAULT_PASSWORD_TEXT = "*************";
 
     /**
@@ -197,10 +200,10 @@ public class AccountFragment extends Fragment {
             tvUsername.setText(mUserAddress);
             mTvNickname.setText(mNickname);
 
-            IImConnection conn = mApp.getConnection(mProviderId, mAccountId);
+            mConn = mApp.getConnection(mProviderId, mAccountId);
 
             try {
-                final List<String> remoteOmemoFingerprints = conn.getFingerprints(mUserAddress);
+                final List<String> remoteOmemoFingerprints = mConn.getFingerprints(mUserAddress);
 
                 if (remoteOmemoFingerprints != null && remoteOmemoFingerprints.size() > 0) {
 
@@ -267,6 +270,13 @@ public class AccountFragment extends Fragment {
 
                 //update just the nickname
                 ImApp.insertOrUpdateAccount(getContext().getContentResolver(), mProviderId, mAccountId, newNickname, "", null);
+
+                if (mConn != null) {
+                    try {
+                        mConn.changeNickname(newNickname);
+                    } catch (RemoteException e) {
+                    }
+                }
 
                 mTvNickname.setText(newNickname);
                 // Do something with value!

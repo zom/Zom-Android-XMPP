@@ -627,6 +627,12 @@ public class ImConnectionAdapter extends org.awesomeapp.messenger.service.IImCon
         }
     }
 
+    public void changeNickname (String nickname)
+    {
+        if (mConnection != null)
+            mConnection.changeNickname(nickname);
+    }
+
     public void sendTypingStatus (String to, boolean isTyping)
     {
         if (mConnection != null)

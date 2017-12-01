@@ -348,4 +348,9 @@ public class LoopbackConnection extends ImConnection {
         return null;
     }
 
+    @Override
+    public void changeNickname(String nickname) {
+        
+    }
+
 }

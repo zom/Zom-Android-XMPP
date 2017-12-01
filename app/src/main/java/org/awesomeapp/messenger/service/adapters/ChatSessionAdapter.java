@@ -50,6 +50,7 @@ import org.awesomeapp.messenger.util.SecureMediaStore;
 import org.awesomeapp.messenger.util.SystemServices;
 
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLConnection;
 import java.util.AbstractMap;
@@ -414,11 +415,9 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
     }
 
-    private org.awesomeapp.messenger.model.Message storeMediaMessage(String localUrl, String mimeType) {
+    private org.awesomeapp.messenger.model.Message storeMediaMessage(String mediaPath, String mimeType) {
 
-        String mediaPath = localUrl;
-
-        org.awesomeapp.messenger.model.Message msg = new org.awesomeapp.messenger.model.Message(localUrl);
+        org.awesomeapp.messenger.model.Message msg = new org.awesomeapp.messenger.model.Message(mediaPath);
         msg.setID(nextID());
 
         msg.setFrom(mConnection.getLoginUser().getAddress());
@@ -471,21 +470,22 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
     }
 
     @Override
-    public boolean offerData(String offerId, final String mediaUri, final String mimeType) {
+    public boolean offerData(String offerId, final String mediaPath, final String mimeType) {
 
         if (TextUtils.isEmpty(mimeType))
             return false;
 
-        Uri uri = Uri.parse(mediaUri);
-        if (uri == null || uri.getPath() == null)
+        Uri mediaUri = Uri.parse(mediaPath);
+
+        if (mediaUri == null || mediaUri.getPath() == null)
             return false;
 
         final java.io.File fileLocal;
         final java.io.InputStream fis;
 
-        if (uri.getScheme() != null &&
-                uri.getScheme().equals("vfs")) {
-            fileLocal = new info.guardianproject.iocipher.File(uri.getPath());
+        if (mediaUri.getScheme() != null &&
+                mediaUri.getScheme().equals("vfs")) {
+            fileLocal = new info.guardianproject.iocipher.File(mediaUri.getPath());
             if (fileLocal.exists()) {
                 try {
                     fis = new info.guardianproject.iocipher.FileInputStream((info.guardianproject.iocipher.File) fileLocal);
@@ -493,15 +493,12 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                     Log.w(TAG, "encrypted file not found on import: " + mediaUri);
                     return false;
                 }
-            }
-            else
-            {
+            } else {
                 Log.w(TAG, "encrypted file not found on import: " + mediaUri);
                 return false;
             }
-        }
-        else {
-            fileLocal = new java.io.File(uri.getPath());
+        } else {
+            fileLocal = new java.io.File(mediaUri.getPath());
             if (fileLocal.exists()) {
                 try {
                     fis = new java.io.FileInputStream(fileLocal);
@@ -509,13 +506,20 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                     Log.w(TAG, "file system file not found on import: " + mediaUri);
                     return false;
                 }
-            }
-            else
-            {
+            } else {
                 Log.w(TAG, "file system file not found on import: " + mediaUri);
                 return false;
             }
         }
+
+        sendMediaMessageAsync(mediaPath, mimeType, fileLocal, fis);
+
+        return true;
+
+    }
+
+    private void sendMediaMessageAsync (final String mediaPath, final String mimeType, final java.io.File fileLocal, final InputStream fis)
+    {
 
         //TODO do HTTP Upload XEP 363
         //this is ugly... we need a nice async task!
@@ -527,7 +531,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
 
 
-                final Message msgMedia = storeMediaMessage(mediaUri, mimeType);
+                final Message msgMedia = storeMediaMessage(mediaPath, mimeType);
 
 
                 String fileName = fileLocal.getName();
@@ -559,7 +563,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                         float percentF = ((float)sent)/((float)total);
 
                         if (mDataHandlerListener != null)
-                            mDataHandlerListener.onTransferProgress(true,"","",mediaUri.toString(),percentF);
+                            mDataHandlerListener.onTransferProgress(true,"","",mediaPath,percentF);
                     }
                 };
 
@@ -567,12 +571,10 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
                 //make sure result is valid and starts with https, if so, send it!
                 if (!TextUtils.isEmpty(resultUrl))
-                    sendMediaMessage(mediaUri, resultUrl, msgMedia);
+                    sendMediaMessage(mediaPath, resultUrl, msgMedia);
 
             }
         }.start();
-
-        return true;
 
 
     }
@@ -758,7 +760,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         }
     }*/
 
-    void insertOrUpdateChat(String message) {
+    Uri insertOrUpdateChat(String message) {
 
         ContentValues values = new ContentValues(2);
 
@@ -767,9 +769,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
          values.put(Imps.Chats.GROUP_CHAT, mIsGroupChat);
          // ImProvider.insert() will replace the chat if it already exist.
-         mContentResolver.insert(mChatURI, values);
-         
-
+         return mContentResolver.insert(mChatURI, values);
     }
 
     // Pattern for recognizing a URL, based off RFC 3986
@@ -1049,7 +1049,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
     class ListenerAdapter implements MessageListener, GroupMemberListener, OtrEngineListener {
 
-        public synchronized boolean onIncomingMessage(ChatSession ses, final org.awesomeapp.messenger.model.Message msg) {
+        public boolean onIncomingMessage(ChatSession ses, final org.awesomeapp.messenger.model.Message msg) {
             String body = msg.getBody();
             String username = msg.getFrom().getAddress();
             String bareUsername = msg.getFrom().getBareAddress();

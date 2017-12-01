@@ -320,7 +320,6 @@ public class XmppConnection extends ImConnection {
         String domain = providerSettings.getDomain();
         String xmppName = userName + '@' + domain + '/' + providerSettings.getXmppResource();
         contactUser = new Contact(new XmppAddress(xmppName), nickname, Imps.Contacts.TYPE_NORMAL);
-
         return contactUser;
     }
 
@@ -1708,6 +1707,25 @@ public class XmppConnection extends ImConnection {
         return result;
     }
 
+    @Override
+    public void changeNickname(String nickname) {
+
+        mUser.setName(nickname);
+
+        execute(new Runnable ()
+        {
+            public void run ()
+            {
+
+                sendVCard();
+
+                sendPresencePacket();
+
+            }
+        });
+
+    }
+
     public void sendVCard ()
     {
         sendVCard(null);
@@ -1716,7 +1734,7 @@ public class XmppConnection extends ImConnection {
     public void sendVCard (String migrateJabberId)
     {
 
-        if (mConnection == null)
+        if (mConnection == null || getState() != ImConnection.LOGGED_IN)
             return;
 
         try {
@@ -2681,6 +2699,8 @@ public class XmppConnection extends ImConnection {
         public boolean resourceSupportsOmemo(Jid jid) {
 
             try {
+                if (mConnection == null || getState() != ImConnection.LOGGED_IN)
+                    return false;
 
                 if (getOmemo().resourceSupportsOmemo(jid)) {
 
