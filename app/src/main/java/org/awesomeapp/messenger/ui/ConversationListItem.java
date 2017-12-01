@@ -65,20 +65,22 @@ import java.util.Locale;
 import im.zom.messenger.R;
 
 public class ConversationListItem extends FrameLayout {
-    public static final String[] CONTACT_PROJECTION = { Imps.Contacts._ID, Imps.Contacts.PROVIDER,
-                                                Imps.Contacts.ACCOUNT, Imps.Contacts.USERNAME,
-                                                Imps.Contacts.NICKNAME, Imps.Contacts.TYPE,
-                                                Imps.Contacts.SUBSCRIPTION_TYPE,
-                                                Imps.Contacts.SUBSCRIPTION_STATUS,
-                                                Imps.Presence.PRESENCE_STATUS,
-                                                Imps.Presence.PRESENCE_CUSTOM_STATUS,
-                                                Imps.Chats.LAST_MESSAGE_DATE,
-                                                Imps.Chats.LAST_UNREAD_MESSAGE,
-                                                Imps.Chats.CHAT_TYPE,
-                                                Imps.Chats.LAST_READ_DATE
+
+    public final String[] CHAT_PROJECTION = { Imps.Contacts._ID, Imps.Contacts.PROVIDER,
+            Imps.Contacts.ACCOUNT, Imps.Contacts.USERNAME,
+            Imps.Contacts.NICKNAME, Imps.Contacts.TYPE,
+            Imps.Contacts.SUBSCRIPTION_TYPE,
+            Imps.Contacts.SUBSCRIPTION_STATUS,
+            Imps.Presence.PRESENCE_STATUS,
+            Imps.Presence.PRESENCE_CUSTOM_STATUS,
+            Imps.Chats.LAST_MESSAGE_DATE,
+            Imps.Chats.LAST_UNREAD_MESSAGE,
+            Imps.Chats.LAST_READ_DATE,
+            Imps.Chats.CHAT_TYPE
+            //          Imps.Contacts.AVATAR_HASH,
+            //        Imps.Contacts.AVATAR_DATA
 
     };
-
 
     public static final int COLUMN_CONTACT_ID = 0;
     public static final int COLUMN_CONTACT_PROVIDER = 1;
@@ -110,7 +112,7 @@ public class ConversationListItem extends FrameLayout {
     }
 */
 
-    public void bind(ConversationViewHolder holder, long contactId, long providerId, long accountId, String address, String nickname, int contactType, String message, long messageDate, String messageType, int presence, String underLineText, boolean showChatMsg, boolean scrolling, boolean isMuted) {
+    public void bind(ConversationViewHolder holder, long contactId, long providerId, long accountId, String address, String nickname, int contactType, String message, long messageDate, String messageType, int presence, int subscription, String underLineText, boolean showChatMsg, boolean scrolling, boolean isMuted) {
 
         //applyStyleColors(holder);
 
@@ -377,58 +379,6 @@ public class ConversationListItem extends FrameLayout {
 
     }
 
-    /**
-    public void setAvatarBorder(int status, RoundedAvatarDrawable avatar) {
-        switch (status) {
-        case Presence.AVAILABLE:
-            avatar.setBorderColor(getResources().getColor(R.color.holo_green_light));
-            break;
-
-        case Presence.IDLE:
-            avatar.setBorderColor(getResources().getColor(R.color.holo_green_dark));
-
-            break;
-
-        case Presence.AWAY:
-            avatar.setBorderColor(getResources().getColor(R.color.holo_orange_light));
-            break;
-
-        case Presence.DO_NOT_DISTURB:
-            avatar.setBorderColor(getResources().getColor(R.color.holo_red_dark));
-
-            break;
-
-        case Presence.OFFLINE:
-            avatar.setBorderColor(getResources().getColor(android.R.color.transparent));
-            break;
-
-
-        default:
-        }
-    }**/
-    
-    public int getAvatarBorder(int status) {
-        switch (status) {
-        case Presence.AVAILABLE:
-            return (getResources().getColor(R.color.holo_green_light));
-
-        case Presence.IDLE:
-            return (getResources().getColor(R.color.holo_green_dark));
-        case Presence.AWAY:
-            return (getResources().getColor(R.color.holo_orange_light));
-
-        case Presence.DO_NOT_DISTURB:
-            return(getResources().getColor(R.color.holo_red_dark));
-
-        case Presence.OFFLINE:
-            return(getResources().getColor(R.color.holo_grey_dark));
-
-        default:
-        }
-
-        return Color.TRANSPARENT;
-    }
-
     private Uri mLastMediaUri = null;
 
     /**
@@ -462,30 +412,6 @@ public class ConversationListItem extends FrameLayout {
 
         return buf.toString();
     }
-
-    /**
-    public void applyStyleColors (ConversationViewHolder holder)
-    {
-        //not set color
-        final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
-        int themeColorHeader = settings.getInt("themeColor",-1);
-        int themeColorText = settings.getInt("themeColorText",-1);
-        int themeColorBg = settings.getInt("themeColorBg",-1);
-
-
-        if (themeColorText != -1)
-        {
-            if (holder.mLine1 != null)
-                holder.mLine1.setTextColor(themeColorText);
-
-            if (holder.mLine2 != null)
-                holder.mLine2.setTextColor(themeColorText);
-
-            //holder.mLine2.setTextColor(darker(themeColorText,2.0f));
-
-        }
-
-    }*/
 
     /**
      * Returns darker version of specified <code>color</code>.

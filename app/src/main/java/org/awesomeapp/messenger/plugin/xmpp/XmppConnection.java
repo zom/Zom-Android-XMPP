@@ -1551,7 +1551,7 @@ public class XmppConnection extends ImConnection {
                     if (body != null) {
                         debug(TAG, "got inbound message omemo: from:" + message.getFrom() + "=" + message.getBody());
                         message.setBody(body);
-                        handleMessage(message, true);
+                        handleMessage(message, true, true);
                     } else {
                         debug(TAG, "got empty ibound message omemo: from:" + message.getFrom().toString());
                     }
@@ -2024,7 +2024,7 @@ public class XmppConnection extends ImConnection {
 
                 org.jivesoftware.smack.packet.Message smackMessage = (org.jivesoftware.smack.packet.Message) stanza;
 
-                handleMessage(smackMessage, false);
+                handleMessage(smackMessage, false, true);
 
                 String msg_xml = smackMessage.toXML().toString();
 
@@ -2229,7 +2229,7 @@ public class XmppConnection extends ImConnection {
 
     }
 
-    private void handleMessage (org.jivesoftware.smack.packet.Message smackMessage, boolean isOmemo) {
+    private void handleMessage (org.jivesoftware.smack.packet.Message smackMessage, boolean isOmemo, boolean notifyUser) {
 
         String body = smackMessage.getBody();
         boolean isGroupMessage = smackMessage.getType() == org.jivesoftware.smack.packet.Message.Type.groupchat;
@@ -2303,9 +2303,9 @@ public class XmppConnection extends ImConnection {
 
                 }
 
-                setPresence(smackMessage.getFrom(),Presence.AVAILABLE);
+               // setPresence(smackMessage.getFrom(),Presence.AVAILABLE);
 
-                boolean good = session.onReceiveMessage(rec);
+                boolean good = session.onReceiveMessage(rec, notifyUser);
 
                 if (smackMessage.getExtension("request", DeliveryReceipt.NAMESPACE) != null) {
                     if (good) {
@@ -2457,10 +2457,7 @@ public class XmppConnection extends ImConnection {
         try {
 
             ChatSession session = mSessionManager.findSession(JidCreate.bareFrom(address));
-            Jid jid = JidCreate.from(address);
-
-            if (jid.hasNoResource())
-                return null;
+            BareJid bareJid = JidCreate.bareFrom(address);
 
             //create a session if this it not groupchat
             if (session == null && (!groupChat)) {
@@ -2470,9 +2467,8 @@ public class XmppConnection extends ImConnection {
                     session = mSessionManager.createChatSession(participant, false);
                     mContactListManager.refreshPresence(address);
 
-                    qAvatar.put(jid.asBareJid().toString(),"");
+                    qAvatar.put(bareJid.toString(),"");
 
-                    BareJid bareJid = jid.asBareJid();
                     if (getOmemo().getManager().contactSupportsOmemo(bareJid)) {
                         getOmemo().getManager().requestDeviceListUpdateFor(bareJid);
                         getOmemo().getManager().buildSessionsWith(bareJid);
@@ -2935,7 +2931,8 @@ public class XmppConnection extends ImConnection {
                         subType = Imps.ContactsColumns.SUBSCRIPTION_TYPE_REMOVE;
 
                     if (!rEntry.isSubscriptionPending()) {
-                        qPresence.add(mRoster.getPresence(rEntry.getJid()));
+                        if (mRoster != null)
+                            qPresence.add(mRoster.getPresence(rEntry.getJid()));
                     }
 
                 }
@@ -3293,7 +3290,7 @@ public class XmppConnection extends ImConnection {
                 e.printStackTrace();
             }
 
-            ChatSession session = findOrCreateSession(contact.getAddress().toString(), false);
+            ChatSession session = findOrCreateSession(contact.getAddress().getAddress(), false);
 
             if (session != null)
                 session.setSubscribed(false);
@@ -4248,11 +4245,24 @@ public class XmppConnection extends ImConnection {
                     contact.setPresence(p);
 
                     mContactListManager.getSubscriptionRequestListener().onSubScriptionRequest(contact, mProviderId, mAccountId);
+
+                    ChatSession session = findOrCreateSession(presence.getFrom().toString(), false);
+
+                    org.jivesoftware.smack.packet.Message msg = new org.jivesoftware.smack.packet.Message();
+                    msg.setStanzaId(presence.getStanzaId());
+                    msg.setTo(presence.getTo());
+                    msg.setFrom(presence.getFrom());
+                    String message = mContext.getString(R.string.subscription_notify_text, contact.getName());
+                    msg.setBody(message);
+                    handleMessage(msg, false, false);
+
                 }
+
+                /** //don't auto subscribe
                 else
                 {
                     mContactListManager.approveSubscriptionRequest(contact);
-                }
+                }**/
 
             }
             catch (Exception e)

@@ -29,7 +29,7 @@ public class OtrChatListener implements MessageListener {
     }
 
     @Override
-    public boolean onIncomingMessage(ChatSession session, Message msg) {
+    public boolean onIncomingMessage(ChatSession session, Message msg, boolean notifyUser) {
 
         OtrDebugLogger.log("processing incoming message: " + msg.getID());
 
@@ -37,7 +37,7 @@ public class OtrChatListener implements MessageListener {
 
         if (mOtrChatManager == null || msg.getType() != Imps.MessageType.INCOMING) {
             if (!TextUtils.isEmpty(msg.getBody())) {
-                result = mMessageListener.onIncomingMessage(session, msg);
+                result = mMessageListener.onIncomingMessage(session, msg, notifyUser);
             } else {
                 OtrDebugLogger.log("incoming body was empty");
             }
@@ -74,7 +74,7 @@ public class OtrChatListener implements MessageListener {
 
                 if (!TextUtils.isEmpty(body)) {
                     msg.setBody(body);
-                    result = mMessageListener.onIncomingMessage(session, msg);
+                    result = mMessageListener.onIncomingMessage(session, msg, notifyUser);
                 } else {
 
                     OtrDebugLogger.log("Decrypted incoming body was null (otrdata?)");

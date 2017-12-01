@@ -35,7 +35,7 @@ public interface MessageListener {
      * @return true if the message was processed correctly, or false
      *   otherwise (e.g. decryption error)
      */
-    public boolean onIncomingMessage(ChatSession ses, Message msg);
+    public boolean onIncomingMessage(ChatSession ses, Message msg, boolean notifyUser);
 
     /**
      * Calls when an error occurs to send a message.

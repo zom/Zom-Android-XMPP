@@ -419,6 +419,7 @@ public class ConversationListFragment extends Fragment {
                 long lastMsgDate = cursor.getLong(ConversationListItem.COLUMN_LAST_MESSAGE_DATE);
                 final int presence = cursor.getInt(ConversationListItem.COLUMN_CONTACT_PRESENCE_STATUS);
                 long lastReadDate = cursor.getLong(ConversationListItem.COLUMN_LAST_READ_DATE);
+                int subscription = cursor.getInt(ConversationListItem.COLUMN_SUBSCRIPTION_STATUS);
 
                 int chatType = cursor.getInt(ConversationListItem.COLUMN_CHAT_TYPE);
                 boolean isMuted = chatType == Imps.Chats.CHAT_TYPE_MUTED;
@@ -440,7 +441,7 @@ public class ConversationListFragment extends Fragment {
 
                 ConversationListItem clItem = ((ConversationListItem)viewHolder.itemView.findViewById(R.id.convoitemview));
 
-                clItem.bind(viewHolder, chatId, providerId, accountId, address, nickname, type, lastMsg, lastMsgDate, lastMsgType, presence, null, true, false, isMuted);
+                clItem.bind(viewHolder, chatId, providerId, accountId, address, nickname, type, lastMsg, lastMsgDate, lastMsgType, presence, subscription, null, true, false, isMuted);
 
                 if (lastReadDate != -1 && lastReadDate < lastMsgDate) {
                     SpannableStringBuilder ssb = new SpannableStringBuilder(viewHolder.mLine1.getText());
@@ -477,7 +478,7 @@ public class ConversationListFragment extends Fragment {
                 if (address != null) {
 
                     if (viewHolder.itemView instanceof  ConversationListItem) {
-                        ((ConversationListItem) viewHolder.itemView).bind(viewHolder, chatId, -1, -1, address, nickname, -1, body, messageDate, messageType, -1, mSearchString, true, false, isMuted);
+                        ((ConversationListItem) viewHolder.itemView).bind(viewHolder, chatId, -1, -1, address, nickname, -1, body, messageDate, messageType, -1,-1, mSearchString, true, false, isMuted);
 
                         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                             @Override

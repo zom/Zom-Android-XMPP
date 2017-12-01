@@ -284,12 +284,12 @@ public class ChatSession {
      * @return true if the message was processed correctly, or false
      *   otherwise (e.g. decryption error)
      */
-    public boolean onReceiveMessage(Message message) {
+    public boolean onReceiveMessage(Message message, boolean notifyUser) {
 //        mHistoryMessages.add(message);
 
 
         if (mListener != null)
-            return mListener.onIncomingMessage(this, message);
+            return mListener.onIncomingMessage(this, message, notifyUser);
         else
             return false;
     }

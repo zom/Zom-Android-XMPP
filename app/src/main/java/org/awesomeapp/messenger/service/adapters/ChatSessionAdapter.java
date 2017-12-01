@@ -1049,7 +1049,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
     class ListenerAdapter implements MessageListener, GroupMemberListener, OtrEngineListener {
 
-        public boolean onIncomingMessage(ChatSession ses, final org.awesomeapp.messenger.model.Message msg) {
+        public boolean onIncomingMessage(ChatSession ses, final org.awesomeapp.messenger.model.Message msg, boolean notifyUser) {
             String body = msg.getBody();
             String username = msg.getFrom().getAddress();
             String bareUsername = msg.getFrom().getBareAddress();
@@ -1183,7 +1183,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             // Due to the move to fragments, we could have listeners for ChatViews that are not visible on the screen.
             // This is for fragments adjacent to the current one.  Therefore we can't use the existence of listeners
             // as a filter on notifications.
-            if (!wasMessageSeen) {
+            if ((!wasMessageSeen) && notifyUser) {
 
                 if (isGroupChatSession()) {
                     if (!isMuted()) {

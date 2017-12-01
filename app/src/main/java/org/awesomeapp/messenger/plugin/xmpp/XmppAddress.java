@@ -62,4 +62,10 @@ public class XmppAddress extends Address {
         return mResource;
     }
 
+    @Override
+    public String toString ()
+    {
+        return getAddress();
+    }
+
 }

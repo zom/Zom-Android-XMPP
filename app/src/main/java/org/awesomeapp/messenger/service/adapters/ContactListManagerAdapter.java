@@ -764,11 +764,13 @@ public class ContactListManagerAdapter extends
                     }
                 });
 
+
                 if (!hadListener) {
                     mContext.getStatusBarNotifier().notifySubscriptionRequest(mConn.getProviderId(), mConn.getAccountId(),
                             ContentUris.parseId(uri), username, nickname);
                 }
             }
+            /**
             else
             {
                 try {
@@ -776,7 +778,7 @@ public class ContactListManagerAdapter extends
                 }
                 catch(Exception e){}
                 approveSubscription(from);
-            }
+            }**/
         }
 
         public void onUnSubScriptionRequest(final Contact from, long providerId, long accountId) {

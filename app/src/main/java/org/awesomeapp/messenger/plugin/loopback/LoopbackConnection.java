@@ -94,7 +94,7 @@ public class LoopbackConnection extends ImConnection {
                 Message rec = new Message(message.getBody());
                 rec.setFrom(message.getTo());
                 rec.setDateTime(new Date());
-                session.onReceiveMessage(rec);
+                session.onReceiveMessage(rec, true);
             }
 
             @Override
