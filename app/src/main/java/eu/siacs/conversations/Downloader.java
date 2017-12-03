@@ -1,5 +1,6 @@
 package eu.siacs.conversations;
 
+import android.util.Log;
 import android.webkit.URLUtil;
 
 import org.apache.commons.io.FilenameUtils;
@@ -43,6 +44,11 @@ public class Downloader {
 
             final URL url = new URL(urlString);
             final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+            //wait up to 60 seconds
+            connection.setConnectTimeout(60000);
+            connection.setReadTimeout(60000);
+
             InputStream inputStream = connection.getInputStream();
             connection.connect();
             mMimeType = connection.getContentType();
@@ -67,6 +73,7 @@ public class Downloader {
 
         } catch (Exception e) {
 
+            Log.d("Download","Error downloading media",e);
             return false;
         }
     }

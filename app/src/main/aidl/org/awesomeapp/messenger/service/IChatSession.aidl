@@ -159,5 +159,7 @@ interface IChatSession {
      void setMuted (boolean muted);
 
      boolean isMuted ();
+
+     String downloadMedia (String mediaLink, String msgId);
 }
 

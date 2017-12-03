@@ -20,6 +20,7 @@ package org.awesomeapp.messenger.ui;
 import im.zom.messenger.R;
 
 import org.awesomeapp.messenger.ImUrlActivity;
+import org.awesomeapp.messenger.service.IChatSession;
 import org.awesomeapp.messenger.ui.onboarding.OnboardingManager;
 import org.awesomeapp.messenger.ui.widgets.AudioWife;
 import org.awesomeapp.messenger.ui.widgets.MessageViewHolder;
@@ -42,6 +43,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -57,6 +59,7 @@ import android.graphics.Typeface;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
+import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.provider.Browser;
 import android.provider.MediaStore;
@@ -194,7 +197,7 @@ public class MessageListItem extends FrameLayout {
     }
 
     public void bindIncomingMessage(MessageViewHolder holder, int id, int messageType, String address, String nickname, final String mimeType, final String body, Date date, Markup smileyRes,
-            boolean scrolling, EncryptionState encryption, boolean showContact, int presenceStatus) {
+            boolean scrolling, EncryptionState encryption, boolean showContact, int presenceStatus, IChatSession session, String packetId) {
 
         mHolder = holder;
         applyStyleColors();
@@ -238,7 +241,8 @@ public class MessageListItem extends FrameLayout {
             }
 
         }
-        else if ((!TextUtils.isEmpty(lastMessage)) && (lastMessage.charAt(0) == '/'||lastMessage.charAt(0) == ':'))
+        else if ((!TextUtils.isEmpty(lastMessage))
+                && (lastMessage.charAt(0) == '/'||lastMessage.charAt(0) == ':'||lastMessage.startsWith("aesgcm://")))
         {
             boolean cmdSuccess = false;
 
@@ -293,6 +297,11 @@ public class MessageListItem extends FrameLayout {
                     cmdSuccess = false;
                 }
             }
+            else if (lastMessage.startsWith("aesgcm://"))
+            {
+                //now load the thumbnail
+                cmdSuccess = showDownloadThumbnail(lastMessage, id, mHolder, session, packetId);
+            }
 
             if (!cmdSuccess)
             {
@@ -339,12 +348,47 @@ public class MessageListItem extends FrameLayout {
         {
 
             mHolder.mTextViewForTimestamp.setText("");
-            //mHolder.mTextViewForTimestamp.setVisibility(View.GONE);
 
         }
         if (linkify)
-            LinkifyHelper.addLinks(mHolder.mTextViewForMessages, new URLSpanConverter());
-        LinkifyHelper.addTorSafeLinks(mHolder.mTextViewForMessages);
+           LinkifyHelper.addLinks(mHolder.mTextViewForMessages, new URLSpanConverter());
+
+    }
+
+    private boolean showDownloadThumbnail (final String mediaLink, int id, MessageViewHolder holder, final IChatSession session, final String packetId)
+    {
+
+        holder.mMediaThumbnail.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                    new Thread ()
+                    {
+                        public void run ()
+                        {
+                            try {
+                                session.downloadMedia(mediaLink,packetId);
+                            }
+                            catch (Exception e){
+                                Log.e("Download","error downloading media",e);
+                            }
+                        }
+                    }.start();
+
+            }
+        });
+
+        holder.mTextViewForMessages.setText(lastMessage);
+        holder.mTextViewForMessages.setVisibility(View.GONE);
+
+        holder.mMediaThumbnail.setScaleType(ImageView.ScaleType.FIT_CENTER);
+
+        holder.mMediaThumbnail.setImageResource(R.drawable.clouddownload);
+        holder.mMediaThumbnail.setBackgroundResource(android.R.color.transparent);
+        holder.mMediaContainer.setVisibility(View.VISIBLE);
+        holder.mContainer.setBackgroundResource(android.R.color.transparent);
+
+        return true;
+
     }
 
     private boolean showMediaThumbnail (String mimeType, Uri mediaUri, int id, MessageViewHolder holder, boolean centerCrop)
@@ -1126,7 +1170,7 @@ public class MessageListItem extends FrameLayout {
     }
 
     public static int getContrastColor(int colorIn) {
-        double y = (299 * Color.red(colorIn) + 587 * Color.green(colorIn) + 114 * Color.blue(colorIn)) / 1000;
+        @SuppressLint("Range") double y = (299 * Color.red(colorIn) + 587 * Color.green(colorIn) + 114 * Color.blue(colorIn)) / 1000;
         return y >= 128 ? Color.BLACK : Color.WHITE;
     }
 

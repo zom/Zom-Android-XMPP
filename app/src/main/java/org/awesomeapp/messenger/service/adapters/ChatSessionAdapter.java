@@ -140,6 +140,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
     private long mContactId;
     private boolean mIsMuted = false;
+    private String mNickname = null;
 
     public ChatSessionAdapter(ChatSession chatSession, ImConnectionAdapter connection, boolean isNewSession) {
 
@@ -234,6 +235,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
     private void init(ChatGroup group, boolean isNewSession) {
         
         mIsGroupChat = true;
+        mNickname = group.getName();
 
         mContactId = insertOrUpdateGroupContactInDb(group);
         group.addMemberListener(mListenerAdapter);
@@ -261,6 +263,8 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
     private void init(Contact contact, boolean isNewSession) {
         mIsGroupChat = false;
+        mNickname = contact.getName();
+
         ContactListManagerAdapter listManager = (ContactListManagerAdapter) mConnection.getContactListManager();
         
         mContactId = listManager.queryOrInsertContact(contact);
@@ -1078,73 +1082,12 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             Uri messageUri = null;
 
             if (mediaLink != null) {
-                try {
-                    Downloader dl = new Downloader();
-                    File fileDownload = dl.openSecureStorageFile(mContactId + "", mediaLink);
-                    OutputStream storageStream = new info.guardianproject.iocipher.FileOutputStream(fileDownload);
-                    downloaded = dl.get(mediaLink, storageStream);
+               String downloadUriString = downloadMedia (mediaLink, msg.getID());
+               if (!TextUtils.isEmpty(downloadUriString)) {
+                   messageUri = Uri.parse(downloadUriString);
+                   downloaded = true;
+               }
 
-                    if (downloaded) {
-                        String mimeType = dl.getMimeType();
-
-                        try {
-                            //boolean isVerified = getDefaultOtrChatSession().isKeyVerified(bareUsername);
-                            //int type = isVerified ? Imps.MessageType.INCOMING_ENCRYPTED_VERIFIED : Imps.MessageType.INCOMING_ENCRYPTED;
-                            int type = Imps.MessageType.INCOMING;
-                            if (mediaLink.startsWith("aesgcm"))
-                                type = Imps.MessageType.INCOMING_ENCRYPTED_VERIFIED;
-
-                            Uri vfsUri = SecureMediaStore.vfsUri(fileDownload.getAbsolutePath());
-
-                            insertOrUpdateChat(vfsUri.toString());
-
-                            messageUri = Imps.insertMessageInDb(service.getContentResolver(),
-                                    mIsGroupChat, getId(),
-                                    true, nickname,
-                                    vfsUri.toString(), System.currentTimeMillis(), type,
-                                    0, msg.getID(), mimeType);
-
-                            if (messageUri == null) //error writing to database
-                            {
-                                Log.e(TAG,"error saving message to the db: " + msg.getID());
-
-                                return false;
-                            }
-                            int percent = (int) (100);
-
-                            String[] path = mediaLink.split("/");
-                            String sanitizedPath = SystemServices.sanitize(path[path.length - 1]);
-
-                            int N = 0;
-
-                            try {
-                                N = mRemoteListeners.beginBroadcast();
-                                for (int i = 0; i < N; i++) {
-                                    IChatListener listener = mRemoteListeners.getBroadcastItem(i);
-                                    try {
-                                        listener.onIncomingFileTransferProgress(sanitizedPath, percent);
-                                    } catch (RemoteException e) {
-                                        // The RemoteCallbackList will take care of removing the
-                                        // dead listeners.
-                                    }
-                                }
-                                mRemoteListeners.finishBroadcast();
-                            } catch (Exception e) {
-                                Log.e(TAG,"error notifying of new messages",e);
-
-                            }
-
-                        } catch (Exception e) {
-                            Log.e(ImApp.LOG_TAG, "Error updating file transfer progress", e);
-                        }
-
-
-                    }
-
-                } catch (Exception e) {
-                    Log.e(ImApp.LOG_TAG, "error downloading incoming media", e);
-
-                }
             }
 
             //if it wasn't a media file or we had an issue downloading, then it is chat
@@ -1210,6 +1153,8 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             mHasUnreadMessages = true;
             return true;
         }
+
+
 
         public void onSendMessageError(ChatSession ses, final org.awesomeapp.messenger.model.Message msg, final ImErrorInfo error) {
             insertMessageInDb(null, null, System.currentTimeMillis(), Imps.MessageType.OUTGOING,
@@ -1870,6 +1815,87 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             c.close();
         }
         mIsMuted = type == Imps.ChatsColumns.CHAT_TYPE_MUTED;
+    }
+
+    public String downloadMedia (String mediaLink, String msgId)
+    {
+        String result = null;
+
+        try {
+            Downloader dl = new Downloader();
+            File fileDownload = dl.openSecureStorageFile(mContactId + "", mediaLink);
+            OutputStream storageStream = new info.guardianproject.iocipher.FileOutputStream(fileDownload);
+            boolean downloaded = dl.get(mediaLink, storageStream);
+
+            if (downloaded) {
+                String mimeType = dl.getMimeType();
+
+                try {
+                    //boolean isVerified = getDefaultOtrChatSession().isKeyVerified(bareUsername);
+                    //int type = isVerified ? Imps.MessageType.INCOMING_ENCRYPTED_VERIFIED : Imps.MessageType.INCOMING_ENCRYPTED;
+                    int type = Imps.MessageType.INCOMING;
+                    if (mediaLink.startsWith("aesgcm"))
+                        type = Imps.MessageType.INCOMING_ENCRYPTED_VERIFIED;
+
+                    Uri vfsUri = SecureMediaStore.vfsUri(fileDownload.getAbsolutePath());
+
+                    insertOrUpdateChat(vfsUri.toString());
+
+                    Imps.deleteMessageInDb(service.getContentResolver(),msgId);
+                    Uri messageUri = Imps.insertMessageInDb(service.getContentResolver(),
+                            mIsGroupChat, getId(),
+                            true, mNickname,
+                            vfsUri.toString(), System.currentTimeMillis(), type,
+                            0, msgId, mimeType);
+
+                    if (messageUri == null) //error writing to database
+                    {
+                        Log.e(TAG,"error saving message to the db: " + msgId);
+
+                        return null;
+                    }
+                    else
+                    {
+                        result = messageUri.toString();
+                    }
+
+                    int percent = (int) (100);
+
+                    String[] path = mediaLink.split("/");
+                    String sanitizedPath = SystemServices.sanitize(path[path.length - 1]);
+
+                    int N = 0;
+
+                    try {
+                        N = mRemoteListeners.beginBroadcast();
+                        for (int i = 0; i < N; i++) {
+                            IChatListener listener = mRemoteListeners.getBroadcastItem(i);
+                            try {
+                                listener.onIncomingFileTransferProgress(sanitizedPath, percent);
+                            } catch (RemoteException e) {
+                                // The RemoteCallbackList will take care of removing the
+                                // dead listeners.
+                            }
+                        }
+                        mRemoteListeners.finishBroadcast();
+                    } catch (Exception e) {
+                        Log.e(TAG,"error notifying of new messages",e);
+
+                    }
+
+                } catch (Exception e) {
+                    Log.e(ImApp.LOG_TAG, "Error updating file transfer progress", e);
+                }
+
+
+            }
+
+        } catch (Exception e) {
+            Log.e(ImApp.LOG_TAG, "error downloading incoming media", e);
+
+        }
+
+        return result;
     }
 
 }
