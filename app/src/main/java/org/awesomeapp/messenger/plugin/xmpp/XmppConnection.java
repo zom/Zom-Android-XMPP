@@ -1603,7 +1603,8 @@ public class XmppConnection extends ImConnection {
         //disable compression based on statement by Ge0rg
         // mConfig.setCompressionEnabled(false);
 
-        if (mConnection.isConnected() && mConnection.isSecureConnection())
+        if (mConnection.isConnected() && mConnection.isSecureConnection()
+            && (!mConnection.isAuthenticated()))
         {
 
             mResource = providerSettings.getXmppResource();
@@ -2843,7 +2844,8 @@ public class XmppConnection extends ImConnection {
             //since we don't show lists anymore, let's just load all entries together
 
             try {
-                mRoster.reloadAndWait();
+                if (!mRoster.isLoaded())
+                    mRoster.reloadAndWait();
             }
             catch (Exception e)
             {
@@ -2888,11 +2890,14 @@ public class XmppConnection extends ImConnection {
 
                     Contact contact = null;
 
+                    int subStatus = Imps.ContactsColumns.SUBSCRIPTION_STATUS_NONE;
 
 
                     contact = getContact(address);
 
                     if (contact == null) {
+
+
                         XmppAddress xAddr = new XmppAddress(address);
 
                         if (name == null || name.length() == 0)
@@ -2900,21 +2905,25 @@ public class XmppConnection extends ImConnection {
 
                         contact = new Contact(xAddr, name, Imps.Contacts.TYPE_NORMAL);
 
-                    }
+                        if (!cl.containsContact(contact)) {
+                            try {
+                                cl.addExistingContact(contact);
+                            } catch (ImException e) {
+                                debug(TAG, "could not add contact to list: " + e.getLocalizedMessage());
+                            }
+                        }
 
-                    if (!cl.containsContact(contact)) {
-                        try {
-                            cl.addExistingContact(contact);
-                        } catch (ImException e) {
-                            debug(TAG, "could not add contact to list: " + e.getLocalizedMessage());
+                        if (!rEntry.canSeeMyPresence()) {
+                            subStatus = Imps.ContactsColumns.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING;
+                            try {
+                                handleSubscribeRequest(rEntry.getJid());
+                            } catch (Exception e) {
+                            }
                         }
                     }
 
-
-                    int subStatus = Imps.ContactsColumns.SUBSCRIPTION_STATUS_NONE;
-
                     if (rEntry.isSubscriptionPending())
-                      subStatus = Imps.ContactsColumns.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING;
+                        subStatus = Imps.ContactsColumns.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING;
 
                     int subType = 0;
                     if (rEntry.getType() == RosterPacket.ItemType.both)
@@ -2930,10 +2939,10 @@ public class XmppConnection extends ImConnection {
                     else if (rEntry.getType() == RosterPacket.ItemType.remove)
                         subType = Imps.ContactsColumns.SUBSCRIPTION_TYPE_REMOVE;
 
-                    if (!rEntry.isSubscriptionPending()) {
-                        if (mRoster != null)
-                            qPresence.add(mRoster.getPresence(rEntry.getJid()));
-                    }
+
+
+                    if (mRoster != null)
+                        qPresence.add(mRoster.getPresence(rEntry.getJid()));
 
                 }
             }
@@ -3376,7 +3385,9 @@ public class XmppConnection extends ImConnection {
         @Override
         protected void doSetContactName(String address, String name) throws ImException {
 
-            Contact[] contacts = {getContact(address)};
+            Contact contact = getContact(address);
+            contact.setName(name);
+            Contact[] contacts = {contact};
             notifyContactsPresenceUpdated(contacts);
 
             // set name
@@ -4236,26 +4247,12 @@ public class XmppConnection extends ImConnection {
 
             try {
 
-               ContactList cList = getContactListManager().getDefaultContactList();
-
                 if (contact == null) {
-                    XmppAddress xAddr = new XmppAddress(presence.getFrom().toString());
-                    contact = new Contact(xAddr, xAddr.getUser(), Imps.Contacts.TYPE_NORMAL);
-                    mContactListManager.doAddContactToListAsync(contact, cList, false);
-                    contact.setPresence(p);
-
-                    mContactListManager.getSubscriptionRequestListener().onSubScriptionRequest(contact, mProviderId, mAccountId);
-
-                    ChatSession session = findOrCreateSession(presence.getFrom().toString(), false);
-
-                    org.jivesoftware.smack.packet.Message msg = new org.jivesoftware.smack.packet.Message();
-                    msg.setStanzaId(presence.getStanzaId());
-                    msg.setTo(presence.getTo());
-                    msg.setFrom(presence.getFrom());
-                    String message = mContext.getString(R.string.subscription_notify_text, contact.getName());
-                    msg.setBody(message);
-                    handleMessage(msg, false, false);
-
+                    handleSubscribeRequest(presence.getFrom());
+                }
+                else
+                {
+                    debug("Subscribe","got subscribe request for a contact we have: " + presence.getFrom());
                 }
 
                 /** //don't auto subscribe
@@ -4393,8 +4390,28 @@ public class XmppConnection extends ImConnection {
 
         }
 
-
         return contact;
+    }
+
+    private void handleSubscribeRequest (Jid jid) throws ImException, RemoteException {
+        ContactList cList = getContactListManager().getDefaultContactList();
+
+        XmppAddress xAddr = new XmppAddress(jid.toString());
+        Contact contact = new Contact(xAddr, xAddr.getUser(), Imps.Contacts.TYPE_NORMAL);
+        mContactListManager.doAddContactToListAsync(contact, cList, false);
+
+        mContactListManager.getSubscriptionRequestListener().onSubScriptionRequest(contact, mProviderId, mAccountId);
+
+        ChatSession session = findOrCreateSession(jid.toString(), false);
+
+        org.jivesoftware.smack.packet.Message msg = new org.jivesoftware.smack.packet.Message();
+        msg.setStanzaId((Math.random()*10000f)+"subscribe");
+        msg.setTo(mUserJid);
+        msg.setFrom(jid);
+        String message = mContext.getString(R.string.subscription_notify_text, contact.getName());
+        msg.setBody(message);
+        handleMessage(msg, false, false);
+
     }
 
 
