@@ -33,15 +33,19 @@ import android.util.Log;
 import android.widget.Toast;
 
 import org.awesomeapp.messenger.crypto.otr.OtrDataHandler;
+import org.awesomeapp.messenger.model.Contact;
 import org.awesomeapp.messenger.model.ImConnection;
+import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.service.IChatSession;
 import org.awesomeapp.messenger.service.IChatSessionManager;
 import org.awesomeapp.messenger.service.IImConnection;
 import org.awesomeapp.messenger.service.ImServiceConstants;
 import org.awesomeapp.messenger.tasks.AddContactAsyncTask;
+import org.awesomeapp.messenger.tasks.ChatSessionInitTask;
 import org.awesomeapp.messenger.ui.AccountViewFragment;
 import org.awesomeapp.messenger.ui.ContactsPickerActivity;
+import org.awesomeapp.messenger.ui.ConversationDetailActivity;
 import org.awesomeapp.messenger.ui.LockScreenActivity;
 import org.awesomeapp.messenger.ui.legacy.SignInHelper;
 import org.awesomeapp.messenger.ui.legacy.SimpleAlertHandler;
@@ -661,6 +665,8 @@ public class ImUrlActivity extends Activity {
 
                     sendOtrInBand(username, providerId, accountId);
 
+                    startChat(providerId, accountId, username, true);
+
                 }
                 else {
 
@@ -677,12 +683,21 @@ public class ImUrlActivity extends Activity {
                                 sendOtrInBand(usernames.get(i), providers.get(i), accounts.get(i));
                             }
 
+
+                        if (usernames.size() > 1)
+                            startActivity(new Intent(this,MainActivity.class));
+                        else
+                        {
+                            startChat(providers.get(0), accounts.get(0), usernames.get(0), true);
+
+                        }
+
                     }
 
+                    finish();
                 }
 
 
-                finish();
             }
             else if (requestCode == REQUEST_SIGNIN_ACCOUNT || requestCode == REQUEST_CREATE_ACCOUNT)
             {
@@ -701,6 +716,31 @@ public class ImUrlActivity extends Activity {
         } else {
             finish();
         }
+    }
+
+    public void startChat (long providerId, long accountId, String username, final boolean openChat)
+    {
+
+        //startCrypto is not actually used anymore, as we move to OMEMO
+
+        if (username != null)
+            new ChatSessionInitTask(((ImApp)getApplication()),providerId, accountId, Imps.Contacts.TYPE_NORMAL)
+            {
+                @Override
+                protected void onPostExecute(Long chatId) {
+
+                    if (chatId != -1 && openChat) {
+                        Intent intent = new Intent(ImUrlActivity.this, ConversationDetailActivity.class);
+                        intent.putExtra("id", chatId);
+                        startActivity(intent);
+                    }
+
+                    finish();
+
+                    super.onPostExecute(chatId);
+                }
+
+            }.executeOnExecutor(ImApp.sThreadPoolExecutor,new Contact(new XmppAddress(username)));
     }
 
     private void sendOtrInBand(String username, long providerId, long accountId) {
