@@ -289,6 +289,7 @@ public class StatusBarNotifier {
 
 
 
+
     }
 
     private Intent getDefaultIntent(long accountId, long providerId) {

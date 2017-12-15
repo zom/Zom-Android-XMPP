@@ -1077,6 +1077,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             if (mediaLink != null) {
                String downloadUriString = downloadMedia (mediaLink, msg.getID(), nickname);
                downloaded = !TextUtils.isEmpty(downloadUriString);
+
             }
 
             //if it wasn't a media file or we had an issue downloading, then it is chat
@@ -1112,6 +1113,11 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                 } catch (Exception e) {
                     Log.e(TAG,"error notifying of new messages",e);
                 }
+            }
+            else
+            {
+                //change body for notification
+                body = Uri.parse(mediaLink).getLastPathSegment();
             }
 
             // Due to the move to fragments, we could have listeners for ChatViews that are not visible on the screen.

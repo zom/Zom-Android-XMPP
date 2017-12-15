@@ -315,9 +315,6 @@ public class MessageListItem extends FrameLayout {
 
         }
 
-      //  if (isSelected())
-        //    mHolder.mContainer.setBackgroundColor(getResources().getColor(R.color.holo_blue_bright));
-
         if (lastMessage.length() > 0)
         {
             mHolder.mTextViewForMessages.setText(new SpannableString(lastMessage));
