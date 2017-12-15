@@ -1610,7 +1610,7 @@ public class XmppConnection extends ImConnection {
             mResource = providerSettings.getXmppResource();
 
             mRoster = Roster.getInstanceFor(mConnection);
-            mRoster.setRosterLoadedAtLogin(false);
+            mRoster.setRosterLoadedAtLogin(true);
             mRoster.setSubscriptionMode(subMode);
 
             mChatManager = ChatManager.getInstanceFor(mConnection);
@@ -2456,6 +2456,9 @@ public class XmppConnection extends ImConnection {
     private ChatSession findOrCreateSession(String address, boolean groupChat) {
 
         try {
+
+            if (mConnection == null || (!mConnection.isConnected()))
+                return null;
 
             ChatSession session = mSessionManager.findSession(JidCreate.bareFrom(address));
             BareJid bareJid = JidCreate.bareFrom(address);

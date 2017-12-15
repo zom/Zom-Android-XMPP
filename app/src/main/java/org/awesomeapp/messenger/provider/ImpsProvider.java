@@ -1398,25 +1398,22 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
         {
             SQLiteDatabase db = getDBHelper().getWritableDatabase();
 
-            synchronized (db)
+            if (db.isOpen()) //db can be closed if service sign out takes longer than app/cacheword lock
             {
-                if (db.isOpen()) //db can be closed if service sign out takes longer than app/cacheword lock
+                try {
+                    db.beginTransaction();
+                    result = deleteInternal(url, selection, selectionArgs);
+                    db.setTransactionSuccessful();
+                    db.endTransaction();
+                }
+                catch (Exception e)
                 {
-                    try {
-                        db.beginTransaction();
-                        result = deleteInternal(url, selection, selectionArgs);
-                        db.setTransactionSuccessful();
-                        db.endTransaction();
-                    }
-                    catch (Exception e)
-                    {
-                        //could not delete
-                    }
+                    //could not delete
+                }
 
-                    if (result > 0) {
-                        getContext().getContentResolver()
-                                .notifyChange(url, null /* observer */, false /* sync */);
-                    }
+                if (result > 0) {
+                    getContext().getContentResolver()
+                            .notifyChange(url, null /* observer */, false /* sync */);
                 }
             }
         }
@@ -1433,23 +1430,22 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
             try
             {
                 SQLiteDatabase db = getDBHelper().getWritableDatabase();
-                synchronized (db)
+
+                if (db.isOpen())
                 {
-                    if (db.isOpen())
-                    {
-                        db.beginTransaction();
-                        try {
-                            result = insertInternal(url, values);
-                            db.setTransactionSuccessful();
-                        } finally {
-                            db.endTransaction();
-                        }
-                        if (result != null) {
-                            getContext().getContentResolver()
-                                    .notifyChange(url, null /* observer */, false /* sync */);
-                        }
+                    db.beginTransaction();
+                    try {
+                        result = insertInternal(url, values);
+                        db.setTransactionSuccessful();
+                    } finally {
+                        db.endTransaction();
+                    }
+                    if (result != null) {
+                        getContext().getContentResolver()
+                                .notifyChange(url, null /* observer */, false /* sync */);
                     }
                 }
+
             }
             catch (IllegalStateException ise)
             {

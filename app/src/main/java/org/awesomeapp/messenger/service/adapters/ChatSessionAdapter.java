@@ -1067,11 +1067,12 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
             long time = msg.getDateTime().getTime();
 
+            /**
             if (msg.getID() != null
                     &&
                     Imps.messageExists(mContentResolver, msg.getID())) {
                 return false; //this message is a duplicate
-            }
+            }**/
 
             boolean allowWebDownloads = true;
             String mediaLink = checkForLinkedMedia(username, body, allowWebDownloads);
@@ -1079,20 +1080,16 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
             boolean wasMessageSeen = false;
 
-            Uri messageUri = null;
-
             if (mediaLink != null) {
                String downloadUriString = downloadMedia (mediaLink, msg.getID());
-               if (!TextUtils.isEmpty(downloadUriString)) {
-                   messageUri = Uri.parse(downloadUriString);
-                   downloaded = true;
-               }
-
+               downloaded = !TextUtils.isEmpty(downloadUriString);
             }
 
             //if it wasn't a media file or we had an issue downloading, then it is chat
             if (!downloaded) {
                 insertOrUpdateChat(body);
+
+                Uri messageUri = null;
 
                 if (msg.getID() == null)
                     messageUri = insertMessageInDb(nickname, body, time, msg.getType(), null);
@@ -1837,15 +1834,15 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                     if (mediaLink.startsWith("aesgcm"))
                         type = Imps.MessageType.INCOMING_ENCRYPTED_VERIFIED;
 
-                    Uri vfsUri = SecureMediaStore.vfsUri(fileDownload.getAbsolutePath());
+                    result = SecureMediaStore.vfsUri(fileDownload.getAbsolutePath()).toString();
 
-                    insertOrUpdateChat(vfsUri.toString());
+                    insertOrUpdateChat(result);
 
-                    Imps.deleteMessageInDb(service.getContentResolver(),msgId);
+                 //   Imps.deleteMessageInDb(service.getContentResolver(),msgId);
                     Uri messageUri = Imps.insertMessageInDb(service.getContentResolver(),
                             mIsGroupChat, getId(),
                             true, mNickname,
-                            vfsUri.toString(), System.currentTimeMillis(), type,
+                            result, System.currentTimeMillis(), type,
                             0, msgId, mimeType);
 
                     if (messageUri == null) //error writing to database
@@ -1853,10 +1850,6 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                         Log.e(TAG,"error saving message to the db: " + msgId);
 
                         return null;
-                    }
-                    else
-                    {
-                        result = messageUri.toString();
                     }
 
                     int percent = (int) (100);

@@ -692,11 +692,26 @@ public class ConversationDetailActivity extends BaseActivity {
                     return ;
                 }
 
+                ShareRequest request = new ShareRequest();
+                request.deleteFile = false;
+                request.resizeImage = true;
+                request.importContent = true;
+                request.media = uri;
+                request.mimeType = "image/jpeg";
 
+                try {
+                    mConvoView.setMediaDraft(request);
+                }
+                catch (Exception e){
+                    Log.w(ImApp.LOG_TAG,"error setting media draft",e);
+                }
+                /**
                 boolean deleteFile = false;
                 boolean resizeImage = true;
                 boolean importContent = true;
+
                 handleSendDelete(uri, "image/jpeg", deleteFile, resizeImage, importContent);
+                 **/
             }
             else if (requestCode == REQUEST_SEND_FILE || requestCode == REQUEST_SEND_AUDIO) {
                 Uri uri = resultIntent.getData() ;
@@ -729,6 +744,11 @@ public class ConversationDetailActivity extends BaseActivity {
 
 
         }
+    }
+
+    public void sendShareRequest (ShareRequest sreq)
+    {
+        handleSendDelete(sreq.media,sreq.mimeType,sreq.deleteFile,sreq.resizeImage,sreq.importContent);
     }
 
     public boolean handleSendData(IChatSession session, Uri uri, String mimeType) {
@@ -890,6 +910,15 @@ public class ConversationDetailActivity extends BaseActivity {
             //noinspection deprecation
             return getResources().getConfiguration().locale;
         }
+    }
+
+    class ShareRequest
+    {
+        boolean deleteFile = false;
+        boolean resizeImage = false;
+        boolean importContent = false;
+        Uri media;
+        String mimeType;
     }
 
     public static final int REQUEST_PICK_CONTACTS = RESULT_FIRST_USER + 1;

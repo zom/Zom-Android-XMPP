@@ -35,6 +35,7 @@ import android.database.ContentObserver;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.database.DataSetObserver;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Rect;
@@ -138,9 +139,11 @@ import org.awesomeapp.messenger.ui.widgets.RoundedAvatarDrawable;
 import org.awesomeapp.messenger.util.Debug;
 import org.awesomeapp.messenger.util.GiphyAPI;
 import org.awesomeapp.messenger.util.LogCleaner;
+import org.awesomeapp.messenger.util.SecureMediaStore;
 import org.awesomeapp.messenger.util.SystemServices;
 import org.ironrabbit.type.CustomTypefaceSpan;
 
+import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -199,6 +202,8 @@ public class ConversationView {
    // private TextView mTitle;
     /*package*/RecyclerView mHistory;
     EditText mComposeMessage;
+    ConversationDetailActivity.ShareRequest mShareDraft;
+
     private ImageButton mSendButton, mMicButton;
     private TextView mButtonTalk;
     private ImageButton mButtonAttach;
@@ -1605,6 +1610,7 @@ public class ConversationView {
 
 
     public void bindInvitation(long invitationId) {
+        /**
         Uri uri = ContentUris.withAppendedId(Imps.Invitation.CONTENT_URI, invitationId);
         ContentResolver cr = mActivity.getContentResolver();
         Cursor cursor = cr.query(uri, INVITATION_PROJECT, null, null, null);
@@ -1628,7 +1634,7 @@ public class ConversationView {
         } finally {
             cursor.close();
         }
-
+        **/
 
     }
 
@@ -1653,13 +1659,13 @@ public class ConversationView {
     private void setViewType(int type) {
         mViewType = type;
         if (type == VIEW_TYPE_CHAT) {
-            mActivity.findViewById(R.id.invitationPanel).setVisibility(View.GONE);
+       //     mActivity.findViewById(R.id.invitationPanel).setVisibility(View.GONE);
        //     mActivity.findViewById(R.id.subscription).setVisibility(View.GONE);
             setChatViewEnabled(true);
         } else if (type == VIEW_TYPE_INVITATION) {
             //setChatViewEnabled(false);
-            mActivity.findViewById(R.id.invitationPanel).setVisibility(View.VISIBLE);
-            mActivity.findViewById(R.id.btnAccept).requestFocus();
+         //   mActivity.findViewById(R.id.invitationPanel).setVisibility(View.VISIBLE);
+           // mActivity.findViewById(R.id.btnAccept).requestFocus();
         } else if (type == VIEW_TYPE_SUBSCRIPTION) {
             //setChatViewEnabled(false);
          //   mActivity.findViewById(R.id.subscription).setVisibility(View.VISIBLE);
@@ -1984,15 +1990,41 @@ public class ConversationView {
 
     void sendMessage() {
 
-        String msg = mComposeMessage.getText().toString();
-        //new SendMessageAsyncTask().execute(msg);
-        sendMessageAsync(msg);
-        sendTypingStatus (false);
-        /**
-        if (ds != null)
+        if (mShareDraft != null)
         {
-            ds.close();
-        }*/
+            mActivity.sendShareRequest(mShareDraft);
+            mShareDraft = null;
+            mActivity.findViewById(R.id.mediaPreviewContainer).setVisibility(View.GONE);
+        }
+
+        String msg = mComposeMessage.getText().toString();
+
+
+        if (!TextUtils.isEmpty(msg))
+            sendMessageAsync(msg);
+
+        sendTypingStatus (false);
+
+    }
+
+    void setMessageDraft (String draftMessage) {
+
+        mComposeMessage.setText(draftMessage);
+        mComposeMessage.requestFocus();
+    }
+
+    void setMediaDraft (ConversationDetailActivity.ShareRequest mediaDraft) throws IOException {
+
+        mShareDraft = mediaDraft;
+
+        mActivity.findViewById(R.id.mediaPreviewContainer).setVisibility(View.VISIBLE);
+        Bitmap bmpPreview = SecureMediaStore.getThumbnailFile(mActivity,mediaDraft.media,1000);
+        ((ImageView)mActivity.findViewById(R.id.mediaPreview)).setImageBitmap(bmpPreview);
+
+        mViewAttach.setVisibility(View.GONE);
+        mComposeMessage.setText(" ");
+        toggleInputMode();
+
     }
 
     void sendMessageAsync(final String msg) {
