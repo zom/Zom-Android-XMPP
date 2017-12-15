@@ -14,8 +14,6 @@ addons:
     packages:
       - fdroidserver
       - openssh-client
-      - python3-qrcode
-      - rsync
 
 android:
   components:
@@ -52,8 +50,9 @@ script:
   - ./gradlew connectedCheck -PdisablePreDex
 
 after_success:
-  - "test -z \"$DEBUG_KEYSTORE\" && exit"
-  - ./nightly/deploy
+  - git clone --depth=1 https://gitlab.com/fdroid/fdroidserver
+  - export PATH=`pwd`/fdroidserver:$PATH
+  - fdroid nightly -v
 
 after_failure:
   - find * -name lint-results.xml | xargs cat
