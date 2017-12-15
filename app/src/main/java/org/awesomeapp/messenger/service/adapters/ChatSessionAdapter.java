@@ -1059,6 +1059,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             String bareUsername = msg.getFrom().getBareAddress();
             String nickname = getNickName(username);
             Contact contact = null;
+
             try {
                 contact = mConnection.getContactListManager().getContactByAddress(bareUsername);
                 nickname = contact.getName();
@@ -1067,13 +1068,6 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
             long time = msg.getDateTime().getTime();
 
-            /**
-            if (msg.getID() != null
-                    &&
-                    Imps.messageExists(mContentResolver, msg.getID())) {
-                return false; //this message is a duplicate
-            }**/
-
             boolean allowWebDownloads = true;
             String mediaLink = checkForLinkedMedia(username, body, allowWebDownloads);
             boolean downloaded = false;
@@ -1081,7 +1075,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             boolean wasMessageSeen = false;
 
             if (mediaLink != null) {
-               String downloadUriString = downloadMedia (mediaLink, msg.getID());
+               String downloadUriString = downloadMedia (mediaLink, msg.getID(), nickname);
                downloaded = !TextUtils.isEmpty(downloadUriString);
             }
 
@@ -1816,6 +1810,11 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
     public String downloadMedia (String mediaLink, String msgId)
     {
+        return downloadMedia(mediaLink, msgId, mNickname);
+    }
+
+    public String downloadMedia (String mediaLink, String msgId, String nickname)
+    {
         String result = null;
 
         try {
@@ -1841,7 +1840,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                  //   Imps.deleteMessageInDb(service.getContentResolver(),msgId);
                     Uri messageUri = Imps.insertMessageInDb(service.getContentResolver(),
                             mIsGroupChat, getId(),
-                            true, mNickname,
+                            true, nickname,
                             result, System.currentTimeMillis(), type,
                             0, msgId, mimeType);
 
@@ -1852,19 +1851,14 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                         return null;
                     }
 
-                    int percent = (int) (100);
-
-                    String[] path = mediaLink.split("/");
-                    String sanitizedPath = SystemServices.sanitize(path[path.length - 1]);
-
-                    int N = 0;
+                    String sanitizedPath = Uri.parse(mediaLink).getLastPathSegment();
 
                     try {
-                        N = mRemoteListeners.beginBroadcast();
+                        int N = mRemoteListeners.beginBroadcast();
                         for (int i = 0; i < N; i++) {
                             IChatListener listener = mRemoteListeners.getBroadcastItem(i);
                             try {
-                                listener.onIncomingFileTransferProgress(sanitizedPath, percent);
+                                listener.onIncomingFileTransferProgress(sanitizedPath, 100);
                             } catch (RemoteException e) {
                                 // The RemoteCallbackList will take care of removing the
                                 // dead listeners.

@@ -366,7 +366,13 @@ public class MessageListItem extends FrameLayout {
                         public void run ()
                         {
                             try {
-                                session.downloadMedia(mediaLink,packetId);
+                                session.downloadMedia(mediaLink,packetId
+                                        /**
+                                         if (msg.getID() != null
+                                         &&
+                                         Imps.messageExists(mContentResolver, msg.getID())) {
+                                         return false; //this message is a duplicate
+                                         }**/);
                             }
                             catch (Exception e){
                                 Log.e("Download","error downloading media",e);
