@@ -3,16 +3,17 @@
     android:id="@+id/player_layout"
     android:layout_width="match_parent"
     android:layout_height="50dp"
-    android:background="@drawable/gray_border_wo_padding"
     android:gravity="center_vertical"
-    android:paddingLeft="4dp" >
+    android:padding="4dp" >
 
     <ImageView
         android:id="@+id/play"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="6"
-        android:src="@android:drawable/ic_media_play" />
+        android:src="@android:drawable/ic_media_play"
+        android:tint="@color/zom_primary"
+        />
 
     <ImageView
         android:id="@+id/pause"
@@ -20,7 +21,10 @@
         android:layout_height="wrap_content"
         android:layout_weight="6"
         android:src="@android:drawable/ic_media_pause"
-        android:visibility="gone" />
+        android:visibility="gone"
+        android:tint="@color/zom_primary"
+
+        />
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -34,7 +38,9 @@
             android:id="@+id/media_seekbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical" />
+            android:layout_gravity="center_vertical"
+            android:thumbTint="@color/zom_primary"
+            />
 
         <TextView
             android:id="@+id/playback_time"
@@ -43,7 +49,7 @@
             android:layout_gravity="right|top"
             android:ellipsize="end"
             android:inputType="text"
-            android:textColor="@android:color/darker_gray"
+            android:textColor="@color/zom_primary"
             android:textSize="11sp" />
     </FrameLayout>
 
