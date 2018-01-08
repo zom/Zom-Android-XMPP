@@ -35,7 +35,7 @@ android:paddingTop="40dp"
             android:gravity="center_horizontal"
             android:autoLink="none"
             android:cursorVisible="true"
-            android:inputType="textEmailAddress"
+            android:inputType="textEmailAddress|textNoSuggestions"
             android:layout_margin="0dp"
             android:layout_marginLeft="50dp"
             android:layout_marginRight="50dp"
@@ -109,6 +109,7 @@ android:paddingTop="40dp"
             android:layout_marginRight="3dp"
             android:layout_marginTop="20dp"
             android:textColor="?messageTextPrimary"
+            android:inputType="textFilter|textNoSuggestions"
 
             />
         <org.ironrabbit.type.CustomTypefaceTextView
