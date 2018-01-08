@@ -442,7 +442,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         long sendTime = System.currentTimeMillis();
 
         msg.setBody(publishUrl);
-        //insertOrUpdateChat(mediaPath);
+       // insertOrUpdateChat(mediaPath);
 
         int newType = mChatSession.sendMessageAsync(msg);
 
@@ -1054,6 +1054,10 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
     class ListenerAdapter implements MessageListener, GroupMemberListener, OtrEngineListener {
 
         public boolean onIncomingMessage(ChatSession ses, final org.awesomeapp.messenger.model.Message msg, boolean notifyUser) {
+
+            if (Imps.messageExists(mContentResolver,msg.getID()))
+                return false; //this was sent by me
+
             String body = msg.getBody();
             String username = msg.getFrom().getAddress();
             String bareUsername = msg.getFrom().getBareAddress();
@@ -1082,6 +1086,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
             //if it wasn't a media file or we had an issue downloading, then it is chat
             if (!downloaded) {
+
                 insertOrUpdateChat(body);
 
                 Uri messageUri = null;

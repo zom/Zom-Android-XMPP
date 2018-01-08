@@ -2290,7 +2290,6 @@ public class XmppConnection extends ImConnection {
                     else if (rec.getFrom().getResource().equals(rec.getTo().getUser())) {
                         try {
 
-
                             //rec.setType(Imps.MessageType.OUTGOING);
                             Occupant oc = mChatGroupManager.getMultiUserChat(rec.getFrom().getBareAddress()).getOccupant(JidCreate.entityFullFrom(rec.getFrom().getAddress()));
                             if (oc != null && oc.getJid().equals(mUser.getAddress().getAddress()))
