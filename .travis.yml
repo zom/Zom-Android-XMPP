@@ -50,8 +50,6 @@ script:
   - ./gradlew connectedCheck -PdisablePreDex
 
 after_success:
-  - git clone --depth=1 https://gitlab.com/fdroid/fdroidserver
-  - export PATH=`pwd`/fdroidserver:$PATH
   - fdroid nightly -v
 
 after_failure:
