@@ -74,6 +74,8 @@ public class Preferences {
     private final static String PROXY_SERVER_HOST = "pref_proxy_server_host";
     private final static String PROXY_SERVER_PORT = "pref_proxy_server_port";
 
+    private final static String BLOCK_SCREENSHOTS = "prefBlockScreenshots";
+
     private static Context context;
     private static SharedPreferences preferences;
     private static Preferences instance;
@@ -277,9 +279,10 @@ public class Preferences {
 
     public static int getProxyServerPort ()
     {
-        return preferences.getInt(PROXY_SERVER_HOST,-1);
+        return preferences.getInt(PROXY_SERVER_PORT,-1);
     }
 
+    public static boolean doBlockScreenshots () { return preferences.getBoolean(BLOCK_SCREENSHOTS,true);}
 
 
 

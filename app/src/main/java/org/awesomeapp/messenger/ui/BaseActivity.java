@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 
+import org.awesomeapp.messenger.Preferences;
 import org.ironrabbit.type.CustomTypefaceManager;
 
 import im.zom.messenger.R;
@@ -27,7 +28,7 @@ public class BaseActivity extends AppCompatActivity {
 
         final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 
-        if (settings.getBoolean("prefBlockScreenshots",true))
+        if (Preferences.doBlockScreenshots())
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
                     WindowManager.LayoutParams.FLAG_SECURE);
 

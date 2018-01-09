@@ -71,6 +71,7 @@ import com.github.javiersantos.appupdater.enums.UpdateFrom;
 import org.awesomeapp.messenger.model.Contact;
 import org.awesomeapp.messenger.model.ImConnection;
 import org.awesomeapp.messenger.model.ImErrorInfo;
+import org.awesomeapp.messenger.model.Presence;
 import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.service.IChatSession;
@@ -142,12 +143,10 @@ public class MainActivity extends BaseActivity implements IConnectionListener {
 
         super.onCreate(savedInstanceState);
 
-        final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-
-        if (settings.getBoolean("prefBlockScreenshots",true))
+        if (Preferences.doBlockScreenshots()) {
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
                     WindowManager.LayoutParams.FLAG_SECURE);
-
+        }
 
         setContentView(R.layout.awesome_activity_main);
 
