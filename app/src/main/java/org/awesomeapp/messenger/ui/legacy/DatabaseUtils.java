@@ -124,17 +124,17 @@ public class DatabaseUtils {
         return builder.build();
     }
 
-    public static void updateAvatarBlob(ContentResolver resolver, Uri updateUri, byte[] data,
+    public static int updateAvatarBlob(ContentResolver resolver, Uri updateUri, byte[] data,
             String username) {
-        ContentValues values = new ContentValues(3);
+        ContentValues values = new ContentValues(1);
         values.put(Imps.Avatars.DATA, data);
 
         StringBuilder buf = new StringBuilder(Imps.Avatars.CONTACT);
-        buf.append("=?");
+        buf.append(" LIKE ?");
 
         String[] selectionArgs = new String[] { username };
 
-        resolver.update(updateUri, values, buf.toString(), selectionArgs);
+        return resolver.update(updateUri, values, buf.toString(), selectionArgs);
 
     }
 
@@ -182,7 +182,8 @@ public class DatabaseUtils {
         values.put(Imps.Avatars.PROVIDER, providerId);
         values.put(Imps.Avatars.ACCOUNT, accountId);
         values.put(Imps.Avatars.HASH, hash);
-        resolver.insert(updateUri, values);
+
+        Uri resultUri = resolver.insert(updateUri, values);
 
     }
 

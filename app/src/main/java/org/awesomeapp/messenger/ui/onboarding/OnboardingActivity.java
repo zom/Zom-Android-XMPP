@@ -23,6 +23,7 @@ import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.widget.ListPopupWindow;
 import android.text.TextUtils;
 import android.util.Log;
@@ -66,10 +67,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.KeyPair;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import im.zom.messenger.BuildConfig;
 import im.zom.messenger.R;
 import org.awesomeapp.messenger.util.Languages;
 
@@ -1007,7 +1010,10 @@ public class OnboardingActivity extends BaseActivity {
 
         if (mOutputFileUri == null) {
             File photo = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), "zomavatar.jpg");
-            mOutputFileUri = Uri.fromFile(photo);
+            mOutputFileUri = FileProvider.getUriForFile(this,
+                    BuildConfig.APPLICATION_ID + ".provider",
+                    photo);
+
         }
 
         return mOutputFileUri;

@@ -484,7 +484,10 @@ public class XmppConnection extends ImConnection {
                         debug(TAG, "found avatar image in vcard for: " + bareJid.toString());
                         debug(TAG, "start avatar length: " + avatarBytes.length);
 
-                        DatabaseUtils.insertAvatarBlob(resolver, Imps.Avatars.CONTENT_URI, mProviderId, mAccountId, avatarBytes, avatarHash, bareJid.toString());
+                        int rowsUpdated = DatabaseUtils.updateAvatarBlob(resolver, Imps.Avatars.CONTENT_URI, avatarBytes, bareJid.toString());
+
+                        if (rowsUpdated <= 0)
+                            DatabaseUtils.insertAvatarBlob(resolver, Imps.Avatars.CONTENT_URI, mProviderId, mAccountId, avatarBytes, avatarHash, bareJid.toString());
 
                         return true;
                     }

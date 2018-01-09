@@ -26,6 +26,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
@@ -63,6 +64,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import im.zom.messenger.BuildConfig;
 import im.zom.messenger.R;
 
 import static android.content.Context.CLIPBOARD_SERVICE;
@@ -417,7 +419,10 @@ public class AccountFragment extends Fragment {
 
             byte[] avatarBytesCompressed = stream.toByteArray();
             String avatarHash = "nohash";
-            DatabaseUtils.insertAvatarBlob(getActivity().getContentResolver(), Imps.Avatars.CONTENT_URI, mProviderId, mAccountId, avatarBytesCompressed, avatarHash, mUserAddress);
+            int rowsUpdated = DatabaseUtils.updateAvatarBlob(getActivity().getContentResolver(), Imps.Avatars.CONTENT_URI, avatarBytesCompressed, mUserAddress);
+
+            if (rowsUpdated <= 0)
+                DatabaseUtils.insertAvatarBlob(getActivity().getContentResolver(), Imps.Avatars.CONTENT_URI, mProviderId, mAccountId, avatarBytesCompressed, avatarHash, mUserAddress);
         } catch (Exception e) {
             Log.w(ImApp.LOG_TAG, "error loading image bytes", e);
         }
@@ -499,7 +504,10 @@ public class AccountFragment extends Fragment {
         Uri outputFileUri = null;
         File getImage = getActivity().getExternalCacheDir();
         if (getImage != null) {
-            outputFileUri = Uri.fromFile(new File(getImage.getPath(), "pickImageResult.jpg"));
+            getImage = (new File(getImage.getPath(), "pickImageResult.jpg"));
+            outputFileUri = FileProvider.getUriForFile(getActivity(),
+                    BuildConfig.APPLICATION_ID + ".provider",
+                    getImage);
         }
         return outputFileUri;
     }
