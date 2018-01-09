@@ -423,6 +423,15 @@ public class AccountFragment extends Fragment {
 
             if (rowsUpdated <= 0)
                 DatabaseUtils.insertAvatarBlob(getActivity().getContentResolver(), Imps.Avatars.CONTENT_URI, mProviderId, mAccountId, avatarBytesCompressed, avatarHash, mUserAddress);
+
+            if (mConn != null) {
+                try {
+                    //this will also trigger an update of the avatar
+                    mConn.changeNickname(mTvNickname.getText().toString());
+                } catch (RemoteException e) {
+                }
+            }
+
         } catch (Exception e) {
             Log.w(ImApp.LOG_TAG, "error loading image bytes", e);
         }

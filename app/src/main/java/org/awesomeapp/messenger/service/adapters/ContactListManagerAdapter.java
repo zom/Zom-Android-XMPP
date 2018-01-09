@@ -1058,14 +1058,21 @@ public class ContactListManagerAdapter extends
 
         ContentValues values = new ContentValues();
         values.put(Imps.Contacts.ACCOUNT, mConn.getAccountId());
+        values.put(Imps.Contacts.PROVIDER, mConn.getProviderId());
         putStringArrayList(values, Imps.Contacts.USERNAME, usernames);
         putStringArrayList(values, Imps.Contacts.NICKNAME, nicknames);
+        mResolver.update(Imps.Contacts.BULK_CONTENT_URI, values, null, null);
+
+        values = new ContentValues();
+        values.put(Imps.Contacts.ACCOUNT, mConn.getAccountId());
+        values.put(Imps.Contacts.PROVIDER, mConn.getProviderId());
+        putStringArrayList(values, Imps.Contacts.USERNAME, usernames);
         putStringArrayList(values, Imps.Presence.PRESENCE_STATUS, statusArray);
         putStringArrayList(values, Imps.Presence.PRESENCE_CUSTOM_STATUS, customStatusArray);
         putStringArrayList(values, Imps.Presence.CONTENT_TYPE, clientTypeArray);
         putStringArrayList(values, Imps.Presence.JID_RESOURCE, resourceArray);
-
         mResolver.update(Imps.Presence.BULK_CONTENT_URI, values, null, null);
+
     }
 
     void updateAvatarsContent(Contact[] contacts) {

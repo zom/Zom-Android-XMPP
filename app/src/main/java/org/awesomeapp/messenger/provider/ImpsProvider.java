@@ -2314,14 +2314,13 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
             Long provider = values.getAsLong(Imps.Contacts.PROVIDER);
             Long account = values.getAsLong(Imps.Contacts.ACCOUNT);
 
-            ContentValues contactValues = new ContentValues();
-            contactValues.put(Imps.Contacts.PROVIDER, provider);
-            contactValues.put(Imps.Contacts.ACCOUNT, account);
-
-            StringBuilder updateSelection = new StringBuilder();
-            String[] updateSelectionArgs = new String[1];
-
             for (int i = 0; i < usernameCount; i++) {
+
+
+                ContentValues contactValues = new ContentValues();
+                contactValues.put(Imps.Contacts.PROVIDER, provider);
+                contactValues.put(Imps.Contacts.ACCOUNT, account);
+
                 String username = usernames.get(i);
                 String nickname = nicknames.get(i);
                 int type = 0;
@@ -2330,37 +2329,52 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
                 int quickContact = 0;
                 int rejected = 0;
 
+
+                contactValues.put(Imps.Contacts.USERNAME, username);
+                contactValues.put(Imps.Contacts.NICKNAME, nickname);
+
                 try {
-                    type = Integer.parseInt(contactTypeArray.get(i));
-                    subscriptionStatus = Integer.parseInt(subscriptionStatusArray.get(i));
-                    subscriptionType = Integer.parseInt(subscriptionTypeArray.get(i));
-                    quickContact = Integer.parseInt(quickContactArray.get(i));
-                    rejected = Integer.parseInt(rejectedArray.get(i));
+                    if (contactTypeArray != null) {
+                        type = Integer.parseInt(contactTypeArray.get(i));
+                        contactValues.put(Imps.Contacts.TYPE, type);
+                    }
+
+                    if (subscriptionStatusArray != null) {
+                        subscriptionStatus = Integer.parseInt(subscriptionStatusArray.get(i));
+                        contactValues.put(Imps.Contacts.SUBSCRIPTION_STATUS, subscriptionStatus);
+                    }
+
+                    if (subscriptionTypeArray != null) {
+                        subscriptionType = Integer.parseInt(subscriptionTypeArray.get(i));
+                        contactValues.put(Imps.Contacts.SUBSCRIPTION_TYPE, subscriptionType);
+                    }
+
+                    if (quickContactArray != null) {
+                        quickContact = Integer.parseInt(quickContactArray.get(i));
+                        contactValues.put(Imps.Contacts.QUICK_CONTACT, quickContact);
+                    }
+
+                    if (rejectedArray != null) {
+                        rejected = Integer.parseInt(rejectedArray.get(i));
+                        contactValues.put(Imps.Contacts.REJECTED, rejected);
+
+                    }
+
                 } catch (NumberFormatException ex) {
                     LogCleaner.error(LOG_TAG, "insertBulkContacts: caught ",ex);
                 }
 
                 
-                    log("updateBulkContacts[" + i + "] username=" + username + ", nickname="
-                        + nickname + ", type=" + type + ", subscriptionStatus="
-                        + subscriptionStatus + ", subscriptionType=" + subscriptionType + ", qc="
-                        + quickContact);
+                log("updateBulkContacts[" + i + "] username=" + username + ", nickname="
+                    + nickname + ", type=" + type + ", subscriptionStatus="
+                    + subscriptionStatus + ", subscriptionType=" + subscriptionType + ", qc="
+                    + quickContact);
 
-                contactValues.put(Imps.Contacts.USERNAME, username);
-                contactValues.put(Imps.Contacts.NICKNAME, nickname);
-                contactValues.put(Imps.Contacts.TYPE, type);
-                contactValues.put(Imps.Contacts.SUBSCRIPTION_STATUS, subscriptionStatus);
-                contactValues.put(Imps.Contacts.SUBSCRIPTION_TYPE, subscriptionType);
-                contactValues.put(Imps.Contacts.QUICK_CONTACT, quickContact);
-                contactValues.put(Imps.Contacts.REJECTED, rejected);
-
-                // append username to the selection clause
-                updateSelection.delete(0, updateSelection.length());
-                updateSelection.append(userWhere);
-                updateSelection.append(" AND ");
+                StringBuffer updateSelection = new StringBuffer();
                 updateSelection.append(Imps.Contacts.USERNAME);
-                updateSelection.append("=?");
+                updateSelection.append(" LIKE ?");
 
+                String[] updateSelectionArgs = new String[1];
                 updateSelectionArgs[0] = username;
 
                 int numUpdated = db.update(TABLE_CONTACTS, contactValues,

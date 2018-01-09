@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Proxy;
 import android.os.Build;
 import android.os.RemoteException;
 import android.text.TextUtils;
@@ -155,6 +156,7 @@ import java.io.Writer;
 import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
@@ -455,7 +457,6 @@ public class XmppConnection extends ImConnection {
                     {
                         contact.setName(vCard.getNickName());
                         mContactListManager.doSetContactName(contact.getAddress().getBareAddress(), contact.getName());
-
                     }
 
                 }
@@ -1696,7 +1697,7 @@ public class XmppConnection extends ImConnection {
     public void broadcastMigrationIdentity (String newIdentity)
     {
 
-        sendVCard(newIdentity);
+        sendVCard(newIdentity, false);
 
         String migrateMessage = mContext.getString(R.string.migrate_message) + ' ' + newIdentity;
         mUserPresence = new Presence(Presence.AVAILABLE, migrateMessage, Presence.CLIENT_TYPE_MOBILE);
@@ -1722,7 +1723,7 @@ public class XmppConnection extends ImConnection {
             public void run ()
             {
 
-                sendVCard();
+                sendVCard(null, true);
 
                 sendPresencePacket();
 
@@ -1733,10 +1734,10 @@ public class XmppConnection extends ImConnection {
 
     public void sendVCard ()
     {
-        sendVCard(null);
+        sendVCard(null, false);
     }
 
-    public void sendVCard (String migrateJabberId)
+    public void sendVCard (String migrateJabberId, boolean forceAvatarRefresh)
     {
 
         if (mConnection == null || getState() != ImConnection.LOGGED_IN)
@@ -1768,6 +1769,7 @@ public class XmppConnection extends ImConnection {
             }
 
             vCard.setNickName(mUser.getName());
+            vCard.setFirstName(mUser.getName());
 
             //if we have moved to a new account, send it here
             if (migrateJabberId != null)
@@ -1779,7 +1781,7 @@ public class XmppConnection extends ImConnection {
                 vCard.setJabberId(mUser.getAddress().getBareAddress());
             }
 
-            if (setAvatar) {
+            if (setAvatar || forceAvatarRefresh) {
                 byte[] avatar = DatabaseUtils.getAvatarBytesFromAddress(mContext.getContentResolver(), mUser.getAddress().getBareAddress());
                 if (avatar != null) {
                     vCard.setAvatar(avatar, "image/jpeg");
@@ -4712,23 +4714,46 @@ public class XmppConnection extends ImConnection {
             if(fileSize >= 2147483647L) {
                 throw new IllegalArgumentException("File size " + fileSize + " must be less than " + 2147483647);
             } else {
-               // int fileSizeInt = (int)fileSize;
+                // int fileSizeInt = (int)fileSize;
                 URL putUrl = slot.getPutUrl();
-                HttpURLConnection urlConnection = (HttpURLConnection)putUrl.openConnection();
+                HttpURLConnection urlConnection = null;
+
+                if (Build.VERSION.SDK_INT >= 23)
+                {
+                    //urlconnection socks proxying only works on SDK 23+
+                    if (!TextUtils.isEmpty(Preferences.getProxyServerHost()))
+                    {
+                        java.net.Proxy proxy =new java.net.Proxy(java.net.Proxy.Type.SOCKS,new InetSocketAddress(Preferences.getProxyServerHost(),Preferences.getProxyServerPort()));
+                        urlConnection = (HttpURLConnection) putUrl.openConnection(proxy);
+                    }
+                    else if (Preferences.useAdvancedNetworking()) {
+                        //setProxy("SOCKS5","127.0.0.1",31059);
+                        java.net.Proxy proxy =new java.net.Proxy(java.net.Proxy.Type.SOCKS,new InetSocketAddress("127.0.0.1",31059));
+                        urlConnection = (HttpURLConnection) putUrl.openConnection(proxy);
+                    }
+                    else
+                    {
+                        urlConnection = (HttpURLConnection) putUrl.openConnection();
+                    }
+                }
+                else {
+                    urlConnection = (HttpURLConnection) putUrl.openConnection();
+                }
+
                 urlConnection.setRequestMethod("PUT");
                 urlConnection.setUseCaches(false);
                 urlConnection.setDoOutput(true);
-               // urlConnection.setFixedLengthStreamingMode(fileSizeInt);
+                // urlConnection.setFixedLengthStreamingMode(fileSizeInt);
                 urlConnection.setRequestProperty("Content-Type", "application/octet-stream;");
                 Iterator tlsSocketFactory = slot.getHeaders().entrySet().iterator();
 
-                while(tlsSocketFactory.hasNext()) {
-                    Map.Entry outputStream = (Map.Entry)tlsSocketFactory.next();
-                    urlConnection.setRequestProperty((String)outputStream.getKey(), (String)outputStream.getValue());
+                while (tlsSocketFactory.hasNext()) {
+                    Map.Entry outputStream = (Map.Entry) tlsSocketFactory.next();
+                    urlConnection.setRequestProperty((String) outputStream.getKey(), (String) outputStream.getValue());
                 }
 
-                if(urlConnection instanceof HttpsURLConnection) {
-                    HttpsURLConnection httpsUrlConn = (HttpsURLConnection)urlConnection;
+                if (urlConnection instanceof HttpsURLConnection) {
+                    HttpsURLConnection httpsUrlConn = (HttpsURLConnection) urlConnection;
                     httpsUrlConn.setHostnameVerifier(mMemTrust.wrapHostnameVerifier(new org.apache.http.conn.ssl.StrictHostnameVerifier()));
                     httpsUrlConn.setSSLSocketFactory(sslContext.getSocketFactory());
                 }

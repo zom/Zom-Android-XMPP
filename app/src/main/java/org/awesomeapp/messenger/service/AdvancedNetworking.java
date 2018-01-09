@@ -57,8 +57,8 @@ public class AdvancedNetworking {
             if (mFileTransport != null)
             {
 
-                String serverAddress = "103.3.60.190";
-                String serverPort = "8888";
+                String serverAddress = "172.104.48.102";
+                String serverPort = "443";
                 String serverPassword = "zomzom123";
                 String serverCipher = "aes-128-cfb";
                 String localAddress = "127.0.0.1";
