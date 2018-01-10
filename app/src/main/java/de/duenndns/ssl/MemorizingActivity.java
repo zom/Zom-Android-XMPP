@@ -33,6 +33,7 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.*;
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import im.zom.messenger.R;
 
@@ -54,6 +55,7 @@ public class MemorizingActivity extends Activity
 	@Override
 	public void onResume() {
 		super.onResume();
+		/**
 		Intent i = getIntent();
 		decisionId = i.getIntExtra(MemorizingTrustManager.DECISION_INTENT_ID, MTMDecision.DECISION_INVALID);
 		int titleId = i.getIntExtra(MemorizingTrustManager.DECISION_TITLE_ID, R.string.mtm_accept_cert);
@@ -67,6 +69,8 @@ public class MemorizingActivity extends Activity
 			.setOnCancelListener(this)
 			.create();
 		dialog.show();
+		 **/
+		Toast.makeText(this,getString(R.string.cant_connect_to_server),Toast.LENGTH_LONG).show();
 	}
 
 	@Override
