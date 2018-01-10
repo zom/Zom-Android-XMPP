@@ -36,6 +36,7 @@ import android.preference.PreferenceManager;
 
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.Preferences;
+import org.awesomeapp.messenger.service.RemoteImService;
 import org.awesomeapp.messenger.ui.PanicSetupActivity;
 import org.awesomeapp.messenger.util.Languages;
 
@@ -202,6 +203,14 @@ public class SettingActivity extends PreferenceActivity {
 
         mForegroundService = (CheckBoxPreference) findPreference("pref_foreground_enable");
         mHeartbeatInterval = (EditTextPreference) findPreference("pref_heartbeat_interval");
+
+        findPreference("prefAdvancedNetworking").setOnPreferenceClickListener(new OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                RemoteImService.installTransports(getApplicationContext());
+                return true;
+            }
+        });
     }
 
     @Override

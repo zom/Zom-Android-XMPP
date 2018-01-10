@@ -271,7 +271,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         startForeground(notifyId, getForegroundNotification());
 
-        installTransports();
+        installTransports(this);
 
     }
 
@@ -598,7 +598,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
         }, delay);
     }
 
-    private void installTransports ()
+    public static void installTransports (Context context)
     {
         //restart transports if needed
         if (Preferences.useAdvancedNetworking())
@@ -609,9 +609,16 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
             }
 
             aNetworking = new AdvancedNetworking();
-            aNetworking.installTransport(this,"ss");
+            aNetworking.installTransport(context,"ss");
             aNetworking.startTransport();
 
+        }
+        else
+        {
+            if (aNetworking != null)
+                aNetworking.stopTransport();
+
+            aNetworking = null;
         }
     }
 
@@ -772,7 +779,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
     }
 
-    private AdvancedNetworking aNetworking;
+    private static AdvancedNetworking aNetworking;
 
     // package private for inner class access
     boolean reestablishConnections() {

@@ -1826,24 +1826,6 @@ public class XmppConnection extends ImConnection {
         debug(TAG, "TLS required? " + requireTls);
 
 
-        // If user did not specify a server, and SRV requested then lookup SRV
-        if (doDnsSrv) {
-
-            //java.lang.System.setProperty("java.net.preferIPv4Stack", "true");
-            //java.lang.System.setProperty("java.net.preferIPv6Addresses", "false");
-
-            debug(TAG, "(DNS SRV) resolving: " + domain);
-            List<HostAddress> listHostsFailed = new ArrayList<>();
-            List<HostAddress> listHosts = DNSUtil.resolveXMPPServiceDomain(domain, listHostsFailed, ConnectionConfiguration.DnssecMode.disabled);
-
-            if (listHosts.size() > 0) {
-                server = listHosts.get(0).getFQDN();
-                serverPort = listHosts.get(0).getPort();
-
-                debug(TAG, "(DNS SRV) resolved: " + domain + "=" + server + ":" + serverPort);
-            }
-        }
-
 
         if (serverPort == 0) //if serverPort is set to 0 then use 5222 as default
             serverPort = 5222;
@@ -1856,6 +1838,12 @@ public class XmppConnection extends ImConnection {
         mConfig.setCompressionEnabled(true);
         mConfig.setConnectTimeout(CONNECT_TIMEOUT);
 
+        mConfig.setXmppDomain(domain);
+        mConfig.setHost(domain);
+
+        if (!TextUtils.isEmpty(server))
+            mConfig.setHost(server);
+
         if (!TextUtils.isEmpty(Preferences.getProxyServerHost()))
         {
             setProxy("SOCKS5",Preferences.getProxyServerHost(),Preferences.getProxyServerPort());
@@ -1864,44 +1852,62 @@ public class XmppConnection extends ImConnection {
         {
             setProxy("SOCKS5","127.0.0.1",31059);
         }
-        else
-        {
-            mProxyInfo = null;
-        }
-
-        // No server requested and SRV lookup wasn't requested or returned nothing - use domain
-        if (server == null)
-            mConfig.setHost(domain);
         else {
-            mConfig.setHost(server);
+            mProxyInfo = null;
 
-            try {
+            //only lookup DNS is proxy is null
 
+            // If user did not specify a server, and SRV requested then lookup SRV
 
-                String[] addressParts = server.split("\\.");
-                if (Integer.parseInt(addressParts[0]) != -1) {
-                    byte[] parts = new byte[addressParts.length];
-                    for (int i = 0; i < 4; i++)
-                        parts[i] = (byte)Integer.parseInt(addressParts[i]);
+            //SRV lookup shouldn't be done through a proxy
+            if (doDnsSrv) {
 
-                    byte[] ipAddr = new byte[]{parts[0],parts[1],parts[2],parts[3]};
-                    InetAddress addr = InetAddress.getByAddress(ipAddr);
-                    mConfig.setHostAddress(addr);
+                //java.lang.System.setProperty("java.net.preferIPv4Stack", "true");
+                //java.lang.System.setProperty("java.net.preferIPv6Addresses", "false");
 
+                debug(TAG, "(DNS SRV) resolving: " + domain);
+                List<HostAddress> listHostsFailed = new ArrayList<>();
+                List<HostAddress> listHosts = DNSUtil.resolveXMPPServiceDomain(domain, listHostsFailed, ConnectionConfiguration.DnssecMode.disabled);
+
+                if (listHosts.size() > 0) {
+                    server = listHosts.get(0).getFQDN();
+                    serverPort = listHosts.get(0).getPort();
+
+                    debug(TAG, "(DNS SRV) resolved: " + domain + "=" + server + ":" + serverPort);
+
+                    if (!TextUtils.isEmpty(server))
+                        mConfig.setHost(server);
+
+                    if (serverPort != -1)
+                        mConfig.setPort(serverPort);
                 }
-                else
-                {
+            }
+
+            if (!TextUtils.isEmpty(server)) {
+
+                try {
+
+
+                    String[] addressParts = server.split("\\.");
+                    if (Integer.parseInt(addressParts[0]) != -1) {
+                        byte[] parts = new byte[addressParts.length];
+                        for (int i = 0; i < 4; i++)
+                            parts[i] = (byte) Integer.parseInt(addressParts[i]);
+
+                        byte[] ipAddr = new byte[]{parts[0], parts[1], parts[2], parts[3]};
+                        InetAddress addr = InetAddress.getByAddress(ipAddr);
+                        mConfig.setHostAddress(addr);
+
+                    } else {
+                        mConfig.setHostAddress(InetAddress.getByName(server));
+                    }
+                } catch (Exception e) {
+                    debug(TAG, "error parsing server as IP address; using as hostname instead");
                     mConfig.setHostAddress(InetAddress.getByName(server));
+
                 }
-            }
-            catch (Exception e){
-                debug(TAG,"error parsing server as IP address; using as hostname instead");
-                mConfig.setHostAddress(InetAddress.getByName(server));
 
             }
-
-            mConfig.setHostAddress(InetAddress.getByName(server));
-            mConfig.setXmppDomain(domain);
         }
 
         mConfig.setProxyInfo(mProxyInfo);
