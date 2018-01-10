@@ -53,6 +53,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 public class ContactListItem extends FrameLayout {
+
     public static final String[] CONTACT_PROJECTION = { Imps.Contacts._ID, Imps.Contacts.PROVIDER,
                                                 Imps.Contacts.ACCOUNT, Imps.Contacts.USERNAME,
                                                 Imps.Contacts.NICKNAME, Imps.Contacts.TYPE,
@@ -62,9 +63,7 @@ public class ContactListItem extends FrameLayout {
                                                 Imps.Presence.PRESENCE_CUSTOM_STATUS,
                                                 Imps.Chats.LAST_MESSAGE_DATE,
                                                 Imps.Chats.LAST_UNREAD_MESSAGE,
-                                                Imps.Chats.LAST_READ_DATE,
-                                                Imps.Contacts.AVATAR_HASH,
-                                                Imps.Contacts.AVATAR_DATA
+                                                Imps.Chats.LAST_READ_DATE
 
     };
 
@@ -82,8 +81,8 @@ public class ContactListItem extends FrameLayout {
     public static final int COLUMN_LAST_MESSAGE_DATE = 10;
     public static final int COLUMN_LAST_MESSAGE = 11;
     public static final int COLUMN_LAST_READ_DATE = 12;
-    public static final int COLUMN_AVATAR_HASH = 13;
-    public static final int COLUMN_AVATAR_DATA = 14;
+
+
 
     static Drawable AVATAR_DEFAULT_GROUP = null;
 

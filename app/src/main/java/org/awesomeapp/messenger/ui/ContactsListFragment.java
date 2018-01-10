@@ -67,6 +67,9 @@ import im.zom.messenger.R;
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.ui.widgets.ConversationViewHolder;
 
+import static org.awesomeapp.messenger.ui.ContactListItem.COLUMN_CONTACT_ACCOUNT;
+import static org.awesomeapp.messenger.ui.ContactListItem.COLUMN_CONTACT_PROVIDER;
+
 //import com.bumptech.glide.Glide;
 
 public class ContactsListFragment extends Fragment {
@@ -481,8 +484,8 @@ public class ContactsListFragment extends Fragment {
             }
             else
             {
-                viewHolder.mProviderId = cursor.getLong(ContactListItem.COLUMN_CONTACT_PROVIDER);
-                viewHolder.mAccountId = cursor.getLong(ContactListItem.COLUMN_CONTACT_ACCOUNT);
+                viewHolder.mProviderId = cursor.getLong(COLUMN_CONTACT_PROVIDER);
+                viewHolder.mAccountId = cursor.getLong(COLUMN_CONTACT_ACCOUNT);
                 nickname = nickname.split("@")[0].split("\\.")[0];
              }
 
@@ -515,36 +518,6 @@ public class ContactsListFragment extends Fragment {
                 }
             });
 
-            /**
-            viewHolder.mView.setOnLongClickListener(new View.OnLongClickListener()
-            {
-
-                @Override
-                public boolean onLongClick(View view) {
-
-                    if (mContext instanceof MainActivity) {
-
-                        String message = mContext.getString(R.string.confirm_delete_contact,viewHolder.mNickname);
-
-                        Snackbar.make(mRecView, message, Snackbar.LENGTH_LONG)
-                                .setAction(mContext.getString(R.string.yes), new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        //if they click, then cancel timer that will be used to end the chat
-
-                                        deleteContact(((MainActivity) mContext), viewHolder.mView.getId(), viewHolder.mAddress, viewHolder.mProviderId, viewHolder.mAccountId);
-                                    }
-                                }).show();
-
-                        return true;
-                    }
-
-
-
-
-                    return false;
-                }
-            });**/
 
         }
 
@@ -569,8 +542,9 @@ public class ContactsListFragment extends Fragment {
             }
 
             buf.append(Imps.Contacts.TYPE).append('=').append(mType);
+            buf.append(" ) GROUP BY(" + Imps.Contacts.USERNAME);
 
-            CursorLoader loader = new CursorLoader(getActivity(), mUri, CHAT_PROJECTION,
+            CursorLoader loader = new CursorLoader(getActivity(), mUri, ContactListItem.CONTACT_PROJECTION,
                     buf == null ? null : buf.toString(), null, Imps.Contacts.SUB_AND_ALPHA_SORT_ORDER);
 
             return loader;
@@ -611,20 +585,9 @@ public class ContactsListFragment extends Fragment {
 
         }
 
-        public final String[] CHAT_PROJECTION = { Imps.Contacts._ID, Imps.Contacts.PROVIDER,
-                Imps.Contacts.ACCOUNT, Imps.Contacts.USERNAME,
-                Imps.Contacts.NICKNAME, Imps.Contacts.TYPE,
-                Imps.Contacts.SUBSCRIPTION_TYPE,
-                Imps.Contacts.SUBSCRIPTION_STATUS,
-                Imps.Presence.PRESENCE_STATUS,
-                Imps.Presence.PRESENCE_CUSTOM_STATUS,
-                Imps.Chats.LAST_MESSAGE_DATE,
-                Imps.Chats.LAST_UNREAD_MESSAGE
-        ///        Imps.Contacts.AVATAR_HASH,
-           //     Imps.Contacts.AVATAR_DATA
-
-        };
 
 
     }
+
+
 }

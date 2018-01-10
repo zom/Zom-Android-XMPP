@@ -302,6 +302,9 @@ public class ConversationView {
                     if (!checkConnection())
                         return;
 
+                if (mConn == null)
+                    return;
+
                 IContactListManager manager = mConn.getContactListManager();
 
                 Contact contact = manager.getContactByAddress(mRemoteAddress);

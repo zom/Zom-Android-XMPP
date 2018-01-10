@@ -2112,9 +2112,9 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
 
         db.beginTransaction();
         try {
-            Long provider = values.getAsLong(Imps.Contacts.PROVIDER);
-            Long account = values.getAsLong(Imps.Contacts.ACCOUNT);
-            Long listId = values.getAsLong(Imps.Contacts.CONTACTLIST);
+            long provider = values.getAsLong(Imps.Contacts.PROVIDER);
+            long account = values.getAsLong(Imps.Contacts.ACCOUNT);
+            long listId = values.getAsLong(Imps.Contacts.CONTACTLIST);
 
             ContentValues contactValues = new ContentValues();
             contactValues.put(Imps.Contacts.PROVIDER, provider);
@@ -2124,12 +2124,15 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
             presenceValues.put(Imps.Presence.PRESENCE_STATUS, Imps.Presence.OFFLINE);
 
             StringBuffer whereClause = new StringBuffer();
-            whereClause.append(Contacts.USERNAME);
-            whereClause.append("=?");
+            whereClause.append(Imps.Contacts.USERNAME);
+            whereClause.append(" = ?");
             whereClause.append(" AND ");
-            whereClause.append(Contacts.ACCOUNT);
-            whereClause.append("=?");
-            
+            whereClause.append(Imps.Contacts.ACCOUNT);
+            whereClause.append(" = ?");
+            whereClause.append(" AND ");
+            whereClause.append(Imps.Contacts.PROVIDER);
+            whereClause.append(" = ?");
+
             for (int i = 0; i < usernameCount; i++) {
                 String username = usernames.get(i);
                 String nickname = nicknames.get(i);
@@ -2204,10 +2207,9 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
                 }
                 */
                 
-                String[] columns = {"_id, username"};
-                String[] whereArgs = {username,account+""};
-                
-                Cursor c = db.query(TABLE_CONTACTS,  columns, whereClause.toString(), whereArgs, null,null,null,null);
+                String[] queryColumns = {"_id", Contacts.USERNAME,Contacts.ACCOUNT,Contacts.PROVIDER};
+                String[] whereArgs = {username,Long.toString(account),Long.toString(provider)};
+                Cursor c = db.query(TABLE_CONTACTS,  queryColumns, whereClause.toString(), whereArgs, null,null,null,null);
                 boolean contactExists = (c != null && c.getCount() > 0);
 
                 if (contactExists) 
@@ -2215,15 +2217,19 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
                     int rowsUpdated = db.update(TABLE_CONTACTS, contactValues, whereClause.toString(), whereArgs);
 
                     // seed the presence for the new contact
-                    c.moveToFirst();
-                    rowId = c.getLong(0);
-                    presenceValues.put(Imps.Presence.CONTACT_ID, rowId);
+                    while (c.moveToNext()) {
+                        for (int n = 0; n < c.getColumnCount(); n++)
+                            LogCleaner.debug(LOG_TAG, c.getColumnName(n) + "=" + c.getString(n));
 
-                    try {
-                        db.update(TABLE_PRESENCE, presenceValues, null, null);
+                        rowId = c.getLong(0);
+                        presenceValues.put(Imps.Presence.CONTACT_ID, rowId);
+                        String[] presenceWhereArgs = {rowId + ""};
+                        try {
+                            db.update(TABLE_PRESENCE, presenceValues, Imps.Presence.CONTACT_ID + " = ?", presenceWhereArgs);
 
-                    } catch (android.database.sqlite.SQLiteConstraintException ex) {
-                        LogCleaner.warn(LOG_TAG, "insertBulkContacts: seeding presence caught " + ex);
+                        } catch (Exception ex) {
+                            LogCleaner.warn(LOG_TAG, "insertBulkContacts: seeding presence caught " + ex);
+                        }
                     }
                 }
                 else
@@ -2239,7 +2245,7 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
     
                         try {
                             db.insert(TABLE_PRESENCE, null, presenceValues);
-                        } catch (android.database.sqlite.SQLiteConstraintException ex) {
+                        } catch (Exception ex) {
                             LogCleaner.warn(LOG_TAG, "insertBulkContacts: seeding presence caught " + ex);
                         }
                     }
