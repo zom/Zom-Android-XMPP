@@ -12,13 +12,13 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Display;
 import android.view.View;
 
 import org.awesomeapp.messenger.ImApp;
 
-public class ThemeableActivity extends ActionBarActivity {
+public class ThemeableActivity extends AppCompatActivity {
 
     private static String mThemeBg = null;
     private static Drawable mThemeDrawable = null;
