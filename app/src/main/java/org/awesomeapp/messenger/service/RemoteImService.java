@@ -19,6 +19,7 @@ package org.awesomeapp.messenger.service;
 
 import android.annotation.TargetApi;
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -38,6 +39,7 @@ import android.os.PowerManager.WakeLock;
 import android.os.RemoteCallbackList;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
@@ -275,8 +277,6 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
     }
 
-
-
     private void checkUpgrade ()
     {
         ImApp app = ((ImApp)getApplication());
@@ -306,9 +306,9 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
     private Notification getForegroundNotification() {
        
-        mNotifyManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);;
+        mNotifyManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         
-        mNotifyBuilder = new NotificationCompat.Builder(this)
+        mNotifyBuilder = new NotificationCompat.Builder(this,ImApp.NOTIFICATION_CHANNEL_ID_SERVICE)
             .setContentTitle(getString(R.string.app_name))
             .setSmallIcon(R.drawable.notify_zom);
 

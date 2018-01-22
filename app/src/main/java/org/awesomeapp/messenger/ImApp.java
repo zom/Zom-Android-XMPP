@@ -18,6 +18,9 @@
 package org.awesomeapp.messenger;
 
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -184,7 +187,18 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
     static final void log(String log) {
         Log.d(LOG_TAG, log);
     }
-/**
+
+    public static final String NOTIFICATION_CHANNEL_ID_SERVICE = "im.zom.service";
+    public void initChannel(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            NotificationChannel nc = new NotificationChannel(NOTIFICATION_CHANNEL_ID_SERVICE, "Zom", NotificationManager.IMPORTANCE_HIGH);
+            nc.setLockscreenVisibility(Notification.VISIBILITY_SECRET);
+            nm.createNotificationChannel(nc);
+
+        }
+    }
+    /**
     protected void attachBaseContext(Context base) {
                 super.attachBaseContext(base);
                 MultiDex.install(this);
@@ -202,6 +216,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
     @Override
     public void onCreate() {
         super.onCreate();
+        initChannel();
 
         Preferences.setup(this);
         Languages.setup(MainActivity.class, R.string.use_system_default);
