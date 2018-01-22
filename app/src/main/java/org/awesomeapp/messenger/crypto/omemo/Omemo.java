@@ -23,7 +23,6 @@ import org.jivesoftware.smackx.omemo.signal.SignalOmemoService;
 import org.jivesoftware.smackx.omemo.signal.SignalOmemoSession;
 import org.jivesoftware.smackx.omemo.util.OmemoConstants;
 import org.jivesoftware.smackx.omemo.util.OmemoKeyUtil;
-import org.jivesoftware.smackx.pubsub.PubSubAssertionError;
 import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.FullJid;
 import org.jxmpp.jid.Jid;
@@ -217,12 +216,6 @@ public class Omemo {
         try {
 
             mOmemoManager.requestDeviceListUpdateFor(jid);
-
-
-        }
-        catch (PubSubAssertionError error)
-        {
-            Log.e(TAG, "error fetching device list",error);
 
         }
         catch (Exception e)
