@@ -656,6 +656,10 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                         String offerId = UUID.randomUUID().toString();
                         String mimeType = URLConnection.guessContentTypeFromName(body);
                         if (mimeType != null) {
+
+                            if (mimeType.startsWith("text"))
+                                mimeType = "text/plain";
+
                             offerData(offerId, body, mimeType);
                         }
                     }
@@ -1055,8 +1059,8 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
         public boolean onIncomingMessage(ChatSession ses, final org.awesomeapp.messenger.model.Message msg, boolean notifyUser) {
 
-            if (Imps.messageExists(mContentResolver,msg.getID()))
-                return false; //this was sent by me
+            //if (Imps.messageExists(mContentResolver,msg.getID()))
+              //  return false; //this was sent by me
 
             String body = msg.getBody();
             String username = msg.getFrom().getAddress();
@@ -1720,6 +1724,12 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
     public void sendTypingStatus (boolean isTyping)
     {
        // mConnection.sendTypingStatus("fpp", isTyping);
+    }
+
+    public boolean useEncryption (boolean useEncryption)
+    {
+        mChatSession.setOmemoGroupEnabled(useEncryption);
+        return isEncrypted();
     }
 
     public boolean isEncrypted ()

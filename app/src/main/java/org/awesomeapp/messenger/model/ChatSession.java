@@ -46,6 +46,8 @@ public class ChatSession {
     private boolean mPushSent = false;
 
     private boolean mCanOmemo = false;
+    private boolean mEnableOmemoGroups = false;
+
     private Jid mJid = null;
     private XmppAddress mXa = null; //our temporary internal representation
 
@@ -125,9 +127,12 @@ public class ChatSession {
 
     public boolean canOmemo ()
     {
-
-        return mCanOmemo;
-
+        if (mParticipant instanceof Contact)
+            return mCanOmemo;
+        else if (mParticipant instanceof ChatGroup)
+            return mCanOmemo && mEnableOmemoGroups;
+        else
+            return false;
     }
 
 
@@ -168,13 +173,9 @@ public class ChatSession {
             message.setTo(mXa);
             message.setType(Imps.MessageType.QUEUED);
 
-            //not for groups yet
-            if (mParticipant instanceof Contact) {
-                //if we can't omemo, check it again to be sure
-                if (!mCanOmemo) {
-                    mCanOmemo = mManager.resourceSupportsOmemo(mJid);
-
-                }
+            //if we can't omemo, check it again to be sure
+            if (!mCanOmemo) {
+                mCanOmemo = mManager.resourceSupportsOmemo(mJid);
             }
 
             if (mCanOmemo) {
@@ -221,6 +222,11 @@ public class ChatSession {
         }
         else if (mParticipant instanceof ChatGroup)
         {
+
+            //if we can't omemo, check it again to be sure
+            if (!mCanOmemo) {
+                mCanOmemo = mManager.resourceSupportsOmemo(mJid);
+            }
 
             message.setTo(mParticipant.getAddress());
             message.setType(Imps.MessageType.OUTGOING);
@@ -376,6 +382,15 @@ public class ChatSession {
 
     public void setSubscribed(boolean isSubscribed) {
         mIsSubscribed = isSubscribed;
+    }
+
+    public boolean getOmemoGroupEnabled () {
+        return mEnableOmemoGroups;
+    }
+
+    public void setOmemoGroupEnabled (boolean omemoGroups)
+    {
+        mEnableOmemoGroups = omemoGroups;
     }
 
 

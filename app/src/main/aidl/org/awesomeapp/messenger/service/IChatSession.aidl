@@ -139,9 +139,15 @@ interface IChatSession {
      void sendTypingStatus (boolean isTyping);
 
     /**
-     * is ready to send and receive encyprted messages
+     * is ready to send and receive encrypted messages
      **/
      boolean isEncrypted ();
+
+
+    /**
+     * request the use of encrypted messages
+     **/
+     boolean useEncryption (boolean useEncryption);
 
     /**
      * Set the subject for a chat room

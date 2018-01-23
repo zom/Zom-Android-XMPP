@@ -212,6 +212,14 @@ public class GroupDisplayActivity extends BaseActivity {
                         }
                     });
 
+                    h.checkGroupEncryption.setChecked(isGroupEncryptionEnabled());
+                    h.checkGroupEncryption.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                        @Override
+                        public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                            setGroupEncryptionEnabled(isChecked);
+                        }
+                    });
+
                     if (!mIsOwner)
                         h.editGroupName.setVisibility(View.GONE);
                     else {
@@ -515,6 +523,7 @@ public class GroupDisplayActivity extends BaseActivity {
         final TextView actionAddFriends;
         final View actionNotifications;
         final SwitchCompat checkNotifications;
+        final SwitchCompat checkGroupEncryption;
 
         HeaderViewHolder(View view) {
             super(view);
@@ -527,6 +536,7 @@ public class GroupDisplayActivity extends BaseActivity {
             actionAddFriends = (TextView) view.findViewById(R.id.tvActionAddFriends);
             actionNotifications = view.findViewById(R.id.tvActionNotifications);
             checkNotifications = (SwitchCompat) view.findViewById(R.id.chkNotifications);
+            checkGroupEncryption = (SwitchCompat) view.findViewById(R.id.chkGroupEncryption);
         }
     }
 
@@ -588,6 +598,29 @@ public class GroupDisplayActivity extends BaseActivity {
         }
         catch (Exception e) {}
     }
+
+    boolean isGroupEncryptionEnabled () {
+        try {
+            if (mSession != null)
+                return mSession.isEncrypted();
+            else
+                return true;
+        }
+        catch (RemoteException re)
+        {
+            return true;
+        }
+    }
+
+    public void setGroupEncryptionEnabled(boolean enabled) {
+        try {
+            if (mSession != null) {
+                mSession.useEncryption(enabled);
+            }
+        }
+        catch (Exception ignored){}
+    }
+
 
     boolean areNotificationsEnabled() {
         try {

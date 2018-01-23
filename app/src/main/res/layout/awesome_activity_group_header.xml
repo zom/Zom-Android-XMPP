@@ -88,6 +88,32 @@
         android:drawableStart="@drawable/ic_person_add_black_24dp"
         android:text="@string/add_friends"
         />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/tvActionEncryption"
+        >
+        <org.ironrabbit.type.CustomTypefaceTextView xmlns:android="http://schemas.android.com/apk/res/android"
+            style="@style/GroupInfoAction"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/ic_encrypted_grey"
+            android:drawableStart="@drawable/ic_encrypted_grey"
+            android:text="@string/chat_encryption_title"
+            android:layout_weight="0"
+            />
+        <android.support.v7.widget.SwitchCompat
+            android:id="@+id/chkGroupEncryption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            />
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"

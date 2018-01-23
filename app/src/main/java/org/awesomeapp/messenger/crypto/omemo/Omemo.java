@@ -170,16 +170,14 @@ public class Omemo {
         return fps;
     }**/
 
-    public boolean resourceSupportsOmemo(final Jid jid)
+    public boolean resourceSupportsOmemo(final Jid jidContact)
     {
        try
        {
-           if (jid.hasResource())
-           {
-               if (mOmemoManager.resourceSupportsOmemo(jid.asFullJidIfPossible()))
+           if (mOmemoManager.contactSupportsOmemo(jidContact.asBareJid()))
                {
                    try {
-                       mOmemoManager.buildSessionsWith(jid.asBareJid());
+                       mOmemoManager.buildSessionsWith(jidContact.asBareJid());
                        return true;
                    }
                    catch (CannotEstablishOmemoSessionException e)
@@ -187,24 +185,19 @@ public class Omemo {
                        debug(TAG,"couldn't establish omemo session: " + e);
                    }
                }
-           }
-           else
-           {
-               return getFingerprints(jid.asBareJid(),true).size() > 0;
-           }
        }
        catch (Exception e) {
            Log.w(TAG, "error checking if resource supports omemo, will check for local fingerprints");
 
            try {
-               mOmemoManager.requestDeviceListUpdateFor(jid.asBareJid());
+               mOmemoManager.requestDeviceListUpdateFor(jidContact.asBareJid());
 
                //let's just check fingerprints instead
-               return getFingerprints(jid.asBareJid(), false).size() > 0;
+               return getFingerprints(jidContact.asBareJid(), false).size() > 0;
            }
            catch (Exception e2)
            {
-               debug(TAG, "error checking if resource supports omemo: " + jid + ": " + e2.toString());
+               debug(TAG, "error checking if resource supports omemo: " + jidContact + ": " + e2.toString());
            }
        }
 

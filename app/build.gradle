@@ -97,13 +97,15 @@ android {
 
 ext {
     smackVersion="4.2.2"
-    smackOmemoVersion="4.2.1-beta1"
+    smackOmemoVersion="4.2.2"
 }
 
 
 
 dependencies {
+
     compile fileTree(include: '*.jar', dir: 'libs')
+
     compile 'com.android.support:multidex:1.0.2'
     compile 'net.zetetic:android-database-sqlcipher:3.5.4@aar'
     compile project(':otr4jandroid')
@@ -149,7 +151,7 @@ dependencies {
 
     compile "org.igniterealtime.smack:smack-android:$smackVersion"
     compile "org.igniterealtime.smack:smack-android-extensions:$smackVersion"
-    compile "org.igniterealtime.smack:smack-omemo-signal:$smackOmemoVersion"
+ //   compile "org.igniterealtime.smack:smack-omemo-signal:$smackOmemoVersion"
     compile "org.igniterealtime.smack:smack-resolver-minidns:$smackVersion"
     compile "org.igniterealtime.smack:smack-tcp:$smackVersion"
     compile "org.igniterealtime.smack:smack-core:$smackVersion"

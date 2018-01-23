@@ -115,6 +115,7 @@ import org.jivesoftware.smackx.omemo.exceptions.UndecidedOmemoIdentityException;
 import org.jivesoftware.smackx.omemo.internal.CipherAndAuthTag;
 import org.jivesoftware.smackx.omemo.internal.OmemoMessageInformation;
 import org.jivesoftware.smackx.omemo.listener.OmemoMessageListener;
+import org.jivesoftware.smackx.omemo.listener.OmemoMucMessageListener;
 import org.jivesoftware.smackx.ping.PingManager;
 import org.jivesoftware.smackx.ping.provider.PingProvider;
 import org.jivesoftware.smackx.privacy.PrivacyListManager;
@@ -1561,6 +1562,34 @@ public class XmppConnection extends ImConnection {
                     }
                 }
             });
+
+            mOmemoInstance.getManager().addOmemoMucMessageListener(new OmemoMucMessageListener() {
+                @Override
+                public void onOmemoMucMessageReceived(MultiUserChat muc, BareJid from, String decryptedBody, org.jivesoftware.smack.packet.Message message, org.jivesoftware.smack.packet.Message wrappingMessage, OmemoMessageInformation omemoInformation) {
+
+                    if (decryptedBody != null) {
+                        debug(TAG, "got inbound MUC message omemo: from:" + message.getFrom() + "=" + message.getBody());
+                        org.jivesoftware.smack.packet.Message messagePlain = new org.jivesoftware.smack.packet.Message();
+                        messagePlain.setType(message.getType());
+                        messagePlain.setFrom(message.getFrom());
+                        messagePlain.setTo(message.getTo());
+                        messagePlain.setBody(decryptedBody);
+                        messagePlain.setStanzaId(message.getStanzaId());
+                        messagePlain.addExtensions(message.getExtensions());
+                        messagePlain.setThread(message.getThread());
+                        messagePlain.setSubject(message.getSubject());
+                        handleMessage(messagePlain, true, true);
+                    } else {
+                        debug(TAG, "got empty ibound MUC message omemo: from:" + message.getFrom().toString());
+                    }
+                }
+
+                @Override
+                public void onOmemoKeyTransportReceived(MultiUserChat muc, BareJid from, CipherAndAuthTag cipherAndAuthTag, org.jivesoftware.smack.packet.Message message, org.jivesoftware.smack.packet.Message wrappingMessage, OmemoMessageInformation omemoInformation) {
+
+                    debug (TAG, "got OmemoKey Transport from: " + from.toString());
+                }
+            });
         }
 
 
@@ -2345,11 +2374,29 @@ public class XmppConnection extends ImConnection {
     }
 
     private void sendReceipt(org.jivesoftware.smack.packet.Message msg) {
-        debug(TAG, "sending XEP-0184 ack to " + msg.getFrom() + " id=" + msg.getPacketID());
-        org.jivesoftware.smack.packet.Message ack = new org.jivesoftware.smack.packet.Message(
-                msg.getFrom().asBareJid(), msg.getType());
-        ack.addExtension(new DeliveryReceipt(msg.getStanzaId()));
-        sendPacket(ack);
+
+        try {
+
+            if (msg.getType() == org.jivesoftware.smack.packet.Message.Type.groupchat) {
+              //  MultiUserChat muc = ((XmppChatGroupManager) getChatGroupManager()).getMultiUserChat(msg.getFrom().asBareJid().toString());
+                org.jivesoftware.smack.packet.Message ack =
+                        new org.jivesoftware.smack.packet.Message(
+                                msg.getFrom(), org.jivesoftware.smack.packet.Message.Type.chat);
+                ack.addExtension(new DeliveryReceipt(msg.getStanzaId()));
+               // muc.sendMessage(msgReceipt);
+                sendPacket(ack);
+            } else {
+                debug(TAG, "sending XEP-0184 ack to " + msg.getFrom() + " id=" + msg.getPacketID());
+                org.jivesoftware.smack.packet.Message ack = new org.jivesoftware.smack.packet.Message(
+                        msg.getFrom().asBareJid(), msg.getType());
+                ack.addExtension(new DeliveryReceipt(msg.getStanzaId()));
+                sendPacket(ack);
+            }
+        }
+        catch (Exception e)
+        {
+            debug(TAG,"error sending delivery receipt",e);
+        }
     }
 
     protected int parsePresence(org.jivesoftware.smack.packet.Presence presence) {
@@ -2618,10 +2665,21 @@ public class XmppConnection extends ImConnection {
                         muc.join(Resourcepart.from(mUser.getName()), null, history, SmackConfiguration.getDefaultPacketReplyTimeout());
                     }
 
+                    if (session.canOmemo())
+                    {
+                        org.jivesoftware.smack.packet.Message msgEncrypted
+                                = getOmemo().getManager().encrypt(muc, msgXmpp.getBody());
+                        msgEncrypted.addExtension(new DeliveryReceiptRequest());
+                        String deliveryReceiptId = DeliveryReceiptRequest.addTo(msgEncrypted);
+                        muc.sendMessage(msgEncrypted);
+                        message.setType(Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED);
+                    }
+                    else {
+                        msgXmpp.addExtension(new DeliveryReceiptRequest());
+                        String deliveryReceiptId = DeliveryReceiptRequest.addTo(msgXmpp);
+                        muc.sendMessage(msgXmpp);
+                    }
 
-                    msgXmpp.addExtension(new DeliveryReceiptRequest());
-                    String deliveryReceiptId = DeliveryReceiptRequest.addTo(msgXmpp);
-                    muc.sendMessage(msgXmpp);
                 }
                 else {
                     Chat thisChat = mChatManager.createChat(jidTo.asEntityJidIfPossible());
@@ -2713,6 +2771,7 @@ public class XmppConnection extends ImConnection {
                 if (mConnection == null || getState() != ImConnection.LOGGED_IN)
                     return false;
 
+
                 if (getOmemo().resourceSupportsOmemo(jid)) {
 
               //      if (getOmemo().getFingerprints(jid.asBareJid(), false).size() == 0) {
@@ -2721,6 +2780,10 @@ public class XmppConnection extends ImConnection {
                 //    }
 
                     return true;
+                }
+                else if (mChatGroupManager.getMultiUserChat(jid.toString())!=null)
+                {
+                    return getOmemo().getManager().multiUserChatSupportsOmemo(jid.asEntityBareJidIfPossible());
                 }
 
             }
