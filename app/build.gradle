@@ -11,6 +11,11 @@ def getVersionName = { ->
     return stdout.toString().trim()
 }
 
+
+configurations {
+    all*.exclude group: 'xpp3', module: 'xpp3'
+}
+
 android {
     compileSdkVersion project.ext.compileSdkVersion
     buildToolsVersion project.ext.buildToolsVersion
