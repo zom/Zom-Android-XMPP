@@ -35,6 +35,7 @@ import java.util.HashMap;
 import org.awesomeapp.messenger.MainActivity;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ContentUris;
@@ -47,6 +48,8 @@ import android.os.Handler;
 import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
+
+import static org.awesomeapp.messenger.ImApp.NOTIFICATION_CHANNEL_ID_MESSAGE;
 
 public class StatusBarNotifier {
     private static final boolean DBG = false;
@@ -352,7 +355,7 @@ public class StatusBarNotifier {
 
 
         public Notification createNotification(String tickerText, boolean lightWeightNotify, int icon, Bitmap largeIcon, Intent intent) {
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext);
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext,ImApp.NOTIFICATION_CHANNEL_ID_MESSAGE);
 
             builder
                 .setSmallIcon(icon)

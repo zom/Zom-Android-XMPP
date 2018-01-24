@@ -189,12 +189,19 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
     }
 
     public static final String NOTIFICATION_CHANNEL_ID_SERVICE = "im.zom.service";
+    public static final String NOTIFICATION_CHANNEL_ID_MESSAGE = "im.zom.message";
+
     public void initChannel(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-            NotificationChannel nc = new NotificationChannel(NOTIFICATION_CHANNEL_ID_SERVICE, "Zom", NotificationManager.IMPORTANCE_HIGH);
+            NotificationChannel nc = new NotificationChannel(NOTIFICATION_CHANNEL_ID_SERVICE, getString(R.string.app_name), NotificationManager.IMPORTANCE_MIN);
             nc.setLockscreenVisibility(Notification.VISIBILITY_SECRET);
             nm.createNotificationChannel(nc);
+
+            nc = new NotificationChannel(NOTIFICATION_CHANNEL_ID_MESSAGE, getString(R.string.notifications), NotificationManager.IMPORTANCE_HIGH);
+            nc.setLockscreenVisibility(Notification.VISIBILITY_SECRET);
+            nm.createNotificationChannel(nc);
+
 
         }
     }

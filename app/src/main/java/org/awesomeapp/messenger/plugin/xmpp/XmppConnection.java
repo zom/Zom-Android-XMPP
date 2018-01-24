@@ -2343,8 +2343,6 @@ public class XmppConnection extends ImConnection {
 
                 }
 
-               // setPresence(smackMessage.getFrom(),Presence.AVAILABLE);
-
                 boolean good = session.onReceiveMessage(rec, notifyUser);
 
                 if (smackMessage.getExtension("request", DeliveryReceipt.NAMESPACE) != null) {

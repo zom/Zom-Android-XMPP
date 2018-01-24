@@ -291,8 +291,6 @@ public class ChatSession {
      *   otherwise (e.g. decryption error)
      */
     public boolean onReceiveMessage(Message message, boolean notifyUser) {
-//        mHistoryMessages.add(message);
-
 
         if (mListener != null)
             return mListener.onIncomingMessage(this, message, notifyUser);
