@@ -1059,8 +1059,14 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
         public boolean onIncomingMessage(ChatSession ses, final org.awesomeapp.messenger.model.Message msg, boolean notifyUser) {
 
-            //if (Imps.messageExists(mContentResolver,msg.getID()))
-              //  return false; //this was sent by me
+            //if the session is encrypted, and this is a plain text message, then ignore
+            if (ses.getParticipant() instanceof ChatGroup &&
+                    ses.getOmemoGroupEnabled()
+                    && msg.getType() == Imps.MessageType.INCOMING)
+                return false;
+
+            if (Imps.messageExists(mContentResolver,msg.getID()))
+                return false;
 
             String body = msg.getBody();
             String username = msg.getFrom().getAddress();
