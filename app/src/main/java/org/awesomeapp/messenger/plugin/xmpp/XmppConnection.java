@@ -1570,6 +1570,7 @@ public class XmppConnection extends ImConnection {
                     if (decryptedBody != null) {
                         debug(TAG, "got inbound MUC message omemo: from:" + message.getFrom() + "=" + message.getBody());
                         org.jivesoftware.smack.packet.Message messagePlain = new org.jivesoftware.smack.packet.Message();
+
                         messagePlain.setType(message.getType());
                         messagePlain.setFrom(message.getFrom());
                         messagePlain.setTo(message.getTo());
@@ -4777,6 +4778,8 @@ public class XmppConnection extends ImConnection {
         private String uploadFile(long fileSize, InputStream fis, Slot slot, UploadProgressListener listener, boolean useEncryption) throws IOException {
 
             String result = null;
+            int connectTimeout = 60000;
+            int socketTimeout = 60000;
 
             if(fileSize >= 2147483647L) {
                 throw new IllegalArgumentException("File size " + fileSize + " must be less than " + 2147483647);
@@ -4806,6 +4809,9 @@ public class XmppConnection extends ImConnection {
                 else {
                     urlConnection = (HttpURLConnection) putUrl.openConnection();
                 }
+
+                urlConnection.setConnectTimeout(connectTimeout);
+                urlConnection.setReadTimeout(socketTimeout);
 
                 urlConnection.setRequestMethod("PUT");
                 urlConnection.setUseCaches(false);
