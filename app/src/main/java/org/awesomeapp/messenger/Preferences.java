@@ -284,6 +284,6 @@ public class Preferences {
 
     public static boolean doBlockScreenshots () { return preferences.getBoolean(BLOCK_SCREENSHOTS,true);}
 
-
+    public static boolean doGroupEncryption () { return preferences.getBoolean("prefGroupEncryption", false);}
 
 }

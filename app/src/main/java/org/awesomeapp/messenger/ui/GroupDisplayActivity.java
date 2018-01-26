@@ -35,6 +35,7 @@ import android.widget.TextView;
 import org.apache.commons.codec.DecoderException;
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.MainActivity;
+import org.awesomeapp.messenger.Preferences;
 import org.awesomeapp.messenger.model.Address;
 import org.awesomeapp.messenger.model.Contact;
 import org.awesomeapp.messenger.model.ImErrorInfo;
@@ -212,13 +213,18 @@ public class GroupDisplayActivity extends BaseActivity {
                         }
                     });
 
-                    h.checkGroupEncryption.setChecked(isGroupEncryptionEnabled());
-                    h.checkGroupEncryption.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                        @Override
-                        public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                            setGroupEncryptionEnabled(isChecked);
-                        }
-                    });
+                    if (Preferences.doGroupEncryption()) {
+                        h.checkGroupEncryption.setChecked(isGroupEncryptionEnabled());
+                        h.checkGroupEncryption.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                            @Override
+                            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                                setGroupEncryptionEnabled(isChecked);
+                                }
+                        });
+                    }
+                    else {
+                        h.actionGroupEncryption.setVisibility(View.GONE);
+                    }
 
                     if (!mIsOwner)
                         h.editGroupName.setVisibility(View.GONE);
@@ -522,6 +528,7 @@ public class GroupDisplayActivity extends BaseActivity {
         final TextView actionShare;
         final TextView actionAddFriends;
         final View actionNotifications;
+        final View actionGroupEncryption;
         final SwitchCompat checkNotifications;
         final SwitchCompat checkGroupEncryption;
 
@@ -535,6 +542,7 @@ public class GroupDisplayActivity extends BaseActivity {
             actionShare = (TextView) view.findViewById(R.id.tvActionShare);
             actionAddFriends = (TextView) view.findViewById(R.id.tvActionAddFriends);
             actionNotifications = view.findViewById(R.id.tvActionNotifications);
+            actionGroupEncryption = view.findViewById(R.id.tvActionEncryption);
             checkNotifications = (SwitchCompat) view.findViewById(R.id.chkNotifications);
             checkGroupEncryption = (SwitchCompat) view.findViewById(R.id.chkGroupEncryption);
         }
