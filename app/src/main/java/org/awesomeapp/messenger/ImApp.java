@@ -32,6 +32,7 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
+import android.media.AudioAttributes;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Build;
@@ -193,13 +194,22 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
     public void initChannel(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
             NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
             NotificationChannel nc = new NotificationChannel(NOTIFICATION_CHANNEL_ID_SERVICE, getString(R.string.app_name), NotificationManager.IMPORTANCE_MIN);
             nc.setLockscreenVisibility(Notification.VISIBILITY_SECRET);
+            nc.setShowBadge(false);
             nm.createNotificationChannel(nc);
 
             nc = new NotificationChannel(NOTIFICATION_CHANNEL_ID_MESSAGE, getString(R.string.notifications), NotificationManager.IMPORTANCE_HIGH);
             nc.setLockscreenVisibility(Notification.VISIBILITY_SECRET);
+            nc.setLightColor(0xff990000);
+            nc.setShowBadge(true);
+            Uri ringtoneUri = Preferences.getNotificationRingtoneUri();
+            nc.setSound(ringtoneUri, new AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_NOTIFICATION_COMMUNICATION_INSTANT)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .build());
             nm.createNotificationChannel(nc);
 
 
@@ -223,9 +233,10 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
     @Override
     public void onCreate() {
         super.onCreate();
+        Preferences.setup(this);
         initChannel();
 
-        Preferences.setup(this);
+
         Languages.setup(MainActivity.class, R.string.use_system_default);
         Languages.setLanguage(this, Preferences.getLanguage(), false);
 
