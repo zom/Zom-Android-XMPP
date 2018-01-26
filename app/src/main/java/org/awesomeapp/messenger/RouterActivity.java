@@ -260,10 +260,7 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
                     imUrlIntent.putExtras(intent.getExtras());
 
                 startActivityForResult(imUrlIntent, REQUEST_HANDLE_LINK);
-
-           // setIntent(null);
-            //finish();
-
+                setIntent(null);
         }
         else if (countAvailable > 0)
         {
@@ -435,6 +432,7 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
             }
         }
 
+        setIntent(null);
         finish();
     }
 
@@ -474,6 +472,7 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
         mApp.maybeInit(this);
 
 
+        /**
         if (!mDoLock) {
 
             mHandler.postDelayed(new Runnable() {
@@ -484,7 +483,7 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
                 }
             },500);
 
-        }
+        }**/
 
 
     }
