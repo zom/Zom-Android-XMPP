@@ -123,7 +123,7 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:27.0.2'
     compile 'com.android.support:support-v4:27.0.2'
     compile project.ext.appcompat
-    compile 'info.guardianproject.cacheword:cachewordlib:0.1.1'
+ //   compile 'info.guardianproject.cacheword:cachewordlib:0.1.1'
     compile 'info.guardianproject.iocipher:IOCipher:0.4'
     compile 'info.guardianproject.netcipher:netcipher:2.0.0-alpha1'
     compile 'info.guardianproject.netcipher:netcipher-httpclient:2.0.0-alpha1'
