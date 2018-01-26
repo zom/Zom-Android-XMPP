@@ -127,7 +127,10 @@ public class ConversationDetailActivity extends BaseActivity {
             if (msg.what == 1) {
                 if (!mConvoView.isGroupChat()) {
                     if (mConvoView.getLastSeen() != null) {
-                        getSupportActionBar().setSubtitle(mPrettyTime.format(mConvoView.getLastSeen()));
+                        Date lastSeen = new Date();
+                        if (mConvoView.getLastSeen().before(lastSeen))
+                            lastSeen = mConvoView.getLastSeen();
+                        getSupportActionBar().setSubtitle(mPrettyTime.format(lastSeen));
                     } else {
                         if (mConvoView.getRemotePresence() == Presence.AWAY)
                             getSupportActionBar().setSubtitle(getString(R.string.presence_away));
@@ -290,9 +293,15 @@ public class ConversationDetailActivity extends BaseActivity {
 
         mApp = (ImApp)getApplication();
 
-        mChatId = intent.getIntExtra("id", -1);
-        if (mChatId == -1)
-            mChatId = intent.getLongExtra("id",-1);
+        try {
+            mChatId = intent.getIntExtra("id", -1);
+            if (mChatId == -1)
+                mChatId = intent.getLongExtra("id", -1);
+        }
+        catch (ClassCastException ce)
+        {
+            mChatId = intent.getLongExtra("id", -1);
+        }
 
         mAddress = intent.getStringExtra("address");
         mNickname = intent.getStringExtra("nickname");
