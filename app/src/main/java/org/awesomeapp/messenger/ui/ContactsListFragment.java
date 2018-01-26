@@ -545,7 +545,7 @@ public class ContactsListFragment extends Fragment {
             buf.append(" ) GROUP BY(" + Imps.Contacts.USERNAME);
 
             CursorLoader loader = new CursorLoader(getActivity(), mUri, ContactListItem.CONTACT_PROJECTION,
-                    buf == null ? null : buf.toString(), null, Imps.Contacts.SUB_AND_ALPHA_SORT_ORDER);
+                    buf == null ? null : buf.toString(), null, Imps.Contacts.ALPHA_SORT_ORDER);
 
             return loader;
         }
