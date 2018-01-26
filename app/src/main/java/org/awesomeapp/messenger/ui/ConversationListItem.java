@@ -227,10 +227,17 @@ public class ConversationListItem extends FrameLayout {
             {
                 String vPath = message.split(" ")[0];
 
-                if (SecureMediaStore.isVfsUri(vPath) && messageType != null)
+                if (SecureMediaStore.isVfsUri(vPath))
                 {
 
-                    if (messageType.startsWith("image"))
+                    if (TextUtils.isEmpty(messageType))
+                    {
+                        holder.mMediaThumb.setVisibility(View.VISIBLE);
+                        holder.mMediaThumb.setImageResource(R.drawable.ic_attach_file_black_36dp);
+                        holder.mMediaThumb.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                        holder.mLine2.setText("");
+                    }
+                    else if (messageType.startsWith("image"))
                     {
                         
                         if (holder.mMediaThumb != null)
@@ -252,6 +259,27 @@ public class ConversationListItem extends FrameLayout {
                                     holder.mLine2.setVisibility(View.GONE);
                                     
                         }
+                    }
+                    else if (messageType.startsWith("audio"))
+                    {
+                        holder.mMediaThumb.setVisibility(View.VISIBLE);
+                        holder.mMediaThumb.setImageResource(R.drawable.ic_volume_up_black_24dp);
+                        holder.mMediaThumb.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                        holder.mLine2.setText("");
+                    }
+                    else if (messageType.startsWith("video"))
+                    {
+                        holder.mMediaThumb.setVisibility(View.VISIBLE);
+                        holder.mMediaThumb.setImageResource(R.drawable.video256);
+                        holder.mMediaThumb.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                        holder.mLine2.setText("");
+                    }
+                    else if (messageType.startsWith("application"))
+                    {
+                        holder.mMediaThumb.setVisibility(View.VISIBLE);
+                        holder.mMediaThumb.setImageResource(R.drawable.ic_attach_file_black_36dp);
+                        holder.mMediaThumb.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                        holder.mLine2.setText("");
                     }
                     else
                     {
