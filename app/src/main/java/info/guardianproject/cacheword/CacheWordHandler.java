@@ -233,6 +233,7 @@ public class CacheWordHandler {
             return;
 
         mCacheWordService.setCachedSecrets(secrets);
+        checkCacheWordState();
     }
 
     /**
