@@ -35,6 +35,7 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.ListViewCompat;
 import android.support.v4.widget.ResourceCursorAdapter;
 import android.support.v7.widget.SearchView;
+import android.text.TextUtils;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -568,7 +569,7 @@ public class ContactsPickerActivity extends BaseActivity {
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
             StringBuilder buf = new StringBuilder();
 
-            if (mSearchString != null) {
+            if (!TextUtils.isEmpty(mSearchString)) {
                 buf.append('(');
                 buf.append(Imps.Contacts.NICKNAME);
                 buf.append(" LIKE ");
@@ -591,12 +592,14 @@ public class ContactsPickerActivity extends BaseActivity {
 
             buf.append(')');
 
+            /**
             buf.append(" AND ");
             buf.append('(');
             buf.append(Imps.Contacts.SUBSCRIPTION_TYPE).append("==").append(Imps.Contacts.SUBSCRIPTION_TYPE_BOTH);
             buf.append(" OR ");
             buf.append(Imps.Contacts.SUBSCRIPTION_TYPE).append("==").append(Imps.Contacts.SUBSCRIPTION_TYPE_TO);
             buf.append(')');
+             **/
 
             CursorLoader loader = new CursorLoader(ContactsPickerActivity.this, mUri, ContactListItem.CONTACT_PROJECTION,
                     buf == null ? null : buf.toString(), null, Imps.Contacts.MODE_AND_ALPHA_SORT_ORDER);
