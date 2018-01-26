@@ -1111,22 +1111,30 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                     return false; //couldn't write to database
                 }
 
-                try {
-                    synchronized (mRemoteListeners) {
-                        int N = mRemoteListeners.beginBroadcast();
-                        for (int i = 0; i < N; i++) {
-                            IChatListener listener = mRemoteListeners.getBroadcastItem(i);
-                            try {
-                                wasMessageSeen = listener.onIncomingMessage(ChatSessionAdapter.this, msg);
-                            } catch (RemoteException e) {
-                                // The RemoteCallbackList will take care of removing the
-                                // dead listeners.
+                int max = 3;
+                int n = 0;
+
+                while (n++ < max) {
+                    try {
+                        synchronized (mRemoteListeners) {
+                            int N = mRemoteListeners.beginBroadcast();
+                            for (int i = 0; i < N; i++) {
+                                IChatListener listener = mRemoteListeners.getBroadcastItem(i);
+                                try {
+                                    wasMessageSeen = listener.onIncomingMessage(ChatSessionAdapter.this, msg);
+                                } catch (RemoteException e) {
+                                    // The RemoteCallbackList will take care of removing the
+                                    // dead listeners.
+                                }
                             }
+                            mRemoteListeners.finishBroadcast();
                         }
-                        mRemoteListeners.finishBroadcast();
+                        break;
+                    } catch (Exception e) {
+                        Log.w(TAG, "error notifying of new messages", e);
+                        try { Thread.sleep(500);}catch(Exception e2){}//wait for broadcast to be over
+
                     }
-                } catch (Exception e) {
-                    Log.e(TAG,"error notifying of new messages",e);
                 }
             }
             else
