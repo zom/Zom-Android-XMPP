@@ -124,6 +124,7 @@ import org.jivesoftware.smackx.privacy.provider.PrivacyProvider;
 import org.jivesoftware.smackx.receipts.DeliveryReceipt;
 import org.jivesoftware.smackx.receipts.DeliveryReceiptManager;
 import org.jivesoftware.smackx.receipts.DeliveryReceiptRequest;
+import org.jivesoftware.smackx.receipts.ReceiptReceivedListener;
 import org.jivesoftware.smackx.search.UserSearch;
 import org.jivesoftware.smackx.sharedgroups.packet.SharedGroupsInfo;
 import org.jivesoftware.smackx.si.provider.StreamInitiationProvider;
@@ -2045,19 +2046,26 @@ public class XmppConnection extends ImConnection {
         mConfig.setHostnameVerifier(
                 mMemTrust.wrapHostnameVerifier(new org.apache.http.conn.ssl.StrictHostnameVerifier()));
 
-
         mConfig.setSendPresence(true);
 
         XMPPTCPConnection.setUseStreamManagementDefault(true);
+        XMPPTCPConnection.setUseStreamManagementResumptiodDefault(true);
 
         mConnection = new XMPPTCPConnection(mConfig.build());
 
+        DeliveryReceiptManager.getInstanceFor(mConnection).addReceiptReceivedListener(new ReceiptReceivedListener() {
+            @Override
+            public void onReceiptReceived(Jid fromJid, Jid toJid, String receiptId, Stanza receipt) {
 
+                ChatSession session = mSessionManager.findSession(fromJid.asBareJid());
 
-        //debug(TAG,"is secure connection? " + mConnection.isSecureConnection());
-        //debug(TAG,"is using TLS? " + mConnection.isUsingTLS());
+                if (session != null)
+                    session.onMessageReceipt(receiptId);
 
-        mConnection.addAsyncStanzaListener(new StanzaListener() {
+            }
+        });
+
+        mConnection.addSyncStanzaListener(new StanzaListener() {
 
             @Override
             public void processStanza(Stanza stanza) {
@@ -2080,7 +2088,7 @@ public class XmppConnection extends ImConnection {
             }
         }, new StanzaTypeFilter(org.jivesoftware.smack.packet.Message.class));
 
-        mConnection.addAsyncStanzaListener(new StanzaListener() {
+        mConnection.addSyncStanzaListener(new StanzaListener() {
 
             @Override
             public void processStanza(Stanza packet) {
@@ -2296,15 +2304,10 @@ public class XmppConnection extends ImConnection {
 
         }
 
-        DeliveryReceipt drIncoming = (DeliveryReceipt) smackMessage.getExtension("received", DeliveryReceipt.NAMESPACE);
-
         ChatSession session = findOrCreateSession(smackMessage.getFrom().toString(), isGroupMessage);
 
         if (session != null) //not subscribed so don't do anything
         {
-
-            if (drIncoming != null)
-                session.onMessageReceipt(drIncoming.getId());
 
             if (body != null && session != null) {
 
@@ -3848,7 +3851,7 @@ public class XmppConnection extends ImConnection {
 
         sdm.addFeature(HttpFileUploadManager.NAMESPACE);
 
-        DeliveryReceiptManager.getInstanceFor(mConnection).dontAutoAddDeliveryReceiptRequests();
+        DeliveryReceiptManager.getInstanceFor(mConnection).autoAddDeliveryReceiptRequests();
         DeliveryReceiptManager.getInstanceFor(mConnection).setAutoReceiptMode(DeliveryReceiptManager.AutoReceiptMode.disabled);
 
     }
