@@ -317,7 +317,7 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
     }
 
     private int accountsAvailable() {
-        if (mProviderCursor == null || !mProviderCursor.moveToFirst()) {
+        if (mProviderCursor == null || mProviderCursor.isClosed() || !mProviderCursor.moveToFirst()) {
             return 0;
         }
         int count = 0;
@@ -451,6 +451,7 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
                 try {
                     mCacheWord.setPassphrase(settings.getString(ImApp.PREFERENCE_KEY_TEMP_PASS, null).toCharArray());
 
+
                 } catch (GeneralSecurityException e) {
                     
                     Log.d(ImApp.LOG_TAG, "couldn't open cacheword with temp password",e);
@@ -472,7 +473,7 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
 
         mApp.maybeInit(this);
 
-        /*
+
         if (!mDoLock) {
 
             mHandler.postDelayed(new Runnable() {
@@ -481,9 +482,9 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
 
                     doOnResume();
                 }
-            },1000);
+            },500);
 
-        }*/
+        }
 
 
     }
