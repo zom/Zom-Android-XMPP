@@ -57,6 +57,7 @@ import org.awesomeapp.messenger.ui.widgets.LetterAvatar;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 
 import im.zom.messenger.R;
 
@@ -321,7 +322,7 @@ public class GroupDisplayActivity extends BaseActivity {
                 return VIEW_TYPE_MEMBER;
             }
         }.init());
-        updateMembers();
+
     }
 
     @Override
@@ -349,7 +350,7 @@ public class GroupDisplayActivity extends BaseActivity {
         super.onPause();
     }
 
-    private void updateMembers() {
+    private synchronized void updateMembers() {
         if (mThreadUpdate != null) {
             mThreadUpdate.interrupt();
             mThreadUpdate = null;
@@ -358,7 +359,7 @@ public class GroupDisplayActivity extends BaseActivity {
             @Override
             public void run() {
 
-                final ArrayList<GroupMemberDisplay> members = new ArrayList<>();
+                final HashMap<String, GroupMemberDisplay> members = new HashMap<>();
 
                 IContactListManager contactManager = null;
 
@@ -398,25 +399,15 @@ public class GroupDisplayActivity extends BaseActivity {
                             }
                         }
 
-
-                        /**
-                         try {
-                         if (contactManager != null) {
-                         Contact contact = contactManager.getContactByAddress(member.username);
-                         if (contact != null)
-                         member.online = contact.getPresence().isOnline();
-                         }
-                         }
-                         catch (RemoteException re){}**/
-
-                        members.add(member);
+                        members.put(member.username, member);
                     }
                     c.close();
                 }
                 if (!Thread.currentThread().isInterrupted()) {
 
+                    final ArrayList<GroupMemberDisplay> listMembers = new ArrayList<>(members.values());
                     // Sort members by name, but keep owners at the top
-                    Collections.sort(members, new Comparator<GroupMemberDisplay>() {
+                    Collections.sort(listMembers, new Comparator<GroupMemberDisplay>() {
                         @Override
                         public int compare(GroupMemberDisplay member1, GroupMemberDisplay member2) {
                             if (member1.affiliation == null || member2.affiliation == null)
@@ -436,7 +427,7 @@ public class GroupDisplayActivity extends BaseActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            mMembers = members;
+                            mMembers = listMembers;
                             mRecyclerView.getAdapter().notifyDataSetChanged();
                         }
                     });

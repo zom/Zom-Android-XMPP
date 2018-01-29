@@ -1765,7 +1765,9 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
 
         case MATCH_GROUP_MEMBERS_BY_GROUP:
             qb.setTables(TABLE_GROUP_MEMBERS);
+            qb.setDistinct(true);
             appendWhere(whereClause, Imps.GroupMembers.GROUP, "=", url.getPathSegments().get(1));
+            groupBy = Imps.GroupMembers.USERNAME;
             break;
 
         case MATCH_AVATARS:
