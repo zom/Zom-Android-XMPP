@@ -83,6 +83,7 @@ import android.os.RemoteCallbackList;
 import android.os.RemoteException;
 import android.provider.BaseColumns;
 import android.provider.ContactsContract;
+import android.provider.OpenableColumns;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
@@ -484,15 +485,18 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         if (mediaUri == null || mediaUri.getPath() == null)
             return false;
 
-        final java.io.File fileLocal;
-        final java.io.InputStream fis;
+        String fileName = mediaUri.getLastPathSegment();
+        java.io.InputStream fis = null;
+        long fileLength = -1;
 
         if (mediaUri.getScheme() != null &&
                 mediaUri.getScheme().equals("vfs")) {
-            fileLocal = new info.guardianproject.iocipher.File(mediaUri.getPath());
+            info.guardianproject.iocipher.File fileLocal = new info.guardianproject.iocipher.File(mediaUri.getPath());
             if (fileLocal.exists()) {
                 try {
-                    fis = new info.guardianproject.iocipher.FileInputStream((info.guardianproject.iocipher.File) fileLocal);
+                    fis = new info.guardianproject.iocipher.FileInputStream(fileLocal);
+                    fileName = fileLocal.getName();
+                    fileLength = fileLocal.length();
                 } catch (FileNotFoundException fe) {
                     Log.w(TAG, "encrypted file not found on import: " + mediaUri);
                     return false;
@@ -501,11 +505,41 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                 Log.w(TAG, "encrypted file not found on import: " + mediaUri);
                 return false;
             }
-        } else {
-            fileLocal = new java.io.File(mediaUri.getPath());
+        }
+        else if (mediaUri.getScheme() != null &&
+                mediaUri.getScheme().equals("content")) {
+
+            ContentResolver cr = service.getContentResolver();
+
+            Cursor returnCursor = cr.query(mediaUri, null, null, null, null);
+
+            if (returnCursor != null && returnCursor.moveToFirst())
+            {
+                int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                int sizeIndex = returnCursor.getColumnIndex(OpenableColumns.SIZE);
+                fileName = returnCursor.getString(nameIndex);
+                fileLength = returnCursor.getLong(sizeIndex);
+                returnCursor.close();
+                try {
+                    fis = cr.openInputStream(mediaUri);
+                }
+                catch (Exception e)
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+
+        }
+        else {
+            java.io.File fileLocal = new java.io.File(mediaUri.getPath());
             if (fileLocal.exists()) {
                 try {
                     fis = new java.io.FileInputStream(fileLocal);
+                    fileLength = fileLocal.length();
                 } catch (FileNotFoundException fe) {
                     Log.w(TAG, "file system file not found on import: " + mediaUri);
                     return false;
@@ -516,13 +550,13 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             }
         }
 
-        sendMediaMessageAsync(mediaPath, mimeType, fileLocal, fis);
+        sendMediaMessageAsync(mediaPath, mimeType, fileName, fis, fileLength);
 
         return true;
 
     }
 
-    private void sendMediaMessageAsync (final String mediaPath, final String mimeType, final java.io.File fileLocal, final InputStream fis)
+    private void sendMediaMessageAsync (final String mediaPath, final String mimeType, final String fileName, final InputStream fis, final long fileLength)
     {
 
         //TODO do HTTP Upload XEP 363
@@ -533,25 +567,23 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             public void run ()
             {
 
-
+                String sendFileName = fileName;
 
                 final Message msgMedia = storeMediaMessage(mediaPath, mimeType);
 
-
-                String fileName = fileLocal.getName();
-                if (!fileName.contains("."))
+                if (!sendFileName.contains("."))
                 {
                     String fileExt = MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType);
 
                     if (!TextUtils.isEmpty(fileExt))
-                        fileName += "." + fileExt;
+                        sendFileName += "." + fileExt;
                     else if (mimeType.equals("audio/mp4"))
                     {
-                        fileName += ".m4a";
+                        sendFileName += ".m4a";
                     }
                     else if (mimeType.equals("audio/mp4"))
                     {
-                        fileName += ".m4a";
+                        sendFileName += ".m4a";
                     }
 
 
@@ -571,7 +603,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                     }
                 };
 
-                String resultUrl = mConnection.publishFile(fileName, mimeType, fileLocal.length(), fis, doEncryption, listener);
+                String resultUrl = mConnection.publishFile(sendFileName, mimeType, fileLength, fis, doEncryption, listener);
 
                 //make sure result is valid and starts with https, if so, send it!
                 if (!TextUtils.isEmpty(resultUrl))

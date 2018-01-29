@@ -461,13 +461,6 @@ public class MessageListItem extends FrameLayout {
 
         mHolder.mTextViewForMessages.setText("");
 
-        /**
-        holder.setOnClickListenerMediaThumbnail(mimeType, mediaUri);
-        mHolder.mTextViewForMessages.setText("");
-        mAudioPlayer = new AudioPlayer(getContext(), mediaUri.getPath(), mimeType, mHolder.mVisualizerView,mHolder.mTextViewForMessages);
-        holder.mContainer.setBackgroundResource(android.R.color.transparent);
-         **/
-
         if (holder.mAudioWife != null)
         {
             holder.mAudioWife.release();

@@ -208,7 +208,16 @@
                     android:layout_width="64dp"
                     android:layout_height="64dp"
                     />
-
+                <org.awesomeapp.messenger.ui.CircleColorImageView
+                    android:id="@+id/btnAttachAudio"
+                    android:src="@drawable/ic_audiotrack_white_24dp"
+                    android:layout_margin="3dp"
+                    android:padding="6dp"
+                    app:circleColor="@android:color/holo_red_light"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    />
+<!--
                 <org.awesomeapp.messenger.ui.CircleColorImageView
                     android:id="@+id/btnAttachFile"
                     android:src="@drawable/ic_insert_drive_file_white_36dp"
@@ -218,6 +227,7 @@
                     android:layout_width="64dp"
                     android:layout_height="64dp"
                     />
+                    -->
             </LinearLayout>
         </HorizontalScrollView>
 

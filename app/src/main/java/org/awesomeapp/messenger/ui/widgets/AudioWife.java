@@ -382,7 +382,7 @@ public class AudioWife {
 
         mProgressUpdateHandler = new Handler();
 
-        initPlayer(ctx, uri.getPath(),mimeType);
+        initPlayer(ctx, uri,mimeType);
 
         return this;
     }
@@ -596,76 +596,69 @@ public class AudioWife {
     /****
      * Initialize and prepare the audio player
      ****/
-    private void initPlayer(Context ctx, String fileName, String mimeType) throws IOException {
-
-        final File fileStream = new File(fileName);
+    private void initPlayer(Context ctx, final Uri mediaUri, String mimeType) throws IOException {
 
         mMediaPlayer = new MediaPlayer();
         mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
-        if (fileStream.exists()) {
+        if (mediaUri.getScheme() != null) {
+            if (mediaUri.getScheme().equals("vfs")) {
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                mMediaPlayer.setDataSource(new MediaDataSource() {
+                final info.guardianproject.iocipher.File fileMediaEncrypted
+                        = new info.guardianproject.iocipher.File(mediaUri.getPath());
 
-                    info.guardianproject.iocipher.RandomAccessFile fis;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    mMediaPlayer.setDataSource(new MediaDataSource() {
 
-                    @Override
-                    public int readAt(long position, byte[] buffer, int offset, int size) throws IOException {
-                        if (fis == null)
-                            fis = new info.guardianproject.iocipher.RandomAccessFile(fileStream,"r");
+                        final info.guardianproject.iocipher.RandomAccessFile fis
+                                = new info.guardianproject.iocipher.RandomAccessFile(fileMediaEncrypted, "r");
 
-                        if (position > getSize())
-                            return -1;
+                        @Override
+                        public int readAt(long position, byte[] buffer, int offset, int size) throws IOException {
 
-                        fis.seek(position);
-                        byte[] outBuffer = new byte[size];
-                        int readSize = fis.read(outBuffer,0,size);
-                        System.arraycopy(outBuffer,0,buffer,offset,size);
-                        return readSize;
-                    }
+                            if (position > getSize())
+                                return -1;
 
-                    @Override
-                    public long getSize() throws IOException {
-                        return fileStream.length();
-                    }
+                            fis.seek(position);
+                            byte[] outBuffer = new byte[size];
+                            int readSize = fis.read(outBuffer, 0, size);
+                            System.arraycopy(outBuffer, 0, buffer, offset, size);
+                            return readSize;
+                        }
 
-                    @Override
-                    public void close() throws IOException {
-                        if (fis != null)
-                            fis.close();
-                    }
-                });
+                        @Override
+                        public long getSize() throws IOException {
+                            return fis.length();
+                        }
+
+                        @Override
+                        public void close() throws IOException {
+                            if (fis != null)
+                                fis.close();
+                        }
+                    });
+                }
+                 else {
+                    HttpMediaStreamer streamer = new HttpMediaStreamer(fileMediaEncrypted, mimeType);
+                    Uri uri = streamer.getUri();
+                    mMediaPlayer.setDataSource(ctx, uri);
+                }
             }
-            else
+            else if (mediaUri.getScheme().equals("content"))
             {
-                HttpMediaStreamer streamer = new HttpMediaStreamer(fileStream, mimeType);
-                Uri uri = streamer.getUri();
-                mMediaPlayer.setDataSource(ctx, uri);
+                mMediaPlayer.setDataSource(ctx, mediaUri);
             }
+            else if (mediaUri.getScheme().equals("file"))
+            {
+                mMediaPlayer.setDataSource(ctx, mediaUri);
+            }
+
         }
         else
         {
-            mMediaPlayer.setDataSource(fileName);
+            mMediaPlayer.setDataSource(mediaUri.getPath());
         }
-        /**
-         mMediaPlayer = new MediaPlayer();
-         mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
-         try {
-         mMediaPlayer.setDataSource(ctx, mUri);
-         } catch (IllegalArgumentException e) {
-         e.printStackTrace();
-         } catch (SecurityException e) {
-         e.printStackTrace();
-         } catch (IllegalStateException e) {
-         e.printStackTrace();
-         } catch (IOException e) {
-         e.printStackTrace();
-         } catch (Exception e) {
-         e.printStackTrace();
-         }
-         **/
 
         try {
             mMediaPlayer.prepare();

@@ -17,6 +17,7 @@
 package org.awesomeapp.messenger.ui;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -286,8 +287,9 @@ public class ConversationDetailActivity extends BaseActivity {
 
     }
 
+    @SuppressLint("Range")
     public static int getContrastColor(int colorIn) {
-        double y = (299 * Color.red(colorIn) + 587 * Color.green(colorIn) + 114 * Color.blue(colorIn)) / 1000;
+         double y = (299 * Color.red(colorIn) + 587 * Color.green(colorIn) + 114 * Color.blue(colorIn)) / 1000;
         return y >= 128 ? Color.BLACK : Color.WHITE;
     }
 
@@ -559,7 +561,7 @@ public class ConversationDetailActivity extends BaseActivity {
     }
 
 
-    void startFilePicker() {
+    void startFilePicker(String mimeType) {
 
         int permissionCheck = ContextCompat.checkSelfPermission(this,
                 Manifest.permission.READ_EXTERNAL_STORAGE);
@@ -601,9 +603,9 @@ public class ConversationDetailActivity extends BaseActivity {
             // If one wanted to search for ogg vorbis files, the type would be "audio/ogg".
             // To search for all documents available via installed storage providers,
             // it would be "*/*".
-            intent.setType("*/*");
+            intent.setType(mimeType);
 
-            startActivityForResult(Intent.createChooser(intent, "Select File"), REQUEST_SEND_FILE);
+            startActivityForResult(Intent.createChooser(intent, getString(R.string.invite_share)), REQUEST_SEND_FILE);
         }
     }
 
@@ -629,27 +631,29 @@ public class ConversationDetailActivity extends BaseActivity {
 
             String sessionId = mConvoView.getChatId()+"";
 
-            Uri vfsUri;
+            Uri sendUri;
+
             if (resizeImage)
-                vfsUri = SecureMediaStore.resizeAndImportImage(this, sessionId, contentUri, info.type);
+                sendUri = SecureMediaStore.resizeAndImportImage(this, sessionId, contentUri, info.type);
             else if (importContent) {
 
                 if (contentUri.getScheme() == null || contentUri.getScheme().equals("assets"))
-                    vfsUri = SecureMediaStore.importContent(sessionId,info.name, info.stream);
+                    sendUri = SecureMediaStore.importContent(sessionId,info.name, info.stream);
                 else if (contentUri.getScheme().startsWith("http"))
                 {
-                    vfsUri = SecureMediaStore.importContent(sessionId,info.name, new URL(contentUri.toString()).openConnection().getInputStream());
+                    sendUri = SecureMediaStore.importContent(sessionId,info.name, new URL(contentUri.toString()).openConnection().getInputStream());
                 }
                 else
-                    vfsUri = SecureMediaStore.importContent(sessionId,info.name, info.stream);
+                    sendUri = SecureMediaStore.importContent(sessionId,info.name, info.stream);
             }
             else
             {
-                vfsUri = contentUri;
+                sendUri = contentUri;
+                info.type = getContentResolver().getType(sendUri);
             }
 
             // send
-            boolean sent = handleSendData(session, vfsUri, info.type);
+            boolean sent = handleSendData(session, sendUri, info.type);
             if (!sent) {
                 // not deleting if not sent
                 return;
@@ -737,7 +741,7 @@ public class ConversationDetailActivity extends BaseActivity {
 
                 boolean deleteFile = false;
                 boolean resizeImage = false;
-                boolean importContent = true;
+                boolean importContent = false;
 
                 handleSendDelete(uri, defaultType, deleteFile, resizeImage, importContent);
             }
@@ -770,6 +774,7 @@ public class ConversationDetailActivity extends BaseActivity {
             if (session != null) {
 
                 String offerId = UUID.randomUUID().toString();
+
                 return session.offerData(offerId, uri.toString(), mimeType );
             }
 

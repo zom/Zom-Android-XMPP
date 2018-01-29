@@ -890,6 +890,15 @@ public class ConversationView {
         });
 
 
+        mActivity.findViewById(R.id.btnAttachAudio).setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                mActivity.startFilePicker("audio/*");
+            }
+
+        });
+        /**
         mActivity.findViewById(R.id.btnAttachFile).setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -897,7 +906,7 @@ public class ConversationView {
                 mActivity.startFilePicker();
             }
 
-        });
+        });**/
 
         mActivity.findViewById(R.id.btnAttachSticker).setOnClickListener(new View.OnClickListener() {
 
@@ -1299,7 +1308,7 @@ public class ConversationView {
 
         mActivity.findViewById(R.id.btnAttachPicture).setEnabled(true);
         mActivity.findViewById(R.id.btnTakePicture).setEnabled(true);
-        //mActivity.findViewById(R.id.btnAttachFile).setEnabled(true);
+        mActivity.findViewById(R.id.btnAttachAudio).setEnabled(true);
         mMicButton.setEnabled(true);
 
     }
