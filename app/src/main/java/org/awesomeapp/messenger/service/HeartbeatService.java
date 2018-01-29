@@ -80,7 +80,7 @@ public class HeartbeatService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null && HEARTBEAT_ACTION.equals(intent.getAction())) {
             startHeartbeat(mHeartbeatInterval);
-            startService(mRelayIntent);
+         //   startService(mRelayIntent);
         }
         return START_STICKY;
     }
