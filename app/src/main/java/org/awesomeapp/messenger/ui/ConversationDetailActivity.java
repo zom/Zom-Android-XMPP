@@ -126,7 +126,11 @@ public class ConversationDetailActivity extends BaseActivity {
 
             if (msg.what == 1) {
                 if (!mConvoView.isGroupChat()) {
-                    if (mConvoView.getLastSeen() != null) {
+                    if (mConvoView.getRemotePresence() == Presence.AVAILABLE)
+                    {
+                        getSupportActionBar().setSubtitle(getString(R.string.presence_available));
+                    }
+                    else if (mConvoView.getLastSeen() != null) {
                         Date lastSeen = new Date();
                         if (mConvoView.getLastSeen().before(lastSeen))
                             lastSeen = mConvoView.getLastSeen();

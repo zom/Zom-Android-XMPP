@@ -91,6 +91,8 @@ public class ContactListItem extends FrameLayout {
 
     private ContactViewHolder mHolder;
 
+    private boolean mShowPresence = false;
+
     public ContactListItem(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
@@ -174,7 +176,6 @@ public class ContactListItem extends FrameLayout {
 
                 try
                 {
-                   //avatar = DatabaseUtils.getAvatarFromCursor(cursor, COLUMN_AVATAR_DATA, ImApp.SMALL_AVATAR_WIDTH, ImApp.SMALL_AVATAR_HEIGHT);
                     avatar = DatabaseUtils.getAvatarFromAddress(this.getContext().getContentResolver(), address, ImApp.SMALL_AVATAR_WIDTH, ImApp.SMALL_AVATAR_HEIGHT);
 
                 }
@@ -249,13 +250,38 @@ public class ContactListItem extends FrameLayout {
             } else if (subStatus == Imps.ContactsColumns.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING) {
                 if (holder.mLine2 != null)
                     holder.mLine2.setText(getContext().getString(R.string.title_pending));
-            } else if (subType == Imps.ContactsColumns.SUBSCRIPTION_TYPE_NONE || subType == Imps.ContactsColumns.SUBSCRIPTION_TYPE_REMOVE) {
+            }
+            /**
+            else if (subType == Imps.ContactsColumns.SUBSCRIPTION_TYPE_NONE || subType == Imps.ContactsColumns.SUBSCRIPTION_TYPE_REMOVE) {
                 if (holder.mLine2 != null)
                     holder.mLine2.setText(getContext().getString(R.string.recipient_blocked_the_user));
             } else {
                 if (holder.mSubBox != null) {
                     holder.mSubBox.setVisibility(View.GONE);
                 }
+            }**/
+        }
+
+        if (mShowPresence) {
+            switch (presence) {
+                case Presence.AVAILABLE:
+                    if (holder.mLine2 != null)
+                        holder.mLine2.setText(getContext().getString(R.string.presence_available));
+
+                case Presence.IDLE:
+                    if (holder.mLine2 != null)
+                        holder.mLine2.setText(getContext().getString(R.string.presence_available));
+                    /**
+                     case Presence.AWAY:
+                     return (getResources().getColor(R.color.holo_orange_light));
+
+                     case Presence.DO_NOT_DISTURB:
+                     return(getResources().getColor(R.color.holo_red_dark));
+
+                     case Presence.OFFLINE:
+                     return(getResources().getColor(R.color.holo_grey_dark));
+                     **/
+                default:
             }
         }
 
@@ -417,6 +443,11 @@ public class ContactListItem extends FrameLayout {
 
         }
 
+    }
+
+    public void setShowPresence (boolean showPresence)
+    {
+        mShowPresence = showPresence;
     }
 
 

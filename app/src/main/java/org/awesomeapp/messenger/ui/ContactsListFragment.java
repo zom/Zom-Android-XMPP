@@ -454,6 +454,7 @@ public class ContactsListFragment extends Fragment {
 
             ContactListItem view = (ContactListItem)LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.contact_view, parent, false);
+            view.setShowPresence(false);
             view.setBackgroundResource(mBackground);
 
             ContactViewHolder holder = view.getViewHolder();
