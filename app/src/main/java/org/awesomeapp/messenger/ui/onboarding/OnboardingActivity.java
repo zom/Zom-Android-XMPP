@@ -791,7 +791,7 @@ public class OnboardingActivity extends BaseActivity {
                 String nickname = new XmppAddress(account[0]).getUser();
                 OnboardingAccount result = OnboardingManager.addExistingAccount(OnboardingActivity.this, mHandler, nickname, account[0], account[1]);
 
-                if (result != null) {
+                if (result != null && result.accountId != -1 && (!TextUtils.isEmpty(result.username))) {
                     String jabberId = result.username + '@' + result.domain;
                     keyMan.storeKeyPair(jabberId,keyPair);
                 }
