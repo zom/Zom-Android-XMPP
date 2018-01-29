@@ -227,7 +227,7 @@ public class ConversationListItem extends FrameLayout {
             {
                 String vPath = message.split(" ")[0];
 
-                if (SecureMediaStore.isVfsUri(vPath))
+                if (SecureMediaStore.isVfsUri(vPath)||SecureMediaStore.isContentUri(vPath))
                 {
 
                     if (TextUtils.isEmpty(messageType))

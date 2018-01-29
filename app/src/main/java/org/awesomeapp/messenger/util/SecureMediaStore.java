@@ -90,6 +90,7 @@ public class SecureMediaStore {
     }
 
     private static final String VFS_SCHEME = "vfs";
+    private static final String CONTENT_SCHEME = "content";
 
     public static Uri vfsUri(String filename) {
         return Uri.parse(VFS_SCHEME + ":" + filename);
@@ -98,6 +99,18 @@ public class SecureMediaStore {
     public static boolean isVfsUri(Uri uri) {
         return TextUtils.equals(VFS_SCHEME, uri.getScheme());
     }
+
+    public static boolean isContentUri(Uri uri) {
+        return TextUtils.equals(CONTENT_SCHEME, uri.getScheme());
+    }
+
+    public static boolean isContentUri(String uriString) {
+        if (TextUtils.isEmpty(uriString))
+            return false;
+        else
+            return uriString.startsWith(CONTENT_SCHEME + ":/");
+    }
+
 
     public static boolean isVfsUri(String uriString) {
         if (TextUtils.isEmpty(uriString))

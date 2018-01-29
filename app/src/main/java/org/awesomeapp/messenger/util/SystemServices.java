@@ -200,9 +200,9 @@ public class SystemServices {
             File file = new File(uri.toString());
             info.name =  file.getName();
             info.stream = new FileInputStream(file);
-            String type = getMimeType(uri.toString());
-            if (!TextUtils.isEmpty(type)) {
-                info.type = type;
+            info.type = aContext.getContentResolver().getType(uri);
+            if (!TextUtils.isEmpty(info.type)) {
+                info.type = getMimeType(uri.toString());;
                 return info;
             }
         }
@@ -212,7 +212,9 @@ public class SystemServices {
             info.stream = aContext.getContentResolver().openInputStream(uri);
         }
 
-        info.type = aContext.getContentResolver().getType(uri);
+        if (TextUtils.isEmpty(info.type))
+            info.type = aContext.getContentResolver().getType(uri);
+
         if (!TextUtils.isEmpty(info.type))
             return info;
 
