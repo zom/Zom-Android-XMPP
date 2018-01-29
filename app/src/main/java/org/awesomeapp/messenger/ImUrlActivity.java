@@ -828,7 +828,12 @@ public class ImUrlActivity extends Activity {
 
     private void startContactPicker() {
 
-        Uri.Builder builder = Imps.Contacts.CONTENT_URI_CHAT_CONTACTS_BY.buildUpon();
+        Intent i = new Intent(this, ContactsPickerActivity.class);
+        i.putExtra(ContactsPickerActivity.EXTRA_SHOW_GROUPS,true);
+        startActivityForResult(i, REQUEST_PICK_CONTACTS);
+
+        /**
+        Uri.Builder builder = Imps.Contacts.CONTENT_URI.buildUpon();
 
         Collection<IImConnection> listConns = ((ImApp)getApplication()).getActiveConnections();
 
@@ -843,20 +848,18 @@ public class ImUrlActivity extends Activity {
                 ContentUris.appendId(builder,  mAccountId);
                 Uri data = builder.build();
 
-                Intent i = new Intent(this, ContactsPickerActivity.class);
                 i.setData(data);
                 ArrayList<String> extras = new ArrayList<>();
                 extras.add("");
                 i.putExtra(EXTRA_EXCLUDED_CONTACTS,extras);
                 i.putExtra(ContactsPickerActivity.EXTRA_SHOW_GROUPS,true);
-                startActivityForResult(i, REQUEST_PICK_CONTACTS);
 
                 break;
 
             } catch (RemoteException e) {
                 throw new RuntimeException(e);
             }
-        }
+        }**/
     }
 
     void showLockScreen() {

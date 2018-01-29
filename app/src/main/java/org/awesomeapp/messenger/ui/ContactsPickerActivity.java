@@ -590,6 +590,7 @@ public class ContactsPickerActivity extends BaseActivity {
                 buf.append(" OR ");
                 buf.append(Imps.Contacts.TYPE).append('=').append(Imps.Contacts.TYPE_GROUP);
             }
+          //  buf.append(") ");
 
             buf.append(")) GROUP BY (" + Imps.Contacts.USERNAME);
 
