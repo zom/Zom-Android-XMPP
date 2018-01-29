@@ -97,7 +97,7 @@ android {
         verify = [
         ]
     }
-    buildToolsVersion '26.0.2'
+    buildToolsVersion '27.0.3'
 }
 
 ext {
