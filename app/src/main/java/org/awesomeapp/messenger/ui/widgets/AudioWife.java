@@ -166,7 +166,8 @@ public class AudioWife {
         }
 
         if (mMediaPlayer == null) {
-            throw new IllegalStateException("Call init() before calling this method");
+            //throw new IllegalStateException("Call init() before calling this method");
+            return;
         }
 
         if (mMediaPlayer.isPlaying()) {
