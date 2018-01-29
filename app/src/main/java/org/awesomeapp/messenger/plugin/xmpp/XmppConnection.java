@@ -73,6 +73,7 @@ import org.jivesoftware.smack.util.DNSUtil;
 import org.jivesoftware.smack.util.dns.HostAddress;
 
 import org.jivesoftware.smackx.address.provider.MultipleAddressesProvider;
+import org.jivesoftware.smackx.bookmarks.BookmarkManager;
 import org.jivesoftware.smackx.bytestreams.socks5.provider.BytestreamsProvider;
 import org.jivesoftware.smackx.chat_markers.ChatMarkersManager;
 import org.jivesoftware.smackx.chatstates.ChatState;
@@ -206,6 +207,8 @@ public class XmppConnection extends ImConnection {
 
     private XmppContactListManager mContactListManager;
     private LastActivityManager mLastActivityManager;
+    private BookmarkManager mBookmarkManager;
+    private PrivateDataManager mPrivateManager;
 
     private Contact mUser;
     private BareJid mUserJid;
@@ -621,6 +624,7 @@ public class XmppConnection extends ImConnection {
                     ChatGroup group = mGroups.get(muc.getRoom().toString());
 
                     addMucListeners(reMuc, group);
+         //           mBookmarkManager.addBookmarkedConference(muc.getSubject(),muc.getRoom(),true,muc.getNickname(),null);
 
                 } catch (Exception e) {
                     Log.w(TAG,"unable to join MUC: " + e.getMessage());
@@ -659,7 +663,7 @@ public class XmppConnection extends ImConnection {
         }
 
         @Override
-        public synchronized boolean createChatGroupAsync(String chatRoomJid, String subject, String nickname) throws Exception {
+        public boolean createChatGroupAsync(String chatRoomJid, String subject, String nickname) throws Exception {
 
             ChatGroup chatGroup;
             MultiUserChat muc;
@@ -875,6 +879,7 @@ public class XmppConnection extends ImConnection {
             }
 
             addMucListeners(muc,chatGroup);
+     //       mBookmarkManager.addBookmarkedConference(muc.getSubject(),muc.getRoom(),true,muc.getNickname(),null);
 
             return true;
 
@@ -965,6 +970,7 @@ public class XmppConnection extends ImConnection {
                 mMUCs.put(chatRoomJid, muc);
 
                 addMucListeners(muc, chatGroup);
+       //         mBookmarkManager.addBookmarkedConference(muc.getSubject(),muc.getRoom(),true,muc.getNickname(),null);
 
 
             } catch (Exception e) {
@@ -1140,6 +1146,7 @@ public class XmppConnection extends ImConnection {
             // Remove and re-add (to make sure it's set only once)
             muc.removeMessageListener(mMessageListener);
             muc.addMessageListener(mMessageListener);
+
         }
 
         @Override
@@ -1160,6 +1167,10 @@ public class XmppConnection extends ImConnection {
 
                 mMUCs.remove(chatRoomJid);
 
+                try {
+              //      mBookmarkManager.removeBookmarkedConference(JidCreate.entityBareFrom(chatRoomJid));
+                }
+                catch (Exception e){}
             }
 
         }
@@ -2933,6 +2944,9 @@ public class XmppConnection extends ImConnection {
 
             mLastActivityManager = LastActivityManager.getInstanceFor(mConnection);
             mLastActivityManager.enable();
+
+            mBookmarkManager = BookmarkManager.getBookmarkManager(mConnection);
+            mPrivateManager = PrivateDataManager.getInstanceFor(mConnection);
 
             ContactList cl;
 
