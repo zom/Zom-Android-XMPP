@@ -368,6 +368,9 @@ public class ImPluginHelper {
         values.put(Imps.Provider.SIGNUP_URL, signUpUrl);
 
         Uri result = cr.insert(Imps.Provider.CONTENT_URI, values);
+        if (result == null)
+            return -1;
+
         providerId = ContentUris.parseId(result);
 
         ContentValues[] settingValues = new ContentValues[config.size()];
