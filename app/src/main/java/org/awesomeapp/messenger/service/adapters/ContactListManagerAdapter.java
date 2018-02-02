@@ -180,11 +180,12 @@ public class ContactListManagerAdapter extends
 
         closeChatSession(address);
 
+        /**
         if (isTemporary(address)) {
             synchronized (mTemporaryContacts) {
                 mTemporaryContacts.remove(address);
             }
-        } else {
+        } else {**/
             synchronized (mContactLists) {
                 for (ContactListAdapter list : mContactLists.values()) {
                     int resCode = list.removeContact(address);
@@ -199,7 +200,7 @@ public class ContactListManagerAdapter extends
                 }
 
             }
-        }
+       // }
 
         String selection = Imps.Contacts.USERNAME + "=?";
         String[] selectionArgs = { address };
@@ -340,13 +341,14 @@ public class ContactListManagerAdapter extends
         }
     }
 
+    /**
     public Contact[] createTemporaryContacts(String[] addresses) {
         Contact[] contacts = mAdaptee.createTemporaryContacts(addresses);
 
         for (Contact c : contacts)
             insertTemporary(c);
         return contacts;
-    }
+    }**/
 
     public long queryOrInsertContact(Contact c) {
         long result;
@@ -361,7 +363,10 @@ public class ContactListManagerAdapter extends
         if (cursor != null && cursor.moveToFirst()) {
             result = cursor.getLong(0);
         } else {
-            result = insertTemporary(c);
+           // result = insertContactContent(c);
+            Uri uriNewContact = insertContactContent(c, FAKE_TEMPORARY_LIST_ID, Imps.Contacts.TYPE_NORMAL, Imps.Contacts.SUBSCRIPTION_TYPE_NONE, Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING);
+            result = ContentUris.parseId(uriNewContact);
+
         }
 
         if (cursor != null) {
@@ -390,13 +395,14 @@ public class ContactListManagerAdapter extends
         return result;
     }
 
+    /**
     private long insertTemporary(Contact c) {
         synchronized (mTemporaryContacts) {
             mTemporaryContacts.put(mAdaptee.normalizeAddress(c.getAddress().getAddress()), c);
         }
-        Uri uri = insertContactContent(c, FAKE_TEMPORARY_LIST_ID, Imps.Contacts.TYPE_TEMPORARY, Imps.Contacts.SUBSCRIPTION_TYPE_NONE, Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING);
+        Uri uri = insertContactContent(c, FAKE_TEMPORARY_LIST_ID, Imps.Contacts.TYPE_NORMAL, Imps.Contacts.SUBSCRIPTION_TYPE_NONE, Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING);
         return ContentUris.parseId(uri);
-    }
+    }**/
 
     /**
      * Tells if a contact is a temporary one which is not in the list of
@@ -407,11 +413,13 @@ public class ContactListManagerAdapter extends
      * @return <code>true</code> if it's a temporary contact; <code>false</code>
      *         otherwise.
      */
+
+    /**
     public boolean isTemporary(String address) {
         synchronized (mTemporaryContacts) {
             return mTemporaryContacts.containsKey(address);
         }
-    }
+    }**/
 
     ContactListAdapter getContactListAdapter(String name) {
         synchronized (mContactLists) {
@@ -596,15 +604,25 @@ public class ContactListManagerAdapter extends
                 if (cla != null)
                 {
                     long listId = cla.getDataBaseId();
+                    /**
                     if (isTemporary(mAdaptee.normalizeAddress(contact.getAddress().getAddress()))) {
                         moveTemporaryContactToList(mAdaptee.normalizeAddress(contact.getAddress().getAddress()), listId);
                     } else {
-
+                    **/
                         boolean exists = updateContact(contact, listId);
 
+                        int subType = Imps.Contacts.SUBSCRIPTION_TYPE_FROM;
+                        int subStatus = Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING;
+
                         if (!exists)
-                             insertContactContent(contact, listId, contact.getType(),Imps.Contacts.SUBSCRIPTION_TYPE_FROM,Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING);
-                    }
+                             insertContactContent(contact, listId, contact.getType(),subType,subStatus);
+                        else
+                            subType = Imps.Contacts.SUBSCRIPTION_TYPE_TO;
+
+                        insertOrUpdateSubscription(contact.getAddress().getBareAddress(),contact.getName(),subType,subStatus);
+
+                    //}
+
                     notificationText = mContext.getResources().getString(R.string.add_contact_success,
                             contact.getName());
                     // handle case where a contact is added before mAllContactsLoaded
@@ -755,7 +773,7 @@ public class ContactListManagerAdapter extends
                 String nickname = from.getName();
                 queryOrInsertContact(from);
                 Uri uri = insertOrUpdateSubscription(username, nickname,
-                        Imps.Contacts.SUBSCRIPTION_TYPE_INVITATIONS,
+                        Imps.Contacts.SUBSCRIPTION_TYPE_FROM,
                         Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING);
 
                 boolean hadListener = broadcast(new SubscriptionBroadcaster() {
@@ -893,10 +911,12 @@ public class ContactListManagerAdapter extends
         Uri uri = builder.build();
         mResolver.delete(uri, Imps.BlockedList.USERNAME + "=?", new String[] { address });
 
-        int type = isTemporary(address) ? Imps.Contacts.TYPE_TEMPORARY : Imps.Contacts.TYPE_NORMAL;
-        updateContactType(address, type);
+        //int type = isTemporary(address) ? Imps.Contacts.TYPE_TEMPORARY : Imps.Contacts.TYPE_NORMAL;
+
+        updateContactType(address, Imps.Contacts.TYPE_NORMAL);
     }
 
+    /**
     void moveTemporaryContactToList(String address, long listId) {
         synchronized (mTemporaryContacts) {
             mTemporaryContacts.remove(address);
@@ -910,7 +930,7 @@ public class ContactListManagerAdapter extends
         String[] selectionArgs = { address };
 
         mResolver.update(mContactUrl, values, selection, selectionArgs);
-    }
+    }**/
 
     boolean updateContactType(String address, int type) {
         ContentValues values = new ContentValues(1);
@@ -1181,12 +1201,13 @@ public class ContactListManagerAdapter extends
             Contact c = iter.next();
 
             String address = mAdaptee.normalizeAddress(c.getAddress().getAddress());
+            /**
             if (isTemporary(address)) {
                 if (!existingUsernames.contains(address)) {
                     moveTemporaryContactToList(address, listId);
                 }
                 iter.remove();
-            }
+            }**/
             mValidatedContacts.add(address);
         }
 
@@ -1202,9 +1223,10 @@ public class ContactListManagerAdapter extends
             String nickname = c.getName();
 
             int type = c.getType();
+            /**
             if (isTemporary(username)) {
                 type = Imps.Contacts.TYPE_TEMPORARY;
-            }
+            }**/
             if (isBlocked(username)) {
                 type = Imps.Contacts.TYPE_BLOCKED;
             }
@@ -1303,9 +1325,11 @@ public class ContactListManagerAdapter extends
 
         int type = contact.getType();
 
+        /**
         if (isTemporary(username)) {
             type = Imps.Contacts.TYPE_TEMPORARY;
-        }
+        }**/
+
         if (isBlocked(username)) {
             type = Imps.Contacts.TYPE_BLOCKED;
         }

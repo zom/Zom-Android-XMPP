@@ -300,9 +300,7 @@ public class ConversationDetailActivity extends BaseActivity {
         mApp = (ImApp)getApplication();
 
         try {
-            mChatId = intent.getIntExtra("id", -1);
-            if (mChatId == -1)
-                mChatId = intent.getLongExtra("id", -1);
+            mChatId = intent.getLongExtra("id", -1);
         }
         catch (ClassCastException ce)
         {

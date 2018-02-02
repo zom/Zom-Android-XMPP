@@ -2982,9 +2982,6 @@ public class XmppConnection extends ImConnection {
 
                     Contact contact = null;
 
-                    int subStatus = Imps.ContactsColumns.SUBSCRIPTION_STATUS_NONE;
-
-
                     contact = getContact(address);
 
                     if (contact == null) {
@@ -3005,33 +3002,41 @@ public class XmppConnection extends ImConnection {
                             }
                         }
 
-                        if (!rEntry.canSeeMyPresence()) {
-                            subStatus = Imps.ContactsColumns.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING;
+                    }
+
+                    int subStatus = Imps.Contacts.SUBSCRIPTION_STATUS_NONE;
+
+                    if (rEntry.isSubscriptionPending())
+                        subStatus = Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING;
+
+                    int subType = Imps.Contacts.SUBSCRIPTION_TYPE_NONE;
+
+                    if (rEntry.canSeeHisPresence() && rEntry.canSeeMyPresence())
+                    {
+                        subType = Imps.Contacts.SUBSCRIPTION_TYPE_BOTH;
+                    }
+                    else if (rEntry.canSeeHisPresence())
+                    {
+                        subType = Imps.Contacts.SUBSCRIPTION_TYPE_FROM;
+
+                        if (rEntry.isSubscriptionPending()) {
                             try {
                                 handleSubscribeRequest(rEntry.getJid());
                             } catch (Exception e) {
+                                debug(TAG, "Error requesting subscribe notification",e);
                             }
                         }
                     }
-
-                    if (rEntry.isSubscriptionPending())
-                        subStatus = Imps.ContactsColumns.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING;
-
-                    int subType = 0;
-                    if (rEntry.getType() == RosterPacket.ItemType.both)
-                        subType = Imps.ContactsColumns.SUBSCRIPTION_TYPE_BOTH;
-                    else if (rEntry.getType() == RosterPacket.ItemType.none)
-                        subType = Imps.ContactsColumns.SUBSCRIPTION_TYPE_NONE;
-                    else if (rEntry.getType() == RosterPacket.ItemType.to) {
-                        subType = Imps.ContactsColumns.SUBSCRIPTION_TYPE_TO;
+                    else if (rEntry.canSeeMyPresence())
+                    {
+                        //it is still pending
+                        subType = Imps.Contacts.SUBSCRIPTION_TYPE_TO;
                     }
-                    else if (rEntry.getType() == RosterPacket.ItemType.from) {
-                        subType = Imps.ContactsColumns.SUBSCRIPTION_TYPE_FROM;
+
+                    try {
+                        mContactListManager.getSubscriptionRequestListener().onSubScriptionChanged(contact, mProviderId, mAccountId, subType, subStatus);
                     }
-                    else if (rEntry.getType() == RosterPacket.ItemType.remove)
-                        subType = Imps.ContactsColumns.SUBSCRIPTION_TYPE_REMOVE;
-
-
+                    catch (Exception e){}
 
                     if (mRoster != null)
                         qPresence.add(mRoster.getPresence(rEntry.getJid()));
@@ -4491,11 +4496,11 @@ public class XmppConnection extends ImConnection {
         XmppAddress xAddr = new XmppAddress(jid.toString());
         Contact contact = new Contact(xAddr, xAddr.getUser(), Imps.Contacts.TYPE_NORMAL);
         mContactListManager.doAddContactToListAsync(contact, cList, false);
-
         mContactListManager.getSubscriptionRequestListener().onSubScriptionRequest(contact, mProviderId, mAccountId);
 
         ChatSession session = findOrCreateSession(jid.toString(), false);
 
+        /**
         org.jivesoftware.smack.packet.Message msg = new org.jivesoftware.smack.packet.Message();
         msg.setStanzaId((Math.random()*10000f)+"subscribe");
         msg.setTo(mUserJid);
@@ -4503,6 +4508,7 @@ public class XmppConnection extends ImConnection {
         String message = mContext.getString(R.string.subscription_notify_text, contact.getName());
         msg.setBody(message);
         handleMessage(msg, false, false);
+         **/
 
     }
 
@@ -4681,6 +4687,8 @@ public class XmppConnection extends ImConnection {
                                             try { Thread.sleep(500);}catch(Exception e){}
                                         }
                                     }
+
+
 
                                 } catch (XMPPException e) {
 

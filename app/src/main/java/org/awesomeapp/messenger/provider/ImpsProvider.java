@@ -99,7 +99,7 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
     private static final String ENCRYPTED_DATABASE_NAME = "impsenc.db";
     private static final String UNENCRYPTED_DATABASE_NAME = "imps.db";
 
-    private static final int DATABASE_VERSION = 110;
+    private static final int DATABASE_VERSION = 112;
 
     protected static final int MATCH_PROVIDERS = 1;
     protected static final int MATCH_PROVIDERS_BY_ID = 2;
@@ -451,7 +451,6 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
 
             //DELETE FROM cache WHERE id IN (SELECT cache.id FROM cache LEFT JOIN main ON cache.id=main.id WHERE main.id IS NULL);
 
-
         }
 
         @Override
@@ -579,10 +578,9 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
                     db.endTransaction();
                 }
 
-                return;
             case 101:
                 // This was a no-op upgrade when we added the encrypted DB option
-                return;
+
             case 103:
 
                 try {
@@ -620,12 +618,12 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
 
                 }
 
-                return;
+
             case 104:
 
                 db.rawExecSQL("PRAGMA cipher_migrate;");
 
-                return;
+
             case 105:
                     // Add ChatSecure-Push
                     db.beginTransaction();
@@ -667,6 +665,24 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
                 } finally {
                     db.endTransaction();
                 }
+
+            case 110:
+            case 111:
+
+                //clean up contacts table
+/**
+                db.beginTransaction();
+                try {
+                    db.execSQL("delete from " + TABLE_CONTACTS
+                            + " where _id not in (select min(_id), account, provider from " + TABLE_CONTACTS
+                            + " group by " + Imps.Contacts.USERNAME + ")");
+                    db.setTransactionSuccessful();
+                } catch (Throwable ex) {
+                    LogCleaner.error(LOG_TAG, ex.getMessage(), ex);
+                } finally {
+                    db.endTransaction();
+                }
+**/
 
                 return;
             case 1:

@@ -376,7 +376,7 @@ public class Imps {
          * subscribe presence for. Usually created because of the user is having
          * a chat session with this contact.
          */
-        int TYPE_TEMPORARY = 1;
+      //  int TYPE_TEMPORARY = 1;
 
         /** contact created for group chat. */
         int TYPE_GROUP = 2;
@@ -405,7 +405,7 @@ public class Imps {
         /** requested to subscribe */
         int SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING = 1;
         /** requested to unsubscribe */
-        int SUBSCRIPTION_STATUS_UNSUBSCRIBE_PENDING = 2;
+      //  int SUBSCRIPTION_STATUS_UNSUBSCRIBE_PENDING = 2;
 
         /** Contact subscription type <P>Type: INTEGER </P> */
         String SUBSCRIPTION_TYPE = "subscriptionType";
@@ -413,7 +413,7 @@ public class Imps {
         /** The user and contact have no interest in each other's presence. */
         int SUBSCRIPTION_TYPE_NONE = 0;
         /** The user wishes to stop receiving presence updates from the contact. */
-        int SUBSCRIPTION_TYPE_REMOVE = 1;
+    //    int SUBSCRIPTION_TYPE_REMOVE = 1;
         /**
          * The user is interested in receiving presence updates from the
          * contact.
@@ -429,7 +429,7 @@ public class Imps {
          */
         int SUBSCRIPTION_TYPE_BOTH = 4;
         /** This is a special type reserved for pending subscription requests */
-        int SUBSCRIPTION_TYPE_INVITATIONS = 5;
+       // int SUBSCRIPTION_TYPE_INVITATIONS = 5;
 
         /**
          * Quick Contact: derived from Google Contact Extension's
@@ -559,7 +559,8 @@ public class Imps {
         public static final String ALPHA_SORT_ORDER = "nickname COLLATE NOCASE ASC";
 
         /** sub status and alpha **/
-        public static final String SUB_AND_ALPHA_SORT_ORDER = "subscriptionStatus ASC, subscriptionType DESC, nickname COLLATE NOCASE ASC";
+       // public static final String SUB_AND_ALPHA_SORT_ORDER = " subscriptionType DESC, subscriptionStatus ASC,nickname COLLATE NOCASE ASC";
+        public static final String SUB_AND_ALPHA_SORT_ORDER = "subscriptionStatus DESC, nickname COLLATE NOCASE ASC";
 
         /** presence and alpha */
         public static final String MODE_AND_ALPHA_SORT_ORDER = "mode DESC, nickname COLLATE NOCASE ASC";

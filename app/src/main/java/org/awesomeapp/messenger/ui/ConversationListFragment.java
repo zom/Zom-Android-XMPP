@@ -457,7 +457,7 @@ public class ConversationListFragment extends Fragment {
                     public void onClick(View v) {
                         Context context = v.getContext();
                         Intent intent = new Intent(context, ConversationDetailActivity.class);
-                        intent.putExtra("id", (int)chatId);
+                        intent.putExtra("id", chatId);
                         intent.putExtra("address", address);
                         intent.putExtra("nickname", nickname);
                         context.startActivity(intent);

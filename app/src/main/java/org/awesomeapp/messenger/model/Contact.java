@@ -145,4 +145,6 @@ public class Contact extends ImEntity implements Parcelable {
             return new Contact[size];
         }
     };
+
+
 }

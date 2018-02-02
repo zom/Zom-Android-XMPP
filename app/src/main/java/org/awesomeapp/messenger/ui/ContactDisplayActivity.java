@@ -56,7 +56,7 @@ import im.zom.messenger.R;
 
 public class ContactDisplayActivity extends BaseActivity {
 
-    private int mContactId = -1;
+    private long mContactId = -1;
     private String mNickname = null;
     private String mUsername = null;
     private long mProviderId = -1;
@@ -76,7 +76,7 @@ public class ContactDisplayActivity extends BaseActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mContactId = (int) getIntent().getLongExtra("contactId", -1);
+        mContactId = getIntent().getLongExtra("contactId", -1);
 
         mNickname = getIntent().getStringExtra("nickname");
         mUsername = getIntent().getStringExtra("address");
@@ -345,7 +345,7 @@ public class ContactDisplayActivity extends BaseActivity {
                             super.onPostExecute(chatId);
                         }
                     }.executeOnExecutor(ImApp.sThreadPoolExecutor,new Contact(new XmppAddress(mUsername)));
-                    Toast.makeText(this, getString(R.string.message_waiting_for_friend), Toast.LENGTH_LONG).show();
+                 //   Toast.makeText(this, getString(R.string.message_waiting_for_friend), Toast.LENGTH_LONG).show();
                 }
             }
         }
@@ -353,6 +353,7 @@ public class ContactDisplayActivity extends BaseActivity {
 
         Intent intent = new Intent(this, ConversationDetailActivity.class);
         intent.putExtra("id", mContactId);
+
         startActivity(intent);
         finish();
 

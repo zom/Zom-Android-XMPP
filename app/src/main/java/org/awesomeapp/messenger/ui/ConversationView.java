@@ -1344,11 +1344,12 @@ public class ConversationView {
         if (isGroupChat())
             return;
 
+        /**
         mHandler.post(new Runnable() {
 
             public void run () {
 
-                if ((mSubscriptionType == Imps.Contacts.SUBSCRIPTION_TYPE_FROM
+                if ((mSubscriptionType == Imps.Contacts.SUBSCRIPTION_TYPE_TO
                         && mSubscriptionStatus == Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING))
                 {
                     mActivity.findViewById(R.id.waiting_view).setVisibility(View.VISIBLE);
@@ -1389,7 +1390,7 @@ public class ConversationView {
                         }
                     });
                 }
-                else if (mSubscriptionStatus == Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING)
+                else if (mSubscriptionType == Imps.Contacts.SUBSCRIPTION_TYPE_FROM)
                 {
                     Snackbar sb = Snackbar.make(mHistory, mContext.getString(R.string.subscription_prompt, mRemoteNickname), Snackbar.LENGTH_INDEFINITE);
                     sb.setAction(mActivity.getString(R.string.approve_subscription), new View.OnClickListener() {
@@ -1405,7 +1406,7 @@ public class ConversationView {
                     mActivity.findViewById(R.id.waiting_view).setVisibility(View.GONE);
                 }
             }
-        });
+        });**/
 
     }
 

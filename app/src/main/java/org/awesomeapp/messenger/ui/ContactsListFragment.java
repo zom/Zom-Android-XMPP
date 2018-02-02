@@ -289,10 +289,6 @@ public class ContactsListFragment extends Fragment {
                 // callback for swipe to dismiss, removing item from data and adapter
                 int position = viewHolder.getAdapterPosition();
 
-                //delete / endchat
-                //items.remove(viewHolder.getAdapterPosition());
-                long itemId = mAdapter.getItemId(position);
-
                 if (viewHolder instanceof ContactViewHolder) {
                     // Tell the view holder it's time to restore the idle state
                     ContactViewHolder itemViewHolder = (ContactViewHolder) viewHolder;
@@ -300,7 +296,6 @@ public class ContactsListFragment extends Fragment {
 
                     final boolean doArchive = (itemViewHolder.mType == Imps.Contacts.TYPE_NORMAL);
                     final int contactType = itemViewHolder.mType;
-                    final int id = itemViewHolder.itemView.getId();
                     final String address = itemViewHolder.mAddress;
                     final long providerId = itemViewHolder.mProviderId;
                     final long accountId = itemViewHolder.mAccountId;
@@ -310,7 +305,7 @@ public class ContactsListFragment extends Fragment {
                         snack.setAction(R.string.yes, new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                archiveContact(getActivity(), id, address, contactType, providerId, accountId);
+                                archiveContact(getActivity(), address, contactType, providerId, accountId);
                             }
                         });
 
@@ -319,7 +314,7 @@ public class ContactsListFragment extends Fragment {
                     else
                     {
                         Snackbar snack = Snackbar.make(mRecView, getString(R.string.action_unarchived), Snackbar.LENGTH_SHORT);
-                        unarchiveContact(getActivity(), id, address, contactType, providerId, accountId);
+                        unarchiveContact(getActivity(), address, contactType, providerId, accountId);
                         snack.show();
 
                     }
@@ -343,7 +338,7 @@ public class ContactsListFragment extends Fragment {
 
     }
 
-    private static void archiveContact (Activity activity, long itemId, String address, int contactType, long providerId, long accountId)
+    private static void archiveContact (Activity activity, String address, int contactType, long providerId, long accountId)
     {
 
         try {
@@ -370,7 +365,7 @@ public class ContactsListFragment extends Fragment {
 
     }
 
-    private static void unarchiveContact (Activity activity, long itemId, String address, int contactType, long providerId, long accountId)
+    private static void unarchiveContact (Activity activity, String address, int contactType, long providerId, long accountId)
     {
 
         try {
@@ -473,7 +468,7 @@ public class ContactsListFragment extends Fragment {
         @Override
         public void onBindViewHolder(final ContactViewHolder viewHolder, Cursor cursor) {
 
-            viewHolder.mContactId =  cursor.getInt(ContactListItem.COLUMN_CONTACT_ID);
+            viewHolder.mContactId =  cursor.getLong(ContactListItem.COLUMN_CONTACT_ID);
            viewHolder.mAddress =  cursor.getString(ContactListItem.COLUMN_CONTACT_USERNAME);
             viewHolder.mType =  cursor.getInt(ContactListItem.COLUMN_CONTACT_TYPE);
 
@@ -482,6 +477,7 @@ public class ContactsListFragment extends Fragment {
             if (TextUtils.isEmpty(nickname))
             {
                 nickname = viewHolder.mAddress.split("@")[0].split("\\.")[0];
+
             }
             else
             {
@@ -500,12 +496,6 @@ public class ContactsListFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
 
-                    /*
-                    if (mContext instanceof ContactListActivity)
-                        ((ContactListActivity)mContext).startChat(viewHolder.mProviderId, viewHolder.mAccountId, viewHolder.mAddress);
-                    else if (mContext instanceof MainActivity)
-                        ((MainActivity)mContext).startChat(viewHolder.mProviderId,viewHolder.mAccountId, viewHolder.mAddress);
-                        */
 
                     Intent intent = new Intent(mContext,ContactDisplayActivity.class);
                     intent.putExtra("address", viewHolder.mAddress);
@@ -543,10 +533,10 @@ public class ContactsListFragment extends Fragment {
             }
 
             buf.append(Imps.Contacts.TYPE).append('=').append(mType);
-            buf.append(" ) GROUP BY(" + Imps.Contacts.USERNAME);
+         //   buf.append(" ) GROUP BY(" + Imps.Contacts.USERNAME);
 
             CursorLoader loader = new CursorLoader(getActivity(), mUri, ContactListItem.CONTACT_PROJECTION,
-                    buf == null ? null : buf.toString(), null, Imps.Contacts.ALPHA_SORT_ORDER);
+                    buf == null ? null : buf.toString(), null, Imps.Contacts.SUB_AND_ALPHA_SORT_ORDER);
 
             return loader;
         }

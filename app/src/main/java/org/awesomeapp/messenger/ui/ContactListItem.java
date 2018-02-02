@@ -115,15 +115,18 @@ public class ContactListItem extends FrameLayout {
         nickname = cursor.getString(COLUMN_CONTACT_NICKNAME);
 
         final int type = cursor.getInt(COLUMN_CONTACT_TYPE);
-        final String lastMsg = cursor.getString(COLUMN_LAST_MESSAGE);
+    //    final String lastMsg = cursor.getString(COLUMN_LAST_MESSAGE);
 
-        long lastMsgDate = cursor.getLong(COLUMN_LAST_MESSAGE_DATE);
+     //   long lastMsgDate = cursor.getLong(COLUMN_LAST_MESSAGE_DATE);
         final int presence = cursor.getInt(COLUMN_CONTACT_PRESENCE_STATUS);
 
         final int subType = cursor.getInt(COLUMN_SUBSCRIPTION_TYPE);
         final int subStatus = cursor.getInt(COLUMN_SUBSCRIPTION_STATUS);
 
         String statusText = cursor.getString(COLUMN_CONTACT_CUSTOM_STATUS);
+
+     //   nickname += " " + holder.mContactId + " " + holder.mAccountId + " " + holder.mProviderId;
+
 
         if (TextUtils.isEmpty(nickname))
         {
@@ -133,6 +136,9 @@ public class ContactListItem extends FrameLayout {
         {
             nickname = nickname.split("@")[0].split("\\.")[0];
         }
+
+
+    //    nickname += " " + subType;// + " " + subStatus;
 
         if (!TextUtils.isEmpty(underLineText)) {
             // highlight/underline the word being searched 
@@ -227,31 +233,37 @@ public class ContactListItem extends FrameLayout {
         if (Imps.Contacts.TYPE_NORMAL == type)
         {
 
-            if (subType == Imps.ContactsColumns.SUBSCRIPTION_TYPE_INVITATIONS)
-            {
-                holder.mSubBox.setVisibility(View.VISIBLE);
+            if (subStatus == Imps.ContactsColumns.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING) {
+                if (subType == Imps.ContactsColumns.SUBSCRIPTION_TYPE_FROM || subType == Imps.ContactsColumns.SUBSCRIPTION_TYPE_NONE
+                        || subType == Imps.ContactsColumns.SUBSCRIPTION_TYPE_BOTH) {
+                    holder.mSubBox.setVisibility(View.VISIBLE);
 
-                holder.mButtonSubApprove.setOnClickListener(new OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        approveSubscription();
-                        mHolder.itemView.performClick();
-                    }
+                    holder.mButtonSubApprove.setOnClickListener(new OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            approveSubscription();
+                            mHolder.itemView.performClick();
+                        }
 
-                });
+                    });
 
-                holder.mButtonSubDecline.setOnClickListener(new OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        declineSubscription();
-                    }
-                });
+                    holder.mButtonSubDecline.setOnClickListener(new OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            declineSubscription();
+                        }
+                    });
 
-            } else if (subStatus == Imps.ContactsColumns.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING) {
-                if (holder.mLine2 != null)
-                    holder.mLine2.setText(getContext().getString(R.string.title_pending));
+                } else if (subType == Imps.ContactsColumns.SUBSCRIPTION_TYPE_TO) {
+                    if (holder.mLine2 != null)
+                        holder.mLine2.setText(getContext().getString(R.string.title_pending));
+                }
+
             }
+
+
             /**
+             *
             else if (subType == Imps.ContactsColumns.SUBSCRIPTION_TYPE_NONE || subType == Imps.ContactsColumns.SUBSCRIPTION_TYPE_REMOVE) {
                 if (holder.mLine2 != null)
                     holder.mLine2.setText(getContext().getString(R.string.recipient_blocked_the_user));
