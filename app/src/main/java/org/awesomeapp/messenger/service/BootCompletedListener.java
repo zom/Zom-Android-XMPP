@@ -12,6 +12,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -45,7 +46,13 @@ public class BootCompletedListener extends BroadcastReceiver {
                     Intent serviceIntent = new Intent(context,RemoteImService.class);
                  //   serviceIntent.setComponent(ImServiceConstants.IM_SERVICE_COMPONENT);
                     serviceIntent.putExtra(ImServiceConstants.EXTRA_CHECK_AUTO_LOGIN, true);
-                    context.startService(serviceIntent);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        context.startForegroundService(serviceIntent);
+                    }
+                    else
+                    {
+                        context.startService(serviceIntent);
+                    }
 
                     Log.d(ImApp.LOG_TAG, "autostart done");
                 }
