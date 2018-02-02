@@ -604,22 +604,25 @@ public class ContactListManagerAdapter extends
                 if (cla != null)
                 {
                     long listId = cla.getDataBaseId();
-                    /**
-                    if (isTemporary(mAdaptee.normalizeAddress(contact.getAddress().getAddress()))) {
-                        moveTemporaryContactToList(mAdaptee.normalizeAddress(contact.getAddress().getAddress()), listId);
-                    } else {
-                    **/
-                        boolean exists = updateContact(contact, listId);
 
-                        int subType = Imps.Contacts.SUBSCRIPTION_TYPE_FROM;
-                        int subStatus = Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING;
+                    boolean exists = updateContact(contact, listId);
 
-                        if (!exists)
-                             insertContactContent(contact, listId, contact.getType(),subType,subStatus);
-                        else
-                            subType = Imps.Contacts.SUBSCRIPTION_TYPE_TO;
+                    int subType = Imps.Contacts.SUBSCRIPTION_TYPE_TO;
+                    int subStatus = Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING;
 
-                        insertOrUpdateSubscription(contact.getAddress().getBareAddress(),contact.getName(),subType,subStatus);
+                    if (!exists)
+                         insertContactContent(contact, listId, contact.getType(),subType,subStatus);
+
+                    if (contact.getSubscriptionStatus() != -1)
+                        subStatus = contact.getSubscriptionStatus();
+
+                    if (contact.getSubscriptionType() != -1)
+                        subType = contact.getSubscriptionType();
+
+                    contact.setSubscriptionStatus(subStatus);
+                    contact.setSubscriptionType(subType);
+
+                    insertOrUpdateSubscription(contact.getAddress().getBareAddress(),contact.getName(),subType,subStatus);
 
                     //}
 
@@ -753,6 +756,8 @@ public class ContactListManagerAdapter extends
         {
             String username = mAdaptee.normalizeAddress(from.getAddress().getAddress());
             String nickname = from.getName();
+            from.setSubscriptionType(subType);
+            from.setSubscriptionStatus(subStatus);
             Uri uri = insertOrUpdateSubscription(username, nickname,
                     subType,
                     subStatus);
@@ -772,6 +777,8 @@ public class ContactListManagerAdapter extends
 
                 String nickname = from.getName();
                 queryOrInsertContact(from);
+                from.setSubscriptionStatus( Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING);
+                from.setSubscriptionType(Imps.Contacts.SUBSCRIPTION_TYPE_FROM);
                 Uri uri = insertOrUpdateSubscription(username, nickname,
                         Imps.Contacts.SUBSCRIPTION_TYPE_FROM,
                         Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING);
@@ -803,6 +810,8 @@ public class ContactListManagerAdapter extends
             String username = mAdaptee.normalizeAddress(from.getAddress().getAddress());
             String nickname = from.getName();
 
+            from.setSubscriptionStatus(Imps.Contacts.SUBSCRIPTION_STATUS_NONE);
+            from.setSubscriptionType(Imps.Contacts.SUBSCRIPTION_TYPE_NONE);
             queryOrInsertContact(from); // FIXME Miron
             Uri uri = insertOrUpdateSubscription(username, nickname,
                     Imps.Contacts.SUBSCRIPTION_TYPE_NONE,

@@ -234,8 +234,9 @@ public class ContactListItem extends FrameLayout {
         {
 
             if (subStatus == Imps.ContactsColumns.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING) {
-                if (subType == Imps.ContactsColumns.SUBSCRIPTION_TYPE_FROM || subType == Imps.ContactsColumns.SUBSCRIPTION_TYPE_NONE
-                        || subType == Imps.ContactsColumns.SUBSCRIPTION_TYPE_BOTH) {
+
+                if (subType == Imps.ContactsColumns.SUBSCRIPTION_TYPE_FROM) {
+
                     holder.mSubBox.setVisibility(View.VISIBLE);
 
                     holder.mButtonSubApprove.setOnClickListener(new OnClickListener() {
@@ -254,24 +255,22 @@ public class ContactListItem extends FrameLayout {
                         }
                     });
 
-                } else if (subType == Imps.ContactsColumns.SUBSCRIPTION_TYPE_TO) {
+                }
+                else
+                {
+
+                    holder.mSubBox.setVisibility(View.GONE);
+
                     if (holder.mLine2 != null)
-                        holder.mLine2.setText(getContext().getString(R.string.title_pending));
+                            holder.mLine2.setText(getContext().getString(R.string.title_pending));
                 }
 
             }
+            else
+            {
+                holder.mSubBox.setVisibility(View.GONE);
+            }
 
-
-            /**
-             *
-            else if (subType == Imps.ContactsColumns.SUBSCRIPTION_TYPE_NONE || subType == Imps.ContactsColumns.SUBSCRIPTION_TYPE_REMOVE) {
-                if (holder.mLine2 != null)
-                    holder.mLine2.setText(getContext().getString(R.string.recipient_blocked_the_user));
-            } else {
-                if (holder.mSubBox != null) {
-                    holder.mSubBox.setVisibility(View.GONE);
-                }
-            }**/
         }
 
         if (mShowPresence) {
@@ -377,7 +376,6 @@ public class ContactListItem extends FrameLayout {
 
         ImApp app = ((ImApp)((Activity)getContext()).getApplication());
         IImConnection mConn = app.getConnection(mHolder.mProviderId, mHolder.mAccountId);
-
 
         if (mConn != null)
         {

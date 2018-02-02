@@ -392,10 +392,10 @@ public abstract class ContactListManager {
         doBlockContactAsync(address, false);
     }
 
-    protected void addContactToListAsync(Contact address, ContactList list, boolean autoSubscribePresence) throws ImException {
+    protected void addContactToListAsync(Contact contact, ContactList list, boolean autoSubscribePresence) throws ImException {
         checkState();
 
-        doAddContactToListAsync(address, list, autoSubscribePresence);
+        doAddContactToListAsync(contact, list, autoSubscribePresence);
     }
 
     protected void removeContactFromListAsync(Contact contact, ContactList list) throws ImException {

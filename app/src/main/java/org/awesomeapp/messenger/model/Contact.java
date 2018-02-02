@@ -31,6 +31,10 @@ public class Contact extends ImEntity implements Parcelable {
 
     private String mForwardAddress;
 
+    private int mSubscriptionType = -1;
+
+    private int mSubscriptionStatus = -1;
+
     //This is based on the Imps.Contacts.TYPE values
     private int mType;
 
@@ -146,5 +150,21 @@ public class Contact extends ImEntity implements Parcelable {
         }
     };
 
+
+    public int getSubscriptionType() {
+        return mSubscriptionType;
+    }
+
+    public void setSubscriptionType(int mSubscriptionType) {
+        this.mSubscriptionType = mSubscriptionType;
+    }
+
+    public int getSubscriptionStatus() {
+        return mSubscriptionStatus;
+    }
+
+    public void setSubscriptionStatus(int mSubscriptionStatus) {
+        this.mSubscriptionStatus = mSubscriptionStatus;
+    }
 
 }

@@ -1344,6 +1344,19 @@ public class ConversationView {
         if (isGroupChat())
             return;
 
+        if (mSubscriptionStatus == Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING) {
+            if (mSubscriptionType == Imps.Contacts.SUBSCRIPTION_TYPE_FROM) {
+                Snackbar sb = Snackbar.make(mHistory, mContext.getString(R.string.subscription_prompt, mRemoteNickname), Snackbar.LENGTH_INDEFINITE);
+                sb.setAction(mActivity.getString(R.string.approve_subscription), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        approveSubscription();
+                    }
+                });
+                sb.show();
+            }
+        }
+
         /**
         mHandler.post(new Runnable() {
 

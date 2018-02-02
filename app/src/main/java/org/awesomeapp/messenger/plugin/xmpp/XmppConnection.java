@@ -3182,12 +3182,12 @@ public class XmppConnection extends ImConnection {
             @Override
             public void entriesUpdated(Collection<Jid> addresses) {
 
-                /**
+
                 for (Jid address :addresses)
                 {
                     requestPresenceRefresh(address.toString());
 
-                }**/
+                }
             }
 
             @Override
@@ -3411,7 +3411,14 @@ public class XmppConnection extends ImConnection {
 
                 BareJid bareJid = JidCreate.bareFrom(contact.getAddress().getBareAddress());
                 RosterEntry entry = mRoster.getEntry(bareJid);
-                if (entry == null || !entry.canSeeMyPresence())
+                if (entry == null)
+                    mRoster.createEntry(bareJid,contact.getName(),null);
+
+                entry = mRoster.getEntry(bareJid);
+
+                int subType = Imps.Contacts.SUBSCRIPTION_TYPE_BOTH;
+
+                if (!entry.canSeeMyPresence())
                 {
                     org.jivesoftware.smack.packet.Presence response = new org.jivesoftware.smack.packet.Presence(
                             org.jivesoftware.smack.packet.Presence.Type.subscribed);
@@ -3423,21 +3430,28 @@ public class XmppConnection extends ImConnection {
                     else
                         sendPacket(response);
 
+                    subType = Imps.Contacts.SUBSCRIPTION_TYPE_TO;
                 }
 
-                if (entry == null || !entry.canSeeHisPresence()) {
+                if (!entry.canSeeHisPresence()) {
 
-                    org.jivesoftware.smack.packet.Presence request = new org.jivesoftware.smack.packet.Presence(
-                            org.jivesoftware.smack.packet.Presence.Type.subscribe);
-                    request.setTo(bareJid);
                     //send now, or queue
                     if (mConnection != null && mConnection.isAuthenticated())
-                        mConnection.sendStanza(request);
-                    else
+                        mRoster.sendSubscriptionRequest(bareJid);
+                    else {
+                        org.jivesoftware.smack.packet.Presence request = new org.jivesoftware.smack.packet.Presence(
+                                org.jivesoftware.smack.packet.Presence.Type.subscribe);
+                        request.setTo(bareJid);
                         sendPacket(request);
+                    }
+
+                    subType = Imps.Contacts.SUBSCRIPTION_TYPE_FROM;
                 }
 
                 mContactListManager.getSubscriptionRequestListener().onSubscriptionApproved(contact, mProviderId, mAccountId);
+                getSubscriptionRequestListener().onSubScriptionChanged(contact,mProviderId,mAccountId,subType,Imps.Contacts.SUBSCRIPTION_STATUS_NONE);
+
+                qNewContact.add(contact);
 
                 ChatSession session = findOrCreateSession(contact.getAddress().toString(), false);
 
@@ -3454,6 +3468,8 @@ public class XmppConnection extends ImConnection {
                         getOmemo().getManager().buildSessionsWith(bareJid);
                     }
                 }
+
+
             }
             catch (Exception e) {
                 debug (TAG, "error responding to subscription approval: " + e.getLocalizedMessage());
@@ -4495,6 +4511,8 @@ public class XmppConnection extends ImConnection {
 
         XmppAddress xAddr = new XmppAddress(jid.toString());
         Contact contact = new Contact(xAddr, xAddr.getUser(), Imps.Contacts.TYPE_NORMAL);
+        contact.setSubscriptionStatus(Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING);
+        contact.setSubscriptionType(Imps.Contacts.SUBSCRIPTION_TYPE_FROM);
         mContactListManager.doAddContactToListAsync(contact, cList, false);
         mContactListManager.getSubscriptionRequestListener().onSubScriptionRequest(contact, mProviderId, mAccountId);
 
@@ -4688,6 +4706,42 @@ public class XmppConnection extends ImConnection {
                                         }
                                     }
 
+                                    int subStatus = Imps.Contacts.SUBSCRIPTION_STATUS_NONE;
+
+                                    if (rEntry.isSubscriptionPending())
+                                        subStatus = Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING;
+
+                                    int subType = Imps.Contacts.SUBSCRIPTION_TYPE_NONE;
+
+                                    if (rEntry.canSeeHisPresence() && rEntry.canSeeMyPresence())
+                                    {
+                                        subType = Imps.Contacts.SUBSCRIPTION_TYPE_BOTH;
+                                    }
+                                    else if (rEntry.canSeeHisPresence())
+                                    {
+                                        subType = Imps.Contacts.SUBSCRIPTION_TYPE_FROM;
+
+                                        if (rEntry.isSubscriptionPending()) {
+                                            try {
+                                                handleSubscribeRequest(rEntry.getJid());
+                                            } catch (Exception e) {
+                                                debug(TAG, "Error requesting subscribe notification",e);
+                                            }
+                                        }
+                                    }
+                                    else if (rEntry.canSeeMyPresence())
+                                    {
+                                        //it is still pending
+                                        subType = Imps.Contacts.SUBSCRIPTION_TYPE_TO;
+                                    }
+
+                                    contact.setSubscriptionType(subType);
+                                    contact.setSubscriptionStatus(subStatus);
+
+                                    try {
+                                        mContactListManager.getSubscriptionRequestListener().onSubScriptionChanged(contact, mProviderId, mAccountId, subType, subStatus);
+                                    }
+                                    catch (Exception e){}
 
 
                                 } catch (XMPPException e) {

@@ -330,8 +330,10 @@ public class MessageListItem extends FrameLayout {
 
             String contact = null;
             if (showContact) {
-                String[] nickParts = nickname.split("/");
-                contact = nickParts[nickParts.length-1];
+                if (nickname != null) {
+                    String[] nickParts = nickname.split("/");
+                    contact = nickParts[nickParts.length - 1];
+                }
             }
 
            CharSequence tsText = formatTimeStamp(date,messageType, null, encryption, contact);

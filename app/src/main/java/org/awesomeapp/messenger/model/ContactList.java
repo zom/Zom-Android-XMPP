@@ -108,6 +108,8 @@ public class ContactList extends ImEntity {
             contact.setName(nickname);
 
         try {
+            contact.setSubscriptionType(Imps.Contacts.SUBSCRIPTION_TYPE_TO);
+            contact.setSubscriptionStatus(Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING);
             mManager.addContactToListAsync(contact, ContactList.this, true);
         } catch (ImException e) {
             // TODO Auto-generated catch block

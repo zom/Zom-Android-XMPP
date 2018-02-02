@@ -297,8 +297,6 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
     {
         if (mCacheWord == null) {
             mCacheWord = new CacheWordHandler(this, (ICacheWordSubscriber) this);
-
-            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
             mCacheWord.connectToService();
         }
 
@@ -979,11 +977,15 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
     @Override
     public void onCacheWordLocked() {
 
+        debug("got cacheword locked");
+
         //do nothing here?
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 
         if (settings.contains(ImApp.PREFERENCE_KEY_TEMP_PASS))
         {
+            debug("cacheword: setting default pass to unlock");
+
             try {
                 mCacheWord.setPassphrase(settings.getString(ImApp.PREFERENCE_KEY_TEMP_PASS, null).toCharArray());
             } catch (GeneralSecurityException e) {
@@ -993,6 +995,8 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
         }
         else if (tempKey != null)
         {
+            debug("found tempKey in memory, unlocking");
+
             openEncryptedStores(tempKey, true);
 
             ((ImApp)getApplication()).initAccountInfo();
@@ -1000,7 +1004,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
             // Check and login accounts if network is ready, otherwise it's checked
             // when the network becomes available.
             if (mNeedCheckAutoLogin && mNetworkState != NetworkConnectivityReceiver.State.NOT_CONNECTED) {
-                mNeedCheckAutoLogin = !autoLogin();;
+                mNeedCheckAutoLogin = !autoLogin();
             }
         }
 
@@ -1010,6 +1014,8 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
     @Override
     public void onCacheWordOpened() {
+
+        debug("cacheword is opened");
 
       //  mCacheWord.setTimeout(0);
 
@@ -1021,7 +1027,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
         // Check and login accounts if network is ready, otherwise it's checked
         // when the network becomes available.
         if (mNeedCheckAutoLogin && mNetworkState != NetworkConnectivityReceiver.State.NOT_CONNECTED) {
-            mNeedCheckAutoLogin = !autoLogin();;
+            mNeedCheckAutoLogin = !autoLogin();
         }
 
         checkUpgrade();
