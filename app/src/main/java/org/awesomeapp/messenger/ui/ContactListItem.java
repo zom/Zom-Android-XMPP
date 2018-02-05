@@ -237,29 +237,31 @@ public class ContactListItem extends FrameLayout {
 
                 if (subType == Imps.ContactsColumns.SUBSCRIPTION_TYPE_FROM) {
 
-                    holder.mSubBox.setVisibility(View.VISIBLE);
+                    if (holder.mSubBox != null) {
+                        holder.mSubBox.setVisibility(View.VISIBLE);
 
-                    holder.mButtonSubApprove.setOnClickListener(new OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            approveSubscription();
-                            mHolder.itemView.performClick();
-                        }
+                        holder.mButtonSubApprove.setOnClickListener(new OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                approveSubscription();
+                                mHolder.itemView.performClick();
+                            }
 
-                    });
+                        });
 
-                    holder.mButtonSubDecline.setOnClickListener(new OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            declineSubscription();
-                        }
-                    });
+                        holder.mButtonSubDecline.setOnClickListener(new OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                declineSubscription();
+                            }
+                        });
+                    }
 
                 }
                 else
                 {
-
-                    holder.mSubBox.setVisibility(View.GONE);
+                    if (holder.mSubBox != null)
+                        holder.mSubBox.setVisibility(View.GONE);
 
                     if (holder.mLine2 != null)
                             holder.mLine2.setText(getContext().getString(R.string.title_pending));
@@ -268,7 +270,8 @@ public class ContactListItem extends FrameLayout {
             }
             else
             {
-                holder.mSubBox.setVisibility(View.GONE);
+                if (holder.mSubBox != null)
+                    holder.mSubBox.setVisibility(View.GONE);
             }
 
         }

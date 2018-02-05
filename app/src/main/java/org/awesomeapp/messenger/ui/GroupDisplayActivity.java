@@ -428,7 +428,9 @@ public class GroupDisplayActivity extends BaseActivity {
                         @Override
                         public void run() {
                             mMembers = listMembers;
-                            mRecyclerView.getAdapter().notifyDataSetChanged();
+
+                            if (mRecyclerView != null && mRecyclerView.getAdapter() != null)
+                                mRecyclerView.getAdapter().notifyDataSetChanged();
                         }
                     });
                 }
