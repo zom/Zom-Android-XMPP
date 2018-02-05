@@ -117,7 +117,17 @@
     <style name="AppTheme.Transparent" parent="AppTheme">
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:popupMenuStyle">@style/MyApp.PopupMenu</item>
+        <!--To change the background of options menu-->
+        <item name="android:itemBackground">@color/message_background_dark</item>
     </style>
+
+
+    <!-- The beef: background color for Action Bar overflow menu -->
+    <style name="MyApp.PopupMenu" parent="android:Widget.Holo.Light.ListPopupWindow">
+        <item name="android:popupBackground">@color/message_background_dark</item>
+    </style>
+
 
     <style name="LStyled.ActionMode" parent="@style/Widget.AppCompat.ActionMode">
         <item name="background">@color/zom_primary</item>

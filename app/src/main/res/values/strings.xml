@@ -409,6 +409,8 @@
     <string name="action_copied">Copied!</string>
     <string name="group_encryption_title">Group Encryption (Android Only)</string>
     <string name="group_encryption_summary">Enable end-to-end encryption in groups (Android only for now)</string>
+    <string name="action_forward">Forward</string>
+    <string name="action_resend">Resend</string>
 
 
 </resources>

@@ -3371,6 +3371,23 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
             notifyMessagesContentUri = true;
             break;
 
+
+        case MATCH_MESSAGES_BY_PACKET_ID:
+            String packetId = decodeURLSegment(url.getPathSegments().get(1));
+            tableToChange = TABLE_MESSAGES; // FIXME these should be going to memory but they do not
+            appendWhere(whereClause, Imps.Messages.PACKET_ID, "=", packetId);
+            notifyMessagesContentUri = true;
+            notifyMessagesByThreadIdContentUri = true;
+            break;
+
+        case MATCH_OTR_MESSAGES_BY_PACKET_ID:
+            String packetIdOtr = decodeURLSegment(url.getPathSegments().get(1));
+            tableToChange = TABLE_IN_MEMORY_MESSAGES; // FIXME these should be going to memory but they do not
+            appendWhere(whereClause, Imps.Messages.PACKET_ID, "=", packetIdOtr);
+            notifyMessagesContentUri = true;
+            notifyMessagesByThreadIdContentUri = true;
+            break;
+
         case MATCH_MESSAGES_BY_PROVIDER:
             tableToChange = TABLE_MESSAGES;
 

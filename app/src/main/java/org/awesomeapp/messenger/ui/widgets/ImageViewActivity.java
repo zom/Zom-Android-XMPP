@@ -31,6 +31,7 @@ import com.bumptech.glide.request.RequestOptions;
 
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.ImUrlActivity;
+import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.util.SecureMediaStore;
 
 import java.io.IOException;
@@ -43,6 +44,7 @@ public class ImageViewActivity extends AppCompatActivity implements PZSImageView
 
     public static final String URIS = "uris";
     public static final String MIME_TYPES = "mime_types";
+    public static final String MESSAGE_IDS = "message_ids";
     public static final String CURRENT_INDEX = "current_index";
 
     private ConditionallyEnabledViewPager viewPagerPhotos;
@@ -50,6 +52,7 @@ public class ImageViewActivity extends AppCompatActivity implements PZSImageView
 
     private ArrayList<Uri> uris;
     private ArrayList<String> mimeTypes;
+    private ArrayList<String> messagePacketIds;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -93,6 +96,8 @@ public class ImageViewActivity extends AppCompatActivity implements PZSImageView
                 if ((right - left) > 0 && (bottom - top) > 0 && viewPagerPhotos.getAdapter() == null) {
                     uris = getIntent().getParcelableArrayListExtra(URIS);
                     mimeTypes = getIntent().getStringArrayListExtra(MIME_TYPES);
+                    messagePacketIds = getIntent().getStringArrayListExtra(MESSAGE_IDS);
+
                     if (uris != null && mimeTypes != null && uris.size() > 0 && uris.size() == mimeTypes.size()) {
                         viewPagerPhotos.setAdapter(new PhotosPagerAdapter(ImageViewActivity.this, uris));
                         int currentIndex = getIntent().getIntExtra(CURRENT_INDEX, 0);
@@ -157,16 +162,15 @@ public class ImageViewActivity extends AppCompatActivity implements PZSImageView
             case R.id.menu_message_copy:
                 exportMediaFile();
                 return true;**/
-                /**
+
             case R.id.menu_message_resend:
                 resendMediaFile();
                 return true;
-                 **/
-            /**
+
             case R.id.menu_message_delete:
                 deleteMediaFile();
                 return true;
-                */
+
             default:
         }
         return super.onOptionsItemSelected(item);
@@ -221,9 +225,24 @@ public class ImageViewActivity extends AppCompatActivity implements PZSImageView
         }
     }
 
-    private void deleteMediaFile ()
-    {
-        Toast.makeText(this,"Feature not quite ready yet!",Toast.LENGTH_SHORT).show();
+    private void deleteMediaFile () {
+        if (messagePacketIds != null) {
+            int currentItem = viewPagerPhotos.getCurrentItem();
+            if (currentItem >= 0 && currentItem < uris.size()) {
+
+                Uri deleteUri = uris.get(currentItem);
+                if (deleteUri.getScheme() != null && deleteUri.getScheme().equals("vfs"))
+                {
+                    info.guardianproject.iocipher.File fileMedia = new info.guardianproject.iocipher.File(deleteUri.getPath());
+                    fileMedia.delete();
+                }
+
+                String messagePacketId = messagePacketIds.get(currentItem);
+                Imps.deleteMessageInDb(getContentResolver(), messagePacketId);
+                setResult(RESULT_OK);
+                finish();
+            }
+        }
     }
 
     public class PhotosPagerAdapter extends PagerAdapter {

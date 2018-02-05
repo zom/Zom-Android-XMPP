@@ -3,6 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".MainActivity">
 
+
+    <item
+        android:id="@+id/menu_message_resend"
+        android:icon="@drawable/ic_refresh_white_24dp"
+        android:title="@string/menu_refresh"
+        app:showAsAction="always" />
+
     <item
         android:id="@+id/menu_message_share"
         android:icon="@drawable/ic_share_white_24dp"
@@ -17,12 +24,12 @@
         android:title="@string/send_message"
         app:showAsAction="always" />
 
-    <!--
+
     <item
         android:id="@+id/menu_message_delete"
         android:icon="@drawable/ic_delete_white_48dp"
         android:title="@string/delete"
         app:showAsAction="always" />
-        -->
+
 
 </menu>

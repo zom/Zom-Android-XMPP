@@ -755,6 +755,11 @@ public class ConversationDetailActivity extends BaseActivity {
                 }
 
             }
+            else if (requestCode == REQUEST_IMAGE_VIEW)
+            {
+                mConvoView.requeryCursor();
+
+            }
 
 
 
@@ -945,4 +950,6 @@ public class ConversationDetailActivity extends BaseActivity {
     public static final int REQUEST_SETTINGS = REQUEST_TAKE_PICTURE + 1;
     public static final int REQUEST_TAKE_PICTURE_SECURE = REQUEST_SETTINGS + 1;
     public static final int REQUEST_ADD_CONTACT = REQUEST_TAKE_PICTURE_SECURE + 1;
+    public static final int REQUEST_IMAGE_VIEW = REQUEST_ADD_CONTACT + 1;
+
 }

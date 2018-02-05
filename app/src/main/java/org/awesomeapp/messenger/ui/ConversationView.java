@@ -237,7 +237,7 @@ public class ConversationView {
     long mProviderId = -1;
     long mAccountId = -1;
     long mInvitationId;
-    private Context mContext; // TODO
+    private Activity mContext; // TODO
     private int mPresenceStatus;
     private Date mLastSeen;
 
@@ -252,7 +252,6 @@ public class ConversationView {
     private static final long SHOW_MEDIA_DELIVERY_INTERVAL = 120 * 1000; // 2 minutes
     private static final long DEFAULT_QUERY_INTERVAL = 2000;
     private static final long FAST_QUERY_INTERVAL = 200;
-
 
     private RequeryCallback mRequeryCallback = null;
 
@@ -1809,6 +1808,7 @@ public class ConversationView {
 
     void requeryCursor() {
 
+        mMessageAdapter.notifyDataSetChanged();
         mLoaderManager.restartLoader(loaderId++, null, new MyLoaderCallbacks());
         updateWarningView();
 
@@ -3084,6 +3084,8 @@ public class ConversationView {
             if (c != null && c.moveToFirst()) {
                 ArrayList<Uri> urisToShow = new ArrayList<>(c.getCount());
                 ArrayList<String> mimeTypesToShow = new ArrayList<>(c.getCount());
+                ArrayList<String> messagePacketIds = new ArrayList<>(c.getCount());
+
                 do {
                     try {
                         String mime = c.getString(mMimeTypeColumn);
@@ -3091,6 +3093,7 @@ public class ConversationView {
                             Uri uri = Uri.parse(c.getString(mBodyColumn));
                             urisToShow.add(uri);
                             mimeTypesToShow.add(mime);
+                            messagePacketIds.add(c.getString(mPacketIdColumn));
                         }
                     } catch (Exception ignored) {
                     }
@@ -3101,13 +3104,14 @@ public class ConversationView {
                 // These two are parallel arrays
                 intent.putExtra(ImageViewActivity.URIS, urisToShow);
                 intent.putExtra(ImageViewActivity.MIME_TYPES, mimeTypesToShow);
+                intent.putExtra(ImageViewActivity.MESSAGE_IDS, messagePacketIds);
 
                 int indexOfCurrent = urisToShow.indexOf(image);
                 if (indexOfCurrent == -1) {
                     indexOfCurrent = 0;
                 }
                 intent.putExtra(ImageViewActivity.CURRENT_INDEX, indexOfCurrent);
-                mContext.startActivity(intent);
+                mContext.startActivityForResult(intent,ConversationDetailActivity.REQUEST_IMAGE_VIEW);
             }
         }
     }
