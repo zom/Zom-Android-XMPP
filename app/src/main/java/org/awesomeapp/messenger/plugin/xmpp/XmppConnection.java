@@ -4359,9 +4359,11 @@ public class XmppConnection extends ImConnection {
             debug(TAG, "got subscribe request: " + presence.getFrom());
 
             try {
-
+                RosterEntry rEntry = mRoster.getEntry(jid);
                 if (contact == null) {
                     handleSubscribeRequest(presence.getFrom());
+                } else if (rEntry != null && rEntry.canSeeHisPresence() && !rEntry.canSeeMyPresence()) {
+                    mContactListManager.approveSubscriptionRequest(contact);
                 }
                 else
                 {
