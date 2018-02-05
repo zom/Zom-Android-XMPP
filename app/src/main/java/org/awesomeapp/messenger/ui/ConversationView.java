@@ -875,6 +875,7 @@ public class ConversationView {
 
             @Override
             public void onClick(View v) {
+                mViewAttach.setVisibility(View.INVISIBLE);
                 mActivity.startImagePicker();
             }
 
@@ -884,6 +885,7 @@ public class ConversationView {
 
             @Override
             public void onClick(View v) {
+                mViewAttach.setVisibility(View.INVISIBLE);
                 mActivity.startPhotoTaker();
             }
 
@@ -894,6 +896,7 @@ public class ConversationView {
 
             @Override
             public void onClick(View v) {
+                mViewAttach.setVisibility(View.INVISIBLE);
                 mActivity.startFilePicker("audio/*");
             }
 

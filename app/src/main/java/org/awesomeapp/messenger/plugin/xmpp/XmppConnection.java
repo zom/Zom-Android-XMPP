@@ -958,8 +958,6 @@ public class XmppConnection extends ImConnection {
                 if (TextUtils.isEmpty(subject))
                     subject = room;
 
-
-
                 ChatGroup chatGroup = mGroups.get(chatRoomJid);
 
                 if (chatGroup == null) {
@@ -1698,7 +1696,7 @@ public class XmppConnection extends ImConnection {
                                 session = mSessionManager.createChatSession(participant, false);
 
                             if (session != null)
-                                ((ChatGroup) session.getParticipant()).setName(reason);
+                                ((ChatGroup) session.getParticipant()).setName(muc.getSubject());
                         }
                     }
                     catch (Exception se)
@@ -2534,21 +2532,43 @@ public class XmppConnection extends ImConnection {
             BareJid bareJid = JidCreate.bareFrom(address);
 
             //create a session if this it not groupchat
-            if (session == null && (!groupChat)) {
-                ImEntity participant = findOrCreateParticipant(address, groupChat);
+            if (session == null) {
 
-                if (participant != null) {
-                    session = mSessionManager.createChatSession(participant, false);
-                    mContactListManager.refreshPresence(address);
+                if (groupChat) {
+                    ImEntity participant = findOrCreateParticipant(address, groupChat);
 
-                    qAvatar.put(bareJid.toString(),"");
+                    if (participant != null) {
+                        session = mSessionManager.createChatSession(participant, false);
+                        mContactListManager.refreshPresence(address);
 
-                    if (getOmemo().getManager().contactSupportsOmemo(bareJid)) {
-                        getOmemo().getManager().requestDeviceListUpdateFor(bareJid);
-                        getOmemo().getManager().buildSessionsWith(bareJid);
+                        qAvatar.put(bareJid.toString(), "");
+
+                        if (getOmemo().getManager().contactSupportsOmemo(bareJid)) {
+                            getOmemo().getManager().requestDeviceListUpdateFor(bareJid);
+                            getOmemo().getManager().buildSessionsWith(bareJid);
+                        }
+
+
                     }
+                }
+                else
+                {
+                    XmppAddress xAddr = new XmppAddress(address);
+                    mChatGroupManager.joinChatGroupAsync(xAddr,null);
+                    MultiUserChat muc = mChatGroupManager.getMultiUserChat(xAddr.getBareAddress());
 
+                    session = mSessionManager.findSession(muc.getRoom());
 
+                    //create a session
+                    if (session == null) {
+                        ImEntity participant = findOrCreateParticipant(xAddr.getAddress(), true);
+
+                        if (participant != null)
+                            session = mSessionManager.createChatSession(participant, false);
+
+                        if (session != null)
+                            ((ChatGroup) session.getParticipant()).setName(muc.getSubject());
+                    }
                 }
 
             }
