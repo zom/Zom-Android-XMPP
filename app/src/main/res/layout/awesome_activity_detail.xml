@@ -162,7 +162,7 @@
             android:fillViewport="true"
             android:measureAllChildren="false"
             android:scrollbars="none"
-            android:visibility="visible"
+            android:visibility="invisible"
             android:layout_gravity="center_vertical"
             android:gravity="center_vertical"
             android:background="@color/background_light"
