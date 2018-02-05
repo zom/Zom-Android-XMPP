@@ -247,8 +247,8 @@ public class XmppConnection extends ImConnection {
     private SecureRandom secureRandom;
     private MemorizingTrustManager mMemTrust;
 
-    private final static int SOTIMEOUT = 1000 * 120;
-    private final static int CONNECT_TIMEOUT = 1000 * 60;
+    private final static int SOTIMEOUT = 1000 * 30;
+    private final static int CONNECT_TIMEOUT = 1000 * 30;
 
     private PingManager mPingManager;
 
@@ -3612,7 +3612,7 @@ public class XmppConnection extends ImConnection {
         try {
 
             mPingSuccess = mPingManager.pingMyServer() ;
-       ;}
+       }
         catch (Exception e)
         {
             mPingSuccess = false;
