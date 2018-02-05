@@ -1,13 +1,13 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
-  <string name="app_name_zom">Zom</string>
+  <string name="app_name_zom">Zom</string> 
   <string name="create_an_account">Konto erstellen</string>
   <string name="create_id">Zom-Kennung erstellen</string>
   <string name="advanced">Erweitert</string>
   <string name="account_congrats">Glückwunsch, Sie können nun mit Zom loslegen!</string>
   <string name="account_congrats_details">Du kannst dein Passwort und deine Account Details auf deiner Profil Seite finden.</string>
   <string name="invite_friends">Kontakte hinzufügen!</string>
-  <string name="invite_sms">SMS</string>
+  <string name="invite_sms">SMS</string> 
   <string name="invite_share">Teilen</string>
   <string name="invite_scan_qr">Scannen</string>
   <string name="sign_in_message">Vorhandenes Konto nutzen</string>
@@ -38,56 +38,145 @@
   <string name="welcome_to_zom">WILLKOMMEN BEI ZOM</string>
   <string name="onboarding_generate">Erstellen Sie eine Zom-Kennung. Wir generieren anschließend ein sicheres Passwort für Sie.</string>
   <string name="grant_perms">Sie müssen Zom Zugriff auf die Kamera gewähren.</string>
+
   <string name="menu_refresh">Sitzung aktualisieren</string>
+
   <string name="action_archived">Archiviert</string>
-  <string name="action_verified">Überprüft</string>
+    <string name="action_unarchived">Nicht archiviert</string>
+
+    <string name="action_verified">Überprüft</string>
+
   <string name="action_theme">Motiv ändern</string>
   <string name="action_stickers">Sticker teilen</string>
+
   <string name="pref_block_screenshots_title">Screenshots blockieren</string>
   <string name="pref_block_screenshots_summary">Die Versuche anderer Apps blockieren, Screenshots dieser App zu erstellen</string>
+
   <string name="pref_enable_tibetan_dictionary_title">Tibetanisches Wörterbuch aktivieren</string>
   <string name="pref_enable_tibetan_dictionary_summary">Passende Wörter aus der App Monlam Tibetan Dictionary vorschlagen</string>
+
   <string name="color_category_title">Benutzerdefinierte Farben</string>
   <string name="color_reset_title">Farben zurücksetzen</string>
   <string name="color_reset_summary">Farben auf den Standard zurücksetzen</string>
+
   <string name="color_header_title">Überschriftenfarbe</string>
   <string name="color_header_summary">Farbe der Überschriften, Aktions- und Symbolleisten</string>
+
   <string name="color_text_title">Textfarbe</string>
   <string name="color_text_summary">Textfarbe in Nachrichten und Listen</string>
+
+
   <string name="color_bg_title">Hintergrundfarbe</string>
   <string name="color_bg_summary">Hintergrundfarbe in Unterhaltungen und Listen</string>
+
   <string name="menu_approve_friend">Freund bestätigen?</string>
+
   <string name="header_got_invited">EINLADUNG ERHALTEN?</string>
   <string name="action_tap_invite">Klicke auf den Zom Einladungs Link von deinem Kontakt oder scanne jetzt seinen QR Code</string>
+
   <string name="action_invite_new_friends">Sende über SMS oder mit Teilen über jeder App einen Einladungs Link an deine Kontakte</string>
+
   <string name="not_verified">Bitte verifiziere die Identität deines Freundes!</string>
+
   <string name="security_code">Fingerabdruck</string>
+
   <string name="reset_passphrase">Passwort zurücksetzen</string>
+
   <string name="action_services">Zom Dienst</string>
+
   <string name="migrate_menu">Account übertragen</string>
-  <string name="migrate_message">\"Ich habe einen neuen Account. Kontakte mich hier: </string>
+  <string name="migrate_message">"Ich habe einen neuen Account. Kontakte mich hier:</string>
+
   <string name="migrate_notification">Dein Account wird bald nicht mehr vorhanden sein. Öffne die App um zu migrieren.</string>
-  <string name="action_undo">Rückgängig</string>
-  <string name="message_upgrade">Wir müssen ihren Zom Account auf einen neuen Server übertragen. Wir können dich automatisch übertragen um die beste Performance zu ermöglichen.</string>
-  <string name="message_upgrade_more">Wir müssen ihren Zom Account auf einen neuen Server übertragen. Wir können dich automatisch übertragen um die beste Performance zu ermöglichen. Du kannst auch einen anderen Server aausswählen (Nur empfohlene für erfahrenere Benutzer).</string>
-  <string name="upgrade_desc">Wir machen hier Verbesserungen.\n Mache hier dein freies Upgrade!</string>
-  <string name="upgrade_action">Upgrade Jetzt</string>
-  <string name="upgrade_complete">Upgrade fertig! Warte drauf, dass deine Freunde deinen neuen Account akzeptieren.</string>
+
+    <string name="action_undo">Rückgängig</string>
+
+    <string name="message_upgrade">Wir müssen ihren Zom Account auf einen neuen Server übertragen. Wir können dich automatisch übertragen um die beste Performance zu ermöglichen.</string>
+
+    <string name="message_upgrade_more">Wir müssen ihren Zom Account auf einen neuen Server übertragen. Wir können dich automatisch übertragen um die beste Performance zu ermöglichen. Du kannst auch einen anderen Server aausswählen (Nur empfohlene für erfahrenere Benutzer).</string>
+
+    <string name="upgrade_desc">Wir machen hier Verbesserungen.\n
+    Mache hier dein freies Upgrade!</string>
+
+    <string name="upgrade_action">Upgrade Jetzt</string>
+
+    <string name="upgrade_complete">Upgrade fertig! Warte drauf, dass deine Freunde deinen neuen Account akzeptieren.</string>
+
   <string name="upgrade_complete_action">Fertig</string>
-  <string name="upgrade_progress_action">Wir arbeiten daran…</string>
+
+    <string name="upgrade_progress_action">Wir arbeiten daran…</string>
+
   <string name="upgrade_failed">Das Upgrade ist fehlgeschlagen. Bitter versuche es später nochmal! Du kannst auch \"Account migrieren\" im \"Meine Konten\"-Menü nutzen.</string>
-  <string name="contact_migration_notice">Dein Kontakt hat einen neuen Account. Du kannst hier mit ihm chatten:</string>
+
+    <string name="contact_migration_notice">Dein Kontakt hat einen neuen Account. Du kannst hier mit ihm chatten:</string>
+
   <string name="contact_migration_action">Jetzt chatten</string>
-  <string name="upgrade_old_chats">Dein Chatverlauf von vor deinem Upgrade ist hier gespeichert</string>
+
+
+<string name="upgrade_old_chats">Dein Chatverlauf von vor deinem Upgrade ist hier gespeichert</string>
+
+<string name="message_waiting_for_friend">Warte auf deinen Freund</string>
+
+
   <string name="message_archive">Einige deiner Zom Kontakte wechseln ihre Konten. Alte Konten werden hier gespeichert.</string>
+
+
   <string name="one_moment_please_privacy">Einen moment bitte! Wir bereiten dein privates Zom vor.</string>
+
+
+
   <string name="action_got_it">Verstanden</string>
+
+
   <string name="action_inbox">Posteingang</string>
+
   <string name="action_active">Aktiv</string>
+
   <string name="action_archive">Archiv</string>
+
+
   <string name="title_pending">Warte auf Bestätigung</string>
+
+
   <string name="title_advanced">erweitert</string>
+
   <string name="action_upgrade_now">jetzt migrieren</string>
+
+
   <string name="action_chat_now">Jetzt chatten</string>
+
+
   <string name="action_add_buddy">Kontakt hinzufügen</string>
+  <string name="action_leave">Verlassen</string>
+  <string name="add_people">Leute hinzufügen</string>
+  <string name="notifications">Benachrichtigungen</string>
+  <string name="is_already_in_your_group">%1$s ✔️</string>
+
+    <string name="confirm_leave_group_title">Gruppe Verlassen?</string>
+  <string name="confirm_leave_group">Dein Gruppenchatverlauf wird gelöscht. Um diese Chats beizubehalten, archiviere stattdessen die Gruppe.</string>
+
+  <string name="pref_enable_advanced_network_features">Erweiterte Vernetzung</string>
+  <string name="pref_enable_advanced_network_features_summary">Aktivieren Sie erweiterten Schutz vor Netzwerkbedrohungen</string>
+
+    <string name="pref_proxy_server_host_title">Proxy Server Host</string>
+    <string name="pref_proxy_server_host_summary">Host- oder Domänenname des SOCKS-Proxys</string>
+
+    <string name="pref_proxy_server_port_title">Proxy Server Anschluss</string>
+    <string name="pref_proxy_server_port_summary">Anschluss des SOCKS-Proxy</string>
+
+    <string name="are_you_sure">Bist du sicher?</string>
+  <string name="photo_x_of_y">Foto %1$d von %2$d</string>
+
+  <string name="mtm_trust_anchor">Das Serverzertifikat ist nicht von einer bekannten Zertifizierungsstelle signiert.</string>
+  <string name="mtm_cert_expired">Das Serverzertifikat ist abgelaufen.</string>
+  <string name="mtm_hostname_mismatch">Der Server konnte sich nicht als \"%s\" authentifizieren. Das Zertifikat ist nur gültig für:</string>
+
+  <string name="mtm_connect_anyway">Möchten Sie trotzdem eine Verbindung herstellen?</string>
+  <string name="mtm_cert_details">Zertifikatdetails:</string>
+
+  <string name="mtm_decision_always">Immer</string>
+  <string name="mtm_decision_once">Einmal</string>
+  <string name="mtm_decision_abort">Abbrechen</string>
+
+  <string name="mtm_notification">Zertifikatsverifizierung</string>
 </resources>
