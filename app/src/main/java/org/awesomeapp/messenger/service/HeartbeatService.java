@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -80,7 +81,14 @@ public class HeartbeatService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null && HEARTBEAT_ACTION.equals(intent.getAction())) {
             startHeartbeat(mHeartbeatInterval);
-         //   startService(mRelayIntent);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                //do nothing
+            }
+            else
+            {
+                startService(mRelayIntent);
+            }
+
         }
         return START_STICKY;
     }
