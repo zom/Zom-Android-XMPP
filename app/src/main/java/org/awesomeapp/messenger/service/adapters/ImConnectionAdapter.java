@@ -495,7 +495,7 @@ public class ImConnectionAdapter extends org.awesomeapp.messenger.service.IImCon
                                     String remoteAddress = c.getString(3);
                                     String nickname = c.getString(4);
                                     if (remoteAddress != null)
-                                       new ChatSessionInitTask((ImApp) getContext().getApplication(), mProviderId, mAccountId, chatType)
+                                       new ChatSessionInitTask((ImApp) getContext().getApplication(), mProviderId, mAccountId, chatType, false)
                                                .executeOnExecutor(ImApp.sThreadPoolExecutor,new Contact(new XmppAddress(remoteAddress),nickname,chatType));
                                 }
                             }

@@ -3338,7 +3338,7 @@ public class ConversationView {
 
 
 
-            new ChatSessionInitTask(((ImApp) mActivity.getApplication()), mProviderId, mAccountId, Imps.Contacts.TYPE_NORMAL) {
+            new ChatSessionInitTask(((ImApp) mActivity.getApplication()), mProviderId, mAccountId, Imps.Contacts.TYPE_NORMAL, true) {
                 @Override
                 protected void onPostExecute(Long chatId) {
 

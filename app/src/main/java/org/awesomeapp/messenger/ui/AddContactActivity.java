@@ -362,6 +362,8 @@ public class AddContactActivity extends BaseActivity {
             Intent intent = new Intent();
             intent.putExtra(ContactsPickerActivity.EXTRA_RESULT_USERNAME, recipients[0].getAddress());
             intent.putExtra(ContactsPickerActivity.EXTRA_RESULT_PROVIDER, mApp.getDefaultProviderId());
+            intent.putExtra(ContactsPickerActivity.EXTRA_RESULT_ACCOUNT, mApp.getDefaultAccountId());
+
             setResult(RESULT_OK, intent);
             finish();
         }
@@ -465,6 +467,8 @@ public class AddContactActivity extends BaseActivity {
                             Intent intent=new Intent();
                             intent.putExtra(ContactsPickerActivity.EXTRA_RESULT_USERNAME, address);
                             intent.putExtra(ContactsPickerActivity.EXTRA_RESULT_PROVIDER, mApp.getDefaultProviderId());
+                            intent.putExtra(ContactsPickerActivity.EXTRA_RESULT_ACCOUNT, mApp.getDefaultAccountId());
+
                             setResult(RESULT_OK, intent);
 
                         }
@@ -477,6 +481,8 @@ public class AddContactActivity extends BaseActivity {
                             Intent intent=new Intent();
                             intent.putExtra(ContactsPickerActivity.EXTRA_RESULT_USERNAME, diLink.username);
                             intent.putExtra(ContactsPickerActivity.EXTRA_RESULT_PROVIDER, mApp.getDefaultProviderId());
+                            intent.putExtra(ContactsPickerActivity.EXTRA_RESULT_ACCOUNT, mApp.getDefaultAccountId());
+
                             setResult(RESULT_OK, intent);
                         }
 

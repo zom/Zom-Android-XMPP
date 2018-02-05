@@ -465,12 +465,12 @@ public class MainActivity extends BaseActivity implements IConnectionListener {
                 long providerId = intent.getLongExtra(ImServiceConstants.EXTRA_INTENT_PROVIDER_ID,mApp.getDefaultProviderId());
                 long accountId = intent.getLongExtra(ImServiceConstants.EXTRA_INTENT_ACCOUNT_ID,mApp.getDefaultAccountId());
                 String username = intent.getStringExtra(ImServiceConstants.EXTRA_INTENT_FROM_ADDRESS);
-                startChat(providerId, accountId, username, true, true);
+                startChat(providerId, accountId, username,  true);
             }
             else if (intent.hasExtra("username"))
             {
                 //launch a new chat based on the intent value
-                startChat(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), intent.getStringExtra("username"), true, true);
+                startChat(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), intent.getStringExtra("username"),  true);
             }
 
             setIntent(null);
@@ -497,7 +497,7 @@ public class MainActivity extends BaseActivity implements IConnectionListener {
                     long providerId = data.getLongExtra(ContactsPickerActivity.EXTRA_RESULT_PROVIDER, -1);
                     long accountId = data.getLongExtra(ContactsPickerActivity.EXTRA_RESULT_ACCOUNT,-1);
 
-                    startChat(providerId, accountId, username, true, true);
+                    startChat(providerId, accountId, username,  true);
                 }
 
             }
@@ -509,7 +509,7 @@ public class MainActivity extends BaseActivity implements IConnectionListener {
                     long providerId = data.getLongExtra(ContactsPickerActivity.EXTRA_RESULT_PROVIDER, -1);
                     long accountId = data.getLongExtra(ContactsPickerActivity.EXTRA_RESULT_ACCOUNT, -1);
 
-                    startChat(providerId, accountId, username, true, true);
+                    startChat(providerId, accountId, username, true);
                 }
                 else {
 
@@ -559,7 +559,7 @@ public class MainActivity extends BaseActivity implements IConnectionListener {
                         }
 
                         if (address != null)
-                            startChat(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), address, true, true);
+                            startChat(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), address, true);
 
                         //if they are for a group chat, then add the group
                     }
@@ -860,13 +860,13 @@ public class MainActivity extends BaseActivity implements IConnectionListener {
 
 
 
-    public void startChat (long providerId, long accountId, String username, boolean startCrypto, final boolean openChat)
+    public void startChat (long providerId, long accountId, String username, final boolean openChat)
     {
 
         //startCrypto is not actually used anymore, as we move to OMEMO
 
         if (username != null)
-            new ChatSessionInitTask(((ImApp)getApplication()),providerId, accountId, Imps.Contacts.TYPE_NORMAL)
+            new ChatSessionInitTask(((ImApp)getApplication()),providerId, accountId, Imps.Contacts.TYPE_NORMAL, true)
             {
                 @Override
                 protected void onPostExecute(Long chatId) {

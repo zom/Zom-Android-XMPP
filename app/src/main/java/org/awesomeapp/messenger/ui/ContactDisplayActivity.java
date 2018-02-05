@@ -338,7 +338,7 @@ public class ContactDisplayActivity extends BaseActivity {
             if (manager != null) {
                 IChatSession session = manager.getChatSession(mUsername);
                 if (session == null) {
-                    new ChatSessionInitTask(((ImApp)getApplication()),mProviderId, mAccountId, Imps.Contacts.TYPE_NORMAL)
+                    new ChatSessionInitTask(((ImApp)getApplication()),mProviderId, mAccountId, Imps.Contacts.TYPE_NORMAL, false)
                     {
                         @Override
                         protected void onPostExecute(Long chatId) {

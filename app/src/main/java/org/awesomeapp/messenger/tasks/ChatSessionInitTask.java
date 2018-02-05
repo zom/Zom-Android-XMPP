@@ -23,13 +23,15 @@ public class ChatSessionInitTask extends AsyncTask<Contact, Long, Long> {
     long mProviderId;
     long mAccountId;
     int mContactType;
+    boolean mIsNewSession;
 
-    public ChatSessionInitTask (ImApp app, long providerId, long accountId, int contactType)
+    public ChatSessionInitTask (ImApp app, long providerId, long accountId, int contactType, boolean isNewSession)
     {
         mApp = app;
         mProviderId = providerId;
         mAccountId = accountId;
         mContactType = contactType;
+        mIsNewSession = isNewSession;
     }
 
     public Long doInBackground (Contact... contacts)
@@ -38,23 +40,19 @@ public class ChatSessionInitTask extends AsyncTask<Contact, Long, Long> {
             try {
                 IImConnection conn = mApp.getConnection(mProviderId, mAccountId);
 
-                if (conn == null || conn.getState() != ImConnection.LOGGED_IN)
+                if (conn == null)
                     return -1L;
 
                 for (Contact contact : contacts) {
 
                     IChatSession session = conn.getChatSessionManager().getChatSession(contact.getAddress().getAddress());
 
-                    //always need to recreate the MUC after login
-////                   if (mContactType == Imps.Contacts.TYPE_GROUP)
- //                     session = conn.getChatSessionManager().createMultiUserChatSession(contact.getAddress().getAddress(), contact.getName(), null, false);
-
                     if (session == null)
                     {
                         if (mContactType == Imps.Contacts.TYPE_GROUP)
-                            session = conn.getChatSessionManager().createMultiUserChatSession(contact.getAddress().getAddress(), contact.getName(), null, false);
+                            session = conn.getChatSessionManager().createMultiUserChatSession(contact.getAddress().getAddress(), contact.getName(), null, mIsNewSession);
                         else {
-                            session = conn.getChatSessionManager().createChatSession(contact.getAddress().getAddress(), false);
+                            session = conn.getChatSessionManager().createChatSession(contact.getAddress().getAddress(), mIsNewSession);
                         }
 
                     }
