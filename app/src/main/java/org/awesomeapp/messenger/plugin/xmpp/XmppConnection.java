@@ -4372,19 +4372,7 @@ public class XmppConnection extends ImConnection {
 
             try {
 
-                if (contact == null) {
-                    handleSubscribeRequest(presence.getFrom());
-                }
-                else
-                {
-                    debug("Subscribe","got subscribe request for a contact we have: " + presence.getFrom());
-                }
-
-                /** //don't auto subscribe
-                else
-                {
-                    mContactListManager.approveSubscriptionRequest(contact);
-                }**/
+                handleSubscribeRequest(presence.getFrom());
 
             }
             catch (Exception e)
@@ -4524,26 +4512,28 @@ public class XmppConnection extends ImConnection {
     }
 
     private void handleSubscribeRequest (Jid jid) throws ImException, RemoteException {
-        ContactList cList = getContactListManager().getDefaultContactList();
 
-        XmppAddress xAddr = new XmppAddress(jid.toString());
-        Contact contact = new Contact(xAddr, xAddr.getUser(), Imps.Contacts.TYPE_NORMAL);
-        contact.setSubscriptionStatus(Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING);
-        contact.setSubscriptionType(Imps.Contacts.SUBSCRIPTION_TYPE_FROM);
-        mContactListManager.doAddContactToListAsync(contact, cList, false);
-        mContactListManager.getSubscriptionRequestListener().onSubScriptionRequest(contact, mProviderId, mAccountId);
+        Contact contact = mContactListManager.getContact(jid.asBareJid().toString());
+        if (contact == null) {
+            XmppAddress xAddr = new XmppAddress(jid.toString());
+            contact = new Contact(xAddr, xAddr.getUser(), Imps.Contacts.TYPE_NORMAL);
+        }
+
+        if (contact.getSubscriptionType() == Imps.Contacts.SUBSCRIPTION_TYPE_BOTH ||
+                contact.getSubscriptionType() == Imps.Contacts.SUBSCRIPTION_TYPE_TO)
+        {
+            mContactListManager.approveSubscriptionRequest(contact);
+        }
+        else {
+            ContactList cList = getContactListManager().getDefaultContactList();
+            contact.setSubscriptionStatus(Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING);
+            contact.setSubscriptionType(Imps.Contacts.SUBSCRIPTION_TYPE_FROM);
+            mContactListManager.doAddContactToListAsync(contact, cList, false);
+            mContactListManager.getSubscriptionRequestListener().onSubScriptionRequest(contact, mProviderId, mAccountId);
+        }
 
         ChatSession session = findOrCreateSession(jid.toString(), false);
 
-        /**
-        org.jivesoftware.smack.packet.Message msg = new org.jivesoftware.smack.packet.Message();
-        msg.setStanzaId((Math.random()*10000f)+"subscribe");
-        msg.setTo(mUserJid);
-        msg.setFrom(jid);
-        String message = mContext.getString(R.string.subscription_notify_text, contact.getName());
-        msg.setBody(message);
-        handleMessage(msg, false, false);
-         **/
 
     }
 
