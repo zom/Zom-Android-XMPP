@@ -1346,82 +1346,70 @@ public class ConversationView {
         if (isGroupChat())
             return;
 
-        if (mSubscriptionStatus == Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING) {
-            if (mSubscriptionType == Imps.Contacts.SUBSCRIPTION_TYPE_FROM) {
-                Snackbar sb = Snackbar.make(mHistory, mContext.getString(R.string.subscription_prompt, mRemoteNickname), Snackbar.LENGTH_INDEFINITE);
-                sb.setAction(mActivity.getString(R.string.approve_subscription), new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        approveSubscription();
-                    }
-                });
-                sb.show();
-            }
-        }
 
-        /**
+
         mHandler.post(new Runnable() {
 
             public void run () {
 
-                if ((mSubscriptionType == Imps.Contacts.SUBSCRIPTION_TYPE_TO
-                        && mSubscriptionStatus == Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING))
-                {
-                    mActivity.findViewById(R.id.waiting_view).setVisibility(View.VISIBLE);
-                    final View buttonRefresh = mActivity.findViewById(R.id.waiting_refresh_background);
-                    final ImageView iconRefresh = (ImageView) mActivity.findViewById(R.id.waiting_refresh);
-                    buttonRefresh.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Animation rotate = new RotateAnimation(0,360,Animation.RELATIVE_TO_SELF,0.5f,Animation.RELATIVE_TO_SELF,0.5f);
-                            rotate.setRepeatCount(4);
-                            rotate.setInterpolator(new LinearInterpolator());
-                            rotate.setDuration(800);
-                            rotate.setAnimationListener(new Animation.AnimationListener() {
-                                @Override
-                                public void onAnimationStart(Animation animation) {
+                if (mSubscriptionStatus == Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING) {
+                    if (mSubscriptionType == Imps.Contacts.SUBSCRIPTION_TYPE_FROM) {
+                        Snackbar sb = Snackbar.make(mHistory, mContext.getString(R.string.subscription_prompt, mRemoteNickname), Snackbar.LENGTH_INDEFINITE);
+                        sb.setAction(mActivity.getString(R.string.approve_subscription), new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                approveSubscription();
+                            }
+                        });
+                        sb.show();
+                    }
+                    else if (mSubscriptionType == Imps.Contacts.SUBSCRIPTION_TYPE_TO) {
+                        mActivity.findViewById(R.id.waiting_view).setVisibility(View.VISIBLE);
+                        final View buttonRefresh = mActivity.findViewById(R.id.waiting_refresh_background);
+                        final ImageView iconRefresh = (ImageView) mActivity.findViewById(R.id.waiting_refresh);
 
-                                }
+                        buttonRefresh.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Animation rotate = new RotateAnimation(0,360,Animation.RELATIVE_TO_SELF,0.5f,Animation.RELATIVE_TO_SELF,0.5f);
+                                rotate.setRepeatCount(4);
+                                rotate.setInterpolator(new LinearInterpolator());
+                                rotate.setDuration(800);
+                                rotate.setAnimationListener(new Animation.AnimationListener() {
+                                    @Override
+                                    public void onAnimationStart(Animation animation) {
 
-                                @Override
-                                public void onAnimationEnd(Animation animation) {
-                                    iconRefresh.clearAnimation();
-                                    Drawable check = ContextCompat.getDrawable(iconRefresh.getContext(), R.drawable.ic_check_white_24dp).mutate();
-                                    DrawableCompat.setTint(check, ContextCompat.getColor(iconRefresh.getContext(), R.color.zom_primary));
-                                    iconRefresh.setImageDrawable(check);
-                                    Drawable back = buttonRefresh.getBackground().mutate();
-                                    DrawableCompat.setTint(back, Color.WHITE);
-                                    ViewCompat.setBackground(buttonRefresh, back);
-                                    buttonRefresh.setEnabled(false);
-                                }
+                                    }
 
-                                @Override
-                                public void onAnimationRepeat(Animation animation) {
+                                    @Override
+                                    public void onAnimationEnd(Animation animation) {
+                                        iconRefresh.clearAnimation();
+                                        Drawable check = ContextCompat.getDrawable(iconRefresh.getContext(), R.drawable.ic_check_white_24dp).mutate();
+                                        DrawableCompat.setTint(check, ContextCompat.getColor(iconRefresh.getContext(), R.color.zom_primary));
+                                        iconRefresh.setImageDrawable(check);
+                                        Drawable back = buttonRefresh.getBackground().mutate();
+                                        DrawableCompat.setTint(back, Color.WHITE);
+                                        ViewCompat.setBackground(buttonRefresh, back);
+                                        buttonRefresh.setEnabled(false);
+                                    }
 
-                                }
-                            });
-                            resendFriendRequest();
-                            iconRefresh.startAnimation(rotate);
-                        }
-                    });
-                }
-                else if (mSubscriptionType == Imps.Contacts.SUBSCRIPTION_TYPE_FROM)
-                {
-                    Snackbar sb = Snackbar.make(mHistory, mContext.getString(R.string.subscription_prompt, mRemoteNickname), Snackbar.LENGTH_INDEFINITE);
-                    sb.setAction(mActivity.getString(R.string.approve_subscription), new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            approveSubscription();
-                        }
-                    });
-                    sb.show();
-                } else
+                                    @Override
+                                    public void onAnimationRepeat(Animation animation) {
 
-                {
-                    mActivity.findViewById(R.id.waiting_view).setVisibility(View.GONE);
+                                    }
+                                });
+                                resendFriendRequest();
+                                iconRefresh.startAnimation(rotate);
+                            }
+                        });
+                    }
+                    else {
+                        mActivity.findViewById(R.id.waiting_view).setVisibility(View.GONE);
+                    }
                 }
             }
-        });**/
+
+        });
 
     }
 
@@ -1434,7 +1422,6 @@ public class ConversationView {
     }
 
     private void reapproveSubscription() {
-
 
         new AsyncTask<String, Void, Boolean>()
         {
