@@ -1402,12 +1402,8 @@ public class XmppConnection extends ImConnection {
 
         providerSettings.close();
 
-        execute(new Runnable() {
-            @Override
-            public void run() {
-                do_login();
-            }
-        });
+        do_login ();
+
     }
 
     private void loginSync(long accountId, String passwordTemp, long providerId, boolean retry) {
@@ -1441,6 +1437,15 @@ public class XmppConnection extends ImConnection {
 
     // Runs in executor thread
     private void do_login() {
+        execute(new Runnable() {
+            @Override
+            public void run() {
+                do_login_async();
+            }
+        });
+    }
+
+    private void do_login_async () {
 
         if (getState() == LOGGED_IN
                 || getState() == SUSPENDED
@@ -2146,6 +2151,8 @@ public class XmppConnection extends ImConnection {
 
             @Override
             public void reconnectionFailed(Exception e) {
+
+                debug(TAG, "reconnection failed",e);
                 // We are not using the reconnection manager
              //   throw new UnsupportedOperationException();
                 execute(new Runnable() {
@@ -2166,6 +2173,7 @@ public class XmppConnection extends ImConnection {
             public void reconnectingIn(int seconds) {
                 // // We are not using the reconnection manager
                 // throw new UnsupportedOperationException();
+                debug(TAG,"reconnecting in " + seconds + " seconds...");
             }
 
             @Override
@@ -2178,7 +2186,7 @@ public class XmppConnection extends ImConnection {
                  * - Network error
                  * - We forced a socket shutdown
                  */
-                debug(TAG, "reconnect on error: " + e.getMessage());
+                debug(TAG, "reconnect on error: " + e.getMessage(),e);
                 if (e.getMessage().contains("conflict")) {
 
 
@@ -2273,18 +2281,6 @@ public class XmppConnection extends ImConnection {
         mStreamHandler = new XmppStreamHandler(mConnection, connectionListener);
         Exception xmppConnectException = null;
         AbstractXMPPConnection conn = mConnection.connect();
-
-        /**
-        ChatMarkersManager chatMarkersManager = ChatMarkersManager.getInstanceFor(mConnection);
-        if (chatMarkersManager.isSupportedByServer())
-        {
-
-        }**/
-
-    //    ReconnectionManager manager = ReconnectionManager.getInstanceFor(mConnection);
-     //   manager.enableAutomaticReconnection();
-      //  manager.setEnabledPerDefault(true);
-      //  manager.setReconnectionPolicy(ReconnectionManager.ReconnectionPolicy.RANDOM_INCREASING_DELAY);
 
     }
 
@@ -2703,12 +2699,12 @@ public class XmppConnection extends ImConnection {
                         org.jivesoftware.smack.packet.Message msgEncrypted
                                 = getOmemo().getManager().encrypt(muc, msgXmpp.getBody());
                         msgEncrypted.addExtension(new DeliveryReceiptRequest());
+                        msgEncrypted.setStanzaId(msgXmpp.getStanzaId());
                         String deliveryReceiptId = DeliveryReceiptRequest.addTo(msgEncrypted);
                         muc.sendMessage(msgEncrypted);
                         message.setType(Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED);
                     }
                     else {
-                        msgXmpp.addExtension(new DeliveryReceiptRequest());
                         String deliveryReceiptId = DeliveryReceiptRequest.addTo(msgXmpp);
                         muc.sendMessage(msgXmpp);
                     }
@@ -2717,7 +2713,6 @@ public class XmppConnection extends ImConnection {
                 else {
                     Chat thisChat = mChatManager.createChat(jidTo.asEntityJidIfPossible());
 
-                    //this isn't an OTR message, so let's try OMEMO
                     if (message.getType() == Imps.MessageType.QUEUED) {
 
                         //if this isn't already OTR encrypted, and the JID can support OMEMO then do it!
@@ -2727,9 +2722,8 @@ public class XmppConnection extends ImConnection {
 
                                 org.jivesoftware.smack.packet.Message msgEncrypted
                                         = getOmemo().getManager().encrypt(jidTo.asBareJid(), msgXmpp.getBody());
-
                                 msgEncrypted.setStanzaId(msgXmpp.getStanzaId());
-                                msgEncrypted.addExtension(new DeliveryReceiptRequest());
+                                DeliveryReceiptRequest.addTo(msgEncrypted);
                                 thisChat.sendMessage(msgEncrypted);
                                 message.setType(Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED);
 
@@ -2744,8 +2738,8 @@ public class XmppConnection extends ImConnection {
                                     getOmemo().trustOmemoDevice(jidTo.asBareJid(), null, true);
                                     org.jivesoftware.smack.packet.Message msgEncrypted
                                             = getOmemo().getManager().encrypt(jidTo.asBareJid(), msgXmpp.getBody());
-                                    msgEncrypted.addExtension(new DeliveryReceiptRequest());
                                     msgEncrypted.setStanzaId(msgXmpp.getStanzaId());
+                                    DeliveryReceiptRequest.addTo(msgEncrypted);
                                     thisChat.sendMessage(msgEncrypted);
                                     message.setType(Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED);
                                 }
@@ -2757,7 +2751,7 @@ public class XmppConnection extends ImConnection {
                             return;
                         }
                     } else {
-                        msgXmpp.addExtension(new DeliveryReceiptRequest());
+                        DeliveryReceiptRequest.addTo(msgXmpp);
                         thisChat.sendMessage(msgXmpp);
                         return;
                     }
@@ -3437,22 +3431,19 @@ public class XmppConnection extends ImConnection {
                 entry = mRoster.getEntry(bareJid);
 
                 int subType = Imps.Contacts.SUBSCRIPTION_TYPE_BOTH;
+                int subStatus = Imps.Contacts.SUBSCRIPTION_STATUS_NONE;
 
-                if (!entry.canSeeMyPresence())
-                {
-                    org.jivesoftware.smack.packet.Presence response = new org.jivesoftware.smack.packet.Presence(
-                            org.jivesoftware.smack.packet.Presence.Type.subscribed);
-                    response.setTo(bareJid);
+                org.jivesoftware.smack.packet.Presence response = new org.jivesoftware.smack.packet.Presence(
+                        org.jivesoftware.smack.packet.Presence.Type.subscribed);
+                response.setTo(bareJid);
 
-                    //send now, or queue
-                    if (mConnection != null && mConnection.isAuthenticated())
-                        mConnection.sendStanza(response);
-                    else
-                        sendPacket(response);
+                //send now, or queue
+                if (mConnection != null && mConnection.isAuthenticated())
+                    mConnection.sendStanza(response);
+                else
+                    sendPacket(response);
 
-                    subType = Imps.Contacts.SUBSCRIPTION_TYPE_TO;
-                }
-
+                /**
                 if (!entry.canSeeHisPresence()) {
 
                     //send now, or queue
@@ -3466,12 +3457,13 @@ public class XmppConnection extends ImConnection {
                     }
 
                     subType = Imps.Contacts.SUBSCRIPTION_TYPE_FROM;
-                }
+                }**/
+
+                contact.setSubscriptionStatus(subStatus);
+                contact.setSubscriptionType(subType);
 
                 mContactListManager.getSubscriptionRequestListener().onSubscriptionApproved(contact, mProviderId, mAccountId);
-                getSubscriptionRequestListener().onSubScriptionChanged(contact,mProviderId,mAccountId,subType,Imps.Contacts.SUBSCRIPTION_STATUS_NONE);
-
-                qNewContact.add(contact);
+                getSubscriptionRequestListener().onSubScriptionChanged(contact,mProviderId,mAccountId,subType,subStatus);
 
                 ChatSession session = findOrCreateSession(contact.getAddress().toString(), false);
 
@@ -4407,18 +4399,23 @@ public class XmppConnection extends ImConnection {
             debug(TAG, "got subscribed confirmation: " + presence.getFrom());
             try
             {
+
                 if (contact == null) {
                     XmppAddress xAddr = new XmppAddress(presence.getFrom().toString());
                     contact = new Contact(xAddr, xAddr.getUser(), Imps.Contacts.TYPE_NORMAL);
+                    mContactListManager.doAddContactToListAsync(contact,getContactListManager().getDefaultContactList(),false);
                 }
 
-                mContactListManager.doAddContactToListAsync(contact,getContactListManager().getDefaultContactList(),false);
-                mContactListManager.getSubscriptionRequestListener().onSubscriptionApproved(contact, mProviderId, mAccountId);
+                if (contact.getSubscriptionStatus() == Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING) {
+                    mContactListManager.approveSubscriptionRequest(contact);
+                    mContactListManager.getSubscriptionRequestListener().onSubscriptionApproved(contact, mProviderId, mAccountId);
+                }
 
                 if (getOmemo().getManager().contactSupportsOmemo(jid)) {
                     getOmemo().getManager().requestDeviceListUpdateFor(jid);
                     getOmemo().getManager().buildSessionsWith(jid);
                 }
+
 
             }
             catch (Exception e)
