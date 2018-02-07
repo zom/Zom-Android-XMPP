@@ -37,6 +37,7 @@ import org.awesomeapp.messenger.ui.widgets.RoundedAvatarDrawable;
 import org.awesomeapp.messenger.util.LinkifyHelper;
 import org.ocpsoft.prettytime.PrettyTime;
 
+import java.io.IOException;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Date;
@@ -98,6 +99,7 @@ public class MessageListItem extends FrameLayout {
     private String lastMessage = null;
     private Uri mediaUri = null;
     private String mimeType = null;
+    private String packetId = null;
 
     private Context context;
     private boolean linkify = false;
@@ -196,6 +198,8 @@ public class MessageListItem extends FrameLayout {
         return lastMessage;
     }
 
+    public String getPacketId () { return packetId; }
+
     public void bindIncomingMessage(MessageViewHolder holder, int id, int messageType, String address, String nickname, final String mimeType, final String body, Date date, Markup smileyRes,
             boolean scrolling, EncryptionState encryption, boolean showContact, int presenceStatus, IChatSession session, String packetId) {
 
@@ -205,6 +209,8 @@ public class MessageListItem extends FrameLayout {
         mHolder.mAudioContainer.setVisibility(View.GONE);
         mHolder.mMediaContainer.setVisibility(View.GONE);
 
+        this.packetId = packetId;
+
         if (nickname == null)
             nickname = address;
 
@@ -213,10 +219,12 @@ public class MessageListItem extends FrameLayout {
 
         mHolder.resetOnClickListenerMediaThumbnail();
 
+        boolean cmdSuccess = false;
+
         if( mimeType != null ) {
 
             Uri mediaUri = Uri.parse(body);
-            lastMessage = "";
+            lastMessage = body;
 
             if (mediaUri != null && mediaUri.getScheme() != null) {
                 if (mimeType.startsWith("audio")) {
@@ -225,6 +233,7 @@ public class MessageListItem extends FrameLayout {
                     try {
                         mHolder.mAudioContainer.setVisibility(View.VISIBLE);
                         showAudioPlayer(mimeType, mediaUri, id, mHolder, mHolder.mLayoutInflater);
+                        cmdSuccess = true;
                     } catch (Exception e) {
                         mHolder.mAudioContainer.setVisibility(View.GONE);
                     }
@@ -232,9 +241,7 @@ public class MessageListItem extends FrameLayout {
                 } else {
                     mHolder.mTextViewForMessages.setVisibility(View.GONE);
                     boolean isJpeg = mimeType.contains("jpg")||mimeType.contains("jpeg");
-
-                    showMediaThumbnail(mimeType, mediaUri, id, mHolder, isJpeg);
-
+                    cmdSuccess = showMediaThumbnail(mimeType, mediaUri, id, mHolder, isJpeg);
                     mHolder.mMediaContainer.setVisibility(View.VISIBLE);
 
                 }
@@ -244,7 +251,6 @@ public class MessageListItem extends FrameLayout {
         else if ((!TextUtils.isEmpty(lastMessage))
                 && (lastMessage.charAt(0) == '/'||lastMessage.charAt(0) == ':'||lastMessage.startsWith("aesgcm://")))
         {
-            boolean cmdSuccess = false;
 
             if (lastMessage.startsWith("/sticker:"))
             {
@@ -310,20 +316,13 @@ public class MessageListItem extends FrameLayout {
             else
             {
                 mHolder.mContainer.setBackgroundResource(android.R.color.transparent);
-                lastMessage = "";
             }
 
         }
-
-        if (lastMessage.length() > 0)
+        else if (!TextUtils.isEmpty(lastMessage))
         {
             mHolder.mTextViewForMessages.setText(new SpannableString(lastMessage));
         }
-        else
-        {
-            mHolder.mTextViewForMessages.setText(lastMessage);
-        }
-
 
         if (date != null)
         {
@@ -631,21 +630,13 @@ public class MessageListItem extends FrameLayout {
         try {
 
             SecureMediaStore.exportContent(mimeType, mediaUri, exportPath);
+
             Intent shareIntent = new Intent();
+            shareIntent.setAction(Intent.ACTION_SEND);
+            shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(exportPath));
+            shareIntent.setType(mimeType);
+            context.startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.export_media)));
 
-            if (doView) {
-                shareIntent.setDataAndType(Uri.fromFile(exportPath),mimeType);
-                shareIntent.setAction(Intent.ACTION_VIEW);
-                context.startActivity(shareIntent);
-            }
-            else
-            {
-                shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(exportPath));
-                shareIntent.setType(mimeType);
-                shareIntent.setAction(Intent.ACTION_SEND);
-                context.startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.export_media)));
-
-            }
             } catch (Exception e) {
             Toast.makeText(getContext(), "Export Failed " + e.getMessage(), Toast.LENGTH_LONG).show();
             e.printStackTrace();
@@ -719,7 +710,7 @@ public class MessageListItem extends FrameLayout {
     }
 
     public void bindOutgoingMessage(MessageViewHolder holder, int id, int messageType, String address, final String mimeType, final String body, Date date, Markup smileyRes, boolean scrolling,
-            DeliveryState delivery, EncryptionState encryption) {
+            DeliveryState delivery, EncryptionState encryption, String packetId) {
 
         mHolder = holder;
         applyStyleColors();
@@ -730,11 +721,10 @@ public class MessageListItem extends FrameLayout {
 
         mHolder.resetOnClickListenerMediaThumbnail();
 
+        this.packetId = packetId;
         lastMessage = body;
 
         if( mimeType != null ) {
-
-            lastMessage = "";
 
             String mediaPath = body;
 
@@ -821,7 +811,6 @@ public class MessageListItem extends FrameLayout {
             else
             {
                 holder.mContainer.setBackgroundResource(android.R.color.transparent);
-                lastMessage = "";
             }
 
         }

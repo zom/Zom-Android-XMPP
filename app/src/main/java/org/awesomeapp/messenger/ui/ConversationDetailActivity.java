@@ -92,6 +92,7 @@ import im.zom.messenger.R;
 import org.awesomeapp.messenger.service.IChatSessionManager;
 import org.awesomeapp.messenger.service.IContactListManager;
 import org.awesomeapp.messenger.service.IImConnection;
+import org.awesomeapp.messenger.ui.widgets.ShareRequest;
 import org.awesomeapp.messenger.util.LogCleaner;
 import org.awesomeapp.messenger.util.SecureMediaStore;
 
@@ -933,14 +934,6 @@ public class ConversationDetailActivity extends BaseActivity {
         }
     }
 
-    class ShareRequest
-    {
-        boolean deleteFile = false;
-        boolean resizeImage = false;
-        boolean importContent = false;
-        Uri media;
-        String mimeType;
-    }
 
     public static final int REQUEST_PICK_CONTACTS = RESULT_FIRST_USER + 1;
     public static final int REQUEST_SEND_IMAGE = REQUEST_PICK_CONTACTS + 1;

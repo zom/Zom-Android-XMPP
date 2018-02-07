@@ -172,11 +172,15 @@ public class GalleryListFragment extends Fragment {
             if (c != null && c.moveToFirst()) {
                 ArrayList<Uri> urisToShow = new ArrayList<>(c.getCount());
                 ArrayList<String> mimeTypesToShow = new ArrayList<>(c.getCount());
+                ArrayList<String> messagePacketIds = new ArrayList<>(c.getCount());
+
                 do {
                     try {
                         Uri uri = Uri.parse(c.getString(2));
                         urisToShow.add(uri);
                         mimeTypesToShow.add("image/jpeg");
+                        messagePacketIds.add(c.getString(4));
+
                     } catch (Exception ignored) {
                     }
                 } while (c.moveToNext());
@@ -186,6 +190,7 @@ public class GalleryListFragment extends Fragment {
                 // These two are parallel arrays
                 intent.putExtra(ImageViewActivity.URIS, urisToShow);
                 intent.putExtra(ImageViewActivity.MIME_TYPES, mimeTypesToShow);
+                intent.putExtra(ImageViewActivity.MESSAGE_IDS, messagePacketIds);
 
                 int indexOfCurrent = urisToShow.indexOf(image);
                 if (indexOfCurrent == -1) {
@@ -257,7 +262,8 @@ public class GalleryListFragment extends Fragment {
                 "MAX (" + Imps.Messages._ID + ") as _id",
                 Imps.Messages.NICKNAME,
                 Imps.Messages.BODY,
-               "MAX (" + Imps.Messages.DATE + ") as maxDate"
+               "MAX (" + Imps.Messages.DATE + ") as maxDate",
+                Imps.Messages.PACKET_ID
         };
 
 

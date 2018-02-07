@@ -82,6 +82,7 @@ import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.MimeTypeMap;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -136,6 +137,7 @@ import org.awesomeapp.messenger.ui.stickers.StickerSelectListener;
 import org.awesomeapp.messenger.ui.widgets.ImageViewActivity;
 import org.awesomeapp.messenger.ui.widgets.MessageViewHolder;
 import org.awesomeapp.messenger.ui.widgets.RoundedAvatarDrawable;
+import org.awesomeapp.messenger.ui.widgets.ShareRequest;
 import org.awesomeapp.messenger.util.Debug;
 import org.awesomeapp.messenger.util.GiphyAPI;
 import org.awesomeapp.messenger.util.LogCleaner;
@@ -150,6 +152,7 @@ import java.util.Collection;
 import java.util.Date;
 
 import im.zom.messenger.R;
+import info.guardianproject.iocipher.VirtualFileSystem;
 
 import static android.content.Context.CLIPBOARD_SERVICE;
 
@@ -202,7 +205,7 @@ public class ConversationView {
    // private TextView mTitle;
     /*package*/RecyclerView mHistory;
     EditText mComposeMessage;
-    ConversationDetailActivity.ShareRequest mShareDraft;
+    ShareRequest mShareDraft;
 
     private ImageButton mSendButton, mMicButton;
     private TextView mButtonTalk;
@@ -1348,8 +1351,6 @@ public class ConversationView {
         if (isGroupChat())
             return;
 
-
-
         mHandler.post(new Runnable() {
 
             public void run () {
@@ -2033,7 +2034,7 @@ public class ConversationView {
         mComposeMessage.requestFocus();
     }
 
-    void setMediaDraft (ConversationDetailActivity.ShareRequest mediaDraft) throws IOException {
+    void setMediaDraft (ShareRequest mediaDraft) throws IOException {
 
         mShareDraft = mediaDraft;
 
@@ -2045,6 +2046,51 @@ public class ConversationView {
         mComposeMessage.setText(" ");
         toggleInputMode();
 
+    }
+
+    void deleteMessage (String packetId, String message)
+    {
+        if (!TextUtils.isEmpty(message)) {
+            Uri deleteUri = Uri.parse(message);
+
+            if (deleteUri.getScheme() != null && deleteUri.getScheme().equals("vfs")) {
+                info.guardianproject.iocipher.File fileMedia = new info.guardianproject.iocipher.File(deleteUri.getPath());
+                fileMedia.delete();
+            }
+        }
+
+        Imps.deleteMessageInDb(mContext.getContentResolver(), packetId);
+
+        requeryCursor();
+    }
+
+    void resendMessage (final String resendMsg) {
+
+        if (!TextUtils.isEmpty(resendMsg))
+        {
+            if (SecureMediaStore.isVfsUri(resendMsg)||SecureMediaStore.isContentUri(resendMsg))
+            {
+                //what do we do with this?
+
+                ShareRequest request = new ShareRequest();
+                request.deleteFile = false;
+                request.resizeImage = false;
+                request.importContent = false;
+                request.media = Uri.parse(resendMsg);
+                request.mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(resendMsg);
+
+                try {
+                    mActivity.sendShareRequest(mShareDraft);
+                }
+                catch (Exception e){
+                    Log.w(ImApp.LOG_TAG,"error setting media draft",e);
+                }
+            }
+            else
+            {
+                sendMessageAsync(resendMsg);
+            }
+        }
     }
 
     void sendMessageAsync(final String msg) {
@@ -2062,7 +2108,6 @@ public class ConversationView {
         mComposeMessage.setText("");
         mComposeMessage.requestFocus();
     }
-
 
     boolean sendMessage(String msg, boolean isResend) {
 
@@ -2953,7 +2998,7 @@ public class ConversationView {
                     messageView.bindErrorMessage(errCode);
                 } else {
                     messageView.bindOutgoingMessage(viewHolder, id, messageType, null, mimeType, body, date, mMarkup, false,
-                            deliveryState, encState);
+                            deliveryState, encState, packetId);
                 }
 
                 break;
@@ -3021,12 +3066,10 @@ public class ConversationView {
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
 
                 switch (item.getItemId()) {
-                    /**
                     case R.id.menu_message_delete:
-                        //shareCurrentItem();
+                        deleteMessage(((MessageListItem)mLastSelectedView).getPacketId(),((MessageListItem)mLastSelectedView).getLastMessage());
                         mode.finish(); // Action picked, so close the CAB
                         return true;
-                     */
                     case R.id.menu_message_share:
                         ((MessageListItem)mLastSelectedView).exportMediaFile();
                         mode.finish(); // Action picked, so close the CAB
@@ -3035,11 +3078,10 @@ public class ConversationView {
                         ((MessageListItem)mLastSelectedView).forwardMediaFile();
                         mode.finish(); // Action picked, so close the CAB
                         return true;
-                        /**
                     case R.id.menu_message_resend:
-                        sendMessageAsync(((MessageListItem)mLastSelectedView).getLastMessage());
+                        resendMessage(((MessageListItem)mLastSelectedView).getLastMessage());
                         mode.finish(); // Action picked, so close the CAB
-                        return true;**/
+                        return true;
                     case R.id.menu_message_copy:
                         String messageText = ((MessageListItem)mLastSelectedView).getLastMessage();
                         ClipboardManager clipboard = (ClipboardManager) mActivity.getSystemService(CLIPBOARD_SERVICE);
