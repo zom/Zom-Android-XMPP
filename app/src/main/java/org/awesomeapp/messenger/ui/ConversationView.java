@@ -234,8 +234,8 @@ public class ConversationView {
     String mRemoteAddress;
     RoundedAvatarDrawable mRemoteAvatar = null;
     Drawable mRemoteHeader = null;
-    int mSubscriptionType;
-    int mSubscriptionStatus;
+    int mSubscriptionType = Imps.Contacts.SUBSCRIPTION_TYPE_NONE;
+    int mSubscriptionStatus = Imps.Contacts.SUBSCRIPTION_STATUS_NONE;
 
     long mProviderId = -1;
     long mAccountId = -1;
@@ -709,9 +709,11 @@ public class ConversationView {
     {
         @Override
         public void onSubScriptionChanged(Contact from, long providerId, long accountId, int subType, int subStatus) throws RemoteException {
-            mSubscriptionType = subType;
-            mSubscriptionStatus = subStatus;
-            showSubscriptionUI();
+            if (from.getAddress().getBareAddress().equals(mRemoteAddress)) {
+                mSubscriptionType = subType;
+                mSubscriptionStatus = subStatus;
+                showSubscriptionUI();
+            }
         }
 
         @Override

@@ -3052,6 +3052,7 @@ public class XmppConnection extends ImConnection {
                     if (rEntry.canSeeHisPresence() && rEntry.canSeeMyPresence())
                     {
                         subType = Imps.Contacts.SUBSCRIPTION_TYPE_BOTH;
+                        subStatus = Imps.Contacts.SUBSCRIPTION_STATUS_NONE;
                     }
                     else if (rEntry.canSeeHisPresence())
                     {
