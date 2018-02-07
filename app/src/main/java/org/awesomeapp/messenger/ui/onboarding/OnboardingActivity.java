@@ -742,26 +742,32 @@ public class OnboardingActivity extends BaseActivity {
 
     }
 
-    private void doExistingAccountRegister ()
+    private synchronized boolean doExistingAccountRegister ()
     {
         String username = ((TextView)findViewById(R.id.edtName)).getText().toString();
         String password = ((TextView)findViewById(R.id.edtPass)).getText().toString();
 
         if (verifyJabberID(username)) {
-            findViewById(R.id.progressExistingUser).setVisibility(View.VISIBLE);
-            findViewById(R.id.progressExistingImage).setVisibility(View.VISIBLE);
 
             if (mExistingAccountTask == null) {
+                findViewById(R.id.progressExistingUser).setVisibility(View.VISIBLE);
+                findViewById(R.id.progressExistingImage).setVisibility(View.VISIBLE);
+
                 mExistingAccountTask = new ExistingAccountTask();
                 mExistingAccountTask.execute(username, password);
+
+                return true;
             }
         }
         else
         {
             Toast.makeText(this,getString(R.string.account_setup_example_email_address),Toast.LENGTH_SHORT).show();
         }
+
+        return false;
     }
 
+    //make sure it is valid, and that people aren't including unsupported domains
     public static boolean verifyJabberID(String jid) {
         if (jid != null) {
             Pattern p = Pattern
@@ -769,6 +775,14 @@ public class OnboardingActivity extends BaseActivity {
             Matcher m = p.matcher(jid);
 
             if (!m.matches()) {
+                return false;
+            }
+            else if (jid.contains("gmail.com")||jid.contains("google.com"))
+            {
+                return false;
+            }
+            else if (jid.contains("facebook.com"))
+            {
                 return false;
             }
         } else {
