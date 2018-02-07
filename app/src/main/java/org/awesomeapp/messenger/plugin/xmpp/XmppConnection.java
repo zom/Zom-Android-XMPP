@@ -111,6 +111,8 @@ import org.jivesoftware.smackx.muc.provider.MUCUserProvider;
 import org.jivesoftware.smackx.offline.packet.OfflineMessageInfo;
 import org.jivesoftware.smackx.offline.packet.OfflineMessageRequest;
 import org.jivesoftware.smackx.omemo.OmemoFingerprint;
+import org.jivesoftware.smackx.omemo.OmemoManager;
+import org.jivesoftware.smackx.omemo.OmemoService;
 import org.jivesoftware.smackx.omemo.exceptions.CryptoFailedException;
 import org.jivesoftware.smackx.omemo.exceptions.UndecidedOmemoIdentityException;
 import org.jivesoftware.smackx.omemo.internal.CipherAndAuthTag;
@@ -157,6 +159,8 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
 import java.lang.reflect.Array;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -1606,6 +1610,8 @@ public class XmppConnection extends ImConnection {
                     debug (TAG, "got OmemoKey Transport from: " + from.toString());
                 }
             });
+
+            addOmemoListener(mOmemoInstance.getManager());
         }
 
 
@@ -1661,6 +1667,7 @@ public class XmppConnection extends ImConnection {
             mRoster = Roster.getInstanceFor(mConnection);
             mRoster.setRosterLoadedAtLogin(true);
             mRoster.setSubscriptionMode(subMode);
+            getContactListManager().listenToRoster(mRoster);
 
             mChatManager = ChatManager.getInstanceFor(mConnection);
 
@@ -1669,13 +1676,10 @@ public class XmppConnection extends ImConnection {
             if (mUser == null)
                 mUser = makeUser(providerSettings,mContext.getContentResolver());
 
-            mConnection.login(mUsername, mPassword, Resourcepart.from(mResource));
-
-            mStreamHandler.notifyInitialLogin();
-            initServiceDiscovery();
-
-            getContactListManager().listenToRoster(mRoster);
-            getContactListManager().loadContactListsAsync();
+            try { getOmemo(); }
+            catch (Exception e) {
+                debug(TAG,"error init'ing omemo during connectoin",e);
+            }
 
             MultiUserChatManager.getInstanceFor(mConnection).addInvitationListener(new InvitationListener() {
 
@@ -1716,6 +1720,12 @@ public class XmppConnection extends ImConnection {
 
 
             });
+
+            mConnection.login(mUsername, mPassword, Resourcepart.from(mResource));
+            mStreamHandler.notifyInitialLogin();
+            initServiceDiscovery();
+
+            getContactListManager().loadContactListsAsync();
 
             execute(new Runnable ()
             {
@@ -2282,6 +2292,20 @@ public class XmppConnection extends ImConnection {
         Exception xmppConnectException = null;
         AbstractXMPPConnection conn = mConnection.connect();
 
+    }
+
+    private void addOmemoListener(OmemoManager omemoManager)
+    {
+        OmemoService omemoService = OmemoService.getInstance();
+        try {
+            Method addMsgListener = OmemoService.class.getDeclaredMethod
+                    ("registerOmemoMessageStanzaListeners", OmemoManager.class);
+            addMsgListener.setAccessible(true);
+            addMsgListener.invoke(omemoService, omemoManager);
+        }
+        catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            debug(TAG,"unable to register omemo listener",e);
+        }
     }
 
     private void handleMessage (org.jivesoftware.smack.packet.Message smackMessage, boolean isOmemo, boolean notifyUser) {

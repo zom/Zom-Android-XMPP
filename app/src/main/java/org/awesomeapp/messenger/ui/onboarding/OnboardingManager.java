@@ -394,6 +394,9 @@ public class OnboardingManager {
 
         long accountId = ImApp.insertOrUpdateAccount(cr, providerId, -1, nickname, username, password);
 
+        if (accountId == -1)
+            return null;
+
         Uri accountUri = ContentUris.withAppendedId(Imps.Account.CONTENT_URI, accountId);
 
         Cursor pCursor = cr.query(Imps.ProviderSettings.CONTENT_URI, new String[]{Imps.ProviderSettings.NAME, Imps.ProviderSettings.VALUE}, Imps.ProviderSettings.PROVIDER + "=?", new String[]{Long.toString(providerId)}, null);

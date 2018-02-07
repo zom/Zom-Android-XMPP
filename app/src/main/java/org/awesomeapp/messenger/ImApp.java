@@ -474,6 +474,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
     public static long insertOrUpdateAccount(ContentResolver cr, long providerId, long accountId, String nickname, String username,
             String pw) {
+        
         String selection = Imps.Account.PROVIDER + "=? AND (" + Imps.Account._ID + "=?" + " OR " + Imps.Account.USERNAME + "=?)";
         String[] selectionArgs = { Long.toString(providerId), Long.toString(accountId), username };
 
