@@ -649,6 +649,8 @@ public class ConversationDetailActivity extends BaseActivity {
             {
                 sendUri = contentUri;
                 info.type = getContentResolver().getType(sendUri);
+                if (info.type == null)
+                    info.type = defaultType;
             }
 
             // send
@@ -758,8 +760,20 @@ public class ConversationDetailActivity extends BaseActivity {
             }
             else if (requestCode == REQUEST_IMAGE_VIEW)
             {
-                mConvoView.requeryCursor();
+                if (resultIntent.hasExtra("resendImageUri"))
+                {
+                    ShareRequest request = new ShareRequest();
+                    request.deleteFile = false;
+                    request.resizeImage = false;
+                    request.importContent = false;
+                    request.media = Uri.parse(resultIntent.getStringExtra("resendImageUri"));
+                    request.mimeType = resultIntent.getStringExtra("resendImageMimeType");
 
+                    sendShareRequest(request);
+
+                }
+
+                mConvoView.requeryCursor();
             }
 
 

@@ -54,6 +54,8 @@ public class ImageViewActivity extends AppCompatActivity implements PZSImageView
     private ArrayList<String> mimeTypes;
     private ArrayList<String> messagePacketIds;
 
+    private boolean mShowResend = false;
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -63,6 +65,8 @@ public class ImageViewActivity extends AppCompatActivity implements PZSImageView
         supportRequestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         //getSupportActionBar().setElevation(0);
+
+        mShowResend = getIntent().getBooleanExtra("showResend",false);
 
         viewPagerPhotos = new ConditionallyEnabledViewPager(this);
         viewPagerPhotos.setBackgroundColor(0x33333333);
@@ -142,6 +146,7 @@ public class ImageViewActivity extends AppCompatActivity implements PZSImageView
         getMenuInflater().inflate(R.menu.menu_message_context, menu);
 
         menu.findItem(R.id.menu_message_copy).setVisible(false);
+        menu.findItem(R.id.menu_message_resend).setVisible(mShowResend);
 
         return true;
     }
@@ -218,10 +223,14 @@ public class ImageViewActivity extends AppCompatActivity implements PZSImageView
         int currentItem = viewPagerPhotos.getCurrentItem();
         if (currentItem >= 0 && currentItem < uris.size()) {
             String resharePath = uris.get(currentItem).toString();
-            Intent shareIntent = new Intent(this, ImUrlActivity.class);
-            shareIntent.setAction(Intent.ACTION_SEND);
-            shareIntent.setDataAndType(Uri.parse(resharePath), mimeTypes.get(currentItem));
-            startActivity(shareIntent);
+            String mimeType = mimeTypes.get(currentItem).toString();
+
+            Intent intentResult = new Intent();
+            intentResult.putExtra("resendImageUri",resharePath);
+            intentResult.putExtra("resendImageMimeType",mimeType);
+
+            setResult(RESULT_OK,intentResult);
+            finish();
         }
     }
 

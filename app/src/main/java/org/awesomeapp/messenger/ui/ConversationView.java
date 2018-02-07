@@ -3134,6 +3134,8 @@ public class ConversationView {
 
                 Intent intent = new Intent(mContext, ImageViewActivity.class);
 
+                intent.putExtra("showResend",true);
+
                 // These two are parallel arrays
                 intent.putExtra(ImageViewActivity.URIS, urisToShow);
                 intent.putExtra(ImageViewActivity.MIME_TYPES, mimeTypesToShow);
