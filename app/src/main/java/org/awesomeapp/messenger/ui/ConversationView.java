@@ -1151,15 +1151,17 @@ public class ConversationView {
 
     private void sendTypingStatus (boolean isTyping) {
 
-        if (mLastIsTyping != isTyping) {
-            try {
-                if (mConn != null)
-                    mConn.sendTypingStatus(mRemoteAddress, isTyping);
-            } catch (Exception ie) {
-                Log.e(ImApp.LOG_TAG, "error sending typing status", ie);
-            }
+        if (mSubscriptionStatus != Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING) {
+            if (mLastIsTyping != isTyping) {
+                try {
+                    if (mConn != null)
+                        mConn.sendTypingStatus(mRemoteAddress, isTyping);
+                } catch (Exception ie) {
+                    Log.e(ImApp.LOG_TAG, "error sending typing status", ie);
+                }
 
-            mLastIsTyping = isTyping;
+                mLastIsTyping = isTyping;
+            }
         }
 
     }
@@ -1391,6 +1393,8 @@ public class ConversationView {
                                         DrawableCompat.setTint(back, Color.WHITE);
                                         ViewCompat.setBackground(buttonRefresh, back);
                                         buttonRefresh.setEnabled(false);
+                                        mActivity.findViewById(R.id.waiting_view).setVisibility(View.GONE);
+
                                     }
 
                                     @Override
