@@ -197,13 +197,13 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
             NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
             NotificationChannel nc = new NotificationChannel(NOTIFICATION_CHANNEL_ID_SERVICE, getString(R.string.app_name), NotificationManager.IMPORTANCE_MIN);
-            nc.setLockscreenVisibility(Notification.VISIBILITY_SECRET);
             nc.setShowBadge(false);
             nm.createNotificationChannel(nc);
 
             nc = new NotificationChannel(NOTIFICATION_CHANNEL_ID_MESSAGE, getString(R.string.notifications), NotificationManager.IMPORTANCE_HIGH);
-            nc.setLockscreenVisibility(Notification.VISIBILITY_SECRET);
             nc.setLightColor(0xff990000);
+            nc.enableLights(true);
+            nc.enableVibration(true);
             nc.setShowBadge(true);
             Uri ringtoneUri = Preferences.getNotificationRingtoneUri();
             nc.setSound(ringtoneUri, new AudioAttributes.Builder()
@@ -474,7 +474,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
     public static long insertOrUpdateAccount(ContentResolver cr, long providerId, long accountId, String nickname, String username,
             String pw) {
-        
+
         String selection = Imps.Account.PROVIDER + "=? AND (" + Imps.Account._ID + "=?" + " OR " + Imps.Account.USERNAME + "=?)";
         String[] selectionArgs = { Long.toString(providerId), Long.toString(accountId), username };
 

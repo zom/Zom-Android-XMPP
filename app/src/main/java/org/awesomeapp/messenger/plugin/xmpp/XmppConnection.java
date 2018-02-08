@@ -251,8 +251,9 @@ public class XmppConnection extends ImConnection {
     private SecureRandom secureRandom;
     private MemorizingTrustManager mMemTrust;
 
-    private final static int SOTIMEOUT = 1000 * 30;
-    private final static int CONNECT_TIMEOUT = 1000 * 30;
+    private final static int SOTIMEOUT = 1000 * 60;
+    private final static int CONNECT_TIMEOUT = 1000 * 60;
+    private final static int PING_INTERVAL = 60 * 5; //5 minutes
 
     private PingManager mPingManager;
 
@@ -1672,6 +1673,7 @@ public class XmppConnection extends ImConnection {
             mChatManager = ChatManager.getInstanceFor(mConnection);
 
             mPingManager = PingManager.getInstanceFor(mConnection) ;
+            mPingManager.setPingInterval(PING_INTERVAL);
 
             if (mUser == null)
                 mUser = makeUser(providerSettings,mContext.getContentResolver());
@@ -2074,6 +2076,7 @@ public class XmppConnection extends ImConnection {
 
         XMPPTCPConnection.setUseStreamManagementDefault(true);
         XMPPTCPConnection.setUseStreamManagementResumptiodDefault(true);
+
 
         mConnection = new XMPPTCPConnection(mConfig.build());
 

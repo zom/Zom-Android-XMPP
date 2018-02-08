@@ -250,8 +250,6 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
         Debug.onServiceStart();
 
-        //startForegroundCompat();
-
         PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
         mWakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "IM_WAKELOCK");
 

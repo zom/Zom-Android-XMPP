@@ -361,7 +361,7 @@ public class StatusBarNotifier {
                 .setSmallIcon(icon)
                 .setTicker(lightWeightNotify ? null : tickerText)
                 .setWhen(System.currentTimeMillis())
-                .setLights(0xff00ff00, 300, 1000)
+                .setLights(0xff990000, 300, 1000)
                 .setContentTitle(getTitle())
                 .setContentText(getMessage())
                 .setContentIntent(PendingIntent.getActivity(mContext, UNIQUE_INT_PER_CALL++, intent, PendingIntent.FLAG_UPDATE_CURRENT))
