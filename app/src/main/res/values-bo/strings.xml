@@ -44,7 +44,6 @@
   <string name="account_setup_password_confirm">གསང་ཚིག་ངེས་གཏན་བཟོས།</string>
   <string name="btn_create_new_account">ཐོ་བྱང་དེབ་སྐྱེལ་བྱོས། </string>
   <string name="account_setup_pers_now_title">ད་ལྟ་ནང་དུ་ཞུགས།</string>
-  <string name="_via_orbot">Orbot (Tor)</string>
   <string name="select_domain_new_account">མིང་གཙོ་བོ་དེ་གདམ། </string>
   <string name="registering_new_account_">ཐོ་མིང་གསར་བ་དེབ་སྐྱེལ་བྱེད་བཞིན་ཡོད། </string>
   <string name="signing_in_wait">ནང་ཞུགས་བྱེད་བཞིན་ཡོད། \u2026</string>
@@ -333,4 +332,6 @@
   <string name="title_more">གསར་རྙེད།</string>
   <string name="title_me">ང་།</string>
   <string name="no_photos">གཏོང་ལེན་བྱས་པའི་འདྲ་པར་ཁག་འདིར་འཆར་ངེས།</string>
+  <string name="group_admin">དོ་དམ་པ།</string>
+  <string name="group_you">ཁྱེད་རང་།</string>
 </resources>

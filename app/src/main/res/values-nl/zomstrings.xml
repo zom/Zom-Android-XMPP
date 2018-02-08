@@ -40,6 +40,7 @@
   <string name="grant_perms">Je moet Zom toestemming geven je camera te gebruiken</string>
   <string name="menu_refresh">Sessie herladen</string>
   <string name="action_archived">Gearchiveerd</string>
+  <string name="action_unarchived">Gedearchiveerd</string>
   <string name="action_verified">Geverifieerd</string>
   <string name="action_theme">Thema wijzigen</string>
   <string name="action_stickers">Stickers delen</string>
@@ -93,5 +94,25 @@
   <string name="action_add_buddy">Vriend toevoegen</string>
   <string name="action_leave">Verlaten</string>
   <string name="add_people">Contacten toevoegen</string>
+  <string name="notifications">Meldingen</string>
   <string name="is_already_in_your_group">%1$s zit al in je groep</string>
+  <string name="confirm_leave_group_title">Groep verlaten?</string>
+  <string name="confirm_leave_group">Je groepsgespreksgeschiedenis zal gewist worden. Archiveer de groep om de gespreksgeschiedenis te behouden.</string>
+  <string name="pref_enable_advanced_network_features">Geavanceerd netwerken</string>
+  <string name="pref_enable_advanced_network_features_summary">Schakel geavanceerde bescherming tegen netwerkbedreigingen in</string>
+  <string name="pref_proxy_server_host_title">Proxyserverhost</string>
+  <string name="pref_proxy_server_host_summary">Host- of domeinnaam van SOCKS-proxy</string>
+  <string name="pref_proxy_server_port_title">Proxyserverpoort</string>
+  <string name="pref_proxy_server_port_summary">Poort van SOCKS-proxy</string>
+  <string name="are_you_sure">Weet je het zeker?</string>
+  <string name="photo_x_of_y">Foto %1$d van %2$d</string>
+  <string name="mtm_trust_anchor">Het servercertificaat is niet ondertekend door een gekende certificaatsautoriteit.</string>
+  <string name="mtm_cert_expired">Het servercertificaat is verlopen.</string>
+  <string name="mtm_hostname_mismatch">Server kon niet authenticeren als \"%s\". Het certificaat is enkel geldig voor:</string>
+  <string name="mtm_connect_anyway">Wil je toch verbinding maken?</string>
+  <string name="mtm_cert_details">Certificaatdetails:</string>
+  <string name="mtm_decision_always">Altijd</string>
+  <string name="mtm_decision_once">Eenmalig</string>
+  <string name="mtm_decision_abort">Afbreken</string>
+  <string name="mtm_notification">Certificaatsverificatie</string>
 </resources>

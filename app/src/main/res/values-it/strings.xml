@@ -44,7 +44,6 @@
   <string name="account_setup_password_confirm">conferma password</string>
   <string name="btn_create_new_account">Registra account</string>
   <string name="account_setup_pers_now_title">Accedi adesso</string>
-  <string name="_via_orbot">Orbot (Tor)</string>
   <string name="select_domain_new_account">Dominio servizio di chat</string>
   <string name="registering_new_account_">Registrazione nuovo account…</string>
   <string name="signing_in_wait">Accesso\u2026</string>
@@ -109,8 +108,8 @@
   <string name="subscription_prompt">Aggiungere <xliff:g id="USER">%1$s</xliff:g>?</string>
   <string name="approve_subscription">Sì</string>
   <string name="decline_subscription">No</string>
-  <string name="approve_subscription_error">Impossibile approvare l\'iscrizione di <xliff:g id="USER">%1$s</xliff:g>. Riprova più tardi.</string>
-  <string name="decline_subscription_error">Impossibile rifiutare l\'iscrizione di <xliff:g id="USER">%1$s</xliff:g>. Riprova più tardi.</string>
+  <string name="approve_subscription_error">Impossibile approvare l'iscrizione di <xliff:g id="USER">%1$s</xliff:g>. Riprova più tardi.</string>
+  <string name="decline_subscription_error">Impossibile rifiutare l'iscrizione di <xliff:g id="USER">%1$s</xliff:g>. Riprova più tardi.</string>
   <!--Security: OTR-->
   <string name="otr_session_status_finished">Il tuo interlocutore ha disabilitato la chat criptata.</string>
   <string name="otr_mode_force">Obbliga / Richiedi</string>
@@ -187,7 +186,7 @@
   <string name="unblock_contact_failed">Il contatto non è stato sbloccato.</string>
   <string name="load_contact_list_failed">Elenco contatti non caricato.</string>
   <string name="cant_connect_to_server">Impossibile collegarsi al server. Controllare la connessione.</string>
-  <string name="contact_already_exist"><xliff:g id="USER">%1$s</xliff:g> già presente nell\'elenco contatti.</string>
+  <string name="contact_already_exist"><xliff:g id="USER">%1$s</xliff:g> già presente nell'elenco contatti.</string>
   <string name="contact_blocked">Il contatto "<xliff:g id="USER">%1$s</xliff:g>" è stato bloccato.</string>
   <string name="contact_not_loaded">Attendere il caricamento dell\'elenco contatti.</string>
   <string name="network_error">Errore di rete.</string>
@@ -325,4 +324,10 @@
   <string name="title_more">Scopri</string>
   <string name="title_me">Io</string>
   <string name="no_photos">Le foto condivise e ricevute appariranno qui</string>
+  <string name="group_admin">amministratore</string>
+  <string name="group_you">tu</string>
+  <string name="copy_message">Copia messaggio</string>
+  <string name="action_copied">Copiato!</string>
+  <string name="group_encryption_title">Cifratura del gruppo (solo Android)</string>
+  <string name="group_encryption_summary">Attiva la cifratura end-to-end nei gruppi (per ora solo Android)</string>
 </resources>

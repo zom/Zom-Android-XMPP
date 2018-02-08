@@ -45,7 +45,6 @@ Aplikazioek BM eduki hornitzailean irakurtzea baimentzen du.</string>
   <string name="account_setup_password_confirm">pasahitza berretzi</string>
   <string name="btn_create_new_account">Kontua erregistratu</string>
   <string name="account_setup_pers_now_title">Saioa hasi orain</string>
-  <string name="_via_orbot">Orbot (Tor)</string>
   <string name="select_domain_new_account">Domeinua hautatu</string>
   <string name="registering_new_account_">Kontu berria erregistratzen…</string>
   <string name="signing_in_wait">Saioa hasi\u2026</string>

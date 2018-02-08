@@ -40,6 +40,7 @@
   <string name="grant_perms">Devi autorizzare Zom ad usare la fotocamera</string>
   <string name="menu_refresh">Aggiorna sessione</string>
   <string name="action_archived">Archiviato</string>
+  <string name="action_unarchived">Non archiviato</string>
   <string name="action_verified">Verificato</string>
   <string name="action_theme">Cambia tema</string>
   <string name="action_stickers">Condivisione di sticker</string>
@@ -79,6 +80,7 @@
   <string name="contact_migration_notice">Il tuo amico si è aggiornato. Chatta con lui a</string>
   <string name="contact_migration_action">Chatta ora</string>
   <string name="upgrade_old_chats">Le tue vecchie chat di prima che aggiornassi sono memorizzate qui</string>
+  <string name="message_waiting_for_friend">In attesa del tuo amico</string>
   <string name="message_archive">Alcuni tuoi amici di Zom stanno aggiornando i loro account. Gli account scaduti verranno memorizzati qui.</string>
   <string name="one_moment_please_privacy">Un attimo per favore! Stiamo preparando il tuo Zom privato.</string>
   <string name="action_got_it">Capito</string>
@@ -92,5 +94,25 @@
   <string name="action_add_buddy">Aggiungi amico</string>
   <string name="action_leave">Esci</string>
   <string name="add_people">Aggiungi persone</string>
+  <string name="notifications">Notifiche</string>
   <string name="is_already_in_your_group">%1$s è già nel tuo gruppo</string>
+  <string name="confirm_leave_group_title">Lasciare il gruppo?</string>
+  <string name="confirm_leave_group">La cronologia della chat di gruppo verrà eliminata. Per conservare queste chat, dovresti archiviare il gruppo.</string>
+  <string name="pref_enable_advanced_network_features">Impostazioni di rete avanzate</string>
+  <string name="pref_enable_advanced_network_features_summary">Attiva la protezione avanzata contro le minacce di rete</string>
+  <string name="pref_proxy_server_host_title">Host server proxy</string>
+  <string name="pref_proxy_server_host_summary">Host o nome di dominio del proxy SOCKS</string>
+  <string name="pref_proxy_server_port_title">Porta server proxy</string>
+  <string name="pref_proxy_server_port_summary">Porta del proxy SOCKS</string>
+  <string name="are_you_sure">Sei sicuro?</string>
+  <string name="photo_x_of_y">Foto %1$d di %2$d</string>
+  <string name="mtm_trust_anchor">Il certificato del server non è firmato da una Certificate Authority conosciuta.</string>
+  <string name="mtm_cert_expired">Il certificato del server è scaduto.</string>
+  <string name="mtm_hostname_mismatch">Il server non ha potuto autenticarsi come \"%s\". Il certificato è valido solo per:</string>
+  <string name="mtm_connect_anyway">Vuoi connetterti comunque?</string>
+  <string name="mtm_cert_details">Dettagli del certificato:</string>
+  <string name="mtm_decision_always">Sempre</string>
+  <string name="mtm_decision_once">Solo una volta</string>
+  <string name="mtm_decision_abort">Rifiuta</string>
+  <string name="mtm_notification">Verifica del certificato</string>
 </resources>

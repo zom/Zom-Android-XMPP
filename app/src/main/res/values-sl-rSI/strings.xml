@@ -33,7 +33,6 @@
   <string name="account_setup_password_confirm">potrdi geslo</string>
   <string name="btn_create_new_account">Ustvari račun</string>
   <string name="account_setup_pers_now_title">Prijavi se sedaj</string>
-  <string name="_via_orbot">Orbot (Tor)</string>
   <string name="select_domain_new_account">Izberi domeno</string>
   <string name="signing_in_wait">Prijavljanje\u2026</string>
   <!--Views: Settings: Account-->

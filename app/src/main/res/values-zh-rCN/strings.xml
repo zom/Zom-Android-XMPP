@@ -44,7 +44,6 @@
   <string name="account_setup_password_confirm">确认密码</string>
   <string name="btn_create_new_account">注册帐号</string>
   <string name="account_setup_pers_now_title">立即登录</string>
-  <string name="_via_orbot">Orbot (Tor代理)</string>
   <string name="select_domain_new_account">选择域</string>
   <string name="registering_new_account_">正在注册新账户</string>
   <string name="signing_in_wait">正以\u2026登录</string>
@@ -329,4 +328,6 @@
   <string name="title_more">发现</string>
   <string name="title_me">我</string>
   <string name="no_photos">您分享与接收的照片会显示在这里。</string>
+  <string name="group_admin">管理员</string>
+  <string name="group_you">你</string>
 </resources>

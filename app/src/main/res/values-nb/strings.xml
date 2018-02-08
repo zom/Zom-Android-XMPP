@@ -46,7 +46,6 @@
   <string name="account_setup_password_confirm">bekreft passord</string>
   <string name="btn_create_new_account">Registrer konto</string>
   <string name="account_setup_pers_now_title">Logg inn nå</string>
-  <string name="_via_orbot">Orbot (Tor)</string>
   <string name="select_domain_new_account">Velg domene</string>
   <string name="registering_new_account_">Registrer ny konto…</string>
   <string name="signing_in_wait">Logger på…</string>

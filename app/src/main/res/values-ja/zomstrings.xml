@@ -40,6 +40,7 @@
   <string name="grant_perms">Zom がカメラを使用するための権限を付与する必要があります</string>
   <string name="menu_refresh">セッションを更新</string>
   <string name="action_archived">アーカイブ済</string>
+  <string name="action_unarchived">アーカイブ解除しました</string>
   <string name="action_verified">検証済</string>
   <string name="action_theme">テーマを変更</string>
   <string name="action_stickers">スティッカー共有</string>
@@ -93,5 +94,25 @@
   <string name="action_add_buddy">バディを追加</string>
   <string name="action_leave">離れる</string>
   <string name="add_people">人を追加</string>
+  <string name="notifications">通知</string>
   <string name="is_already_in_your_group">%1$s はすでにグループにいます</string>
+  <string name="confirm_leave_group_title">グループを離れますか?</string>
+  <string name="confirm_leave_group">グループチャットの履歴は消去されます。これらのチャットを残すには、代わりにグループをアーカイブしてください。</string>
+  <string name="pref_enable_advanced_network_features">高度なネットワーキング</string>
+  <string name="pref_enable_advanced_network_features_summary">ネットワークの脅威に対して高度な保護を有効にします</string>
+  <string name="pref_proxy_server_host_title">プロキシサーバーホスト</string>
+  <string name="pref_proxy_server_host_summary">SOCKS プロキシのホストまたはドメイン名</string>
+  <string name="pref_proxy_server_port_title">プロキシサーバーポート</string>
+  <string name="pref_proxy_server_port_summary">SOCKS プロキシのポート</string>
+  <string name="are_you_sure">よろしいですか?</string>
+  <string name="photo_x_of_y">写真 %1$d / %2$d</string>
+  <string name="mtm_trust_anchor">サーバー証明書が既知の認証局で署名されていません。</string>
+  <string name="mtm_cert_expired">サーバー証明書が有効期限切れです。</string>
+  <string name="mtm_hostname_mismatch">サーバーが \"%s\" として認証できません。証明書は次でのみ有効です:</string>
+  <string name="mtm_connect_anyway">とにかく接続しますか?</string>
+  <string name="mtm_cert_details">証明書の詳細:</string>
+  <string name="mtm_decision_always">いつも</string>
+  <string name="mtm_decision_once">１回のみ</string>
+  <string name="mtm_decision_abort">中断</string>
+  <string name="mtm_notification">証明書の検証</string>
 </resources>

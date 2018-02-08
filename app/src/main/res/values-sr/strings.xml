@@ -43,7 +43,6 @@
   <string name="account_setup_password_confirm">потврда лозинке</string>
   <string name="btn_create_new_account">Региструј налог</string>
   <string name="account_setup_pers_now_title">Пријави се сада</string>
-  <string name="_via_orbot">„Орбот (Тор)“</string>
   <string name="select_domain_new_account">Домен сервиса ћаскања</string>
   <string name="registering_new_account_">Региструјем нови налог…</string>
   <string name="signing_in_wait">Пријављујем се\u2026</string>

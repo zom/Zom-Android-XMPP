@@ -46,7 +46,6 @@
   <string name="account_setup_password_confirm">パスワードを確認</string>
   <string name="btn_create_new_account">アカウントを登録</string>
   <string name="account_setup_pers_now_title">今すぐログイン</string>
-  <string name="_via_orbot">Orbot (Tor)</string>
   <string name="select_domain_new_account">チャット サービス ドメイン</string>
   <string name="registering_new_account_">新しいアカウントを登録しています…</string>
   <string name="signing_in_wait">ログインしています…</string>
@@ -329,4 +328,8 @@
   <string name="no_photos">共有と、受信した写真がここに表示されます</string>
   <string name="group_admin">管理</string>
   <string name="group_you">自分</string>
+  <string name="copy_message">メッセージをコピー</string>
+  <string name="action_copied">コピーしました!</string>
+  <string name="group_encryption_title">グループ暗号化 (Android のみ)</string>
+  <string name="group_encryption_summary">グループのエンドトゥエンド暗号化を有効にします (現在 Android のみ)</string>
 </resources>

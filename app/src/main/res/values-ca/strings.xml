@@ -29,7 +29,7 @@
   <!--Views: Setup-->
   <string name="add_account">Afegeix el compte <xliff:g id="account">%1$s</xliff:g></string>
   <string name="menu_about">Quan a</string>
-  <string name="signed_out_prompt_with_error">S\'ha tancat la vostra sessió <xliff:g id="account">%1$s</xliff:g> per <xliff:g id="reason">%2$s</xliff:g></string>
+  <string name="signed_out_prompt_with_error">S'ha tancat la vostra sessió <xliff:g id="account">%1$s</xliff:g> per <xliff:g id="reason">%2$s</xliff:g></string>
   <string name="pass_err_length">La vostra contrasenya no és prou llarga</string>
   <!--Views: About: Welcome-->
   <!--Views: About: OTR-->
@@ -43,7 +43,6 @@
   <string name="account_setup_password_confirm">confirmeu la contrasenya</string>
   <string name="btn_create_new_account">Registreu un compte</string>
   <string name="account_setup_pers_now_title">Entra ara</string>
-  <string name="_via_orbot">Orbot (Tor)</string>
   <string name="select_domain_new_account">Domini del servei de xat</string>
   <string name="registering_new_account_">S\'està registrant un compte nou…</string>
   <string name="signing_in_wait">Entrant\u2026</string>
@@ -71,12 +70,12 @@
   <string name="menu_contact_nickname">Àlies del contacte</string>
   <string name="menu_view_blocked">Bloquejat</string>
   <string name="nickname">Àlies</string>
-  <string name="confirm_delete_contact">S\'eliminarà el contacte "<xliff:g id="user">%1$s</xliff:g>".</string>
+  <string name="confirm_delete_contact">S'eliminarà el contacte "<xliff:g id="user">%1$s</xliff:g>".</string>
   <string name="confirm_block_contact">Es blocarà el contacte "<xliff:g id="user">%1$s</xliff:g>".</string>
-  <string name="add_contact_success">S\'ha afegit el contacte "<xliff:g id="user">%1$s</xliff:g>".</string>
-  <string name="delete_contact_success">S\'ha esborrat el contacte "<xliff:g id="user">%1$s</xliff:g>".</string>
-  <string name="block_contact_success">S\'ha blocat el contacte "<xliff:g id="user">%1$s</xliff:g>".</string>
-  <string name="unblock_contact_success">S\'ha desblocat el contacte "<xliff:g id="user">%1$s</xliff:g>".</string>
+  <string name="add_contact_success">S'ha afegit el contacte "<xliff:g id="user">%1$s</xliff:g>".</string>
+  <string name="delete_contact_success">S'ha esborrat el contacte "<xliff:g id="user">%1$s</xliff:g>".</string>
+  <string name="block_contact_success">S'ha blocat el contacte "<xliff:g id="user">%1$s</xliff:g>".</string>
+  <string name="unblock_contact_success">S'ha desblocat el contacte "<xliff:g id="user">%1$s</xliff:g>".</string>
   <string name="menu_verify">Verifica el contacte</string>
   <string name="empty_conversation_group">No hi ha cap conversa en curs!</string>
   <string name="search_label">Contate</string>
@@ -87,7 +86,7 @@
   <string name="contact_away"><xliff:g id="user">%1$s</xliff:g> no hi és</string>
   <string name="contact_busy"><xliff:g id="user">%1$s</xliff:g> està ocupat/da</string>
   <string name="contact_offline"><xliff:g id="user">%1$s</xliff:g> no està connectat/da</string>
-  <string name="contact_joined"><xliff:g id="user">%1$s</xliff:g> S\'ha unit</string>
+  <string name="contact_joined"><xliff:g id="user">%1$s</xliff:g> S'ha unit</string>
   <string name="contact_left"><xliff:g id="user">%1$s</xliff:g> ha marxat</string>
   <string name="file_transfer">Transferència de fitxer</string>
   <string name="accept_transfer_">Accepteu la transferència?</string>

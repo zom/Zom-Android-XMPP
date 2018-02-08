@@ -43,7 +43,6 @@
   <string name="account_setup_password_confirm">Parolayı onayla</string>
   <string name="btn_create_new_account">Hesabı kaydet</string>
   <string name="account_setup_pers_now_title">Şimdi giriş yap</string>
-  <string name="_via_orbot">Orbot (Tor)</string>
   <string name="select_domain_new_account">Alan adı seçin</string>
   <string name="registering_new_account_">Yeni hesap kaydediliyor…</string>
   <string name="signing_in_wait">Oturum açılıyor…</string>

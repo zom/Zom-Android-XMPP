@@ -43,7 +43,6 @@
   <string name="account_setup_password_confirm">confirmar contraseña</string>
   <string name="btn_create_new_account">Registrar cuenta</string>
   <string name="account_setup_pers_now_title">Iniciar sesión ahora</string>
-  <string name="_via_orbot">Orbot (Tor)</string>
   <string name="select_domain_new_account">Dominio del servicio de chat</string>
   <string name="registering_new_account_">Registrando nueva cuenta…</string>
   <string name="signing_in_wait">Iniciando sesión</string>

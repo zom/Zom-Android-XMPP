@@ -46,7 +46,6 @@ Tillåt applikationer att skriva data till IM innehållsleverantör.
   <string name="account_setup_password_confirm">bekräfta lösenord</string>
   <string name="btn_create_new_account">Registrera Konto</string>
   <string name="account_setup_pers_now_title">Logga in nu</string>
-  <string name="_via_orbot">Orbot (Tor)</string>
   <string name="select_domain_new_account">Välj en domän</string>
   <string name="registering_new_account_">Registrerar nytt konto…</string>
   <string name="signing_in_wait">Loggar in…</string>

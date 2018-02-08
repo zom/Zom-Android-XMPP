@@ -40,6 +40,7 @@
   <string name="grant_perms">ཁྱེད་ཀྱིས་་འཛོམས་ཀྱི་པར་ཆས་བེད་སྤྱོད་གཏོང་བའི་ཆོག་མཆན་ངེས་པར་དུ་སྤྲོད།</string>
   <string name="menu_refresh">གླེང་མོལ་བསྐྱར་གསོ།</string>
   <string name="action_archived">ཉར་ཚགས་ཟིན།</string>
+  <string name="action_unarchived">ཉར་ཚགས་བྱས་མེད།</string>
   <string name="action_verified">བརྟག་དཔྱད་ཟིན།</string>
   <string name="action_theme">པར་ངོས་བརྗེས།</string>
   <string name="action_stickers">སྦྱར་ཤོག་བཀྲམས།</string>
@@ -93,5 +94,7 @@
   <string name="action_add_buddy">གྲོགས་པོ་གསར་སྣོན་བྱོས།</string>
   <string name="action_leave">ཕྱིར་འབུད།</string>
   <string name="add_people">མི་ཁ་སྣོན་བྱོས།</string>
+  <string name="notifications">བརྡ་ཁྱབ།</string>
   <string name="is_already_in_your_group">%1$s ཁྱེད་ཀྱི་ཚོགས་པའི་ནང་འཛུལ་ཚར་འདུག</string>
+  <string name="confirm_leave_group_title">ཚོགས་པ་ནས་ཕྱིར་འབུད་རྒྱུ་ཡིན་ནམ།</string>
 </resources>

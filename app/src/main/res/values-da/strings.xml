@@ -46,7 +46,6 @@ Tillader applikationer at skrive data til IM-indholdsleverandøren.</string>
   <string name="account_setup_password_confirm">bekræft adgangskode</string>
   <string name="btn_create_new_account">Registrer konto</string>
   <string name="account_setup_pers_now_title">Log ind nu</string>
-  <string name="_via_orbot">Orbot (Tor)</string>
   <string name="select_domain_new_account">Vælg et domæne</string>
   <string name="registering_new_account_">Registrerer ny konto…</string>
   <string name="signing_in_wait">Logger ind …</string>

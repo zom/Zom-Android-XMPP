@@ -44,7 +44,6 @@ Cho phép ứng dụng viết/thêm dữ liệu vào dịch vụ chat.</string>
   <string name="account_setup_password_confirm">xác nhận mật khẩu</string>
   <string name="btn_create_new_account">Đăng ký Tài Khoản</string>
   <string name="account_setup_pers_now_title">Đăng nhập ngay</string>
-  <string name="_via_orbot">Orbot (Tor)</string>
   <string name="select_domain_new_account">Chọn một tên miền</string>
   <string name="registering_new_account_">Đăng ký tài khoản mới</string>
   <string name="signing_in_wait">Đang đăng nhập\u2026</string>

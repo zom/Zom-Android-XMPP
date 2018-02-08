@@ -44,7 +44,6 @@
   <string name="account_setup_password_confirm">επιβεβαιώστε τον κωδικό</string>
   <string name="btn_create_new_account">Εγγραφή λογαριασμού</string>
   <string name="account_setup_pers_now_title">Σύνδεση Τώρα</string>
-  <string name="_via_orbot">Orbot (Tor)</string>
   <string name="select_domain_new_account">Επιλογή domain</string>
   <string name="registering_new_account_">Καταχώριση νέου λογαριασμού…</string>
   <string name="signing_in_wait">Σύνδεση…</string>

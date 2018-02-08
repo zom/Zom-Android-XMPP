@@ -47,7 +47,6 @@
   <string name="account_setup_password_confirm">penegasan password</string>
   <string name="btn_create_new_account">Pendaftaran Akun</string>
   <string name="account_setup_pers_now_title">Sign In Sekarang</string>
-  <string name="_via_orbot">Orbot (Tor)</string>
   <string name="select_domain_new_account">Pilih sebuah domain</string>
   <string name="registering_new_account_">Mendaftarkan akun baru…</string>
   <string name="signing_in_wait">Melakukan Sign In\u2026</string>

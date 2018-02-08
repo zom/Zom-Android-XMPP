@@ -44,7 +44,6 @@
   <string name="account_setup_password_confirm">تایید رمز عبور</string>
   <string name="btn_create_new_account">ثبت نام حساب کاربری</string>
   <string name="account_setup_pers_now_title">الان وارد شوید</string>
-  <string name="_via_orbot">اوربات(تور)</string>
   <string name="select_domain_new_account">دامنه خدمات چت</string>
   <string name="registering_new_account_">ثبت نام در حساب کاربری جدید …</string>
   <string name="signing_in_wait">امضا\u2026
@@ -72,12 +71,12 @@
   <string name="menu_contact_nickname">تماس با نام مستعار</string>
   <string name="menu_view_blocked">مسدود شده</string>
   <string name="nickname">نام مستعار</string>
-  <string name="confirm_delete_contact">تماس \"<xliff:g id="user">%1$s</xliff:g>\" حذف شد.</string>
-  <string name="confirm_block_contact">تماس \"<xliff:g id="user">%1$s</xliff:g>\" مسدود شد.</string>
-  <string name="add_contact_success">تماس \"<xliff:g id="user">%1$s</xliff:g>\" اضافه شد.</string>
-  <string name="delete_contact_success">این تماس \"<xliff:g id="user">%1$s</xliff:g>\" حذف خواهد شد.</string>
-  <string name="block_contact_success">این تماس \"<xliff:g id="user">%1$s</xliff:g>\" مسدود خواهد شد.</string>
-  <string name="unblock_contact_success">این تماس \"<xliff:g id="user">%1$s</xliff:g>\" دیگر مسدود نخواهد بود.</string>
+  <string name="confirm_delete_contact">تماس "<xliff:g id="user">%1$s</xliff:g>" حذف شد.</string>
+  <string name="confirm_block_contact">تماس "<xliff:g id="user">%1$s</xliff:g>" مسدود شد.</string>
+  <string name="add_contact_success">تماس "<xliff:g id="user">%1$s</xliff:g>" اضافه شد.</string>
+  <string name="delete_contact_success">این تماس "<xliff:g id="user">%1$s</xliff:g>" حذف خواهد شد.</string>
+  <string name="block_contact_success">این تماس "<xliff:g id="user">%1$s</xliff:g>" مسدود خواهد شد.</string>
+  <string name="unblock_contact_success">این تماس "<xliff:g id="user">%1$s</xliff:g>" دیگر مسدود نخواهد بود.</string>
   <string name="menu_verify">بررسی تماس با</string>
   <string name="empty_conversation_group">گفتگویی نیست</string>
   <string name="search_label">تماس</string>
@@ -152,8 +151,8 @@
   <string name="unblock_contact_failed">تماس از حالت انسداد خارج نشد</string>
   <string name="load_contact_list_failed">لیست تماس بارگیری نشد.</string>
   <string name="cant_connect_to_server">نمیتواند به سرور متصل شود. لطفا ارتباط خود را بررسی کنید.</string>
-  <string name="contact_already_exist">\"<xliff:g id="user">%1$s</xliff:g>\" هم اکنون در لیست تماس شما موجود است.</string>
-  <string name="contact_blocked">تماس \"<xliff:g id="user">%1$s</xliff:g>\" مسدود شد.</string>
+  <string name="contact_already_exist">"<xliff:g id="user">%1$s</xliff:g>" هم اکنون در لیست تماس شما موجود است.</string>
+  <string name="contact_blocked">تماس "<xliff:g id="user">%1$s</xliff:g>" مسدود شد.</string>
   <string name="contact_not_loaded">لطفا تا زمان بارگیری لیست تماس صبر کنید</string>
   <string name="network_error">در شبکه خطا رخ داده است.</string>
   <string name="wifi_not_connected_error">برای این ارتباط، WiFi مورد نیاز است.</string>

@@ -47,7 +47,6 @@ Zezwala aplikacji na przesyłanie danych do dostawcy zawartości czatu.
   <string name="account_setup_password_confirm">potwierdź hasło</string>
   <string name="btn_create_new_account">Zarejestruj konto</string>
   <string name="account_setup_pers_now_title">Zaloguj teraz</string>
-  <string name="_via_orbot">Orbot (Tor)</string>
   <string name="select_domain_new_account">Wybierz domenę</string>
   <string name="registering_new_account_">Rejestrowanie nowego konta…</string>
   <string name="signing_in_wait">Trwa logowanie…</string>

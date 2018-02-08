@@ -44,7 +44,6 @@
   <string name="account_setup_password_confirm">подтвердить пароль</string>
   <string name="btn_create_new_account">Зарегистрировать аккаунт</string>
   <string name="account_setup_pers_now_title">Войдите в систему</string>
-  <string name="_via_orbot">Orbot (Tor)</string>
   <string name="select_domain_new_account">Выбрать домен</string>
   <string name="registering_new_account_">Создание новой учетной записи…</string>
   <string name="signing_in_wait">Выполняется вход…</string>

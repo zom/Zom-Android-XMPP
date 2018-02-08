@@ -43,7 +43,6 @@
   <string name="account_setup_password_confirm">تأكيد كلمة السر</string>
   <string name="btn_create_new_account">تسجيل حساب</string>
   <string name="account_setup_pers_now_title">تسجيل الدخول الآن</string>
-  <string name="_via_orbot">اوربوت/Orbot (تور/Tor)</string>
   <string name="select_domain_new_account">اختر اسم نطاق الدردشة</string>
   <string name="registering_new_account_">جاري تسجيل حساب جديد…</string>
   <string name="signing_in_wait">يتم تسجيل الدخول الآن…</string>

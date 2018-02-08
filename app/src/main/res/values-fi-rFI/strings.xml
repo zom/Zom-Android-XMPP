@@ -45,7 +45,6 @@ Sallii tietojen kirjoittamisen pikaviestisovelluksiin.</string>
   <string name="account_setup_password_confirm">vahvista salasana</string>
   <string name="btn_create_new_account">Rekisteröi tili</string>
   <string name="account_setup_pers_now_title">Kirjaudu sisään nyt</string>
-  <string name="_via_orbot">Orbot (Tor)</string>
   <string name="select_domain_new_account">Valitse domain</string>
   <string name="registering_new_account_">Rekisteröidään uutta tiliä…</string>
   <string name="signing_in_wait">Kirjaudutaan sisään\u2026</string>

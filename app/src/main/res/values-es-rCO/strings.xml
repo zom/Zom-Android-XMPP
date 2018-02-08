@@ -48,7 +48,6 @@ Permite a las aplicaciones escribir datos en el proveedor de contenidos de mensa
   <string name="account_setup_password_confirm">confirmar contraseña</string>
   <string name="btn_create_new_account">Registrar cuenta</string>
   <string name="account_setup_pers_now_title">Iniciar sesión ahora</string>
-  <string name="_via_orbot">Orbot (Tor)</string>
   <string name="select_domain_new_account">Elija un dominio</string>
   <string name="signing_in_wait">Iniciando sesión\u2026 </string>
   <!--Views: Settings: Account-->

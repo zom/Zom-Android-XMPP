@@ -34,7 +34,6 @@
   <string name="account_setup_password">пароль</string>
   <string name="account_setup_password_confirm">повторіть пароль</string>
   <string name="btn_create_new_account">Реєстрація екаунту</string>
-  <string name="_via_orbot">Orbot (Tor)</string>
   <string name="registering_new_account_">Триває реєстрація нового екаунту…</string>
   <!--Views: Settings: Account-->
   <string name="server_port">Порт сервера</string>

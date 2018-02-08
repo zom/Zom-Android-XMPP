@@ -46,7 +46,6 @@
   <string name="account_setup_password_confirm">비밀번호 확인</string>
   <string name="btn_create_new_account">계정 등록</string>
   <string name="account_setup_pers_now_title">로그인</string>
-  <string name="_via_orbot">Orbot (Tor)</string>
   <string name="select_domain_new_account">채팅 서비스 도메인</string>
   <string name="registering_new_account_">새 계정 등록중…</string>
   <string name="signing_in_wait">로그인 중\u2026</string>

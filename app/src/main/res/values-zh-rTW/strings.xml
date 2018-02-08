@@ -35,7 +35,6 @@
   <string name="account_setup_password_confirm">密碼再確認</string>
   <string name="btn_create_new_account">註冊帳戶</string>
   <string name="account_setup_pers_now_title">馬上登入</string>
-  <string name="_via_orbot">匿名二代洋蔥路由(Tor)</string>
   <string name="select_domain_new_account">選取網域</string>
   <string name="signing_in_wait">登入中…</string>
   <!--Views: Settings: Account-->

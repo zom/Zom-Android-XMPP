@@ -31,7 +31,6 @@
   <string name="account_setup_example_email_address">usuario@dominio.com</string>
   <string name="account_setup_password">contraseña</string>
   <string name="account_setup_pers_now_title">Iniciar sesión ahora</string>
-  <string name="_via_orbot">Orbot (Tor)</string>
   <string name="signing_in_wait">Iniciando sesión</string>
   <!--Views: Settings: Account-->
   <string name="do_srv_lookup">Hacer búsqueda SRV</string>
