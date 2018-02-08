@@ -43,7 +43,6 @@
   <string name="account_setup_password_confirm">potvrdit heslo</string>
   <string name="btn_create_new_account">Zaregistrovat účet</string>
   <string name="account_setup_pers_now_title">Přihlásit se nyní</string>
-  <string name="_via_orbot">Orbot (Tor)</string>
   <string name="select_domain_new_account">Doména chat služby</string>
   <string name="registering_new_account_">Registruji nový učet…</string>
   <string name="signing_in_wait">Přihlašování…</string>
@@ -106,8 +105,8 @@
   <string name="empty_contact_list">Žádné kontakty nenalezeny
 
 Klikněte pro pozvání.</string>
-  <string name="approve_subscription_error">Přihlášení k odběru uživatele <xliff:g id="USER">%1$s</xliff:g> se nepodařilo schválit. Zkuste to prosím znovu později.</string>
-  <string name="decline_subscription_error">Odmítnutí odběru uživatele <xliff:g id="USER">%1$s</xliff:g> se nezdařilo. Zkuste to prosím znovu později.</string>
+  <string name="approve_subscription_error">Přihlášení k odběru uživatele. Zkuste to prosím znovu později.</string>
+  <string name="decline_subscription_error">Odmítnutí odběru uživatele. Zkuste to prosím znovu později.</string>
   <!--Security: OTR-->
   <string name="otr_session_status_finished">Váš kontakt zastavil šifrovný chat.</string>
   <!--Security: OTR: Keyring-->
@@ -156,7 +155,7 @@ Klikněte pro pozvání.</string>
   <string name="pref_debug_title">Zapnout ladící logy</string>
   <string name="pref_debug_summary">Výstupní log dat aplikace na standardní odchozí / logcat pro ladění</string>
   <!--Alerts: Dialogs-->
-  <string name="bg_data_prompt_message">Poskytovatel <xliff:g id="PROVIDER">%1$s</xliff:g> vyžaduje povolení přenosu dat na pozadí.</string>
+  <string name="bg_data_prompt_message">Poskytovatel vyžaduje povolení přenosu dat na pozadí.</string>
   <string name="prompt_create_new_account_">Vytvořit nový učet?</string>
   <string name="allow_s_to_create_a_new_chat_account_for_s_">Vytvořit nový účet pro přezdívku \'%1$s\'?</string>
   <!--Alerts: Notifications-->

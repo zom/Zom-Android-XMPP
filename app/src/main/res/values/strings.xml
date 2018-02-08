@@ -143,8 +143,8 @@
     <string name="subscription_prompt">Add <xliff:g id="USER">%1$s</xliff:g>?</string>
     <string name="approve_subscription">Yes</string>
     <string name="decline_subscription">No</string>
-    <string name="approve_subscription_error">Unable to approve subscription from <xliff:g id="user">%1$s</xliff:g>. Please try again later.</string>
-    <string name="decline_subscription_error">Unable to decline subscription from <xliff:g id="user">%1$s</xliff:g>. Please try again later.</string>
+    <string name="approve_subscription_error">Unable to approve subscription. Please try again later.</string>
+    <string name="decline_subscription_error">Unable to decline subscription. Please try again later.</string>
 
     <!-- Security: OTR -->
     <string name="otr_session_status_finished">Your contact has stopped the encrypted chat.</string>
