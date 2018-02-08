@@ -178,4 +178,10 @@
   <string name="mtm_decision_abort">Abort</string>
 
   <string name="mtm_notification">Certificate Verification</string>
+
+  <string name="bot_zomkyi_name">Zomkyi</string>
+  <string name="bot_zomkyi_desc">Ask me about Zom</string>
+  <string name="bot_quiz_name">Agu Denpa</string>
+  <string name="bot_quiz_desc">Take my quiz</string>
+
 </resources>
