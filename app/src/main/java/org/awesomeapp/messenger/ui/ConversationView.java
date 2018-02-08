@@ -2066,7 +2066,7 @@ public class ConversationView {
         requeryCursor();
     }
 
-    void resendMessage (final String resendMsg) {
+    void resendMessage (final String resendMsg, final String mimeType) {
 
         if (!TextUtils.isEmpty(resendMsg))
         {
@@ -2079,10 +2079,10 @@ public class ConversationView {
                 request.resizeImage = false;
                 request.importContent = false;
                 request.media = Uri.parse(resendMsg);
-                request.mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(resendMsg);
+                request.mimeType = mimeType;
 
                 try {
-                    mActivity.sendShareRequest(mShareDraft);
+                    mActivity.sendShareRequest(request);
                 }
                 catch (Exception e){
                     Log.w(ImApp.LOG_TAG,"error setting media draft",e);
@@ -3081,7 +3081,7 @@ public class ConversationView {
                         mode.finish(); // Action picked, so close the CAB
                         return true;
                     case R.id.menu_message_resend:
-                        resendMessage(((MessageListItem)mLastSelectedView).getLastMessage());
+                        resendMessage(((MessageListItem)mLastSelectedView).getLastMessage(),((MessageListItem)mLastSelectedView).getMimeType());
                         mode.finish(); // Action picked, so close the CAB
                         return true;
                     case R.id.menu_message_copy:

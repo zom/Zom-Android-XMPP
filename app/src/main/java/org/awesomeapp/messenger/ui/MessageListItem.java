@@ -193,7 +193,7 @@ public class MessageListItem extends FrameLayout {
         return mHolder.mTextViewForMessages.getUrls();
     }
 
-
+    public String getMimeType () { return mimeType; }
     public String getLastMessage () {
         return lastMessage;
     }
@@ -351,6 +351,9 @@ public class MessageListItem extends FrameLayout {
         if (linkify)
            LinkifyHelper.addLinks(mHolder.mTextViewForMessages, new URLSpanConverter());
 
+        if (isSelected())
+            mHolder.mContainer.setBackgroundColor(getResources().getColor(R.color.holo_blue_bright));
+
     }
 
     private boolean showDownloadThumbnail (final String mediaLink, int id, MessageViewHolder holder, final IChatSession session, final String packetId)
@@ -459,6 +462,9 @@ public class MessageListItem extends FrameLayout {
                     mimeType = guessed;
             }
         }
+
+        this.mediaUri = mediaUri;
+        this.mimeType = mimeType;
 
         mHolder.mTextViewForMessages.setText("");
 
@@ -818,8 +824,8 @@ public class MessageListItem extends FrameLayout {
             mHolder.mTextViewForMessages.setText(new SpannableString(lastMessage));
         }
 
-        //if (isSelected())
-          //  mHolder.mContainer.setBackgroundColor(getResources().getColor(R.color.holo_blue_bright));
+        if (isSelected())
+           mHolder.mContainer.setBackgroundColor(getResources().getColor(R.color.holo_blue_bright));
 
         if (date != null)
         {
