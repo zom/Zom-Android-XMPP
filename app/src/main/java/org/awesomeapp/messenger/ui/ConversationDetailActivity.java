@@ -691,6 +691,9 @@ public class ConversationDetailActivity extends BaseActivity {
 
             if (requestCode == REQUEST_PICK_CONTACTS) {
 
+                if (resultIntent == null)
+                    return;
+
                 ArrayList<String> invitees = new ArrayList<String>();
 
                 String username = resultIntent.getStringExtra(ContactsPickerActivity.EXTRA_RESULT_USERNAME);
@@ -704,6 +707,11 @@ public class ConversationDetailActivity extends BaseActivity {
 
             }
             if (requestCode == REQUEST_SEND_IMAGE) {
+
+
+                if (resultIntent == null)
+                    return;
+
                 Uri uri = resultIntent.getData() ;
 
                 if( uri == null ) {
@@ -732,6 +740,11 @@ public class ConversationDetailActivity extends BaseActivity {
                  **/
             }
             else if (requestCode == REQUEST_SEND_FILE || requestCode == REQUEST_SEND_AUDIO) {
+
+
+                if (resultIntent == null)
+                    return;
+
                 Uri uri = resultIntent.getData() ;
 
                 if( uri == null ) {
@@ -760,7 +773,8 @@ public class ConversationDetailActivity extends BaseActivity {
             }
             else if (requestCode == REQUEST_IMAGE_VIEW)
             {
-                if (resultIntent.hasExtra("resendImageUri"))
+                if (resultIntent != null &&
+                        resultIntent.hasExtra("resendImageUri"))
                 {
                     ShareRequest request = new ShareRequest();
                     request.deleteFile = false;
