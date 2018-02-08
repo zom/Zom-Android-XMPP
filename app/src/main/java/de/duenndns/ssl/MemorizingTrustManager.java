@@ -701,6 +701,7 @@ public class MemorizingTrustManager implements X509TrustManager {
 
 	boolean interactHostname(X509Certificate cert, String hostname)
 	{
+		/*
 		switch (interact(hostNameMessage(cert, hostname), R.string.mtm_accept_servername)) {
 		case MTMDecision.DECISION_ALWAYS:
 			storeCert(hostname, cert);
@@ -708,7 +709,8 @@ public class MemorizingTrustManager implements X509TrustManager {
 			return true;
 		default:
 			return false;
-		}
+		}*/
+		return false;
 	}
 
 	protected static void interactResult(int decisionId, int choice) {
