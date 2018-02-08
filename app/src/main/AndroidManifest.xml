@@ -34,23 +34,19 @@
     <uses-feature android:name="android.hardware.touchscreen"
         android:required="false" />
 
-    <!--
-    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
-    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
-    <uses-permission android:name="com.google.android.googleapps.permission.GOOGLE_AUTH" />
-    -->
-
-    <uses-feature android:name="android.hardware.camera" />
-    <uses-feature
-        android:name="android.hardware.camera.autofocus"
+    <uses-feature android:name="android.hardware.camera"  android:required="false" />
+    <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
+    <uses-feature android:name="android.hardware.telephony" android:required="false" />
+    <uses-feature android:name="android.hardware.microphone" android:required="false" />
+    <!-- Some Chromebooks don't support touch. Although not essential,
+            it's a good idea to explicitly include this declaration. -->
+    <uses-feature android:name="android.hardware.touchscreen"
         android:required="false" />
+
     <uses-feature
         android:name="android.hardware.wifi"
         android:required="false" />
-
+    q
     <permission
         android:name="org.awesomeapp.messenger.permission.IM_SERVICE"
         android:description="@string/perm_desc"
