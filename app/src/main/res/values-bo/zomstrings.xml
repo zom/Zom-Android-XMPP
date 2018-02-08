@@ -97,4 +97,10 @@
   <string name="notifications">བརྡ་ཁྱབ།</string>
   <string name="is_already_in_your_group">%1$s ཁྱེད་ཀྱི་ཚོགས་པའི་ནང་འཛུལ་ཚར་འདུག</string>
   <string name="confirm_leave_group_title">ཚོགས་པ་ནས་ཕྱིར་འབུད་རྒྱུ་ཡིན་ནམ།</string>
+
+  <string name="bot_zomkyi_name">འཛོམས་</string>
+  <string name="bot_zomkyi_desc">ང་ལ་འཛོམས་སྐོར་དྲི་བ་དྲི་</string>
+  <string name="bot_quiz_name">ཨ་ཁུ་བདེན་པ་</string>
+  <string name="bot_quiz_desc">ངའི་དྲི་བ་ལ་ལན་རྒྱབས་</string>
+
 </resources>
