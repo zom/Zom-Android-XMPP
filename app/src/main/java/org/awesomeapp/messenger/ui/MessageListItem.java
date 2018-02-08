@@ -416,7 +416,7 @@ public class MessageListItem extends FrameLayout {
 
         holder.setOnClickListenerMediaThumbnail(mimeType, mediaUri);
 
-        holder.mTextViewForMessages.setText(lastMessage);
+        holder.mTextViewForMessages.setText("");
         holder.mTextViewForMessages.setVisibility(View.GONE);
 
         if (centerCrop)
