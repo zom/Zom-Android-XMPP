@@ -106,12 +106,6 @@ public class ConversationListItem extends FrameLayout {
         sPrettyTime = new PrettyTime(getCurrentLocale());
     }
 
-/**
-    public void bind(ConversationViewHolder holder, Cursor cursor, String underLineText, boolean scrolling) {
-        bind(holder, cursor, underLineText, true, scrolling);
-    }
-*/
-
     public void bind(ConversationViewHolder holder, long contactId, long providerId, long accountId, String address, String nickname, int contactType, String message, long messageDate, String messageType, int presence, int subscription, String underLineText, boolean showChatMsg, boolean scrolling, boolean isMuted) {
 
         //applyStyleColors(holder);
@@ -129,13 +123,6 @@ public class ConversationListItem extends FrameLayout {
         {
             nickname += " \uD83D\uDD15";
         }
-
-        /**
-        if (Imps.Contacts.TYPE_GROUP == contactType) {
-
-            String groupCountString = getGroupCount(getContext().getContentResolver(), contactId);
-            nickname += groupCountString;
-        }**/
 
         if (!TextUtils.isEmpty(underLineText)) {
             // highlight/underline the word being searched 
@@ -264,27 +251,31 @@ public class ConversationListItem extends FrameLayout {
                     }
                     else if (messageType.startsWith("audio"))
                     {
+                        mLastMediaUri = null;
                         holder.mMediaThumb.setVisibility(View.VISIBLE);
-                        holder.mMediaThumb.setImageResource(R.drawable.ic_volume_up_black_24dp);
                         holder.mMediaThumb.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                        holder.mMediaThumb.setImageResource(R.drawable.ic_volume_up_black_24dp);
                         holder.mLine2.setText("");
                     }
                     else if (messageType.startsWith("video"))
                     {
+                        mLastMediaUri = null;
                         holder.mMediaThumb.setVisibility(View.VISIBLE);
-                        holder.mMediaThumb.setImageResource(R.drawable.video256);
                         holder.mMediaThumb.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                        holder.mMediaThumb.setImageResource(R.drawable.video256);
                         holder.mLine2.setText("");
                     }
                     else if (messageType.startsWith("application"))
                     {
+                        mLastMediaUri = null;
                         holder.mMediaThumb.setVisibility(View.VISIBLE);
-                        holder.mMediaThumb.setImageResource(R.drawable.ic_attach_file_black_36dp);
                         holder.mMediaThumb.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                        holder.mMediaThumb.setImageResource(R.drawable.ic_attach_file_black_36dp);
                         holder.mLine2.setText("");
                     }
                     else
                     {
+                        mLastMediaUri = null;
                         holder.mMediaThumb.setVisibility(View.GONE);
                         holder.mLine2.setText(messageType);
                     }
@@ -301,6 +292,7 @@ public class ConversationListItem extends FrameLayout {
                         String mimeTypeSticker = "image/png";
                         Uri mediaUri = Uri.parse("asset://"+cmds[1]);
 
+                        mLastMediaUri = null;
                         setThumbnail(getContext().getContentResolver(), holder, mediaUri, false);
                         holder.mLine2.setVisibility(View.GONE);
 
@@ -333,6 +325,7 @@ public class ConversationListItem extends FrameLayout {
 
                         //now setup the new URI for loading local sticker asset
                         Uri mediaUri = Uri.parse("asset://localhost/" + stickerPath);
+                        mLastMediaUri = null;
                         setThumbnail(getContext().getContentResolver(), holder, mediaUri, false);
                         holder.mLine2.setVisibility(View.GONE);
                         holder.mMediaThumb.setScaleType(ImageView.ScaleType.FIT_CENTER);

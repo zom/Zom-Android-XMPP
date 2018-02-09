@@ -2901,6 +2901,7 @@ public class ConversationView {
                 }
             });
 
+
             MessageViewHolder mvh = new MessageViewHolder(view);
             mvh.setLayoutInflater(inflater);
             mvh.setOnImageClickedListener(this);
