@@ -497,7 +497,7 @@ public class MainActivity extends BaseActivity implements IConnectionListener {
                     long providerId = data.getLongExtra(ContactsPickerActivity.EXTRA_RESULT_PROVIDER, -1);
                     long accountId = data.getLongExtra(ContactsPickerActivity.EXTRA_RESULT_ACCOUNT,-1);
 
-                    startChat(providerId, accountId, username,  true);
+                    startChat(providerId, accountId, username,  false);
                 }
 
             }
