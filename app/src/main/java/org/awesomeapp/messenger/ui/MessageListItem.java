@@ -287,7 +287,15 @@ public class MessageListItem extends FrameLayout {
                 String mimeTypeSticker = "image/png";
                 try {
                     String[] stickerParts = cmds[1].split("-");
-                    String stickerPath = "stickers/" + stickerParts[0].toLowerCase() + "/" + stickerParts[1].toLowerCase() + ".png";
+                    String folder = stickerParts[0];
+                    StringBuffer name = new StringBuffer();
+                    for (int i = 1; i < stickerParts.length; i++) {
+                        name.append(stickerParts[i]);
+                        if (i+1<stickerParts.length)
+                            name.append('-');
+                    }
+
+                    String stickerPath = "stickers/" + folder + "/" + name.toString() + ".png";
 
                     //make sure sticker exists
                     AssetFileDescriptor afd = getContext().getAssets().openFd(stickerPath);
@@ -793,7 +801,14 @@ public class MessageListItem extends FrameLayout {
                 String mimeTypeSticker = "image/png";
                 try {
                     String[] stickerParts = cmds[1].split("-");
-                    String stickerPath = "stickers/" + stickerParts[0].toLowerCase() + "/" + stickerParts[1].toLowerCase() + ".png";
+                    String folder = stickerParts[0];
+                    StringBuffer name = new StringBuffer();
+                    for (int i = 1; i < stickerParts.length; i++) {
+                        name.append(stickerParts[i]);
+                        if (i+1<stickerParts.length)
+                            name.append('-');
+                    }
+                    String stickerPath = "stickers/" + folder + "/" + name.toString() + ".png";
 
                     //make sure sticker exists
                     AssetFileDescriptor afd = getContext().getAssets().openFd(stickerPath);

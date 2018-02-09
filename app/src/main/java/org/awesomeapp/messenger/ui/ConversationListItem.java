@@ -222,7 +222,9 @@ public class ConversationListItem extends FrameLayout {
 
         if (showChatMsg && message != null) {
 
-
+            holder.mMediaThumb.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            holder.mMediaThumb.setVisibility(View.GONE);
+            
             if (holder.mLine2 != null)
             {
                 String vPath = message.split(" ")[0];
@@ -254,7 +256,7 @@ public class ConversationListItem extends FrameLayout {
 
                             }
 
-                            setThumbnail(getContext().getContentResolver(), holder, Uri.parse(vPath));
+                            setThumbnail(getContext().getContentResolver(), holder, Uri.parse(vPath), true);
 
                                     holder.mLine2.setVisibility(View.GONE);
                                     
@@ -299,7 +301,7 @@ public class ConversationListItem extends FrameLayout {
                         String mimeTypeSticker = "image/png";
                         Uri mediaUri = Uri.parse("asset://"+cmds[1]);
 
-                        setThumbnail(getContext().getContentResolver(), holder, mediaUri);
+                        setThumbnail(getContext().getContentResolver(), holder, mediaUri, false);
                         holder.mLine2.setVisibility(View.GONE);
 
                         holder.mMediaThumb.setScaleType(ImageView.ScaleType.FIT_CENTER);
@@ -315,7 +317,14 @@ public class ConversationListItem extends FrameLayout {
 
                     try {
                         String[] stickerParts = cmds[1].split("-");
-                        String stickerPath = "stickers/" + stickerParts[0].toLowerCase() + "/" + stickerParts[1].toLowerCase() + ".png";
+                        String folder = stickerParts[0];
+                        StringBuffer name = new StringBuffer();
+                        for (int i = 1; i < stickerParts.length; i++) {
+                            name.append(stickerParts[i]);
+                            if (i+1<stickerParts.length)
+                                name.append('-');
+                        }
+                        String stickerPath = "stickers/" + folder + "/" + name.toString() + ".png";
 
                         //make sure sticker exists
                         AssetFileDescriptor afd = getContext().getAssets().openFd(stickerPath);
@@ -324,7 +333,7 @@ public class ConversationListItem extends FrameLayout {
 
                         //now setup the new URI for loading local sticker asset
                         Uri mediaUri = Uri.parse("asset://localhost/" + stickerPath);
-                        setThumbnail(getContext().getContentResolver(), holder, mediaUri);
+                        setThumbnail(getContext().getContentResolver(), holder, mediaUri, false);
                         holder.mLine2.setVisibility(View.GONE);
                         holder.mMediaThumb.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
@@ -414,13 +423,20 @@ public class ConversationListItem extends FrameLayout {
      * @param aHolder
      * @param mediaUri
      */
-    private void setThumbnail(final ContentResolver contentResolver, final ConversationViewHolder aHolder, final Uri mediaUri) {
+    private void setThumbnail(final ContentResolver contentResolver, final ConversationViewHolder aHolder, final Uri mediaUri, boolean centerCrop) {
 
         if (mLastMediaUri != null && mLastMediaUri.getPath().equals(mediaUri.getPath()))
             return;
 
         mLastMediaUri = mediaUri;
         aHolder.mMediaThumb.setVisibility(View.VISIBLE);
+
+        if (centerCrop)
+            aHolder.mMediaThumb.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        else
+            aHolder.mMediaThumb.setScaleType(ImageView.ScaleType.FIT_CENTER);
+
+
         GlideUtils.loadImageFromUri(getContext(), mediaUri, aHolder.mMediaThumb);
     }
 
