@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -27,17 +28,19 @@ import android.util.Log;
 
 import org.awesomeapp.messenger.ImApp;
 
+import im.zom.messenger.R;
+
 public class StickerManager {
 	
 	
 	private static StickerManager mInstance = null;
 
 	private Map<Pattern, Sticker> emoticons = new HashMap<Pattern, Sticker>();
-	private TreeMap<String, StickerGroup> categories = new TreeMap<String, StickerGroup>();
+	private LinkedHashMap<String, StickerGroup> categories = new LinkedHashMap<String, StickerGroup>();
 	
 	private Context mContext;
 	
-	private final static String PLUGIN_CONSTANT = "info.guardianproject.emoji.STICKER_PACK";
+	private final static String PLUGIN_CONSTANT = "im.zom.emoji.STICKER_PACK";
 	
 	private StickerManager(Context context)
 	{
@@ -201,164 +204,64 @@ public class StickerManager {
 
 		try {
 
-			String basePath = "stickers/olo and shimi";
 			AssetManager aMan = activity.getAssets();
-			String[] filelist = aMan.list(basePath);
 
-			String category = "Olo & Shimi";
+            String basePath = "stickers/zomkyi";
+            String category = activity.getString(R.string.stickers_zomkyi);
+            loadStickers(activity,category,basePath,aMan.list(basePath));
 
-			for (int i = 0; i < filelist.length; i++) {
-				Sticker sticker = new Sticker();
-				sticker.name = filelist[i];
-				sticker.category = category;
-				sticker.assetUri = Uri.parse(basePath + '/' + filelist[i]);
-				sticker.res = activity.getResources();
-				sticker.emoticon = filelist[i];
+            basePath = "stickers/expressions";
+            category = activity.getString(R.string.stickers_expressions);
+            loadStickers(activity,category,basePath,aMan.list(basePath));
 
-				addPattern(sticker.emoticon, sticker);
-				addEmojiToCategory(category, sticker);
-			}
+            basePath = "stickers/olo and shimi";
+			category = activity.getString(R.string.stickers_olo_and_shimi);
+			loadStickers(activity,category,basePath,aMan.list(basePath));
 
-			basePath = "stickers/pema";
-			filelist = aMan.list(basePath);
+            basePath = "stickers/losar";
+            category = activity.getString(R.string.stickers_losar);
+            loadStickers(activity,category,basePath,aMan.list(basePath));
 
-			category = "Pema";
+            basePath = "stickers/sindu";
+            category = activity.getString(R.string.stickers_sindu);
+            loadStickers(activity,category,basePath,aMan.list(basePath));
 
-			for (int i = 0; i < filelist.length; i++) {
-				Sticker sticker = new Sticker();
-				sticker.name = filelist[i];
-				sticker.category = category;
-				sticker.assetUri = Uri.parse(basePath + '/' + filelist[i]);
-				sticker.res = activity.getResources();
-				sticker.emoticon = filelist[i];
-
-				addPattern(sticker.emoticon, sticker);
-				addEmojiToCategory(category, sticker);
-			}
-
-			basePath = "stickers/zomkyi";
-			filelist = aMan.list(basePath);
-
-			category = "Zomkyi";
-
-			for (int i = 0; i < filelist.length; i++) {
-				Sticker sticker = new Sticker();
-				sticker.name = filelist[i];
-				sticker.category = category;
-				sticker.assetUri = Uri.parse(basePath + '/' + filelist[i]);
-				sticker.res = activity.getResources();
-				sticker.emoticon = filelist[i];
-
-				addPattern(sticker.emoticon, sticker);
-				addEmojiToCategory(category, sticker);
-			}
+            basePath = "stickers/pema";
+			category = activity.getString(R.string.stickers_pema);
+			loadStickers(activity,category,basePath,aMan.list(basePath));
 
 			basePath = "stickers/topgyal";
-			filelist = aMan.list(basePath);
+			category = activity.getString(R.string.stickers_topgyal);
+			loadStickers(activity,category,basePath,aMan.list(basePath));
 
-			category = "Topgyal";
-
-			for (int i = 0; i < filelist.length; i++) {
-				Sticker sticker = new Sticker();
-				sticker.name = filelist[i];
-				sticker.category = category;
-				sticker.assetUri = Uri.parse(basePath + '/' + filelist[i]);
-				sticker.res = activity.getResources();
-				sticker.emoticon = filelist[i];
-
-				addPattern(sticker.emoticon, sticker);
-				addEmojiToCategory(category, sticker);
-			}
-
-			basePath = "stickers/sindu";
-			filelist = aMan.list(basePath);
-
-			category = "Sindu";
-
-			for (int i = 0; i < filelist.length; i++) {
-				Sticker sticker = new Sticker();
-				sticker.name = filelist[i];
-				sticker.category = category;
-				sticker.assetUri = Uri.parse(basePath + '/' + filelist[i]);
-				sticker.res = activity.getResources();
-				sticker.emoticon = filelist[i];
-
-				addPattern(sticker.emoticon, sticker);
-				addEmojiToCategory(category, sticker);
-			}
-
-			basePath = "stickers/losar";
-			filelist = aMan.list(basePath);
-
-			category = "Losar";
-
-			for (int i = 0; i < filelist.length; i++) {
-				Sticker sticker = new Sticker();
-				sticker.name = filelist[i];
-				sticker.category = category;
-				sticker.assetUri = Uri.parse(basePath + '/' + filelist[i]);
-				sticker.res = activity.getResources();
-				sticker.emoticon = filelist[i];
-
-				addPattern(sticker.emoticon, sticker);
-				addEmojiToCategory(category, sticker);
-			}
+            basePath = "stickers/buddhist";
+            category = activity.getString(R.string.stickers_buddhist);
+            loadStickers(activity,category,basePath,aMan.list(basePath));
 
 			basePath = "stickers/tiboji";
-			filelist = aMan.list(basePath);
+			category = activity.getString(R.string.stickers_tiboji);
+			loadStickers(activity,category,basePath,aMan.list(basePath));
 
-			category = "Tiboji";
-
-			for (int i = 0; i < filelist.length; i++) {
-				Sticker sticker = new Sticker();
-				sticker.name = filelist[i];
-				sticker.category = category;
-				sticker.assetUri = Uri.parse(basePath + '/' + filelist[i]);
-				sticker.res = activity.getResources();
-				sticker.emoticon = filelist[i];
-
-				addPattern(sticker.emoticon, sticker);
-				addEmojiToCategory(category, sticker);
-			}
-
-			basePath = "stickers/buddhist";
-			filelist = aMan.list(basePath);
-
-			category = "Buddhist";
-
-			for (int i = 0; i < filelist.length; i++) {
-				Sticker sticker = new Sticker();
-				sticker.name = filelist[i];
-				sticker.category = category;
-				sticker.assetUri = Uri.parse(basePath + '/' + filelist[i]);
-				sticker.res = activity.getResources();
-				sticker.emoticon = filelist[i];
-
-				addPattern(sticker.emoticon, sticker);
-				addEmojiToCategory(category, sticker);
-			}
-
-			basePath = "stickers/expressions";
-			filelist = aMan.list(basePath);
-
-			category = "Expressions";
-
-			for (int i = 0; i < filelist.length; i++) {
-				Sticker sticker = new Sticker();
-				sticker.name = filelist[i];
-				sticker.category = category;
-				sticker.assetUri = Uri.parse(basePath + '/' + filelist[i]);
-				sticker.res = activity.getResources();
-				sticker.emoticon = filelist[i];
-
-				addPattern(sticker.emoticon, sticker);
-				addEmojiToCategory(category, sticker);
-			}
 
 
 		} catch (Exception fe) {
 			Log.e(ImApp.LOG_TAG, "could not load emoji definition", fe);
 		}
 
+	}
+
+	private void loadStickers (Activity activity, String category, String basePath, String[] filelist)
+	{
+		for (int i = 0; i < filelist.length; i++) {
+			Sticker sticker = new Sticker();
+			sticker.name = filelist[i];
+			sticker.category = category;
+			sticker.assetUri = Uri.parse(basePath + '/' + filelist[i]);
+			sticker.res = activity.getResources();
+			sticker.emoticon = filelist[i];
+
+			addPattern(sticker.emoticon, sticker);
+			addEmojiToCategory(category, sticker);
+		}
 	}
 }

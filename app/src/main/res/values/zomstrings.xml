@@ -183,5 +183,14 @@
   <string name="bot_zomkyi_desc">Ask me about Zom</string>
   <string name="bot_quiz_name">Agu Denpa</string>
   <string name="bot_quiz_desc">Take my quiz</string>
+    <string name="stickers_pema">Pema</string>
+    <string name="stickers_zomkyi">Zomkyi</string>
+    <string name="stickers_topgyal">Topgyal</string>
+    <string name="stickers_sindu">Sindu</string>
+    <string name="stickers_losar">Losar</string>
+    <string name="stickers_tiboji">Tiboji</string>
+    <string name="stickers_buddhist">Buddhist</string>
+    <string name="stickers_expressions">Expressions</string>
+    <string name="stickers_olo_and_shimi"><![CDATA[Olo & Shimi]]></string>
 
 </resources>
