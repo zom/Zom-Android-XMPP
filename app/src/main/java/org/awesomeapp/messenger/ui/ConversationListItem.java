@@ -224,7 +224,7 @@ public class ConversationListItem extends FrameLayout {
 
             holder.mMediaThumb.setScaleType(ImageView.ScaleType.FIT_CENTER);
             holder.mMediaThumb.setVisibility(View.GONE);
-            
+
             if (holder.mLine2 != null)
             {
                 String vPath = message.split(" ")[0];

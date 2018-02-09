@@ -127,7 +127,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
     public static final String PREFERENCE_KEY_TEMP_PASS = "temppass";
     
     //ACCOUNT SETTINGS Imps defaults
-    public static final String DEFAULT_XMPP_RESOURCE = "ChatSecureZom";
+    public static final String DEFAULT_XMPP_RESOURCE = "Zom";
     public static final int DEFAULT_XMPP_PRIORITY = 20;
     public static final String DEFAULT_XMPP_OTR_MODE = "auto";
 
