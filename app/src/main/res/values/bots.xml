@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <array name="bots">
+        <item>@array/bot_zomkyi</item>
+        <item>@array/bot_agu_denpa</item>
+    </array>
+
+    <array name="bot_zomkyi">
+        <item>@string/bot_zomkyi_name</item>
+        <item>zomkyibot@home.zom.im</item>
+        <item>@string/bot_zomkyi_desc</item>
+        <item>@drawable/bot_zomkyi</item>
+    </array>
+
+    <array name="bot_agu_denpa">
+        <item>@string/bot_quiz_name</item>
+        <item>quizbot@home.zom.im</item>
+        <item>@string/bot_quiz_desc</item>
+        <item>@drawable/bot_agu_denpa</item>
+    </array>
+</resources>
