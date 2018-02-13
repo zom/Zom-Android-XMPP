@@ -16,6 +16,7 @@
 
 package org.awesomeapp.messenger.ui;
 
+import android.app.ProgressDialog;
 import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -84,10 +85,21 @@ public class ServicesActivity extends BaseActivity implements ZomServicesRecycle
     @Override
     public void onBotClicked(final String jid, final String nickname) {
         ImApp app = (ImApp)getApplication();
+
+        final ProgressDialog dialog;
+        dialog = new ProgressDialog(this);
+        dialog.setMessage(getString(R.string.upgrade_progress_action));
+        dialog.setCancelable(true);
+        dialog.show();
+
         new AddContactAsyncTask(app.getDefaultProviderId(), app.getDefaultAccountId(), app){
             @Override
             protected void onPostExecute(Integer response) {
                 super.onPostExecute(response);
+
+                if (dialog.isShowing()) {
+                    dialog.dismiss();
+                }
 
                 Intent intent = new Intent(ServicesActivity.this, MainActivity.class);
                 intent.putExtra("username", jid);
