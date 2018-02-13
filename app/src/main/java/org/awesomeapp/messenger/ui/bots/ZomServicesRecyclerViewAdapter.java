@@ -29,7 +29,7 @@ public class ZomServicesRecyclerViewAdapter extends RecyclerView.Adapter<Recycle
     private final List<Object> mValues;
 
     public interface ServiceItemCallback {
-        void onBotClicked(String jid);
+        void onBotClicked(String jid, String nickname);
     }
 
     public ServiceItemCallback listener;
@@ -45,11 +45,12 @@ public class ZomServicesRecyclerViewAdapter extends RecyclerView.Adapter<Recycle
             if (resIdBot >= 0) {
                 TypedArray botArray = context.getResources().obtainTypedArray(resIdBot);
                 int resIdName = botArray.getResourceId(0, 0);
+                String nickname = botArray.getString(0);
                 String jid = botArray.getString(1);
                 int resIdDescription = botArray.getResourceId(2, 0);
                 int resIdImage = botArray.getResourceId(3, 0);
 
-                BotEntry botEntry = new BotEntry(resIdName, jid, resIdDescription, resIdImage);
+                BotEntry botEntry = new BotEntry(resIdName, nickname, jid, resIdDescription, resIdImage);
                 mValues.add(botEntry);
                 botArray.recycle();
             }
@@ -78,15 +79,15 @@ public class ZomServicesRecyclerViewAdapter extends RecyclerView.Adapter<Recycle
             viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    onBotClicked(e.jid);
+                    onBotClicked(e.jid,e.nickname);
                 }
             });
         }
     }
 
-    private void onBotClicked(String jid) {
+    private void onBotClicked(String jid, String nickname) {
         if (listener != null) {
-            listener.onBotClicked(jid);
+            listener.onBotClicked(jid,nickname);
         }
     }
 
@@ -116,11 +117,13 @@ public class ZomServicesRecyclerViewAdapter extends RecyclerView.Adapter<Recycle
 
     protected class BotEntry {
         public int resIdName;
+        public String nickname;
         public String jid;
         public int resIdDescription;
         public int resIdImage;
-        public BotEntry(int resIdName, String jid, int resIdDescription, int resIdImage) {
+        public BotEntry(int resIdName, String nickname, String jid, int resIdDescription, int resIdImage) {
             this.resIdName = resIdName;
+            this.nickname = nickname;
             this.jid = jid;
             this.resIdDescription = resIdDescription;
             this.resIdImage = resIdImage;

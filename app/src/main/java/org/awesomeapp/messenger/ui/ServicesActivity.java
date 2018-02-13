@@ -16,6 +16,7 @@
 
 package org.awesomeapp.messenger.ui;
 
+import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
@@ -81,12 +82,24 @@ public class ServicesActivity extends BaseActivity implements ZomServicesRecycle
     }
 
     @Override
-    public void onBotClicked(String jid) {
+    public void onBotClicked(final String jid, final String nickname) {
         ImApp app = (ImApp)getApplication();
-        new AddContactAsyncTask(app.getDefaultProviderId(), app.getDefaultAccountId(), app).execute(jid, null, getString(R.string.action_services));
-        finish();
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("username", jid);
-        startActivity(intent);
+        new AddContactAsyncTask(app.getDefaultProviderId(), app.getDefaultAccountId(), app){
+            @Override
+            protected void onPostExecute(Integer response) {
+                super.onPostExecute(response);
+
+                Intent intent = new Intent(ServicesActivity.this, MainActivity.class);
+                intent.putExtra("username", jid);
+                startActivity(intent);
+                finish();
+
+            }
+
+        }.execute(jid, null, nickname);
+
+
+
     }
+
 }
