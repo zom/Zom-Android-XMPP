@@ -198,6 +198,8 @@
         -->
         <!--  -->
 
+        <service android:name="org.awesomeapp.messenger.util.SoundService"
+            android:exported="false"/>
 
         <!-- android:process="info.guardianproject.otr.app.process.im" -->
         <service

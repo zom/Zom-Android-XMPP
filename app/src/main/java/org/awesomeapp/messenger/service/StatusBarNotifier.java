@@ -27,6 +27,7 @@ import org.awesomeapp.messenger.model.Contact;
 import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.ui.legacy.DatabaseUtils;
+import org.awesomeapp.messenger.util.SoundService;
 import org.awesomeapp.messenger.util.SystemServices;
 
 import java.util.ArrayList;
@@ -44,8 +45,11 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 
@@ -65,6 +69,9 @@ public class StatusBarNotifier {
     private ArrayList<NotificationInfo> mNotificationInfos;
     private long mLastSoundPlayedMs;
 
+    private Vibrator mVibrator;
+    private VibrationEffect mVibeEffect;
+    private final static long[] VIBRATION_TIMINGS = {0,500,100,100,1000};
     public StatusBarNotifier(Context context) {
         mContext = context;
         mNotificationManager = (NotificationManager) context
@@ -320,6 +327,13 @@ public class StatusBarNotifier {
             if (DBG)
                 log("setRinger: defaults |= vibrate");
         }
+        else if (Preferences.getNotificationSound()||Preferences.getNotificationVibrate())
+        {
+            builder.setDefaults(Notification.DEFAULT_ALL);
+
+            if (DBG)
+                log("setRinger: defaults |= vibrate + sound");
+        }
     }
 
     private static int UNIQUE_INT_PER_CALL = 10000;
@@ -367,12 +381,41 @@ public class StatusBarNotifier {
                 .setContentIntent(PendingIntent.getActivity(mContext, UNIQUE_INT_PER_CALL++, intent, PendingIntent.FLAG_UPDATE_CURRENT))
                 .setAutoCancel(true);
 
+            if (Preferences.getNotificationSound()) {
+
+                // play sound
+                Intent serviceIntent = new Intent(mContext, SoundService.class);
+                serviceIntent.setAction("ACTION_START_PLAYBACK");
+                serviceIntent.putExtra("SOUND_URI", Preferences.getNotificationRingtoneUri().toString());
+                mContext.startService(serviceIntent);
+
+            }
+
+            if (Preferences.getNotificationVibrate())
+            {
+
+                // play vibration
+                if (mVibrator == null) {
+                    mVibrator = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        mVibeEffect = VibrationEffect.createWaveform(VIBRATION_TIMINGS,-1);
+                    }
+                }
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                    mVibrator.vibrate(mVibeEffect);
+                else
+                    mVibrator.vibrate(VIBRATE_PATTERN,-1);
+
+
+            }
+
             if (!TextUtils.isEmpty(mBigMessage))
             {
                 /*
          * Sets the big view "big text" style and supplies the
          * text (the user's reminder message) that will be displayed
-         * in the detail area of the expanded notification.
+         * in the detail area of the expanded notification
          * These calls are ignored by the support library for
          * pre-4.1 devices.
          */
@@ -383,9 +426,10 @@ public class StatusBarNotifier {
             if (largeIcon != null)
                 builder.setLargeIcon(largeIcon);
 
+            /**
             if (!(lightWeightNotify || shouldSuppressSoundNotification())) {
                 setRinger(mProviderId, builder);
-            }
+            }**/
 
             return builder.build();
         }

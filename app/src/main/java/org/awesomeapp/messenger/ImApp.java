@@ -188,7 +188,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
     }
 
     public static final String NOTIFICATION_CHANNEL_ID_SERVICE = "im.zom.service";
-    public static final String NOTIFICATION_CHANNEL_ID_MESSAGE = "im.zom.message";
+    public static final String NOTIFICATION_CHANNEL_ID_MESSAGE = "im.zom.message.2";
 
     public void initChannel(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -201,13 +201,9 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
             nc = new NotificationChannel(NOTIFICATION_CHANNEL_ID_MESSAGE, getString(R.string.notifications), NotificationManager.IMPORTANCE_HIGH);
             nc.setLightColor(0xff990000);
             nc.enableLights(true);
-            nc.enableVibration(true);
+            nc.enableVibration(false);
             nc.setShowBadge(true);
-            Uri ringtoneUri = Preferences.getNotificationRingtoneUri();
-            nc.setSound(ringtoneUri, new AudioAttributes.Builder()
-                    .setUsage(AudioAttributes.USAGE_NOTIFICATION_COMMUNICATION_INSTANT)
-                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                    .build());
+            nc.setSound(null, null);
             nm.createNotificationChannel(nc);
 
 
