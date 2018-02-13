@@ -19,4 +19,5 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="detail_view_padding">8dp</dimen>
     <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="bot_image_rounding">10dp</dimen>
     </resources>

@@ -3,15 +3,18 @@ package org.awesomeapp.messenger.ui.bots;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Outline;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.net.Uri;
+import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.TextViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewOutlineProvider;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -74,6 +77,19 @@ public class ZomServicesRecyclerViewAdapter extends RecyclerView.Adapter<Recycle
 
             ViewHolderBot viewHolder = (ViewHolderBot) holder;
             viewHolder.image.setImageResource(e.resIdImage);
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                ViewOutlineProvider viewOutlineProvider = new ViewOutlineProvider() {
+                    @Override
+                    public void getOutline(View view, Outline outline) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            int rounding = view.getContext().getResources().getDimensionPixelSize(R.dimen.bot_image_rounding);
+                            outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), rounding);
+                        }
+                    }
+                };
+                viewHolder.image.setOutlineProvider(viewOutlineProvider);
+                viewHolder.image.setClipToOutline(true);
+            }
             viewHolder.name.setText(e.resIdName);
             viewHolder.description.setText(e.resIdDescription);
             viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
