@@ -186,6 +186,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
@@ -251,9 +252,9 @@ public class XmppConnection extends ImConnection {
     private SecureRandom secureRandom;
     private MemorizingTrustManager mMemTrust;
 
-    private final static int SOTIMEOUT = 1000 * 60;
-    private final static int CONNECT_TIMEOUT = 1000 * 60;
-    private final static int PING_INTERVAL = 60 * 5; //5 minutes
+    private final static int SOTIMEOUT = 1000 * 30;
+    private final static int CONNECT_TIMEOUT = 1000 * 30;
+    private final static int PING_INTERVAL = 60 * 1; //5 minutes
 
     private PingManager mPingManager;
 
@@ -272,9 +273,9 @@ public class XmppConnection extends ImConnection {
 
     private HashMap<String, String> qAvatar = new HashMap <>();
 
-    private ArrayDeque<org.jivesoftware.smack.packet.Presence> qPresence = new ArrayDeque<org.jivesoftware.smack.packet.Presence>();
-    private ArrayDeque<org.jivesoftware.smack.packet.Stanza> qPacket = new ArrayDeque<org.jivesoftware.smack.packet.Stanza>();
-    private ArrayDeque<Contact> qNewContact = new ArrayDeque<Contact>();
+    private ConcurrentLinkedQueue<org.jivesoftware.smack.packet.Presence> qPresence = new ConcurrentLinkedQueue<org.jivesoftware.smack.packet.Presence>();
+    private ConcurrentLinkedQueue<org.jivesoftware.smack.packet.Stanza> qPacket = new ConcurrentLinkedQueue<org.jivesoftware.smack.packet.Stanza>();
+    private ConcurrentLinkedQueue<Contact> qNewContact = new ConcurrentLinkedQueue<Contact>();
 
     private final static String DEFAULT_CONFERENCE_SERVER = "conference.zom.im";
 
@@ -1670,6 +1671,9 @@ public class XmppConnection extends ImConnection {
             mRoster.setSubscriptionMode(subMode);
             getContactListManager().listenToRoster(mRoster);
 
+            ReconnectionManager manager = ReconnectionManager.getInstanceFor(mConnection);
+            manager.disableAutomaticReconnection();
+
             mChatManager = ChatManager.getInstanceFor(mConnection);
 
             mPingManager = PingManager.getInstanceFor(mConnection) ;
@@ -2121,7 +2125,7 @@ public class XmppConnection extends ImConnection {
             public void processStanza(Stanza packet) {
 
                 org.jivesoftware.smack.packet.Presence presence = (org.jivesoftware.smack.packet.Presence) packet;
-                qPresence.push(presence);
+                qPresence.add(presence);
 
             }
         }, new StanzaTypeFilter(org.jivesoftware.smack.packet.Presence.class));
@@ -2289,6 +2293,7 @@ public class XmppConnection extends ImConnection {
                 }
             }
         };
+
 
         mConnection.addConnectionListener(connectionListener);
         mStreamHandler = new XmppStreamHandler(mConnection, connectionListener);
@@ -3218,7 +3223,7 @@ public class XmppConnection extends ImConnection {
             @Override
             public void presenceChanged(org.jivesoftware.smack.packet.Presence presence) {
 
-                qPresence.push(presence);
+                qPresence.add(presence);
             }
 
             @Override
@@ -3394,7 +3399,7 @@ public class XmppConnection extends ImConnection {
             notifyContactsPresenceUpdated(contacts);
 
             if (autoSubscribedPresence)
-                qNewContact.push(contact);
+                qNewContact.add(contact);
 
         }
 
@@ -4359,7 +4364,7 @@ public class XmppConnection extends ImConnection {
         }
     }
 
-    private Contact handlePresenceChanged(org.jivesoftware.smack.packet.Presence presence) {
+    private synchronized Contact handlePresenceChanged(org.jivesoftware.smack.packet.Presence presence) {
 
         if (presence == null) //our presence isn't really valid
             return null;
@@ -4650,7 +4655,7 @@ public class XmppConnection extends ImConnection {
                                 debug(TAG, "postponed packet to " + packet.getTo()
                                         + " because we are not connected");
                                 postpone(packet);
-                                qPacket.push(packet);//return the packet to the stack
+                                qPacket.add(packet);//return the packet to the stack
                                 return;
                             }
 
@@ -4660,7 +4665,7 @@ public class XmppConnection extends ImConnection {
                                 postpone(packet);
                                debug(TAG, "postponed packet to " + packet.getTo()
                                         + " because socket is disconnected");
-                                qPacket.push(packet);//return the packet to the stack
+                                qPacket.add(packet);//return the packet to the stack
                                 return;
                             }
                         }
@@ -4701,7 +4706,7 @@ public class XmppConnection extends ImConnection {
                                 debug(TAG, "postponed adding new contact"
                                         + " because we are not connected");
 
-                                qNewContact.push(contact);//return the packet to the stack
+                                qNewContact.add(contact);//return the packet to the stack
                                 return;
                             }
                             else
@@ -4782,12 +4787,12 @@ public class XmppConnection extends ImConnection {
                                 } catch (XMPPException e) {
 
                                     debug(TAG,"error updating remote roster",e);
-                                    qNewContact.push(contact); //try again later
+                                    qNewContact.add(contact); //try again later
 
                                 } catch (Exception e) {
                                     String msg = "Not logged in to server while updating remote roster";
                                     debug(TAG, msg, e);
-                                    qNewContact.push(contact); //try again later
+                                    qNewContact.add(contact); //try again later
 
                                 }
                             }
