@@ -279,6 +279,8 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
             try{
                 Method m = StrictMode.class.getMethod("disableDeathOnFileUriExposure");
                 m.invoke(null);
+
+                StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.LAX);
             }catch(Exception e){
                 e.printStackTrace();
             }

@@ -12,10 +12,13 @@ import java.util.TimeZone;
 
 import android.content.Context;
 import java.io.PrintWriter;
+import java.util.logging.Level;
 
 import org.apache.commons.io.output.StringBuilderWriter;
 
 import android.os.StrictMode;
+
+import static org.jivesoftware.smack.util.Async.ThrowingRunnable.LOGGER;
 
 public class Debug {
 
@@ -98,6 +101,11 @@ public class Debug {
     public static void onServiceStart() {
         if (DEBUGGER_ATTACH_ENABLED)
             android.os.Debug.waitForDebugger();
+
+        if (DEBUG_ENABLED)
+            LOGGER.setLevel(Level.ALL);
+        else
+            LOGGER.setLevel(Level.OFF);
     }
 
     public static void onHeartbeat() {

@@ -651,7 +651,6 @@ public class XmppConnection extends ImConnection {
 
                 Collection<DomainBareJid> servers = mucMgr.getXMPPServiceDomains();
 
-
                 //just grab the first one
                 for (DomainBareJid server : servers)
                     return server.toString();
@@ -2559,10 +2558,9 @@ public class XmppConnection extends ImConnection {
             ChatSession session = mSessionManager.findSession(JidCreate.bareFrom(address));
             BareJid bareJid = JidCreate.bareFrom(address);
 
-            //create a session if this it not groupchat
             if (session == null) {
 
-                if (groupChat) {
+                if (!groupChat) {
                     ImEntity participant = findOrCreateParticipant(address, groupChat);
 
                     if (participant != null) {
@@ -2575,8 +2573,6 @@ public class XmppConnection extends ImConnection {
                             getOmemo().getManager().requestDeviceListUpdateFor(bareJid);
                             getOmemo().getManager().buildSessionsWith(bareJid);
                         }
-
-
                     }
                 }
                 else

@@ -155,7 +155,7 @@ public class MemorizingTrustManager implements X509TrustManager {
 		File dir = app.getDir(KEYSTORE_DIR, Context.MODE_PRIVATE);
 		keyStoreFile = new File(dir + File.separator + KEYSTORE_FILE);
 
-		appKeyStore = loadAppKeyStore();
+		//appKeyStore = loadAppKeyStore();
 	}
 
 	
