@@ -2,6 +2,650 @@
 Track the source commits here:
 https://github.com/zom/Zom-Android/commits/master#
 
+15.4.0 (15400020) / 12 Feb 2018 / 92784a1a272e213b0dcdd9ea0d803670459dc4bc
+
+92784a1 update to build 1540020
+1d26b72 Merge branch 'N-Pex-npex_dev'
+2cb34e5 tweaks for new zom services bot selected - wait for add contact to finish before opening chat
+5b91f53 Merge branch 'npex_dev' of https://github.com/N-Pex/Zom-Android into N-Pex-npex_dev
+5119cbe only reset the media uri for audio if it is a new file
+a2b847f tweak XMPP behavior to be in order and less hangy
+da170d6 Basic UI for bots
+3e8d69a fix sticker glitch
+fb48a7a add two missing losar stickers
+464162e update build to 1540013
+d35e1e5 fix display issues with thumbnail on convo list
+525d341 for #415 update sticker ordering
+8ddd94a for #428, change our XMPP resource to just "Zom"
+5f459ff for #421 update expression stickers
+4da15ff add losar stickers #422 and fix sticker display code
+fd5df39 don't auto open chat with new contacts
+4c2cada possible fix for #424 don't ever set the URI for the text message display
+50eb3a4 update hardware optional req's for support of chromebooks
+010754f for #400 resend of audio files now works
+e988d31 notification and bg improvements
+ea17be7 fix for #387 don't crash when deleting photos
+12fbfdf update build tools
+b903544 update tibetan strings for chatbot
+68859e2 update strings with xliff fixes
+2455abd add zombots for Chinese
+76d57b2 update strings xliff tags
+20f3173 disable memorizing trust manager
+6a1f29b update zomstrings to add bot strings in
+3c406fd update to build 1540012
+27cf63c fix bug that showed incorrect subscription status for a current chat view
+ecc9f77 more fixes for #400 resend media options
+d57d66b fixes for resend #400 and delete image #387
+dca461c make waiting for friend disappear after you request a refriend
+9789474 modified omemo listener to support offline messages again based on this thread: https://discourse.igniterealtime.org/t/smack-is-unable-to-receive-omemo-offline-messages/62645/6
+0d3e2be stop people form the double login!
+6466f7d Merge branch 'master' of github.com:zom/Zom-Android
+51c7def update build tools to 27
+4cf9063 update build to 1540004
+13eda69 handle subscribe request from people who you are subscribed to
+4ebf94f tweak display of pending friends
+fb46ddb improve XMPP subscription, login and receipts
+4490515 for #416, don't crash on the group add contact
+77d382b still use the heartbeat service on older devices before Android O
+12fadcc tweak socket timeouts to be lower
+0578373 progress on #400 resend and delete #387
+fe77a9b for #388 scanning QR code now should open chat
+303cf07 set attachment menu to invisible by default
+1e6c355 improvements to #392 and #393
+692d84e Merge pull request #401 from squeezer11/master
+a4d0cbd update build to 1540003
+298a55a multiple fixes for handling subscription type and status flow
+94050ad fix boot crash for Android 8
+b82b099 major updates to contact subscription status handling and display
+0f660cb add initial bookmark manager support
+4a5f498 don't crash if mediaplayer isn't yet init'd
+ab2d1c5 ensure you can pick contacts when you share from external apps
+a361321 handle a null URI result whenthe db is unavailable
+44fd1ef handle login failures a little better
+d53fb3b fixes for mime type and playback of content URIs
+c0fe358 improves for #386 and UI changes for audio file sharing
+a1273b6 attempting to re-enabled SDK 26 tools
+ef70c0f interim fix for #361 to address group duplicates
+a03fba2 update biuld tools to SDK 27
+03d8830 updates for display contacts and presence
+9d841b6 can't start service in the background anymore... need to move to JobScheduler
+17ff38e update build to 1540002
+79ae2a9 only handle inbound intent once, then set to null
+dbb21a9 make contact picker show groups again
+e121b69 make contact list alphabetical
+aeb8a7b handle conflicting broadcat events with a retry
+1c675c0 display icons for last media message
+2f1f674 improve last time handling, and case of wrong extra format
+7457bf7 update delivery receipt handling and stanza listener support
+74317c5 handle some NPE provider issues
+8197aa4 add sound support for notification channels
+4ccdba9 ensure notification when unlocked
+704a510 update icons, and add sound/volume icon
+2ee139f add group encryption global preferences "experimental"
+808ee53 set upload timeout for media sharing
+54a4c2b add modified cacheword inline (no service)
+afe6624 remove cacheword from external depends (build it in for now)
+e6044ca re-enable per message notifications now with NotificationChannel
+1c6293e if group expects encrypted message, then ignore unencrypted message
+ea260db exclude javax packages from build
+1c7f510 update build to 1540001
+8d5d243 big progress on #404 group OMEMO MUC encryption - must enable manually using switch in group display activity - delivery receipts not currently working when enabled - can receive messages from Conversations encrypted, but Conversatoins doesn't receive for some reason - currently using manually built omemo-signal-* jars for 4.2.2 release, since they aren't officially published yet
+a6ff378 update travis ci build for SDK 27
+205fdd2 add SDK 27 NotificationChannel support
+ca77af5 remove unused error class
+4d87bb2 update themeable activity for latest SDK
+0b95ff2 add the ability to request ignore battery optimizations
+45fc41b update SDK to 27 and use smack public dependencies
+fb43ce2 delete old smack jars
+f89ebab Updated de (German) translation
+96f01be update build to 1532002
+a714def major clean-up of the way contacts and presence are updated
+1a0da48 updated support for proxying, pluggable transports and DNS
+73e8bc7 move to use the xmpp-server-list https://github.com/zom/xmpp-server-list
+a890458 ffor now, show toast instead of dialog #370 - when there is a cert issue, don't give the user an option to override -in the future we'll have a better UI/UX for handling MITM attacks or other unexpected server certificate issues
+c318cdc more fixes for #353 for avatar and nickname updating
+c74f038 for #353 progress in handling avatar updating
+b756d4c improve impl of screenshot blocking pref
+9452355 some progress on #385 audiowife visual
+f929ba9 Merge branch 'master' of github.com:zom/Zom-Android
+30d7902 For #370, integrate MemTrustMgr and integrate directly so we can change the UI/UX
+1897d18 add nosuggestions flag to username entry #381
+417226d ignore messages you already have (so we don't get echo in our group chats)
+bdfccd2 updates to support chromebooks
+c5bfc03 travis-ci: use fdroid nightly from official PPA package
+8d3ede6 1532001 15.2.0 beta 1
+b978065 improve notifications from media
+857e69e show proper nickname for groupchat media sharing
+324b487 put audiowife player code back in
+85a9f84 fix init issue for audiowife play
+a4e773c update build 1531005
+e1020a7 Merge branch 'master' of github.com:zom/Zom-Android
+4de3ffc fixes for media handling, preview, sending
+22b2aa3 upgrade gradle
+4897d88 Merge pull request #383 from eighthave/travis-ci-fdroid-nightly
+515fb7e set the versionCode to a UNIX timestamp on any debug build
+52a3a1a travis-ci: temporarily use fdroidserver from git
+23d46a2 travis-ci: switch to `fdroid nightly` for nightly builds
+1706d3a initial support for supporting downloading of undownloading media file
+5b20261 improve handling of inbound subscription requests
+eedc5dd for #300 improve share from gallery experience
+5c628af update build to 1531004
+9235bdb improved sign-in, sign-out, network messages on main screen snackbar
+9f285a0 try not loading roster at login, to make login faster!
+6a2059b updates to some gradle depends
+73fbf5c mostly implemented #184 though questions remain about the UI and flow
+1425257 don't set time to -1, else it shows "moments from now"
+d5480e9 for #317, update nicknames in db when new vcard comes in
+f9143cc improve nickname/vcard updating for #317
+31ef67e improvement to "Last Seen" and uploading reliability and erros
+7baaa33 small tweaks to Omemo behavior
+389566d stop media player when it moves out of view
+7b460ff update to build 1531003
+7bf7f99 improvements for #199 last seen, and other session tweaks
+db780b0 for #199 support "Last Seen" time reading and setting
+bc3deb4 small improvements in media and thumbnail display
+33d51be for #168 if no account, send the user to onboarding
+52009c5 progress on #180 using snackbar
+e2632db implements #312 use AudioWife player with IOCipher/VFS
+92004ad improvements in audio playback on SDK 23+ devices (android M)
+56c53f6 disable debug
+771c513 update to build 1531002
+1ba6224 fixes for #367 for notifications and downloading content types
+699321f implements #161 to support copy and paste of jabber id from account
+df177b6 handle NPE in group display view that can happen during login
+fa65413 For #160 implement copy and paste
+72c215d some progress on #180
+20c3d60 addresses #346 issues with fetching group chat history
+5a1a204 for #142, attempts basic verification of entered jabber id, so it won't crash!
+58b4c49 don't autoscroll for new messages if the user has scrolled back
+3052ea7 make sure all file names work in IOCiphre
+7e89010 small fixes for media viewing and notification setting
+a0d58d4 Merge branch 'swipe_through_gallery' of https://github.com/N-Pex/Zom-Android into N-Pex-swipe_through_gallery
+b1a65f8 change checkbox to SwitchCompat
+7598d72 Tweak animation
+ea544d7 Change group notification setting to a checkbox
+0ad044e Make image view activity transparent
+b0d680f Fancy custom swipe-to-dismiss
+b053893 Add string for "photo x of y"
+31623a6 Swipe through images in conversation
+1ab9783 Implement a view pager for paging through photos
+afd307b Add common image loader code to GlideUtils
+a3614ed Update Glide library to version 4
+a357dd3 fixes for #321 #372 #332 #263 archive fixes
+0f4f055 Merge branch 'N-Pex-npex_dev'
+f73b0cf Merge branch 'npex_dev' of https://github.com/N-Pex/Zom-Android into N-Pex-npex_dev
+dc77c53 remove swipe on contact list
+bc32914 advanced networking should be off by default
+6faee5c fixes to support proxy features
+cef9ce5 improvements to media sharing
+8b66ef0 allow app to run shell commands
+77cf7e6 support for advanced networking features
+9abaa23 Make user name bold and black on unread messages
+0a5e4f1 Don't hang on to view holder, it will change contents
+d6ec2f6 Update "Waiting for friend view" with animationg
+de0c132 Add "LAST_READ_DATE" column
+cf32206 Sort group members by affiliation and name
+5406ce5 Improve handling of media/files for sharing, and playing/export as well
+aa81ee6 ensure delivery receipts are sent only when messages are saved to the db we have been having receipts sent, when no logcal messages show u
+bbac805 update build tools to 26.0.2
+39fa77a update to build 1531000 (and pudate build tools too!)
+c8e83e1 update biuld to 1510042
+4129df2 add initial support for file sharing
+5f6c6e3 solve crash related to displaying group affiliation was NPE in some cases also ensure chatId is int not long
+32d39c4 only display "waiting" if we really know we are
+9960f7f improve chance of loading old history messages from MUC
+f9a93cc tweak "waiting" dialog color background
+e0ac065 remove chatsecure-push submodule
+0649bb1 remove chatsecure-push for now since we use server-based push - may use this again in the future for receiving pushes but not now
+91c6913 update to build 1510041
+e0ca5ae make sure to get subjects for groups when you join
+66d33d6 update to build 1510040
+9efb5e5 more fixes for for #357 and #364 handles case where contact id is -1
+2d68666 update build to 1510039
+d551975 for #357 and #364 handles case where contact id is -1
+2271bfd update build to 1510038
+0ae6ebf ensure group chat notifications get cleared properly
+c0e6939 don't try to get fingerprint if connection is null
+e7eaf4e set the owner of a group when you reload the list
+c35757c for #356 don't show blocked contact in contact picker
+d34452c for #356 don't crash if a blocked contact is selected
+b8bcc9a don't show groups as being "blocked"
+0141956 For #363 don't show groups when you are adding people to groups
+340db20 update build to 1510037
+3f7297d fixes for group history fetch
+19a16f9 make sure we stop the audioplayer when it leaves the screen
+833209f for #333 add buddy is now add friend
+b194c1c Merge branch 'master' of github.com:zom/Zom-Android
+e7970a8 improve notifications for all situations - add support for batch notifications - make sure notifications are dismissed
+ea3064b for #358 don't show pending approval for group chats
+91e2eb2 for #357 don't crash with a blocked contact
+f84090e Merge pull request #355 from zom/travis-ci-fdroid-nightly
+7ba58f9 travis-ci: disable failing lint until lint errors are fixed
+0eb2243 travis-ci: create nightly builds fdroid repo from each build
+05da907 travis-ci: get build and emulator tests working again
+fcba6a7 make ./gradlew verify the gradle it downloads
+5f5f6f7 update to build 1510036
+2f3c479 don't show subscription UI for groups
+a555c47 update build 1510035
+ca7b8c2 for #352 and #432 show proper status for unfriended/blocked state
+9a9e8af fixes for QR code scanning - use low res preview and image size
+6eb0651 for #337 mute all notification types
+faa551d ensure Presnece is accurate, and fix chat listener, typing status
+b3aac53 update to biuld 1510034
+c31f642 improvements to "last seen" presence handling
+774c2f6 address #334 and other QR code crash related bugs
+daf38f8 for #337 group notification muting now works!
+38384e4 Merge branch 'npex_dev' of https://github.com/N-Pex/Zom-Android into N-Pex-npex_dev
+2b6f63f progress on #337, only notify if not muted
+79e12e4 modifications for presence handling and group loading
+6761e69 don't display group member # on conversation list summary
+e0a25ea more work on #353 avatar loading
+e7de0dc don't always refresh device life for OMEMO
+61b41e6 for #353 tweaks photo / camera for avatar taking url base - newer android cameras don't return proper metdata in the Intent!
+537aa40 Clearing members is too risky, as it could leave us with a partial member list
+5733ea1 add initial support for group chat specific notifications
+0ba968b make sure to clear notifications when a chat is opened
+fd24c78 Register listeners only once
+608b29e update to version 1510033
+141a04a avoid race conditions with member loading
+24ce2f2 Merge pull request #351 from N-Pex/npex_group
+3f1a1f8 Remove some debugging
+f5a10c9 Group chat member list updates
+2aaf301 Change loadMembers
+06c2081 Fix where clause builder precedence issue
+a903e39 Implement the crown view for group owner/admins
+41fafd6 update to build 1510032
+e075c2d more fixes for image sharing
+238cf8a more improvements to image sharing
+ad17c17 work on issues with queued media resending
+587d055 remove places where deadlocks could occur
+2b1b671 fix display of group leave confirm
+f317906 update to build 1510031
+37b826d more improvements for group membership work on #332 to confirm leaving group initial work on #344 to add crown to group admin
+97f366c update build to 1510030
+d1d782d improve file sharing, selection and import
+50616f4 fixes for host, ip address and proxy support
+f58a2f0 replace app name instances with Zom
+6695d05 build 1510029
+96f98cf more fixes for group membership and sharing
+66442ae don't exclude existing contats, in case you need to reinvite them
+4742294 truly fixes #335
+609d3a5 improve display of media in message list
+4d638c8 update translations
+6484b2f update to build 1510028
+eb15005 more progress on group presence and loading
+5afbd25 make the QR code preview camera window a better shape
+01bad0d tweak QR code display and scanning code
+c57f107 for #330, fixes parsing of invite links
+583a9cd work for #36 MUC permissions and owner display
+32c08ac improves #325 #326 MUC rejoining and history fetching
+1c018c1 Merge pull request #328 from N-Pex/npex_dev
+605f9d5 Only use pretty fingerprints for display
+ed313a5 fix issues with MUC reconnection; also support IP address connect servers
+30a00a2 don't ever show X-check, just show check!
+cc399c4 update build to 1510026
+e11929d only remove muc members when you get a leave notification don't clear group members on list reload
+551368f add new layout for qrcode scan
+1862ad2 fix link handling, invitelinks vs regular links
+54a3bfc fixes for QR code display and scanning - move to XMPP style links for display and scanning - reduce resolution of camera to save memory - reduce render size oF QR code to save memory
+3c50d8f for #278 adds support for delivery receipts in groupchat
+c2a1384 update xzing qrcode library to latest 3.3
+7fe646e fixes #318 hex digits only appended if neceessary
+b36d5dd Merge pull request #320 from N-Pex/npex_group_changes
+448460a more improvements on #393 - make it async!
+d3a39bd for #323 new UI and handling for "waiting" status
+57e2d91 update to build 1510025
+de3448a improve display of names, icons in groupchat
+e8ccd95 fixes #316 fixes string regex max that was incorrectly matching any www. as a file share
+b2c7f96 fixes #319 - was incorrectly matching "www." URLS as file shares
+482295d Updated palette for group avatars
+765241e store the mapping between MUC JIDs and our local contacts - this is to enable local contact avatars to show up for group members
+7217e83 temporarily allow fileURIs to be expoed until we can update this code
+17926a6 Only display one key fingerprint (primary OMEMO) and fix QR scanning - qrcode now display "xmpp:" address for easier scanning and sharing - account now only displays OMEMO fingerprint not OTR
+5b5d8e5 update build to 1510024
+32aadbd For #313, media share upload experience improved - local message stored and queued immediately - single check will show once it is uploaded - double check will show once it is received
+eaf83fd grant all invited group members ADMIN status - this allows them to query membership and invite others
+6b25b39 make sure session isn't null when you try to leave it
+73e96dd fixes #308 now closes group and returns to main screen
+273328f fixes #314 to send and receive https file share links in groupchats - disables use of aesgcm encrypted links in unencrypted groupchats
+614b7db update build to 1510023
+79d7d9c tweak sticker and photo rendering
+f97c193 retry uploads 3 times
+45e713f more fixes for #308
+a8f8fae for #308 implement "leave" function, cleanup group chat view
+43e7ae1 for #307 improve loading of members, handling various permissions levels
+4205d3e don't connect group if connection is not logged in and authenticated
+ea00e9b update to build 1510022
+1631bd1 Merge branch 'npex_group_changes' of https://github.com/N-Pex/Zom-Android into N-Pex-npex_group_changes
+791a90e Merge branch 'npex_dev' of https://github.com/N-Pex/Zom-Android
+d789583 handle group reconnection and NPE connection instances
+3e3b044 Muted group chats disappeared
+8ec9c28 Group subject edit/update
+0414852 Indicate which users are already in group
+bebd258 Show info view for group members when tapped
+dc94cec Hide group JID in group info view
+d5850d7 Hide QR code on group info view for now
+5544d8d Don't need a roster entry
+8ef73fc update to build version 1510021
+44537d6 address #295, wait for entry to be created, so it is not null
+60c04c7 remove unused code
+451e6c6 wait for group to be created first!
+2e292cf don't recreate the group
+f7eec72 re-enable display of turning notifications off and on for groupchat
+c4aa718 send postponed messages when a new session is init'd
+e96eb2a make sure user rejoins groups
+2f63652 if no omemo, check again on next message send
+18f366a Merge branch 'npex_dev' of https://github.com/N-Pex/Zom-Android into N-Pex-npex_dev
+7a747d7 properly clear/reload group/room membership
+60cc33f Add back button to group detail view
+7c96eb5 Support for mute group
+77369e5 Refactor selection
+2888888 Layout changes and use correct request id
+18209d5 Grow the tag view to at most a third of the screen
+d123cf4 Implement the check view for selected contacts
+b90fab7 Make ContactViewHolder initialize itself
+3403422 Implement tag view when selecting multiple contacts
+cebde60 more fixes for auto-refresh of MUC group connections
+d762d41 update to build 1510020
+516b792 more work on #281 #202 #201
+5c3704a disable filterTouches for now, and move to preferences and API call
+1cd1f7d group fixes for #281 #202 #201 - multiple fixes for rejoining groups on reconnect - inviting incorrect contacts was fixed previously - now loads group members, and not just occupants ("delay" was just the fact there weren't current occupants)
+272c0c8 Use recycler view for group detail activity
+a1ffb1e Group avatars
+dfd17b6 update for 15.2 RC 3
+f91f48b update build to 1510019
+de0310f Merge pull request #265 from Simon0Harms/master
+6020634 fixes #273 incorrect app branding
+5efcb9b update to build 1510018
+f437c15 fix apostrophe escape in translation
+13f05b6 update string language resources
+c059008 update to build 1510017
+0a65c1b fix group multi-select in contacts picker
+f77f32a improvements to subscribe flow to work better with Zom iOS
+cdbb41c improvements to QR code scanning code and logic
+ff67ae6 improvements to network state on/offline handling and subscription response
+6d6e118 add code for Android 7 to ensure we receive connectivity events
+46ab67b build 1510016
+c64b71d fix check related to using omemo/xep-363 file sharing or OTRDATA
+856cc6d moving to GPL v3 license required by OMEMO Signal integration
+21e34e1 build 1510015
+373277d fix support for incoming XEP 363 shares without OTR
+62f3651 update to build 1510014
+0222188 disable debug for now
+5b86a21 fixes for group chat support - also adding support for group chat media sharing!
+799ad67 handle null schemes on some asset links
+769af74 refresh sessions when you are reauth'd with a server
+bac3efd finishing XEP 363 Support, closes #16 #198, supports AESGCM encryption https://xmpp.org/extensions/xep-0363.html
+ea634ba update display of current key (one key to rule them all!) - don't show OTR and OMEMO keys... just so OMEMO if we have it, and OTR if we don't - remove unneeded menu options to simplify and avoid issues
+7a5f6e4 support new format for media sharing (VFI HTTPS)
+0e9cfbc update build to 1510013
+e28fc49 disable XMPP debug
+e64ef65 improvements on logic for uploading/sending via xep363
+286b565 multiple fixes for xep363 related issues - only send share message if upload was successful - allow autodownload of http/s links if it comes from same domain as user - disable some broadcasts for now until we can sort out thread safe issues
+22568cf ensure we have one OmemoStore instance for multiple OmemoManagers - we support multiple simultaneous acccounts, so we need multiple managers, but only one store!
+43b3651 add initial method for helping with encrypted xep363 downloads
+158bb5f ensure we ask for subscribe presence perms when we approve also fix SSL handling for xep363 downloads
+4baa86d enable web links again
+0edfd95 add fixes for legacy auth and http upload from smack 4.2 branch
+b12d1af update libs to support xep363 fixes
+6e5a446 more fixes for HTTP File Upload support
+1db89fe implement new IOCipher secure key storage for OMEMO
+34921fd move back to using self built jars for smack
+c374be4 big improvement to roster loading, presence handling and http upload
+00aed13 change name of method related to linkify options
+17b7b84 let's remove the linkify options from preferences for Zom
+1c34965 make sure start on boot is true by default
+fabb8f8 updates for the latest Omemo work and state handling
+b4ba2d4 update gradle versions and dependencies
+1870831 remove local libs, and use smack-omemo snapshot releases
+53f54e0 remove general linkify for now, as it was throwing errors and causing unnecessary connections to the internet
+5659245 Add files via upload
+c408141 Implements #261 for supporting OMEMO style encrypted file sharing
+2ba83db improved way of showing "Undo" in Tibetan
+dd6d532 show status in title bar
+4f718dc update presence and avatar handling
+e248fe5 show "Active" when you unarchive a contact
+4db035d update gradle tools and libraries to latest
+221ffda update to build 1510012
+ac22afa if there are no OMEMO keys yet, use OTR instead - still working on why we can't fetch OMEMO keys for some users
+cfe4621 ensure proper JIDs are used
+0ae7016 fixes for presence and vcard updating issues
+a350c71 improve display of toolbar subtitle
+46cd89d work for #260 addressing the OTR/OMEMO issues
+38b3eb3 remove Dukgo from server list
+233c725 fix issues with crashing camera and path leakage for URIs This is fix for Nougat
+69383e8 improve handling of migration notice, and ensure there is an override
+932fa91 fixes #253 adds omemo fingerprint to your account display
+39feaaa tweak how and when we are displaying presence information in a chat
+aca06ab - handle issues with null connections and last activity - also make sure to set jabberID in all cases of vcard
+8dd7800 make sure we don't crash on typing indicators
+fd87cd4 handle subscription pending better
+92d4a80 handle invite links internally
+d515b3e sort by subscription status (pending at top!)
+adcf4ac make sure to set status properly
+e3e13ce start chats after adding contact
+63038ed update gradle tools
+57b0f04 ensure bundle are published, related to #255
+954e7cd for #250 and #239 make add friend prompt permanently displayed
+e30ae91 update appupdater for 15.1.0 RC 1
+50e88f7 update to build 1510010
+d32b23b fix handling of OTR vs OMEMO messages
+115b3ae fix crashing related to invite link handling
+bb2d4b3 15.1.0 beta 3 app updater
+ad7d711 update build to 1510009
+b0e6a98 allow migrate to work offline and improve invite link parsing
+50179b2 move appupdater to 15.1.0
+71b0028 update travis files
+f4060a1 update build 1510008
+91b9bf5 improve display and logic of approve friend
+a860961 disable debug
+8f71947 make sure to remove connectino when you delete an account
+1cdcd40 additional small fixes for subscription management
+c71a88b make sure we are always specifying the right ImConnection instance
+f7e171b improve subscription notifications and connection requests
+961f949 add support for #235 "waiting" and other add friend improvements
+056441d tweaks to help with Monlam font users
+1ba8fbe a few small tweaks to account upgrade process
+5172c8c show the full account username in the list
+4638ea2 in some cases, the contact will be null, as it not existed yet
+0514bd5 catch an error in omemo pubsub on some servers
+4d94168 change placeholder text of account items
+8f8f681 update to build 1510007
+984c228 tweak rendering of swipe for archive/unarchive
+17c324f tuning the archive/unarchive view and actions
+323eec0 major improvements to archiving in the UI and data persistence
+b92dc78 update strings and menu options for archive and migration
+b27edfb add new icons for migration and filtering
+89d1f02 make it possible to search for archived contacts
+498acc6 more fixes for contact archiving #249
+e946fd8 implement basic archiving of contacts for #249
+27d3d98 update to build 1510006
+709b1ca Merge branch 'dev_omemo'
+9b79bf8 more fixes for #240 - friend adding is SOLID
+453d265 fixes #240. there was a bug in how new friends were being added.
+f0bda55 update to build 1510005
+2ae7f86 add progress checking and double click blocking on migrate
+df8871a more progress on #231 and #233 tuning messaging sending - sending invite link out in migration message - tweaks for OMEMO loading of keys for new contacts as well
+572919a for #231 implement vcard forwarding support and UI
+d0ad663 ensure signed out post-migrate account is really signed out permanently
+d715c1f account upgrade prompt UI tied into migrate account task logic #233
+16eca04 nearly there with #233
+e502c65 send migration message for #233
+9e82064 more progress on #233 with new account registration functionality working
+f139cab update to build 1510004
+2d61deb addresses #177 multiple notification bug, and improves UI for friends
+84c54b7 update for presence handling efficiency and improvements
+6de19a5 progress on #233 with migration task logic
+95ab45f add initial migrantaccounttask
+3f54217 fix login and DNS issues, specific fix for dukgo
+e868ba1 handle cases where the session might be null
+4f01ad1 allow multiple attempts to resend postponed/queued
+f326750 update smack omemo libs to version compatibility with Zom iOS
+f558567 multiple tweaks for queued/postponed message handling - the reason we call it "queued" now is that all messages start in queued state, and then are moved out of it once message sending is successful, as opposed to retroactively being set to POSTPONED
+718d46c change name of variable from POSTPONED to QUEUD
+322a1ba reduce load from roster and vcard loading; tweak OMEMO init
+0fd4609 change to QUEUED, and if offline, queue all messages, even without push - this is short term until we can make sure the server-based push XEP is working
+0232b41 only load active omemo devices, not all of them
+7a2dac0 refactoring, POSTPONED status is now called QUEUED
+b2cd925 add more main screen network status messages
+018f725 tweak build systems to ensure we don't OOM
+002c1f8 update to latest smack-omemo
+759cc86 update build to 1510003
+71a4ebb remove space
+4f447e7 other updates, improvements related to OMEMO stability and API changes - reduce chances of attempting OTR unless you really mean it!
+06d611a improvements for sending postponed messages
+e2c4dfd temporary fix for trusting for new keys for your JID - when i signed in from a second device, a new OMEMO device was created for the other jid, and thus, for the first time, I had to trust a key from a device I did not know. We need UI/UX here obviously, but for now, this handles the error case.
+bc17667 reduce memory for builds
+664f4a3 gets the latest and greatest from smack-omemo
+4d5a4c1 Smack-OMEMO updates, cleanup, new API changes
+b4f45c6 update smack omemo libs from latest master
+72521d4 update to build 1510002
+0e87d69 if you are sending data, make sure OTR session is init'd for now, we still use OTRDATA for sharing media, but soon this will end
+b4f976e Changes for #209 - don't OTR if you can OMEMO!
+f8b5b6a update to latest smack-omemo 3830efa96b8b9ff42de544b928eb7a2b073d3ec1 fix code to support latest method changes
+6ad4204 fixes for #207 to address double resource bug
+0063bb0 Merge pull request #210 from mimi89999/master
+d67bd39 Add logging instruction
+3d3dc3b update to build code 1510000
+f38fd18 simplify encryption status detection and support for OMEMO
+0a80613 improve how we check for OMEMO and handle message send state
+c50e792 refactor Omemo to have one instance per ImConnection
+6077551 more improvements, fixes for OMEMO support - fixed trust setting of new devices/keys - implemented basic key fingerprint display in UI
+f7f487d update libs from smack-omemo project
+dd0f1e3 centralize Omemo logic; do proper check if JID supports OMEMO
+615312c get OMEMO and OTR to play nice together
+316aca4 update smack-omemo to version with OMEMO_HINT message removed
+ffc5093 temporary "auto trust" of OMEMO devices - need to figure out TOFU and UI for trust management
+6f723d1 adding smack 4.3 libs with OMEMO
+316dd53 first commit with OMEMO enabled, OTR disabled
+d528dd7 renable OTR sessions (need to figure out how to coexist with OMEMO)
+528a8d9 OMEMO integrated, building, not crashing (but not working yet!) More work to do to properly setup omemo keystore, sending, receiving
+0409e8a add new Smack-OMEMO as local dependency; upgrade to 4.2.0 built from: https://github.com/vanitasvitae/smack-omemo.git
+c0d9837 app updater to 15.0.3
+0b4ba7d update build to 1503005
+5799a54 tune the threadpoolexec
+e02560f try to refresh the session of a decryption doesn't work
+74ed69a fix the gradle wrapper
+c15ca4e Contact can be null here, so check
+a3dc5a8 update to 1503004
+449bb1a improve time display formatting and "last seen" header
+d261d56 fix string xliff, ellipsis encodings
+b6183dc Merge pull request #193 from n8fr8/master
+d956b58 update build to 1503003
+0d5ba8a disable debug
+78f9213 ensure all formatted times are localized
+5055f3e implementation of "last seen" for #181
+3c1eed7 Merge pull request #191 from n8fr8/master
+e88a56e tweak display of contacts
+efbbde0 fixes #72 and #172 updating languages from transifex
+df42d48 update languages
+1ccc837 changes to support better toolbars, lastSeen, and more
+33256fa don't allow existing account to be added twice
+1dbe1b5 correct session key fingerprint now displayed - improved key verified logic and flow
+3203721 more small tweaks to network management
+ad3784b improvements to network reconnect codebase
+c602fd4 improvements to network connectivity dialog
+a38bd77 tweak network reconnect handling
+73244dc this doesn't need to be singleTask - too much memory usage
+92e1ddc remove local IOCipher 0.4 dependency (using official release now)
+168d3cb Merge branch 'master' of github.com:zom/Zom-Android
+c3fd7ef update to 1503002
+4fd658a ensure vcard avatars get updated
+70a03de make sure to create file paths for data storage - related to update to new IOCipher 0.4
+49088c7 tweak how PushManager instance and message queuing/sending work
+a990ca4 Merge pull request #183 from n8fr8/master
+58a2182 update build for 1503001
+c9ea5d3 disable debug for now
+ba4a55f detect network outage/offline state more completely
+cfdb210 don't start login again if we are already logging in
+b14a12a attempt to fix the travis build
+61d87b2 update chatsecure-push
+2226e2e fix folder creation with media storage
+f1aec22 massive cleanup, build optimization, and dependency improvements - switch to spongycastle instead of gp's version - try to reduce over method count, but still need multidex for now - add the possibility of minify/optimized builds, but don't enable yet
+af976df switch to updated apache httpclient import
+107a418 remove multidex imports, not used anymore
+d0044f5 switch to using spongycastle instead of our outdated bc fork
+fbffdbc fixes #182 adding expression sticker pack
+3217737 fixes #144 to make sure to close any existing chat session
+9bebaaf tweak how the persistent notification shows up and works
+dbfe991 make sure the "hint" color shows up when themes change
+914072b remove unused insecure code: app/src/main/java/org/awesomeapp/messenger/plugin/xmpp/XmppConnection.java
+753f813 progress on #180 notifying when there is no internet
+58e31bb fix for new SDK 25 updates
+75dc199 remove gradle witness pins for now, until we can properly update them
+e26b2ac update gradle settings, switch back to IOCipher gradle depend
+5b3223c update to latest build of chatsecure push repo
+2b90c23 Merge branch 'master' of github.com:zom/Zom-Android
+a058a62 modifications for use of custom fonts
+12fc6dd fix gradle settigs, imports, and sdks
+0be7f06 we don't need this anymore for sqlcipher
+b73da63 add support for Lato fonts
+9ea4938 fixes issues with chatstate handling and threads
+c9167c4 check for now on typeface, don't do anything if null
+1f85a4c update in-app update for 15.0.2.002
+2f1c45c update build version to 1502002
+d140eab tweak how new chats are started for contacts
+9c99222 make home.zom.im the default server
+af51e56 link Zom Services to add contact and start chat!
+eef828e just show three dots for typing indicator
+00ed990 turn debug status off
+25f709e update gradle build to 1502001
+c53d875 small UI tweaks for themeing and spacing
+1beab60 improve password change UI and experience
+3fb4c80 add support for changing nickname and server password
+a36324a update dev build of IOCipher AAR
+8029d10 add new IOCipher dependency
+54ad19d update local IOCipher depend
+4bb2368 update zom services icon
+b7cc29b Multiple improvements to multi-select, sharing and forwarding - contact picker now works with multiple selections for both group creation and sharing/forwarding - you can now share photos with multiple selected contacts - bug related to multiple mode not return proper selected items fixed by using "stable IDs"
+a2c8dc4 updated strings from transifex
+dd898e6 don't auto-start OTR in all cases; display fingerprint w/o session - We were over zealously trying to start OTR sessions before. Now we will not, so that we can give them a chance to work, and not overwhelm other clients. - We also need to be able to display OTR fingerprints for contacts, even if we don't have an active session with them. This will now show a default fingerprint for the contact if they are not conneted.
+c54eda4 improve display of messages with/without bubble around them
+b3de376 reset the main activity if certain settings are changed sometimes we have to finish() start() activity for these to take affect
+8bc7fc9 improved contact link sharing to NOT use QRCode and just text
+c4c1961 another fix for password view toggling
+9c72807 allow toggle of show password UI
+144a040 Merge branch 'master' of github.com:zom/Zom-Android
+5954712 make attach menu animate in and out
+b5ea8a8 tweak the typing indicator
+7519a2e never show the sent + waiting (no check + clock)
+3cae1b6 update name of chatsecure push module
+4e746b8 update to IOCipher-v0.4 beta build
+9446cce update to new IOCipher beta build for Android 7
+ada00bd tweak the support for chat state typing indicators
+76eb3c6 only show this warning for a certain period of time
+294d254 remote unused library
+c5bef4e tweak color of discover tab text
+67dc9b0 Fixes #154: add Trust On First Use and Verification Warning The first time you encounter a contact and their OTR key, there will be no warning. If the key changes, the user will be warned and prompted to verify it on the profile screen. This is a work in progress fix, with a few more user expereince tweaks to come.
+bdcb7a2 add new "Zom Services" string
+ca0853d udpate the Discover tab
+e68f883 fixes #157 with new buddhist sticker pack
+c42371e Merge branch 'master' of github.com:zom/Zom-Android
+49c46dd update build to 1501933
+fd415d4 add typing indicator chatstatus support
+65e3859 remnaning related work for this next release
+a406bb1 delete random pgp sig files in repo
+431ff3c update build.gradle spacing
+4bec61a ignore pgp sigs
+90703cc store presence created time for "last seen" support coming soon
+128cdcc removed from legacy
+25b323b show prominent verify button if needed
+dc9b864 update to support multi-color letteravatars using material design
+abf59a2 add new strings for security verification and lock
+dc5765d add new reset lock menu option
+8455e87 Add support for typing indicators to indicate active state
+8c59464 make add friend dialog fullscreen
+bcbfc46 Add app lock reset passphrase option
+38bb283 Merge pull request #158 from eighthave/master
+a0aa3a0 include fdroid metadata for building with `fdroid build`
+c309744 update for build 932
+e62850f update to gradle 1501932
+3a5fd08 tweaked icon size a bit more
+c63e431 final layout of add contact dialog
+7888dc3 small UI tweaks
+9e9c4f8 fix avatar by camera not working
+83a538f fix color setting support
+
 15.0.1.931 (1501921) / 21 Sept 2016 / f772bda
 
 3af5cf8 update tibetan translations
