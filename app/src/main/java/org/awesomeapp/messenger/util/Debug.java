@@ -12,11 +12,16 @@ import java.util.TimeZone;
 
 import android.content.Context;
 import java.io.PrintWriter;
+import java.util.logging.Handler;
 import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 
 import org.apache.commons.io.output.StringBuilderWriter;
 
 import android.os.StrictMode;
+import android.util.Log;
 
 import static org.jivesoftware.smack.util.Async.ThrowingRunnable.LOGGER;
 
@@ -96,16 +101,19 @@ public class Debug {
     public static void onAppStart() {
         // Same StrictMode policy
         onConnectionStart();
+
+        AndroidLoggingHandler.reset(new AndroidLoggingHandler());
+
+        if (DEBUG_ENABLED)
+            LOGGER.setLevel(Level.ALL);
+        else
+            LOGGER.setLevel(Level.OFF);
     }
 
     public static void onServiceStart() {
         if (DEBUGGER_ATTACH_ENABLED)
             android.os.Debug.waitForDebugger();
 
-        if (DEBUG_ENABLED)
-            LOGGER.setLevel(Level.ALL);
-        else
-            LOGGER.setLevel(Level.OFF);
     }
 
     public static void onHeartbeat() {
@@ -133,4 +141,6 @@ public class Debug {
             throw new IllegalStateException("service throwable: " + writer.getBuilder().toString());
         }
     }
+
+
 }
