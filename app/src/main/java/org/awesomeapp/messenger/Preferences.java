@@ -8,6 +8,8 @@ import android.text.TextUtils;
 
 import org.awesomeapp.messenger.util.Languages;
 
+import java.util.Locale;
+
 import im.zom.messenger.R;
 
 
@@ -35,7 +37,7 @@ public class Preferences {
             OTR_MODE_REQUESTED,
             OTR_MODE_DISABLED
     };
-    public static final String DEFAULT_LANGUAGE = null;
+    public static final String DEFAULT_LANGUAGE = Locale.getDefault().getLanguage();
     public static final String DEFAULT_OTR_MODE = OTR_MODE_AUTO;
     public static final String DEFAULT_NOTIFICATION_RINGTONE_URI = "content://settings/system/notification_sound";
     public static final int DEFAULT_HEARTBEAT_INTERVAL = 1;

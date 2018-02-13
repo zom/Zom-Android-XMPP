@@ -80,6 +80,7 @@ public class Languages {
                     || locale.equals(Locale.ENGLISH))
                 localeSet.add(locale);
         }
+
         for (Locale locale : localeSet) {
             if (locale.equals(TIBETAN)) {
                 // include English name for devices without Tibetan font support
