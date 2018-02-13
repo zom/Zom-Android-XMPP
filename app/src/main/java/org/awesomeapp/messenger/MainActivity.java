@@ -344,10 +344,9 @@ public class MainActivity extends BaseActivity implements IConnectionListener {
 
         handleIntent();
 
-
         if (mApp.getDefaultAccountId() == -1)
         {
-            startActivity(new Intent(this,OnboardingActivity.class));
+            startActivity(new Intent(this,RouterActivity.class));
         }
         else {
             if (mConn == null) {
