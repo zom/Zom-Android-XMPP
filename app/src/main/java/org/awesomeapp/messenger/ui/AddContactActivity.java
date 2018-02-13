@@ -343,9 +343,10 @@ public class AddContactActivity extends BaseActivity {
     }
 
     void inviteBuddies() {
-        Rfc822Token[] recipients = Rfc822Tokenizer.tokenize(mNewAddress.getText());
 
         Pattern pattern = Pattern.compile(EMAIL_PATTERN);
+
+        Rfc822Token[] recipients = Rfc822Tokenizer.tokenize(mNewAddress.getText());
 
         boolean foundOne = false;
 
@@ -367,7 +368,28 @@ public class AddContactActivity extends BaseActivity {
             setResult(RESULT_OK, intent);
             finish();
         }
+        else
+        {
 
+            String inviteAddress = mNewAddress.getText().toString();
+            String domain = mApp.getDefaultUsername().split("@")[1];
+
+            inviteAddress += "@" + domain;
+
+            if (pattern.matcher(inviteAddress).matches())
+            {
+
+                new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).execute(inviteAddress, null, null);
+                Intent intent = new Intent();
+                intent.putExtra(ContactsPickerActivity.EXTRA_RESULT_USERNAME,inviteAddress);
+                intent.putExtra(ContactsPickerActivity.EXTRA_RESULT_PROVIDER, mApp.getDefaultProviderId());
+                intent.putExtra(ContactsPickerActivity.EXTRA_RESULT_ACCOUNT, mApp.getDefaultAccountId());
+
+                setResult(RESULT_OK, intent);
+                finish();
+            }
+
+        }
 
 
     }
