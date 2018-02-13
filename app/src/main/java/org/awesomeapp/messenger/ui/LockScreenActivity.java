@@ -118,6 +118,10 @@ public class LockScreenActivity extends BaseActivity implements ICacheWordSubscr
             {
                 changePassphrase();
             }
+            else
+        {
+            promptPassphrase();
+        }
 
 
         //not set color
@@ -135,14 +139,14 @@ public class LockScreenActivity extends BaseActivity implements ICacheWordSubscr
     @Override
     protected void onPause() {
         super.onPause();
-        mCacheWord.detach();
+     //   mCacheWord.detach();
 
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mCacheWord.reattach();
+     //   mCacheWord.reattach();
 
         getSupportActionBar().hide();
 
