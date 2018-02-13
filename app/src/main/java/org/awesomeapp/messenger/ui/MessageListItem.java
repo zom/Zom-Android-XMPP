@@ -171,12 +171,12 @@ public class MessageListItem extends FrameLayout {
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
 
-
+        /**
         if (mHolder.mAudioWife != null)
         {
             mHolder.mAudioWife.release();
 
-        }
+        }**/
 
     }
 
@@ -458,8 +458,11 @@ public class MessageListItem extends FrameLayout {
 
     }
 
-    private void showAudioPlayer (String mimeType, Uri mediaUri, int id, MessageViewHolder holder, LayoutInflater inflater) throws Exception
+    private void showAudioPlayer (String mimeType, Uri newMediaUri, int id, MessageViewHolder holder, LayoutInflater inflater) throws Exception
     {
+        if (this.mediaUri != null && this.mediaUri.equals(newMediaUri))
+            return;
+
         /* Guess the MIME type in case we received a file that we can display or play*/
         if (TextUtils.isEmpty(mimeType) || mimeType.startsWith("application")) {
             String guessed = URLConnection.guessContentTypeFromName(mediaUri.toString());
@@ -471,7 +474,7 @@ public class MessageListItem extends FrameLayout {
             }
         }
 
-        this.mediaUri = mediaUri;
+        this.mediaUri = newMediaUri;
         this.mimeType = mimeType;
 
         mHolder.mTextViewForMessages.setText("");
