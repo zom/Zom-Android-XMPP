@@ -491,7 +491,7 @@ public class StatusBarNotifier {
     {
         if (mAudioManager == null)
             mAudioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
-        
+
         int mode = mAudioManager.getRingerMode();
 
         switch (mode) {
