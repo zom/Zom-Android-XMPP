@@ -44,14 +44,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
+import android.widget.Toast;
 
 import static org.awesomeapp.messenger.ImApp.NOTIFICATION_CHANNEL_ID_MESSAGE;
 
@@ -391,7 +394,7 @@ public class StatusBarNotifier {
 
             }
 
-            if (Preferences.getNotificationVibrate())
+            if (Preferences.getNotificationVibrate() && isVibrateOn())
             {
 
                 // play vibration
@@ -482,4 +485,30 @@ public class StatusBarNotifier {
     public static String html2text(String html) {
         return Jsoup.parse(html).text();
     }**/
+    AudioManager mAudioManager;
+
+    private boolean isVibrateOn ()
+    {
+        if (mAudioManager == null)
+            mAudioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
+        
+        int mode = mAudioManager.getRingerMode();
+
+        switch (mode) {
+            case AudioManager.RINGER_MODE_NORMAL:
+                if ((1 == Settings.System.getInt(mContext.getContentResolver(), Settings.System.VIBRATE_WHEN_RINGING, 0))) {
+                    return true;
+                } else {
+                    return false;
+                }
+
+            case AudioManager.RINGER_MODE_SILENT:
+                return false;
+
+            case AudioManager.RINGER_MODE_VIBRATE:
+                return true;
+        }
+
+        return false;
+    }
 }

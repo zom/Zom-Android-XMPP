@@ -2,6 +2,7 @@ package org.awesomeapp.messenger.util;
 
 import android.app.Service;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
@@ -49,9 +50,10 @@ public class SoundService extends Service {
             return;
         }
 
-        // play sound
+        // play ringer sound
         if (mMediaPlayer == null) {
             mMediaPlayer = new MediaPlayer();
+            mMediaPlayer.setAudioStreamType(AudioManager.STREAM_NOTIFICATION);
             mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
                 public void onPrepared(MediaPlayer mp) {
