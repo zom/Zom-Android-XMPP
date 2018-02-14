@@ -273,9 +273,9 @@ public class XmppConnection extends ImConnection {
 
     private HashMap<String, String> qAvatar = new HashMap <>();
 
-    private ConcurrentLinkedQueue<org.jivesoftware.smack.packet.Presence> qPresence = new ConcurrentLinkedQueue<org.jivesoftware.smack.packet.Presence>();
-    private ConcurrentLinkedQueue<org.jivesoftware.smack.packet.Stanza> qPacket = new ConcurrentLinkedQueue<org.jivesoftware.smack.packet.Stanza>();
-    private ConcurrentLinkedQueue<Contact> qNewContact = new ConcurrentLinkedQueue<Contact>();
+    private LinkedBlockingQueue<org.jivesoftware.smack.packet.Presence> qPresence = new LinkedBlockingQueue<org.jivesoftware.smack.packet.Presence>();
+    private LinkedBlockingQueue<org.jivesoftware.smack.packet.Stanza> qPacket = new LinkedBlockingQueue<org.jivesoftware.smack.packet.Stanza>();
+    private LinkedBlockingQueue<Contact> qNewContact = new LinkedBlockingQueue<Contact>();
 
     private final static String DEFAULT_CONFERENCE_SERVER = "conference.zom.im";
 
