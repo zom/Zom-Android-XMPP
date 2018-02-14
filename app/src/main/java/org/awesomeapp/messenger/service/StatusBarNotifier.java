@@ -106,7 +106,7 @@ public class StatusBarNotifier {
         intent.setAction(Intent.ACTION_VIEW);
         intent.setDataAndType(ContentUris.withAppendedId(Imps.Chats.CONTENT_URI, chatId),Imps.Chats.CONTENT_ITEM_TYPE);
         intent.addCategory(ImApp.IMPS_CATEGORY);
-        notify(username, title, snippet, msg, providerId, accountId, intent, lightWeightNotify, R.drawable.ic_discuss, avatar);
+        notify(username, title, snippet, msg, providerId, accountId, intent, lightWeightNotify, R.drawable.ic_discuss, avatar, true);
     }
 
     public void notifyGroupChat(long providerId, long accountId, long chatId, String remoteAddress, String groupname,
@@ -119,13 +119,13 @@ public class StatusBarNotifier {
         intent.setAction(Intent.ACTION_VIEW);
         intent.setDataAndType(ContentUris.withAppendedId(Imps.Chats.CONTENT_URI, chatId),Imps.Chats.CONTENT_ITEM_TYPE);
         intent.addCategory(ImApp.IMPS_CATEGORY);
-        notify(remoteAddress, groupname, snippet, nickname + ": " + msg, providerId, accountId, intent, lightWeightNotify, R.drawable.ic_discuss, avatar);
+        notify(remoteAddress, groupname, snippet, nickname + ": " + msg, providerId, accountId, intent, lightWeightNotify, R.drawable.ic_discuss, avatar, true);
     }
 
     public void notifyError(String username, String error) {
 
         Intent intent = getDefaultIntent(-1,-1);
-        notify(username, error, error, error, -1, -1, intent, true, R.drawable.alerts_and_states_error);
+        notify(username, error, error, error, -1, -1, intent, true, R.drawable.alerts_and_states_error, false);
     }
 
     public void notifySubscriptionRequest(long providerId, long accountId, long contactId,
@@ -142,7 +142,7 @@ public class StatusBarNotifier {
         intent.putExtra(ImServiceConstants.EXTRA_INTENT_FROM_ADDRESS, username);
         intent.setType(Imps.Contacts.CONTENT_ITEM_TYPE);
         intent.addCategory(ImApp.IMPS_CATEGORY);
-        notify(username, title, message, message, providerId, accountId, intent, false, R.drawable.ic_people_white_24dp);
+        notify(username, title, message, message, providerId, accountId, intent, false, R.drawable.ic_people_white_24dp, true);
     }
 
     public void notifySubscriptionApproved(Contact contact, long providerId, long accountId) {
@@ -159,7 +159,7 @@ public class StatusBarNotifier {
         intent.setType(Imps.Contacts.CONTENT_ITEM_TYPE);
         intent.addCategory(ImApp.IMPS_CATEGORY);
 
-        notify(contact.getAddress().getAddress(), title, message, message, providerId, accountId, intent, false, R.drawable.ic_people_white_24dp);
+        notify(contact.getAddress().getAddress(), title, message, message, providerId, accountId, intent, false, R.drawable.ic_people_white_24dp, false);
     }
 
 
@@ -171,7 +171,7 @@ public class StatusBarNotifier {
 
         String title = mContext.getString(R.string.notify_groupchat_label);
         String message = mContext.getString(R.string.group_chat_invite_notify_text, username);
-        notify(username, title, message, message, providerId, accountId, intent, false, R.drawable.group_chat);
+        notify(username, title, message, message, providerId, accountId, intent, false, R.drawable.group_chat, true);
     }
 
     public void notifyLoggedIn(long providerId, long accountId) {
@@ -181,7 +181,7 @@ public class StatusBarNotifier {
 
         String title = mContext.getString(R.string.app_name);
         String message = mContext.getString(R.string.presence_available);
-        notify(message, title, message, message, providerId, accountId, intent, false, R.drawable.ic_discuss);
+        notify(message, title, message, message, providerId, accountId, intent, false, R.drawable.ic_discuss, false);
     }
 
     public void notifyLocked() {
@@ -190,7 +190,7 @@ public class StatusBarNotifier {
 
         String title = mContext.getString(R.string.app_name);
         String message = mContext.getString(R.string.account_setup_pers_now_title);
-        notify(message, title, message, message, -1, -1, intent, true, R.drawable.ic_lock_outline_black_18dp);
+        notify(message, title, message, message, -1, -1, intent, true, R.drawable.ic_lock_outline_black_18dp,false);
 
 
     }
@@ -202,7 +202,7 @@ public class StatusBarNotifier {
 
         String title = mContext.getString(R.string.app_name);
         String message = mContext.getString(R.string.presence_offline);
-        notify(message, title, message, message, providerId, accountId, intent, false, R.drawable.alerts_and_states_error);
+        notify(message, title, message, message, providerId, accountId, intent, false, R.drawable.alerts_and_states_error, false);
     }
 
 
@@ -211,7 +211,7 @@ public class StatusBarNotifier {
      
         String message = mContext.getString(R.string.file_notify_text);
         Intent intent = SystemServices.Viewer.getViewIntent(uri, type);
-        notify(message, nickname, message, message, providerId, accountId, intent, false, R.drawable.ic_stat_status);
+        notify(message, nickname, message, message, providerId, accountId, intent, false, R.drawable.ic_stat_status, false);
     }
 
     public void dismissNotifications(long providerId) {
@@ -240,7 +240,7 @@ public class StatusBarNotifier {
     }
 
     public void notify(String title, String tickerText, String message,
-                        Intent intent, boolean lightWeightNotify) {
+                        Intent intent, boolean lightWeightNotify, boolean doVibrateSound) {
 
         intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP|Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
@@ -249,19 +249,19 @@ public class StatusBarNotifier {
             info.setInfo("", title, message, null, intent);
 
         mNotificationManager.notify(info.computeNotificationId(),
-                info.createNotification(tickerText, lightWeightNotify, R.drawable.ic_stat_status, null, intent));
+                info.createNotification(tickerText, lightWeightNotify, R.drawable.ic_stat_status, null, intent,doVibrateSound));
 
 
     }
 
     private void notify(String sender, String title, String tickerText, String message,
-                        long providerId, long accountId, Intent intent, boolean lightWeightNotify, int iconSmall) {
+                        long providerId, long accountId, Intent intent, boolean lightWeightNotify, int iconSmall, boolean doVibrateSound) {
 
-        notify(sender,title,tickerText,message,providerId,accountId,intent,lightWeightNotify,iconSmall,null);
+        notify(sender,title,tickerText,message,providerId,accountId,intent,lightWeightNotify,iconSmall,null, doVibrateSound);
     }
 
     private void notify(String sender, String title, String tickerText, String message,
-                        long providerId, long accountId, Intent intent, boolean lightWeightNotify, int iconSmall, Bitmap iconLarge) {
+                        long providerId, long accountId, Intent intent, boolean lightWeightNotify, int iconSmall, Bitmap iconLarge, boolean doVibrateSound) {
 
         intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP|Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
@@ -297,7 +297,7 @@ public class StatusBarNotifier {
         }
 
         mNotificationManager.notify(info.computeNotificationId(),
-                info.createNotification(tickerText, lightWeightNotify, iconSmall, iconLarge, intent));
+                info.createNotification(tickerText, lightWeightNotify, iconSmall, iconLarge, intent, doVibrateSound));
 
 
 
@@ -371,7 +371,7 @@ public class StatusBarNotifier {
         }
 
 
-        public Notification createNotification(String tickerText, boolean lightWeightNotify, int icon, Bitmap largeIcon, Intent intent) {
+        public Notification createNotification(String tickerText, boolean lightWeightNotify, int icon, Bitmap largeIcon, Intent intent, boolean doNotifyVibrateSound) {
             NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext,ImApp.NOTIFICATION_CHANNEL_ID_MESSAGE);
 
             builder
@@ -384,33 +384,36 @@ public class StatusBarNotifier {
                 .setContentIntent(PendingIntent.getActivity(mContext, UNIQUE_INT_PER_CALL++, intent, PendingIntent.FLAG_UPDATE_CURRENT))
                 .setAutoCancel(true);
 
-            if (Preferences.getNotificationSound()) {
+            if (doNotifyVibrateSound) {
+                if (Preferences.getNotificationSound()) {
 
-                // play sound
-                Intent serviceIntent = new Intent(mContext, SoundService.class);
-                serviceIntent.setAction("ACTION_START_PLAYBACK");
-                serviceIntent.putExtra("SOUND_URI", Preferences.getNotificationRingtoneUri().toString());
-                mContext.startService(serviceIntent);
-
-            }
-
-            if (Preferences.getNotificationVibrate() && isVibrateOn())
-            {
-
-                // play vibration
-                if (mVibrator == null) {
-                    mVibrator = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        mVibeEffect = VibrationEffect.createWaveform(VIBRATION_TIMINGS,-1);
+                    try {
+                        // play sound
+                        Intent serviceIntent = new Intent(mContext, SoundService.class);
+                        serviceIntent.setAction("ACTION_START_PLAYBACK");
+                        serviceIntent.putExtra("SOUND_URI", Preferences.getNotificationRingtoneUri().toString());
+                        mContext.startService(serviceIntent);
+                    } catch (java.lang.IllegalStateException e) {
+                        //error can't start services in the background
                     }
                 }
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                    mVibrator.vibrate(mVibeEffect);
-                else
-                    mVibrator.vibrate(VIBRATE_PATTERN,-1);
+                if (Preferences.getNotificationVibrate() && isVibrateOn()) {
 
+                    // play vibration
+                    if (mVibrator == null) {
+                        mVibrator = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            mVibeEffect = VibrationEffect.createWaveform(VIBRATION_TIMINGS, -1);
+                        }
+                    }
 
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                        mVibrator.vibrate(mVibeEffect);
+                    else
+                        mVibrator.vibrate(VIBRATE_PATTERN, -1);
+
+                }
             }
 
             if (!TextUtils.isEmpty(mBigMessage))
