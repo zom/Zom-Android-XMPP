@@ -71,6 +71,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/ic_launcher_name"
         android:theme="@style/AppTheme"
+        android:largeHeap="true"
         tools:replace="android:icon,android:allowBackup,android:label"
         >
         <activity
