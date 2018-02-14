@@ -6,8 +6,10 @@ package org.awesomeapp.messenger.util;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Environment;
+import android.support.media.ExifInterface;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -283,6 +285,8 @@ public class SecureMediaStore {
         else
         {
             targetPath += ".jpg";
+
+
         }
 
         //load lower-res bitmap
@@ -307,6 +311,7 @@ public class SecureMediaStore {
     public static Bitmap getThumbnailFile(Context context, Uri uri, int thumbnailSize) throws IOException {
 
         InputStream is = context.getContentResolver().openInputStream(uri);
+
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         options.inInputShareable = true;
@@ -327,8 +332,23 @@ public class SecureMediaStore {
         opts.inSampleSize = originalSize / thumbnailSize;
 
         Bitmap scaledBitmap = BitmapFactory.decodeStream(is, null, opts);
-
         is.close();
+
+
+        ExifInterface exif = new ExifInterface(context.getContentResolver().openInputStream(uri));
+        int orientationType = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+        int orientationD  = 0;
+        if (orientationType == ExifInterface.ORIENTATION_ROTATE_90)
+            orientationD = 90;
+        else if (orientationType == ExifInterface.ORIENTATION_ROTATE_180)
+            orientationD = 180;
+        else if (orientationType == ExifInterface.ORIENTATION_ROTATE_270)
+            orientationD = 270;
+
+        if (orientationD != 0)
+            scaledBitmap = rotateBitmap(scaledBitmap, orientationD);
+
+
         return scaledBitmap;
     }
 
@@ -476,5 +496,34 @@ public class SecureMediaStore {
         } while(file.exists());
 
         return file;
+    }
+
+    public static int getImageOrientation(String imagePath) {
+        int rotate = 0;
+        try {
+            ExifInterface exif = new ExifInterface(imagePath);
+            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
+            switch (orientation) {
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    rotate = 270;
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    rotate = 180;
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    rotate = 90;
+                    break;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return rotate;
+    }
+
+    public static Bitmap rotateBitmap(Bitmap bitmap, int rotate) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(rotate);
+        Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+        return rotatedBitmap;
     }
 }
