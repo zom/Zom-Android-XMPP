@@ -254,7 +254,6 @@ public class MainActivity extends BaseActivity implements IConnectionListener {
 
         applyStyle();
 
-        onResume();
     }
 
     private void installRingtones ()

@@ -153,12 +153,18 @@ public class ConversationListFragment extends Fragment {
         Uri.Builder builder = baseUri.buildUpon();
         mUri = builder.build();
 
-        mLoaderManager = getLoaderManager();
-        mLoaderCallbacks = new MyLoaderCallbacks();
-        mLoaderManager.initLoader(mLoaderId, null, mLoaderCallbacks);
+        if (mLoaderManager == null || mAdapter == null) {
+            mLoaderManager = getLoaderManager();
+            mLoaderCallbacks = new MyLoaderCallbacks();
+            mLoaderManager.initLoader(mLoaderId, null, mLoaderCallbacks);
 
-        Cursor cursor = null;
-        mAdapter = new ConversationListRecyclerViewAdapter(getActivity(),cursor);
+            Cursor cursor = null;
+            mAdapter = new ConversationListRecyclerViewAdapter(getActivity(), cursor);
+        }
+        else
+        {
+            mRecView.setAdapter(mAdapter);
+        }
 
         // init swipe to dismiss logic
 
