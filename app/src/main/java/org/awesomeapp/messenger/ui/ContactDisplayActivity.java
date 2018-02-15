@@ -330,7 +330,7 @@ public class ContactDisplayActivity extends BaseActivity {
 
     public void startChat ()
     {
-        if (mConn == null || mContactId == -1)
+        if (mConn == null)
             return;
 
         try {
@@ -343,20 +343,37 @@ public class ContactDisplayActivity extends BaseActivity {
                         @Override
                         protected void onPostExecute(Long chatId) {
                             super.onPostExecute(chatId);
+
+                            if (mContactId == -1) {
+                                Intent intent = new Intent(ContactDisplayActivity.this, ConversationDetailActivity.class);
+                                intent.putExtra("id", chatId);
+
+                                startActivity(intent);
+                                finish();
+                            }
                         }
                     }.executeOnExecutor(ImApp.sThreadPoolExecutor,new Contact(new XmppAddress(mUsername)));
                  //   Toast.makeText(this, getString(R.string.message_waiting_for_friend), Toast.LENGTH_LONG).show();
+                }
+                else
+                {
+                    Intent intent = new Intent(ContactDisplayActivity.this, ConversationDetailActivity.class);
+                    intent.putExtra("id", session.getId());
+                    startActivity(intent);
+                    finish();
+
                 }
             }
         }
         catch (RemoteException re){}
 
-        Intent intent = new Intent(this, ConversationDetailActivity.class);
-        intent.putExtra("id", mContactId);
+        if (mContactId != -1) {
+            Intent intent = new Intent(ContactDisplayActivity.this, ConversationDetailActivity.class);
+            intent.putExtra("id", mContactId);
 
-        startActivity(intent);
-        finish();
-
+            startActivity(intent);
+            finish();
+        }
 
     }
 
