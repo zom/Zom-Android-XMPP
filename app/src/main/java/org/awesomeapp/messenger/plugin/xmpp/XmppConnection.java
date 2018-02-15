@@ -299,6 +299,13 @@ public class XmppConnection extends ImConnection {
 
         XmppStreamHandler.addExtensionProviders();
 
+        mChatGroupManager = new XmppChatGroupManager();
+
+        mSessionManager = new XmppChatSessionManager();
+
+        mContactListManager = new XmppContactListManager();
+
+
     }
 
     public void initUser(long providerId, long accountId) throws ImException
@@ -587,10 +594,7 @@ public class XmppConnection extends ImConnection {
     private XmppChatGroupManager mChatGroupManager = null;
 
     @Override
-    public synchronized ChatGroupManager getChatGroupManager() {
-
-        if (mChatGroupManager == null)
-            mChatGroupManager = new XmppChatGroupManager();
+    public ChatGroupManager getChatGroupManager() {
 
         return mChatGroupManager;
     }
@@ -1340,22 +1344,14 @@ public class XmppConnection extends ImConnection {
 
     };
 
-
-
     @Override
-    public synchronized ChatSessionManager getChatSessionManager() {
-
-        if (mSessionManager == null)
-            mSessionManager = new XmppChatSessionManager();
+    public ChatSessionManager getChatSessionManager() {
 
         return mSessionManager;
     }
 
     @Override
-    public synchronized XmppContactListManager getContactListManager() {
-
-        if (mContactListManager == null)
-            mContactListManager = new XmppContactListManager();
+    public XmppContactListManager getContactListManager() {
 
         return mContactListManager;
     }
@@ -1621,15 +1617,9 @@ public class XmppConnection extends ImConnection {
 
     }
 
-    private synchronized Omemo getOmemo () throws Exception
+    private Omemo getOmemo () throws Exception
     {
-
-        if (mOmemoInstance == null && mConnection != null) {
-            initOmemo(mConnection);
-        }
-
         return mOmemoInstance;
-
     }
 
 
@@ -4360,7 +4350,7 @@ public class XmppConnection extends ImConnection {
         }
     }
 
-    private synchronized Contact handlePresenceChanged(org.jivesoftware.smack.packet.Presence presence) {
+    private Contact handlePresenceChanged(org.jivesoftware.smack.packet.Presence presence) {
 
         if (presence == null) //our presence isn't really valid
             return null;
