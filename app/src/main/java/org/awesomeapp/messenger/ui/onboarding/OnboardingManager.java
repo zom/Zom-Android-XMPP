@@ -1,6 +1,8 @@
 package org.awesomeapp.messenger.ui.onboarding;
 
+import org.awesomeapp.messenger.model.ImConnection;
 import org.awesomeapp.messenger.provider.Imps;
+import org.awesomeapp.messenger.service.IImConnection;
 import org.awesomeapp.messenger.ui.qr.QrScanActivity;
 import org.json.JSONArray;
 import org.json.JSONException;

@@ -310,9 +310,6 @@ public class AccountFragment extends Fragment {
 
                 if (!TextUtils.isEmpty(newPassword)) {
                     new ChangePasswordTask().execute(getAccountPassword(mProviderId),newPassword);
-
-
-                    // Do something with value!
                 }
             }
         });

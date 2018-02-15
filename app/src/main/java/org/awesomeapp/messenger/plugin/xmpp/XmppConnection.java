@@ -1431,7 +1431,7 @@ public class XmppConnection extends ImConnection {
 
         providerSettings.close();
 
-        do_login();
+        do_login_async();
 
 
     }
