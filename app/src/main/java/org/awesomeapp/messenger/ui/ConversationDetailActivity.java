@@ -190,9 +190,6 @@ public class ConversationDetailActivity extends BaseActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         applyStyleForToolbar();
 
-        Intent intent = getIntent();
-        processIntent(intent);
-
         collapseToolbar();
 
         getWindow().setSoftInputMode(
@@ -336,6 +333,9 @@ public class ConversationDetailActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
 
+        Intent intent = getIntent();
+        processIntent(intent);
+
         mConvoView.setSelected(true);
 
         IntentFilter regFilter = new IntentFilter();
@@ -393,6 +393,7 @@ public class ConversationDetailActivity extends BaseActivity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
 
+        setIntent(intent);
         processIntent(intent);
     }
 

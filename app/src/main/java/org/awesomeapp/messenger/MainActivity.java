@@ -341,7 +341,7 @@ public class MainActivity extends BaseActivity implements IConnectionListener {
         }
 
 
-        handleIntent();
+        handleIntent(getIntent());
 
         if (mApp.getDefaultAccountId() == -1)
         {
@@ -436,16 +436,13 @@ public class MainActivity extends BaseActivity implements IConnectionListener {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-
         setIntent(intent);
-
-        handleIntent();
+        handleIntent(intent);
     }
 
-    private void handleIntent ()
+    private void handleIntent (Intent intent)
     {
 
-        Intent intent = getIntent();
 
         if (intent != null)
         {
