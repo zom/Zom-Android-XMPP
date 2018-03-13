@@ -39,6 +39,7 @@ import org.awesomeapp.messenger.Preferences;
 import org.awesomeapp.messenger.service.RemoteImService;
 import org.awesomeapp.messenger.ui.PanicSetupActivity;
 import org.awesomeapp.messenger.util.Languages;
+import org.jivesoftware.smackx.bookmarks.BookmarkManager;
 
 import java.util.ArrayList;
 
@@ -202,6 +203,17 @@ public class SettingActivity extends PreferenceActivity {
         });
 
         mForegroundService = (CheckBoxPreference) findPreference("pref_foreground_enable");
+        mForegroundService.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object o) {
+
+                ((ImApp)getApplication()).forceStopImService();
+
+                return true;
+            }
+        });
+
+
         mHeartbeatInterval = (EditTextPreference) findPreference("pref_heartbeat_interval");
 
         findPreference("prefAdvancedNetworking").setOnPreferenceClickListener(new OnPreferenceClickListener() {
