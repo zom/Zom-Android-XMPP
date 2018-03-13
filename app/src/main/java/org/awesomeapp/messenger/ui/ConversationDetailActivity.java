@@ -297,13 +297,7 @@ public class ConversationDetailActivity extends BaseActivity {
 
         mApp = (ImApp)getApplication();
 
-        try {
-            mChatId = intent.getLongExtra("id", -1);
-        }
-        catch (ClassCastException ce)
-        {
-            mChatId = intent.getLongExtra("id", -1);
-        }
+        mChatId = intent.getLongExtra("id", -1);
 
         mAddress = intent.getStringExtra("address");
         mNickname = intent.getStringExtra("nickname");
@@ -395,6 +389,13 @@ public class ConversationDetailActivity extends BaseActivity {
 
         setIntent(intent);
         processIntent(intent);
+
+        // Set last read date now!
+        if (mChatId != -1) {
+            ContentValues values = new ContentValues(1);
+            values.put(Imps.Chats.LAST_READ_DATE, System.currentTimeMillis());
+            getContentResolver().update(ContentUris.withAppendedId(Imps.Chats.CONTENT_URI, mChatId), values, null, null);
+        }
     }
 
     @Override
