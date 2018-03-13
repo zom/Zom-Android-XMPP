@@ -268,8 +268,9 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
         HeartbeatService.startBeating(getApplicationContext());
 
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-        startForeground(notifyId, getForegroundNotification());
+        if (Preferences.getUseForegroundPriority()) {
+            startForeground(notifyId, getForegroundNotification());
+        }
 
         installTransports(this);
 
