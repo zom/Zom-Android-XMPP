@@ -22,7 +22,7 @@ android {
 
     defaultConfig {
         applicationId 'im.zom.messenger'
-        versionCode 1540028
+        versionCode 1550011
         versionName getVersionName()
         archivesBaseName = "Zom-$versionName"
         minSdkVersion project.ext.minSdkVersion
