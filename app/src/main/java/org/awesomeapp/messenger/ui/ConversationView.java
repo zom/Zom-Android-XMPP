@@ -527,6 +527,13 @@ public class ConversationView {
         public boolean onIncomingMessage(IChatSession ses,
                 org.awesomeapp.messenger.model.Message msg) {
 
+            try {
+                if (getChatSession().getId() != ses.getId())
+                    return false;
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+
             return mIsSelected;
         }
 
@@ -540,16 +547,34 @@ public class ConversationView {
 
         @Override
         public void onSendMessageError(IChatSession ses,
+
                 org.awesomeapp.messenger.model.Message msg, ImErrorInfo error) {
+
+
+            try {
+                if (getChatSession().getId() != ses.getId())
+                    return;
+            }
+            catch (RemoteException re){}
+
         }
 
         @Override
         public void onIncomingReceipt(IChatSession ses, String packetId) throws RemoteException {
+
+            if (getChatSession().getId() != ses.getId())
+                return;
+
             scheduleRequery(DEFAULT_QUERY_INTERVAL);
         }
 
         @Override
         public void onStatusChanged(IChatSession ses) throws RemoteException {
+
+
+            if (getChatSession().getId() != ses.getId())
+                return;
+
             scheduleRequery(DEFAULT_QUERY_INTERVAL);
 
         }
@@ -591,6 +616,7 @@ public class ConversationView {
         public void onIncomingFileTransferError(String file, String err) throws RemoteException {
 
 
+
             android.os.Message message = android.os.Message.obtain(null, SHOW_DATA_ERROR, (int) (mProviderId >> 32),
                     (int) mProviderId, -1);
             message.getData().putString("file", file);
@@ -606,7 +632,10 @@ public class ConversationView {
         public void onContactTyping(IChatSession ses, Contact contact, boolean isTyping) throws RemoteException {
             super.onContactTyping(ses, contact, isTyping);
 
-            if (contact.getPresence() != null) {
+            if (getChatSession().getId() != ses.getId())
+                return;
+
+                if (contact.getPresence() != null) {
                 mPresenceStatus = contact.getPresence().getStatus();
                 mLastSeen = contact.getPresence().getLastSeen();
             }
@@ -738,15 +767,16 @@ public class ConversationView {
 
         public void onContactChange(int type, IContactList list, Contact contact) {
 
-           if (contact != null && contact.getPresence() != null) {
-               mPresenceStatus = contact.getPresence().getStatus();
+            if (contact.getAddress().getBareAddress().equals(mRemoteAddress)) {
 
-           }
-            mLastSeen = new Date();
+                if (contact != null && contact.getPresence() != null) {
+                    mPresenceStatus = contact.getPresence().getStatus();
 
-            mActivity.updateLastSeen(mLastSeen);
+                }
+                mLastSeen = new Date();
+                mActivity.updateLastSeen(mLastSeen);
 
-
+            }
         }
 
         public void onContactError(int errorType, ImErrorInfo error, String listName,
