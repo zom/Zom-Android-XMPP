@@ -111,24 +111,28 @@ dependencies {
 
     compile fileTree(include: '*.jar', dir: 'libs')
 
-    compile 'com.android.support:multidex:1.0.2'
-    compile 'net.zetetic:android-database-sqlcipher:3.5.4@aar'
     compile project(':otr4jandroid')
     compile project(':tibetanTextLibrary')
+
+    compile project.ext.appcompat
+    compile 'com.android.support:multidex:1.0.3'
+    compile 'com.android.support:design:27.1.0'
+    compile 'com.android.support:recyclerview-v7:27.1.0'
+    compile 'com.android.support:support-v4:27.1.0'
+    compile "com.android.support:exifinterface:27.1.0"
+
+    compile 'net.zetetic:android-database-sqlcipher:3.5.4@aar'
     compile 'com.google.zxing:core:3.3.0'
     compile 'commons-codec:commons-codec:1.9'
     compile 'commons-io:commons-io:2.4'
     compile 'org.thoughtcrime.ssl.pinning:AndroidPinning:1.0.0'
-    compile 'com.android.support:design:27.0.2'
-    compile 'com.android.support:recyclerview-v7:27.0.2'
-    compile 'com.android.support:support-v4:27.0.2'
-    compile project.ext.appcompat
- //   compile 'info.guardianproject.cacheword:cachewordlib:0.1.1'
+
     compile 'info.guardianproject.iocipher:IOCipher:0.4'
     compile 'info.guardianproject.netcipher:netcipher:2.0.0-alpha1'
     compile 'info.guardianproject.netcipher:netcipher-httpclient:2.0.0-alpha1'
-    compile 'cz.msebera.android:httpclient:4.4.1.2'
     compile 'info.guardianproject.panic:panic:0.5'
+
+    compile 'cz.msebera.android:httpclient:4.4.1.2'
     compile 'de.measite.minidns:minidns-hla:0.2.4'
 
     // https://mvnrepository.com/artifact/org.jxmpp/jxmpp-core
@@ -142,7 +146,7 @@ dependencies {
     compile 'org.whispersystems:curve25519-android:0.3.0'
 
     // https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java
-    compile 'com.google.protobuf:protobuf-java:3.0.0'
+    compile 'com.google.protobuf:protobuf-java:3.4.0'
 
     compile 'org.ocpsoft.prettytime:prettytime:4.0.0.Final'
     compile 'com.theartofdev.edmodo:android-image-cropper:2.0.0'
@@ -171,5 +175,4 @@ dependencies {
     compile group: 'com.google.code.gson', name: 'gson', version: '2.8.0'
     compile 'com.jrummyapps:android-shell:1.0.1'
 
-    compile "com.android.support:exifinterface:27.0.2"
 }
