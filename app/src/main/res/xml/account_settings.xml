@@ -72,9 +72,9 @@
 			android:summary="Proxy server host to connect to" />
 		<EditTextPreference android:key="pref_security_proxy_port"
 			android:title="Proxy Server Port"
-			android:summary="Proxy server port to connect to" />
-
-
+			android:summary="Proxy server port to connect to"
+			android:numeric="integer"
+			android:maxLength="5" />
 	</PreferenceCategory>
 
 </PreferenceScreen>
