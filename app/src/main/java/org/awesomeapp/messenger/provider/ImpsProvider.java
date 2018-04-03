@@ -99,7 +99,7 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
     private static final String ENCRYPTED_DATABASE_NAME = "impsenc.db";
     private static final String UNENCRYPTED_DATABASE_NAME = "imps.db";
 
-    private static final int DATABASE_VERSION = 112;
+    private static final int DATABASE_VERSION = 113;
 
     protected static final int MATCH_PROVIDERS = 1;
     protected static final int MATCH_PROVIDERS_BY_ID = 2;
@@ -684,8 +684,28 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
                 }
 **/
 
-                return;
-            case 1:
+                case 112:
+
+                    try {
+                        db.beginTransaction();
+
+                        Cursor c = db.query(TABLE_CHATS, null, null, null, null, null, null);
+                        if (c.getColumnIndex("use_encryption")==-1)
+                        {
+                            db.execSQL("ALTER TABLE " + TABLE_CHATS
+                                    + " ADD COLUMN use_encryption INTEGER;");
+                        }
+                        c.close();
+
+                        db.setTransactionSuccessful();
+                    } catch (Throwable ex) {
+                        LogCleaner.error(LOG_TAG, ex.getMessage(), ex);
+                    } finally {
+                        db.endTransaction();
+                    }
+                    return;
+
+                case 1:
                 if (newVersion <= 100) {
                     return;
                 }
@@ -861,7 +881,9 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
             buf.append("unsent_composed_message TEXT,"); // a composed, but not sent message
             buf.append("shortcut INTEGER,"); // which of 10 slots (if any) this chat occupies
             buf.append("chat_type INTEGER,"); // chat type for filtering
-            buf.append("last_read_date INTEGER);"); // in seconds
+            buf.append("last_read_date INTEGER,"); // in seconds
+            buf.append("use_encryption INTEGER);"); // in seconds
+
 
 
             // chat sessions, including single person chats and group chats

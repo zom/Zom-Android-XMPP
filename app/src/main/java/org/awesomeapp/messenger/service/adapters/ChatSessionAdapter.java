@@ -170,7 +170,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         }
 
         initMuted();
-        
+        initUseEncryption();
     }
 
     private void initOtrChatSession (ImEntity participant)
@@ -1097,6 +1097,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                     && msg.getType() == Imps.MessageType.INCOMING)
                 return false;
 
+
             if (Imps.messageExists(mContentResolver,msg.getID()))
                 return false;
 
@@ -1775,7 +1776,15 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
     public boolean useEncryption (boolean useEncryption)
     {
         mChatSession.setOmemoGroupEnabled(useEncryption);
-        return isEncrypted();
+        ContentValues values = new ContentValues();
+        values.put(Imps.Chats.USE_ENCRYPTION,useEncryption ? 1 : 0);
+        mContentResolver.update(mChatURI,values,null,null);
+        return getUseEncryption();
+    }
+
+    public boolean getUseEncryption ()
+    {
+        return mChatSession.getOmemoGroupEnabled();
     }
 
     public boolean isEncrypted ()
@@ -1873,6 +1882,21 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             c.close();
         }
         mIsMuted = type == Imps.ChatsColumns.CHAT_TYPE_MUTED;
+    }
+
+    private void initUseEncryption () {
+        boolean useEncryption = true;
+
+        String[] projection = {Imps.Chats.USE_ENCRYPTION};
+        Cursor c = mContentResolver.query(mChatURI, projection, null, null, null);
+        if (c != null) {
+            if (c.moveToFirst()) {
+                useEncryption = c.getInt(0) > 0;
+            }
+            c.close();
+        }
+
+        mChatSession.setOmemoGroupEnabled(useEncryption);
     }
 
     public String downloadMedia (String mediaLink, String msgId)

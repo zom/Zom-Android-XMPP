@@ -603,9 +603,9 @@ public class GroupDisplayActivity extends BaseActivity {
     boolean isGroupEncryptionEnabled () {
         try {
             if (mSession != null)
-                return mSession.isEncrypted();
+                return mSession.getUseEncryption();
             else
-                return true;
+                return false;
         }
         catch (RemoteException re)
         {

@@ -84,6 +84,7 @@ import org.jivesoftware.smackx.debugger.android.AndroidDebugger;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.disco.provider.DiscoverInfoProvider;
 import org.jivesoftware.smackx.disco.provider.DiscoverItemsProvider;
+import org.jivesoftware.smackx.eme.element.ExplicitMessageEncryptionElement;
 import org.jivesoftware.smackx.httpfileupload.HttpFileUploadManager;
 import org.jivesoftware.smackx.httpfileupload.UploadProgressListener;
 import org.jivesoftware.smackx.httpfileupload.UploadService;
@@ -2094,7 +2095,12 @@ public class XmppConnection extends ImConnection {
 
                 org.jivesoftware.smack.packet.Message smackMessage = (org.jivesoftware.smack.packet.Message) stanza;
 
-                handleMessage(smackMessage, false, true);
+                ExtensionElement ee = smackMessage.getExtension("eu.siacs.conversations.axolotl");
+
+                boolean hasOmemo = (ee != null);
+
+                if (!hasOmemo)
+                    handleMessage(smackMessage, hasOmemo, true);
 
                 String msg_xml = smackMessage.toXML().toString();
 
@@ -2318,7 +2324,7 @@ public class XmppConnection extends ImConnection {
         }
 
 
-        if (body == null) {
+        if (TextUtils.isEmpty(body)) {
             Collection<org.jivesoftware.smack.packet.Message.Body> mColl = smackMessage.getBodies();
             for (org.jivesoftware.smack.packet.Message.Body bodyPart : mColl) {
                 String msg = bodyPart.getMessage();
@@ -2335,7 +2341,7 @@ public class XmppConnection extends ImConnection {
         if (session != null) //not subscribed so don't do anything
         {
 
-            if (body != null && session != null) {
+            if ((!TextUtils.isEmpty(body)) && session != null) {
 
                 Message rec = new Message(body);
 

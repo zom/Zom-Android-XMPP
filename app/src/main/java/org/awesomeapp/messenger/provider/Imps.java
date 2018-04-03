@@ -1298,6 +1298,11 @@ public class Imps {
         int CHAT_TYPE_MUTED = 1;
         int CHAT_TYPE_ARCHIVED = 2;
 
+        /**
+         * This is to store whether to allow encryption or not per chat
+         */
+        String USE_ENCRYPTION = "use_encryption";
+
     }
 
     /** Contains ongoing chat sessions. */

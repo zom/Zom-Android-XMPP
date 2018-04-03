@@ -148,6 +148,7 @@ interface IChatSession {
      * request the use of encrypted messages
      **/
      boolean useEncryption (boolean useEncryption);
+     boolean getUseEncryption ();
 
     /**
      * Set the subject for a chat room
