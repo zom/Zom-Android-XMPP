@@ -1,11 +1,11 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
-  <string name="app_name_zom">众</string>
+  <string name="app_name_zom">Zom</string>
   <string name="create_an_account">创建一个帐户</string>
   <string name="create_id">创建一个 Zom ID</string>
   <string name="advanced">先进</string>
-  <string name="account_congrats">恭喜你，你可以准备使用zom</string>
-  <string name="account_congrats_details">您可以在个人简介页面上找到您的密码和帐户详细信息。</string>
+  <string name="account_congrats">恭喜，你可以准备使用 Zom 了！</string>
+  <string name="account_congrats_details">您可以在个人简介页面上找到您的密码和帐户的详细信息等。</string>
   <string name="invite_friends">添加朋友</string>
   <string name="invite_sms">短信</string>
   <string name="invite_share">分享</string>
@@ -15,28 +15,28 @@
   <string name="friends">朋友</string>
   <string name="add_friends">添加朋友</string>
   <string name="search_by_id">用帐号搜索</string>
-  <string name="invite_accepted">您已经成为众朋友</string>
+  <string name="invite_accepted">您已经成为 Zom 朋友</string>
   <string name="chats">通讯录</string>
   <string name="choose_friend">选择朋友</string>
   <string name="send_message">发送信息</string>
   <string name="push_to_talk">按住说话</string>
   <string name="recording_release">录音中… 放开手指以发送</string>
   <string name="recording_delete">录音中… 放开手指以取消发送</string>
-  <string name="swipe_up_delete">向上滑动去删除</string>
+  <string name="swipe_up_delete">向上滑动即可删除</string>
   <string name="create_group">删除群聊</string>
   <string name="members">成员</string>
   <string name="group_name">群聊名称</string>
   <string name="search_history">查找记录</string>
-  <string name="photo_gallery">相片流</string>
+  <string name="photo_gallery">相册</string>
   <string name="me_title">我</string>
   <string name="accounts">我的账户</string>
   <string name="select_avatar">选择或创建头像</string>
   <string name="delete_account">删除帐户</string>
   <string name="add_account_action">添加帐户</string>
-  <string name="choose_photos">从照片库中选择</string>
+  <string name="choose_photos">从图库中选择</string>
   <string name="choose_language">切换语言</string>
   <string name="welcome_to_zom">欢迎使用 众</string>
-  <string name="onboarding_generate">请创建一个  Zom 帐号，我们将为您生成安全密码。</string>
+  <string name="onboarding_generate">请创建一个 Zom 帐号，我们将为您生成安全密码。</string>
   <string name="grant_perms">您必须授予 Zom 使用摄像头的权限</string>
   <string name="menu_refresh">重新整理工作阶段</string>
   <string name="action_archived">存档</string>
@@ -44,9 +44,9 @@
   <string name="action_theme">更改主题</string>
   <string name="action_stickers">贴图分享</string>
   <string name="pref_block_screenshots_title">阻止截屏</string>
-  <string name="pref_block_screenshots_summary">阻止其他应用尝试截取此应用的屏幕</string>
+  <string name="pref_block_screenshots_summary">阻止其他应用尝试截取 Zom 的屏幕</string>
   <string name="pref_enable_tibetan_dictionary_title">启用藏语词典</string>
-  <string name="pref_enable_tibetan_dictionary_summary">如果存在，从传 Monlam Tibetan Dictionary 应用建议与藏语匹配的单词</string>
+  <string name="pref_enable_tibetan_dictionary_summary">如果已安装，从 Monlam Tibetan Dictionary 应用获取与藏语匹配的单词建议</string>
   <string name="color_category_title">自定义颜色</string>
   <string name="color_reset_title">重置颜色</string>
   <string name="color_reset_summary">将颜色重置为默认值</string>
@@ -58,15 +58,15 @@
   <string name="color_bg_summary">聊天背景和列表的颜色</string>
   <string name="menu_approve_friend">批准好友？</string>
   <string name="header_got_invited">收到邀请？</string>
-  <string name="action_tap_invite">点击你朋友所发送的邀请链接或扫描他们的QR码</string>
+  <string name="action_tap_invite">点击你朋友所发送的邀请链接或扫描他们的二维码</string>
   <string name="action_invite_new_friends">通过短信向您的朋友发送邀请链接或者通过任何应用转发</string>
-  <string name="not_verified">为了确保安全，请验证您朋友的安全身份。</string>
-  <string name="security_code">安全身份</string>
+  <string name="not_verified">为了确保安全，请验证你的朋友的身份码。</string>
+  <string name="security_code">身份码</string>
   <string name="reset_passphrase">复位锁</string>
-  <string name="action_services">众服务</string>
-  <string name="migrate_menu">迁移帐户</string>
+  <string name="action_services">Zom 服务</string>
+  <string name="migrate_menu">升级帐户</string>
   <string name="migrate_message">我已经升级我的账户，</string>
-  <string name="migrate_notification">你的账户快要过期了， 打开应用程序后升级。</string>
+  <string name="migrate_notification">你的账户快要过期了，打开应用程序以升级。</string>
   <string name="action_undo">撤消</string>
   <string name="message_upgrade">我们需要升级你的账户到一个新的服务器。  我们可以自动升级并提供最佳性能。</string>
   <string name="message_upgrade_more">我们需要升级你的账户到一个新的服务器。  我们可以自动升级并提供最佳性能。如果你是一个高级用户，你可以选择自己的服务器。</string>
@@ -74,14 +74,14 @@
   <string name="upgrade_action">即刻升级</string>
   <string name="upgrade_complete">升级完成。 等待你的朋友批准你升级的帐户。</string>
   <string name="upgrade_complete_action">完成</string>
-  <string name="upgrade_progress_action">正在工作中</string>
-  <string name="upgrade_failed">升级失败。请稍后再试。你还可以在账户设置菜单里选择“迁移账户”</string>
+  <string name="upgrade_progress_action">正在处理中…</string>
+  <string name="upgrade_failed">升级失败。请稍后再试。你还可以在账户设置菜单里选择“迁移账户”。</string>
   <string name="contact_migration_notice">你的朋友已经升级了。跟他们聊天</string>
   <string name="contact_migration_action">现在聊天</string>
   <string name="upgrade_old_chats">升级前的旧聊天记录会存储在此处</string>
   <string name="message_waiting_for_friend">正在等待你的朋友</string>
   <string name="message_archive">你的一些朋友正在已经升级他们的的账户。过期的账户会存储在此处。</string>
-  <string name="one_moment_please_privacy">请稍等！ 我们正在准备您的私人众。</string>
+  <string name="one_moment_please_privacy">请稍等！我们正在准备您的 Zom。</string>
   <string name="action_got_it">知道了</string>
   <string name="action_inbox">收件箱</string>
   <string name="action_active">在线</string>
@@ -95,23 +95,23 @@
   <string name="add_people">添加网友</string>
   <string name="is_already_in_your_group">%1$s 已经在你的圈里</string>
 
-  <string name="mtm_trust_anchor">服务器证书没有被签名</string>
-  <string name="mtm_cert_expired">The server certificate is expired.</string>
+  <string name="mtm_trust_anchor">此服务器的证书没有被签名。</string>
+  <string name="mtm_cert_expired">此服务器的证书已经过期。</string>
   <string name="mtm_accept_servername">是否接受不匹配的服务器名</string>
   <string name="mtm_hostname_mismatch">服务器不能给\"%s\"授权. 证书只对:有效</string>
 
-  <string name="mtm_connect_anyway">Do you want to connect anyway?</string>
+  <string name="mtm_connect_anyway">你想忽略证书问题并继续吗？（不推荐）</string>
   <string name="mtm_cert_details">证书详情</string>
 
-  <string name="mtm_decision_always">总是</string>
-  <string name="mtm_decision_once">一次</string>
-  <string name="mtm_decision_abort">放弃</string>
+  <string name="mtm_decision_always">永远</string>
+  <string name="mtm_decision_once">仅本次</string>
+  <string name="mtm_decision_abort">取消</string>
 
   <string name="mtm_notification">证书验证</string>
 
   <string name="bot_zomkyi_name">Zomkyi</string>
-  <string name="bot_zomkyi_desc">请问我关于Zom</string>
+  <string name="bot_zomkyi_desc">向我请教关于 Zom 的问题吧！</string>
   <string name="bot_quiz_name">Agu Denpa</string>
-  <string name="bot_quiz_desc">请参加我的测验</string>
+  <string name="bot_quiz_desc">欢迎来回答我的提问~</string>
 
 </resources>
