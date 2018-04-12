@@ -383,19 +383,16 @@ public class Imps {
 
         /** blocked contact. */
         int TYPE_BLOCKED = 3;
-        /**
-         * the contact is hidden. The client should hide this contact
-         * to the user.
-         */
-        int TYPE_HIDDEN = 4;
+
         /**
          * the contact is pinned. The client should always display this contact
          * to the user.
          */
         int TYPE_PINNED = 5;
 
-        int TYPE_HIDDEN_GROUP = 6;
-
+        int TYPE_MASK = 0xff;
+        int TYPE_FLAG_HIDDEN = 0x100;
+        int TYPE_FLAG_UNSEEN = 0x200;
 
         /** Contact subscription status <P>Type: INTEGER</P> */
         String SUBSCRIPTION_STATUS = "subscriptionStatus";

@@ -192,5 +192,8 @@
     <string name="stickers_buddhist">Buddhist</string>
     <string name="stickers_expressions">Expressions</string>
     <string name="stickers_olo_and_shimi"><![CDATA[Olo & Shimi]]></string>
+  <string name="room_invited">Someone invited you to the \´%s\´ group.</string>
+  <string name="room_join">Join</string>
+  <string name="room_dont_join">No thanks</string>
 
 </resources>

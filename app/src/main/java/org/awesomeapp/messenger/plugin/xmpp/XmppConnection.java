@@ -1697,7 +1697,7 @@ public class XmppConnection extends ImConnection {
                             ImEntity participant = findOrCreateParticipant(xa.getAddress(), true);
 
                             if (participant != null)
-                                session = mSessionManager.createChatSession(participant, false);
+                                session = mSessionManager.createChatSession(participant, true);
 
                             if (session != null)
                                 ((ChatGroup) session.getParticipant()).setName(muc.getSubject());
