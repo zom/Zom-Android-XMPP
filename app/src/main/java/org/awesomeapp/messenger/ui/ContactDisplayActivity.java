@@ -1,10 +1,14 @@
 package org.awesomeapp.messenger.ui;
 
 import android.app.AlertDialog;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.RemoteException;
@@ -18,6 +22,9 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -30,6 +37,7 @@ import org.awesomeapp.messenger.crypto.IOtrChatSession;
 import org.awesomeapp.messenger.crypto.omemo.Omemo;
 import org.awesomeapp.messenger.crypto.otr.OtrChatManager;
 import org.awesomeapp.messenger.model.Contact;
+import org.awesomeapp.messenger.model.ImConnection;
 import org.awesomeapp.messenger.model.ImErrorInfo;
 import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
 import org.awesomeapp.messenger.provider.Imps;
@@ -37,11 +45,13 @@ import org.awesomeapp.messenger.service.IChatSession;
 import org.awesomeapp.messenger.service.IChatSessionManager;
 import org.awesomeapp.messenger.service.IContactListManager;
 import org.awesomeapp.messenger.service.IImConnection;
+import org.awesomeapp.messenger.tasks.AddContactAsyncTask;
 import org.awesomeapp.messenger.tasks.ChatSessionInitTask;
 import org.awesomeapp.messenger.ui.legacy.DatabaseUtils;
 import org.awesomeapp.messenger.ui.onboarding.OnboardingManager;
 import org.awesomeapp.messenger.ui.qr.QrDisplayActivity;
 import org.awesomeapp.messenger.ui.qr.QrShareAsyncTask;
+import org.ironrabbit.type.CustomTypefaceManager;
 import org.jivesoftware.smackx.omemo.OmemoManager;
 import org.jivesoftware.smackx.omemo.util.OmemoKeyUtil;
 import org.jxmpp.jid.impl.JidCreate;
@@ -92,7 +102,6 @@ public class ContactDisplayActivity extends BaseActivity {
             mNickname = mNickname.split("@")[0].split("\\.")[0];
         }
 
-
         setTitle("");
 
         TextView tv = (TextView) findViewById(R.id.tvNickname);
@@ -125,6 +134,23 @@ public class ContactDisplayActivity extends BaseActivity {
             }
         });
 
+        boolean showAddFriends = true;
+        Cursor c = getContentResolver().query(Imps.Contacts.CONTENT_URI, new String[]{Imps.Contacts.SUBSCRIPTION_TYPE}, Imps.Contacts.USERNAME + "=?", new String[]{mUsername}, null);
+        if (c != null) {
+            if (c.moveToFirst()) {
+                int subscriptionType = c.getInt(c.getColumnIndex(Imps.Contacts.SUBSCRIPTION_TYPE));
+                if (subscriptionType != Imps.Contacts.SUBSCRIPTION_TYPE_NONE && subscriptionType != Imps.Contacts.SUBSCRIPTION_TYPE_FROM) {
+                    // It is "to", or "both" or some other value with special meaning.
+                    showAddFriends = false;
+                }
+            }
+            c.close();
+        }
+        if (showAddFriends) {
+            Button btnAddAsFriend = findViewById(R.id.btnAddAsFriend);
+            btnAddAsFriend.setText(getString(R.string.add_x_as_friend, mNickname));
+            btnAddAsFriend.setVisibility(View.VISIBLE);
+        }
 
         if (mConn != null) {
             new AsyncTask<String, Void, Boolean>() {
@@ -236,6 +262,57 @@ public class ContactDisplayActivity extends BaseActivity {
     {
         verifyRemoteFingerprint();
         findViewById(R.id.btnVerify).setVisibility(View.GONE);
+    }
+
+    public void addFriendClicked (final View view)
+    {
+        LayoutInflater factory = LayoutInflater.from(this);
+        final View dialogAddFriend = factory.inflate(R.layout.alert_dialog_add_friend, null);
+        TextView title = dialogAddFriend.findViewById(R.id.alertTitle);
+        title.setText(getString(R.string.add_x_as_friend_question, mNickname));
+
+        ImageView avatarView = dialogAddFriend.findViewById(R.id.imageAvatar);
+        avatarView.setVisibility(View.GONE);
+        try {
+            Drawable avatar = DatabaseUtils.getAvatarFromAddress(getContentResolver(), mUsername, ImApp.DEFAULT_AVATAR_WIDTH, ImApp.DEFAULT_AVATAR_HEIGHT, true);
+            if (avatar != null) {
+                avatarView.setImageDrawable(avatar);
+                avatarView.setVisibility(View.VISIBLE);
+            }
+        } catch (Exception e) {
+        }
+
+
+        final AlertDialog dialog = new AlertDialog.Builder(this)
+                .setView(dialogAddFriend)
+                .create();
+        dialog.show();
+
+        View btnAdd = dialogAddFriend.findViewById(R.id.btnAdd);
+        btnAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ImApp app = (ImApp)getApplication();
+                new AddContactAsyncTask(mProviderId, mAccountId, app).execute(mUsername, null, null);
+                dialog.dismiss();
+                view.setVisibility(View.GONE);
+                showFriendAddedView();
+            }
+        });
+
+        TextView btnCancel = dialogAddFriend.findViewById(R.id.btnCancel);
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        Typeface typeface;
+        if ((typeface = CustomTypefaceManager.getCurrentTypeface(this))!=null) {
+            title.setTypeface(typeface);
+            btnCancel.setTypeface(typeface);
+        }
     }
 
     private void showGallery (int contactId)
@@ -470,6 +547,45 @@ public class ContactDisplayActivity extends BaseActivity {
         }
     }
 
+    private void showFriendAddedView() {
+        final ViewGroup mainView = findViewById(R.id.main_content);
+        final View friendAddedView = LayoutInflater.from(this).inflate(R.layout.friend_added, mainView, false);
+        mainView.addView(friendAddedView);
+
+        Animation fadeIn = AnimationUtils.loadAnimation(this, android.R.anim.fade_in);
+        final Animation fadeOut = AnimationUtils.loadAnimation(this, android.R.anim.fade_out);
+        fadeOut.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                mainView.removeView(friendAddedView);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+
+        friendAddedView.bringToFront();
+        friendAddedView.startAnimation(fadeIn);
+        friendAddedView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                friendAddedView.startAnimation(fadeOut);
+            }
+        });
+        friendAddedView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                friendAddedView.startAnimation(fadeOut);
+            }
+        }, 3000);
+    }
 
 
 }
