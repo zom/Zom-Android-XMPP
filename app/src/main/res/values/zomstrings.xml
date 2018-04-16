@@ -195,6 +195,6 @@
   <string name="add_x_as_friend">Add %s as Friend</string>
   <string name="add_x_as_friend_question">Add %s as friend?</string>
   <string name="no_thanks">No thanks</string>
-  <string name="requested">Requested</string>
+  <string name="added">Added</string>
 
 </resources>
