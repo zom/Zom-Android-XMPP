@@ -192,5 +192,9 @@
     <string name="stickers_buddhist">Buddhist</string>
     <string name="stickers_expressions">Expressions</string>
     <string name="stickers_olo_and_shimi"><![CDATA[Olo & Shimi]]></string>
+  <string name="add_x_as_friend">Add %s as Friend</string>
+  <string name="add_x_as_friend_question">Add %s as friend?</string>
+  <string name="no_thanks">No thanks</string>
+  <string name="added">Added</string>
 
 </resources>
