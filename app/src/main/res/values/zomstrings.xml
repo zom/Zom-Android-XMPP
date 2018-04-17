@@ -196,5 +196,8 @@
   <string name="add_x_as_friend_question">Add %s as friend?</string>
   <string name="no_thanks">No thanks</string>
   <string name="added">Added</string>
+  <string name="room_invited">You have been invited to the \´%s\´ group.</string>
+  <string name="room_join">Join</string>
+  <string name="room_dont_join">No thanks</string>
 
 </resources>

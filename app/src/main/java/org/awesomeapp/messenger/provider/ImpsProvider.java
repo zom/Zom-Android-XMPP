@@ -668,6 +668,25 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
 
             case 110:
             case 111:
+            case 112:
+
+                // Move away from TYPE_HIDDEN and TYPE_HIDDEN_GROUP to the new FLAGS instead.
+                db.beginTransaction();
+                try {
+                    // Old value for TYPE_HIDDEN = 4
+                    db.execSQL("update " + TABLE_CONTACTS
+                            + " set type = " + (Contacts.TYPE_NORMAL | Contacts.TYPE_FLAG_HIDDEN)
+                            + " where type = 4;");
+                    // Old value for TYPE_HIDDEN_GROUP = 6
+                    db.execSQL("update " + TABLE_CONTACTS
+                            + " set type = " + (Contacts.TYPE_GROUP | Contacts.TYPE_FLAG_HIDDEN)
+                            + " where type = 6;");
+                    db.setTransactionSuccessful();
+                } catch (Throwable ex) {
+                    LogCleaner.error(LOG_TAG, ex.getMessage(), ex);
+                } finally {
+                    db.endTransaction();
+                }
 
                 //clean up contacts table
 /**
@@ -684,7 +703,7 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
                 }
 **/
 
-                case 112:
+                case 113:
 
                     try {
                         db.beginTransaction();

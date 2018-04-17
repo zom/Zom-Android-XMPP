@@ -282,7 +282,7 @@ public class MainActivity extends BaseActivity implements IConnectionListener {
                 break;
             case 1:
 
-                if (mContactList.getCurrentType()==Imps.Contacts.TYPE_HIDDEN)
+                if ((mContactList.getCurrentType() & Imps.Contacts.TYPE_FLAG_HIDDEN) != 0)
                     sb.append(getString(R.string.action_archive));
                 else
                     sb.append(getString(R.string.friends));

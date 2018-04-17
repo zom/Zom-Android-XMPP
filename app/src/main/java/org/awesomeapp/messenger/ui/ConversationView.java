@@ -26,6 +26,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.ContentResolver;
 import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -1371,7 +1372,7 @@ public class ConversationView {
             mSubscriptionStatus = c.getInt(SUBSCRIPTION_STATUS_COLUMN);
 
             showSubscriptionUI();
-
+            showJoinGroupUI();
 
         }
 
@@ -1458,6 +1459,58 @@ public class ConversationView {
 
     }
 
+    private void showJoinGroupUI ()
+    {
+        if (!isGroupChat())
+            return;
+
+        mHandler.post(new Runnable() {
+
+            public void run () {
+                if ((mContactType & Imps.Contacts.TYPE_FLAG_UNSEEN) != 0) {
+                    final View joinGroupView = mActivity.findViewById(R.id.join_group_view);
+                    joinGroupView.setVisibility(View.VISIBLE);
+
+                    final View btnJoinAccept = joinGroupView.findViewById(R.id.btnJoinAccept);
+                    final View btnJoinDecline = joinGroupView.findViewById(R.id.btnJoinDecline);
+                    final TextView title = joinGroupView.findViewById(R.id.room_join_title);
+
+                    title.setText(title.getContext().getString(R.string.room_invited, mRemoteNickname));
+
+                    btnJoinAccept.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            setGroupSeen();
+                            joinGroupView.setVisibility(View.GONE);
+                        }
+                    });
+                    btnJoinDecline.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            try {
+                                if (mCurrentChatSession != null) {
+                                    mCurrentChatSession.leave();
+
+                                    //clear the stack and go back to the main activity
+                                    Intent intent = new Intent(v.getContext(), MainActivity.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    v.getContext().startActivity(intent);
+                                }
+                            } catch (RemoteException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                } else {
+                    mActivity.findViewById(R.id.join_group_view).setVisibility(View.GONE);
+                }
+            }
+
+        });
+
+    }
+
+
     private void reapproveSubscription() {
 
         new AsyncTask<String, Void, Boolean>()
@@ -1526,7 +1579,15 @@ public class ConversationView {
         return mRemoteHeader;
     }
 
-
+    private void setGroupSeen() {
+        if (isGroupChat()) {
+            Uri contactUri = ContentUris.withAppendedId(Imps.Contacts.CONTENT_URI, mLastChatId);
+            ContentResolver cr = mActivity.getContentResolver();
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(Imps.Contacts.TYPE, mContactType & (~Imps.Contacts.TYPE_FLAG_UNSEEN));
+            cr.update(contactUri, contentValues, null, null);
+        }
+    }
 
 
     private void updateGroupTitle() {
@@ -1928,8 +1989,6 @@ public class ConversationView {
         mContext.startActivity(intent);
     }
 
-
-
     public void blockContact() {
         // TODO: unify with codes in ContactListView
         DialogInterface.OnClickListener confirmListener = new DialogInterface.OnClickListener() {
@@ -1981,7 +2040,7 @@ public class ConversationView {
                         String remoteAddress = mRemoteAddress;
                         IChatSession session = null;
 
-                        if (mContactType == Imps.Contacts.TYPE_GROUP)
+                        if ((mContactType & Imps.Contacts.TYPE_MASK) == Imps.Contacts.TYPE_GROUP)
                         {
                             //Contact contactGroup = new Contact(new XmppAddress(mRemoteAddress),mRemoteNickname,Imps.Contacts.TYPE_GROUP);
                             session = sessionMgr.createMultiUserChatSession(mRemoteAddress,mRemoteNickname,null,false);
@@ -2038,7 +2097,7 @@ public class ConversationView {
     }
 
     public boolean isGroupChat() {
-        return this.mContactType == Imps.Contacts.TYPE_GROUP;
+        return (this.mContactType & Imps.Contacts.TYPE_MASK) == Imps.Contacts.TYPE_GROUP;
     }
 
     void sendMessage() {

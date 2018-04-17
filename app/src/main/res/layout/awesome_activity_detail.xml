@@ -24,11 +24,11 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    >
+    android:orientation="vertical">
 <!--
 
     android:fitsSystemWindows="true"
@@ -413,5 +413,35 @@
 
         </LinearLayout>
 
+        <!-- Join group view, covers the whole container -->
+        <RelativeLayout
+            android:id="@+id/join_group_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="0dp"
+            android:background="@color/zom_primary"
+            android:visibility="gone">
+            <Button android:id="@+id/btnJoinDecline" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_centerInParent="true"
+                android:text="@string/room_dont_join" android:textColor="@android:color/white" android:background="@null" android:textAllCaps="false"/>
+            <Button android:id="@+id/btnJoinAccept" android:layout_width="wrap_content" android:layout_height="50dp" android:layout_above="@id/btnJoinDecline" android:layout_centerHorizontal="true"
+                android:text="@string/room_join"
+                android:paddingLeft="40dp"
+                android:paddingStart="40dp"
+                android:paddingRight="40dp"
+                android:paddingEnd="40dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium" android:textColor="@color/zom_primary" android:background="@drawable/rounded_white_button_background" android:textAllCaps="false" />
+            <TextView
+                android:id="@+id/room_join_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_above="@id/btnJoinAccept"
+                android:layout_margin="40dp"
+                android:gravity="center"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:textColor="@android:color/white"
+                tools:text="@string/room_invited"
+                />
+        </RelativeLayout>
     </FrameLayout>
 </LinearLayout>
