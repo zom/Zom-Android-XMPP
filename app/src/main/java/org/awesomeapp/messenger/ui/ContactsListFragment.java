@@ -123,7 +123,7 @@ public class ContactsListFragment extends Fragment {
     public void setArchiveFilter (boolean filterAchive)
     {
        if (filterAchive)
-           setType(Imps.Contacts.TYPE_HIDDEN);
+           setType(Imps.Contacts.TYPE_NORMAL | Imps.Contacts.TYPE_FLAG_HIDDEN);
         else
            setType(Imps.Contacts.TYPE_NORMAL);
     }
@@ -219,7 +219,7 @@ public class ContactsListFragment extends Fragment {
 
                     if (dX > 0) {
 
-                        if (contactType == Imps.Contacts.TYPE_HIDDEN || contactType == Imps.Contacts.TYPE_HIDDEN_GROUP)
+                        if ((contactType & Imps.Contacts.TYPE_FLAG_HIDDEN) != 0)
                         {
                             icon = BitmapFactory.decodeResource(
                                     getActivity().getResources(), R.drawable.ic_unarchive_white_24dp);
@@ -294,7 +294,7 @@ public class ContactsListFragment extends Fragment {
                     ContactViewHolder itemViewHolder = (ContactViewHolder) viewHolder;
                     //itemViewHolder.onItemClear();
 
-                    final boolean doArchive = (itemViewHolder.mType == Imps.Contacts.TYPE_NORMAL);
+                    final boolean doArchive = ((itemViewHolder.mType & Imps.Contacts.TYPE_FLAG_HIDDEN) == 0);
                     final int contactType = itemViewHolder.mType;
                     final String address = itemViewHolder.mAddress;
                     final long providerId = itemViewHolder.mProviderId;

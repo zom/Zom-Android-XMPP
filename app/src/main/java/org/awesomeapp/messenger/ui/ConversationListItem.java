@@ -147,7 +147,7 @@ public class ConversationListItem extends FrameLayout {
 
         if (holder.mAvatar != null)
         {
-            if (Imps.Contacts.TYPE_GROUP == contactType) {
+            if (Imps.Contacts.TYPE_GROUP == (contactType & Imps.Contacts.TYPE_MASK)) {
 
                 holder.mAvatar.setVisibility(View.VISIBLE);
                 try {

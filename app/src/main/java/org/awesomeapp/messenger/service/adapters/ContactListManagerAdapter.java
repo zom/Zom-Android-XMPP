@@ -238,15 +238,12 @@ public class ContactListManagerAdapter extends
     }
 
     public int archiveContact(String address, int contactType, boolean doArchive) {
-
-        boolean result = false;
-
-        if (contactType == Imps.Contacts.TYPE_NORMAL || contactType == Imps.Contacts.TYPE_HIDDEN)
-            updateContactType(address, doArchive ? Imps.Contacts.TYPE_HIDDEN : Imps.Contacts.TYPE_NORMAL);
-        else if (contactType == Imps.Contacts.TYPE_GROUP || contactType == Imps.Contacts.TYPE_HIDDEN_GROUP)
-            updateContactType(address, doArchive ? Imps.Contacts.TYPE_HIDDEN_GROUP : Imps.Contacts.TYPE_GROUP);
-
-        if (result)
+        if (doArchive) {
+            contactType = contactType | Imps.Contacts.TYPE_FLAG_HIDDEN;
+        } else {
+            contactType = contactType & (~Imps.Contacts.TYPE_FLAG_HIDDEN);
+        }
+        if (updateContactType(address, contactType))
             return ImErrorInfo.NO_ERROR;
         else
             return -1;

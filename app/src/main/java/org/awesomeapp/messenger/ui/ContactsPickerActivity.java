@@ -587,8 +587,13 @@ public class ContactsPickerActivity extends BaseActivity {
             buf.append(Imps.Contacts.TYPE).append('=').append(Imps.Contacts.TYPE_NORMAL);
 
             if (mShowGroups) {
-                buf.append(" OR ");
-                buf.append(Imps.Contacts.TYPE).append('=').append(Imps.Contacts.TYPE_GROUP);
+                buf.append(" OR (")
+                        // Mask out TYPE_FLAG_UNSEEN, we want unseen groups as well!
+                .append(Imps.Contacts.TYPE)
+                .append(" & (~")
+                .append(Imps.Contacts.TYPE_FLAG_UNSEEN)
+                .append("))")
+                .append('=').append(Imps.Contacts.TYPE_GROUP);
             }
           //  buf.append(") ");
 

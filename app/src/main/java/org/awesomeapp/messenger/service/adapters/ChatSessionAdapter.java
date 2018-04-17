@@ -237,7 +237,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         mIsGroupChat = true;
         mNickname = group.getName();
 
-        mContactId = insertOrUpdateGroupContactInDb(group);
+        mContactId = insertOrUpdateGroupContactInDb(group, isNewSession);
         group.addMemberListener(mListenerAdapter);
         mChatSession.setMessageListener(mListenerAdapter);
 
@@ -867,14 +867,17 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
     }
 
-    private long insertOrUpdateGroupContactInDb(ChatGroup group) {
+    private long insertOrUpdateGroupContactInDb(ChatGroup group, boolean isNewSession) {
         // Insert a record in contacts table
         ContentValues values = new ContentValues(4);
         values.put(Imps.Contacts.USERNAME, group.getAddress().getAddress());
         values.put(Imps.Contacts.NICKNAME, group.getName());
         values.put(Imps.Contacts.CONTACTLIST, ContactListManagerAdapter.LOCAL_GROUP_LIST_ID);
-        values.put(Imps.Contacts.TYPE, Imps.Contacts.TYPE_GROUP);
-
+        if (isNewSession) {
+            values.put(Imps.Contacts.TYPE, Imps.Contacts.TYPE_GROUP | Imps.Contacts.TYPE_FLAG_UNSEEN);
+        } else {
+            values.put(Imps.Contacts.TYPE, Imps.Contacts.TYPE_GROUP);
+        }
         Uri contactUri = ContentUris.withAppendedId(
                 ContentUris.withAppendedId(Imps.Contacts.CONTENT_URI, mConnection.mProviderId),
                 mConnection.mAccountId);

@@ -114,7 +114,9 @@ public class ContactListItem extends FrameLayout {
         address = cursor.getString(COLUMN_CONTACT_USERNAME);
         nickname = cursor.getString(COLUMN_CONTACT_NICKNAME);
 
-        final int type = cursor.getInt(COLUMN_CONTACT_TYPE);
+        int typeUnmasked = cursor.getInt(COLUMN_CONTACT_TYPE);
+        final int type = typeUnmasked & Imps.Contacts.TYPE_MASK;
+
     //    final String lastMsg = cursor.getString(COLUMN_LAST_MESSAGE);
 
      //   long lastMsgDate = cursor.getLong(COLUMN_LAST_MESSAGE_DATE);
@@ -163,7 +165,7 @@ public class ContactListItem extends FrameLayout {
 
         if (holder.mAvatar != null)
         {
-            if (Imps.Contacts.TYPE_GROUP == type) {
+            if (Imps.Contacts.TYPE_GROUP == (type & Imps.Contacts.TYPE_MASK)) {
 
                 holder.mAvatar.setVisibility(View.VISIBLE);
 
@@ -222,7 +224,7 @@ public class ContactListItem extends FrameLayout {
 
         statusText = address;
 
-        if (type == Imps.Contacts.TYPE_HIDDEN)
+        if ((typeUnmasked & Imps.Contacts.TYPE_FLAG_HIDDEN) != 0)
         {
             statusText += " | " + getContext().getString(R.string.action_archive);
         }
