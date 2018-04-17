@@ -703,7 +703,7 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
                 }
 **/
 
-                case 112:
+                case 113:
 
                     try {
                         db.beginTransaction();
