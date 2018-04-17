@@ -97,6 +97,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
     private static final String NON_CHAT_MESSAGE_SELECTION = Imps.Messages.TYPE + "!="
                                                              + Imps.MessageType.INCOMING + " AND "
                                                              + Imps.Messages.TYPE + "!="
+
                                                              + Imps.MessageType.OUTGOING;
 
     /** The registered remote listeners. */
@@ -117,8 +118,6 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
     private Uri mMessageURI;
 
     private boolean mConvertingToGroupChat;
-
-    private static final int MAX_HISTORY_COPY_COUNT = 10;
 
     private HashMap<String, Integer> mContactStatusMap = new HashMap<String, Integer>();
 
