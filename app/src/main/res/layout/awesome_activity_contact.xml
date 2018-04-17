@@ -20,7 +20,9 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
+    android:fillViewport="true"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 <FrameLayout
     android:orientation="vertical"
@@ -177,7 +179,21 @@
             </org.ironrabbit.type.CustomTypefaceButton>
 
         </RelativeLayout>
-        </LinearLayout>
+
+        <org.ironrabbit.type.CustomTypefaceButton android:id="@+id/btnAddAsFriend"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            tools:text="Add X as Friend"
+            android:padding="10dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="?colorPrimary"
+            android:gravity="start|left"
+            android:onClick="addFriendClicked"
+            android:visibility="visible"
+            />
+
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/fragment_container"

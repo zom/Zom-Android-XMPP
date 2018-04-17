@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:padding="30dp"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    >
+    <TextView
+        android:id="@+id/alertTitle"
+        tools:text="Add x as friend?"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:gravity="center"
+        />
+    <FrameLayout
+        android:layout_width="135dp"
+        android:layout_height="135dp">
+        <ImageView
+            android:id="@+id/btnAdd"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/btn_add_friend_selector"
+            android:scaleType="centerInside"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
+            />
+
+        <ImageView
+            android:id="@+id/imageAvatar"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="20dp"
+            android:scaleType="centerInside"
+            />
+
+    </FrameLayout>
+    <TextView
+        android:id="@+id/btnCancel"
+        android:text="@string/no_thanks"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textAllCaps="true"
+        android:layout_alignParentBottom="true"
+        />
+</LinearLayout>
