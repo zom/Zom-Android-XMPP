@@ -399,6 +399,7 @@ public class SessionImpl implements Session {
             doTransmitLastMessage = true;
             isLastMessageRetransmit = true;
 
+            /**
             Vector<Integer> versions = new Vector<Integer>();
             if (policy.getAllowV1())
                 versions.add(1);
@@ -408,9 +409,14 @@ public class SessionImpl implements Session {
 
             if (DEBUG_ENABLED) Log.d(LOG_TAG,"Sending Query");
             injectMessage(new QueryMessage(versions));
+             **/
+            endSession();
+
+
         } else {
             showError(errorMessage.error);
         }
+
     }
 
     private synchronized String handleDataMessage(DataMessage data, List<TLV> tlvs) throws OtrException {

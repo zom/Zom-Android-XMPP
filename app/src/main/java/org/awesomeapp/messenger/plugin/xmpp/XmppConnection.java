@@ -6,8 +6,10 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Proxy;
+import android.net.TrafficStats;
 import android.os.Build;
 import android.os.RemoteException;
+import android.support.v4.net.TrafficStatsCompat;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -43,6 +45,7 @@ import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.ExceptionCallback;
 import org.jivesoftware.smack.MessageListener;
 import org.jivesoftware.smack.PresenceListener;
+import org.jivesoftware.smack.ReconnectionListener;
 import org.jivesoftware.smack.ReconnectionManager;
 import org.jivesoftware.smack.SASLAuthentication;
 import org.jivesoftware.smack.SmackConfiguration;
@@ -255,7 +258,7 @@ public class XmppConnection extends ImConnection {
 
     private final static int SOTIMEOUT = 1000 * 30;
     private final static int CONNECT_TIMEOUT = 1000 * 30;
-    private final static int PING_INTERVAL = 60 * 1; //5 minutes
+    private final static int PING_INTERVAL = 60 * 5; //1 minutes
 
     private PingManager mPingManager;
 
@@ -1662,7 +1665,21 @@ public class XmppConnection extends ImConnection {
             getContactListManager().listenToRoster(mRoster);
 
             ReconnectionManager manager = ReconnectionManager.getInstanceFor(mConnection);
-            manager.disableAutomaticReconnection();
+            manager.enableAutomaticReconnection();
+            manager.addReconnectionListener(new ReconnectionListener() {
+                @Override
+                public void reconnectingIn(int seconds) {
+                    debug (TAG,"reconnecting in: " + seconds + " seconds");
+
+
+                }
+
+                @Override
+                public void reconnectionFailed(Exception e) {
+                    debug (TAG,"reconnection failed",e);
+
+                }
+            });
 
             mChatManager = ChatManager.getInstanceFor(mConnection);
 
@@ -1852,6 +1869,8 @@ public class XmppConnection extends ImConnection {
 
     // Runs in executor thread
     private void initConnection(Imps.ProviderSettings.QueryMap providerSettings, String userName) throws InterruptedException, NoSuchAlgorithmException, KeyManagementException, XMPPException, SmackException, IOException  {
+
+        TrafficStatsCompat.setThreadStatsTag(0xF00D);
 
         boolean allowPlainAuth = false;//never! // providerSettings.getAllowPlainAuth();
         boolean requireTls = true;// providerSettings.getRequireTls(); //always!
@@ -2457,6 +2476,7 @@ public class XmppConnection extends ImConnection {
         debug(TAG, "disconnected");
         join();
         setState(DISCONNECTED, info);
+        TrafficStatsCompat.clearThreadStatsTag();
     }
 
 

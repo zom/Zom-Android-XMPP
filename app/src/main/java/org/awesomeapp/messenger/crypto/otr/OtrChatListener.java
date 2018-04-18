@@ -77,7 +77,7 @@ public class OtrChatListener implements MessageListener {
                     result = mMessageListener.onIncomingMessage(session, msg, notifyUser);
                 } else {
 
-                    OtrDebugLogger.log("Decrypted incoming body was null (otrdata?)");
+                    OtrDebugLogger.log("Decrypted incoming body was null");
 
                 }
 
@@ -104,7 +104,7 @@ public class OtrChatListener implements MessageListener {
                 //  mOtrChatManager.refreshSession(sessionID.getLocalUserId(),sessionID.getRemoteUserId());
                 // msg.setBody("[" + "You received an unreadable encrypted message" + "]");
                 // mMessageListener.onIncomingMessage(session, msg);
-                mOtrChatManager.injectMessage(sessionID, "");
+                //mOtrChatManager.injectMessage(sessionID, "");
 
             }
 
