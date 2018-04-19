@@ -32,7 +32,8 @@ public class ChatGroup extends ImEntity {
     private String mName;
     private HashMap<String, Contact> mMembers;
     private HashMap<String, Contact> mGroupAddressToContactMap;
-    private Contact mOwner;
+    private List<Contact> mOwners;
+    private List<Contact> mAdmins;
     private CopyOnWriteArrayList<GroupMemberListener> mMemberListeners;
 
     public ChatGroup(Address address, String name, ChatGroupManager manager) {
@@ -214,14 +215,23 @@ public class ChatGroup extends ImEntity {
 
     }
 
-    public void setOwner (Contact owner)
+    public void setOwners (List<Contact> owners)
     {
-
-        mOwner = owner;
+        mOwners = owners;
     }
 
-    public Contact getOwner ()
+    public List<Contact> getOwners ()
     {
-        return mOwner;
+        return mOwners;
+    }
+
+    public void setAdmins (List<Contact> admins)
+    {
+        mAdmins = admins;
+    }
+
+    public List<Contact> getAdmins ()
+    {
+        return mAdmins;
     }
 }

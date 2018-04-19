@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -14,7 +15,6 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
-import android.support.v4.widget.TextViewCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -26,7 +26,6 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -36,15 +35,15 @@ import org.apache.commons.codec.DecoderException;
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.MainActivity;
 import org.awesomeapp.messenger.Preferences;
-import org.awesomeapp.messenger.model.Address;
 import org.awesomeapp.messenger.model.Contact;
 import org.awesomeapp.messenger.model.ImErrorInfo;
-import org.awesomeapp.messenger.model.Message;
 import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.service.IChatListener;
 import org.awesomeapp.messenger.service.IChatSession;
+import org.awesomeapp.messenger.service.IChatSessionListener;
 import org.awesomeapp.messenger.service.IChatSessionManager;
+import org.awesomeapp.messenger.service.IConnectionListener;
 import org.awesomeapp.messenger.service.IContactListManager;
 import org.awesomeapp.messenger.service.IImConnection;
 import org.awesomeapp.messenger.ui.legacy.DatabaseUtils;
@@ -58,10 +57,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 
 import im.zom.messenger.R;
 
-public class GroupDisplayActivity extends BaseActivity {
+public class GroupDisplayActivity extends BaseActivity implements IChatSessionListener {
 
     private String mName = null;
     private String mAddress = null;
@@ -72,8 +72,7 @@ public class GroupDisplayActivity extends BaseActivity {
 
     private IImConnection mConn;
     private IChatSession mSession;
-    private Contact mGroupOwner;
-    private boolean mIsOwner = false;
+    private GroupMemberDisplay mYou;
     private Thread mThreadUpdate;
 
     private class GroupMemberDisplay {
@@ -120,15 +119,12 @@ public class GroupDisplayActivity extends BaseActivity {
 
         providerSettings.close();
 
-        try {
-            mSession = mConn.getChatSessionManager().getChatSession(mAddress);
-            if (mSession != null) {
-                mGroupOwner = mSession.getGroupChatOwner();
-                if (mGroupOwner != null)
-                    mIsOwner = mGroupOwner.getAddress().getBareAddress().equals(mLocalAddress);
-            }
-        }
-        catch (RemoteException e){}
+        mYou = new GroupMemberDisplay();
+        mYou.username = mLocalAddress;
+        mYou.affiliation = "none";
+        mYou.role = "none";
+
+        updateSession();
 
         mRecyclerView = (RecyclerView) findViewById(R.id.rvRoot);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
@@ -227,7 +223,7 @@ public class GroupDisplayActivity extends BaseActivity {
                         h.actionGroupEncryption.setVisibility(View.GONE);
                     }
 
-                    if (!mIsOwner)
+                    if (!canChangeSubject(mYou))
                         h.editGroupName.setVisibility(View.GONE);
                     else {
                         h.editGroupName.setOnClickListener(new View.OnClickListener() {
@@ -236,6 +232,7 @@ public class GroupDisplayActivity extends BaseActivity {
                                 editGroupSubject();
                             }
                         });
+                        h.editGroupName.setEnabled(mSession != null);
                     }
                 } else if (holder instanceof FooterViewHolder) {
                     FooterViewHolder h = (FooterViewHolder)holder;
@@ -270,6 +267,10 @@ public class GroupDisplayActivity extends BaseActivity {
                         nickname = member.username.split("@")[0].split("\\.")[0];
                     } else {
                         nickname = nickname.split("@")[0].split("\\.")[0];
+                    }
+
+                    if (member == mYou) {
+                        nickname += " " + getString(R.string.group_you);
                     }
 
                     h.line1.setText(nickname);
@@ -325,21 +326,72 @@ public class GroupDisplayActivity extends BaseActivity {
 
     }
 
+    public IChatSession updateSession() {
+        try {
+            if (mSession == null) {
+                mSession = mConn.getChatSessionManager().getChatSession(mAddress);
+                if (mSession != null) {
+                    mSession.registerChatListener(mChatListener);
+
+                    List<Contact> admins = mSession.getGroupChatAdmins();
+                    List<Contact> owners = mSession.getGroupChatOwners();
+                    if (admins != null) {
+                        for (Contact c : admins) {
+                            if (c.getAddress().getBareAddress().equals(mLocalAddress)) {
+                                mYou.affiliation = "admin";
+                                break;
+                            }
+                        }
+                    }
+                    if (owners != null) {
+                        for (Contact c : owners) {
+                            if (c.getAddress().getBareAddress().equals(mLocalAddress)) {
+                                mYou.affiliation = "owner";
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        catch (RemoteException e){}
+        return mSession;
+    }
+
+    @Override
+    public void onChatSessionCreated(IChatSession session) throws RemoteException {
+        updateSession();
+    }
+
+    @Override
+    public void onChatSessionCreateError(String name, ImErrorInfo error) throws RemoteException {
+        updateSession();
+    }
+
+    @Override
+    public IBinder asBinder() {
+        return mConn.asBinder();
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
-        if (mSession != null) {
-            try {
-                mSession.registerChatListener(mChatListener);
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
+        try {
+            mConn.getChatSessionManager().registerChatSessionListener(this);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        updateSession();
         updateMembers();
     }
 
     @Override
     protected void onPause() {
+        try {
+            mConn.getChatSessionManager().unregisterChatSessionListener(this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         if (mSession != null) {
             try {
                 mSession.unregisterChatListener(mChatListener);
@@ -392,11 +444,8 @@ public class GroupDisplayActivity extends BaseActivity {
                             e.printStackTrace();
                         }
 
-                        if (member.affiliation != null) {
-                            if (member.affiliation.contentEquals("owner") || member.affiliation.contentEquals("admin")) {
-                                if (member.username.equals(mLocalAddress))
-                                    mIsOwner = true;
-                            }
+                        if (member.username.equals(mLocalAddress)) {
+                            mYou = member;
                         }
 
                         members.put(member.username, member);
@@ -472,13 +521,106 @@ public class GroupDisplayActivity extends BaseActivity {
 
     }
 
-    public void showMemberInfo(GroupMemberDisplay member) {
+    public void showMemberInfo(final GroupMemberDisplay member) {
+        if (member == mYou) {
+            return;
+        }
+
+        final boolean canGrantAdmin = canGrantAdmin(mYou, member);
+        final boolean canKickout = canRevokeMembership(mYou, member);
+        final boolean isModerator = TextUtils.equals(mYou.role, "moderator");
+
+        if (isModerator && (canGrantAdmin || canKickout)) {
+            AlertDialog.Builder alert = new AlertDialog.Builder(this);
+            View content = LayoutInflater.from(this).inflate(R.layout.group_member_operations, null);
+
+            // Populate the contact view part (nickname and avatar)
+            //
+            MemberViewHolder h = new MemberViewHolder(content);
+            String nickname = member.nickname;
+            if (TextUtils.isEmpty(nickname)) {
+                nickname = member.username.split("@")[0].split("\\.")[0];
+            } else {
+                nickname = nickname.split("@")[0].split("\\.")[0];
+            }
+            h.line1.setText(nickname);
+            h.line2.setText(member.username);
+            if (member.affiliation != null && (member.affiliation.contentEquals("owner") || member.affiliation.contentEquals("admin"))) {
+                h.avatarCrown.setVisibility(View.VISIBLE);
+            } else {
+                h.avatarCrown.setVisibility(View.GONE);
+            }
+            if (member.avatar == null) {
+                int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 12, getResources().getDisplayMetrics());
+                member.avatar = new LetterAvatar(h.itemView.getContext(), nickname, padding);
+            }
+            h.avatar.setImageDrawable(member.avatar);
+            h.avatar.setVisibility(View.VISIBLE);
+
+            alert.setView(content);
+            final AlertDialog dialog = alert.show();
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+            View actionMakeAdmin = content.findViewById(R.id.actionMakeAdmin);
+            if (canGrantAdmin) {
+                actionMakeAdmin.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                        showMemberProfile(member);
+                    }
+                });
+            } else {
+                actionMakeAdmin.setVisibility(View.GONE);
+            }
+
+            View actionViewProfile = content.findViewById(R.id.actionViewProfile);
+            actionViewProfile.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                    grantAdmin(member);
+                }
+            });
+
+            View actionKickout = content.findViewById(R.id.actionKickout);
+            if (canKickout) {
+                actionKickout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                        kickout(member);
+                    }
+                });
+            } else {
+                actionKickout.setVisibility(View.GONE);
+            }
+        } else {
+            showMemberProfile(member);
+        }
+    }
+
+    private void showMemberProfile(GroupMemberDisplay member) {
         Intent intent = new Intent(this, ContactDisplayActivity.class);
         intent.putExtra("address", member.username);
         intent.putExtra("nickname", member.nickname);
         intent.putExtra("provider", mProviderId);
         intent.putExtra("account", mAccountId);
         startActivity(intent);
+    }
+
+    private void grantAdmin(GroupMemberDisplay member) {
+        try {
+            if (mSession != null)
+                mSession.grantAdmin(member.username);
+        } catch (Exception ignored) {}
+    }
+
+    private void kickout(GroupMemberDisplay member) {
+        try {
+            if (mSession != null)
+                mSession.kickContact(member.username);
+        } catch (Exception ignored) {}
     }
 
     @Override
@@ -741,7 +883,7 @@ public class GroupDisplayActivity extends BaseActivity {
     private void showAddFriends ()
     {
         if (mActionAddFriends != null) {
-            if (!mIsOwner)
+            if (!canInviteOthers(mYou))
                 mActionAddFriends.setVisibility(View.GONE);
             else {
                 mActionAddFriends.setOnClickListener(new View.OnClickListener() {
@@ -756,7 +898,36 @@ public class GroupDisplayActivity extends BaseActivity {
                         startActivityForResult(intent, REQUEST_PICK_CONTACTS);
                     }
                 });
+                mActionAddFriends.setEnabled(mSession != null);
             }
         }
     }
+
+    private boolean canChangeSubject(GroupMemberDisplay member) {
+        return TextUtils.equals(member.role, "moderator") &&
+                (TextUtils.equals(member.affiliation, "admin") || TextUtils.equals(member.affiliation, "owner"));
+    }
+
+    private boolean canInviteOthers(GroupMemberDisplay member) {
+        return canChangeSubject(member);
+    }
+
+    public boolean canGrantAdmin(GroupMemberDisplay granter, GroupMemberDisplay grantee) {
+        return TextUtils.equals(granter.affiliation, "owner") &&
+                (TextUtils.equals(grantee.affiliation, "member") || TextUtils.equals(grantee.affiliation, "none"));
+    }
+
+    public boolean canRevokeMembership(GroupMemberDisplay revoker, GroupMemberDisplay revokee) {
+        if (TextUtils.equals(revokee.affiliation, "owner")) {
+            return false;
+        }
+        if (TextUtils.equals(revoker.affiliation, "owner")) {
+            return true;
+        }
+        if (TextUtils.equals(revoker.affiliation, "admin") && !TextUtils.equals(revokee.affiliation, "admin")) {
+            return true;
+        }
+        return false;
+    }
+
 }

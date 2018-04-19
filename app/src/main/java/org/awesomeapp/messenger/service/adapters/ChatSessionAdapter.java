@@ -1844,12 +1844,28 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
     }
 
     @Override
-    public Contact getGroupChatOwner ()
+    public List<Contact> getGroupChatOwners ()
     {
         try {
             if (isGroupChatSession()) {
                 ChatGroup group = (ChatGroup)mChatSession.getParticipant();
-                return group.getOwner();
+                return group.getOwners();
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    @Override
+    public List<Contact> getGroupChatAdmins ()
+    {
+        try {
+            if (isGroupChatSession()) {
+                ChatGroup group = (ChatGroup)mChatSession.getParticipant();
+                return group.getAdmins();
 
             }
         } catch (Exception e) {
@@ -1978,4 +1994,21 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         return result;
     }
 
+    @Override
+    public void kickContact(String contactString) {
+        if (!mIsGroupChat) {
+            return;
+        }
+        Contact contact = new Contact(new XmppAddress(contactString), contactString, Imps.Contacts.TYPE_NORMAL);
+        getGroupManager().removeGroupMemberAsync((ChatGroup) mChatSession.getParticipant(), contact);
+    }
+
+    @Override
+    public void grantAdmin(String contactString) {
+        if (!mIsGroupChat) {
+            return;
+        }
+        Contact contact = new Contact(new XmppAddress(contactString), contactString, Imps.Contacts.TYPE_NORMAL);
+        getGroupManager().grantAdminAsync((ChatGroup) mChatSession.getParticipant(), contact);
+    }
 }

@@ -790,7 +790,7 @@ public class XmppConnection extends ImConnection {
                         List owners = new ArrayList();
                         owners.add(mUser.getAddress().getBareAddress());
                         submitForm.setAnswer("muc#roomconfig_roomowners", owners);
-                        chatGroup.setOwner(mUser);
+                        chatGroup.setOwners(Collections.singletonList(mUser));
 
                         if (submitForm.getField("muc#roominfo_description") == null) {
                             FormField field =new FormField("muc#roominfo_description");
@@ -930,20 +930,15 @@ public class XmppConnection extends ImConnection {
         }
 
         @Override
-        protected void removeGroupMemberAsync(ChatGroup group, Contact contact) {
-
-
+        public void removeGroupMemberAsync(ChatGroup group, Contact contact) {
             String chatRoomJid = group.getAddress().getAddress();
-
             if (mMUCs.containsKey(chatRoomJid))
             {
                 MultiUserChat muc = mMUCs.get(chatRoomJid);
                 try {
-                    String reason = "";
-                    muc.kickParticipant(Resourcepart.from(contact.getName()),reason);
-                  //  muc.kickParticipant(chatRoomJid, contact.getAddress().getBareAddress());
+                    EntityBareJid contactJid = JidCreate.entityBareFrom(contact.getAddress().getAddress());
+                    muc.revokeMembership(contactJid);
                 } catch (Exception e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             }
@@ -1059,12 +1054,14 @@ public class XmppConnection extends ImConnection {
             }
 
             try {
+                ArrayList<Contact> owners = new ArrayList<>();
                 for (Affiliate member : muc.getOwners()) {
                     xa = new XmppAddress(member.getJid().toString());
                     Contact mucContact = new Contact(xa, xa.getUser(), Imps.Contacts.TYPE_NORMAL);
                     chatGroup.notifyMemberJoined(null, mucContact);
-                    chatGroup.setOwner(mucContact);
+                    owners.add(mucContact);
                 }
+                chatGroup.setOwners(owners);
             }
             catch (Exception e)
                 {
@@ -1073,12 +1070,14 @@ public class XmppConnection extends ImConnection {
                 }
 
             try {
+                ArrayList<Contact> admins = new ArrayList<>();
                 for (Affiliate member : muc.getAdmins()) {
                     xa = new XmppAddress(member.getJid().toString());
                     Contact mucContact = new Contact(xa, xa.getUser(), Imps.Contacts.TYPE_NORMAL);
                     chatGroup.notifyMemberJoined(null, mucContact);
-                    chatGroup.setOwner(mucContact);
+                    admins.add(mucContact);
                 }
+                chatGroup.setAdmins(admins);
             }
             catch (Exception e)
             {
@@ -1243,6 +1242,22 @@ public class XmppConnection extends ImConnection {
                 }
         }
 
+
+        @Override
+        public void grantAdminAsync(ChatGroup group, Contact contact) {
+            String chatRoomJid = group.getAddress().getAddress();
+            if (mMUCs.containsKey(chatRoomJid))
+            {
+                MultiUserChat muc = mMUCs.get(chatRoomJid);
+                try {
+                    EntityBareJid contactJid = JidCreate.entityBareFrom(contact.getAddress().getAddress());
+                    muc.grantAdmin(contactJid);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
         class GroupParticipantStatusListener implements ParticipantStatusListener {
             public GroupParticipantStatusListener ()
             {
@@ -1341,7 +1356,6 @@ public class XmppConnection extends ImConnection {
             public void nicknameChanged(EntityFullJid entityFullJid, Resourcepart resourcepart) {
 
             }
-
 
 
         }

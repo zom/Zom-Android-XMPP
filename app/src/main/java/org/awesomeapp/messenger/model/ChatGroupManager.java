@@ -111,7 +111,7 @@ public abstract class ChatGroupManager {
      * @param group the {@link ChatGroup} whose member will be removed.
      * @param contact the member {@link Contact} to be removed.
      */
-    protected abstract void removeGroupMemberAsync(ChatGroup group, Contact contact);
+    public abstract void removeGroupMemberAsync(ChatGroup group, Contact contact);
 
     /**
      * Joins into a certain {@link ChatGroup}. This method returns immediately and the
@@ -317,4 +317,16 @@ public abstract class ChatGroupManager {
      * @param subject The new subject
      */
     public abstract void setGroupSubject(ChatGroup group, String subject);
+
+    /**
+     * Grants admin rights to a member in a certain {@link ChatGroup}. This method returns immediately
+     * and the {@link GroupListener}s registered on the group will be notified when
+     * the member is granted admin rights or any error occurs. Only the owner of the
+     * ChatGroup can grant admin rights.
+     *
+     * @param group the {@link ChatGroup} whose member will be granted admin rights.
+     * @param contact the member {@link Contact} to be granted admin rights.
+     */
+    public abstract void grantAdminAsync(ChatGroup group, Contact contact);
+
 }
