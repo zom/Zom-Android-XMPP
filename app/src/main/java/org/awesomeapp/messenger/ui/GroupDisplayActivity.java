@@ -74,6 +74,7 @@ public class GroupDisplayActivity extends BaseActivity implements IChatSessionLi
     private IChatSession mSession;
     private GroupMemberDisplay mYou;
     private Thread mThreadUpdate;
+    private boolean mChatListenerRegistered;
 
     private class GroupMemberDisplay {
         public String username;
@@ -333,6 +334,7 @@ public class GroupDisplayActivity extends BaseActivity implements IChatSessionLi
                 mSession = mConn.getChatSessionManager().getChatSession(mAddress);
                 if (mSession != null) {
                     mSession.registerChatListener(mChatListener);
+                    mChatListenerRegistered = true;
                     List<Contact> admins = mSession.getGroupChatAdmins();
                     List<Contact> owners = mSession.getGroupChatOwners();
                     if (admins != null) {
@@ -382,7 +384,16 @@ public class GroupDisplayActivity extends BaseActivity implements IChatSessionLi
         } catch (Exception e) {
             e.printStackTrace();
         }
-        updateSession();
+        if (mSession != null && !mChatListenerRegistered) {
+            try {
+                mSession.registerChatListener(mChatListener);
+                mChatListenerRegistered = true;
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        } else {
+            updateSession();
+        }
         updateMembers();
     }
 
@@ -396,6 +407,7 @@ public class GroupDisplayActivity extends BaseActivity implements IChatSessionLi
         if (mSession != null) {
             try {
                 mSession.unregisterChatListener(mChatListener);
+                mChatListenerRegistered = false;
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
