@@ -61,4 +61,9 @@ public interface GroupMemberListener {
      */
     public void onMemberRoleChanged(ChatGroup group, Contact contact, String role, String affiliation);
 
+    /** Called before member list is updated **/
+    public void onBeginMemberUpdates(ChatGroup group);
+
+    /** Called after member list is updated **/
+    public void onEndMemberUpdates(ChatGroup group);
 }

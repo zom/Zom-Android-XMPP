@@ -978,7 +978,7 @@ public class XmppConnection extends ImConnection {
                 addMucListeners(muc, chatGroup);
        //         mBookmarkManager.addBookmarkedConference(muc.getSubject(),muc.getRoom(),true,muc.getNickname(),null);
 
-
+                loadMembers(muc, chatGroup);
             } catch (Exception e) {
                 debug(TAG,"error joining MUC",e);
             }
@@ -1003,26 +1003,16 @@ public class XmppConnection extends ImConnection {
             });
         }
 
-        public void loadMembers (ChatGroup chatGroup) {
-            try {
-
-                if (mConnection != null && mConnection.isAuthenticated())
-                    loadMembers(mMUCs.get(chatGroup.getAddress().getAddress()), chatGroup);
-
-            } catch (Exception e)
-            {
-                debug(TAG,"Could not load members",e);
-            }
-        }
-
         private synchronized void loadMembers (MultiUserChat muc, ChatGroup chatGroup) throws SmackException, XMPPException,InterruptedException
         {
-          //  chatGroup.clearMembers();
+            //chatGroup.clearMembers();
 
             //first make sure I am in the room
             if (chatGroup.getMember(mUserJid.toString()) == null) {
                 chatGroup.notifyMemberJoined(null, mUser);
             }
+
+            chatGroup.beginMemberUpdates();
 
             XmppAddress xa;
 
@@ -1045,6 +1035,7 @@ public class XmppConnection extends ImConnection {
                     xa = new XmppAddress(member.getJid().toString());
                     Contact mucContact = new Contact(xa, xa.getUser(), Imps.Contacts.TYPE_NORMAL);
                     chatGroup.notifyMemberJoined(null, mucContact);
+                    chatGroup.notifyMemberRoleUpdate(mucContact, null, "member");
                 }
             }
             catch (Exception e)
@@ -1059,6 +1050,8 @@ public class XmppConnection extends ImConnection {
                     xa = new XmppAddress(member.getJid().toString());
                     Contact mucContact = new Contact(xa, xa.getUser(), Imps.Contacts.TYPE_NORMAL);
                     chatGroup.notifyMemberJoined(null, mucContact);
+                    // Owners are also moderators
+                    chatGroup.notifyMemberRoleUpdate(mucContact, "moderator", "owner");
                     owners.add(mucContact);
                 }
                 chatGroup.setOwners(owners);
@@ -1075,6 +1068,7 @@ public class XmppConnection extends ImConnection {
                     xa = new XmppAddress(member.getJid().toString());
                     Contact mucContact = new Contact(xa, xa.getUser(), Imps.Contacts.TYPE_NORMAL);
                     chatGroup.notifyMemberJoined(null, mucContact);
+                    chatGroup.notifyMemberRoleUpdate(mucContact, null, "admin");
                     admins.add(mucContact);
                 }
                 chatGroup.setAdmins(admins);
@@ -1084,6 +1078,7 @@ public class XmppConnection extends ImConnection {
                 debug("MUC","Couldn't load group owner: " + e.getMessage());
 
             }
+            chatGroup.endMemberUpdates();
         }
 
         private void addMucListeners (final MultiUserChat muc, final ChatGroup group)
@@ -1127,13 +1122,18 @@ public class XmppConnection extends ImConnection {
                             if (occupant != null) {
                                 notifyMemberJoined(group, mucContact, entity.toString());
                                 group.notifyMemberRoleUpdate(mucContact, occupant.getRole().toString(), occupant.getAffiliation().toString());
+                            } else if (presence.getType() == org.jivesoftware.smack.packet.Presence.Type.unavailable){
+                                // If we get a 321 status and "unavailable" the users membership has been revoked
+                                MUCUser user = MUCUser.from(presence);
+                                if (user != null && user.hasStatus() && user.getStatus().contains(MUCUser.Status.REMOVED_AFFIL_CHANGE_321)) {
+                                    notifyMemberLeft(group, null, entity.toString());
+                                }
                             }
                             debug("MUC", "Got group presence: " + presence.toString());
                         } catch (Exception e) {
                             debug("MUC", "Error handling group presence: " + e);
                         }
                     }
-
                 };
             }
 
@@ -1334,17 +1334,16 @@ public class XmppConnection extends ImConnection {
 
             @Override
             public void ownershipGranted(EntityFullJid entityFullJid) {
-
+                joined(entityFullJid);
             }
 
             @Override
             public void ownershipRevoked(EntityFullJid entityFullJid) {
-
             }
 
             @Override
             public void adminGranted(EntityFullJid entityFullJid) {
-
+                joined(entityFullJid);
             }
 
             @Override

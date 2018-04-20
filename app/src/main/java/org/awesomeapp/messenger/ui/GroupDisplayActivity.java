@@ -232,6 +232,7 @@ public class GroupDisplayActivity extends BaseActivity implements IChatSessionLi
                                 editGroupSubject();
                             }
                         });
+                        h.editGroupName.setVisibility(View.VISIBLE);
                         h.editGroupName.setEnabled(mSession != null);
                     }
                 } else if (holder instanceof FooterViewHolder) {
@@ -332,7 +333,6 @@ public class GroupDisplayActivity extends BaseActivity implements IChatSessionLi
                 mSession = mConn.getChatSessionManager().getChatSession(mAddress);
                 if (mSession != null) {
                     mSession.registerChatListener(mChatListener);
-
                     List<Contact> admins = mSession.getGroupChatAdmins();
                     List<Contact> owners = mSession.getGroupChatOwners();
                     if (admins != null) {
@@ -351,6 +351,7 @@ public class GroupDisplayActivity extends BaseActivity implements IChatSessionLi
                             }
                         }
                     }
+                    updateMembers();
                 }
             }
         }
@@ -567,7 +568,7 @@ public class GroupDisplayActivity extends BaseActivity implements IChatSessionLi
                     @Override
                     public void onClick(View v) {
                         dialog.dismiss();
-                        showMemberProfile(member);
+                        grantAdmin(member);
                     }
                 });
             } else {
@@ -579,7 +580,7 @@ public class GroupDisplayActivity extends BaseActivity implements IChatSessionLi
                 @Override
                 public void onClick(View v) {
                     dialog.dismiss();
-                    grantAdmin(member);
+                    showMemberProfile(member);
                 }
             });
 
@@ -861,21 +862,43 @@ public class GroupDisplayActivity extends BaseActivity implements IChatSessionLi
     }
 
     private final IChatListener mChatListener = new ChatListenerAdapter() {
+
+        boolean ignoreUpdates = false;
+
         @Override
         public void onContactJoined(IChatSession ses, Contact contact) {
             super.onContactJoined(ses, contact);
-            updateMembers();
+            if (!ignoreUpdates) {
+                updateMembers();
+            }
         }
 
         @Override
         public void onContactLeft(IChatSession ses, Contact contact) {
             super.onContactLeft(ses, contact);
-            updateMembers();
+            if (!ignoreUpdates) {
+                updateMembers();
+            }
         }
 
         @Override
         public void onContactRoleChanged(IChatSession ses, Contact contact) {
             super.onContactRoleChanged(ses, contact);
+            if (!ignoreUpdates) {
+                updateMembers();
+            }
+        }
+
+        @Override
+        public void onBeginMemberListUpdate(IChatSession ses) {
+            super.onBeginMemberListUpdate(ses);
+            ignoreUpdates = true;
+        }
+
+        @Override
+        public void onEndMemberListUpdate(IChatSession ses) {
+            super.onEndMemberListUpdate(ses);
+            ignoreUpdates = false;
             updateMembers();
         }
     };
@@ -898,6 +921,7 @@ public class GroupDisplayActivity extends BaseActivity implements IChatSessionLi
                         startActivityForResult(intent, REQUEST_PICK_CONTACTS);
                     }
                 });
+                mActionAddFriends.setVisibility(View.VISIBLE);
                 mActionAddFriends.setEnabled(mSession != null);
             }
         }

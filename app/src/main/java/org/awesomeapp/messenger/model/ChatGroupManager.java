@@ -218,7 +218,7 @@ public abstract class ChatGroupManager {
         }
         if (left != null) {
             for (Contact contact : left) {
-                notifyMemberLeft(group, contact);
+                notifyMemberLeft(group, contact, null);
             }
         }
     }
@@ -289,8 +289,8 @@ public abstract class ChatGroupManager {
      * @param group the group which the contact has left.
      * @param contact the contact who has left this group.
      */
-    protected void notifyMemberLeft(ChatGroup group, Contact contact) {
-        group.notifyMemberLeft(contact);
+    protected void notifyMemberLeft(ChatGroup group, Contact contact, String groupAddress) {
+        group.notifyMemberLeft(groupAddress, contact);
     }
 
     /**
@@ -303,12 +303,6 @@ public abstract class ChatGroupManager {
     }
 
     public abstract String getDefaultGroupChatService ();
-
-    /**
-     * Force the reloading of the group memberships
-     * @param group the group you wont to load
-     */
-    public abstract void loadMembers (ChatGroup group);
 
     /**
      * Set the subject for a chat room

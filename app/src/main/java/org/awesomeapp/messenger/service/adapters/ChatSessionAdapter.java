@@ -162,7 +162,6 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
         if (participant instanceof ChatGroup) {
             init((ChatGroup) participant,isNewSession);
-            mChatSessionManager.getChatGroupManager().loadMembers((ChatGroup) participant);
         } else {
             init((Contact) participant,isNewSession);
             initOtrChatSession(participant);
@@ -938,12 +937,14 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
     }
 
     void updateGroupMemberRoleAndAffiliationInDb(Contact member, String role, String affiliation) {
-        if (mChatURI != null) {
+        if (mChatURI != null && (role != null || affiliation != null)) {
             String username = member.getAddress().getAddress();
             String nickname = member.getName();
 
             ContentValues values = new ContentValues(4);
-            values.put(Imps.GroupMembers.ROLE, role);
+            if (role != null) {
+                values.put(Imps.GroupMembers.ROLE, role);
+            }
             if (affiliation != null) {
                 values.put(Imps.GroupMembers.AFFILIATION, affiliation);
             }
@@ -956,6 +957,35 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         }
     }
 
+    // When updating the member list, first mark all members, admins and owners with an affiliation
+    // of "transient". Then do the update. After the update, delete all members with affiliation
+    // "transient". This will ensure that stale entries are removed.
+    void beginGroupMemberUpdates(ChatGroup group) {
+        if (mChatURI != null) {
+            ContentValues values = new ContentValues(1);
+            values.put(Imps.GroupMembers.AFFILIATION, "transient");
+
+            long groupId = ContentUris.parseId(mChatURI);
+            Uri uri = ContentUris.withAppendedId(Imps.GroupMembers.CONTENT_URI, groupId);
+            mContentResolver.update(uri, values, Imps.GroupMembers.GROUP + "=? AND (" +
+                    Imps.GroupMembers.AFFILIATION + "=?" + " OR " +
+                    Imps.GroupMembers.AFFILIATION + "=?" + " OR " +
+                    Imps.GroupMembers.AFFILIATION + "=?)", new String[]{
+                    String.valueOf(groupId), "member", "admin", "owner"
+            });
+        }
+    }
+
+    void endGroupMemberUpdates(ChatGroup group) {
+        if (mChatURI != null) {
+            long groupId = ContentUris.parseId(mChatURI);
+            Uri uri = ContentUris.withAppendedId(Imps.GroupMembers.CONTENT_URI, groupId);
+            mContentResolver.delete(uri,Imps.GroupMembers.GROUP + "=? AND " +
+                    Imps.GroupMembers.AFFILIATION + "=?", new String[]{
+                    String.valueOf(groupId), "transient"
+            });
+        }
+    }
 
     void deleteAllGroupMembers() {
 
@@ -1424,7 +1454,47 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
         }
 
+        @Override
+        public void onBeginMemberUpdates(ChatGroup group) {
+            beginGroupMemberUpdates(group);
+            try {
+                synchronized (mRemoteListeners) {
+                    final int N = mRemoteListeners.beginBroadcast();
+                    for (int i = 0; i < N; i++) {
+                        IChatListener listener = mRemoteListeners.getBroadcastItem(i);
+                        try {
+                            listener.onBeginMemberListUpdate(ChatSessionAdapter.this);
+                        } catch (RemoteException e) {
+                            // The RemoteCallbackList will take care of removing the
+                            // dead listeners.
+                        }
+                    }
+                    mRemoteListeners.finishBroadcast();
+                }
+            }
+            catch (Exception e){}
+        }
 
+        @Override
+        public void onEndMemberUpdates(ChatGroup group) {
+            endGroupMemberUpdates(group);
+            try {
+                synchronized (mRemoteListeners) {
+                    final int N = mRemoteListeners.beginBroadcast();
+                    for (int i = 0; i < N; i++) {
+                        IChatListener listener = mRemoteListeners.getBroadcastItem(i);
+                        try {
+                            listener.onEndMemberListUpdate(ChatSessionAdapter.this);
+                        } catch (RemoteException e) {
+                            // The RemoteCallbackList will take care of removing the
+                            // dead listeners.
+                        }
+                    }
+                    mRemoteListeners.finishBroadcast();
+                }
+            }
+            catch (Exception e){}
+        }
     }
 
     class ChatConvertor implements GroupListener, GroupMemberListener {
@@ -1491,6 +1561,16 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
         public void onMemberLeft(ChatGroup group, Contact contact) {
             mContactStatusMap.remove(contact.getName());
+        }
+
+        @Override
+        public void onBeginMemberUpdates(ChatGroup group) {
+
+        }
+
+        @Override
+        public void onEndMemberUpdates(ChatGroup group) {
+
         }
     }
 

@@ -128,4 +128,18 @@ public class ChatListenerAdapter extends IChatListener.Stub {
             LogCleaner.debug(TAG, "onGroupSubjectChanged(" + ses + ")");
         }
     }
+
+    @Override
+    public void onBeginMemberListUpdate(IChatSession ses) {
+        if (Log.isLoggable(TAG, Log.DEBUG)) {
+            LogCleaner.debug(TAG, "onBeginMemberListUpdate(" + ses + ")");
+        }
+    }
+
+    @Override
+    public void onEndMemberListUpdate(IChatSession ses) {
+        if (Log.isLoggable(TAG, Log.DEBUG)) {
+            LogCleaner.debug(TAG, "onEndMemberListUpdate(" + ses + ")");
+        }
+    }
 }
