@@ -1081,7 +1081,7 @@ public class XmppConnection extends ImConnection {
             chatGroup.endMemberUpdates();
         }
 
-        private void addMucListeners (final MultiUserChat muc, final ChatGroup group)
+        private void addMucListeners (final MultiUserChat muc, final ChatGroup ignored)
         {
             if (mSubjectUpdateListener == null) {
                 mSubjectUpdateListener = new SubjectUpdatedListener() {
@@ -1118,15 +1118,18 @@ public class XmppConnection extends ImConnection {
                             Occupant occupant = muc.getOccupant(entity);
                             Jid jidSource = (occupant != null) ? occupant.getJid() : presence.getFrom();
                             XmppAddress xa = new XmppAddress(jidSource.toString());
+
+                            ChatGroup chatGroup = mChatGroupManager.getChatGroup(xa);
+
                             Contact mucContact = new Contact(xa, xa.getUser(), Imps.Contacts.TYPE_NORMAL);
                             if (occupant != null) {
-                                notifyMemberJoined(group, mucContact, entity.toString());
-                                group.notifyMemberRoleUpdate(mucContact, occupant.getRole().toString(), occupant.getAffiliation().toString());
+                                notifyMemberJoined(chatGroup, mucContact, entity.toString());
+                                chatGroup.notifyMemberRoleUpdate(mucContact, occupant.getRole().toString(), occupant.getAffiliation().toString());
                             } else if (presence.getType() == org.jivesoftware.smack.packet.Presence.Type.unavailable){
                                 // If we get a 321 status and "unavailable" the users membership has been revoked
                                 MUCUser user = MUCUser.from(presence);
                                 if (user != null && user.hasStatus() && user.getStatus().contains(MUCUser.Status.REMOVED_AFFIL_CHANGE_321)) {
-                                    notifyMemberLeft(group, null, entity.toString());
+                                    notifyMemberLeft(chatGroup, null, entity.toString());
                                 }
                             }
                             debug("MUC", "Got group presence: " + presence.toString());
