@@ -114,10 +114,10 @@ dependencies {
     compile project(':tibetanTextLibrary')
     compile project.ext.appcompat
     compile 'com.android.support:multidex:1.0.3'
-    compile 'com.android.support:design:27.1.0'
-    compile 'com.android.support:recyclerview-v7:27.1.0'
-    compile 'com.android.support:support-v4:27.1.0'
-    compile 'com.android.support:exifinterface:27.1.0'
+    compile 'com.android.support:design:27.1.1'
+    compile 'com.android.support:recyclerview-v7:27.1.1'
+    compile 'com.android.support:support-v4:27.1.1'
+    compile 'com.android.support:exifinterface:27.1.1'
     compile 'net.zetetic:android-database-sqlcipher:3.5.4@aar'
     compile 'com.google.zxing:core:3.3.0'
     compile 'commons-codec:commons-codec:1.9'

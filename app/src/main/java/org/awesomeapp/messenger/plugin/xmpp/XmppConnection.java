@@ -619,6 +619,15 @@ public class XmppConnection extends ImConnection {
             return mMUCs.get(chatRoomJid);
         }
 
+        @Override
+        public void acceptInvitationAsync(String inviteId) {
+            Invitation invitation = mInvitations.remove(inviteId);
+            if (invitation != null) {
+                acceptInvitationAsync(invitation);
+                notifyGroupInvitation(invitation);
+            }
+        }
+
         public void reconnectAll ()
         {
             MultiUserChatManager mucMgr = MultiUserChatManager.getInstanceFor(mConnection);
@@ -1665,6 +1674,8 @@ public class XmppConnection extends ImConnection {
             getContactListManager().listenToRoster(mRoster);
 
             ReconnectionManager manager = ReconnectionManager.getInstanceFor(mConnection);
+            manager.disableAutomaticReconnection();
+            /**
             manager.enableAutomaticReconnection();
             manager.addReconnectionListener(new ReconnectionListener() {
                 @Override
@@ -1679,7 +1690,7 @@ public class XmppConnection extends ImConnection {
                     debug (TAG,"reconnection failed",e);
 
                 }
-            });
+            });**/
 
             mChatManager = ChatManager.getInstanceFor(mConnection);
 
@@ -1719,7 +1730,10 @@ public class XmppConnection extends ImConnection {
 
                             if (session != null)
                                 ((ChatGroup) session.getParticipant()).setName(muc.getSubject());
+
+
                         }
+
                     }
                     catch (Exception se)
                     {

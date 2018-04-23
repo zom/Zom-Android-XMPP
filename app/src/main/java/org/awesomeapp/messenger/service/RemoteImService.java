@@ -23,6 +23,9 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -274,7 +277,27 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
         installTransports(this);
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Intent startServiceIntent = new Intent(this, NetworkSchedulerService.class);
+            startService(startServiceIntent);
+            scheduleNetworkJob();
+        }
+
     }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private void scheduleNetworkJob() {
+        JobInfo myJob = new JobInfo.Builder(0, new ComponentName(this, NetworkSchedulerService.class))
+                .setMinimumLatency(1000)
+                .setOverrideDeadline(2000)
+                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                .setPersisted(true)
+                .build();
+
+        JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        jobScheduler.schedule(myJob);
+    }
+
 
     private void checkUpgrade ()
     {
@@ -412,7 +435,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
             mNeedCheckAutoLogin = !autoLogin();
         }
 
-        return START_STICKY;
+        return START_REDELIVER_INTENT;
     }
 
 
@@ -516,6 +539,13 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
         }
         cursor.close();
 
+        if (didAutoLogin) {
+            Intent notificationIntent = new Intent(this, MainActivity.class);
+            PendingIntent launchIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent, 0);
+            getStatusBarNotifier().notify("Connecting...", "Connecting to account", "Connecting to your account", notificationIntent, false, false);
+        }
+
+
         return didAutoLogin;
     }
 
@@ -536,6 +566,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
         Debug.recordTrail(this, SERVICE_DESTROY_TRAIL_TAG, new Date());
 
         HeartbeatService.stopBeating(getApplicationContext());
+        stopService(new Intent(this, NetworkSchedulerService.class));
 
         debug("ImService stopped.");
         for (ImConnectionAdapter conn : mConnections.values()) {
@@ -756,11 +787,12 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
                     message = getString(R.string.error_suspended_connection);
                     mNotifyBuilder.setSmallIcon(R.drawable.notify_zom);
                 } else {
-                    message = getString(R.string.app_unlocked);
+                    message = "Network is offline";//getString(R.string.app_unlocked);
                     mNotifyBuilder.setSmallIcon(R.drawable.notify_zom);
                 }
 
                 mNotifyBuilder.setContentText(message);
+                mNotifyBuilder.setTicker(message);
                 // Because the ID remains unchanged, the existing notification is
                 // updated.
                 mNotifyManager.notify(
@@ -812,6 +844,9 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
             }
         }
 
+        Intent notificationIntent = new Intent(this, MainActivity.class);
+        PendingIntent launchIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent, 0);
+        getStatusBarNotifier().notify("Suspending","Suspending connection","The network is currently unavailable",notificationIntent, false, false);
     }
 
 

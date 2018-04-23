@@ -71,7 +71,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/ic_launcher_name"
         android:theme="@style/AppTheme"
-        android:largeHeap="true"
+        android:largeHeap="false"
         tools:replace="android:icon,android:allowBackup,android:label"
         >
         <activity
@@ -222,7 +222,9 @@
             android:exported="false"
             android:grantUriPermissions="true"
             android:readPermission="org.awesomeapp.messenger.permission.READ_ONLY"
-            android:writePermission="org.awesomeapp.messenger.permission.WRITE_ONLY" />
+            android:writePermission="org.awesomeapp.messenger.permission.WRITE_ONLY"
+            android:directBootAware="true"
+            />
 
         <activity
             android:name="org.awesomeapp.messenger.ImUrlActivity"
@@ -308,7 +310,6 @@
             android:exported="false"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
-        <!--
         <receiver
             android:name="org.awesomeapp.messenger.service.NetworkConnectivityReceiver"
             android:enabled="true"
@@ -316,7 +317,7 @@
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
-        </receiver>-->
+        </receiver>
         <receiver
             android:name="org.awesomeapp.messenger.service.BootCompletedListener"
             android:enabled="true"
@@ -432,6 +433,11 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths"/>
         </provider>
+
+        <service
+            android:name="org.awesomeapp.messenger.service.NetworkSchedulerService"
+            android:exported="true"
+            android:permission="android.permission.BIND_JOB_SERVICE"/>
     </application>
 
 </manifest>

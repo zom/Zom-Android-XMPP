@@ -67,7 +67,7 @@ public class NetworkConnectivityReceiver extends BroadcastReceiver {
 
         mNetworkInfo = manager.getActiveNetworkInfo();
         if (mNetworkInfo != null
-                && mNetworkInfo.isConnectedOrConnecting())
+                && mNetworkInfo.isConnected())
         {
             mState = State.CONNECTED;
         }
