@@ -138,7 +138,6 @@ public class ChatSessionManagerAdapter extends
             {
                 ChatSession session = getChatSessionManager().createChatSession(chatGroup,isNewChat);
                 ChatSessionAdapter adapter = getChatSessionAdapter(session, isNewChat);
-                groupMan.loadMembers(chatGroup);
                 return adapter;
             }
             else

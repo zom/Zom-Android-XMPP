@@ -199,5 +199,8 @@
   <string name="room_invited">You have been invited to the \´%s\´ group.</string>
   <string name="room_join">Join</string>
   <string name="room_dont_join">No thanks</string>
+  <string name="make_group_admin">Make group admin</string>
+  <string name="view_profile">View profile</string>
+  <string name="kickout">Kickout</string>
 
 </resources>

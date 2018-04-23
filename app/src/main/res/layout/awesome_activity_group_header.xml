@@ -53,7 +53,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="6dp"
-                android:src="@drawable/ic_mode_edit_black_18dp" />
+                android:src="@drawable/ic_mode_edit_black_18dp"
+                android:tint="@color/black_or_gray_selector"
+                />
         </LinearLayout>
 
         <org.ironrabbit.type.CustomTypefaceTextView
@@ -87,6 +89,8 @@
         android:drawableLeft="@drawable/ic_person_add_black_24dp"
         android:drawableStart="@drawable/ic_person_add_black_24dp"
         android:text="@string/add_friends"
+        android:textColor="@color/black_or_gray_selector"
+        android:drawableTint="@color/black_or_gray_selector"
         />
     <LinearLayout
         android:layout_width="match_parent"

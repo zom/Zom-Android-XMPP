@@ -17,6 +17,8 @@
 
 package org.awesomeapp.messenger.model;
 
+import android.text.TextUtils;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -32,7 +34,8 @@ public class ChatGroup extends ImEntity {
     private String mName;
     private HashMap<String, Contact> mMembers;
     private HashMap<String, Contact> mGroupAddressToContactMap;
-    private Contact mOwner;
+    private List<Contact> mOwners;
+    private List<Contact> mAdmins;
     private CopyOnWriteArrayList<GroupMemberListener> mMemberListeners;
 
     public ChatGroup(Address address, String name, ChatGroupManager manager) {
@@ -146,17 +149,19 @@ public class ChatGroup extends ImEntity {
      *
      * @param contact the contact who has left this group.
      */
-    public void notifyMemberLeft(Contact contact) {
-
-        if (mMembers.remove(contact.getAddress().getBareAddress())!=null) {
+    public void notifyMemberLeft(String groupAddress, Contact contact) {
+        if (contact == null && !TextUtils.isEmpty(groupAddress)) {
+            contact = mGroupAddressToContactMap.get(groupAddress);
+        }
+        if (contact != null && mMembers.remove(contact.getAddress().getBareAddress())!=null) {
 
             Object[] keys = mGroupAddressToContactMap.keySet().toArray();
 
-            for (Object groupAddress : keys)
+            for (Object groupAddressEntry : keys)
             {
-                Contact member = mGroupAddressToContactMap.get(groupAddress);
+                Contact member = mGroupAddressToContactMap.get(groupAddressEntry);
                 if (contact.getAddress().equals(member.getAddress()))
-                    mGroupAddressToContactMap.remove(groupAddress);
+                    mGroupAddressToContactMap.remove(groupAddressEntry);
             }
 
             for (GroupMemberListener listener : mMemberListeners) {
@@ -188,7 +193,7 @@ public class ChatGroup extends ImEntity {
         Object[] members = mMembers.values().toArray();
         for (Object member : members) {
             if (deleteFromDB) {
-                notifyMemberLeft((Contact) member);
+                notifyMemberLeft(null, (Contact) member);
             } else {
                 notifyMemberRoleUpdate((Contact) member, "none", null);
             }
@@ -214,14 +219,36 @@ public class ChatGroup extends ImEntity {
 
     }
 
-    public void setOwner (Contact owner)
+    public void setOwners (List<Contact> owners)
     {
-
-        mOwner = owner;
+        mOwners = owners;
     }
 
-    public Contact getOwner ()
+    public List<Contact> getOwners ()
     {
-        return mOwner;
+        return mOwners;
     }
+
+    public void setAdmins (List<Contact> admins)
+    {
+        mAdmins = admins;
+    }
+
+    public List<Contact> getAdmins ()
+    {
+        return mAdmins;
+    }
+
+    public synchronized void beginMemberUpdates() {
+        for (GroupMemberListener listener : mMemberListeners) {
+            listener.onBeginMemberUpdates(this);
+        }
+    }
+
+    public synchronized void endMemberUpdates() {
+        for (GroupMemberListener listener : mMemberListeners) {
+            listener.onEndMemberUpdates(this);
+        }
+    }
+
 }
