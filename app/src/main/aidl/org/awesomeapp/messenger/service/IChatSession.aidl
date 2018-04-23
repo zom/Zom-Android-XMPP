@@ -156,9 +156,14 @@ interface IChatSession {
      void setGroupChatSubject(String subject);
 
      /**
-     * Get group chat owner
+     * Get group chat owner(s)
      **/
-     Contact getGroupChatOwner();
+     List<Contact> getGroupChatOwners();
+
+     /**
+     * Get group chat admin(s)
+     **/
+     List<Contact> getGroupChatAdmins();
 
      /**
      * Set muted
@@ -168,5 +173,15 @@ interface IChatSession {
      boolean isMuted ();
 
      String downloadMedia (String mediaLink, String msgId);
+
+     /**
+     * Kick a user in a group chat
+     **/
+     void kickContact(String contact);
+
+     /**
+     * Make a contact admin in a group chat
+     **/
+     void grantAdmin(String contact);
 }
 

@@ -89,4 +89,11 @@ interface IChatListener {
      * This method is called when a contact has a new role or affiliation
      */
     void onContactRoleChanged(IChatSession ses, in Contact contact);
+
+	/** this is called when the member list in a group is about to change **/
+    void onBeginMemberListUpdate(IChatSession ses);
+
+    /** this is called when the member list in a group has changed **/
+    void onEndMemberListUpdate(IChatSession ses);
+
 }
