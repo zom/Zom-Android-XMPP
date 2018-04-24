@@ -14,7 +14,7 @@ import org.bouncycastle.crypto.modes.AEADBlockCipher;
 import org.bouncycastle.crypto.modes.GCMBlockCipher;
 import org.bouncycastle.crypto.params.AEADParameters;
 import org.bouncycastle.crypto.params.KeyParameter;
-import org.spongycastle.util.encoders.HexEncoder;
+import org.bouncycastle.util.encoders.HexEncoder;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;

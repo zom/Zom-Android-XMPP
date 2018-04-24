@@ -26,6 +26,7 @@ public class HeartbeatService extends Service {
     public static final String NETWORK_STATE_ACTION = "info.guardianproject.otr.app.im.SERVICE.NETWORK_STATE";
     public static final String NETWORK_STATE_EXTRA = "state";
     public static final String NETWORK_INFO_EXTRA = "info";
+    public static final String NETWORK_INFO_CONNECTED = "info.guardianproject.otr.app.im.SERVICE.NETWORK_INFO_CONNECTED";
 
     private static final String TAG = "GB.HeartbeatService";
     private PendingIntent mPendingIntent;

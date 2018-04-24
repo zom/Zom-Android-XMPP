@@ -32,6 +32,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Handler;
@@ -150,8 +151,6 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
     public static void debug(String msg) {
        LogCleaner.debug(TAG, msg);
-       // Log.d(TAG, msg);
-
     }
 
     public static void debug(String msg, Exception e) {
@@ -290,7 +289,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
         JobInfo myJob = new JobInfo.Builder(0, new ComponentName(this, NetworkSchedulerService.class))
                 .setMinimumLatency(1000)
                 .setOverrideDeadline(2000)
-                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED)
                 .setPersisted(true)
                 .build();
 
@@ -396,28 +395,38 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
                 return START_REDELIVER_INTENT;
             }
 
-            if (HeartbeatService.NETWORK_STATE_ACTION.equals(intent.getAction())) {
-                NetworkInfo networkInfo = (NetworkInfo) intent
-                        .getParcelableExtra(HeartbeatService.NETWORK_INFO_EXTRA);
-                NetworkConnectivityReceiver.State networkState = State.values()[intent.getIntExtra(HeartbeatService.NETWORK_STATE_EXTRA, 0)];
 
-                if (!mWakeLock.isHeld())
+            if (HeartbeatService.NETWORK_STATE_ACTION.equals(intent.getAction())) {
+
+                if (intent.hasExtra(HeartbeatService.NETWORK_INFO_CONNECTED))
                 {
-                    try {
-                        mWakeLock.acquire();
+                    ConnectivityManager connectivityManager
+                            = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+                    NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+                    NetworkConnectivityReceiver.State networkState = State.values()[intent.getIntExtra(HeartbeatService.NETWORK_STATE_EXTRA, 0)];
+                    networkStateChanged(activeNetworkInfo,networkState);
+                }
+                else {
+                    NetworkInfo networkInfo = (NetworkInfo) intent
+                            .getParcelableExtra(HeartbeatService.NETWORK_INFO_EXTRA);
+                    NetworkConnectivityReceiver.State networkState = State.values()[intent.getIntExtra(HeartbeatService.NETWORK_STATE_EXTRA, 0)];
+
+                    if (!mWakeLock.isHeld()) {
+                        try {
+                            mWakeLock.acquire();
+                            networkStateChanged(networkInfo, networkState);
+
+                        } finally {
+                            mWakeLock.release();
+                        }
+                    } else {
                         networkStateChanged(networkInfo, networkState);
 
-                    } finally {
-                        mWakeLock.release();
                     }
-                }
-                else
-                {
-                    networkStateChanged(networkInfo, networkState);
-
                 }
 
             }
+
 
             if (ImServiceConstants.EXTRA_CHECK_SHUTDOWN.equals((intent.getAction())))
             {
@@ -538,13 +547,6 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
             }
         }
         cursor.close();
-
-        if (didAutoLogin) {
-            Intent notificationIntent = new Intent(this, MainActivity.class);
-            PendingIntent launchIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent, 0);
-            getStatusBarNotifier().notify("Connecting...", "Connecting to account", "Connecting to your account", notificationIntent, false, false);
-        }
-
 
         return didAutoLogin;
     }
@@ -755,17 +757,19 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
         debug("networkStateChanged: type=" + networkInfo + " state=" + networkState);
 
-        boolean networkChanged = false;
+        boolean networkChanged = mNetworkType != networkType
+                || mNetworkState != networkState;
 
-        if (mNetworkType != networkType
-            || mNetworkState != networkState) {
+        boolean isNetworkAvailable = isNetworkAvailable();
+
+        if (networkChanged) {
 
             mNetworkState = networkState;
             mNetworkType = networkType;
 
-            networkChanged = true;
+            isNetworkAvailable = isNetworkAvailable();
 
-            if (isNetworkAvailable()) {
+            if (isNetworkAvailable) {
 
                 if (mNeedCheckAutoLogin) {
                     mNeedCheckAutoLogin = !autoLogin();
@@ -779,31 +783,30 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
                 suspendConnections();
             }
 
-            //update the notification
-            if (mNotifyBuilder != null) {
-                String message = "";
-
-                if (!isNetworkAvailable()) {
-                    message = getString(R.string.error_suspended_connection);
-                    mNotifyBuilder.setSmallIcon(R.drawable.notify_zom);
-                } else {
-                    message = "Network is offline";//getString(R.string.app_unlocked);
-                    mNotifyBuilder.setSmallIcon(R.drawable.notify_zom);
-                }
-
-                mNotifyBuilder.setContentText(message);
-                mNotifyBuilder.setTicker(message);
-                // Because the ID remains unchanged, the existing notification is
-                // updated.
-                mNotifyManager.notify(
-                        notifyId,
-                        mNotifyBuilder.build());
-
-            }
-
 
         }
 
+        //update the notification
+        if (mNotifyBuilder != null) {
+            String message = "";
+
+            if (!isNetworkAvailable) {
+                message = getString(R.string.error_suspended_connection);
+                mNotifyBuilder.setSmallIcon(R.drawable.notify_zom);
+            } else {
+                message = "Zom is online";//getString(R.string.app_unlocked);
+                mNotifyBuilder.setSmallIcon(R.drawable.notify_zom);
+            }
+
+            mNotifyBuilder.setContentText(message);
+            mNotifyBuilder.setTicker(message);
+            // Because the ID remains unchanged, the existing notification is
+            // updated.
+            mNotifyManager.notify(
+                    notifyId,
+                    mNotifyBuilder.build());
+
+        }
 
 
     }
@@ -844,9 +847,6 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
             }
         }
 
-        Intent notificationIntent = new Intent(this, MainActivity.class);
-        PendingIntent launchIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent, 0);
-        getStatusBarNotifier().notify("Suspending","Suspending connection","The network is currently unavailable",notificationIntent, false, false);
     }
 
 

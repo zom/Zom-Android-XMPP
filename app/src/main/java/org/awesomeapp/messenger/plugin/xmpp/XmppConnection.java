@@ -963,6 +963,9 @@ public class XmppConnection extends ImConnection {
 
             try {
 
+                if (mConnection == null || (!mConnection.isConnected()))
+                    return;
+
                 // Create a MultiUserChat using a Connection for a room
                 MultiUserChatManager mucMgr = MultiUserChatManager.getInstanceFor(mConnection);
                 mucMgr.setAutoJoinOnReconnect(true);
@@ -1478,6 +1481,7 @@ public class XmppConnection extends ImConnection {
     private void do_login_async () {
 
         if (getState() == LOGGED_IN
+                || getState() == LOGGING_IN
                 || getState() == SUSPENDED
                 || getState() == SUSPENDING ) {
             mNeedReconnect = false;
@@ -1490,6 +1494,8 @@ public class XmppConnection extends ImConnection {
                     "still trying..."));
             return;
         }*/
+
+        setState(LOGGING_IN, null);
 
         ContentResolver contentResolver = mContext.getContentResolver();
 
@@ -1508,7 +1514,6 @@ public class XmppConnection extends ImConnection {
         String defaultStatus = null;
 
         mNeedReconnect = true;
-        setState(LOGGING_IN, null);
 
         mUserPresence = new Presence(Presence.AVAILABLE, defaultStatus, Presence.CLIENT_TYPE_MOBILE);
 
@@ -1545,7 +1550,7 @@ public class XmppConnection extends ImConnection {
             if (mRetryLogin && getState() != SUSPENDED) {
                 debug(TAG, "will retry");
                 setState(LOGGING_IN, info);
-                maybe_reconnect();
+                reconnect();
 
             } else {
                //debug(TAG, "will not retry"); //WE MUST ALWAYS RETRY!
@@ -1567,6 +1572,7 @@ public class XmppConnection extends ImConnection {
 
                 ImErrorInfo info = new ImErrorInfo(ImErrorInfo.UNKNOWN_ERROR, "keymanagement exception");
                 setState(LOGGING_IN, info);
+                reconnect();
             }
             else
             {
@@ -2247,9 +2253,11 @@ public class XmppConnection extends ImConnection {
                  * - Network error
                  * - We forced a socket shutdown
                  */
-                debug(TAG, "reconnect on error: " + e.getMessage(),e);
-                if (e.getMessage().contains("conflict")) {
+                debug(TAG, "connectionClosedOnError error: " + e.getMessage(),e);
 
+                disconnected(new ImErrorInfo(ImpsErrorInfo.UNKNOWN_ERROR,e.getMessage()));
+                /**
+                if (e.getMessage().contains("conflict")) {
 
                     execute(new Runnable() {
                         @Override
@@ -2277,7 +2285,7 @@ public class XmppConnection extends ImConnection {
                     });
 
 
-                }
+                }**/
             }
 
             @Override
@@ -2320,7 +2328,8 @@ public class XmppConnection extends ImConnection {
                  */
 
                 //if the state is logged in, we should try to reconnect!
-                if (getState() == LOGGED_IN)
+
+                if (getState() != SUSPENDED)
                 {
                     execute(new Runnable() {
 
@@ -2337,7 +2346,6 @@ public class XmppConnection extends ImConnection {
                 }
             }
         };
-
 
         mConnection.addConnectionListener(connectionListener);
         mStreamHandler = new XmppStreamHandler(mConnection, connectionListener);
@@ -3688,7 +3696,6 @@ public class XmppConnection extends ImConnection {
 
     }
 
-
     @Override
     public void networkTypeChanged() {
 
@@ -3700,7 +3707,7 @@ public class XmppConnection extends ImConnection {
                 {
                     public void run ()
                     {
-                        if (mState == SUSPENDED || mState == SUSPENDING) {
+                        if (mState != LOGGED_IN) {
                             debug(TAG, "network type changed");
                             mNeedReconnect = true;
                             setState(LOGGING_IN, null);
@@ -3809,9 +3816,8 @@ public class XmppConnection extends ImConnection {
 
                     mConnection = null;
                     mNeedReconnect = true;
-                    setState(LOGGING_IN, new ImErrorInfo(ImErrorInfo.NETWORK_ERROR, null));
-
-                    do_login();
+                    setState(DISCONNECTED, new ImErrorInfo(ImErrorInfo.NETWORK_ERROR, null));
+                    do_login_async();
 
                 }
             } catch (Exception e) {
@@ -3822,7 +3828,7 @@ public class XmppConnection extends ImConnection {
                 debug(TAG, "reconnection attempt failed", e);
                 // Smack incorrectly notified us that reconnection was successful, reset in case it fails
                 mNeedReconnect = false;
-                setState(LOGGING_IN, new ImErrorInfo(ImErrorInfo.NETWORK_ERROR, e.getMessage()));
+                setState(DISCONNECTED, new ImErrorInfo(ImErrorInfo.NETWORK_ERROR, e.getMessage()));
 
                 do_login();
 
@@ -3832,7 +3838,7 @@ public class XmppConnection extends ImConnection {
             mConnection = null;
             debug(TAG, "reconnection on network change failed");
 
-            setState(LOGGING_IN, new ImErrorInfo(ImErrorInfo.NETWORK_ERROR,
+            setState(DISCONNECTED, new ImErrorInfo(ImErrorInfo.NETWORK_ERROR,
                     "reconnection on network change failed"));
 
             do_login();
@@ -4937,6 +4943,8 @@ public class XmppConnection extends ImConnection {
         }
 
         private String uploadFile(long fileSize, InputStream fis, Slot slot, UploadProgressListener listener, boolean useEncryption) throws IOException {
+
+            TrafficStatsCompat.setThreadStatsTag(0xF00D);
 
             String result = null;
             int connectTimeout = 60000;

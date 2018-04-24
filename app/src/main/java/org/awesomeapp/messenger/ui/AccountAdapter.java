@@ -18,6 +18,7 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.widget.CursorAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -223,6 +224,11 @@ public class AccountAdapter extends CursorAdapter implements AccountListItem.Sig
             return;
         }
         Cursor cursor = getCursor();
+
+        if (cursor == null || cursor.isClosed()) {
+            Log.w(getClass().getName(),"unable to sign in, since cursor is closed");
+            return;
+        }
 
         cursor.moveToFirst();
         while (!cursor.isAfterLast())

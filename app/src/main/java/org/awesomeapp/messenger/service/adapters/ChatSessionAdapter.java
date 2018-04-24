@@ -1656,22 +1656,6 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
                 }
 
-                /**
-                if (mimeType != null && mimeType.startsWith("audio"))
-                {
-                    MediaPlayer mp = new MediaPlayer();
-                    try {
-                        mp.setDataSource(file.getCanonicalPath());
-
-                        mp.prepare();
-                        mp.start();
-
-                    } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        //e.printStackTrace();
-                    }
-                }*/
-
             } catch (Exception e) {
              //   mHandler.showAlert(service.getString(R.string.error_chat_file_transfer_title), service.getString(R.string.error_chat_file_transfer_body));
                 OtrDebugLogger.log("error reading file", e);
