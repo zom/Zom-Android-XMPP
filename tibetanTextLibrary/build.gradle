@@ -16,7 +16,7 @@ android {
     }
 
     dependencies {
-        compile project.ext.appcompat
+        implementation project.ext.appcompat
     }
     buildToolsVersion '27.0.3'
 }

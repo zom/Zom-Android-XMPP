@@ -109,54 +109,55 @@ ext {
 
 
 dependencies {
-    compile fileTree(include: '*.jar', dir: 'libs')
-    compile project(':otr4jandroid')
-    compile project(':tibetanTextLibrary')
-    compile project.ext.appcompat
-    compile 'com.android.support:multidex:1.0.3'
-    compile 'com.android.support:design:27.1.1'
-    compile 'com.android.support:recyclerview-v7:27.1.1'
-    compile 'com.android.support:support-v4:27.1.1'
-    compile 'com.android.support:exifinterface:27.1.1'
-    compile 'net.zetetic:android-database-sqlcipher:3.5.4@aar'
-    compile 'com.google.zxing:core:3.3.0'
-    compile 'commons-codec:commons-codec:1.9'
-    compile 'commons-io:commons-io:2.4'
-    compile 'org.thoughtcrime.ssl.pinning:AndroidPinning:1.0.0'
-    compile 'info.guardianproject.iocipher:IOCipher:0.4'
-    compile 'info.guardianproject.netcipher:netcipher:2.0.0-alpha1'
-    compile 'info.guardianproject.netcipher:netcipher-httpclient:2.0.0-alpha1'
-    compile 'info.guardianproject.panic:panic:0.5'
-    compile 'cz.msebera.android:httpclient:4.4.1.2'
-    compile 'de.measite.minidns:minidns-hla:0.2.4'
+    implementation fileTree(include: '*.jar', dir: 'libs')
+    implementation project(':otr4jandroid')
+  //  implementation 'com.github.otr4j:otr4j:aac20b11de'
+    implementation project(':tibetanTextLibrary')
+    implementation project.ext.appcompat
+    implementation 'com.android.support:multidex:1.0.3'
+    implementation 'com.android.support:design:27.1.1'
+    implementation 'com.android.support:recyclerview-v7:27.1.1'
+    implementation 'com.android.support:support-v4:27.1.1'
+    implementation 'com.android.support:exifinterface:27.1.1'
+    implementation 'net.zetetic:android-database-sqlcipher:3.5.4@aar'
+    implementation 'com.google.zxing:core:3.3.0'
+    implementation 'commons-codec:commons-codec:1.9'
+    implementation 'commons-io:commons-io:2.4'
+    implementation 'org.thoughtcrime.ssl.pinning:AndroidPinning:1.0.0'
+    implementation 'info.guardianproject.iocipher:IOCipher:0.4'
+    implementation 'info.guardianproject.netcipher:netcipher:2.0.0-alpha1'
+    implementation 'info.guardianproject.netcipher:netcipher-httpclient:2.0.0-alpha1'
+    implementation 'info.guardianproject.panic:panic:0.5'
+    implementation 'cz.msebera.android:httpclient:4.4.1.2'
+    implementation 'de.measite.minidns:minidns-hla:0.2.4'
     // https://mvnrepository.com/artifact/org.jxmpp/jxmpp-core
-    compile 'org.jxmpp:jxmpp-core:0.6.0'
-    compile 'org.jxmpp:jxmpp-jid:0.6.0'
-    compile 'org.jxmpp:jxmpp-util-cache:0.6.0'
+    implementation 'org.jxmpp:jxmpp-core:0.6.0'
+    implementation 'org.jxmpp:jxmpp-jid:0.6.0'
+    implementation 'org.jxmpp:jxmpp-util-cache:0.6.0'
     // for OMEMO support
-    compile 'org.whispersystems:signal-protocol-java:2.3.0'
-    compile 'org.bouncycastle:bcprov-jdk15on:1.57'
-    compile 'org.whispersystems:curve25519-android:0.3.0'
+    implementation 'org.whispersystems:signal-protocol-java:2.3.0'
+    implementation 'org.bouncycastle:bcprov-jdk15on:1.57'
+    implementation 'org.whispersystems:curve25519-android:0.3.0'
     // https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java
-    compile 'com.google.protobuf:protobuf-java:3.4.0'
-    compile 'org.ocpsoft.prettytime:prettytime:4.0.0.Final'
-    compile 'com.theartofdev.edmodo:android-image-cropper:2.0.0'
-    compile 'de.hdodenhof:circleimageview:2.0.0'
-    compile 'com.github.bumptech.glide:glide:4.3.1'
+    implementation 'com.google.protobuf:protobuf-java:3.4.0'
+    implementation 'org.ocpsoft.prettytime:prettytime:4.0.0.Final'
+    implementation 'com.theartofdev.edmodo:android-image-cropper:2.0.0'
+    implementation 'de.hdodenhof:circleimageview:2.0.0'
+    implementation 'com.github.bumptech.glide:glide:4.3.1'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.3.1'
-    compile 'com.github.javiersantos:AppUpdater:2.6.4'
-    compile 'com.github.QuadFlask:colorpicker:0.0.10'
-    compile "org.igniterealtime.smack:smack-android:$smackVersion"
-    compile "org.igniterealtime.smack:smack-android-extensions:$smackVersion"
+    implementation 'com.github.javiersantos:AppUpdater:2.6.4'
+    implementation 'com.github.QuadFlask:colorpicker:0.0.10'
+    implementation "org.igniterealtime.smack:smack-android:$smackVersion"
+    implementation "org.igniterealtime.smack:smack-android-extensions:$smackVersion"
     //   compile "org.igniterealtime.smack:smack-omemo-signal:$smackOmemoVersion"
-    compile "org.igniterealtime.smack:smack-resolver-minidns:$smackVersion"
-    compile "org.igniterealtime.smack:smack-tcp:$smackVersion"
-    compile "org.igniterealtime.smack:smack-core:$smackVersion"
-    compile "org.igniterealtime.smack:smack-extensions:$smackVersion"
-    compile "org.igniterealtime.smack:smack-experimental:$smackVersion"
-    compile "org.igniterealtime.smack:smack-im:$smackVersion"
-    compile "org.igniterealtime.smack:smack-sasl-provided:$smackVersion"
+    implementation "org.igniterealtime.smack:smack-resolver-minidns:$smackVersion"
+    implementation "org.igniterealtime.smack:smack-tcp:$smackVersion"
+    implementation "org.igniterealtime.smack:smack-core:$smackVersion"
+    implementation "org.igniterealtime.smack:smack-extensions:$smackVersion"
+    implementation "org.igniterealtime.smack:smack-experimental:$smackVersion"
+    implementation "org.igniterealtime.smack:smack-im:$smackVersion"
+    implementation "org.igniterealtime.smack:smack-sasl-provided:$smackVersion"
     // https://mvnrepository.com/artifact/com.google.code.gson/gson
-    compile 'com.google.code.gson:gson:2.8.0'
-    compile 'com.jrummyapps:android-shell:1.0.1'
+    implementation 'com.google.code.gson:gson:2.8.0'
+    implementation 'com.jrummyapps:android-shell:1.0.1'
 }
