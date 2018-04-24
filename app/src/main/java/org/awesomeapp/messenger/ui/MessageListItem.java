@@ -64,8 +64,10 @@ import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.provider.Browser;
 import android.provider.MediaStore;
+import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ClickableSpan;
 import android.text.style.ImageSpan;
@@ -214,7 +216,7 @@ public class MessageListItem extends FrameLayout {
         if (nickname == null)
             nickname = address;
 
-        lastMessage = formatMessage(body);
+        lastMessage = body;
         showAvatar(address, nickname, true, presenceStatus);
 
         mHolder.resetOnClickListenerMediaThumbnail();
@@ -319,7 +321,7 @@ public class MessageListItem extends FrameLayout {
 
             if (!cmdSuccess)
             {
-                mHolder.mTextViewForMessages.setText(new SpannableString(lastMessage));
+                mHolder.mTextViewForMessages.setText(formatMessage(lastMessage));
             }
             else
             {
@@ -329,7 +331,7 @@ public class MessageListItem extends FrameLayout {
         }
         else if (!TextUtils.isEmpty(lastMessage))
         {
-            mHolder.mTextViewForMessages.setText(new SpannableString(lastMessage));
+            mHolder.mTextViewForMessages.setText(formatMessage(lastMessage));
         }
 
         if (date != null)
@@ -712,18 +714,25 @@ public class MessageListItem extends FrameLayout {
     }
 
 
-    private String formatMessage (String body)
+    private Spanned formatMessage (String body)
     {
 
         if (body != null)
             try {
-                return (android.text.Html.fromHtml(body).toString()); //this happens on Xiaomi sometimes
+
+                body = body.replace("\n","<br/>");
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    return Html.fromHtml(body, Html.FROM_HTML_MODE_LEGACY|Html.FROM_HTML_SEPARATOR_LINE_BREAK_PARAGRAPH);
+                } else {
+                    return Html.fromHtml(body);
+                }
             }
             catch (RuntimeException re){
-                return "";
+                return null;
             }
         else
-            return "";
+            return null;
     }
 
     public void bindOutgoingMessage(MessageViewHolder holder, int id, int messageType, String address, final String mimeType, final String body, Date date, Markup smileyRes, boolean scrolling,
