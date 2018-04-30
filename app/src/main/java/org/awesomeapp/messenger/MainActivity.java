@@ -34,6 +34,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.IInterface;
 import android.os.Parcel;
@@ -382,13 +383,12 @@ public class MainActivity extends BaseActivity implements IConnectionListener {
             }
 
             if (mApp.getDefaultProviderId() != -1) {
-                IImConnection conn = mApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
+                final IImConnection conn = mApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
+                final int connState = conn.getState();
 
-
-
-                if (conn.getState() == ImConnection.DISCONNECTED
-                        || conn.getState() == ImConnection.SUSPENDED
-                        || conn.getState() == ImConnection.SUSPENDING) {
+                if (connState == ImConnection.DISCONNECTED
+                        || connState == ImConnection.SUSPENDED
+                        || connState == ImConnection.SUSPENDING) {
 
                     mSbStatus = Snackbar.make(mViewPager, R.string.error_suspended_connection, Snackbar.LENGTH_INDEFINITE);
                     mSbStatus.setAction(getString(R.string.connect), new View.OnClickListener() {
@@ -403,16 +403,24 @@ public class MainActivity extends BaseActivity implements IConnectionListener {
 
                     return false;
                 }
-                else if (conn.getState() == ImConnection.LOGGED_IN)
+                else if (connState == ImConnection.LOGGED_IN)
                 {
                     //do nothing
                 }
-                else if (conn.getState() == ImConnection.LOGGING_IN)
+                else if (connState == ImConnection.LOGGING_IN)
                 {
-                    mSbStatus = Snackbar.make(mViewPager, R.string.signing_in_wait, Snackbar.LENGTH_INDEFINITE);
-                    mSbStatus.show();
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (connState == ImConnection.LOGGING_IN) {
+                                mSbStatus = Snackbar.make(mViewPager, R.string.signing_in_wait, Snackbar.LENGTH_INDEFINITE);
+                                mSbStatus.show();
+                            }
+                        }
+                    }, 5000); //Timer is in ms here.
+
                 }
-                else if (conn.getState() == ImConnection.LOGGING_OUT)
+                else if (connState == ImConnection.LOGGING_OUT)
                 {
                     mSbStatus = Snackbar.make(mViewPager, R.string.signing_out_wait, Snackbar.LENGTH_INDEFINITE);
                     mSbStatus.show();
