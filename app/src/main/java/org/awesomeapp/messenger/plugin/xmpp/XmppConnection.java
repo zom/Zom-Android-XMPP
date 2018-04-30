@@ -1521,6 +1521,8 @@ public class XmppConnection extends ImConnection {
             if (mUsername == null || mUsername.length() == 0)
                 throw new Exception("empty username not allowed");
 
+            mRetryLogin = true;
+
             initConnectionAndLogin(providerSettings, mUsername);
 
             setState(LOGGED_IN, null);
@@ -1532,7 +1534,7 @@ public class XmppConnection extends ImConnection {
             debug(TAG, "exception thrown on connection",e);
 
             ImErrorInfo info = new ImErrorInfo(ImErrorInfo.CANT_CONNECT_TO_SERVER, e.getMessage());
-            mRetryLogin = true; // our default behavior is to retry
+          //  mRetryLogin = true; // our default behavior is to retry
 
             if (mConnection != null && mConnection.isConnected()) {
 
@@ -2255,7 +2257,7 @@ public class XmppConnection extends ImConnection {
                  */
                 debug(TAG, "connectionClosedOnError error: " + e.getMessage(),e);
 
-                disconnected(new ImErrorInfo(ImpsErrorInfo.UNKNOWN_ERROR,e.getMessage()));
+               // disconnected(new ImErrorInfo(ImpsErrorInfo.UNKNOWN_ERROR,e.getMessage()));
                 /**
                 if (e.getMessage().contains("conflict")) {
 
