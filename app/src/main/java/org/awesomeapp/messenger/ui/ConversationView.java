@@ -1581,11 +1581,12 @@ public class ConversationView {
 
     private void setGroupSeen() {
         if (isGroupChat()) {
-            Uri contactUri = ContentUris.withAppendedId(Imps.Contacts.CONTENT_URI, mLastChatId);
-            ContentResolver cr = mActivity.getContentResolver();
-            ContentValues contentValues = new ContentValues();
-            contentValues.put(Imps.Contacts.TYPE, mContactType & (~Imps.Contacts.TYPE_FLAG_UNSEEN));
-            cr.update(contactUri, contentValues, null, null);
+            if (getChatSession() != null) {
+                try {
+                    getChatSession().markAsSeen();
+                } catch (RemoteException e) {
+                }
+            }
         }
     }
 

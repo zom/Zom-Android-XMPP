@@ -1013,6 +1013,7 @@ public class MainActivity extends BaseActivity implements IConnectionListener {
                         if (session != null)
                         {
                             mRequestedChatId = session.getId();
+                            session.markAsSeen(); // We created this, so mark as seen
                             publishProgress(mRequestedChatId);
 
                         } else {
