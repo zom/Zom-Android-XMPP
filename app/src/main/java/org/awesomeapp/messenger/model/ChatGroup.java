@@ -18,6 +18,7 @@
 package org.awesomeapp.messenger.model;
 
 import android.text.TextUtils;
+import android.util.Pair;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -34,8 +35,12 @@ public class ChatGroup extends ImEntity {
     private String mName;
     private HashMap<String, Contact> mMembers;
     private HashMap<String, Contact> mGroupAddressToContactMap;
-    private List<Contact> mOwners;
-    private List<Contact> mAdmins;
+
+    /** Store the role and affiliation for a contact in a pair data structure, the first being
+     * the role and the second the affiliation.
+     */
+    private HashMap<Contact, Pair<String, String>> mMemberRolesAndAffiliations;
+
     private CopyOnWriteArrayList<GroupMemberListener> mMemberListeners;
 
     public ChatGroup(Address address, String name, ChatGroupManager manager) {
@@ -44,6 +49,7 @@ public class ChatGroup extends ImEntity {
         mName = name;
         mManager = manager;
         mMembers = new HashMap<>();
+        mMemberRolesAndAffiliations = new HashMap<>();
         mGroupAddressToContactMap = new HashMap<>();
 
         mMemberListeners = new CopyOnWriteArrayList<GroupMemberListener>();
@@ -76,6 +82,14 @@ public class ChatGroup extends ImEntity {
 
     public void addMemberListener(GroupMemberListener listener) {
         mMemberListeners.add(listener);
+
+        // Could be that member lists were downloaded before we had a listener attached, so make
+        // sure to update the listener here.
+        for (Contact c : getMembers()) {
+            Pair<String, String> roles = mMemberRolesAndAffiliations.get(c);
+            listener.onMemberJoined(this, c);
+            listener.onMemberRoleChanged(this, c, roles.first, roles.second);
+        }
     }
 
     public void removeMemberListener(GroupMemberListener listener) {
@@ -121,6 +135,7 @@ public class ChatGroup extends ImEntity {
 
         if (contact == null) {
             mMembers.put(newContact.getAddress().getBareAddress(), newContact);
+            mMemberRolesAndAffiliations.put(newContact, new Pair<String, String>("none", "none"));
 
             if (groupAddress != null)
                 mGroupAddressToContactMap.put(groupAddress, newContact);
@@ -137,6 +152,7 @@ public class ChatGroup extends ImEntity {
     public synchronized void notifyMemberRoleUpdate(Contact newContact, String role, String affiliation) {
         Contact contact = mMembers.get(newContact.getAddress().getBareAddress());
         if (contact != null) {
+            mMemberRolesAndAffiliations.put(newContact, new Pair<String, String>(role, affiliation));
             for (GroupMemberListener listener : mMemberListeners) {
                 listener.onMemberRoleChanged(this, contact, role, affiliation);
             }
@@ -154,6 +170,7 @@ public class ChatGroup extends ImEntity {
             contact = mGroupAddressToContactMap.get(groupAddress);
         }
         if (contact != null && mMembers.remove(contact.getAddress().getBareAddress())!=null) {
+            mMemberRolesAndAffiliations.remove(contact);
 
             Object[] keys = mGroupAddressToContactMap.keySet().toArray();
 
@@ -196,6 +213,8 @@ public class ChatGroup extends ImEntity {
                 notifyMemberLeft(null, (Contact) member);
             } else {
                 notifyMemberRoleUpdate((Contact) member, "none", null);
+                Pair<String, String> oldValue = mMemberRolesAndAffiliations.get(member);
+                mMemberRolesAndAffiliations.put((Contact)member, new Pair<String, String>("none", oldValue.second));
             }
         }
         if (deleteFromDB) {
@@ -205,38 +224,28 @@ public class ChatGroup extends ImEntity {
         }
     }
 
-    /*
-    set the list of members
-     */
-    public void setMembers (List<Contact> members)
-    {
-        clearMembers(true);
-
-        for (Contact newContact : members)
-        {
-            notifyMemberJoined(null, newContact);
-        }
-
-    }
-
-    public void setOwners (List<Contact> owners)
-    {
-        mOwners = owners;
-    }
-
     public List<Contact> getOwners ()
     {
-        return mOwners;
-    }
-
-    public void setAdmins (List<Contact> admins)
-    {
-        mAdmins = admins;
+        ArrayList<Contact> owners = new ArrayList<>();
+        for (Contact c : mMemberRolesAndAffiliations.keySet()) {
+            Pair<String, String> roles = mMemberRolesAndAffiliations.get(c);
+            if (roles.first.equalsIgnoreCase("owner")) {
+                owners.add(c);
+            }
+        }
+        return owners;
     }
 
     public List<Contact> getAdmins ()
     {
-        return mAdmins;
+        ArrayList<Contact> admins = new ArrayList<>();
+        for (Contact c : mMemberRolesAndAffiliations.keySet()) {
+            Pair<String, String> roles = mMemberRolesAndAffiliations.get(c);
+            if (roles.first.equalsIgnoreCase("admin")) {
+                admins.add(c);
+            }
+        }
+        return admins;
     }
 
     public synchronized void beginMemberUpdates() {
