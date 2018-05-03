@@ -72,7 +72,7 @@ public final class Presence implements Parcelable {
     private Date mLastSeen = null;
 
     public Presence() {
-        this(Presence.OFFLINE, null, null, null, CLIENT_TYPE_DEFAULT, null, null);
+        this(Presence.OFFLINE, null, null, null, CLIENT_TYPE_DEFAULT, null, null, null);
     }
 
     /**
@@ -92,21 +92,22 @@ public final class Presence implements Parcelable {
 
     public Presence(int status, String statusText, byte[] avatarData, String avatarType,
             int clientType) {
-        this(status, statusText, avatarData, avatarType, clientType, null, null);
+        this(status, statusText, avatarData, avatarType, clientType, null, null, null);
     }
 
     public Presence(int status, String statusText, byte[] avatarData, String avatarType,
-            int clientType, Map<String, String> extendedInfo, String resource) {
+            int clientType, Map<String, String> extendedInfo, String resource, Date lastSeen) {
         setStatus(status);
         mStatusText = statusText;
         setAvatar(avatarData, avatarType);
         mClientType = clientType;
         mExtendedInfo = extendedInfo;
         mResource = resource;
+        mLastSeen = lastSeen;
     }
 
     public Presence(Presence p) {
-        this(p.mStatus, p.mStatusText, p.mAvatarData, p.mAvatarType, p.mClientType, p.mExtendedInfo, p.mResource);
+        this(p.mStatus, p.mStatusText, p.mAvatarData, p.mAvatarType, p.mClientType, p.mExtendedInfo, p.mResource, p.mLastSeen);
     }
 
     public Presence(Parcel source) {
