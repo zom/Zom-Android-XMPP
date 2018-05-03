@@ -183,5 +183,10 @@ interface IChatSession {
      * Make a contact admin in a group chat
      **/
      void grantAdmin(String contact);
+
+     /**
+      * Mark this chat session as seen.
+      */
+     void markAsSeen();
 }
 

@@ -799,7 +799,6 @@ public class XmppConnection extends ImConnection {
                         List owners = new ArrayList();
                         owners.add(mUser.getAddress().getBareAddress());
                         submitForm.setAnswer("muc#roomconfig_roomowners", owners);
-                        chatGroup.setOwners(Collections.singletonList(mUser));
 
                         if (submitForm.getField("muc#roominfo_description") == null) {
                             FormField field =new FormField("muc#roominfo_description");
@@ -989,8 +988,6 @@ public class XmppConnection extends ImConnection {
 
                 addMucListeners(muc, chatGroup);
        //         mBookmarkManager.addBookmarkedConference(muc.getSubject(),muc.getRoom(),true,muc.getNickname(),null);
-
-                loadMembers(muc, chatGroup);
             } catch (Exception e) {
                 debug(TAG,"error joining MUC",e);
             }
@@ -1066,7 +1063,6 @@ public class XmppConnection extends ImConnection {
                     chatGroup.notifyMemberRoleUpdate(mucContact, "moderator", "owner");
                     owners.add(mucContact);
                 }
-                chatGroup.setOwners(owners);
             }
             catch (Exception e)
                 {
@@ -1083,7 +1079,6 @@ public class XmppConnection extends ImConnection {
                     chatGroup.notifyMemberRoleUpdate(mucContact, null, "admin");
                     admins.add(mucContact);
                 }
-                chatGroup.setAdmins(admins);
             }
             catch (Exception e)
             {
@@ -1145,6 +1140,13 @@ public class XmppConnection extends ImConnection {
                                 }
                             }
                             debug("MUC", "Got group presence: " + presence.toString());
+
+                            MUCUser user = MUCUser.from(presence);
+                            if (user != null && user.hasStatus() && user.getStatus().contains(MUCUser.Status.PRESENCE_TO_SELF_110)) {
+                                // We are now logged in, fetch the lists for members, admins, owners!
+                                // See item 2 at https://xmpp.org/extensions/xep-0045.html#order
+                                loadMembers(muc, chatGroup);
+                            }
                         } catch (Exception e) {
                             debug("MUC", "Error handling group presence: " + e);
                         }

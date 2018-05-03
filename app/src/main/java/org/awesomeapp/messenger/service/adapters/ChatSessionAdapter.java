@@ -736,6 +736,20 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         }
     }
 
+    public void markAsSeen() {
+        Uri uriContact = ContentUris.withAppendedId(Imps.Contacts.CONTENT_URI, mContactId);
+        Cursor c = mContentResolver.query(uriContact, new String[]{Imps.Contacts.TYPE}, null, null, null);
+        if (c != null) {
+            if (c.moveToFirst()) {
+                int type = c.getInt(0);
+                ContentValues contentValues = new ContentValues();
+                contentValues.put(Imps.Contacts.TYPE, type & (~Imps.Contacts.TYPE_FLAG_UNSEEN));
+                mContentResolver.update(uriContact, contentValues, null, null);
+            }
+            c.close();
+        }
+    }
+
     String getNickName(String username) {
         ImEntity participant = mChatSession.getParticipant();
         if (mIsGroupChat) {
