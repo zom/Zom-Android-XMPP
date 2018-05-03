@@ -303,9 +303,14 @@ public class ConversationDetailActivity extends BaseActivity {
         mNickname = intent.getStringExtra("nickname");
 
         if (mChatId != -1) {
-            mConvoView.bindChat(mChatId, mAddress, mNickname);
-            mConvoView.startListening();
-            applyStyleForToolbar();
+            boolean bound = mConvoView.bindChat(mChatId, mAddress, mNickname);
+
+            if (bound) {
+                mConvoView.startListening();
+                applyStyleForToolbar();
+            }
+            else
+                finish();
         }
         else {
             finish ();
@@ -344,25 +349,6 @@ public class ConversationDetailActivity extends BaseActivity {
             getContentResolver().update(ContentUris.withAppendedId(Imps.Chats.CONTENT_URI, mChatId), values, null, null);
         }
 
-        /**
-        if (mConvoView.getOtrSessionStatus() == SessionStatus.ENCRYPTED
-                && (!mConvoView.isOtrSessionVerified())
-                )
-        {
-
-            Snackbar sb = Snackbar.make(mConvoView.getHistoryView(), R.string.not_verified, Snackbar.LENGTH_INDEFINITE);
-
-            sb.setAction(R.string.ok, new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    mConvoView.showVerifyDialog();
-                }
-            });
-
-            sb.show();;
-
-        }**/
 
 
     }

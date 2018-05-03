@@ -1635,7 +1635,7 @@ public class ConversationView {
 
     }
 
-    public void bindChat(long chatId, String address, String name) {
+    public boolean bindChat(long chatId, String address, String name) {
         //log("bind " + this + " " + chatId);
 
         mLastChatId = chatId;
@@ -1646,7 +1646,7 @@ public class ConversationView {
         Cursor c = mActivity.getContentResolver().query(contactUri, CHAT_PROJECTION, null, null, null);
 
         if (c == null)
-            return;
+            return false;
 
         if (!c.moveToFirst()) {
             if (Log.isLoggable(ImApp.LOG_TAG, Log.DEBUG)) {
@@ -1655,6 +1655,8 @@ public class ConversationView {
             mLastChatId = -1;
 
             c.close();
+
+            return false;
 
         } else {
 
@@ -1697,7 +1699,10 @@ public class ConversationView {
                     //handle glitches in unicode nicknames
                 }
             }
+
+            return true;
         }
+
 
     }
 

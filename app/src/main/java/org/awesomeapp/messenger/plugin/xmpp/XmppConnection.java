@@ -2257,6 +2257,20 @@ public class XmppConnection extends ImConnection {
                  */
                 debug(TAG, "connectionClosedOnError error: " + e.getMessage(),e);
 
+                execute(new Runnable() {
+
+                    public void run() {
+                        if (getState() == LOGGED_IN)
+                        {
+                            mNeedReconnect = true;
+                            setState(LOGGING_IN,
+                                    new ImErrorInfo(ImErrorInfo.NETWORK_ERROR, "network error"));
+                            reconnect();
+                        }
+                    }
+
+                });
+
                // disconnected(new ImErrorInfo(ImpsErrorInfo.UNKNOWN_ERROR,e.getMessage()));
                 /**
                 if (e.getMessage().contains("conflict")) {
@@ -4431,7 +4445,10 @@ public class XmppConnection extends ImConnection {
         XmppAddress xaddress = new XmppAddress(presence.getFrom().toString());
 
         Presence p = new Presence(parsePresence(presence), presence.getStatus(), null, null,
-                Presence.CLIENT_TYPE_MOBILE,null,xaddress.getResource());
+                Presence.CLIENT_TYPE_MOBILE,null,xaddress.getResource(),null);
+
+        if (p.getStatus() != Presence.OFFLINE)
+            p.setLastSeen(new Date());
 
         //this is only persisted in memory
         p.setPriority(presence.getPriority());
