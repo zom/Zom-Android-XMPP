@@ -1927,8 +1927,9 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         try {
             if (isGroupChatSession()) {
                 ChatGroup group = (ChatGroup)mChatSession.getParticipant();
-                return group.getOwners();
-
+                if (group != null) {
+                    return group.getOwners();
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -1943,8 +1944,9 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         try {
             if (isGroupChatSession()) {
                 ChatGroup group = (ChatGroup)mChatSession.getParticipant();
-                return group.getAdmins();
-
+                if (group != null) {
+                    return group.getAdmins();
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();

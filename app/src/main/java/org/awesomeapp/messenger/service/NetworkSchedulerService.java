@@ -64,6 +64,12 @@ public class NetworkSchedulerService extends JobService implements
 
         NetworkConnectivityReceiver.State stateExtra = isConnected ? NetworkConnectivityReceiver.State.CONNECTED : NetworkConnectivityReceiver.State.NOT_CONNECTED;
         intent.putExtra(NETWORK_STATE_EXTRA,stateExtra.ordinal());
-        startService(intent);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(intent);
+        }
+        else
+        {
+            startService(intent);
+        }
     }
 }

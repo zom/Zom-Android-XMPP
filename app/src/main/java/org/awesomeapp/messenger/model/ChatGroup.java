@@ -152,7 +152,8 @@ public class ChatGroup extends ImEntity {
     public synchronized void notifyMemberRoleUpdate(Contact newContact, String role, String affiliation) {
         Contact contact = mMembers.get(newContact.getAddress().getBareAddress());
         if (contact != null) {
-            mMemberRolesAndAffiliations.put(newContact, new Pair<String, String>(role, affiliation));
+            Pair<String, String> oldValue = mMemberRolesAndAffiliations.get(contact);
+            mMemberRolesAndAffiliations.put(contact, new Pair<String, String>((role == null) ? oldValue.first : role, (affiliation == null) ? oldValue.second : affiliation));
             for (GroupMemberListener listener : mMemberListeners) {
                 listener.onMemberRoleChanged(this, contact, role, affiliation);
             }
@@ -229,7 +230,7 @@ public class ChatGroup extends ImEntity {
         ArrayList<Contact> owners = new ArrayList<>();
         for (Contact c : mMemberRolesAndAffiliations.keySet()) {
             Pair<String, String> roles = mMemberRolesAndAffiliations.get(c);
-            if (roles.first.equalsIgnoreCase("owner")) {
+            if ("owner".equalsIgnoreCase(roles.first)) {
                 owners.add(c);
             }
         }
@@ -241,7 +242,7 @@ public class ChatGroup extends ImEntity {
         ArrayList<Contact> admins = new ArrayList<>();
         for (Contact c : mMemberRolesAndAffiliations.keySet()) {
             Pair<String, String> roles = mMemberRolesAndAffiliations.get(c);
-            if (roles.first.equalsIgnoreCase("admin")) {
+            if ("admin".equalsIgnoreCase(roles.first)) {
                 admins.add(c);
             }
         }
