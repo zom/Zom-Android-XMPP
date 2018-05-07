@@ -271,7 +271,7 @@ public class GroupDisplayActivity extends BaseActivity implements IChatSessionLi
                         nickname = nickname.split("@")[0].split("\\.")[0];
                     }
 
-                    if (member == mYou) {
+                    if (mYou.username.contentEquals(member.username)) {
                         nickname += " " + getString(R.string.group_you);
                     }
 
@@ -457,7 +457,7 @@ public class GroupDisplayActivity extends BaseActivity implements IChatSessionLi
                             e.printStackTrace();
                         }
 
-                        if (member.username.equals(mLocalAddress)) {
+                        if (mLocalAddress.contentEquals(member.username)) {
                             mYou = member;
                         }
 
