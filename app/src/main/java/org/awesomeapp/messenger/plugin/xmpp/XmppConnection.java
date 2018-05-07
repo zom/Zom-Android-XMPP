@@ -1147,7 +1147,9 @@ public class XmppConnection extends ImConnection {
                             if (user != null && user.hasStatus() && user.getStatus().contains(MUCUser.Status.PRESENCE_TO_SELF_110)) {
                                 // We are now logged in, fetch the lists for members, admins, owners!
                                 // See item 2 at https://xmpp.org/extensions/xep-0045.html#order
-                                loadMembers(muc, chatGroup);
+                                if (presence.isAvailable()) {
+                                    loadMembers(muc, chatGroup);
+                                }
                             }
                         } catch (Exception e) {
                             debug("MUC", "Error handling group presence: " + e);
