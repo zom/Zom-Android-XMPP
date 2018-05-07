@@ -229,7 +229,7 @@ public class ChatGroup extends ImEntity {
         ArrayList<Contact> owners = new ArrayList<>();
         for (Contact c : mMemberRolesAndAffiliations.keySet()) {
             Pair<String, String> roles = mMemberRolesAndAffiliations.get(c);
-            if (roles.first.equalsIgnoreCase("owner")) {
+            if ("owner".equalsIgnoreCase(roles.first)) {
                 owners.add(c);
             }
         }
@@ -241,7 +241,7 @@ public class ChatGroup extends ImEntity {
         ArrayList<Contact> admins = new ArrayList<>();
         for (Contact c : mMemberRolesAndAffiliations.keySet()) {
             Pair<String, String> roles = mMemberRolesAndAffiliations.get(c);
-            if (roles.first.equalsIgnoreCase("admin")) {
+            if ("admin".equalsIgnoreCase(roles.first)) {
                 admins.add(c);
             }
         }
