@@ -1088,7 +1088,7 @@ public class XmppConnection extends ImConnection {
             chatGroup.endMemberUpdates();
         }
 
-        private void addMucListeners (final MultiUserChat muc, final ChatGroup ignored)
+        private void addMucListeners (MultiUserChat muc, ChatGroup ignored)
         {
             if (mSubjectUpdateListener == null) {
                 mSubjectUpdateListener = new SubjectUpdatedListener() {
@@ -1121,12 +1121,14 @@ public class XmppConnection extends ImConnection {
                     public void processPresence(org.jivesoftware.smack.packet.Presence presence) {
 
                         try {
+                            XmppAddress xa = new XmppAddress(presence.getFrom().toString());
+                            MultiUserChat muc = mChatGroupManager.getMultiUserChat(xa.getBareAddress());
+                            ChatGroup chatGroup = mChatGroupManager.getChatGroup(xa);
+
                             EntityFullJid entity = presence.getFrom().asEntityFullJidOrThrow();
                             Occupant occupant = muc.getOccupant(entity);
                             Jid jidSource = (occupant != null) ? occupant.getJid() : presence.getFrom();
-                            XmppAddress xa = new XmppAddress(jidSource.toString());
-
-                            ChatGroup chatGroup = mChatGroupManager.getChatGroup(xa);
+                            xa = new XmppAddress(jidSource.toString());
 
                             Contact mucContact = new Contact(xa, xa.getUser(), Imps.Contacts.TYPE_NORMAL);
                             if (occupant != null) {
