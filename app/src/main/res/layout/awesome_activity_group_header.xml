@@ -104,7 +104,7 @@
             android:layout_height="wrap_content"
             android:drawableLeft="@drawable/ic_encrypted_grey"
             android:drawableStart="@drawable/ic_encrypted_grey"
-            android:text="@string/chat_encryption_title"
+            android:text="@string/group_encryption_title"
             android:layout_weight="0"
             />
         <android.support.v7.widget.SwitchCompat
