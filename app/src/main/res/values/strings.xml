@@ -80,7 +80,7 @@
     <string name="allow_plain_text_auth">Allow Plain Text Auth</string>
     <string name="require_tls_ssl_connection">Require TLS Connection</string>
     <string name="transport_encryption">Transport Encryption</string>
-    <string name="how_encrypted_chats_are_started">how encrypted chats are started</string>
+    <string name="how_encrypted_chats_are_started">How encrypted chats are started</string>
     <string name="the_server_to_connect_to_if_needed">The server to connect to, if needed</string>
     <string name="connect_server">Connect Server</string>
     <string name="tcp_port_for_xmpp_server">TCP Port for XMPP Server</string>
@@ -163,14 +163,14 @@
     <string name="qmp_answer_hint">the expected answer</string>
     <string name="remote_verified_us">Your contact has successfully authenticated you.  Now authenticate your contact by asking your own question.</string>
     <string name="otr_qa_title">OTR Q&amp;A Verification</string>
-    <string name="chat_encryption_title">Chat Encryption</string>
+    <string name="chat_encryption_title">One-to-one Chat Encryption</string>
     <string name="otr_qa_send">Send</string>
     <string name="otr_qa_cancel">Cancel</string>
 
     <!-- Views: VoIP -->
     <!-- Views: Settings: General -->
-    <!-- Actions: Settings: General: Security and Privacy -->
-    <string name="pref_group_security_title">Security and Privacy</string>
+    <!-- Actions: Settings: General: Chat Privacy -->
+    <string name="pref_group_security_title">Chat Privacy</string>
     <string name="encryption_and_anonymity_title">Network Privacy</string>
     <!-- Actions: Settings: General: User Interface -->
     <string name="pref_linkify_on_tor_title">Clickable links</string>
@@ -408,7 +408,7 @@
     <string name="copy_message">Copy Message</string>
     <string name="action_copied">Copied!</string>
     <string name="group_encryption_title">Group Encryption</string>
-    <string name="group_encryption_summary">Enable end-to-end encryption in groups</string>
+    <string name="group_encryption_summary">Encryption must also be manually enabled for each group.</string>
     <string name="action_forward">Forward</string>
     <string name="action_resend">Resend</string>
 

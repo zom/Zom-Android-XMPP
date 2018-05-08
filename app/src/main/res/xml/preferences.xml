@@ -33,6 +33,13 @@
     android:summary="@string/how_encrypted_chats_are_started"
     android:defaultValue="auto" />
 
+       <CheckBoxPreference
+           android:key="prefGroupEncryption"
+           android:title="@string/group_encryption_title"
+           android:summary="@string/group_encryption_summary"
+           android:defaultValue="false"
+           />
+
        <!--
   <CheckBoxPreference
           android:key="pref_linkify_on_tor"
@@ -205,13 +212,5 @@
         android:summary="@string/pref_proxy_server_port_summary"
         android:numeric="integer"
         android:maxLength="5" />
-
-    <CheckBoxPreference
-        android:key="prefGroupEncryption"
-        android:title="@string/group_encryption_title"
-        android:summary="@string/group_encryption_summary"
-        android:defaultValue="false"
-        />
-
 
 </PreferenceScreen>
