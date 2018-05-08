@@ -23,10 +23,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.provider.Telephony;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -45,6 +48,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -106,6 +110,7 @@ public class AddContactActivity extends BaseActivity {
         setContentView(R.layout.add_contact_activity);
 
         TextView label = (TextView) findViewById(R.id.input_contact_label);
+        label.setText(getString(R.string.enter_your_friends_account, mApp.getDefaultUsername()));
 
         mNewAddress = (EditText) findViewById(R.id.email);
         mNewAddress.addTextChangedListener(mTextWatcher);
@@ -134,6 +139,15 @@ public class AddContactActivity extends BaseActivity {
 
     }
 
+    private boolean isPackageInstalled(String packagename, PackageManager packageManager) {
+        try {
+            packageManager.getPackageInfo(packagename, 0);
+            return true;
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -153,23 +167,103 @@ public class AddContactActivity extends BaseActivity {
         }
     }
 
+    private String getInviteMessage() {
+        ImApp app = ((ImApp)getApplication());
+
+        String nickname = app.getDefaultNickname();
+        if (nickname == null)
+            nickname = new XmppAddress(app.getDefaultUsername()).getUser();
+
+        return OnboardingManager.generateInviteMessage(AddContactActivity.this, nickname, app.getDefaultUsername(), app.getDefaultOtrKey());
+    }
+
     private void setupActions ()
     {
+        PackageManager pm = getPackageManager();
 
+        View btnAddFriend = findViewById(R.id.btnAddFriend);
+        btnAddFriend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mNewAddress.getText() != null && mNewAddress.getText().length() > 0) {
+                    inviteBuddies();
+                }
+            }
+        });
+
+        // WeChat installed?
+        ImageButton btnInviteWeChat = findViewById(R.id.btnInviteWeChat);
+        final String packageNameWeChat = "com.tencent.mm";
+        if (isPackageInstalled(packageNameWeChat, pm)) {
+            try {
+                Drawable icon = getPackageManager().getApplicationIcon(packageNameWeChat);
+                if (icon != null) {
+                    btnInviteWeChat.setImageDrawable(icon);
+                }
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+            }
+            btnInviteWeChat.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    OnboardingManager.inviteShareToPackage(AddContactActivity.this, getInviteMessage(), packageNameWeChat);
+                }
+
+            });
+        } else {
+            btnInviteWeChat.setVisibility(View.GONE);
+        }
+
+        // WhatsApp installed?
+        ImageButton btnInviteWhatsApp = findViewById(R.id.btnInviteWhatsApp);
+        final String packageNameWhatsApp = "com.whatsapp";
+        if (isPackageInstalled(packageNameWhatsApp, pm)) {
+            try {
+                Drawable icon = getPackageManager().getApplicationIcon(packageNameWhatsApp);
+                if (icon != null) {
+                    btnInviteWhatsApp.setImageDrawable(icon);
+                }
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+            }
+            btnInviteWhatsApp.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    OnboardingManager.inviteShareToPackage(AddContactActivity.this, getInviteMessage(), packageNameWhatsApp);
+                }
+
+            });
+        } else {
+            btnInviteWhatsApp.setVisibility(View.GONE);
+        }
+
+        // Populate SMS option
         View btnInviteSms = findViewById(R.id.btnInviteSMS);
+        if (pm.hasSystemFeature(PackageManager.FEATURE_TELEPHONY)) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                String defaultSmsPackageName = Telephony.Sms.getDefaultSmsPackage(this);
+                if (defaultSmsPackageName != null) {
+                    try {
+                        Drawable icon = getPackageManager().getApplicationIcon(defaultSmsPackageName);
+                        if (icon != null) {
+                            ((ImageButton) btnInviteSms).setImageDrawable(icon);
+                        }
+                    } catch (PackageManager.NameNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        } else {
+            btnInviteSms.setVisibility(View.GONE);
+        }
+
         btnInviteSms.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-
-                ImApp app = ((ImApp)getApplication());
-
-                String nickname = app.getDefaultNickname();
-                if (nickname == null)
-                    nickname = new XmppAddress(app.getDefaultUsername()).getUser();
-
-                String inviteString = OnboardingManager.generateInviteMessage(AddContactActivity.this, nickname, app.getDefaultUsername(), app.getDefaultOtrKey());
-                OnboardingManager.inviteSMSContact(AddContactActivity.this, null, inviteString);
+                OnboardingManager.inviteSMSContact(AddContactActivity.this, null, getInviteMessage());
             }
 
         });
@@ -180,16 +274,7 @@ public class AddContactActivity extends BaseActivity {
 
             @Override
             public void onClick(View v) {
-
-                ImApp app = ((ImApp)getApplication());
-
-                String nickname = app.getDefaultNickname();
-                if (nickname == null)
-                    nickname = new XmppAddress(app.getDefaultUsername()).getUser();
-
-                String inviteString = OnboardingManager.generateInviteMessage(AddContactActivity.this,  nickname, app.getDefaultUsername(), app.getDefaultOtrKey());
-                OnboardingManager.inviteShare(AddContactActivity.this, inviteString);
-
+                OnboardingManager.inviteShare(AddContactActivity.this, getInviteMessage());
             }
 
         });
@@ -215,7 +300,16 @@ public class AddContactActivity extends BaseActivity {
 
         });
 
+        View btnInviteNearby = findViewById(R.id.btnInviteNearby);
+        btnInviteNearby.setOnClickListener(new View.OnClickListener()
+        {
 
+            @Override
+            public void onClick(View v) {
+                OnboardingManager.inviteNearby(AddContactActivity.this, getInviteMessage());
+            }
+
+        });
     }
 
     private final static int MY_PERMISSIONS_REQUEST_CAMERA = 1;

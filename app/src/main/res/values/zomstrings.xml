@@ -202,5 +202,9 @@
   <string name="make_group_admin">Make group admin</string>
   <string name="view_profile">View profile</string>
   <string name="kickout">Kickout</string>
-
+  <string name="find_your_friend">Find your friend on Zom</string>
+  <string name="hint_add_friend" translatable="false">zomkyi12@home.zom.im</string>
+  <string name="enter_your_friends_account">Enter your friend\'s full Zom account. Yours is %s</string>
+  <string name="send_your_invite_link">Send your invite link</string>
+  <string name="standing_next_to_them">Standing next to them?</string>
 </resources>
