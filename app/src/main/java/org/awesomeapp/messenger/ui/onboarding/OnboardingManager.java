@@ -81,9 +81,22 @@ public class OnboardingManager {
         intent.putExtra(Intent.EXTRA_TEXT, message);
         intent.setType("text/plain");
         context.startActivity(intent);
-
     }
-    
+
+    public static void inviteNearby(Activity context, String message)
+    {
+        //TODO
+    }
+
+    public static void inviteShareToPackage (Activity context, String message, String packageName)
+    {
+        Intent intent = new Intent(android.content.Intent.ACTION_SEND);
+        intent.putExtra(Intent.EXTRA_TEXT, message);
+        intent.setType("text/plain");
+        intent.setPackage(packageName);
+        context.startActivity(intent);
+    }
+
     public static void inviteScan (Activity context, String message)
     {
         Intent intent = new Intent(context, QrScanActivity.class);
