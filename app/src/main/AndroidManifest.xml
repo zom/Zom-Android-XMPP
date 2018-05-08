@@ -25,27 +25,40 @@
     <uses-permission android:name="android.permission.UPDATE_APP_OPS_STATS" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" android:required="false" />
-    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
-    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
-
-    <!-- Some Chromebooks don't support touch. Although not essential,
-     it's a good idea to explicitly include this declaration. -->
-    <uses-feature android:name="android.hardware.touchscreen"
+    <uses-permission
+        android:name="android.permission.READ_PHONE_STATE"
         android:required="false" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
-    <uses-feature android:name="android.hardware.camera"  android:required="false" />
-    <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
-    <uses-feature android:name="android.hardware.telephony" android:required="false" />
-    <uses-feature android:name="android.hardware.microphone" android:required="false" />
-    <!-- Some Chromebooks don't support touch. Although not essential,
-            it's a good idea to explicitly include this declaration. -->
-
+    <!--
+     Some Chromebooks don't support touch. Although not essential,
+     it's a good idea to explicitly include this declaration.
+    -->
+    <uses-feature
+        android:name="android.hardware.touchscreen"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera.autofocus"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.telephony"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.microphone"
+        android:required="false" />
+    <!--
+         Some Chromebooks don't support touch. Although not essential,
+            it's a good idea to explicitly include this declaration.
+    -->
 
     <uses-feature
         android:name="android.hardware.wifi"
         android:required="false" />
-    q
+
     <permission
         android:name="org.awesomeapp.messenger.permission.IM_SERVICE"
         android:description="@string/perm_desc"
@@ -70,10 +83,13 @@
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/ic_launcher_name"
-        android:theme="@style/AppTheme"
         android:largeHeap="false"
-        tools:replace="android:icon,android:allowBackup,android:label"
-        >
+        android:theme="@style/AppTheme"
+        tools:replace="android:icon,android:allowBackup,android:label">
+        <meta-data
+            android:name="com.google.android.nearby.messages.API_KEY"
+            android:value="AIzaSyAIyP2Qqn7NdWNk3oll8I3ThRKADfmQv8g" />
+
         <activity
             android:name="org.awesomeapp.messenger.RouterActivity"
             android:theme="@style/InviteDialog">
@@ -87,7 +103,6 @@
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-
             <intent-filter>
                 <action android:name="android.intent.action.SENDTO" />
 
@@ -96,7 +111,6 @@
 
                 <data android:scheme="im" />
             </intent-filter>
-
             <intent-filter>
                 <action android:name="android.intent.action.SENDTO" />
 
@@ -199,8 +213,9 @@
         -->
         <!--  -->
 
-        <service android:name="org.awesomeapp.messenger.util.SoundService"
-            android:exported="false"/>
+        <service
+            android:name="org.awesomeapp.messenger.util.SoundService"
+            android:exported="false" />
 
         <!-- android:process="info.guardianproject.otr.app.process.im" -->
         <service
@@ -219,16 +234,15 @@
         <provider
             android:name="org.awesomeapp.messenger.provider.ImpsProvider"
             android:authorities="org.awesomeapp.messenger.provider.Imps"
+            android:directBootAware="true"
             android:exported="false"
             android:grantUriPermissions="true"
             android:readPermission="org.awesomeapp.messenger.permission.READ_ONLY"
-            android:writePermission="org.awesomeapp.messenger.permission.WRITE_ONLY"
-            android:directBootAware="true"
-            />
+            android:writePermission="org.awesomeapp.messenger.permission.WRITE_ONLY" />
 
         <activity
             android:name="org.awesomeapp.messenger.ImUrlActivity"
-            android:theme="@style/InviteDialog"/>
+            android:theme="@style/InviteDialog" />
         <activity
             android:name="org.awesomeapp.messenger.ui.legacy.SignoutActivity"
             android:exported="false">
@@ -248,21 +262,26 @@
             android:label="@string/choose_friend">
             <intent-filter>
                 <action android:name="android.intent.action.PICK" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="vnd.android.cursor.dir/imps-contacts" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.PICK" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="vnd.android.cursor.dir/imps-chats" />
             </intent-filter>
         </activity>
         <activity
             android:name="org.awesomeapp.messenger.ui.AccountActivity"
             android:exported="false"
-            android:windowSoftInputMode="stateUnchanged" >
+            android:windowSoftInputMode="stateUnchanged">
             <intent-filter>
                 <action android:name="android.intent.action.EDIT" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="org.awesomeapp.messenger.service.IMPS_CATEGORY" />
 
@@ -270,12 +289,13 @@
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.INSERT" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="org.awesomeapp.messenger.service.IMPS_CATEGORY" />
+
                 <data android:mimeType="vnd.android.cursor.item/imps-providers" />
             </intent-filter>
         </activity>
-
         <activity
             android:name="org.awesomeapp.messenger.ui.AccountSettingsActivity"
             android:exported="false">
@@ -323,24 +343,23 @@
             android:enabled="true"
             android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
 
         <activity
             android:name="org.awesomeapp.messenger.ui.LockScreenActivity"
-            android:label="@string/title_activity_lock_screen"/>
+            android:label="@string/title_activity_lock_screen" />
         <activity
             android:name="org.awesomeapp.messenger.ui.onboarding.OnboardingActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:launchMode="singleTask"/>
+            android:launchMode="singleTask" />
         <activity
             android:name="org.awesomeapp.messenger.ui.qr.QrScanActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity
             android:name="org.awesomeapp.messenger.ui.qr.QrDisplayActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
-
         <activity
             android:name="org.awesomeapp.messenger.ui.legacy.DummyActivity"
             android:allowTaskReparenting="true"
@@ -352,7 +371,9 @@
             android:noHistory="true"
             android:stateNotNeeded="true"
             android:theme="@android:style/Theme.NoDisplay" />
-        <activity android:name="org.awesomeapp.messenger.ui.widgets.ImageViewActivity" android:theme="@style/AppTheme.Transparent" />
+        <activity
+            android:name="org.awesomeapp.messenger.ui.widgets.ImageViewActivity"
+            android:theme="@style/AppTheme.Transparent" />
         <activity android:name="org.awesomeapp.messenger.ui.widgets.SecureCameraActivity" />
         <activity
             android:name="org.awesomeapp.messenger.MainActivity"
@@ -385,8 +406,8 @@
         <activity
             android:name="org.awesomeapp.messenger.ui.ConversationDetailActivity"
             android:exported="false"
-            android:theme="@style/AppThemeNoAction"
             android:launchMode="standard"
+            android:theme="@style/AppThemeNoAction"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name="org.awesomeapp.messenger.ui.ContactListActivity"
@@ -414,15 +435,14 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name="org.awesomeapp.messenger.ui.ContactDisplayActivity"
+        <activity
+            android:name="org.awesomeapp.messenger.ui.ContactDisplayActivity"
             android:exported="false"
-            android:theme="@style/AppThemeNoAction"
-            />
-        <activity android:name="org.awesomeapp.messenger.ui.GroupDisplayActivity"/>
-
+            android:theme="@style/AppThemeNoAction" />
+        <activity android:name="org.awesomeapp.messenger.ui.GroupDisplayActivity" />
         <activity
             android:name="org.awesomeapp.messenger.ui.AccountsActivity"
-            android:label="@string/accounts"/>
+            android:label="@string/accounts" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -431,13 +451,17 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths"/>
+                android:resource="@xml/provider_paths" />
         </provider>
 
         <service
             android:name="org.awesomeapp.messenger.service.NetworkSchedulerService"
             android:exported="true"
-            android:permission="android.permission.BIND_JOB_SERVICE"/>
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+
+        <activity
+            android:name="org.awesomeapp.messenger.nearby.NearbyActivity"
+            android:label="@string/title_activity_nearby"></activity>
     </application>
 
 </manifest>
