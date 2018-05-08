@@ -45,7 +45,6 @@
     <uses-feature
         android:name="android.hardware.wifi"
         android:required="false" />
-    q
     <permission
         android:name="org.awesomeapp.messenger.permission.IM_SERVICE"
         android:description="@string/perm_desc"
