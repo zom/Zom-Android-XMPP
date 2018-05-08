@@ -68,10 +68,6 @@ android {
             applicationId = "org.awesomeapp.messenger"
             applicationId 'org.awesomeapp.messenger'
         }
-        chatsecure {
-            minSdkVersion 16
-            applicationId 'org.chatsecure.android'
-        }
         zomrelease {
         }
     }
@@ -160,4 +156,7 @@ dependencies {
     // https://mvnrepository.com/artifact/com.google.code.gson/gson
     implementation 'com.google.code.gson:gson:2.8.0'
     implementation 'com.jrummyapps:android-shell:1.0.1'
+
+    //adding this nearby library for now
+    implementation 'com.google.android.gms:play-services-nearby:15.0.1'
 }

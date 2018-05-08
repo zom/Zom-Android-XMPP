@@ -73,6 +73,10 @@
         android:largeHeap="false"
         tools:replace="android:icon,android:allowBackup,android:label"
         >
+        <meta-data
+            android:name="com.google.android.nearby.messages.API_KEY"
+            android:value="AIzaSyAIyP2Qqn7NdWNk3oll8I3ThRKADfmQv8g" />
+
         <activity
             android:name="org.awesomeapp.messenger.RouterActivity"
             android:theme="@style/InviteDialog">
