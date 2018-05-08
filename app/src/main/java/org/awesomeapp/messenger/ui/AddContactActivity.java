@@ -306,7 +306,15 @@ public class AddContactActivity extends BaseActivity {
 
             @Override
             public void onClick(View v) {
-                OnboardingManager.inviteNearby(AddContactActivity.this, getInviteMessage());
+                try {
+                    ImApp app = ((ImApp) getApplication());
+                    String xmppLink = OnboardingManager.generateXmppLink(app.getDefaultUsername(), app.getDefaultOtrKey());
+                    OnboardingManager.inviteNearby(AddContactActivity.this, xmppLink);
+                }
+                catch (IOException ioe)
+                {
+                    ioe.printStackTrace();
+                }
             }
 
         });

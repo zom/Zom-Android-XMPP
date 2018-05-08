@@ -34,7 +34,7 @@ android {
 
     dexOptions {
         javaMaxHeapSize "1536m"
- 	    preDexLibraries true
+        preDexLibraries true
     }
 
     buildTypes {
@@ -47,7 +47,7 @@ android {
         debug {
             applicationIdSuffix ".debug"
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'),'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             shrinkResources false
         }
     }
@@ -98,8 +98,8 @@ android {
 }
 
 ext {
-    smackVersion="4.2.2"
-    smackOmemoVersion="4.2.2"
+    smackVersion = "4.2.2"
+    smackOmemoVersion = "4.2.2"
 }
 
 
@@ -107,7 +107,7 @@ ext {
 dependencies {
     implementation fileTree(include: '*.jar', dir: 'libs')
     implementation project(':otr4jandroid')
-  //  implementation 'com.github.otr4j:otr4j:aac20b11de'
+    //  implementation 'com.github.otr4j:otr4j:aac20b11de'
     implementation project(':tibetanTextLibrary')
     implementation project.ext.appcompat
     implementation 'com.android.support:multidex:1.0.3'
@@ -140,6 +140,7 @@ dependencies {
     implementation 'com.theartofdev.edmodo:android-image-cropper:2.0.0'
     implementation 'de.hdodenhof:circleimageview:2.0.0'
     implementation 'com.github.bumptech.glide:glide:4.3.1'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.3.1'
     implementation 'com.github.javiersantos:AppUpdater:2.6.4'
     implementation 'com.github.QuadFlask:colorpicker:0.0.10'

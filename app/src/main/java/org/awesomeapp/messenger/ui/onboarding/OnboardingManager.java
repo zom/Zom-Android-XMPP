@@ -1,6 +1,7 @@
 package org.awesomeapp.messenger.ui.onboarding;
 
 import org.awesomeapp.messenger.model.ImConnection;
+import org.awesomeapp.messenger.nearby.NearbyActivity;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.service.IImConnection;
 import org.awesomeapp.messenger.ui.qr.QrScanActivity;
@@ -85,7 +86,10 @@ public class OnboardingManager {
 
     public static void inviteNearby(Activity context, String message)
     {
-        //TODO
+        Intent intent = new Intent(context, NearbyActivity.class);
+        intent.putExtra(Intent.EXTRA_TEXT, message);
+        intent.setType("text/plain");
+        context.startActivity(intent);
     }
 
     public static void inviteShareToPackage (Activity context, String message, String packageName)

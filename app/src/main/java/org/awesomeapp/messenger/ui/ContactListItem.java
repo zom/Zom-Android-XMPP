@@ -105,6 +105,168 @@ public class ContactListItem extends FrameLayout {
         mHolder = viewHolder;
     }
 
+    public void bind (ContactViewHolder holder, Contact contact, OnClickListener confirmListener, OnClickListener denyListener) {
+        address = contact.getAddress().getBareAddress();
+        nickname = contact.getName();
+
+        int typeUnmasked = Imps.ContactsColumns.TYPE_NORMAL;
+        final int type = typeUnmasked & Imps.Contacts.TYPE_MASK;
+
+        //    final String lastMsg = cursor.getString(COLUMN_LAST_MESSAGE);
+
+        //   long lastMsgDate = cursor.getLong(COLUMN_LAST_MESSAGE_DATE);
+        final int presence = contact.getPresence().getStatus();
+
+        final int subType = contact.getSubscriptionType();
+        final int subStatus = contact.getSubscriptionStatus();
+
+        String statusText = "";
+
+        //   nickname += " " + holder.mContactId + " " + holder.mAccountId + " " + holder.mProviderId;
+
+
+        if (TextUtils.isEmpty(nickname))
+        {
+            nickname = address.split("@")[0].split("\\.")[0];
+        }
+        else
+        {
+            nickname = nickname.split("@")[0].split("\\.")[0];
+        }
+
+
+        //    nickname += " " + subType;// + " " + subStatus;
+         holder.mLine1.setText(nickname);
+
+        //holder.mStatusIcon.setVisibility(View.GONE);
+
+        if (holder.mAvatar != null)
+        {
+            if (Imps.Contacts.TYPE_GROUP == (type & Imps.Contacts.TYPE_MASK)) {
+
+                holder.mAvatar.setVisibility(View.VISIBLE);
+
+                if (AVATAR_DEFAULT_GROUP == null)
+                    AVATAR_DEFAULT_GROUP = new RoundedAvatarDrawable(BitmapFactory.decodeResource(getResources(),
+                            R.drawable.group_chat));
+
+
+                holder.mAvatar.setImageDrawable(AVATAR_DEFAULT_GROUP);
+
+            }
+            else
+            {
+
+                Drawable avatar = null;
+
+                try
+                {
+                    avatar = DatabaseUtils.getAvatarFromAddress(this.getContext().getContentResolver(), address, ImApp.SMALL_AVATAR_WIDTH, ImApp.SMALL_AVATAR_HEIGHT);
+
+                }
+                catch (Exception e)
+                {
+                    //problem decoding avatar
+                    Log.e(ImApp.LOG_TAG,"error decoding avatar",e);
+                }
+
+                try
+                {
+                    if (avatar != null)
+                    {
+                        if (avatar instanceof RoundedAvatarDrawable)
+                            setAvatarBorder(presence,(RoundedAvatarDrawable)avatar);
+
+                        holder.mAvatar.setImageDrawable(avatar);
+                    }
+                    else
+                    {
+                        //int color = getAvatarBorder(presence);
+                        int padding = 24;
+                        LetterAvatar lavatar = new LetterAvatar(getContext(), nickname, padding);
+
+                        holder.mAvatar.setImageDrawable(lavatar);
+
+                    }
+
+                    holder.mAvatar.setVisibility(View.VISIBLE);
+                }
+                catch (OutOfMemoryError ome)
+                {
+                    //this seems to happen now and then even on tiny images; let's catch it and just not set an avatar
+                }
+
+            }
+        }
+
+        statusText = address;
+
+        if ((typeUnmasked & Imps.Contacts.TYPE_FLAG_HIDDEN) != 0)
+        {
+            statusText += " | " + getContext().getString(R.string.action_archive);
+        }
+
+        if (holder.mLine2 != null)
+            holder.mLine2.setText(statusText);
+
+        if (Imps.Contacts.TYPE_NORMAL == type)
+        {
+
+            if (subStatus == Imps.ContactsColumns.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING) {
+
+                if (subType == Imps.ContactsColumns.SUBSCRIPTION_TYPE_FROM) {
+
+                    if (holder.mSubBox != null) {
+                        holder.mSubBox.setVisibility(View.VISIBLE);
+                        holder.mButtonSubApprove.setOnClickListener(confirmListener);
+                        holder.mButtonSubDecline.setOnClickListener(denyListener);
+                    }
+
+                }
+                else
+                {
+                    if (holder.mSubBox != null)
+                        holder.mSubBox.setVisibility(View.GONE);
+
+                    if (holder.mLine2 != null)
+                        holder.mLine2.setText(getContext().getString(R.string.title_pending));
+                }
+
+            }
+            else
+            {
+                if (holder.mSubBox != null)
+                    holder.mSubBox.setVisibility(View.GONE);
+            }
+
+        }
+
+        if (mShowPresence) {
+            switch (presence) {
+                case Presence.AVAILABLE:
+                    if (holder.mLine2 != null)
+                        holder.mLine2.setText(getContext().getString(R.string.presence_available));
+
+                case Presence.IDLE:
+                    if (holder.mLine2 != null)
+                        holder.mLine2.setText(getContext().getString(R.string.presence_available));
+                    /**
+                     case Presence.AWAY:
+                     return (getResources().getColor(R.color.holo_orange_light));
+
+                     case Presence.DO_NOT_DISTURB:
+                     return(getResources().getColor(R.color.holo_red_dark));
+
+                     case Presence.OFFLINE:
+                     return(getResources().getColor(R.color.holo_grey_dark));
+                     **/
+                default:
+            }
+        }
+
+        holder.mLine1.setVisibility(View.VISIBLE);
+    }
+
     public void bind(ContactViewHolder holder, Cursor cursor, String underLineText, boolean scrolling) {
         bind(holder, cursor, underLineText, true, scrolling);
     }
