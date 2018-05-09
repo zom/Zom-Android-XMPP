@@ -16,223 +16,227 @@
  * limitations under the License.
  */
 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/main_content"
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
-    android:orientation="vertical"
-    android:focusable="true"
-    android:focusableInTouchMode="true"
-    android:descendantFocusability="beforeDescendants"
+    android:fillViewport="true"
     >
 
-    <RelativeLayout
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/main_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#eefffb"
-        android:paddingBottom="0dp"
-        android:paddingTop="12dp">
+        android:background="@android:color/white"
+        android:descendantFocusability="beforeDescendants"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:orientation="vertical">
 
-        <org.ironrabbit.type.CustomTypefaceTextView
-            android:id="@+id/title"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="13dp"
-            android:gravity="center"
-            android:paddingEnd="12dp"
-            android:paddingLeft="12dp"
-            android:paddingRight="12dp"
-            android:paddingStart="12dp"
-            android:text="@string/find_your_friend"
-            android:textAllCaps="false"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textSize="17sp"
-            android:textStyle="bold"
-            android:textColor="@android:color/black" />
+            android:background="#eefffb"
+            android:paddingBottom="0dp"
+            android:paddingTop="12dp">
 
-        <org.ironrabbit.type.CustomTypefaceEditText
-            android:id="@+id/email"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/title"
-            android:layout_marginTop="19dp"
-            android:focusableInTouchMode="true"
-            android:gravity="center_horizontal"
-            android:hint="@string/hint_add_friend"
-            android:imeOptions="actionSend"
-            android:inputType="textEmailAddress"
-            android:nextFocusLeft="@id/email"
-            android:nextFocusUp="@id/email"
-            android:layout_marginStart="20dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginRight="20dp"
-            android:windowSoftInputMode="stateHidden"
-            android:textSize="12sp"
-            android:backgroundTint="@color/black_or_gray_selector"
-            />
+            <org.ironrabbit.type.CustomTypefaceTextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13dp"
+                android:gravity="center"
+                android:paddingEnd="12dp"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"
+                android:paddingStart="12dp"
+                android:text="@string/find_your_friend"
+                android:textAllCaps="false"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@android:color/black"
+                android:textSize="17sp"
+                android:textStyle="bold" />
+
+            <org.ironrabbit.type.CustomTypefaceEditText
+                android:id="@+id/email"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/title"
+                android:layout_marginEnd="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="19dp"
+                android:backgroundTint="@color/black_or_gray_selector"
+                android:focusableInTouchMode="true"
+                android:gravity="center_horizontal"
+                android:hint="@string/hint_add_friend"
+                android:imeOptions="actionSend"
+                android:inputType="textEmailAddress"
+                android:nextFocusLeft="@id/email"
+                android:nextFocusUp="@id/email"
+                android:textSize="12sp"
+                android:windowSoftInputMode="stateHidden" />
+
+            <org.ironrabbit.type.CustomTypefaceTextView
+                android:id="@+id/input_contact_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/email"
+                android:layout_marginTop="6dp"
+                android:gravity="center"
+                android:paddingEnd="12dp"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"
+                android:paddingStart="12dp"
+                android:text="@string/enter_your_friends_account"
+                android:textColor="#000000"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/btnAddFriend"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_below="@id/input_contact_label"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/rounded_rect_primary"
+                android:paddingEnd="30dp"
+                android:paddingLeft="30dp"
+                android:paddingRight="30dp"
+                android:paddingStart="30dp"
+                android:text="@string/action_add_buddy"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white"
+                android:textSize="17sp" />
+
+            <View
+                android:id="@id/spacer"
+                android:layout_width="match_parent"
+                android:layout_height="26dp"
+                android:layout_alignBottom="@id/image"
+                android:background="@android:color/white" />
+
+            <ImageView
+                android:id="@+id/image"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/input_contact_label"
+                android:layout_marginTop="34dp"
+                android:adjustViewBounds="true"
+                android:maxHeight="150dp"
+                android:paddingEnd="12dp"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"
+                android:paddingStart="12dp"
+                android:scaleType="centerInside"
+                android:src="@mipmap/add_friends" />
+        </RelativeLayout>
+
 
         <org.ironrabbit.type.CustomTypefaceTextView
-            android:id="@+id/input_contact_label"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/email"
-            android:layout_marginTop="6dp"
-            android:gravity="center"
-            android:paddingEnd="12dp"
-            android:paddingLeft="12dp"
-            android:paddingRight="12dp"
-            android:paddingStart="12dp"
-            android:text="@string/enter_your_friends_account"
-            android:textColor="#000000"
-            android:textSize="12sp" />
-
-        <Button
-            android:id="@+id/btnAddFriend"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:layout_below="@id/input_contact_label"
-            android:layout_centerHorizontal="true"
-            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="4dp"
             android:layout_marginTop="14dp"
-            android:background="@drawable/rounded_rect_primary"
-            android:paddingEnd="30dp"
-            android:paddingLeft="30dp"
-            android:paddingRight="30dp"
-            android:paddingStart="30dp"
-            android:text="@string/action_add_buddy"
-            android:textColor="@android:color/white"
-            android:textSize="17sp"
-            android:textAllCaps="false"
-            />
+            android:gravity="center_horizontal"
+            android:text="@string/send_your_invite_link"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#030303"
+            android:textSize="15sp"
+            android:textStyle="bold" />
 
-        <View
-            android:id="@id/spacer"
-            android:layout_width="match_parent"
-            android:layout_height="26dp"
-            android:layout_alignBottom="@id/image"
-            android:background="@android:color/white" />
-
-        <ImageView
-            android:id="@+id/image"
+        <LinearLayout
+            android:id="@+id/inviteOptions"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:maxHeight="150dp"
-            android:layout_below="@id/input_contact_label"
-            android:layout_marginTop="34dp"
-            android:adjustViewBounds="true"
-            android:paddingEnd="12dp"
-            android:paddingLeft="12dp"
-            android:paddingRight="12dp"
-            android:paddingStart="12dp"
-            android:scaleType="centerInside"
-            android:src="@mipmap/add_friends" />
-    </RelativeLayout>
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="0dp"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/btnInviteWeChat"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_margin="10dp"
+                android:background="@android:color/transparent"
+                android:scaleType="centerInside"
+                android:src="@android:drawable/ic_menu_send" />
+
+            <ImageButton
+                android:id="@+id/btnInviteWhatsApp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_margin="10dp"
+                android:background="@android:color/transparent"
+                android:scaleType="centerInside"
+                android:src="@android:drawable/ic_menu_send" />
+
+            <ImageButton
+                android:id="@+id/btnInviteSMS"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_margin="10dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/invite_sms"
+                android:scaleType="centerInside"
+                android:src="@android:drawable/ic_menu_send" />
+
+            <ImageButton
+                android:id="@+id/btnInviteShare"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_margin="10dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/invite_share"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_more" />
+
+        </LinearLayout>
 
 
-    <org.ironrabbit.type.CustomTypefaceTextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="14dp"
-        android:layout_marginBottom="4dp"
-        android:gravity="center_horizontal"
-        android:text="@string/send_your_invite_link"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="#030303"
-        android:textSize="15sp"
-        android:textStyle="bold" />
+        <org.ironrabbit.type.CustomTypefaceTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:gravity="center_horizontal"
+            android:text="@string/standing_next_to_them"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#030303"
+            android:textSize="15sp"
+            android:textStyle="bold" />
 
-    <LinearLayout
-        android:id="@+id/inviteOptions"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_margin="0dp"
-        android:gravity="center_horizontal"
-        android:orientation="horizontal">
+        <LinearLayout
+            android:id="@+id/inviteOptionsNearby"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="10dp"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
 
-        <ImageButton
-            android:id="@+id/btnInviteWeChat"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_margin="10dp"
-            android:background="@android:color/transparent"
-            android:scaleType="centerInside"
-            android:src="@android:drawable/ic_menu_send" />
+            <ImageButton
+                android:id="@+id/btnInviteScan"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_margin="10dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/invite_scan_qr"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_qr" />
 
-        <ImageButton
-            android:id="@+id/btnInviteWhatsApp"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_margin="10dp"
-            android:background="@android:color/transparent"
-            android:scaleType="centerInside"
-            android:src="@android:drawable/ic_menu_send" />
+            <ImageButton
+                android:id="@+id/btnInviteNearby"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_margin="10dp"
+                android:background="@android:color/transparent"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_nearby" />
 
-        <ImageButton
-            android:id="@+id/btnInviteSMS"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_margin="10dp"
-            android:background="@android:color/transparent"
-            android:contentDescription="@string/invite_sms"
-            android:scaleType="centerInside"
-            android:src="@android:drawable/ic_menu_send" />
 
-        <ImageButton
-            android:id="@+id/btnInviteShare"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_margin="10dp"
-            android:background="@android:color/transparent"
-            android:contentDescription="@string/invite_share"
-            android:scaleType="centerInside"
-            android:src="@drawable/ic_more" />
-
+        </LinearLayout>
     </LinearLayout>
-
-
-    <org.ironrabbit.type.CustomTypefaceTextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-        android:gravity="center_horizontal"
-        android:text="@string/standing_next_to_them"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="#030303"
-        android:textSize="15sp"
-        android:textStyle="bold" />
-
-    <LinearLayout
-        android:id="@+id/inviteOptionsNearby"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_margin="0dp"
-        android:gravity="center_horizontal"
-        android:orientation="horizontal">
-
-        <ImageButton
-            android:id="@+id/btnInviteScan"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_margin="10dp"
-            android:background="@android:color/transparent"
-            android:contentDescription="@string/invite_scan_qr"
-            android:scaleType="centerInside"
-            android:src="@drawable/ic_qr" />
-
-        <ImageButton
-            android:id="@+id/btnInviteNearby"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_margin="10dp"
-            android:background="@android:color/transparent"
-            android:scaleType="centerInside"
-            android:src="@drawable/ic_nearby" />
-
-
-    </LinearLayout>
-</LinearLayout>
+</android.support.v4.widget.NestedScrollView>
