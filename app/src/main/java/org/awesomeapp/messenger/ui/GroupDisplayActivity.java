@@ -203,22 +203,32 @@ public class GroupDisplayActivity extends BaseActivity implements IChatSessionLi
                         }
                     });*/
 
-                    h.checkNotifications.setChecked(areNotificationsEnabled());
-                    h.checkNotifications.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                        @Override
-                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                            setNotificationsEnabled(isChecked);
-                        }
-                    });
+                    if (mSession != null) {
+                        h.checkNotifications.setChecked(areNotificationsEnabled());
+                        h.checkNotifications.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                            @Override
+                            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                                setNotificationsEnabled(isChecked);
+                            }
+                        });
+                        h.checkNotifications.setEnabled(true);
+                    } else {
+                        h.checkNotifications.setEnabled(false);
+                    }
 
                     if (Preferences.doGroupEncryption()) {
-                        h.checkGroupEncryption.setChecked(isGroupEncryptionEnabled());
-                        h.checkGroupEncryption.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                            @Override
-                            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                                setGroupEncryptionEnabled(isChecked);
+                        if (mSession != null) {
+                            h.checkGroupEncryption.setChecked(isGroupEncryptionEnabled());
+                            h.checkGroupEncryption.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                                @Override
+                                public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                                    setGroupEncryptionEnabled(isChecked);
                                 }
-                        });
+                            });
+                            h.checkGroupEncryption.setEnabled(true);
+                        } else {
+                            h.checkGroupEncryption.setEnabled(false);
+                        }
                     }
                     else {
                         h.actionGroupEncryption.setVisibility(View.GONE);
@@ -354,6 +364,11 @@ public class GroupDisplayActivity extends BaseActivity implements IChatSessionLi
                         }
                     }
                     updateMembers();
+
+                    // Update recycler view adapter (if set) to enable session dependent stuff, like notifications
+                    if (mRecyclerView != null) {
+                        mRecyclerView.getAdapter().notifyDataSetChanged();
+                    }
                 }
             }
         }
