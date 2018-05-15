@@ -2,6 +2,7 @@ package org.awesomeapp.messenger.nearby;
 
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -23,6 +24,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.nearby.Nearby;
 import com.google.android.gms.nearby.messages.Message;
 import com.google.android.gms.nearby.messages.MessageListener;
@@ -40,6 +44,7 @@ import org.awesomeapp.messenger.ui.CursorRecyclerViewAdapter;
 import org.awesomeapp.messenger.ui.onboarding.OnboardingManager;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import im.zom.messenger.R;
 
@@ -54,7 +59,7 @@ public class NearbyActivity extends AppCompatActivity {
     private Message mMessage;
     private static ImApp mApp;
     private static RecyclerView mList;
-    private static ArrayList<Contact> contactList = new ArrayList<>();
+    private static HashMap<String,Contact> contactList = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +73,7 @@ public class NearbyActivity extends AppCompatActivity {
         mList.setLayoutManager(new LinearLayoutManager(this));
         mList.setItemAnimator(new DefaultItemAnimator());
 
-        NearbyListRecyclerViewAdapter adapter = new NearbyListRecyclerViewAdapter(this,contactList);
+        NearbyListRecyclerViewAdapter adapter = new NearbyListRecyclerViewAdapter(this,new ArrayList<Contact>(contactList.values()));
         mList.setAdapter(adapter);
 
         ObjectAnimator scaleDown = ObjectAnimator.ofPropertyValuesHolder(
@@ -88,8 +93,30 @@ public class NearbyActivity extends AppCompatActivity {
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        String nearbyMessage = getIntent().getStringExtra(EXTRA_TEXT);
-        initNearby(nearbyMessage);
+        // Showing status
+        if(checkPlayServices())
+        {
+            String nearbyMessage = getIntent().getStringExtra(EXTRA_TEXT);
+            initNearby(nearbyMessage);
+        }
+    }
+
+    private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 2404;
+
+    private boolean checkPlayServices() {
+        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
+        int resultCode = apiAvailability.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (apiAvailability.isUserResolvableError(resultCode)) {
+                apiAvailability.getErrorDialog(this, resultCode, PLAY_SERVICES_RESOLUTION_REQUEST)
+                        .show();
+            } else {
+                Log.i(TAG, "This device is not supported.");
+                finish();
+            }
+            return false;
+        }
+        return true;
     }
 
     private void initNearby (String nearbyMessage) {
@@ -122,7 +149,7 @@ public class NearbyActivity extends AppCompatActivity {
         contact.setPresence(new Presence());
         contact.setSubscriptionType(Imps.ContactsColumns.SUBSCRIPTION_TYPE_FROM);
         contact.setSubscriptionStatus(Imps.ContactsColumns.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING);
-        contactList.add(contact);
+        contactList.put(contact.getAddress().getAddress(),contact);
 
         refreshList();  
     }
@@ -143,7 +170,7 @@ public class NearbyActivity extends AppCompatActivity {
 
     private static void refreshList ()
     {
-        NearbyListRecyclerViewAdapter adapter = new NearbyListRecyclerViewAdapter(mApp,contactList);
+        NearbyListRecyclerViewAdapter adapter = new NearbyListRecyclerViewAdapter(mApp,new ArrayList<Contact>(contactList.values()));
         mList.setAdapter(adapter);
     }
 
