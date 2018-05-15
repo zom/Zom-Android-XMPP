@@ -65,7 +65,7 @@
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:layout_marginStart="20dp"
-                android:layout_marginTop="19dp"
+                android:layout_marginTop="10dp"
                 android:backgroundTint="@color/black_or_gray_selector"
                 android:focusableInTouchMode="true"
                 android:gravity="center_horizontal"
@@ -74,7 +74,7 @@
                 android:inputType="textEmailAddress"
                 android:nextFocusLeft="@id/email"
                 android:nextFocusUp="@id/email"
-                android:textSize="12sp"
+                android:textSize="16dp"
                 android:windowSoftInputMode="stateHidden" />
 
             <org.ironrabbit.type.CustomTypefaceTextView
@@ -162,7 +162,9 @@
                 android:layout_margin="10dp"
                 android:background="@android:color/transparent"
                 android:scaleType="centerInside"
-                android:src="@android:drawable/ic_menu_send" />
+                android:src="@android:drawable/ic_menu_send"
+                android:layout_marginBottom="5dp"
+                />
 
             <ImageButton
                 android:id="@+id/btnInviteWhatsApp"
@@ -171,7 +173,10 @@
                 android:layout_margin="10dp"
                 android:background="@android:color/transparent"
                 android:scaleType="centerInside"
-                android:src="@android:drawable/ic_menu_send" />
+                android:src="@android:drawable/ic_menu_send"
+                android:layout_marginBottom="5dp"
+
+                />
 
             <ImageButton
                 android:id="@+id/btnInviteSMS"
@@ -181,7 +186,10 @@
                 android:background="@android:color/transparent"
                 android:contentDescription="@string/invite_sms"
                 android:scaleType="centerInside"
-                android:src="@android:drawable/ic_menu_send" />
+                android:src="@android:drawable/ic_menu_send"
+                android:layout_marginBottom="5dp"
+
+                />
 
             <ImageButton
                 android:id="@+id/btnInviteShare"
@@ -191,7 +199,10 @@
                 android:background="@android:color/transparent"
                 android:contentDescription="@string/invite_share"
                 android:scaleType="centerInside"
-                android:src="@drawable/ic_more" />
+                android:src="@drawable/ic_more"
+                android:layout_marginBottom="5dp"
+
+                />
 
         </LinearLayout>
 
@@ -200,7 +211,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="5dp"
             android:gravity="center_horizontal"
             android:text="@string/standing_next_to_them"
             android:textAppearance="?android:attr/textAppearanceMedium"
@@ -221,7 +232,7 @@
                 android:id="@+id/btnInviteScan"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:layout_margin="10dp"
+                android:layout_margin="5dp"
                 android:background="@android:color/transparent"
                 android:contentDescription="@string/invite_scan_qr"
                 android:scaleType="centerInside"
@@ -231,7 +242,7 @@
                 android:id="@+id/btnInviteNearby"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:layout_margin="10dp"
+                android:layout_margin="5dp"
                 android:background="@android:color/transparent"
                 android:scaleType="centerInside"
                 android:src="@drawable/ic_nearby" />
