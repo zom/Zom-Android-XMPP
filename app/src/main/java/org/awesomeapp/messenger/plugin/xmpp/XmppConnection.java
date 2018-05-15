@@ -258,7 +258,7 @@ public class XmppConnection extends ImConnection {
 
     private final static int SOTIMEOUT = 1000 * 30;
     private final static int CONNECT_TIMEOUT = 1000 * 30;
-    private final static int PING_INTERVAL = 60 * 5; //1 minutes
+    private final static int PING_INTERVAL = 60 * 1; //1 minutes
 
     private PingManager mPingManager;
 
@@ -2351,6 +2351,10 @@ public class XmppConnection extends ImConnection {
 
                 //if the state is logged in, we should try to reconnect!
 
+                setState(DISCONNECTED,
+                        new ImErrorInfo(ImErrorInfo.NETWORK_ERROR, "network error"));
+
+                /**
                 if (getState() != SUSPENDED)
                 {
                     execute(new Runnable() {
@@ -2365,7 +2369,7 @@ public class XmppConnection extends ImConnection {
                         }
 
                     });
-                }
+                }**/
             }
         };
 
