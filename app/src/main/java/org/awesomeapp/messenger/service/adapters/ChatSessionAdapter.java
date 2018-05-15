@@ -169,6 +169,8 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
         initMuted();
         initUseEncryption();
+
+        sendPostponedMessages();
     }
 
     private void initOtrChatSession (ImEntity participant)
@@ -277,7 +279,6 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
         mContactStatusMap.put(contact.getName(), contact.getPresence().getStatus());
 
-        sendPostponedMessages();
 
     }
 
@@ -1858,7 +1859,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         mChatSession.setOmemoGroupEnabled(useEncryption);
         ContentValues values = new ContentValues();
         values.put(Imps.Chats.USE_ENCRYPTION,useEncryption ? 1 : 0);
-        mContentResolver.update(mChatURI,values,null,null);
+        int rowsUpdate = mContentResolver.update(mChatURI,values,null,null);
         return getUseEncryption();
     }
 
