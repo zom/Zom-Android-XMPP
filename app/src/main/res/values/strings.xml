@@ -412,6 +412,7 @@
     <string name="action_forward">Forward</string>
     <string name="action_resend">Resend</string>
     <string name="title_activity_nearby">NearbyActivity</string>
+    <string name="nearby_not_supported">Nearby sharing not supported on this device</string>
 
 
 </resources>
