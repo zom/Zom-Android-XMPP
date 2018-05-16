@@ -23,6 +23,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -98,6 +99,11 @@ public class NearbyActivity extends AppCompatActivity {
         {
             String nearbyMessage = getIntent().getStringExtra(EXTRA_TEXT);
             initNearby(nearbyMessage);
+        }
+        else
+        {
+            Toast.makeText(this, R.string.nearby_not_supported,Toast.LENGTH_LONG).show();
+            finish();
         }
     }
 
