@@ -58,12 +58,12 @@
 
             <org.ironrabbit.type.CustomTypefaceEditText
                 android:id="@+id/email"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/title"
                 android:layout_marginEnd="20dp"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
+                android:layout_marginLeft="40dp"
+                android:layout_marginRight="40dp"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="10dp"
                 android:backgroundTint="@color/black_or_gray_selector"
@@ -74,8 +74,10 @@
                 android:inputType="textEmailAddress"
                 android:nextFocusLeft="@id/email"
                 android:nextFocusUp="@id/email"
-                android:textSize="16dp"
-                android:windowSoftInputMode="stateHidden" />
+                android:textSize="20dp"
+                android:windowSoftInputMode="stateHidden"
+                android:layout_gravity="center_horizontal"
+                />
 
             <org.ironrabbit.type.CustomTypefaceTextView
                 android:id="@+id/input_contact_label"
