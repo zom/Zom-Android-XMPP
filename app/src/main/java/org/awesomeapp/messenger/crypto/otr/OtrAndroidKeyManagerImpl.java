@@ -393,7 +393,7 @@ public class OtrAndroidKeyManagerImpl extends IOtrKeyManager.Stub implements Otr
         if (sessionID == null)
             return;
 
-        generateLocalKeyPair(sessionID.getLocalUserId());
+        generateLocalKeyPair(sessionID.getAccountID());
     }
 
     public void regenerateLocalPublicKey(KeyFactory factory, String fullUserId, DSAPrivateKey privKey) {
@@ -558,7 +558,25 @@ public class OtrAndroidKeyManagerImpl extends IOtrKeyManager.Stub implements Otr
     }
 
     public String getLocalFingerprint(SessionID sessionID) {
-        return getLocalFingerprint(sessionID.getLocalUserId());
+        return getLocalFingerprint(sessionID.getAccountID());
+    }
+
+    @Override
+    public byte[] getLocalFingerprintRaw(SessionID sessionID) {
+        String userId = Address.stripResource(sessionID.getAccountID());
+
+        KeyPair keyPair = loadLocalKeyPair(userId);
+
+        if (keyPair == null)
+            return null;
+
+        try {
+            return cryptoEngine.getFingerprintRaw(keyPair.getPublic());
+        }
+        catch (Exception e)
+        {
+            return null;
+        }
     }
 
     public String getLocalFingerprint(String fullUserId) {
@@ -588,7 +606,7 @@ public class OtrAndroidKeyManagerImpl extends IOtrKeyManager.Stub implements Otr
     }
 
     public String getRemoteFingerprint(SessionID sessionID) {
-        return getRemoteFingerprint(sessionID.getRemoteUserId());
+        return getRemoteFingerprint(sessionID.getUserID());
     }
 
     public boolean hasRemoteFingerprint (String userId)
@@ -704,7 +722,7 @@ public class OtrAndroidKeyManagerImpl extends IOtrKeyManager.Stub implements Otr
     public boolean isVerified(SessionID sessionID) {
         if (sessionID == null)
             return false;
-        return isVerified(sessionID.getRemoteUserId(),null);
+        return isVerified(sessionID.getUserID(),null);
     }
 
     public boolean isVerified(String remoteUserId, String remoteFingerprint) {
@@ -745,7 +763,7 @@ public class OtrAndroidKeyManagerImpl extends IOtrKeyManager.Stub implements Otr
         if (sessionID == null)
             return null;
 
-        return loadLocalKeyPair(sessionID.getLocalUserId());
+        return loadLocalKeyPair(sessionID.getUserID());
     }
 
     private KeyPair loadLocalKeyPair(String fullUserId) {
@@ -785,7 +803,7 @@ public class OtrAndroidKeyManagerImpl extends IOtrKeyManager.Stub implements Otr
 
     public PublicKey loadRemotePublicKey(SessionID sessionID) {
 
-        return loadRemotePublicKeyFromStore(sessionID.getRemoteUserId());
+        return loadRemotePublicKeyFromStore(sessionID.getUserID());
     }
 
     private PublicKey loadRemotePublicKeyFromStore(String fullUserId) {
@@ -825,14 +843,14 @@ public class OtrAndroidKeyManagerImpl extends IOtrKeyManager.Stub implements Otr
       //  if (!Address.hasResource(sessionID.getRemoteUserId()))
         //    return;
 
-        String fullUserId = sessionID.getRemoteUserId();
+        String fullUserId = sessionID.getUserID();
 
         this.store.setProperty(fullUserId + ".publicKey", x509EncodedKeySpec.getEncoded());
         // Stash the associated fingerprint.  This saves calculating it in the future
         // and is useful for transferring rosters to other apps.
         try {
             String fingerprintString = new OtrCryptoEngineImpl().getFingerprint(pubKey);
-            String verifiedToken = buildPublicKeyVerifiedId(sessionID.getRemoteUserId(), fingerprintString);
+            String verifiedToken = buildPublicKeyVerifiedId(sessionID.getUserID(), fingerprintString);
             String fingerprintKey = fullUserId + ".fingerprint";
 
             //if a fingerprint for this userid exists, then check if the key is verified
@@ -860,7 +878,7 @@ public class OtrAndroidKeyManagerImpl extends IOtrKeyManager.Stub implements Otr
         if (!isVerified(sessionID))
             return;
 
-        unverifyUser(sessionID.getRemoteUserId());
+        unverifyUser(sessionID.getUserID());
 
         for (OtrKeyManagerListener l : listeners)
             l.verificationStatusChanged(sessionID);
@@ -884,17 +902,10 @@ public class OtrAndroidKeyManagerImpl extends IOtrKeyManager.Stub implements Otr
         if (this.isVerified(sessionID))
             return;
 
-        verifyUser(sessionID.getRemoteUserId());
+        verifyUser(sessionID.getUserID());
 
     }
 
-    public void remoteVerifiedUs(SessionID sessionID) {
-        if (sessionID == null)
-            return;
-
-        for (OtrKeyManagerListener l : listeners)
-            l.remoteVerifiedUs(sessionID);
-    }
 
     private static String buildPublicKeyVerifiedId(String userId, String fingerprint) {
         if (fingerprint == null)

@@ -183,7 +183,8 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                 mDataHandler.setDataListener(mDataHandlerListener);
 
                 OtrChatManager cm = service.getOtrChatManager();
-                cm.addOtrEngineListener(mListenerAdapter);
+              //  cm.addOtrEngineListener(mListenerAdapter);
+
                 mChatSession.setMessageListener(new OtrChatListener(cm, mListenerAdapter));
 
                 if (participant instanceof Contact) {
@@ -1134,7 +1135,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
     }
 
 
-    class ListenerAdapter implements MessageListener, GroupMemberListener, OtrEngineListener {
+    class ListenerAdapter implements MessageListener, GroupMemberListener {
 
         public boolean onIncomingMessage(ChatSession ses, final org.awesomeapp.messenger.model.Message msg, boolean notifyUser) {
 
@@ -1416,16 +1417,6 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             // TODO
 
         }
-
-        @Override
-        public void sessionStatusChanged(SessionID sessionID) {
-
-            if (sessionID.getRemoteUserId().equals(mChatSession.getParticipant().getAddress().getAddress()))
-                onStatusChanged(mChatSession, OtrChatManager.getInstance().getSessionStatus(sessionID));
-
-
-        }
-
 
         @Override
         public void onStatusChanged(ChatSession session, SessionStatus status) {

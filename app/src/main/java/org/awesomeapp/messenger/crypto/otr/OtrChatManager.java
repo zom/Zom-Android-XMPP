@@ -2,56 +2,41 @@ package org.awesomeapp.messenger.crypto.otr;
 
 // Originally: package com.zadov.beem;
 
-import org.awesomeapp.messenger.ImApp;
-import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
-import org.awesomeapp.messenger.ui.legacy.SmpResponseActivity;
-import org.awesomeapp.messenger.model.Contact;
-import org.awesomeapp.messenger.model.Message;
-import org.awesomeapp.messenger.service.adapters.ImConnectionAdapter;
-import org.awesomeapp.messenger.service.ImServiceConstants;
-import org.awesomeapp.messenger.service.RemoteImService;
-import org.awesomeapp.messenger.util.Debug;
+import android.content.Context;
+import android.support.annotation.NonNull;
+import android.text.TextUtils;
 
-import java.io.UnsupportedEncodingException;
-import java.security.KeyPair;
-import java.security.PublicKey;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.List;
-
-import net.java.otr4j.OtrEngineImpl;
 import net.java.otr4j.OtrEngineListener;
 import net.java.otr4j.OtrException;
 import net.java.otr4j.OtrKeyManager;
 import net.java.otr4j.OtrPolicy;
 import net.java.otr4j.OtrPolicyImpl;
-import net.java.otr4j.session.OtrSm;
-import net.java.otr4j.session.OtrSm.OtrSmEngineHost;
 import net.java.otr4j.session.Session;
 import net.java.otr4j.session.SessionID;
+import net.java.otr4j.session.SessionImpl;
 import net.java.otr4j.session.SessionStatus;
 import net.java.otr4j.session.TLV;
-import android.content.Context;
-import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.text.TextUtils;
-import android.util.Log;
+
+import org.awesomeapp.messenger.ImApp;
+import org.awesomeapp.messenger.model.Message;
+import org.awesomeapp.messenger.service.RemoteImService;
+
+import java.security.KeyPair;
+import java.security.PublicKey;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
 
 /*
  * OtrChatManager keeps track of the status of chats and their OTR stuff
  */
-public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
+public class OtrChatManager implements OtrEngineListener {
 
     //the singleton instance
     private static OtrChatManager mInstance;
 
     private OtrEngineHostImpl mOtrEngineHost;
-    private OtrEngineImpl mOtrEngine;
-    private Hashtable<String, SessionID> mSessions;
-    private Hashtable<String, OtrSm> mOtrSms;
+    private Hashtable<String, Session> mSessions;
 
     private Context mContext;
     private ImApp mApp;
@@ -60,23 +45,19 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
 
     private OtrChatManager(int otrPolicy, RemoteImService imService, OtrAndroidKeyManagerImpl otrKeyManager) throws Exception {
 
-        mContext = (Context)imService;
+        mContext = imService;
 
         mOtrEngineHost = new OtrEngineHostImpl(new OtrPolicyImpl(otrPolicy),
                 mContext, otrKeyManager, imService);
 
-        mOtrEngine = new OtrEngineImpl(mOtrEngineHost);
-        mOtrEngine.addOtrEngineListener(this);
-
-        mSessions = new Hashtable<String, SessionID>();
-        mOtrSms = new Hashtable<String, OtrSm>();
-
-        // Use the Application-managed PushManager which has a push account already authenticated
-
+        mSessions = new Hashtable<>();
 
         mApp = ((ImApp)mContext.getApplicationContext());
 
+
     }
+
+
 
     public static synchronized OtrChatManager getInstance(int otrPolicy, RemoteImService imService, OtrAndroidKeyManagerImpl otrKeyManager)
             throws Exception {
@@ -92,41 +73,6 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
         return mInstance;
     }
 
-    public static void endAllSessions() {
-        if (mInstance == null) {
-            return;
-        }
-        Collection<SessionID> sessionIDs = mInstance.mSessions.values();
-        for (SessionID sessionId : sessionIDs) {
-            mInstance.endSession(sessionId);
-        }
-    }
-
-    public static void endSessionsForAccount(Contact localUserContact) {
-        if (mInstance == null) {
-            return;
-        }
-        String localUserId = localUserContact.getAddress().getBareAddress();
-        
-        Enumeration<String> sKeys = mInstance.mSessions.keys();
-        
-        while (sKeys.hasMoreElements())
-        {
-            String sKey = sKeys.nextElement();
-            if (sKey.contains(localUserId))
-            {
-                SessionID sessionId = mInstance.mSessions.get(sKey);
-                
-                if (sessionId != null)
-                    mInstance.endSession(sessionId);
-            }
-        }
-    }
-
-    public void addOtrEngineListener(OtrEngineListener oel) {
-        mOtrEngine.addOtrEngineListener(oel);
-
-    }
 
     public void setPolicy(int otrPolicy) {
         mOtrEngineHost.setSessionPolicy(new OtrPolicyImpl(otrPolicy));
@@ -153,37 +99,15 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
 
        // boolean stripResource = !remoteUserId.startsWith("group");
         //SessionID sIdTemp = new SessionID(localUserId, XmppAddress.stripResource(remoteUserId), SESSION_TYPE_XMPP);
-        SessionID sIdTemp = new SessionID(localUserId, remoteUserId, SESSION_TYPE_XMPP);
-        SessionID sessionId = mSessions.get(sIdTemp.toString());
+        SessionID sessionId = new SessionID(localUserId, remoteUserId, SESSION_TYPE_XMPP);
 
-        if (sessionId == null)
-        {
-            sIdTemp = new SessionID(localUserId, XmppAddress.stripResource(remoteUserId), SESSION_TYPE_XMPP);
-            sessionId = mSessions.get(sIdTemp.toString());
-            if (sessionId != null)
-                return sessionId;
-        }
+        Session session = mSessions.get(sessionId.toString());
 
-        if (sessionId == null)
-        {
-         // or we didn't have a session yet.
-            sessionId = sIdTemp;
-            mSessions.put(sessionId.toString(), sessionId);
-        }
-        else if ((!sessionId.getRemoteUserId().equals(remoteUserId)) &&
-                        remoteUserId.contains("/")) {
-            // Remote has changed (either different presence, or from generic JID to specific presence),
-            // Create or replace sessionId with one that is specific to the new presence.
+        if (session != null)
+            return session.getSessionID();
+        else
+            return sessionId;
 
-            sessionId = sIdTemp;
-            mSessions.put(sessionId.toString(), sessionId);
-
-            if (Debug.DEBUG_ENABLED)
-                Log.d(ImApp.LOG_TAG,"getting new otr session id: " + sessionId);
-
-        }
-
-        return sessionId;
     }
 
     /**
@@ -199,14 +123,18 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
         if (sessionId == null)
             return null;
 
-        return mOtrEngine.getSessionStatus(sessionId);
+        return getSessionStatus(sessionId);
 
     }
 
     public SessionStatus getSessionStatus(SessionID sessionId) {
 
-        return mOtrEngine.getSessionStatus(sessionId);
+        Session session = getSession(sessionId);
 
+        if (session != null)
+            return session.getSessionStatus();
+
+        return SessionStatus.PLAINTEXT;
     }
 
     /**
@@ -225,6 +153,7 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
      * @param localUserId i.e. the account of the user of this phone
      * @param remoteUserId i.e. the account that this user is talking to
      */
+    /**
     private SessionID startSession(String localUserId, String remoteUserId) throws Exception {
 
         if (!remoteUserId.contains("/"))
@@ -246,7 +175,7 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
         }
 
         return null;
-    }
+    }**/
 
 
     /**
@@ -259,8 +188,16 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
 
         try {
 
-            mOtrEngine.startSession(sessionId);
-            
+            Session session = getSession(sessionId);
+            if (session == null)
+            {
+                session = new SessionImpl(sessionId,mOtrEngineHost);
+                session.addOtrEngineListener(this);
+                mSessions.put(sessionId.toString(),session);
+            }
+
+            session.startSession();
+
             return sessionId;
 
         } catch (Exception e) {
@@ -280,8 +217,10 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
 
         try {
 
-            mOtrEngine.endSession(sessionId);
-            mSessions.remove(sessionId.toString());
+            Session session = getSession(sessionId);
+            if (session == null) {
+                session.endSession();
+            }
 
         } catch (Exception e) {
             OtrDebugLogger.log("endSession", e);
@@ -296,22 +235,23 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
     }
 
     public void status(String localUserId, String remoteUserId) {
-        mOtrEngine.getSessionStatus(getSessionId(localUserId, remoteUserId)).toString();
+        getSessionStatus(getSessionId(localUserId,remoteUserId));
     }
 
     public String decryptMessage(String localUserId, String remoteUserId, String msg, List<TLV> tlvs) throws OtrException {
 
         String plain = null;
 
-        SessionID sessionId = getSessionId(localUserId, remoteUserId);
-       // OtrDebugLogger.log("session status: " + mOtrEngine.getSessionStatus(sessionId));
+        Session session = getSession(getSessionId(localUserId, remoteUserId));
 
-        if (mOtrEngine != null && sessionId != null) {
+        if (session != null) {
 
-            mOtrEngineHost.putSessionResource(sessionId, processResource(remoteUserId));
+            mOtrEngineHost.putSessionResource(session.getSessionID(), processResource(remoteUserId));
 
-            plain = mOtrEngine.transformReceiving(sessionId, msg, tlvs);
+            //plain = mOtrEngine.transformReceiving(sessionId, msg, tlvs);
 
+            plain = session.transformReceiving(msg);
+            /**
             OtrSm otrSm = mOtrSms.get(sessionId.toString());
 
             if (otrSm != null) {
@@ -320,7 +260,7 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
                     String encrypted = mOtrEngine.transformSending(sessionId, "", smTlvs);
                     mOtrEngineHost.injectMessage(sessionId, encrypted);
                 }
-            }
+            }**/
 
             //not null, but empty so make it null!
             if (TextUtils.isEmpty(plain))
@@ -330,23 +270,26 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
         return plain;
     }
 
-    public boolean transformSending(Message message) {
-        return transformSending(message, false, null);
-    }
 
-    public boolean transformSending(Message message, boolean isResponse, byte[] data) {
+    public boolean transformSending(Message message) {
         String localUserId = message.getFrom().getAddress();
         String remoteUserId = message.getTo().getAddress();
-        String body = message.getBody();
+        String plainText = message.getBody();
 
-        SessionID sessionId = getSessionId(localUserId, remoteUserId);
+        Session session = getSession(getSessionId(localUserId, remoteUserId));
 
-        if (mOtrEngine != null && sessionId != null) {
-            SessionStatus sessionStatus = mOtrEngine.getSessionStatus(sessionId);
-            if (data != null && sessionStatus != SessionStatus.ENCRYPTED) {
+        String body = null;
+
+        if (session != null) {
+            SessionStatus sessionStatus = getSessionStatus(getSessionId(localUserId,remoteUserId));
+            if (sessionStatus != SessionStatus.ENCRYPTED) {
                 // Cannot send data without OTR, so start a session and drop message.
                 // Message will be resent by caller when session is encrypted.
-                startSession(sessionId);
+                try {
+                    session.startSession();
+                } catch (OtrException e) {
+                    e.printStackTrace();
+                }
                 OtrDebugLogger.log("auto-start OTR on data send request");
                 return false;
             }
@@ -354,18 +297,18 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
             OtrDebugLogger.log("session status: " + sessionStatus);
 
             try {
-                OtrPolicy sessionPolicy = getSessionPolicy(sessionId);
+                OtrPolicy sessionPolicy = session.getSessionPolicy();
 
                 if (sessionStatus == SessionStatus.PLAINTEXT && sessionPolicy.getRequireEncryption())
                 {
-                    startSession(sessionId);
+                    session.startSession();
                     return false;
                 }
                 if (sessionStatus != SessionStatus.PLAINTEXT || sessionPolicy.getRequireEncryption()) {
-                    body = mOtrEngine.transformSending(sessionId, body, isResponse, data);
+                    body = session.transformSending(plainText)[0];
 
                     if (!message.getTo().getAddress().contains("/"))
-                        message.setTo(mOtrEngineHost.appendSessionResource(sessionId, message.getTo()));
+                        message.setTo(mOtrEngineHost.appendSessionResource(session.getSessionID(), message.getTo()));
 
                 } else if (sessionStatus == SessionStatus.PLAINTEXT && sessionPolicy.getAllowV2()
                            && sessionPolicy.getSendWhitespaceTag()) {
@@ -386,46 +329,42 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
 
     @Override
     public void sessionStatusChanged(final SessionID sessionID) {
-        SessionStatus sStatus = mOtrEngine.getSessionStatus(sessionID);
+        SessionStatus sStatus = getSessionStatus(sessionID);
 
         OtrDebugLogger.log("session status changed: " + sStatus);
 
-        final Session session = mOtrEngine.getSession(sessionID);
-        OtrSm otrSm = mOtrSms.get(sessionID.toString());
+        final Session session = mSessions.get(sessionID.toString());
+
+        if (session != null) {
 
 
-        if (sStatus == SessionStatus.ENCRYPTED) {
+            if (sStatus == SessionStatus.ENCRYPTED) {
 
-            PublicKey remoteKey = mOtrEngine.getRemotePublicKey(sessionID);
-            mOtrEngineHost.storeRemoteKey(sessionID, remoteKey);
+                PublicKey remoteKey = session.getRemotePublicKey();
+                mOtrEngineHost.storeRemoteKey(sessionID, remoteKey);
 
-            if (otrSm == null) {
-                // SMP handler - make sure we only add this once per session!
-                otrSm = new OtrSm(session, mOtrEngineHost.getKeyManager(),
-                        sessionID, OtrChatManager.this);
-                session.addTlvHandler(otrSm);
 
-                mOtrSms.put(sessionID.toString(), otrSm);
+            } else if (sStatus == SessionStatus.PLAINTEXT) {
+
+                mOtrEngineHost.removeSessionResource(sessionID);
+
+
+            } else if (sStatus == SessionStatus.FINISHED) {
+                // Do nothing.  The user must take affirmative action to
+                // restart or end the session, so that they don't send
+                // plaintext by mistake.
             }
-
-
-
-
-        } else if (sStatus == SessionStatus.PLAINTEXT) {
-            if (otrSm != null) {
-                session.removeTlvHandler(otrSm);
-                mOtrSms.remove(sessionID.toString());
-            }
-
-
-            mOtrEngineHost.removeSessionResource(sessionID);
-
-
-        } else if (sStatus == SessionStatus.FINISHED) {
-            // Do nothing.  The user must take affirmative action to
-            // restart or end the session, so that they don't send
-            // plaintext by mistake.
         }
+
+    }
+
+    @Override
+    public void multipleInstancesDetected(SessionID sessionID) {
+
+    }
+
+    @Override
+    public void outgoingSessionChanged(SessionID sessionID) {
 
     }
 
@@ -453,45 +392,40 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
         return mOtrEngineHost.getLocalKeyFingerprint(localUserId);
     }
 
-    @Override
     public void injectMessage(SessionID sessionID, String msg) {
 
         mOtrEngineHost.injectMessage(sessionID, msg);
     }
 
-    @Override
     public void showWarning(SessionID sessionID, String warning) {
 
         mOtrEngineHost.showWarning(sessionID, warning);
 
     }
 
-    @Override
     public void showError(SessionID sessionID, String error) {
         mOtrEngineHost.showError(sessionID, error);
 
 
     }
 
-    @Override
     public OtrPolicy getSessionPolicy(SessionID sessionID) {
 
         return mOtrEngineHost.getSessionPolicy(sessionID);
     }
 
-    @Override
     public KeyPair getKeyPair(SessionID sessionID) {
         return mOtrEngineHost.getKeyPair(sessionID);
     }
 
-    @Override
+    /**
     public void askForSecret(SessionID sessionID, String question) {
 
         Intent dialog = new Intent(mContext.getApplicationContext(), SmpResponseActivity.class);
         dialog.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         dialog.putExtra("q", question);
-        dialog.putExtra("sid", sessionID.getRemoteUserId());//yes "sid" = remoteUserId in this case - see SMPResponseActivity
+        dialog.putExtra("sid", sessionID.getUserID());//yes "sid" = remoteUserId in this case - see SMPResponseActivity
         ImConnectionAdapter connection = mOtrEngineHost.findConnection(sessionID);
         if (connection == null) {
             OtrDebugLogger.log("Could ask for secret - no connection for " + sessionID.toString());
@@ -515,10 +449,20 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
         }
 
         tlvs = otrSm.initRespondSmp(null, secret, false);
-        String encrypted = mOtrEngine.transformSending(sessionID, "", tlvs);
-        mOtrEngineHost.injectMessage(sessionID, encrypted);
+        Session session = getSession(sessionID);
+        String[] encrypted = session.transformSending("",tlvs);
+
+        for (String msg : encrypted)
+            mOtrEngineHost.injectMessage(sessionID, msg);
+
+    }**/
+
+    private Session getSession (SessionID sid)
+    {
+        return mSessions.get(sid.toString());
     }
 
+    /**
     public void initSmp(SessionID sessionID, String question, String secret) throws OtrException {
         OtrSm otrSm = mOtrSms.get(sessionID.toString());
 
@@ -530,8 +474,12 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
         }
 
         tlvs = otrSm.initRespondSmp(question, secret, true);
-        String encrypted = mOtrEngine.transformSending(sessionID, "", tlvs);
-        mOtrEngineHost.injectMessage(sessionID, encrypted);
+        Session session = getSession(sessionID);
+        String[] encrypted = session.transformSending("", tlvs);
+
+        for (String msg : encrypted)
+            mOtrEngineHost.injectMessage(sessionID, msg);
+
     }
 
     public void abortSmp(SessionID sessionID) throws OtrException {
@@ -541,9 +489,13 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
             return;
 
         List<TLV> tlvs = otrSm.abortSmp();
-        String encrypted = mOtrEngine.transformSending(sessionID, "", tlvs);
-        mOtrEngineHost.injectMessage(sessionID, encrypted);
+        Session session = getSession(sessionID);
+        String[] encrypted = session.transformSending("", tlvs);
+        for (String msg : encrypted)
+            mOtrEngineHost.injectMessage(sessionID, msg);
+
     }
+    **/
 
     /**
      * Create a message body describing the ChatSecure-Push Whitelist Token Exchange.
@@ -568,21 +520,21 @@ public class OtrChatManager implements OtrEngineListener, OtrSmEngineHost {
             List<TLV> tlvs = new ArrayList<>(1);
 
 
-            if (mOtrEngine != null && sessionId != null) {
-                SessionStatus sessionStatus = mOtrEngine.getSessionStatus(sessionId);
-                if (sessionStatus != SessionStatus.ENCRYPTED) {
+            if (sessionId != null) {
+                Session session = getSession(sessionId);
+                if (session.getSessionStatus() != SessionStatus.ENCRYPTED) {
                     // Cannot send Whitelist token without OTR.
                     // TODO: Is it possible to Postpone-send a TLV message?
                     OtrDebugLogger.log("Could not send ChatSecure-Push Whitelist Token TLV. Session not encrypted.");
                     return false;
                 }
-                OtrDebugLogger.log("session status: " + sessionStatus);
+                OtrDebugLogger.log("session status: " + session.getSessionStatus());
 
-                body = mOtrEngine.transformSending(sessionId, body, tlvs);
+                String msgs[] = session.transformSending(body, tlvs);
                 message.setTo(mOtrEngineHost.appendSessionResource(sessionId, message.getTo()));
+                message.setBody(msgs[0]);
             }
 
-            message.setBody(body);
 
             return true;
 

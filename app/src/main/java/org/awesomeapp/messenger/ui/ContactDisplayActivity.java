@@ -198,13 +198,16 @@ public class ContactDisplayActivity extends BaseActivity {
             ImageView iv = (ImageView)findViewById(R.id.qrcode);
             TextView tv = (TextView)findViewById(R.id.tvFingerprint);
 
-            ArrayList<String> fingerprints = OtrChatManager.getInstance().getRemoteKeyFingerprints(mUsername);
+           // ArrayList<String> fingerprints = OtrChatManager.getInstance().getRemoteKeyFingerprints(mUsername);
 
             if (!TextUtils.isEmpty(remoteFingerprint)) {
 
                 findViewById(R.id.listEncryptionKey).setVisibility(View.VISIBLE);
 
-                tv.setText(OmemoKeyUtil.prettyFingerprint(remoteFingerprint));
+                if (remoteFingerprint.length() > 40)
+                    tv.setText(OmemoKeyUtil.prettyFingerprint(remoteFingerprint));
+                else
+                    tv.setText(prettyPrintFingerprint(remoteFingerprint));
 
                 iv.setOnClickListener(new View.OnClickListener() {
 

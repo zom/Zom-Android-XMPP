@@ -16,8 +16,11 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 
 import net.java.otr4j.OtrEngineHost;
+import net.java.otr4j.OtrException;
 import net.java.otr4j.OtrKeyManager;
 import net.java.otr4j.OtrPolicy;
+import net.java.otr4j.session.FragmenterInstructions;
+import net.java.otr4j.session.InstanceTag;
 import net.java.otr4j.session.SessionID;
 
 import android.content.Context;
@@ -71,7 +74,7 @@ public class OtrEngineHostImpl implements OtrEngineHost {
 
     public ImConnectionAdapter findConnection(SessionID session) {
 
-        return mImService.getConnection(Address.stripResource(session.getLocalUserId()));
+        return mImService.getConnection(Address.stripResource(session.getAccountID()));
     }
 
     public OtrKeyManager getKeyManager() {
@@ -130,6 +133,56 @@ public class OtrEngineHostImpl implements OtrEngineHost {
         return mPolicy;
     }
 
+    @Override
+    public FragmenterInstructions getFragmenterInstructions(SessionID sessionID) {
+        return null;
+    }
+
+    @Override
+    public KeyPair getLocalKeyPair(SessionID sessionID) throws OtrException {
+        return getKeyPair(sessionID);
+    }
+
+    @Override
+    public byte[] getLocalFingerprintRaw(SessionID sessionID) {
+        return mOtrKeyManager.getLocalFingerprintRaw(sessionID);
+    }
+
+    @Override
+    public void askForSecret(SessionID sessionID, InstanceTag instanceTag, String s) {
+
+    }
+
+    @Override
+    public void verify(SessionID sessionID, String s, boolean b) {
+
+    }
+
+    @Override
+    public void unverify(SessionID sessionID, String s) {
+
+    }
+
+    @Override
+    public String getReplyForUnreadableMessage(SessionID sessionID) {
+        return "The message could not be read";
+    }
+
+    @Override
+    public String getFallbackMessage(SessionID sessionID) {
+        return "Please try again";
+    }
+
+    @Override
+    public void messageFromAnotherInstanceReceived(SessionID sessionID) {
+
+    }
+
+    @Override
+    public void multipleInstancesDetected(SessionID sessionID) {
+
+    }
+
     public void setSessionPolicy(OtrPolicy policy) {
         mPolicy = policy;
     }
@@ -143,7 +196,7 @@ public class OtrEngineHostImpl implements OtrEngineHost {
             ChatSessionManagerAdapter chatSessionManagerAdapter = (ChatSessionManagerAdapter) connection
                     .getChatSessionManager();
             ChatSessionAdapter chatSessionAdapter = (ChatSessionAdapter) chatSessionManagerAdapter
-                    .getChatSession(sessionID.getRemoteUserId());
+                    .getChatSession(sessionID.getAccountID());
 
             if (chatSessionAdapter != null)
             {
@@ -153,7 +206,7 @@ public class OtrEngineHostImpl implements OtrEngineHost {
                     body = ""; //don't allow null messages, only empty ones!
 
                 Message msg = new Message(body);
-                Address to = new XmppAddress(sessionID.getRemoteUserId());
+                Address to = new XmppAddress(sessionID.getAccountID());
                 msg.setTo(to);
 
                 if (!to.getAddress().contains("/")) {
@@ -187,10 +240,43 @@ public class OtrEngineHostImpl implements OtrEngineHost {
 
     }
 
+    @Override
+    public void unreadableMessageReceived(SessionID sessionID) throws OtrException {
+        OtrDebugLogger.log(sessionID.toString() + ": unreadableMessageReceived");
+
+    }
+
+    @Override
+    public void unencryptedMessageReceived(SessionID sessionID, String s) throws OtrException {
+        OtrDebugLogger.log(sessionID.toString() + ": unencryptedMessageReceived=" + s);
+
+    }
+
     public void showError(SessionID sessionID, String error) {
         OtrDebugLogger.log(sessionID.toString() + ": ERROR=" + error);
 
-      //  Toast.makeText(mContext, "ERROR: " + error, Toast.LENGTH_SHORT).show();
+
+    }
+
+    @Override
+    public void smpError(SessionID sessionID, int i, boolean b) throws OtrException {
+
+    }
+
+    @Override
+    public void smpAborted(SessionID sessionID) throws OtrException {
+
+    }
+
+    @Override
+    public void finishedSessionMessage(SessionID sessionID, String s) throws OtrException {
+        OtrDebugLogger.log(sessionID.toString() + ": finishedSessionMessage=" + s);
+
+    }
+
+    @Override
+    public void requireEncryptedMessage(SessionID sessionID, String s) throws OtrException {
+        OtrDebugLogger.log(sessionID.toString() + ": requireEncryptedMessage=" + s);
 
     }
 

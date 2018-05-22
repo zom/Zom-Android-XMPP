@@ -272,7 +272,7 @@ public class ChatSession {
                 message.setType(Imps.MessageType.OUTGOING_ENCRYPTED);
             }
 
-            boolean canSend = cm.transformSending(message, isResponse, data);
+            boolean canSend = cm.transformSending(message);
 
             if (canSend)
                 mManager.sendMessageAsync(this, message);
@@ -355,7 +355,7 @@ public class ChatSession {
         SessionID sId = cm.getSessionId(message.getFrom().getAddress(), mParticipant.getAddress().getAddress());
         SessionStatus otrStatus = cm.getSessionStatus(sId);
 
-        message.setTo(new XmppAddress(sId.getRemoteUserId()));
+        message.setTo(new XmppAddress(sId.getUserID()));
 
         if (otrStatus == SessionStatus.ENCRYPTED) {
             boolean verified = cm.getKeyManager().isVerified(sId);

@@ -94,7 +94,7 @@ import info.guardianproject.cacheword.ICacheWordSubscriber;
 import im.zom.messenger.R;
 
 
-public class RemoteImService extends Service implements OtrEngineListener, ImService, ICacheWordSubscriber {
+public class RemoteImService extends Service implements ImService, ICacheWordSubscriber {
 
     private static final String PREV_CONNECTIONS_TRAIL_TAG = "prev_connections";
     private static final String CONNECTIONS_TRAIL_TAG = "connections";
@@ -176,26 +176,9 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
                 if (otrKeyManager != null)
                 {
                     mOtrChatManager = OtrChatManager.getInstance(otrPolicy, this, otrKeyManager);
-                    mOtrChatManager.addOtrEngineListener(this);
+            //        mOtrChatManager.addOtrEngineListener(this);
     
-                    otrKeyManager.addListener(new OtrKeyManagerListener() {
-                        public void verificationStatusChanged(SessionID session) {
-                            boolean isVerified = mOtrChatManager.getKeyManager().isVerified(session);
-                            String msg = session + ": verification status=" + isVerified;
-    
-                            OtrDebugLogger.log(msg);
-    
-                        }
-    
-                        public void remoteVerifiedUs(SessionID session) {
-                            String msg = session + ": remote verified us";
-                            OtrDebugLogger.log(msg);
-    
-                            showToast(getString(R.string.remote_verified_us),Toast.LENGTH_SHORT);
-                         //   if (!isRemoteKeyVerified(session))
-                           //     showWarning(session, mContext.getApplicationContext().getString(R.string.remote_verified_us));
-                        }
-                    });
+
                 }
 
             }
@@ -988,14 +971,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
         }
     }
 
-    @Override
-    public void sessionStatusChanged(SessionID sessionID) {
 
-        //this method does nothing!
-       // Log.d(TAG,"OTR session status changed: " + sessionID.getRemoteUserId());
-
-
-    }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override

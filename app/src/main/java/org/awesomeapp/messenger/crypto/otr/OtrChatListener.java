@@ -109,7 +109,7 @@ public class OtrChatListener implements MessageListener {
             }
 
 
-            SessionStatus newStatus = mOtrChatManager.getSessionStatus(sessionID.getLocalUserId(), sessionID.getRemoteUserId());
+            SessionStatus newStatus = mOtrChatManager.getSessionStatus(sessionID.getAccountID(), sessionID.getUserID());
             if (newStatus != otrStatus) {
 
                 OtrDebugLogger.log("OTR status changed from: " + otrStatus + " to " + newStatus);

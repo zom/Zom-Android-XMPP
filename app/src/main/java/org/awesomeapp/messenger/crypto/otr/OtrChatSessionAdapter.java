@@ -92,9 +92,9 @@ public class OtrChatSessionAdapter extends Stub {
     public void initSmpVerification(String question, String secret) throws RemoteException {
 
         try {
-            _chatManager.initSmp(getSessionID (), question,
-                    secret);
-        } catch (OtrException e) {
+//            _chatManager.initSmp(getSessionID (), question,
+     //               secret);
+        } catch (Exception e) {
             OtrDebugLogger.log("initSmp", e);
             throw new RemoteException();
         }
@@ -104,9 +104,9 @@ public class OtrChatSessionAdapter extends Stub {
     public void respondSmpVerification(String answer) throws RemoteException {
 
         try {
-            _chatManager.respondSmp(getSessionID (), answer);
+//            _chatManager.respondSmp(getSessionID (), answer);
 
-        } catch (OtrException e) {
+        } catch (Exception e) {
             OtrDebugLogger.log("respondSmp", e);
             throw new RemoteException();
         }
@@ -153,12 +153,12 @@ public class OtrChatSessionAdapter extends Stub {
 
     @Override
     public String getLocalUserId() throws RemoteException {
-        return getSessionID ().getLocalUserId();
+        return getSessionID ().getAccountID();
     }
 
     @Override
     public String getRemoteUserId() throws RemoteException {
-        return getSessionID ().getRemoteUserId();
+        return getSessionID ().getUserID();
     }
 
 }
