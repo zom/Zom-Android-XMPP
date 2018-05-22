@@ -8,6 +8,7 @@ package org.awesomeapp.messenger.plugin.xmpp;
  */
 
 import java.security.*;
+import java.util.Iterator;
 
 import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.packet.*;
@@ -163,9 +164,12 @@ public class VCardTempXUpdatePresenceExtension
      *
      * @return the packet extension as XML.
      */
-    public String toXML()
+    public XmlStringBuilder toXML(String enclosingNamespace)
     {
-        return this.xmlString;
+        XmlStringBuilder buf = new XmlStringBuilder(enclosingNamespace);
+        buf.append(xmlString);
+
+        return buf;
     }
 
     /**

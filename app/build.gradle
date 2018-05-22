@@ -123,7 +123,7 @@ android {
 }
 
 ext {
-    smackVersion = "4.2.2"
+    smackVersion = "4.2.4"
     smackOmemoVersion = "4.2.2"
 }
 
@@ -150,13 +150,17 @@ dependencies {
     implementation 'info.guardianproject.netcipher:netcipher-httpclient:2.0.0-alpha1'
     implementation 'info.guardianproject.panic:panic:0.5'
     implementation 'cz.msebera.android:httpclient:4.4.1.2'
-    implementation 'de.measite.minidns:minidns-hla:0.2.4'
+
+    //   implementation 'de.measite.minidns:minidns-hla:0.2.4'
+    implementation 'org.minidns:minidns-hla:0.3.0'
+
     // https://mvnrepository.com/artifact/org.jxmpp/jxmpp-core
-    implementation 'org.jxmpp:jxmpp-core:0.6.0'
-    implementation 'org.jxmpp:jxmpp-jid:0.6.0'
-    implementation 'org.jxmpp:jxmpp-util-cache:0.6.0'
+    implementation 'org.jxmpp:jxmpp-core:0.6.2'
+    implementation 'org.jxmpp:jxmpp-jid:0.6.2'
+    implementation 'org.jxmpp:jxmpp-util-cache:0.6.2'
+
     // for OMEMO support
-    implementation 'org.whispersystems:signal-protocol-java:2.3.0'
+    implementation 'org.whispersystems:signal-protocol-java:2.4.0'
     implementation 'org.bouncycastle:bcprov-jdk15on:1.57'
     implementation 'org.whispersystems:curve25519-android:0.3.0'
     // https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java
@@ -169,16 +173,20 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.3.1'
     implementation 'com.github.javiersantos:AppUpdater:2.6.4'
     implementation 'com.github.QuadFlask:colorpicker:0.0.10'
-    implementation "org.igniterealtime.smack:smack-android:$smackVersion"
-    implementation "org.igniterealtime.smack:smack-android-extensions:$smackVersion"
+
+//from: https://github.com/igniterealtime/Smack
+    // implementation "org.igniterealtime.smack:smack-android:$smackVersion"
+   // implementation "org.igniterealtime.smack:smack-android-extensions:$smackVersion"
     //   compile "org.igniterealtime.smack:smack-omemo-signal:$smackOmemoVersion"
-    implementation "org.igniterealtime.smack:smack-resolver-minidns:$smackVersion"
-    implementation "org.igniterealtime.smack:smack-tcp:$smackVersion"
-    implementation "org.igniterealtime.smack:smack-core:$smackVersion"
-    implementation "org.igniterealtime.smack:smack-extensions:$smackVersion"
-    implementation "org.igniterealtime.smack:smack-experimental:$smackVersion"
-    implementation "org.igniterealtime.smack:smack-im:$smackVersion"
-    implementation "org.igniterealtime.smack:smack-sasl-provided:$smackVersion"
+   // implementation "org.igniterealtime.smack:smack-resolver-minidns:$smackVersion"
+   // implementation "org.igniterealtime.smack:smack-tcp:$smackVersion"
+   // implementation "org.igniterealtime.smack:smack-core:$smackVersion"
+   // imp/lementation "org.igniterealtime.smack:smack-extensions:$smackVersion"
+   // implementation "org.igniterealtime.smack:smack-experimental:$smackVersion"
+   // implementation "org.igniterealtime.smack:smack-im:$smackVersion"
+   // implementation "org.igniterealtime.smack:smack-sasl-provided:$smackVersion"
+
+
     // https://mvnrepository.com/artifact/com.google.code.gson/gson
     implementation 'com.google.code.gson:gson:2.8.0'
     implementation 'com.jrummyapps:android-shell:1.0.1'

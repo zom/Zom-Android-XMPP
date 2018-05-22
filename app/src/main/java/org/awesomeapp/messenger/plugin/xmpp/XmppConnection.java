@@ -53,8 +53,8 @@ import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.chat.Chat;
-import org.jivesoftware.smack.chat.ChatManager;
+import org.jivesoftware.smack.chat2.Chat;
+import org.jivesoftware.smack.chat2.ChatManager;
 import org.jivesoftware.smack.debugger.SmackDebugger;
 import org.jivesoftware.smack.debugger.SmackDebuggerFactory;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
@@ -70,6 +70,7 @@ import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.roster.RosterGroup;
 import org.jivesoftware.smack.roster.RosterListener;
 import org.jivesoftware.smack.roster.packet.RosterPacket;
+import org.jivesoftware.smack.sm.StreamManagementException;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 import org.jivesoftware.smack.util.DNSUtil;
@@ -152,6 +153,7 @@ import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.jid.parts.Resourcepart;
 import org.jxmpp.stringprep.XmppStringprepException;
+import org.minidns.dnsname.DnsName;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -225,13 +227,15 @@ public class XmppConnection extends ImConnection {
     // watch out, this is a different XMPPConnection class than XmppConnection! ;)
     // Synchronized by executor thread
     private XMPPTCPConnection mConnection;
-    private XmppStreamHandler mStreamHandler;
+   // private XmppStreamHandler mStreamHandler;
     private ChatManager mChatManager;
 
     private Roster mRoster;
 
     private XmppChatSessionManager mSessionManager;
     private XMPPTCPConnectionConfiguration.Builder mConfig;
+
+    private ChatStateManager mChatStateManager;
 
     private Omemo mOmemoInstance;
 
@@ -296,12 +300,15 @@ public class XmppConnection extends ImConnection {
 
         SmackConfiguration.setDefaultPacketReplyTimeout(SOTIMEOUT);
 
+        XMPPTCPConnection.setUseStreamManagementDefault(true);
+        XMPPTCPConnection.setUseStreamManagementResumptiodDefault(true);
+
         // Create a single threaded executor.  This will serialize actions on the underlying connection.
         createExecutor();
 
         addProviderManagerExtensions();
 
-        XmppStreamHandler.addExtensionProviders();
+        //XmppStreamHandler.addExtensionProviders();
 
         mChatGroupManager = new XmppChatGroupManager();
 
@@ -1779,8 +1786,10 @@ public class XmppConnection extends ImConnection {
             });
 
             mConnection.login(mUsername, mPassword, Resourcepart.from(mResource));
-            mStreamHandler.notifyInitialLogin();
+            //mStreamHandler.notifyInitialLogin();
             initServiceDiscovery();
+
+            mChatStateManager = ChatStateManager.getInstance(mConnection);
 
             getContactListManager().loadContactListsAsync();
 
@@ -1981,10 +1990,10 @@ public class XmppConnection extends ImConnection {
 
                 debug(TAG, "(DNS SRV) resolving: " + domain);
                 List<HostAddress> listHostsFailed = new ArrayList<>();
-                List<HostAddress> listHosts = DNSUtil.resolveXMPPServiceDomain(domain, listHostsFailed, ConnectionConfiguration.DnssecMode.disabled);
+                List<HostAddress> listHosts = DNSUtil.resolveXMPPServiceDomain(DnsName.from(domain), listHostsFailed, ConnectionConfiguration.DnssecMode.disabled);
 
                 if (listHosts.size() > 0) {
-                    server = listHosts.get(0).getFQDN();
+                    server = listHosts.get(0).getHost();
                     serverPort = listHosts.get(0).getPort();
 
                     debug(TAG, "(DNS SRV) resolved: " + domain + "=" + server + ":" + serverPort);
@@ -2026,16 +2035,18 @@ public class XmppConnection extends ImConnection {
 
         mConfig.setProxyInfo(mProxyInfo);
 
-        mConfig.setDebuggerEnabled(Debug.DEBUG_ENABLED);
-        SmackConfiguration.DEBUG = Debug.DEBUG_ENABLED;
-        SmackConfiguration.setDebuggerFactory(new SmackDebuggerFactory() {
-            @Override
-            public SmackDebugger create(XMPPConnection xmppConnection, Writer writer, Reader reader) throws IllegalArgumentException {
 
-                return new AndroidDebugger(xmppConnection, writer, reader);
+        SmackConfiguration.DEBUG = Debug.DEBUG_ENABLED;
+        SmackConfiguration.setDefaultSmackDebuggerFactory(new SmackDebuggerFactory() {
+            @Override
+            public SmackDebugger create(XMPPConnection xmppConnection) throws IllegalArgumentException {
+
+                return new AndroidDebugger(xmppConnection);
+
 
             }
         });
+        mConfig.enableDefaultDebugger();
 
         //mConfig.setSASLAuthenticationEnabled(useSASL);
 
@@ -2131,11 +2142,10 @@ public class XmppConnection extends ImConnection {
 
         mConfig.setSendPresence(true);
 
-        XMPPTCPConnection.setUseStreamManagementDefault(true);
-        XMPPTCPConnection.setUseStreamManagementResumptiodDefault(true);
-
-
         mConnection = new XMPPTCPConnection(mConfig.build());
+
+        mConnection.setUseStreamManagement(true);
+        mConnection.setUseStreamManagementResumption(true);
 
         DeliveryReceiptManager.getInstanceFor(mConnection).addReceiptReceivedListener(new ReceiptReceivedListener() {
             @Override
@@ -2165,7 +2175,7 @@ public class XmppConnection extends ImConnection {
                 if (!hasOmemo)
                     handleMessage(smackMessage, hasOmemo, true);
 
-                String msg_xml = smackMessage.toXML().toString();
+                String msg_xml = smackMessage.toXML("").toString();
 
                 try {
                     handleChatState(smackMessage.getFrom().toString(), msg_xml);
@@ -2204,14 +2214,19 @@ public class XmppConnection extends ImConnection {
 
         initNewContactProcessor();
 
+
         ConnectionListener connectionListener = new ConnectionListener() {
+
+
             /**
              * Called from smack when connect() is fully successful
              *
              * This is called on the executor thread while we are in reconnect()
              */
+            /**
             @Override
             public void reconnectionSuccessful() {
+
                 if (mStreamHandler == null || !mStreamHandler.isResumePending()) {
                     debug(TAG, "Reconnection success");
                     onReconnectionSuccessful();
@@ -2221,9 +2236,12 @@ public class XmppConnection extends ImConnection {
                     mChatGroupManager.reconnectAll();
                 } else {
                     debug(TAG, "Ignoring reconnection callback due to pending resume");
-                }
-            }
 
+            }
+            }**/
+
+
+            /**
             @Override
             public void reconnectionFailed(Exception e) {
 
@@ -2242,14 +2260,7 @@ public class XmppConnection extends ImConnection {
                     }
 
                 });
-            }
-
-            @Override
-            public void reconnectingIn(int seconds) {
-                // // We are not using the reconnection manager
-                // throw new UnsupportedOperationException();
-                debug(TAG,"reconnecting in " + seconds + " seconds...");
-            }
+            }**/
 
             @Override
             public void connectionClosedOnError(final Exception e) {
@@ -2374,7 +2385,7 @@ public class XmppConnection extends ImConnection {
         };
 
         mConnection.addConnectionListener(connectionListener);
-        mStreamHandler = new XmppStreamHandler(mConnection, connectionListener);
+   //     mStreamHandler = new XmppStreamHandler(mConnection, connectionListener);
         Exception xmppConnectException = null;
         AbstractXMPPConnection conn = mConnection.connect();
 
@@ -2616,6 +2627,7 @@ public class XmppConnection extends ImConnection {
             if (mTimerPackets != null)
                 mTimerPackets.cancel();
 
+            /**
             execute(new Runnable() {
                 @Override
                 public void run() {
@@ -2624,7 +2636,7 @@ public class XmppConnection extends ImConnection {
                     if (mStreamHandler != null)
                         mStreamHandler.quickShutdown();
                 }
-            });
+            });**/
         }
     }
 
@@ -2759,7 +2771,7 @@ public class XmppConnection extends ImConnection {
 
     private final class XmppChatSessionManager extends ChatSessionManager {
         @Override
-        public void sendMessageAsync(ChatSession session, Message message) {
+        public void sendMessageAsync(ChatSession session, final Message message) {
 
             if (getState() != LOGGED_IN) {
                 message.setType(Imps.MessageType.QUEUED);
@@ -2819,7 +2831,21 @@ public class XmppConnection extends ImConnection {
 
                 }
                 else {
-                    Chat thisChat = mChatManager.createChat(jidTo.asEntityJidIfPossible());
+                    Chat thisChat = mChatManager.chatWith(jidTo.asEntityBareJidIfPossible());
+
+                    /**
+                    if (mConnection.isSmEnabled()) {
+                        try {
+                            mConnection.addStanzaIdAcknowledgedListener(message.getID(), new StanzaListener() {
+                                @Override
+                                public void processStanza(Stanza stanza) throws SmackException.NotConnectedException, InterruptedException, SmackException.NotLoggedInException {
+                                    message.setType(Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED);
+                                }
+                            });
+                        } catch (StreamManagementException.StreamManagementNotEnabledException e) {
+                            e.printStackTrace();
+                        }
+                    }**/
 
                     if (message.getType() == Imps.MessageType.QUEUED) {
 
@@ -2832,7 +2858,7 @@ public class XmppConnection extends ImConnection {
                                         = getOmemo().getManager().encrypt(jidTo.asBareJid(), msgXmpp.getBody());
                                 msgEncrypted.setStanzaId(msgXmpp.getStanzaId());
                                 DeliveryReceiptRequest.addTo(msgEncrypted);
-                                thisChat.sendMessage(msgEncrypted);
+                                thisChat.send(msgEncrypted);
                                 message.setType(Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED);
 
                             } catch (CryptoFailedException cfe) {
@@ -2848,10 +2874,12 @@ public class XmppConnection extends ImConnection {
                                             = getOmemo().getManager().encrypt(jidTo.asBareJid(), msgXmpp.getBody());
                                     msgEncrypted.setStanzaId(msgXmpp.getStanzaId());
                                     DeliveryReceiptRequest.addTo(msgEncrypted);
-                                    thisChat.sendMessage(msgEncrypted);
+                                    thisChat.send(msgEncrypted);
                                     message.setType(Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED);
                                 }
                             }
+
+
 
                             return;
                         } else {
@@ -2860,7 +2888,7 @@ public class XmppConnection extends ImConnection {
                         }
                     } else {
                         DeliveryReceiptRequest.addTo(msgXmpp);
-                        thisChat.sendMessage(msgXmpp);
+                        thisChat.send(msgXmpp);
                         return;
                     }
                 }
@@ -3762,6 +3790,7 @@ public class XmppConnection extends ImConnection {
 
         mNeedReconnect = true;
 
+        /**
         try {
             if (mConnection != null && mConnection.isConnected()) {
                 mStreamHandler.quickShutdown();
@@ -3769,7 +3798,7 @@ public class XmppConnection extends ImConnection {
         } catch (Exception e) {
 
             Log.w(TAG, "problem disconnecting on force_reconnect: " + e.getMessage());
-        }
+        }**/
 
         reconnect();
     }
@@ -3830,6 +3859,7 @@ public class XmppConnection extends ImConnection {
             debug(TAG, "reconnect");
 
             try {
+                /**
                 if (mStreamHandler.isResumePossible()) {
                     // Connect without binding, will automatically trigger a resume
                     debug(TAG, "mStreamHandler resume");
@@ -3837,7 +3867,7 @@ public class XmppConnection extends ImConnection {
                     initServiceDiscovery();
                     initPacketProcessor();
 
-                } else {
+                } else {**/
                     debug(TAG, "reconnection on network change failed: " + mUser.getAddress().getAddress());
 
                     mConnection = null;
@@ -3845,10 +3875,10 @@ public class XmppConnection extends ImConnection {
                     setState(DISCONNECTED, new ImErrorInfo(ImErrorInfo.NETWORK_ERROR, null));
                     do_login_async();
 
-                }
+               // }
             } catch (Exception e) {
-                if (mStreamHandler != null)
-                    mStreamHandler.quickShutdown();
+              //  if (mStreamHandler != null)
+               //     mStreamHandler.quickShutdown();
 
                 mConnection = null;
                 debug(TAG, "reconnection attempt failed", e);
@@ -4376,14 +4406,22 @@ public class XmppConnection extends ImConnection {
             });
     }
 
+    private HashMap<String,Chat> mChatMap = new HashMap<>();
+
     private void sendChatState (String to, ChatState currentChatState)
     {
         try {
             if (mConnection != null && mConnection.isConnected())
             {
-               // findOrCreateSession(to, false);
-                Chat thisChat = mChatManager.createChat(JidCreate.from(to).asEntityJidIfPossible());
-                ChatStateManager.getInstance(mConnection).setCurrentState(currentChatState, thisChat);
+                Chat thisChat = mChatMap.get(to);
+
+                if (thisChat == null) {
+                    thisChat = mChatManager.chatWith(JidCreate.from(to).asEntityBareJidIfPossible());
+                    mChatMap.put(to,thisChat);
+                }
+
+                if (mChatStateManager != null)
+                    mChatStateManager.setCurrentState(currentChatState,thisChat);
             }
         }
         catch (Exception e)

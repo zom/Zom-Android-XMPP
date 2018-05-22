@@ -1,16 +1,11 @@
 package org.awesomeapp.messenger.crypto.omemo;
 
-import android.content.Context;
-import android.text.TextUtils;
 import android.util.Log;
 
 import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.packet.XMPPError;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smackx.omemo.OmemoConfiguration;
 import org.jivesoftware.smackx.omemo.OmemoFingerprint;
-import org.jivesoftware.smackx.omemo.OmemoInitializer;
 import org.jivesoftware.smackx.omemo.OmemoManager;
 import org.jivesoftware.smackx.omemo.OmemoService;
 import org.jivesoftware.smackx.omemo.OmemoStore;
@@ -18,21 +13,15 @@ import org.jivesoftware.smackx.omemo.exceptions.CannotEstablishOmemoSessionExcep
 import org.jivesoftware.smackx.omemo.exceptions.CorruptedOmemoKeyException;
 import org.jivesoftware.smackx.omemo.internal.CachedDeviceList;
 import org.jivesoftware.smackx.omemo.internal.OmemoDevice;
-import org.jivesoftware.smackx.omemo.signal.SignalFileBasedOmemoStore;
 import org.jivesoftware.smackx.omemo.signal.SignalOmemoService;
-import org.jivesoftware.smackx.omemo.signal.SignalOmemoSession;
-import org.jivesoftware.smackx.omemo.util.OmemoConstants;
 import org.jivesoftware.smackx.omemo.util.OmemoKeyUtil;
 import org.jxmpp.jid.BareJid;
-import org.jxmpp.jid.FullJid;
 import org.jxmpp.jid.Jid;
-import org.jxmpp.jid.impl.JidCreate;
 import org.whispersystems.libsignal.IdentityKey;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.logging.Logger;
 
 import static org.awesomeapp.messenger.util.LogCleaner.debug;
 
@@ -54,8 +43,7 @@ public class Omemo {
         return mOmemoManager;
     }
 
-    public Omemo (XMPPTCPConnection connection, BareJid user) throws Exception
-    {
+    public Omemo (XMPPTCPConnection connection, BareJid user) {
 
         oneTimeSetup();
 
@@ -113,7 +101,7 @@ public class Omemo {
         //do we need to do anything to reinit on reconnect?
     }
 
-    public ArrayList<String> getFingerprints (BareJid jid, boolean autoload) throws CorruptedOmemoKeyException, SmackException, XMPPException.XMPPErrorException, InterruptedException
+    public ArrayList<String> getFingerprints (BareJid jid, boolean autoload) throws CorruptedOmemoKeyException, SmackException, InterruptedException
     {
 
         try {
