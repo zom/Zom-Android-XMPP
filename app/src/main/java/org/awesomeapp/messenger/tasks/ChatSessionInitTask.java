@@ -2,14 +2,8 @@ package org.awesomeapp.messenger.tasks;
 
 import android.os.AsyncTask;
 
-import net.java.otr4j.OtrPolicy;
-
 import org.awesomeapp.messenger.ImApp;
-import org.awesomeapp.messenger.Preferences;
-import org.awesomeapp.messenger.crypto.IOtrChatSession;
-import org.awesomeapp.messenger.model.ChatSession;
 import org.awesomeapp.messenger.model.Contact;
-import org.awesomeapp.messenger.model.ImConnection;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.service.IChatSession;
 import org.awesomeapp.messenger.service.IImConnection;
@@ -80,25 +74,6 @@ public class ChatSessionInitTask extends AsyncTask<Contact, Long, Long> {
 
     }
 
-    private int getOtrPolicy() {
 
-        int otrPolicy = OtrPolicy.OPPORTUNISTIC;
-
-        String otrModeSelect = Preferences.getOtrMode();
-
-        if (otrModeSelect.equals("auto")) {
-            otrPolicy = OtrPolicy.OPPORTUNISTIC;
-        } else if (otrModeSelect.equals("disabled")) {
-            otrPolicy = OtrPolicy.NEVER;
-
-        } else if (otrModeSelect.equals("force")) {
-            otrPolicy = OtrPolicy.OTRL_POLICY_ALWAYS;
-
-        } else if (otrModeSelect.equals("requested")) {
-            otrPolicy = OtrPolicy.OTRL_POLICY_MANUAL;
-        }
-
-        return otrPolicy;
-    }
 
 }

@@ -1620,7 +1620,7 @@ public class XmppConnection extends ImConnection {
                 public void onOmemoMessageReceived(String body, org.jivesoftware.smack.packet.Message message, org.jivesoftware.smack.packet.Message message1, OmemoMessageInformation omemoMessageInformation) {
 
                     if (body != null) {
-                        debug(TAG, "got inbound message omemo: from:" + message.getFrom() + "=" + message.getBody());
+                         debug(TAG, "got inbound message omemo: from:" + message.getFrom() + "=" + message.getBody());
                         message.setBody(body);
                         handleMessage(message, true, true);
                     } else {

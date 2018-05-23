@@ -133,7 +133,8 @@ dependencies {
     implementation fileTree(include: '*.jar', dir: 'libs')
     //implementation project(':otr4jandroid')
 
-    implementation 'com.github.otr4j:otr4j:0.22'
+   // implementation 'com.github.otr4j:otr4j:0.22'
+    implementation 'com.github.cobratbq:otr4j:1ed70336c6'
 
     //  implementation 'com.github.otr4j:otr4j:aac20b11de'
     implementation project(':tibetanTextLibrary')

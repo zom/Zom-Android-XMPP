@@ -3,9 +3,8 @@ package org.awesomeapp.messenger.crypto.otr;
 import org.awesomeapp.messenger.crypto.IOtrChatSession.Stub;
 import org.awesomeapp.messenger.model.ImEntity;
 import org.awesomeapp.messenger.util.Debug;
-import net.java.otr4j.OtrException;
-import net.java.otr4j.session.SessionID;
-import net.java.otr4j.session.SessionStatus;
+import net.java.otr4j.api.SessionID;
+import net.java.otr4j.api.SessionStatus;
 import android.os.RemoteException;
 
 public class OtrChatSessionAdapter extends Stub {

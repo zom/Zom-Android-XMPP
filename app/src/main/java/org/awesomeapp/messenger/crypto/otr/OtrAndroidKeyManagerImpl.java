@@ -35,12 +35,9 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.Vector;
 
-import net.java.otr4j.OtrKeyManager;
-import net.java.otr4j.OtrKeyManagerListener;
-import net.java.otr4j.OtrKeyManagerStore;
-import net.java.otr4j.crypto.OtrCryptoEngineImpl;
+import net.java.otr4j.crypto.OtrCryptoEngine;
 import net.java.otr4j.crypto.OtrCryptoException;
-import net.java.otr4j.session.SessionID;
+import net.java.otr4j.api.SessionID;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -57,11 +54,10 @@ import android.widget.Toast;
 
 import info.guardianproject.iocipher.*;
 
-public class OtrAndroidKeyManagerImpl extends IOtrKeyManager.Stub implements OtrKeyManager {
+public class OtrAndroidKeyManagerImpl extends IOtrKeyManager.Stub {
 
     private SimplePropertiesStore store;
 
-    private OtrCryptoEngineImpl cryptoEngine;
 
     private final static String KEY_ALG = "DSA";
     private final static int KEY_SIZE = 1024;
@@ -100,7 +96,7 @@ public class OtrAndroidKeyManagerImpl extends IOtrKeyManager.Stub implements Otr
 
         store = new SimplePropertiesStore(filepath);
 
-        cryptoEngine = new OtrCryptoEngineImpl();
+
 
     }
 
@@ -167,7 +163,7 @@ public class OtrAndroidKeyManagerImpl extends IOtrKeyManager.Stub implements Otr
     }
     */
 
-    static class SimplePropertiesStore implements OtrKeyManagerStore {
+    static class SimplePropertiesStore  {
 
         private Properties mProperties = new Properties();
         private File mStoreFile;
@@ -374,20 +370,6 @@ public class OtrAndroidKeyManagerImpl extends IOtrKeyManager.Stub implements Otr
         }
     }
 
-    private List<OtrKeyManagerListener> listeners = new Vector<OtrKeyManagerListener>();
-
-    public void addListener(OtrKeyManagerListener l) {
-        synchronized (listeners) {
-            if (!listeners.contains(l))
-                listeners.add(l);
-        }
-    }
-
-    public void removeListener(OtrKeyManagerListener l) {
-        synchronized (listeners) {
-            listeners.remove(l);
-        }
-    }
 
     public void generateLocalKeyPair(SessionID sessionID) {
         if (sessionID == null)
@@ -407,7 +389,7 @@ public class OtrAndroidKeyManagerImpl extends IOtrKeyManager.Stub implements Otr
         PublicKey pubKey;
         try {
             pubKey = factory.generatePublic(keySpec);
-            storeLocalPublicKey(userId, pubKey);
+            storePublicKey(userId, pubKey);
 
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -447,8 +429,7 @@ public class OtrAndroidKeyManagerImpl extends IOtrKeyManager.Stub implements Otr
         {
             // Store Public Key.
             PublicKey pubKey = keyPair.getPublic();
-            storeLocalPublicKey(userId, pubKey); //this will do saving
-
+            storePublicKey(userId, pubKey); //this will do saving
         }
         catch (Exception e)
         {
@@ -497,11 +478,11 @@ public class OtrAndroidKeyManagerImpl extends IOtrKeyManager.Stub implements Otr
         }*/
     }
 
-    public void storeLocalPublicKey(String fullUserId, PublicKey pubKey) throws OtrCryptoException {
+    public void storePublicKey(String fullUserId, PublicKey pubKey) throws OtrCryptoException {
 
         String userId = Address.stripResource(fullUserId);
 
-        String fingerprintString = cryptoEngine.getFingerprint(pubKey);
+        String fingerprintString = OtrCryptoEngine.getFingerprint(pubKey);
         String fingerprintKey = userId + ".fingerprint";
 
         //check if we already have this
@@ -561,7 +542,6 @@ public class OtrAndroidKeyManagerImpl extends IOtrKeyManager.Stub implements Otr
         return getLocalFingerprint(sessionID.getAccountID());
     }
 
-    @Override
     public byte[] getLocalFingerprintRaw(SessionID sessionID) {
         String userId = Address.stripResource(sessionID.getAccountID());
 
@@ -571,7 +551,7 @@ public class OtrAndroidKeyManagerImpl extends IOtrKeyManager.Stub implements Otr
             return null;
 
         try {
-            return cryptoEngine.getFingerprintRaw(keyPair.getPublic());
+            return OtrCryptoEngine.getFingerprintRaw(keyPair.getPublic());
         }
         catch (Exception e)
         {
@@ -594,15 +574,12 @@ public class OtrAndroidKeyManagerImpl extends IOtrKeyManager.Stub implements Otr
 
     public String getFingerprint (PublicKey pubKey)
     {
-        try {
-            String fingerprint = cryptoEngine.getFingerprint(pubKey);
+
+            String fingerprint = OtrCryptoEngine.getFingerprint(pubKey);
             //  OtrDebugLogger.log("got fingerprint for: " + userId + "=" + fingerprint);
             return fingerprint;
 
-        } catch (OtrCryptoException e) {
-            e.printStackTrace();
-            return null;
-        }
+
     }
 
     public String getRemoteFingerprint(SessionID sessionID) {
@@ -651,11 +628,11 @@ public class OtrAndroidKeyManagerImpl extends IOtrKeyManager.Stub implements Otr
 
         try {
             // Store the fingerprint, for posterity.
-            String fingerprintString = new OtrCryptoEngineImpl().getFingerprint(remotePublicKey);
+            String fingerprintString = OtrCryptoEngine.getFingerprint(remotePublicKey);
             this.store.setProperty(fullUserId + ".fingerprint", fingerprintString);
             
             return fingerprintString;
-        } catch (OtrCryptoException e) {
+        } catch (Exception e) {
             throw new RuntimeException("OtrCryptoException getting remote fingerprint",e);
 
         }
@@ -763,7 +740,7 @@ public class OtrAndroidKeyManagerImpl extends IOtrKeyManager.Stub implements Otr
         if (sessionID == null)
             return null;
 
-        return loadLocalKeyPair(sessionID.getUserID());
+        return loadLocalKeyPair(sessionID.getAccountID());
     }
 
     private KeyPair loadLocalKeyPair(String fullUserId) {
@@ -835,8 +812,6 @@ public class OtrAndroidKeyManagerImpl extends IOtrKeyManager.Stub implements Otr
     }
 
     public void savePublicKey(SessionID sessionID, PublicKey pubKey) {
-        if (sessionID == null)
-            return;
 
         X509EncodedKeySpec x509EncodedKeySpec = new X509EncodedKeySpec(pubKey.getEncoded());
 
@@ -849,7 +824,7 @@ public class OtrAndroidKeyManagerImpl extends IOtrKeyManager.Stub implements Otr
         // Stash the associated fingerprint.  This saves calculating it in the future
         // and is useful for transferring rosters to other apps.
         try {
-            String fingerprintString = new OtrCryptoEngineImpl().getFingerprint(pubKey);
+            String fingerprintString = OtrCryptoEngine.getFingerprint(pubKey);
             String verifiedToken = buildPublicKeyVerifiedId(sessionID.getUserID(), fingerprintString);
             String fingerprintKey = fullUserId + ".fingerprint";
 
@@ -866,7 +841,7 @@ public class OtrAndroidKeyManagerImpl extends IOtrKeyManager.Stub implements Otr
             }
 
             
-        } catch (OtrCryptoException e) {
+        } catch (Exception e) {
             Log.e(ImApp.LOG_TAG,"otr error: " + e.getMessage(),e);
         }
     }
@@ -879,9 +854,6 @@ public class OtrAndroidKeyManagerImpl extends IOtrKeyManager.Stub implements Otr
             return;
 
         unverifyUser(sessionID.getUserID());
-
-        for (OtrKeyManagerListener l : listeners)
-            l.verificationStatusChanged(sessionID);
 
     }
 

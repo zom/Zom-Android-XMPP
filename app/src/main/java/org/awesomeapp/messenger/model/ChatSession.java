@@ -24,8 +24,8 @@ import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.stringprep.XmppStringprepException;
 
-import net.java.otr4j.session.SessionID;
-import net.java.otr4j.session.SessionStatus;
+import net.java.otr4j.api.SessionID;
+import net.java.otr4j.api.SessionStatus;
 
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
@@ -168,8 +168,6 @@ public class ChatSession {
             SessionStatus otrStatus = cm.getSessionStatus(sId);
             boolean verified = cm.getKeyManager().isVerified(sId);
 
-            boolean isOffline = !((Contact) mParticipant).getPresence().isOnline();
-
             message.setTo(mXa);
             message.setType(Imps.MessageType.QUEUED);
 
@@ -182,41 +180,35 @@ public class ChatSession {
                 mManager.sendMessageAsync(this, message);
             } else {
 
-                //try to send ChatSecure Push message as a client
-                if (isOffline) {
 
+                //do OTR!
 
-                }
-                else {
-                    //do OTR!
+                if (otrStatus == SessionStatus.ENCRYPTED) {
 
-                    if (otrStatus == SessionStatus.ENCRYPTED) {
-
-
-                        if (verified) {
-                            message.setType(Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED);
-                        } else {
-                            message.setType(Imps.MessageType.OUTGOING_ENCRYPTED);
-                        }
-
+                    if (verified) {
+                        message.setType(Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED);
                     } else {
-
-                        OtrChatManager.getInstance().startSession(sId);
-                        message.setType(Imps.MessageType.QUEUED);
-                        return message.getType();
+                        message.setType(Imps.MessageType.OUTGOING_ENCRYPTED);
                     }
 
-                    boolean canSend = cm.transformSending(message);
+                } else {
 
-                    if (canSend) {
-                        mManager.sendMessageAsync(this, message);
-                    } else {
-                        //can't be sent due to OTR state
-                        message.setType(Imps.MessageType.QUEUED);
-                        return message.getType();
-
-                    }
+                    OtrChatManager.getInstance().startSession(sId);
+                    message.setType(Imps.MessageType.QUEUED);
+                    return message.getType();
                 }
+
+                boolean canSend = cm.transformSending(message);
+
+                if (canSend) {
+                    mManager.sendMessageAsync(this, message);
+                } else {
+                    //can't be sent due to OTR state
+                    message.setType(Imps.MessageType.QUEUED);
+                    return message.getType();
+
+                }
+
             }
 
         }

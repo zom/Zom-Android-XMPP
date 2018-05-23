@@ -61,7 +61,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 
-import net.java.otr4j.session.SessionStatus;
+import net.java.otr4j.api.SessionStatus;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.NullOutputStream;

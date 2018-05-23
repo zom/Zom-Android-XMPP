@@ -40,8 +40,6 @@ import android.widget.Toast;
 
 import com.theartofdev.edmodo.cropper.CropImageView;
 
-import net.java.otr4j.OtrKeyManager;
-
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.crypto.omemo.Omemo;
 import org.awesomeapp.messenger.crypto.otr.OtrAndroidKeyManagerImpl;

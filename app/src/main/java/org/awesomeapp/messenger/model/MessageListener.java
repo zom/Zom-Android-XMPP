@@ -17,7 +17,7 @@
 
 package org.awesomeapp.messenger.model;
 
-import net.java.otr4j.session.SessionStatus;
+import net.java.otr4j.api.SessionStatus;
 
 import org.awesomeapp.messenger.crypto.otr.OtrDataHandler.Transfer;
 

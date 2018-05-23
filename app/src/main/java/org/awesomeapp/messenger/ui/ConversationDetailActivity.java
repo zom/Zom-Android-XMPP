@@ -29,7 +29,6 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.media.MediaRecorder;
@@ -41,65 +40,44 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Parcelable;
 import android.os.RemoteException;
-import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-//import com.bumptech.glide.Glide;
-
-import net.java.otr4j.session.SessionStatus;
-
-import org.awesomeapp.messenger.model.Contact;
+import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.model.Presence;
-import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
 import org.awesomeapp.messenger.provider.Imps;
+import org.awesomeapp.messenger.service.IChatSession;
+import org.awesomeapp.messenger.ui.widgets.ShareRequest;
+import org.awesomeapp.messenger.util.SecureMediaStore;
+import org.awesomeapp.messenger.util.SystemServices;
+import org.ironrabbit.type.CustomTypefaceManager;
+import org.ocpsoft.prettytime.PrettyTime;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
-import org.awesomeapp.messenger.service.IChatSession;
-
 import im.zom.messenger.BuildConfig;
 import im.zom.messenger.R;
 
-import org.awesomeapp.messenger.service.IChatSessionManager;
-import org.awesomeapp.messenger.service.IContactListManager;
-import org.awesomeapp.messenger.service.IImConnection;
-import org.awesomeapp.messenger.ui.widgets.ShareRequest;
-import org.awesomeapp.messenger.util.LogCleaner;
-import org.awesomeapp.messenger.util.SecureMediaStore;
-
-import org.awesomeapp.messenger.ImApp;
-import org.awesomeapp.messenger.util.SystemServices;
-import org.ironrabbit.type.CustomTypefaceManager;
-import org.ocpsoft.prettytime.PrettyTime;
+//import com.bumptech.glide.Glide;
 
 public class ConversationDetailActivity extends BaseActivity {
 

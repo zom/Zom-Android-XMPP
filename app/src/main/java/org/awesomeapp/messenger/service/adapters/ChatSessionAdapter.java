@@ -62,9 +62,6 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.java.otr4j.OtrEngineListener;
-import net.java.otr4j.session.SessionID;
-import net.java.otr4j.session.SessionStatus;
 
 import org.awesomeapp.messenger.service.RemoteImService;
 import org.awesomeapp.messenger.service.StatusBarNotifier;
@@ -89,6 +86,8 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 import android.webkit.URLUtil;
+
+import net.java.otr4j.api.SessionStatus;
 
 import static cz.msebera.android.httpclient.conn.ssl.SSLConnectionSocketFactory.TAG;
 
@@ -170,7 +169,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         initMuted();
         initUseEncryption();
 
-        sendPostponedMessages();
+      //  sendPostponedMessages();
     }
 
     private void initOtrChatSession (ImEntity participant)
@@ -455,24 +454,6 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
     }
 
-    private void sendUnstoredMessage(String text) {
-
-        if (mConnection.getState() != ImConnection.LOGGED_IN) {
-            return;
-        }
-
-        org.awesomeapp.messenger.model.Message msg = new org.awesomeapp.messenger.model.Message(text);
-        msg.setID(nextID());
-
-        msg.setFrom(mConnection.getLoginUser().getAddress());
-        msg.setType(Imps.MessageType.QUEUED);
-
-        long sendTime = System.currentTimeMillis();
-
-        int newType = mChatSession.sendMessageAsync(msg);
-
-
-    }
 
     @Override
     public boolean offerData(String offerId, final String mediaPath, final String mimeType) {
@@ -1417,6 +1398,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             // TODO
 
         }
+
 
         @Override
         public void onStatusChanged(ChatSession session, SessionStatus status) {

@@ -15,15 +15,15 @@ import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
-import net.java.otr4j.OtrEngineHost;
-import net.java.otr4j.OtrException;
-import net.java.otr4j.OtrKeyManager;
-import net.java.otr4j.OtrPolicy;
-import net.java.otr4j.session.FragmenterInstructions;
-import net.java.otr4j.session.InstanceTag;
-import net.java.otr4j.session.SessionID;
+import net.java.otr4j.api.InstanceTag;
+import net.java.otr4j.api.OtrEngineHost;
+import net.java.otr4j.api.OtrException;
+import net.java.otr4j.api.OtrPolicy;
+import net.java.otr4j.api.SessionID;
 
 import android.content.Context;
+
+import javax.annotation.Nonnull;
 
 /*
  * OtrEngineHostImpl is the connects this app and the OtrEngine
@@ -37,85 +37,19 @@ public class OtrEngineHostImpl implements OtrEngineHost {
 
     private Context mContext;
 
-    private Hashtable<SessionID, String> mSessionResources;
-
     private RemoteImService mImService;
 
     public OtrEngineHostImpl(OtrPolicy policy, Context context, OtrAndroidKeyManagerImpl otrKeyManager, RemoteImService imService) throws IOException {
         mPolicy = policy;
         mContext = context;
-
-        mSessionResources = new Hashtable<SessionID, String>();
-
         mOtrKeyManager = otrKeyManager;
-
         mImService = imService;
-
-
-    }
-
-    public void putSessionResource(SessionID session, String resource) {
-        mSessionResources.put(session, resource);
-    }
-
-    public void removeSessionResource(SessionID session) {
-        mSessionResources.remove(session);
-    }
-
-    public Address appendSessionResource(SessionID session, Address to) {
-
-        String resource = mSessionResources.get(session);
-        if (resource != null)
-            return new XmppAddress(to.getBareAddress() + '/' + resource);
-        else
-            return to;
 
     }
 
     public ImConnectionAdapter findConnection(SessionID session) {
 
         return mImService.getConnection(Address.stripResource(session.getAccountID()));
-    }
-
-    public OtrKeyManager getKeyManager() {
-        return mOtrKeyManager;
-    }
-
-    public void storeRemoteKey(SessionID sessionID, PublicKey remoteKey) {
-        mOtrKeyManager.savePublicKey(sessionID, remoteKey);
-    }
-
-    public boolean isRemoteKeyVerified(String userId, String fingerprint) {
-        return mOtrKeyManager.isVerified(userId, fingerprint);
-    }
-
-    public boolean isRemoteKeyVerified(SessionID sessionID) {
-        return mOtrKeyManager.isVerified(sessionID);
-    }
-
-    public String getLocalKeyFingerprint(SessionID sessionID) {
-        return mOtrKeyManager.getLocalFingerprint(sessionID);
-    }
-
-    public String getLocalKeyFingerprint(String userId) {
-        return mOtrKeyManager.getLocalFingerprint(userId);
-    }
-
-    public String getRemoteKeyFingerprint(SessionID sessionID) {
-        return mOtrKeyManager.getRemoteFingerprint(sessionID);
-    }
-
-    public String getRemoteKeyFingerprint(String userId) {
-        return mOtrKeyManager.getRemoteFingerprint(userId);
-    }
-
-    public ArrayList<String> getRemoteKeyFingerprints(String userId) {
-        return mOtrKeyManager.getRemoteKeyFingerprints(userId);
-    }
-
-    public boolean hasRemoteKeyFingerprint (String userid)
-    {
-        return mOtrKeyManager.hasRemoteFingerprint(userid);
     }
 
     public KeyPair getKeyPair(SessionID sessionID) {
@@ -134,12 +68,12 @@ public class OtrEngineHostImpl implements OtrEngineHost {
     }
 
     @Override
-    public FragmenterInstructions getFragmenterInstructions(SessionID sessionID) {
-        return null;
+    public int getMaxFragmentSize(@Nonnull SessionID sessionID) {
+        return Integer.MAX_VALUE;
     }
 
     @Override
-    public KeyPair getLocalKeyPair(SessionID sessionID) throws OtrException {
+    public KeyPair getLocalKeyPair(SessionID sessionID) {
         return getKeyPair(sessionID);
     }
 
@@ -153,10 +87,6 @@ public class OtrEngineHostImpl implements OtrEngineHost {
 
     }
 
-    @Override
-    public void verify(SessionID sessionID, String s, boolean b) {
-
-    }
 
     @Override
     public void unverify(SessionID sessionID, String s) {
@@ -175,11 +105,18 @@ public class OtrEngineHostImpl implements OtrEngineHost {
 
     @Override
     public void messageFromAnotherInstanceReceived(SessionID sessionID) {
+        OtrDebugLogger.log(sessionID.toString() + ": messageFromAnotherInstanceReceived");
 
     }
 
     @Override
     public void multipleInstancesDetected(SessionID sessionID) {
+        OtrDebugLogger.log(sessionID.toString() + ": multipleInstancesDetected");
+    }
+
+    @Override
+    public void extraSymmetricKeyDiscovered(@Nonnull SessionID sessionID, @Nonnull String s, @Nonnull byte[] bytes, @Nonnull byte[] bytes1) {
+        OtrDebugLogger.log(sessionID.toString() + ": extraSymmetricKeyDiscovered");
 
     }
 
@@ -188,7 +125,6 @@ public class OtrEngineHostImpl implements OtrEngineHost {
     }
 
     public void injectMessage(SessionID sessionID, String text) {
-        OtrDebugLogger.log(sessionID.toString() + ": injecting message: " + text);
 
         ImConnectionAdapter connection = findConnection(sessionID);
         if (connection != null)
@@ -196,40 +132,32 @@ public class OtrEngineHostImpl implements OtrEngineHost {
             ChatSessionManagerAdapter chatSessionManagerAdapter = (ChatSessionManagerAdapter) connection
                     .getChatSessionManager();
             ChatSessionAdapter chatSessionAdapter = (ChatSessionAdapter) chatSessionManagerAdapter
-                    .getChatSession(sessionID.getAccountID());
+                    .getChatSession(sessionID.getUserID());
 
-            if (chatSessionAdapter != null)
-            {
-                String body = text;
+            if (chatSessionAdapter == null)
+                chatSessionAdapter = (ChatSessionAdapter)chatSessionManagerAdapter.createChatSession(sessionID.getUserID(),true);
 
-                if (body == null)
-                    body = ""; //don't allow null messages, only empty ones!
+            String body = text;
 
-                Message msg = new Message(body);
-                Address to = new XmppAddress(sessionID.getAccountID());
-                msg.setTo(to);
+            if (body == null)
+                body = ""; //don't allow null messages, only empty ones!
 
-                if (!to.getAddress().contains("/")) {
-                    //always send OTR messages to a resource
-                    msg.setTo(appendSessionResource(sessionID, to));
-                }
+            Message msg = new Message(body);
+            Address to = new XmppAddress(sessionID.getUserID());
+            msg.setTo(to);
 
-                boolean verified = mOtrKeyManager.isVerified(sessionID);
+            /**
+            if (!to.getAddress().contains("/")) {
+                //always send OTR messages to a resource
+                msg.setTo(appendSessionResource(sessionID, to));
+            }**/
 
-                if (verified) {
-                    msg.setType(Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED);
-                } else {
-                    msg.setType(Imps.MessageType.OUTGOING_ENCRYPTED);
-                }
+            msg.setType(Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED);
 
-                // msg ID is set by plugin
-                chatSessionManagerAdapter.getChatSessionManager().sendMessageAsync(chatSessionAdapter.getAdaptee(), msg);
+            // msg ID is set by plugin
+            chatSessionManagerAdapter.getChatSessionManager().sendMessageAsync(chatSessionAdapter.getAdaptee(), msg);
 
-            }
-            else {
-                OtrDebugLogger.log(sessionID.toString() + ": could not find chatSession");
 
-            }
         }
         else
         {
@@ -241,13 +169,13 @@ public class OtrEngineHostImpl implements OtrEngineHost {
     }
 
     @Override
-    public void unreadableMessageReceived(SessionID sessionID) throws OtrException {
+    public void unreadableMessageReceived(SessionID sessionID)  {
         OtrDebugLogger.log(sessionID.toString() + ": unreadableMessageReceived");
 
     }
 
     @Override
-    public void unencryptedMessageReceived(SessionID sessionID, String s) throws OtrException {
+    public void unencryptedMessageReceived(SessionID sessionID, String s)  {
         OtrDebugLogger.log(sessionID.toString() + ": unencryptedMessageReceived=" + s);
 
     }
@@ -259,30 +187,29 @@ public class OtrEngineHostImpl implements OtrEngineHost {
     }
 
     @Override
-    public void smpError(SessionID sessionID, int i, boolean b) throws OtrException {
+    public void smpError(SessionID sessionID, int i, boolean b)  {
 
     }
 
     @Override
-    public void smpAborted(SessionID sessionID) throws OtrException {
+    public void smpAborted(SessionID sessionID)  {
 
     }
 
     @Override
-    public void finishedSessionMessage(SessionID sessionID, String s) throws OtrException {
+    public void verify(@Nonnull SessionID sessionID, @Nonnull String s) {
+
+    }
+
+    @Override
+    public void finishedSessionMessage(SessionID sessionID, String s)  {
         OtrDebugLogger.log(sessionID.toString() + ": finishedSessionMessage=" + s);
 
     }
 
     @Override
-    public void requireEncryptedMessage(SessionID sessionID, String s) throws OtrException {
+    public void requireEncryptedMessage(SessionID sessionID, String s)  {
         OtrDebugLogger.log(sessionID.toString() + ": requireEncryptedMessage=" + s);
-
-    }
-
-    public void showWarning(SessionID sessionID, String warning) {
-        OtrDebugLogger.log(sessionID.toString() + ": WARNING=" + warning);
-
 
     }
 

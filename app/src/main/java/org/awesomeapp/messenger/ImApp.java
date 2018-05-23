@@ -260,11 +260,11 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
         mCacheWord.connectToService();
 
         if (sThreadPoolExecutor == null) {
-            int corePoolSize = 20;
-            int maximumPoolSize = 120;
-            int keepAliveTime = 30;
+            int corePoolSize = 10;
+            int maximumPoolSize = 20;
+            int keepAliveTime = 5;
             BlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<Runnable>(maximumPoolSize);
-            sThreadPoolExecutor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, TimeUnit.SECONDS, workQueue);
+            sThreadPoolExecutor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, TimeUnit.MINUTES, workQueue);
         }
 
         IntentFilter intentFilter = new IntentFilter();

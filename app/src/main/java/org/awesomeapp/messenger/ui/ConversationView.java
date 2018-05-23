@@ -95,8 +95,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import net.java.otr4j.OtrPolicy;
-import net.java.otr4j.session.SessionStatus;
+import net.java.otr4j.api.OtrPolicy;
+import net.java.otr4j.api.SessionStatus;
 
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.MainActivity;
@@ -327,7 +327,7 @@ public class ConversationView {
                 }
 
                 if ((mLastSessionStatus == null || mLastSessionStatus == SessionStatus.PLAINTEXT)) {
-
+                    /**
                     boolean otrPolicyAuto = getOtrPolicy() == OtrPolicy.OPPORTUNISTIC
                             || getOtrPolicy() == OtrPolicy.OTRL_POLICY_ALWAYS;
 
@@ -358,7 +358,7 @@ public class ConversationView {
                                 }
                             }, 100);
                         }
-                    }
+                    }**/
 
                 }
 
@@ -2433,10 +2433,6 @@ public class ConversationView {
 
     }
 
-    public SessionStatus getOtrSessionStatus ()
-    {
-        return mLastSessionStatus;
-    }
 
     public boolean isOtrSessionVerified ()
     {

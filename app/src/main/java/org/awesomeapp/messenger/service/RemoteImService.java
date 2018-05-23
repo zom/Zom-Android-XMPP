@@ -19,7 +19,6 @@ package org.awesomeapp.messenger.service;
 
 import android.annotation.TargetApi;
 import android.app.Notification;
-import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -48,13 +47,7 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.jrummyapps.android.shell.CommandResult;
-import com.jrummyapps.android.shell.Shell;
-
-import net.java.otr4j.OtrEngineListener;
-import net.java.otr4j.OtrKeyManagerListener;
-import net.java.otr4j.OtrPolicy;
-import net.java.otr4j.session.SessionID;
+import net.java.otr4j.api.OtrPolicy;
 
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.MainActivity;
@@ -70,18 +63,14 @@ import org.awesomeapp.messenger.model.ImErrorInfo;
 import org.awesomeapp.messenger.model.ImException;
 import org.awesomeapp.messenger.plugin.ImPluginInfo;
 import org.awesomeapp.messenger.provider.Imps;
+import org.awesomeapp.messenger.service.NetworkConnectivityReceiver.State;
 import org.awesomeapp.messenger.service.adapters.ImConnectionAdapter;
-import org.awesomeapp.messenger.tasks.ChatSessionInitTask;
 import org.awesomeapp.messenger.ui.legacy.DummyActivity;
 import org.awesomeapp.messenger.ui.legacy.ImPluginHelper;
-import org.awesomeapp.messenger.service.NetworkConnectivityReceiver.State;
-import org.awesomeapp.messenger.util.BinaryInstaller;
 import org.awesomeapp.messenger.util.Debug;
 import org.awesomeapp.messenger.util.LogCleaner;
 import org.awesomeapp.messenger.util.SecureMediaStore;
 
-import java.io.File;
-import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -89,9 +78,9 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
+import im.zom.messenger.R;
 import info.guardianproject.cacheword.CacheWordHandler;
 import info.guardianproject.cacheword.ICacheWordSubscriber;
-import im.zom.messenger.R;
 
 
 public class RemoteImService extends Service implements ImService, ICacheWordSubscriber {
@@ -211,6 +200,8 @@ public class RemoteImService extends Service implements ImService, ICacheWordSub
         } else if (otrModeSelect.equals("requested")) {
             otrPolicy = OtrPolicy.OTRL_POLICY_MANUAL;
         }
+
+
 
         return otrPolicy;
     }

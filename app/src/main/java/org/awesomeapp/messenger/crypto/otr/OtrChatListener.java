@@ -1,6 +1,11 @@
 package org.awesomeapp.messenger.crypto.otr;
 
 import android.text.TextUtils;
+import android.util.Log;
+
+import net.java.otr4j.api.SessionID;
+import net.java.otr4j.api.SessionStatus;
+import net.java.otr4j.api.TLV;
 
 import org.awesomeapp.messenger.model.ChatSession;
 import org.awesomeapp.messenger.model.ImErrorInfo;
@@ -11,10 +16,6 @@ import org.awesomeapp.messenger.provider.Imps;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.java.otr4j.OtrException;
-import net.java.otr4j.session.SessionID;
-import net.java.otr4j.session.SessionStatus;
-import net.java.otr4j.session.TLV;
 
 public class OtrChatListener implements MessageListener {
 
@@ -98,9 +99,9 @@ public class OtrChatListener implements MessageListener {
                     }
                 }
 
-            } catch (OtrException oe) {
+            } catch (Exception oe) {
 
-                OtrDebugLogger.log("error decrypting message: " + msg.getID());
+                OtrDebugLogger.log("error decrypting message: " + msg.getID(),oe);
                 //  mOtrChatManager.refreshSession(sessionID.getLocalUserId(),sessionID.getRemoteUserId());
                 // msg.setBody("[" + "You received an unreadable encrypted message" + "]");
                 // mMessageListener.onIncomingMessage(session, msg);
