@@ -2831,7 +2831,7 @@ public class XmppConnection extends ImConnection {
 
                 }
                 else {
-al                    Chat thisChat = mChatManager.chatWith(jidTo.asEntityBareJidIfPossible());
+                    Chat thisChat = mChatManager.chatWith(jidTo.asEntityBareJidIfPossible());
 
                     /**
                     if (mConnection.isSmEnabled()) {
