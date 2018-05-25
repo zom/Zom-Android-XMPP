@@ -434,6 +434,7 @@ public class ConversationView {
 
     }
 
+    /**
     public void setOTRState(boolean otrEnabled) {
         
         try {
@@ -473,7 +474,7 @@ public class ConversationView {
         }
 
 
-    }
+    }**/
 
 
 
@@ -1901,7 +1902,7 @@ public class ConversationView {
 
         mMessageAdapter.notifyDataSetChanged();
         mLoaderManager.restartLoader(loaderId++, null, new MyLoaderCallbacks());
-        updateWarningView();
+//        updateWarningView();
 
         /**
         if (mMessageAdapter.isScrolling()) {
@@ -1928,7 +1929,6 @@ public class ConversationView {
         if (getChatSession() != null) {
             try {
 
-                setOTRState(false);
                 updateWarningView();
                 getChatSession().leave();
 
@@ -3468,8 +3468,6 @@ public class ConversationView {
     {
 
         if (username != null) {
-
-
 
             new ChatSessionInitTask(((ImApp) mActivity.getApplication()), mProviderId, mAccountId, Imps.Contacts.TYPE_NORMAL, true) {
                 @Override
