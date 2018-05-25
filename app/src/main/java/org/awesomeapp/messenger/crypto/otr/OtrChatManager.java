@@ -52,7 +52,7 @@ public class OtrChatManager implements OtrEngineListener {
         mContext = imService;
         mKeyManager = otrKeyManager;
 
-        OtrPolicy policy = new OtrPolicy(OtrPolicy.ALLOW_V2 | OtrPolicy.ALLOW_V3
+        OtrPolicy policy = new OtrPolicy(OtrPolicy.ALLOW_V2
                 | OtrPolicy.ERROR_START_AKE | OtrPolicy.OTRL_POLICY_MANUAL);
 
         mOtrEngineHost = new OtrEngineHostImpl(policy,
@@ -191,7 +191,7 @@ public class OtrChatManager implements OtrEngineListener {
      *
      * @param sessionId the {@link SessionID} of the OTR session
      */
-    public synchronized SessionID startSession(SessionID sessionId) {
+    public SessionID startSession(SessionID sessionId) {
 
         try {
 

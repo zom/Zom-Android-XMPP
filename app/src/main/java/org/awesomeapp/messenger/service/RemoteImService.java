@@ -418,7 +418,7 @@ public class RemoteImService extends Service implements ImService, ICacheWordSub
             mNeedCheckAutoLogin = !autoLogin();
         }
 
-        return START_REDELIVER_INTENT;
+        return START_STICKY;
     }
 
 

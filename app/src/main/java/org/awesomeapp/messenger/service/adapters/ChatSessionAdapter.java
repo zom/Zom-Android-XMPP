@@ -637,7 +637,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
     boolean sendingPostponed = false;
 
-    void sendPostponedMessages() {
+    synchronized void sendPostponedMessages() {
 
         if (!sendingPostponed) {
             sendingPostponed = true;

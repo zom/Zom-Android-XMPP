@@ -214,7 +214,7 @@ public class XmppConnection extends ImConnection {
 
     private static final String DISCO_FEATURE = "http://jabber.org/protocol/disco#info";
     final static String TAG = "ZomXMPP";
-    private final static boolean PING_ENABLED = true;
+    private final static boolean PING_ENABLED = false;
 
     private XmppContactListManager mContactListManager;
     private LastActivityManager mLastActivityManager;
@@ -260,11 +260,11 @@ public class XmppConnection extends ImConnection {
     private SecureRandom secureRandom;
     private MemorizingTrustManager mMemTrust;
 
-    private final static int SOTIMEOUT = 1000 * 30;
-    private final static int CONNECT_TIMEOUT = 1000 * 30;
+    private final static int SOTIMEOUT = 1000 * 60;
+    private final static int CONNECT_TIMEOUT = 1000 * 60;
     private final static int PING_INTERVAL = 60 * 1; //1 minutes
 
-    private PingManager mPingManager;
+  //  private PingManager mPingManager;
 
     private String mUsername;
     private String mPassword;
@@ -735,7 +735,6 @@ public class XmppConnection extends ImConnection {
                 }
 
 
-
             }
             else
             {
@@ -1103,10 +1102,12 @@ public class XmppConnection extends ImConnection {
                     @Override
                     public void subjectUpdated(String subject, EntityFullJid from) {
 
-                        XmppAddress xa = new XmppAddress(from.toString());
-                        MultiUserChat muc = mChatGroupManager.getMultiUserChat(xa.getBareAddress());
-                        ChatGroup chatGroup = mChatGroupManager.getChatGroup(xa);
-                        chatGroup.setName(subject);
+                        if (from != null) {
+                            XmppAddress xa = new XmppAddress(from.toString());
+                            MultiUserChat muc = mChatGroupManager.getMultiUserChat(xa.getBareAddress());
+                            ChatGroup chatGroup = mChatGroupManager.getChatGroup(xa);
+                            chatGroup.setName(subject);
+                        }
                     }
                 };
             }
@@ -1694,13 +1695,13 @@ public class XmppConnection extends ImConnection {
 
         Debug.onConnectionStart(); //only activates if Debug TRUE is set, so you can leave this in!
 
-        initConnection(providerSettings, userName);
+        AbstractXMPPConnection conn = initConnection(providerSettings, userName);
 
         //disable compression based on statement by Ge0rg
         // mConfig.setCompressionEnabled(false);
 
-        if (mConnection.isConnected() && mConnection.isSecureConnection()
-            && (!mConnection.isAuthenticated()))
+        if (conn.isConnected() && conn.isSecureConnection()
+            && (!conn.isAuthenticated()))
         {
 
             mResource = providerSettings.getXmppResource();
@@ -1710,8 +1711,6 @@ public class XmppConnection extends ImConnection {
             mRoster.setSubscriptionMode(subMode);
             getContactListManager().listenToRoster(mRoster);
 
-            ReconnectionManager manager = ReconnectionManager.getInstanceFor(mConnection);
-            manager.disableAutomaticReconnection();
             /**
             manager.enableAutomaticReconnection();
             manager.addReconnectionListener(new ReconnectionListener() {
@@ -1729,10 +1728,10 @@ public class XmppConnection extends ImConnection {
                 }
             });**/
 
-            mChatManager = ChatManager.getInstanceFor(mConnection);
+            mChatManager = ChatManager.getInstanceFor(conn);
 
-            mPingManager = PingManager.getInstanceFor(mConnection) ;
-            mPingManager.setPingInterval(PING_INTERVAL);
+        //    mPingManager = PingManager.getInstanceFor(mConnection) ;
+         //   mPingManager.setPingInterval(PING_INTERVAL);
 
             if (mUser == null)
                 mUser = makeUser(providerSettings,mContext.getContentResolver());
@@ -1742,7 +1741,7 @@ public class XmppConnection extends ImConnection {
                 debug(TAG,"error init'ing omemo during connectoin",e);
             }
 
-            MultiUserChatManager.getInstanceFor(mConnection).addInvitationListener(new InvitationListener() {
+            MultiUserChatManager.getInstanceFor(conn).addInvitationListener(new InvitationListener() {
 
                 @Override
                 public void invitationReceived(XMPPConnection xmppConnection, MultiUserChat muc, EntityJid entityJid, String reason, String password, org.jivesoftware.smack.packet.Message message, MUCUser.Invite invite) {
@@ -1785,11 +1784,12 @@ public class XmppConnection extends ImConnection {
 
             });
 
-            mConnection.login(mUsername, mPassword, Resourcepart.from(mResource));
+            conn.login(mUsername, mPassword, Resourcepart.from(mResource));
+
             //mStreamHandler.notifyInitialLogin();
             initServiceDiscovery();
 
-            mChatStateManager = ChatStateManager.getInstance(mConnection);
+            mChatStateManager = ChatStateManager.getInstance(conn);
 
             getContactListManager().loadContactListsAsync();
 
@@ -1828,7 +1828,7 @@ public class XmppConnection extends ImConnection {
     @Override
     public String publishFile(String fileName, String mimeType, long fileSize, java.io.InputStream is, boolean doEncryption, UploadProgressListener listener) {
 
-        UploaderManager uploader = new UploaderManager();
+        UploaderManager uploader = new UploaderManager(mConnection);
         String result = uploader.doUpload(fileName, mimeType, fileSize, is, listener, doEncryption);
 
         return result;
@@ -1921,7 +1921,7 @@ public class XmppConnection extends ImConnection {
     }
 
     // Runs in executor thread
-    private void initConnection(Imps.ProviderSettings.QueryMap providerSettings, String userName) throws InterruptedException, NoSuchAlgorithmException, KeyManagementException, XMPPException, SmackException, IOException  {
+    private AbstractXMPPConnection initConnection(Imps.ProviderSettings.QueryMap providerSettings, String userName) throws InterruptedException, NoSuchAlgorithmException, KeyManagementException, XMPPException, SmackException, IOException  {
 
         TrafficStatsCompat.setThreadStatsTag(0xF00D);
 
@@ -2147,6 +2147,7 @@ public class XmppConnection extends ImConnection {
         mConnection.setUseStreamManagement(true);
         mConnection.setUseStreamManagementResumption(true);
 
+
         DeliveryReceiptManager.getInstanceFor(mConnection).addReceiptReceivedListener(new ReceiptReceivedListener() {
             @Override
             public void onReceiptReceived(Jid fromJid, Jid toJid, String receiptId, Stanza receipt) {
@@ -2340,6 +2341,9 @@ public class XmppConnection extends ImConnection {
                 sendPresencePacket();
                 mChatGroupManager.reconnectAll();
 
+                ReconnectionManager manager = ReconnectionManager.getInstanceFor(mConnection);
+                manager.disableAutomaticReconnection();
+
             }
 
             @Override
@@ -2389,6 +2393,12 @@ public class XmppConnection extends ImConnection {
         Exception xmppConnectException = null;
         AbstractXMPPConnection conn = mConnection.connect();
 
+        conn.setReplyTimeout(SOTIMEOUT);
+
+        ReconnectionManager reconnectionManager = ReconnectionManager.getInstanceFor(conn);
+        reconnectionManager.enableAutomaticReconnection();
+
+        return conn;
     }
 
     private void addOmemoListener(OmemoManager omemoManager)
@@ -2678,10 +2688,7 @@ public class XmppConnection extends ImConnection {
                     //create a session
                     if (session == null) {
                         ImEntity participant = findOrCreateParticipant(xAddr.getAddress(), true);
-
-                        if (participant != null)
-                            session = mSessionManager.createChatSession(participant, false);
-
+                        session = mSessionManager.createChatSession(participant, participant == null);
                         if (session != null)
                             ((ChatGroup) session.getParticipant()).setName(muc.getSubject());
                     }
@@ -2831,7 +2838,7 @@ public class XmppConnection extends ImConnection {
 
                 }
                 else {
-al                    Chat thisChat = mChatManager.chatWith(jidTo.asEntityBareJidIfPossible());
+                    Chat thisChat = mChatManager.chatWith(jidTo.asEntityBareJidIfPossible());
 
                     /**
                     if (mConnection.isSmEnabled()) {
@@ -3710,6 +3717,7 @@ al                    Chat thisChat = mChatManager.chatWith(jidTo.asEntityBareJi
             setState(LOGGING_IN, new ImErrorInfo(ImErrorInfo.NETWORK_ERROR, "network disconnected"));
             force_reconnect();
         } else if (getState() == LOGGED_IN) {
+            /**
             if (PING_ENABLED) {
                 // Check ping on every heartbeat.  checkPing() will return true immediately if we already checked.
                 if (!mPingSuccess) {
@@ -3724,7 +3732,7 @@ al                    Chat thisChat = mChatManager.chatWith(jidTo.asEntityBareJi
                         sendPing();
                     }
                 }
-            }
+            }**/
         }
     }
 
@@ -3733,7 +3741,7 @@ al                    Chat thisChat = mChatManager.chatWith(jidTo.asEntityBareJi
         heartbeatSequence = 0;
     }
 
-
+        /**
     boolean mPingSuccess = true;
     // Runs in executor thread
     private void sendPing() {
@@ -3748,7 +3756,7 @@ al                    Chat thisChat = mChatManager.chatWith(jidTo.asEntityBareJi
         }
 
 
-    }
+    }**/
 
     @Override
     public void networkTypeChanged() {
@@ -4949,12 +4957,12 @@ al                    Chat thisChat = mChatManager.chatWith(jidTo.asEntityBareJi
         boolean mIsDiscovered = false;
         HttpFileUploadManager manager;
 
-        public UploaderManager ()
+        public UploaderManager (XMPPConnection conn)
         {
 
             try {
 
-                manager = HttpFileUploadManager.getInstanceFor(mConnection);
+                manager = HttpFileUploadManager.getInstanceFor(conn);
                 mIsDiscovered = manager.discoverUploadService();
 
             }
@@ -4972,7 +4980,7 @@ al                    Chat thisChat = mChatManager.chatWith(jidTo.asEntityBareJi
             if (getState() != ImConnection.LOGGED_IN)
                 return null;
 
-        //    manager.useTlsSettingsFrom(mConnection.getConfiguration());
+       //     manager.useTlsSettingsFrom(mConnection.getConfiguration());
             UploadService upService = manager.getDefaultUploadService();
 
             if (upService != null) {
