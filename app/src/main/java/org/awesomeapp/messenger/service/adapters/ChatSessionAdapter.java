@@ -1149,15 +1149,35 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             boolean downloaded = false;
 
             boolean wasMessageSeen = false;
+            String mimeType = null;
 
             if (mediaLink != null) {
-               String downloadUriString = downloadMedia (mediaLink, msg.getID(), nickname);
-               downloaded = !TextUtils.isEmpty(downloadUriString);
+               mimeType = downloadMedia (mediaLink, msg.getID(), nickname);
+               downloaded = !TextUtils.isEmpty(mimeType);
 
             }
 
-            //if it wasn't a media file or we had an issue downloading, then it is chat
-            if (!downloaded) {
+            if (downloaded) {
+
+                //update the notification message
+
+                String displayType = mimeType.split("/")[0];
+                if (displayType.equals("audio"))
+                {
+                    displayType += "🔊";
+                }
+                else if (displayType.equals("image"))
+                {
+                    displayType += "\uD83D\uDCF7";
+                }
+
+                body = service.getString(R.string.file_notify_text, displayType, nickname);
+
+
+            }
+            else {
+                //if it wasn't a media file or we had an issue downloading, then it is chat
+
 
                 insertOrUpdateChat(body);
 
@@ -1199,11 +1219,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                     }
                 }
             }
-            else
-            {
-                //change body for notification
-                body = Uri.parse(mediaLink).getLastPathSegment();
-            }
+
 
             // Due to the move to fragments, we could have listeners for ChatViews that are not visible on the screen.
             // This is for fragments adjacent to the current one.  Therefore we can't use the existence of listeners
@@ -1225,9 +1241,11 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                                 getId(), group.getAddress().getBareAddress(), group.getName(), nickname, body, false);
                     }
                 } else {
+
                     //reinstated body display here in the notification; perhaps add preferences to turn that off
                     mStatusBarNotifier.notifyChat(mConnection.getProviderId(), mConnection.getAccountId(),
                             getId(), bareUsername, nickname, body, false);
+
                 }
             }
 
@@ -1978,7 +1996,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
     public String downloadMedia (String mediaLink, String msgId, String nickname)
     {
-        String result = null;
+        String mimeType = null;
 
         try {
             Downloader dl = new Downloader();
@@ -1987,7 +2005,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             boolean downloaded = dl.get(mediaLink, storageStream);
 
             if (downloaded) {
-                String mimeType = dl.getMimeType();
+                mimeType = dl.getMimeType();
 
                 try {
                     //boolean isVerified = getDefaultOtrChatSession().isKeyVerified(bareUsername);
@@ -1996,7 +2014,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                     if (mediaLink.startsWith("aesgcm"))
                         type = Imps.MessageType.INCOMING_ENCRYPTED_VERIFIED;
 
-                    result = SecureMediaStore.vfsUri(fileDownload.getAbsolutePath()).toString();
+                    String result = SecureMediaStore.vfsUri(fileDownload.getAbsolutePath()).toString();
 
                     insertOrUpdateChat(result);
 
@@ -2045,7 +2063,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
         }
 
-        return result;
+        return mimeType;
     }
 
     @Override

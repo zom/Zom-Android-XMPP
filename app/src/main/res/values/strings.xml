@@ -213,7 +213,7 @@
     <string name="allow_s_to_create_a_new_chat_account_for_s_">Create a new chat account for username \'%1$s\'?</string>
     <!-- Alerts: Notifications -->
     <string name="subscription_notify_text">New friend invitation from <xliff:g id="user">%s</xliff:g></string>
-    <string name="file_notify_text">New file <xliff:g id="filename">%1$s</xliff:g> from <xliff:g id="user">%2$s</xliff:g></string>
+    <string name="file_notify_text">New <xliff:g id="filename">%1$s</xliff:g> received</string>
     <string name="notify_groupchat_label">Group chat invitation</string>
     <string name="group_chat_invite_notify_text">New group chat invitation from <xliff:g id="user">%s</xliff:g></string>
     <string name="new_messages_notify">New message(s) from</string>
