@@ -45,8 +45,7 @@ public class ChatSession {
 
     private boolean mPushSent = false;
 
-    private boolean mCanOmemo = false;
-    private boolean mEnableOmemoGroups = false;
+    private boolean mCanOmemo = true;
 
     private Jid mJid = null;
     private XmppAddress mXa = null; //our temporary internal representation
@@ -138,7 +137,7 @@ public class ChatSession {
         if (mParticipant instanceof Contact)
             return mCanOmemo;
         else if (mParticipant instanceof ChatGroup)
-            return mCanOmemo && mEnableOmemoGroups;
+            return mCanOmemo;
         else
             return false;
     }
@@ -382,14 +381,6 @@ public class ChatSession {
         mIsSubscribed = isSubscribed;
     }
 
-    public boolean getOmemoGroupEnabled () {
-        return mEnableOmemoGroups;
-    }
-
-    public void setOmemoGroupEnabled (boolean omemoGroups)
-    {
-        mEnableOmemoGroups = omemoGroups;
-    }
 
     public void updateParticipant (ImEntity participant)
     {

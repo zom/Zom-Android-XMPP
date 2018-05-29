@@ -2892,7 +2892,7 @@ public class XmppConnection extends ImConnection {
                             }
                         }
                     }
-                    else if (!session.getOmemoGroupEnabled()) {
+                    else {
                         String deliveryReceiptId = DeliveryReceiptRequest.addTo(msgXmpp);
                         muc.sendMessage(msgXmpp);
                     }

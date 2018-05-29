@@ -139,6 +139,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
     private long mContactId;
     private boolean mIsMuted = false;
+    private boolean mEnableOmemoGroups = false;
     private String mNickname = null;
 
     public ChatSessionAdapter(ChatSession chatSession, ImConnectionAdapter connection, boolean isNewSession) {
@@ -570,7 +571,10 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
                 }
 
-                boolean doEncryption = !isGroupChatSession();
+                boolean doEncryption = mChatSession.canOmemo();
+
+                if (mIsGroupChat)
+                    doEncryption = mEnableOmemoGroups;
 
                 UploadProgressListener listener = new UploadProgressListener() {
                     @Override
@@ -1122,7 +1126,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
             //if the session is encrypted, and this is a plain text message, then ignore
             if (ses.getParticipant() instanceof ChatGroup &&
-                    ses.getOmemoGroupEnabled()
+                    mEnableOmemoGroups
                     && msg.getType() == Imps.MessageType.INCOMING)
                 return false;
 
@@ -1847,7 +1851,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
     public boolean useEncryption (boolean useEncryption)
     {
-        mChatSession.setOmemoGroupEnabled(useEncryption);
+        mEnableOmemoGroups = useEncryption;
         ContentValues values = new ContentValues();
         values.put(Imps.Chats.USE_ENCRYPTION,useEncryption ? 1 : 0);
         int rowsUpdate = mContentResolver.update(mChatURI,values,null,null);
@@ -1856,7 +1860,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
     public boolean getUseEncryption ()
     {
-        return mChatSession.getOmemoGroupEnabled();
+        return mEnableOmemoGroups;
     }
 
     public boolean isEncrypted ()
@@ -1974,19 +1978,28 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         mIsMuted = type == Imps.ChatsColumns.CHAT_TYPE_MUTED;
     }
 
+
+    public boolean getOmemoGroupEnabled () {
+        return mEnableOmemoGroups;
+    }
+
+    public void setOmemoGroupEnabled (boolean omemoGroups)
+    {
+        mEnableOmemoGroups = omemoGroups;
+    }
+
     private void initUseEncryption () {
-        boolean useEncryption = true;
 
         String[] projection = {Imps.Chats.USE_ENCRYPTION};
         Cursor c = mContentResolver.query(mChatURI, projection, null, null, null);
         if (c != null) {
             if (c.moveToFirst()) {
-                useEncryption = c.getInt(0) > 0;
+                mEnableOmemoGroups = c.getInt(0) > 0;
             }
             c.close();
         }
 
-        mChatSession.setOmemoGroupEnabled(useEncryption);
+
     }
 
     public String downloadMedia (String mediaLink, String msgId)
