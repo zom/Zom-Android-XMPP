@@ -1035,6 +1035,10 @@ public class XmppConnection extends ImConnection {
                 for (EntityFullJid entity : muc.getOccupants()) {
                     Occupant occupant = muc.getOccupant(entity);
                     Jid jidSource = occupant.getJid();
+                    try {
+                        getOmemo().trustOmemoDevice(jidSource.asBareJid(), null, true);
+                    }
+                    catch (Exception e){}
                     xa = new XmppAddress(jidSource.toString());
                     Contact mucContact = new Contact(xa, xa.getUser(), Imps.Contacts.TYPE_NORMAL);
                     chatGroup.notifyMemberJoined(entity.toString(), mucContact);
@@ -1063,6 +1067,10 @@ public class XmppConnection extends ImConnection {
                 ArrayList<Contact> owners = new ArrayList<>();
                 for (Affiliate member : muc.getOwners()) {
                     xa = new XmppAddress(member.getJid().toString());
+                    try {
+                        getOmemo().trustOmemoDevice(member.getJid().asBareJid(), null, true);
+                    }
+                    catch (Exception e){}
                     Contact mucContact = new Contact(xa, xa.getUser(), Imps.Contacts.TYPE_NORMAL);
                     chatGroup.notifyMemberJoined(null, mucContact);
                     // Owners are also moderators
@@ -1080,6 +1088,10 @@ public class XmppConnection extends ImConnection {
                 ArrayList<Contact> admins = new ArrayList<>();
                 for (Affiliate member : muc.getAdmins()) {
                     xa = new XmppAddress(member.getJid().toString());
+                    try {
+                        getOmemo().trustOmemoDevice(member.getJid().asBareJid(), null, true);
+                    }
+                    catch (Exception e){}
                     Contact mucContact = new Contact(xa, xa.getUser(), Imps.Contacts.TYPE_NORMAL);
                     chatGroup.notifyMemberJoined(null, mucContact);
                     chatGroup.notifyMemberRoleUpdate(mucContact, null, "admin");
@@ -2832,15 +2844,55 @@ public class XmppConnection extends ImConnection {
 
                     if (session.canOmemo())
                     {
-                        org.jivesoftware.smack.packet.Message msgEncrypted
-                                = getOmemo().getManager().encrypt(muc, msgXmpp.getBody());
-                        msgEncrypted.addExtension(new DeliveryReceiptRequest());
-                        msgEncrypted.setStanzaId(msgXmpp.getStanzaId());
-                        String deliveryReceiptId = DeliveryReceiptRequest.addTo(msgEncrypted);
-                        muc.sendMessage(msgEncrypted);
-                        message.setType(Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED);
+                        try {
+
+
+                            org.jivesoftware.smack.packet.Message msgEncrypted
+                                    = getOmemo().getManager().encrypt(muc, msgXmpp.getBody());
+                            msgEncrypted.addExtension(new DeliveryReceiptRequest());
+                            msgEncrypted.setStanzaId(msgXmpp.getStanzaId());
+                            String deliveryReceiptId = DeliveryReceiptRequest.addTo(msgEncrypted);
+                            muc.sendMessage(msgEncrypted);
+                            message.setType(Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED);
+
+
+                        } catch (CryptoFailedException cfe) {
+                            debug(TAG, "crypto failed", cfe);
+                        } catch (UndecidedOmemoIdentityException uoie) {
+                            debug(TAG, "crypto failed", uoie);
+
+                            //if we are connected, then try again
+                            if (mConnection != null && mConnection.isConnected()) {
+
+                                try {
+                                    //fetch and trust keys for group
+                                    for (Affiliate aff : muc.getMembers()) {
+                                        getOmemo().trustOmemoDevice(aff.getJid().asBareJid(), null, true);
+                                    }
+                                }
+                                catch (Exception e){}
+
+                                try {
+
+                                    //fetch and trust keys for group
+                                    for (Affiliate aff : muc.getAdmins()) {
+                                        getOmemo().trustOmemoDevice(aff.getJid().asBareJid(), null, true);
+                                    }
+                                }
+                                catch (Exception e){}
+
+                                //try again
+                                org.jivesoftware.smack.packet.Message msgEncrypted
+                                        = getOmemo().getManager().encrypt(muc, msgXmpp.getBody());
+                                msgEncrypted.addExtension(new DeliveryReceiptRequest());
+                                msgEncrypted.setStanzaId(msgXmpp.getStanzaId());
+                                String deliveryReceiptId = DeliveryReceiptRequest.addTo(msgEncrypted);
+                                muc.sendMessage(msgEncrypted);
+                                message.setType(Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED);
+                            }
+                        }
                     }
-                    else {
+                    else if (!session.getOmemoGroupEnabled()) {
                         String deliveryReceiptId = DeliveryReceiptRequest.addTo(msgXmpp);
                         muc.sendMessage(msgXmpp);
                     }
