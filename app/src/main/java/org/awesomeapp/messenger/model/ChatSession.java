@@ -162,7 +162,7 @@ public class ChatSession {
      *
      * @param message the message to send.
      */
-    public int sendMessageAsync(Message message) {
+    public int sendMessageAsync(Message message, boolean sendOmemo) {
 
         if (mParticipant instanceof Contact) {
 
@@ -226,6 +226,10 @@ public class ChatSession {
             if (!mCanOmemo) {
                 mCanOmemo = mManager.resourceSupportsOmemo(mJid);
             }
+
+            //override if false
+            if (!sendOmemo)
+                mCanOmemo = false;
 
             message.setTo(mParticipant.getAddress());
             message.setType(Imps.MessageType.OUTGOING);

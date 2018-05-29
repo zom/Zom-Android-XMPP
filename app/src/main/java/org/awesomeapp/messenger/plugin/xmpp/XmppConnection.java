@@ -2049,17 +2049,16 @@ public class XmppConnection extends ImConnection {
 
 
         SmackConfiguration.DEBUG = Debug.DEBUG_ENABLED;
-        SmackConfiguration.setDefaultSmackDebuggerFactory(new SmackDebuggerFactory() {
-            @Override
-            public SmackDebugger create(XMPPConnection xmppConnection) throws IllegalArgumentException {
 
-                return new AndroidDebugger(xmppConnection);
-
-
-            }
-        });
-        mConfig.enableDefaultDebugger();
-
+        if (SmackConfiguration.DEBUG) {
+            SmackConfiguration.setDefaultSmackDebuggerFactory(new SmackDebuggerFactory() {
+                @Override
+                public SmackDebugger create(XMPPConnection xmppConnection) throws IllegalArgumentException {
+                    return new AndroidDebugger(xmppConnection);
+                    }
+            });
+            mConfig.enableDefaultDebugger();
+        }
         //mConfig.setSASLAuthenticationEnabled(useSASL);
 
 

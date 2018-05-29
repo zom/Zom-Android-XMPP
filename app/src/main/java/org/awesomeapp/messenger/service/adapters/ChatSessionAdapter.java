@@ -139,7 +139,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
     private long mContactId;
     private boolean mIsMuted = false;
-    private boolean mEnableOmemoGroups = false;
+    private boolean mEnableOmemoGroups = true;
     private String mNickname = null;
 
     public ChatSessionAdapter(ChatSession chatSession, ImConnectionAdapter connection, boolean isNewSession) {
@@ -170,7 +170,6 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         initMuted();
         initUseEncryption();
 
-      //  sendPostponedMessages();
     }
 
     private void initOtrChatSession (ImEntity participant)
@@ -410,7 +409,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             insertOrUpdateChat(text);
         }
 
-        int newType = mChatSession.sendMessageAsync(msg);
+        int newType = mChatSession.sendMessageAsync(msg, mEnableOmemoGroups);
 
         if (msg.getDateTime() != null)
             sendTime = msg.getDateTime().getTime();
@@ -445,7 +444,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         msg.setBody(publishUrl);
        // insertOrUpdateChat(mediaPath);
 
-        int newType = mChatSession.sendMessageAsync(msg);
+        int newType = mChatSession.sendMessageAsync(msg, mEnableOmemoGroups);
 
         if (msg.getDateTime() != null)
             sendTime = msg.getDateTime().getTime();
