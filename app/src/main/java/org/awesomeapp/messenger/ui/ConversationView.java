@@ -2057,7 +2057,7 @@ public class ConversationView {
                         }
                         else
                         {
-                            remoteAddress = Address.stripResource(mRemoteAddress);
+                            //remoteAddress = Address.stripResource(mRemoteAddress);
 
                             session = sessionMgr.createChatSession(remoteAddress,false);
                         }

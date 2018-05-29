@@ -106,7 +106,7 @@ public class OtrChatManager implements OtrEngineListener {
 
     public synchronized SessionID getSessionId(String localUserId, String remoteUserId) {
 
-        SessionID sessionId = new SessionID( XmppAddress.stripResource(localUserId), XmppAddress.stripResource(remoteUserId), SESSION_TYPE_XMPP);
+        SessionID sessionId = new SessionID( XmppAddress.stripResource(localUserId), remoteUserId, SESSION_TYPE_XMPP);
 
         Session session = mSessions.get(sessionId.toString());
 

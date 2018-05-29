@@ -1126,8 +1126,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                     && msg.getType() == Imps.MessageType.INCOMING)
                 return false;
 
-
-            if (Imps.messageExists(mContentResolver,msg.getID()))
+            if (Imps.messageExists(mContentResolver,msg.getID(),msg.getType()))
                 return false;
 
             String body = msg.getBody();
@@ -1140,6 +1139,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                 contact = mConnection.getContactListManager().getContactByAddress(bareUsername);
                 nickname = contact.getName();
             } catch (Exception e) {
+                return false;
             }
 
             long time = msg.getDateTime().getTime();

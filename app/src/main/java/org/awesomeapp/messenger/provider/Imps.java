@@ -2556,6 +2556,26 @@ public class Imps {
         return result;
     }
 
+    public static boolean messageExists (ContentResolver resolver, String id, int messageType)
+    {
+        boolean result = false;
+
+        Uri.Builder builder = Messages.OTR_MESSAGES_CONTENT_URI_BY_PACKET_ID.buildUpon();
+        builder.appendPath(id);
+
+        String[] args = {messageType+""};
+
+        Cursor c = resolver.query(builder.build(),null, Imps.Messages.TYPE + "=?", args, null);
+        if (c != null)
+        {
+            if (c.getCount() > 0)
+                result = true;
+
+            c.close();
+        }
+
+        return result;
+    }
 
 
 }

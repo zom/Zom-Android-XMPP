@@ -70,6 +70,14 @@ public class ChatSession {
     {
         try {
             mJid = JidCreate.from(mParticipant.getAddress().getAddress());
+
+            if (mJid.hasNoResource() && mParticipant instanceof Contact)
+            {
+                Contact contact = (Contact)mParticipant;
+                if (contact.getPresence() != null && contact.getPresence().getResource() != null)
+                    mJid = JidCreate.from(mParticipant.getAddress().getBareAddress() + '/' + contact.getPresence().getResource());
+            }
+
             mXa = new XmppAddress(mJid.toString());
 
             if (mJid.hasNoResource()) {
@@ -383,5 +391,8 @@ public class ChatSession {
         mEnableOmemoGroups = omemoGroups;
     }
 
-
+    public void updateParticipant (ImEntity participant)
+    {
+        mParticipant = participant;
+    }
 }

@@ -2482,6 +2482,15 @@ public class XmppConnection extends ImConnection {
                     }
 
                 }
+                else
+                {
+                    Contact contact = (Contact)session.getParticipant();
+                    if (contact.getPresence() == null || contact.getPresence().getResource() == null)
+                    {
+                        session.updateParticipant(handlePresenceChanged(mRoster.getPresence(smackMessage.getFrom().asBareJid())));
+
+                    }
+                }
 
                 boolean good = session.onReceiveMessage(rec, notifyUser);
 
@@ -2925,7 +2934,7 @@ public class XmppConnection extends ImConnection {
         @Override
         public ChatSession createChatSession(ImEntity participant, boolean isNewSession) {
             ChatSession session = super.createChatSession(participant,isNewSession);
-            mSessions.put(participant.getAddress().getAddress(),session);
+            mSessions.put(participant.getAddress().getBareAddress(),session);
 
             if (participant instanceof Contact)
                 getLastSeen ((Contact)participant);
@@ -4351,6 +4360,8 @@ public class XmppConnection extends ImConnection {
         if (contact == null)
             return;
 
+        p = contact.getPresence();
+
         boolean isTyping = false;
 
         //handle is-typing, probably some indication on screen
@@ -4358,22 +4369,26 @@ public class XmppConnection extends ImConnection {
             //do nothing
         }
         else if (chatStateXml.contains(ChatState.active.toString())) {
-            p = new Presence(Presence.AVAILABLE, "", null, null,
-                    Presence.CLIENT_TYPE_MOBILE);
+            if (p == null)
+                p = new Presence(Presence.AVAILABLE, "", null, null,
+                        Presence.CLIENT_TYPE_MOBILE);
+
             p.setLastSeen(new Date());
         }
         else if (chatStateXml.contains(ChatState.inactive.toString())) {
-            p = new Presence(Presence.AWAY, "", null, null,
+            if (p == null)
+                p = new Presence(Presence.AWAY, "", null, null,
                     Presence.CLIENT_TYPE_MOBILE);
+
             p.setLastSeen(new Date());
         }
         else if (chatStateXml.contains(ChatState.composing.toString())) {
-            p = new Presence(Presence.AVAILABLE, "", null, null,
+            if (p == null)
+                p = new Presence(Presence.AVAILABLE, "", null, null,
                     Presence.CLIENT_TYPE_MOBILE);
 
             isTyping = true;
             p.setLastSeen(new Date());
-
 
         }
         else if (chatStateXml.contains(ChatState.inactive.toString())||chatStateXml.contains(ChatState.paused.toString())) {
@@ -4445,8 +4460,11 @@ public class XmppConnection extends ImConnection {
         if (contact == null)
             return;
 
-        p = new Presence(presenceType, "", null, null,
-                Presence.CLIENT_TYPE_MOBILE);
+        p = contact.getPresence();
+
+        if (p == null)
+            p = new Presence(presenceType, "", null, null,
+                    Presence.CLIENT_TYPE_MOBILE);
 
         if (from.hasResource())
             p.setResource(from.getResourceOrEmpty().toString());
@@ -4472,7 +4490,10 @@ public class XmppConnection extends ImConnection {
                 LastActivity activity = mLastActivityManager.getLastActivity(JidCreate.bareFrom(contact.getAddress().getBareAddress()));
 
                 if (activity != null) {
-                    Presence presence = new Presence();
+                    Presence presence = contact.getPresence();
+                    if (presence == null)
+                        presence = new Presence();
+
                     Date now = new Date();
                     presence.setLastSeen(new Date(now.getTime() - (activity.getIdleTime() * 1000)));
                     contact.setPresence(presence);
