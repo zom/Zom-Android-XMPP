@@ -288,4 +288,9 @@ public class Preferences {
 
     public static boolean doGroupEncryption () { return preferences.getBoolean("prefGroupEncryption", false);}
 
+    public static boolean doCheckBatteryOptimizations () { return preferences.getBoolean("prefCheckBattery",true); };
+
+    public static void checkedBatteryOptimizations () {
+        preferences.edit().putBoolean("prefCheckBattery", false).apply();
+    }
 }

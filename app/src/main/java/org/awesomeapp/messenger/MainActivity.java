@@ -38,9 +38,11 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.IInterface;
 import android.os.Parcel;
+import android.os.PowerManager;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -255,6 +257,11 @@ public class MainActivity extends BaseActivity implements IConnectionListener {
 
         applyStyle();
 
+        if (Preferences.doCheckBatteryOptimizations())
+        {
+            requestChangeBatteryOptimizations();
+            Preferences.checkedBatteryOptimizations();
+        }
     }
 
     private void installRingtones ()
@@ -1286,6 +1293,38 @@ public class MainActivity extends BaseActivity implements IConnectionListener {
             }
 
             CustomTypefaceManager.loadFromAssets(this, loadTibetan);
+        }
+
+    }
+
+    private void requestChangeBatteryOptimizations ()
+    {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+
+            AlertDialog dialog = new AlertDialog.Builder(this)
+                    .setTitle(R.string.battery_opt_title)
+                    .setMessage(R.string.battery_opt_message)
+                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int whichButton) {
+
+
+                            Intent myIntent = new Intent();
+                            myIntent.setAction(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
+                            startActivity(myIntent);
+
+                        }
+                    })
+                    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int whichButton) {
+
+                            /* User clicked cancel so do some stuff */
+                            dialog.dismiss();
+                        }
+                    })
+                    .create();
+            dialog.show();
         }
 
     }

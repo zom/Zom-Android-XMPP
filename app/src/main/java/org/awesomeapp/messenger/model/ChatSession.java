@@ -183,10 +183,9 @@ public class ChatSession {
                 mCanOmemo = mManager.resourceSupportsOmemo(mJid);
             }
 
-            if (mCanOmemo) {
+            if (mCanOmemo && otrStatus != SessionStatus.ENCRYPTED) {
                 mManager.sendMessageAsync(this, message);
             } else {
-
 
                 //do OTR!
 
