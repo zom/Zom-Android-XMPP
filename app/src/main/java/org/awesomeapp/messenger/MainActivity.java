@@ -1022,6 +1022,9 @@ public class MainActivity extends BaseActivity implements IConnectionListener {
                         {
                             mRequestedChatId = session.getId();
                             session.markAsSeen(); // We created this, so mark as seen
+                            session.sendTypingStatus(true);
+                            session.setMuted(false);
+                            session.setGroupChatSubject(subject);
                             publishProgress(mRequestedChatId);
 
                         } else {

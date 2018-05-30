@@ -423,7 +423,7 @@ public class XmppConnection extends ImConnection {
     void postpone(final org.jivesoftware.smack.packet.Stanza packet) {
         if (packet instanceof org.jivesoftware.smack.packet.Message) {
             boolean groupChat = ((org.jivesoftware.smack.packet.Message) packet).getType().equals( org.jivesoftware.smack.packet.Message.Type.groupchat);
-            ChatSession session = findOrCreateSession(packet.getTo().toString(), groupChat);
+            ChatSession session = findOrCreateSession(packet.getTo().toString(), groupChat, false);
             if (session != null)
                 session.onMessagePostponed(packet.getStanzaId());
         }
@@ -2451,7 +2451,7 @@ public class XmppConnection extends ImConnection {
 
         }
 
-        ChatSession session = findOrCreateSession(smackMessage.getFrom().toString(), isGroupMessage);
+        ChatSession session = findOrCreateSession(smackMessage.getFrom().toString(), isGroupMessage, false);
 
         if (session != null) //not subscribed so don't do anything
         {
@@ -2670,7 +2670,7 @@ public class XmppConnection extends ImConnection {
         }
     }
 
-    private ChatSession findOrCreateSession(String address, boolean groupChat) {
+    private ChatSession findOrCreateSession(String address, boolean groupChat, boolean isNew) {
 
         try {
 
@@ -2708,7 +2708,7 @@ public class XmppConnection extends ImConnection {
                     //create a session
                     if (session == null) {
                         ImEntity participant = findOrCreateParticipant(xAddr.getAddress(), true);
-                        session = mSessionManager.createChatSession(participant, participant == null);
+                        session = mSessionManager.createChatSession(participant, true);
                         if (session != null)
                             ((ChatGroup) session.getParticipant()).setName(muc.getSubject());
                     }
@@ -3559,7 +3559,7 @@ public class XmppConnection extends ImConnection {
                 }
             }
 
-            ChatSession session = findOrCreateSession(contact.getAddress().toString(), false);
+            ChatSession session = findOrCreateSession(contact.getAddress().toString(), false, true);
 
             if (session != null)
                 session.setSubscribed(autoSubscribedPresence);
@@ -3614,7 +3614,7 @@ public class XmppConnection extends ImConnection {
                 e.printStackTrace();
             }
 
-            ChatSession session = findOrCreateSession(contact.getAddress().getAddress(), false);
+            ChatSession session = findOrCreateSession(contact.getAddress().getAddress(), false, false);
 
             if (session != null)
                 session.setSubscribed(false);
@@ -3669,7 +3669,7 @@ public class XmppConnection extends ImConnection {
                 mContactListManager.getSubscriptionRequestListener().onSubscriptionApproved(contact, mProviderId, mAccountId);
                 getSubscriptionRequestListener().onSubScriptionChanged(contact,mProviderId,mAccountId,subType,subStatus);
 
-                ChatSession session = findOrCreateSession(contact.getAddress().toString(), false);
+                ChatSession session = findOrCreateSession(contact.getAddress().toString(), false, true);
 
                 if (session != null)
                     session.setSubscribed(true);
@@ -4760,7 +4760,7 @@ public class XmppConnection extends ImConnection {
             mContactListManager.getSubscriptionRequestListener().onSubScriptionRequest(contact, mProviderId, mAccountId);
         }
 
-        ChatSession session = findOrCreateSession(jid.toString(), false);
+        ChatSession session = findOrCreateSession(jid.toString(), false, true);
 
 
     }
