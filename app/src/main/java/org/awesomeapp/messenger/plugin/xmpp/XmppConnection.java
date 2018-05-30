@@ -654,7 +654,6 @@ public class XmppConnection extends ImConnection {
                     ChatGroup group = mGroups.get(muc.getRoom().toString());
 
                     addMucListeners(reMuc, group);
-         //           mBookmarkManager.addBookmarkedConference(muc.getSubject(),muc.getRoom(),true,muc.getNickname(),null);
 
                 } catch (Exception e) {
                     Log.w(TAG,"unable to join MUC: " + e.getMessage());
@@ -729,6 +728,8 @@ public class XmppConnection extends ImConnection {
             if (chatGroup != null && muc !=null)
             {
 
+                mBookmarkManager.addBookmarkedConference(muc.getSubject(),muc.getRoom(),true,muc.getNickname(),null);
+
                 if (!muc.isJoined()) {
                     DiscussionHistory history = new DiscussionHistory();
                     muc.createOrJoin(Resourcepart.from(nickname), null, history, SmackConfiguration.getDefaultPacketReplyTimeout());
@@ -754,6 +755,9 @@ public class XmppConnection extends ImConnection {
 
                 muc = mucMgr.getMultiUserChat(JidCreate.entityBareFrom(chatRoomJid));
                 boolean mucCreated = false;
+
+             //   mBookmarkManager.addBookmarkedConference(muc.getSubject(),muc.getRoom(),true,muc.getNickname(),null);
+
                 try {
                     if (!muc.isJoined()) {
                         DiscussionHistory history = new DiscussionHistory();
@@ -782,6 +786,7 @@ public class XmppConnection extends ImConnection {
                 mMUCs.put(chatRoomJid, muc);
 
                 if (mucCreated) {
+
                     try {
 
                         int historyFetchMax = 20;
@@ -906,7 +911,6 @@ public class XmppConnection extends ImConnection {
             }
 
             addMucListeners(muc,chatGroup);
-     //       mBookmarkManager.addBookmarkedConference(muc.getSubject(),muc.getRoom(),true,muc.getNickname(),null);
 
             return true;
 
@@ -971,6 +975,8 @@ public class XmppConnection extends ImConnection {
                 if (mConnection == null || (!mConnection.isConnected()))
                     return;
 
+                mBookmarkManager.addBookmarkedConference(address.getUser(),JidCreate.entityBareFrom(chatRoomJid),true,null,null);
+
                 // Create a MultiUserChat using a Connection for a room
                 MultiUserChatManager mucMgr = MultiUserChatManager.getInstanceFor(mConnection);
                 mucMgr.setAutoJoinOnReconnect(true);
@@ -993,7 +999,7 @@ public class XmppConnection extends ImConnection {
                 mMUCs.put(chatRoomJid, muc);
 
                 addMucListeners(muc, chatGroup);
-       //         mBookmarkManager.addBookmarkedConference(muc.getSubject(),muc.getRoom(),true,muc.getNickname(),null);
+
             } catch (Exception e) {
                 debug(TAG,"error joining MUC",e);
             }
@@ -1118,7 +1124,8 @@ public class XmppConnection extends ImConnection {
                             XmppAddress xa = new XmppAddress(from.toString());
                             MultiUserChat muc = mChatGroupManager.getMultiUserChat(xa.getBareAddress());
                             ChatGroup chatGroup = mChatGroupManager.getChatGroup(xa);
-                            chatGroup.setName(subject);
+                            if (chatGroup != null)
+                                chatGroup.setName(subject);
                         }
                     }
                 };
@@ -1206,6 +1213,11 @@ public class XmppConnection extends ImConnection {
 
             if (mMUCs.containsKey(chatRoomJid))
             {
+                try {
+                    mBookmarkManager.removeBookmarkedConference(JidCreate.entityBareFrom(chatRoomJid));
+                }
+                catch (Exception e){}
+
                 MultiUserChat muc = mMUCs.get(chatRoomJid);
                 try {
                     muc.leave();
@@ -1218,10 +1230,6 @@ public class XmppConnection extends ImConnection {
 
                 mMUCs.remove(chatRoomJid);
 
-                try {
-              //      mBookmarkManager.removeBookmarkedConference(JidCreate.entityBareFrom(chatRoomJid));
-                }
-                catch (Exception e){}
             }
 
         }
@@ -1776,7 +1784,7 @@ public class XmppConnection extends ImConnection {
                             if (participant != null)
                                 session = mSessionManager.createChatSession(participant, true);
 
-                            if (session != null)
+                            if (session != null && session.getParticipant() != null)
                                 ((ChatGroup) session.getParticipant()).setName(muc.getSubject());
 
 
@@ -1797,9 +1805,6 @@ public class XmppConnection extends ImConnection {
             });
 
             conn.login(mUsername, mPassword, Resourcepart.from(mResource));
-
-            //mStreamHandler.notifyInitialLogin();
-            initServiceDiscovery();
 
             mChatStateManager = ChatStateManager.getInstance(conn);
 
@@ -2337,7 +2342,10 @@ public class XmppConnection extends ImConnection {
             public void connected(XMPPConnection connection) {
                 debug(TAG, "connected");
 
-                try { initOmemo((XMPPTCPConnection)connection); }
+                try {
+                    initOmemo((XMPPTCPConnection)connection);
+
+                }
                 catch (Exception e)
                 {
                     debug("OMEMO","There was a problem init'g omemo",e);
@@ -2354,6 +2362,8 @@ public class XmppConnection extends ImConnection {
 
                 ReconnectionManager manager = ReconnectionManager.getInstanceFor(mConnection);
                 manager.disableAutomaticReconnection();
+
+                initServiceDiscovery();
 
             }
 
@@ -2709,7 +2719,7 @@ public class XmppConnection extends ImConnection {
                     if (session == null) {
                         ImEntity participant = findOrCreateParticipant(xAddr.getAddress(), true);
                         session = mSessionManager.createChatSession(participant, true);
-                        if (session != null)
+                        if (session != null && session.getParticipant() != null)
                             ((ChatGroup) session.getParticipant()).setName(muc.getSubject());
                     }
                 }
@@ -3158,12 +3168,6 @@ public class XmppConnection extends ImConnection {
                 debug(TAG,"error loading roaster",e);
                 return;
             }
-
-            mLastActivityManager = LastActivityManager.getInstanceFor(mConnection);
-            mLastActivityManager.enable();
-
-            mBookmarkManager = BookmarkManager.getBookmarkManager(mConnection);
-            mPrivateManager = PrivateDataManager.getInstanceFor(mConnection);
 
             ContactList cl;
 
@@ -4105,6 +4109,24 @@ public class XmppConnection extends ImConnection {
 
         DeliveryReceiptManager.getInstanceFor(mConnection).autoAddDeliveryReceiptRequests();
         DeliveryReceiptManager.getInstanceFor(mConnection).setAutoReceiptMode(DeliveryReceiptManager.AutoReceiptMode.disabled);
+
+        mLastActivityManager = LastActivityManager.getInstanceFor(mConnection);
+        mLastActivityManager.enable();
+
+        mBookmarkManager = BookmarkManager.getBookmarkManager(mConnection);
+        mPrivateManager = PrivateDataManager.getInstanceFor(mConnection);
+
+        try {
+            debug(TAG,"is Private Data supported?" + mPrivateManager.isSupported());
+        } catch (SmackException.NoResponseException e) {
+            e.printStackTrace();
+        } catch (SmackException.NotConnectedException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (XMPPException.XMPPErrorException e) {
+            e.printStackTrace();
+        }
 
     }
 

@@ -133,7 +133,8 @@ public class ChatSessionManagerAdapter extends
             groupMan.createChatGroupAsync(roomAddress, subject, nickname);
 
             ChatGroup chatGroup = groupMan.getChatGroup(address);
-            chatGroup.setName(subject);
+            if (chatGroup != null)
+                chatGroup.setName(subject);
 
             if (chatGroup != null && mConnection.getState() == ImConnection.LOGGED_IN)
             {
