@@ -800,14 +800,20 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
     Uri insertOrUpdateChat(String message) {
 
-        ContentValues values = new ContentValues(2);
+        ContentValues values = new ContentValues(4);
 
         values.put(Imps.Chats.LAST_MESSAGE_DATE, System.currentTimeMillis());
         values.put(Imps.Chats.LAST_UNREAD_MESSAGE, message);
-
          values.put(Imps.Chats.GROUP_CHAT, mIsGroupChat);
-         // ImProvider.insert() will replace the chat if it already exist.
-         return mContentResolver.insert(mChatURI, values);
+         values.put(Imps.Chats.USE_ENCRYPTION,mEnableOmemoGroups);
+
+         int result = mContentResolver.update(mChatURI, values, null, null);
+
+         if (result < 1)
+            // ImProvider.insert() will replace the chat if it already exist.
+            return mContentResolver.insert(mChatURI, values);
+         else
+             return mChatURI;
     }
 
     // Pattern for recognizing a URL, based off RFC 3986
@@ -1129,7 +1135,8 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                     && msg.getType() == Imps.MessageType.INCOMING)
                 return false;
 
-            if (Imps.messageExists(mContentResolver,msg.getID(),msg.getType()))
+            //we already have an encrypted message with this idea, so don't override that
+            if (Imps.messageExists(mContentResolver,msg.getID(),-1))
                 return false;
 
             String body = msg.getBody();
@@ -1181,16 +1188,14 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             }
             else {
                 //if it wasn't a media file or we had an issue downloading, then it is chat
-
-
-                insertOrUpdateChat(body);
-
                 Uri messageUri = null;
 
                 if (msg.getID() == null)
                     messageUri = insertMessageInDb(nickname, body, time, msg.getType(), null);
                 else
                     messageUri = insertMessageInDb(nickname, body, time, msg.getType(), 0, msg.getID(), null);
+
+                insertOrUpdateChat(body);
 
                 if (messageUri == null) {
                     Log.e(TAG,"error saving message to the db: " + msg.getID());
