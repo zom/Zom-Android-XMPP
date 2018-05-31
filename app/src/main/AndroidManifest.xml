@@ -463,7 +463,7 @@
             android:label="@string/title_activity_nearby" />
         <activity
             android:name="org.awesomeapp.messenger.ui.camera.CameraActivity"
-            android:label="@string/title_activity_camera"
+            android:label=""
             android:screenOrientation="portrait"
             />
     </application>
