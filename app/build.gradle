@@ -133,7 +133,7 @@ dependencies {
     implementation fileTree(include: '*.jar', dir: 'libs')
     //implementation project(':otr4jandroid')
 
-   // implementation 'com.github.otr4j:otr4j:0.22'
+    // implementation 'com.github.otr4j:otr4j:0.22'
     implementation 'com.github.cobratbq:otr4j:1ed70336c6'
 
     //  implementation 'com.github.otr4j:otr4j:aac20b11de'
@@ -180,16 +180,15 @@ dependencies {
 
 //from: https://github.com/igniterealtime/Smack
     // implementation "org.igniterealtime.smack:smack-android:$smackVersion"
-   // implementation "org.igniterealtime.smack:smack-android-extensions:$smackVersion"
+    // implementation "org.igniterealtime.smack:smack-android-extensions:$smackVersion"
     //   compile "org.igniterealtime.smack:smack-omemo-signal:$smackOmemoVersion"
-   // implementation "org.igniterealtime.smack:smack-resolver-minidns:$smackVersion"
-   // implementation "org.igniterealtime.smack:smack-tcp:$smackVersion"
-   // implementation "org.igniterealtime.smack:smack-core:$smackVersion"
-   // imp/lementation "org.igniterealtime.smack:smack-extensions:$smackVersion"
-   // implementation "org.igniterealtime.smack:smack-experimental:$smackVersion"
-   // implementation "org.igniterealtime.smack:smack-im:$smackVersion"
-   // implementation "org.igniterealtime.smack:smack-sasl-provided:$smackVersion"
-
+    // implementation "org.igniterealtime.smack:smack-resolver-minidns:$smackVersion"
+    // implementation "org.igniterealtime.smack:smack-tcp:$smackVersion"
+    // implementation "org.igniterealtime.smack:smack-core:$smackVersion"
+    // imp/lementation "org.igniterealtime.smack:smack-extensions:$smackVersion"
+    // implementation "org.igniterealtime.smack:smack-experimental:$smackVersion"
+    // implementation "org.igniterealtime.smack:smack-im:$smackVersion"
+    // implementation "org.igniterealtime.smack:smack-sasl-provided:$smackVersion"
 
     // https://mvnrepository.com/artifact/com.google.code.gson/gson
     implementation 'com.google.code.gson:gson:2.8.0'
@@ -197,4 +196,8 @@ dependencies {
 
     //adding this nearby library for now
     implementation 'com.google.android.gms:play-services-nearby:15.0.1'
+
+    //built in camera now!
+    //https://github.com/siralam/CameraViewPlus?utm_source=android-arsenal.com&utm_medium=referral&utm_campaign=6575
+    implementation 'com.asksira.android:cameraviewplus:0.9.0'
 }

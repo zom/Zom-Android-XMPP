@@ -49,6 +49,7 @@ import org.awesomeapp.messenger.MainActivity;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.service.IChatSession;
 import org.awesomeapp.messenger.tasks.AddContactAsyncTask;
+import org.awesomeapp.messenger.ui.camera.CameraActivity;
 import org.awesomeapp.messenger.ui.onboarding.OnboardingActivity;
 import org.awesomeapp.messenger.ui.onboarding.OnboardingManager;
 import org.awesomeapp.messenger.util.SecureMediaStore;
@@ -146,6 +147,7 @@ public class GalleryActivity extends BaseActivity {
             }
         }
         else {
+            /**
             // create Intent to take a picture and return control to the calling application
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             File photo = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), "cs_" + new Date().getTime() + ".jpg");
@@ -154,6 +156,9 @@ public class GalleryActivity extends BaseActivity {
                     mLastPhoto);
 
             // start the image capture Intent
+            startActivityForResult(intent, ConversationDetailActivity.REQUEST_TAKE_PICTURE);
+             **/
+            Intent intent = new Intent(this, CameraActivity.class);
             startActivityForResult(intent, ConversationDetailActivity.REQUEST_TAKE_PICTURE);
         }
     }

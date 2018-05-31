@@ -94,9 +94,11 @@ import org.awesomeapp.messenger.ui.ConversationDetailActivity;
 import org.awesomeapp.messenger.ui.ConversationListFragment;
 import org.awesomeapp.messenger.ui.LockScreenActivity;
 import org.awesomeapp.messenger.ui.MoreFragment;
+import org.awesomeapp.messenger.ui.camera.CameraActivity;
 import org.awesomeapp.messenger.ui.legacy.SettingActivity;
 import org.awesomeapp.messenger.ui.onboarding.OnboardingActivity;
 import org.awesomeapp.messenger.ui.onboarding.OnboardingManager;
+import org.awesomeapp.messenger.ui.qr.CameraView;
 import org.awesomeapp.messenger.util.AssetUtil;
 import org.awesomeapp.messenger.util.SecureMediaStore;
 import org.awesomeapp.messenger.util.SystemServices;
@@ -1168,6 +1170,7 @@ public class MainActivity extends BaseActivity implements IConnectionListener {
 
     void startPhotoTaker() {
 
+        /**
         // create Intent to take a picture and return control to the calling application
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         File photo = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),  "cs_" + new Date().getTime() + ".jpg");
@@ -1177,6 +1180,10 @@ public class MainActivity extends BaseActivity implements IConnectionListener {
 
         // start the image capture Intent
         startActivityForResult(intent, ConversationDetailActivity.REQUEST_TAKE_PICTURE);
+         **/
+        Intent intent = new Intent(this, CameraActivity.class);
+        startActivityForResult(intent, ConversationDetailActivity.REQUEST_TAKE_PICTURE);
+
     }
 
     /**
