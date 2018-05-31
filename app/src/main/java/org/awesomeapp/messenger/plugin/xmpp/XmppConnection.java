@@ -1044,7 +1044,10 @@ public class XmppConnection extends ImConnection {
                     try {
                         getOmemo().trustOmemoDevice(jidSource.asBareJid(), null, true);
                     }
-                    catch (Exception e){}
+                    catch (Exception e){
+                        debug("MUC", "Error trusting group member OMEMO: "  + jidSource,e);
+
+                    }
                     xa = new XmppAddress(jidSource.toString());
                     Contact mucContact = new Contact(xa, xa.getUser(), Imps.Contacts.TYPE_NORMAL);
                     chatGroup.notifyMemberJoined(entity.toString(), mucContact);
@@ -1052,7 +1055,7 @@ public class XmppConnection extends ImConnection {
                 }
             }
             catch (Exception e) {
-                debug("MUC", "Error loading occupants: " + e);
+                debug("MUC", "Error loading group occupants: " + chatGroup.getName(),e);
             }
 
             try {
@@ -1065,7 +1068,7 @@ public class XmppConnection extends ImConnection {
             }
             catch (Exception e)
             {
-                debug("MUC","Couldn't load group members: " + e.getMessage());
+                debug("MUC", "Error loading group members: " + chatGroup.getName(),e);
 
             }
 
@@ -1076,7 +1079,11 @@ public class XmppConnection extends ImConnection {
                     try {
                         getOmemo().trustOmemoDevice(member.getJid().asBareJid(), null, true);
                     }
-                    catch (Exception e){}
+                    catch (Exception e){
+
+                        debug("MUC", "Error trusting group owner OMEMO: "  + member.getJid(),e);
+
+                    }
                     Contact mucContact = new Contact(xa, xa.getUser(), Imps.Contacts.TYPE_NORMAL);
                     chatGroup.notifyMemberJoined(null, mucContact);
                     // Owners are also moderators
@@ -1086,7 +1093,7 @@ public class XmppConnection extends ImConnection {
             }
             catch (Exception e)
                 {
-                    debug("MUC","Couldn't load group owner: " + e.getMessage());
+                    debug("MUC", "Error loading group owners: " + chatGroup.getName(),e);
 
                 }
 
@@ -1097,7 +1104,10 @@ public class XmppConnection extends ImConnection {
                     try {
                         getOmemo().trustOmemoDevice(member.getJid().asBareJid(), null, true);
                     }
-                    catch (Exception e){}
+                    catch (Exception e){
+                        debug("MUC", "Error trusting group admin OMEMO: "  + member.getJid(),e);
+
+                    }
                     Contact mucContact = new Contact(xa, xa.getUser(), Imps.Contacts.TYPE_NORMAL);
                     chatGroup.notifyMemberJoined(null, mucContact);
                     chatGroup.notifyMemberRoleUpdate(mucContact, null, "admin");
