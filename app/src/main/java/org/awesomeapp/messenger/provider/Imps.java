@@ -2571,6 +2571,11 @@ public class Imps {
             args[0] = messageType+"";
             selection = Imps.Messages.TYPE + "=?";
         }
+        else
+        {
+            args = null;
+            selection = null;
+        }
 
         Cursor c = resolver.query(builder.build(),null, selection, args, null);
         if (c != null)
