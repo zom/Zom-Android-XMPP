@@ -36,7 +36,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:padding="6dp"
-                android:src="@drawable/ic_refresh_white_24dp"/>
+                android:src="@drawable/ic_camera_front"/>
 
             <ImageView
                 android:id="@+id/btnCamera"
@@ -44,7 +44,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:padding="6dp"
-                android:src="@drawable/ic_photo_camera_white_36dp"/>
+                android:src="@drawable/ic_shutter"/>
 
             <ImageView
                 android:id="@+id/toggle_flash"
@@ -52,7 +52,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:padding="6dp"
-                android:src="@drawable/ic_audiotrack_white_24dp"/>
+                android:src="@drawable/ic_flash_auto"/>
 
         </LinearLayout>
     </FrameLayout>

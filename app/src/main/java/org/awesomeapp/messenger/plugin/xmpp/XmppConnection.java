@@ -220,6 +220,7 @@ public class XmppConnection extends ImConnection {
     private LastActivityManager mLastActivityManager;
     private BookmarkManager mBookmarkManager;
     private PrivateDataManager mPrivateManager;
+    private ReconnectionManager mReconnectionManager;
 
     private Contact mUser;
     private BareJid mUserJid;
@@ -1741,23 +1742,6 @@ public class XmppConnection extends ImConnection {
             mRoster.setSubscriptionMode(subMode);
             getContactListManager().listenToRoster(mRoster);
 
-            /**
-            manager.enableAutomaticReconnection();
-            manager.addReconnectionListener(new ReconnectionListener() {
-                @Override
-                public void reconnectingIn(int seconds) {
-                    debug (TAG,"reconnecting in: " + seconds + " seconds");
-
-
-                }
-
-                @Override
-                public void reconnectionFailed(Exception e) {
-                    debug (TAG,"reconnection failed",e);
-
-                }
-            });**/
-
             mChatManager = ChatManager.getInstanceFor(conn);
 
         //    mPingManager = PingManager.getInstanceFor(mConnection) ;
@@ -2245,50 +2229,6 @@ public class XmppConnection extends ImConnection {
         ConnectionListener connectionListener = new ConnectionListener() {
 
 
-            /**
-             * Called from smack when connect() is fully successful
-             *
-             * This is called on the executor thread while we are in reconnect()
-             */
-            /**
-            @Override
-            public void reconnectionSuccessful() {
-
-                if (mStreamHandler == null || !mStreamHandler.isResumePending()) {
-                    debug(TAG, "Reconnection success");
-                    onReconnectionSuccessful();
-                    mRoster = Roster.getInstanceFor(mConnection);
-
-                    sendPresencePacket();
-                    mChatGroupManager.reconnectAll();
-                } else {
-                    debug(TAG, "Ignoring reconnection callback due to pending resume");
-
-            }
-            }**/
-
-
-            /**
-            @Override
-            public void reconnectionFailed(Exception e) {
-
-                debug(TAG, "reconnection failed",e);
-                // We are not using the reconnection manager
-             //   throw new UnsupportedOperationException();
-                execute(new Runnable() {
-
-                    public void run() {
-
-                        mNeedReconnect = true;
-                        setState(LOGGING_IN,
-                                new ImErrorInfo(ImErrorInfo.NETWORK_ERROR, "network error"));
-                        reconnect();
-
-                    }
-
-                });
-            }**/
-
             @Override
             public void connectionClosedOnError(final Exception e) {
                 /*
@@ -2370,9 +2310,6 @@ public class XmppConnection extends ImConnection {
                 sendPresencePacket();
                 mChatGroupManager.reconnectAll();
 
-                ReconnectionManager manager = ReconnectionManager.getInstanceFor(mConnection);
-                manager.disableAutomaticReconnection();
-
                 initServiceDiscovery();
 
             }
@@ -2425,9 +2362,6 @@ public class XmppConnection extends ImConnection {
         AbstractXMPPConnection conn = mConnection.connect();
 
         conn.setReplyTimeout(SOTIMEOUT);
-
-        ReconnectionManager reconnectionManager = ReconnectionManager.getInstanceFor(conn);
-        reconnectionManager.enableAutomaticReconnection();
 
         return conn;
     }
@@ -4125,6 +4059,30 @@ public class XmppConnection extends ImConnection {
 
         mBookmarkManager = BookmarkManager.getBookmarkManager(mConnection);
         mPrivateManager = PrivateDataManager.getInstanceFor(mConnection);
+
+
+        if (mReconnectionManager != null) {
+            mReconnectionManager.abortPossiblyRunningReconnection();
+            mReconnectionManager.disableAutomaticReconnection();
+        }
+
+
+        mReconnectionManager = ReconnectionManager.getInstanceFor(mConnection);
+        mReconnectionManager.setReconnectionPolicy(ReconnectionManager.ReconnectionPolicy.RANDOM_INCREASING_DELAY);
+        mReconnectionManager.addReconnectionListener(new ReconnectionListener() {
+            @Override
+            public void reconnectingIn(int i) {
+                debug(TAG,"Reconnecting in..." + i);
+
+            }
+
+            @Override
+            public void reconnectionFailed(Exception e) {
+                debug(TAG,"Reconnection failed",e);
+            }
+        });
+        mReconnectionManager.enableAutomaticReconnection();
+
 
         try {
             debug(TAG,"is Private Data supported?" + mPrivateManager.isSupported());
