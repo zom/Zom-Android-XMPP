@@ -1136,11 +1136,12 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             String username = msg.getFrom().getAddress();
             String bareUsername = msg.getFrom().getBareAddress();
             String nickname = getNickName(username);
-            Contact contact = null;
 
             try {
-                contact = mConnection.getContactListManager().getContactByAddress(bareUsername);
-                nickname = contact.getName();
+                Contact contact = mConnection.getContactListManager().getContactByAddress(bareUsername);
+                if (contact != null)
+                    nickname = contact.getName();
+
             } catch (Exception e) {
                 return false;
             }
@@ -1233,12 +1234,16 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                     if (!isMuted()) {
                         ChatGroup group = (ChatGroup) ses.getParticipant();
                         try {
-                            contact = mConnection.getContactListManager().getContactByAddress(nickname);
-                            nickname = contact.getName();
+                            Contact contact = mConnection.getContactListManager().getContactByAddress(nickname);
+                            if (contact != null) {
+                                nickname = contact.getName();
+
+                                if (!TextUtils.isEmpty(nickname))
+                                    nickname = nickname.split("@")[0];
+                            }
+
                         } catch (Exception e) {
                         }
-
-                        nickname = nickname.split("@")[0];
 
                         mStatusBarNotifier.notifyGroupChat(mConnection.getProviderId(), mConnection.getAccountId(),
                                 getId(), group.getAddress().getBareAddress(), group.getName(), nickname, body, false);
