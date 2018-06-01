@@ -39,7 +39,7 @@ public class SecureMediaStore {
     private static String dbFilePath;
     private static final String BLOB_NAME = "media.db";
 
-    private static final int DEFAULT_IMAGE_WIDTH = 720;
+    public static final int DEFAULT_IMAGE_WIDTH = 1080;
 
     public static void unmount() {
         VirtualFileSystem.get().unmount();
@@ -308,9 +308,20 @@ public class SecureMediaStore {
         return vfsUri(targetPath);
     }
 
+    public static InputStream openInputStream (Context context, Uri uri) throws FileNotFoundException {
+        InputStream is;
+
+        if (uri.getScheme() != null && uri.getScheme().equals("vfs"))
+            is = new info.guardianproject.iocipher.FileInputStream(uri.getPath());
+        else
+            is = context.getContentResolver().openInputStream(uri);
+
+
+        return is;
+    }
     public static Bitmap getThumbnailFile(Context context, Uri uri, int thumbnailSize) throws IOException {
 
-        InputStream is = context.getContentResolver().openInputStream(uri);
+        InputStream is = openInputStream(context, uri);
 
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
@@ -326,15 +337,15 @@ public class SecureMediaStore {
                 : options.outWidth;
 
         is.close();
-        is = context.getContentResolver().openInputStream(uri);
-        
+        is = openInputStream(context, uri);
+
         BitmapFactory.Options opts = new BitmapFactory.Options();
         opts.inSampleSize = calculateInSampleSize(options, thumbnailSize, thumbnailSize);
 
         Bitmap scaledBitmap = BitmapFactory.decodeStream(is, null, opts);
         is.close();
 
-        ExifInterface exif = new ExifInterface(context.getContentResolver().openInputStream(uri));
+        ExifInterface exif = new ExifInterface(openInputStream(context,uri));
         int orientationType = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
         int orientationD  = 0;
         if (orientationType == ExifInterface.ORIENTATION_ROTATE_90)

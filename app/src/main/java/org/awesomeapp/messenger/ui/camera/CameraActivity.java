@@ -1,5 +1,6 @@
 package org.awesomeapp.messenger.ui.camera;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Camera;
 import android.graphics.Matrix;
@@ -230,6 +231,9 @@ public class CameraActivity extends AppCompatActivity {
 
         try {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+            bitmap = getResizedBitmap(bitmap,SecureMediaStore.DEFAULT_IMAGE_WIDTH,SecureMediaStore.DEFAULT_IMAGE_WIDTH);
+
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100 /*ignored for JPG*/, bos);
             ByteArrayInputStream bs = new ByteArrayInputStream(bos.toByteArray());
 
@@ -243,11 +247,32 @@ public class CameraActivity extends AppCompatActivity {
                     System.currentTimeMillis(), Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED,
                     0, offerId, mimeType);
 
+            Intent data = new Intent();
+            data.setData(vfsUri);
+            setResult(RESULT_OK,data);
+            finish();
+
         }
         catch (IOException ioe)
         {
             Log.e(ImApp.LOG_TAG,"error importing photo",ioe);
         }
+    }
+
+    public Bitmap getResizedBitmap(Bitmap bm, int maxWidth, int maxHeight) {
+
+        float scale = Math.min(((float)maxHeight / bm.getWidth()), ((float)maxWidth / bm.getHeight()));
+
+        // CREATE A MATRIX FOR THE MANIPULATION
+        Matrix matrix = new Matrix();
+        // RESIZE THE BIT MAP
+        matrix.postScale(scale, scale);
+
+        // "RECREATE" THE NEW BITMAP
+        Bitmap resizedBitmap = Bitmap.createBitmap(
+                bm, 0, 0, bm.getWidth(), bm.getHeight(), matrix, false);
+        bm.recycle();
+        return resizedBitmap;
     }
 
 }

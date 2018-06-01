@@ -58,6 +58,7 @@ import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.model.Presence;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.service.IChatSession;
+import org.awesomeapp.messenger.ui.camera.CameraActivity;
 import org.awesomeapp.messenger.ui.widgets.ShareRequest;
 import org.awesomeapp.messenger.util.SecureMediaStore;
 import org.awesomeapp.messenger.util.SystemServices;
@@ -484,6 +485,7 @@ public class ConversationDetailActivity extends BaseActivity {
         }
         else {
 
+            /**
             // create Intent to take a picture and return control to the calling application
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             File photo = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), "cs_" + new Date().getTime() + ".jpg");
@@ -496,6 +498,10 @@ public class ConversationDetailActivity extends BaseActivity {
                     mLastPhoto);
 
             // start the image capture Intent
+            startActivityForResult(intent, ConversationDetailActivity.REQUEST_TAKE_PICTURE);
+             **/
+
+            Intent intent = new Intent(this, CameraActivity.class);
             startActivityForResult(intent, ConversationDetailActivity.REQUEST_TAKE_PICTURE);
         }
     }
@@ -727,13 +733,22 @@ public class ConversationDetailActivity extends BaseActivity {
             }
             else if (requestCode == REQUEST_TAKE_PICTURE)
             {
-                if (mLastPhoto != null) {
-                    boolean deleteFile = true;
-                    boolean resizeImage = true;
-                    boolean importContent = true;
 
-                    handleSendDelete(mLastPhoto,"image/jpeg", deleteFile, resizeImage, importContent);
-                    mLastPhoto = null;
+                if (resultIntent.getData() != null)
+                {
+                    ShareRequest request = new ShareRequest();
+                    request.deleteFile = false;
+                    request.resizeImage = false;
+                    request.importContent = false;
+                    request.media = resultIntent.getData();
+                    request.mimeType = "image/jpeg";
+
+                    try {
+                        mConvoView.setMediaDraft(request);
+                    }
+                    catch (Exception e){
+                        Log.w(ImApp.LOG_TAG,"error setting media draft",e);
+                    }
                 }
 
             }
