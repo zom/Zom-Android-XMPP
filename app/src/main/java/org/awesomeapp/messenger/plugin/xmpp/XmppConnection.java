@@ -973,7 +973,7 @@ public class XmppConnection extends ImConnection {
 
             try {
 
-                if (mConnection == null || (!mConnection.isConnected()))
+                if (mConnection == null || (!mConnection.isAuthenticated()))
                     return;
 
                 mBookmarkManager.addBookmarkedConference(address.getUser(),JidCreate.entityBareFrom(chatRoomJid),true,null,null);
@@ -4081,7 +4081,7 @@ public class XmppConnection extends ImConnection {
                 debug(TAG,"Reconnection failed",e);
             }
         });
-        mReconnectionManager.enableAutomaticReconnection();
+        mReconnectionManager.disableAutomaticReconnection();
 
 
         try {
