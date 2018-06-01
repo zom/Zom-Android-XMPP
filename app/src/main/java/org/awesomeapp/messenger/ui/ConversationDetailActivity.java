@@ -502,6 +502,7 @@ public class ConversationDetailActivity extends BaseActivity {
              **/
 
             Intent intent = new Intent(this, CameraActivity.class);
+            intent.putExtra(CameraActivity.SETTING_ONE_AND_DONE,true);
             startActivityForResult(intent, ConversationDetailActivity.REQUEST_TAKE_PICTURE);
         }
     }

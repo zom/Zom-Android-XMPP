@@ -200,4 +200,8 @@ dependencies {
     //built in camera now!
     //https://github.com/siralam/CameraViewPlus
     implementation 'com.asksira.android:cameraviewplus:0.9.0'
+
+    //from here: https://github.com/guardianproject/proofmode
+    implementation 'org.witness:android-libproofmode:0.0.2'
+    implementation 'com.eternitywall:opentimestamps:0.1.14.1'
 }

@@ -147,18 +147,9 @@ public class GalleryActivity extends BaseActivity {
             }
         }
         else {
-            /**
-            // create Intent to take a picture and return control to the calling application
-            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            File photo = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), "cs_" + new Date().getTime() + ".jpg");
-            mLastPhoto = Uri.fromFile(photo);
-            intent.putExtra(MediaStore.EXTRA_OUTPUT,
-                    mLastPhoto);
 
-            // start the image capture Intent
-            startActivityForResult(intent, ConversationDetailActivity.REQUEST_TAKE_PICTURE);
-             **/
             Intent intent = new Intent(this, CameraActivity.class);
+            intent.putExtra(CameraActivity.SETTING_ONE_AND_DONE,false);
             startActivityForResult(intent, ConversationDetailActivity.REQUEST_TAKE_PICTURE);
         }
     }

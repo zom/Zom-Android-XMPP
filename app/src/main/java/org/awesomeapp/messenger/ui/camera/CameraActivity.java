@@ -39,6 +39,9 @@ public class CameraActivity extends AppCompatActivity {
     OrientationEventListener mOrientationEventListener;
     int mLastOrientation = -1;
 
+    boolean mOneAndDone = true;
+    public final static String SETTING_ONE_AND_DONE = "oad";
+
     public static final int ORIENTATION_PORTRAIT = 0;
     public static final int ORIENTATION_LANDSCAPE = 1;
     public static final int ORIENTATION_PORTRAIT_REVERSE = 2;
@@ -61,6 +64,8 @@ public class CameraActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
+
+        mOneAndDone = getIntent().getBooleanExtra(SETTING_ONE_AND_DONE,true);
 
         setTitle("");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -247,10 +252,14 @@ public class CameraActivity extends AppCompatActivity {
                     System.currentTimeMillis(), Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED,
                     0, offerId, mimeType);
 
-            Intent data = new Intent();
-            data.setData(vfsUri);
-            setResult(RESULT_OK,data);
-            finish();
+            ProofMode.generateProof(this, vfsUri);
+
+            if (mOneAndDone) {
+                Intent data = new Intent();
+                data.setData(vfsUri);
+                setResult(RESULT_OK, data);
+                finish();
+            }
 
         }
         catch (IOException ioe)

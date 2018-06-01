@@ -94,6 +94,7 @@ import im.zom.messenger.R;
 import org.awesomeapp.messenger.util.Languages;
 import org.ironrabbit.type.CustomTypefaceManager;
 import org.jivesoftware.smackx.omemo.OmemoInitializer;
+import org.witness.proofmode.ProofMode;
 
 public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
@@ -229,7 +230,6 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
         super.onCreate();
         Preferences.setup(this);
         initChannel();
-
 
         Languages.setup(MainActivity.class, R.string.use_system_default);
         Languages.setLanguage(this, Preferences.getLanguage(), false);
