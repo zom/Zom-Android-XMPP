@@ -221,6 +221,7 @@ public class XmppConnection extends ImConnection {
     private BookmarkManager mBookmarkManager;
     private PrivateDataManager mPrivateManager;
     private ReconnectionManager mReconnectionManager;
+    private PingManager mPingManager;
 
     private Contact mUser;
     private BareJid mUserJid;
@@ -2571,6 +2572,9 @@ public class XmppConnection extends ImConnection {
 
             try {
                 //   mStreamHandler.quickShutdown();
+                if (mPingManager != null)
+                    mPingManager.setPingInterval(-1);
+
                 mConnection.disconnect();
             } catch (Throwable th) {
                 // ignore
@@ -4060,12 +4064,19 @@ public class XmppConnection extends ImConnection {
         mBookmarkManager = BookmarkManager.getBookmarkManager(mConnection);
         mPrivateManager = PrivateDataManager.getInstanceFor(mConnection);
 
+        if (mPingManager != null)
+        {
+            mPingManager.setPingInterval(-1);
+        }
+
+        mPingManager = PingManager.getInstanceFor(mConnection);
+        mPingManager.setPingInterval(60);
+        mPingManager.pingServerIfNecessary();
 
         if (mReconnectionManager != null) {
             mReconnectionManager.abortPossiblyRunningReconnection();
             mReconnectionManager.disableAutomaticReconnection();
         }
-
 
         mReconnectionManager = ReconnectionManager.getInstanceFor(mConnection);
         mReconnectionManager.setReconnectionPolicy(ReconnectionManager.ReconnectionPolicy.RANDOM_INCREASING_DELAY);
