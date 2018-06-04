@@ -1188,10 +1188,11 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
             boolean wasMessageSeen = false;
             ArrayList<String> mimeTypes = new ArrayList<>();
+            int attachIdx = 0;
 
             for (String mediaLink : mediaLinks)
             {
-               String resultMimeType = downloadMedia (mediaLink, msg.getID(), nickname);
+               String resultMimeType = downloadMedia (mediaLink, msg.getID() + "-" + attachIdx++, nickname);
                mimeTypes.add(resultMimeType);
             }
 
@@ -2067,7 +2068,6 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
                     insertOrUpdateChat(result);
 
-                 //   Imps.deleteMessageInDb(service.getContentResolver(),msgId);
                     Uri messageUri = Imps.insertMessageInDb(service.getContentResolver(),
                             mIsGroupChat, getId(),
                             true, nickname,

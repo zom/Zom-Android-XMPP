@@ -53,7 +53,7 @@ public class Downloader {
             connection.connect();
             mMimeType = connection.getContentType();
 
-            if (mMimeType != null && (!mMimeType.startsWith("text"))) {
+            if (mMimeType != null) {
                 OutputStream os = setupOutputStream(storageStream, url.getRef());
                 byte[] buffer = new byte[4096];
                 int count;
