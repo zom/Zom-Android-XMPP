@@ -68,6 +68,7 @@ import java.util.UUID;
 import im.zom.messenger.R;
 
 import static org.awesomeapp.messenger.ui.ContactsPickerActivity.EXTRA_EXCLUDED_CONTACTS;
+import static org.awesomeapp.messenger.ui.camera.ProofMode.PROOF_FILE_TAG;
 
 public class ImUrlActivity extends Activity {
     private static final String TAG = "ImUrlActivity";
@@ -765,12 +766,11 @@ public class ImUrlActivity extends Activity {
 
 
                         String offerId = UUID.randomUUID().toString();
-                      //  Log.i(TAG, "mSendUrl " +mSendUrl);
-                        Uri vfsUri = null;
 
                         if (SecureMediaStore.isVfsUri(mSendUri)) {
-                            vfsUri = mSendUri;
-                            boolean sent = session.offerData(offerId, vfsUri.toString(),mSendType );
+
+
+                            boolean sent = session.offerData(offerId, mSendUri.toString(),mSendType );
 
                             if (sent)
                                 return;
@@ -780,6 +780,7 @@ public class ImUrlActivity extends Activity {
                             InputStream is = getContentResolver().openInputStream(mSendUri);
                             String fileName = mSendUri.getLastPathSegment();
                             FileInfo importInfo = SystemServices.getFileInfoFromURI(this, mSendUri);
+                            Uri vfsUri = null;
 
                             if (!TextUtils.isEmpty(importInfo.type)) {
                                 if (importInfo.type.startsWith("image"))

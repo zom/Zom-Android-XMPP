@@ -46,9 +46,11 @@ import org.awesomeapp.messenger.model.ImErrorInfo;
 import org.awesomeapp.messenger.model.MessageListener;
 import org.awesomeapp.messenger.model.Presence;
 import org.awesomeapp.messenger.provider.Imps;
+import org.awesomeapp.messenger.ui.camera.ProofMode;
 import org.awesomeapp.messenger.util.SecureMediaStore;
 import org.awesomeapp.messenger.util.SystemServices;
 
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -90,6 +92,7 @@ import android.webkit.URLUtil;
 import net.java.otr4j.api.SessionStatus;
 
 import static cz.msebera.android.httpclient.conn.ssl.SSLConnectionSocketFactory.TAG;
+import static org.awesomeapp.messenger.ui.camera.ProofMode.PROOF_FILE_TAG;
 
 public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSession.Stub {
 
@@ -470,8 +473,11 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         java.io.InputStream fis = null;
         long fileLength = -1;
 
+        boolean isVfs = false;
+
         if (mediaUri.getScheme() != null &&
                 mediaUri.getScheme().equals("vfs")) {
+            isVfs = true;
             info.guardianproject.iocipher.File fileLocal = new info.guardianproject.iocipher.File(mediaUri.getPath());
             if (fileLocal.exists()) {
                 try {
@@ -533,6 +539,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
         sendMediaMessageAsync(mediaPath, mimeType, fileName, fis, fileLength);
 
+
         return true;
 
     }
@@ -590,9 +597,28 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                 String resultUrl = mConnection.publishFile(sendFileName, mimeType, fileLength, fis, doEncryption, listener);
 
                 //make sure result is valid and starts with https, if so, send it!
-                if (!TextUtils.isEmpty(resultUrl))
-                    sendMediaMessage(mediaPath, resultUrl, msgMedia);
+                if (!TextUtils.isEmpty(resultUrl)) {
 
+                    Uri proofUri = Uri.parse(mediaPath + PROOF_FILE_TAG);
+                    File fileProof =new info.guardianproject.iocipher.File(proofUri.getPath());
+                    if (fileProof.exists()) {
+                        String proofUrl = null;
+                        try {
+                            proofUrl = mConnection.publishFile(sendFileName + ProofMode.PROOF_FILE_TAG, ProofMode.PROOF_MIME_TYPE, fileProof.length(), new info.guardianproject.iocipher.FileInputStream(fileProof), doEncryption, new UploadProgressListener() {
+                                @Override
+                                public void onUploadProgress(long l, long l1) {
+                                    //do nada
+                                }
+                            });
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        }
+                        resultUrl += ' ' + proofUrl;
+                    }
+
+
+                    sendMediaMessage(mediaPath, resultUrl, msgMedia);
+                }
             }
         }.start();
 
@@ -830,18 +856,18 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
 
 
-    String checkForLinkedMedia (String jid, String message, boolean allowWebDownloads)
+    ArrayList<String> checkForLinkedMedia (String jid, String message, boolean allowWebDownloads)
     {
+        ArrayList<String> results = new ArrayList<>();
+
         Matcher matcher = aesGcmUrlPattern.matcher(message);
 
-        //if we match the aesgcm crypto pattern, then it is a match
-        if (matcher.find())
+        while (matcher.find())
         {
-            int matchStart = matcher.start(1);
-            int matchEnd = matcher.end();
-            return message.substring(matchStart,matchEnd);
+            results.add(matcher.group());
         }
-        else if (allowWebDownloads)
+
+        if (allowWebDownloads)
         {
             //if someone sends us a random URL, only get it if it is from the same host as the jabberid
             matcher = urlPattern.matcher(message);
@@ -858,7 +884,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                         domain = domain.replace("conference.","");
 
                     if (urlDownload.contains(domain)) {
-                        return urlDownload;
+                        results.add(urlDownload);
                     }
                 }
                 catch (XmppStringprepException se)
@@ -868,7 +894,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             }
         }
 
-        return null;
+        return results;
 
     }
 
@@ -1156,23 +1182,22 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
             long time = msg.getDateTime().getTime();
 
             boolean allowWebDownloads = true;
-            String mediaLink = checkForLinkedMedia(username, body, allowWebDownloads);
-            boolean downloaded = false;
+            ArrayList<String> mediaLinks = checkForLinkedMedia(username, body, allowWebDownloads);
 
             boolean wasMessageSeen = false;
-            String mimeType = null;
+            ArrayList<String> mimeTypes = new ArrayList<>();
 
-            if (mediaLink != null) {
-               mimeType = downloadMedia (mediaLink, msg.getID(), nickname);
-               downloaded = !TextUtils.isEmpty(mimeType);
-
+            for (String mediaLink : mediaLinks)
+            {
+               String resultMimeType = downloadMedia (mediaLink, msg.getID(), nickname);
+               mimeTypes.add(resultMimeType);
             }
 
-            if (downloaded) {
+            if (mimeTypes.size() > 0) {
 
                 //update the notification message
 
-                String displayType = mimeType.split("/")[0];
+                String displayType = mimeTypes.get(0).split("/")[0];
                 if (displayType.equals("audio"))
                 {
                     displayType += "🔊";

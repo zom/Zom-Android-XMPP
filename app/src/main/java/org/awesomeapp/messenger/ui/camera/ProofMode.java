@@ -32,9 +32,10 @@ import timber.log.Timber;
 
 public class ProofMode {
 
-    private final static String PROOF_FILE_TAG = ".proof.csv";
-    private final static String OPENPGP_FILE_TAG = ".asc";
+    public final static String PROOF_FILE_TAG = ".proof.csv";
+    public final static String OPENPGP_FILE_TAG = ".asc";
     private final static String PROOF_BASE_FOLDER = "/proofmode";
+    public final static String PROOF_MIME_TYPE = "text/csv";
 
     static {
         Security.addProvider(new BouncyCastleProvider());
@@ -87,52 +88,30 @@ public class ProofMode {
     {
 
         File fileMedia = new File(mediaPath);
-        File fileFolder = getHashStorageDir(hash);
 
-        if (fileFolder != null) {
+        File fileMediaSig = new File(mediaPath + OPENPGP_FILE_TAG);
+        File fileMediaProof = new File(mediaPath + PROOF_FILE_TAG);
+        File fileMediaProofSig = new File(mediaPath + PROOF_FILE_TAG + OPENPGP_FILE_TAG);
 
-            File fileMediaSig = new File(fileFolder, fileMedia.getName() + OPENPGP_FILE_TAG);
-            File fileMediaProof = new File(fileFolder, fileMedia.getName() + PROOF_FILE_TAG);
-            File fileMediaProofSig = new File(fileFolder, fileMedia.getName() + PROOF_FILE_TAG + OPENPGP_FILE_TAG);
+        try {
 
-            try {
+            //sign the media file
+            if (!fileMediaSig.exists())
+                PgpUtils.getInstance(context).createDetachedSignature(new FileInputStream(fileMedia), new FileOutputStream(fileMediaSig), PgpUtils.DEFAULT_PASSWORD);
 
-                //sign the media file
-                if (!fileMediaSig.exists())
-                    PgpUtils.getInstance(context).createDetachedSignature(new FileInputStream(fileMedia), new FileOutputStream(fileMediaSig), PgpUtils.DEFAULT_PASSWORD);
+            //add data to proof csv and sign again
+            boolean writeHeaders = !fileMediaProof.exists();
+            writeTextToFile(context, fileMediaProof, buildProof(context, mediaPath, writeHeaders, showDeviceIds, showLocation, showMobileNetwork, safetyCheckResult, isBasicIntegrity, isCtsMatch, notarizeTimestamp, notes));
 
-                //add data to proof csv and sign again
-                boolean writeHeaders = !fileMediaProof.exists();
-                writeTextToFile(context, fileMediaProof, buildProof(context, mediaPath, writeHeaders, showDeviceIds, showLocation, showMobileNetwork, safetyCheckResult, isBasicIntegrity, isCtsMatch, notarizeTimestamp, notes));
-
-                if (fileMediaProof.exists()) {
-                    //sign the proof file again
-                    PgpUtils.getInstance(context).createDetachedSignature(new FileInputStream(fileMediaProof), new FileOutputStream(fileMediaProofSig), PgpUtils.DEFAULT_PASSWORD);
-                }
-
-            } catch (Exception e) {
-                Log.e("MediaWatcher", "Error signing media or proof", e);
+            if (fileMediaProof.exists()) {
+                //sign the proof file again
+                PgpUtils.getInstance(context).createDetachedSignature(new FileInputStream(fileMediaProof), new FileOutputStream(fileMediaProofSig), PgpUtils.DEFAULT_PASSWORD);
             }
+
+        } catch (Exception e) {
+            Log.e("MediaWatcher", "Error signing media or proof", e);
         }
-    }
 
-    public static File getHashStorageDir(String hash) {
-
-        // Get the directory for the user's public pictures directory.
-        File fileParentDir = new File(PROOF_BASE_FOLDER);
-        File fileHashDir = new File(fileParentDir, hash);
-        fileHashDir.mkdirs();
-
-        return fileHashDir;
-    }
-
-    /* Checks if external storage is available for read and write */
-    public boolean isExternalStorageWritable() {
-        String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state)) {
-            return true;
-        }
-        return false;
     }
 
     private static String buildProof (Context context, String mediaPath, boolean writeHeaders, boolean showDeviceIds, boolean showLocation, boolean showMobileNetwork, String safetyCheckResult, boolean isBasicIntegrity, boolean isCtsMatch, long notarizeTimestamp, String notes)
