@@ -358,7 +358,6 @@ public class SecureMediaStore {
         if (orientationD != 0)
             scaledBitmap = rotateBitmap(scaledBitmap, orientationD);
 
-
         return scaledBitmap;
     }
 

@@ -199,6 +199,13 @@
         android:defaultValue="false"
         />
 
+    <CheckBoxPreference
+        android:key="prefProofMode"
+        android:title="@string/pref_enable_proof_mode_title"
+        android:summary="@string/pref_enable_proof_mode_summary"
+        android:defaultValue="false"
+        />
+
     <EditTextPreference
         android:key="pref_proxy_server_host"
         android:title="@string/pref_proxy_server_host_title"

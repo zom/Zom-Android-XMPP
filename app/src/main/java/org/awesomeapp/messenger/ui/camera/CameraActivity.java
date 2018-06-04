@@ -19,6 +19,7 @@ import com.google.android.cameraview.CameraView;
 import com.google.android.cameraview.CameraViewImpl;
 
 import org.awesomeapp.messenger.ImApp;
+import org.awesomeapp.messenger.Preferences;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.util.SecureMediaStore;
 import org.awesomeapp.messenger.util.SystemServices;
@@ -252,7 +253,8 @@ public class CameraActivity extends AppCompatActivity {
                     System.currentTimeMillis(), Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED,
                     0, offerId, mimeType);
 
-            ProofMode.generateProof(this, vfsUri);
+            if (Preferences.useProofMode())
+                ProofMode.generateProof(this, vfsUri);
 
             if (mOneAndDone) {
                 Intent data = new Intent();

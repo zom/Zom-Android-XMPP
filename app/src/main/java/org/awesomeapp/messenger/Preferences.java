@@ -78,6 +78,8 @@ public class Preferences {
 
     private final static String BLOCK_SCREENSHOTS = "prefBlockScreenshots";
 
+    private final static String USE_PROOF_MODE = "prefProofMode";
+
     private static Context context;
     private static SharedPreferences preferences;
     private static Preferences instance;
@@ -293,4 +295,8 @@ public class Preferences {
     public static void checkedBatteryOptimizations () {
         preferences.edit().putBoolean("prefCheckBattery", false).apply();
     }
+
+    public static boolean useProofMode () { return preferences.getBoolean(USE_PROOF_MODE, false);}
+
+    public static void setUseProofMode (boolean useProofMode) { preferences.edit().putBoolean(USE_PROOF_MODE,useProofMode).apply(); }
 }

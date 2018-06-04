@@ -17,6 +17,7 @@
 
 package org.awesomeapp.messenger.service.adapters;
 
+import org.awesomeapp.messenger.Preferences;
 import  org.awesomeapp.messenger.crypto.IOtrChatSession;
 import org.awesomeapp.messenger.crypto.otr.OtrChatListener;
 import org.awesomeapp.messenger.crypto.otr.OtrChatManager;
@@ -599,23 +600,24 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                 //make sure result is valid and starts with https, if so, send it!
                 if (!TextUtils.isEmpty(resultUrl)) {
 
-                    Uri proofUri = Uri.parse(mediaPath + PROOF_FILE_TAG);
-                    File fileProof =new info.guardianproject.iocipher.File(proofUri.getPath());
-                    if (fileProof.exists()) {
-                        String proofUrl = null;
-                        try {
-                            proofUrl = mConnection.publishFile(sendFileName + ProofMode.PROOF_FILE_TAG, ProofMode.PROOF_MIME_TYPE, fileProof.length(), new info.guardianproject.iocipher.FileInputStream(fileProof), doEncryption, new UploadProgressListener() {
-                                @Override
-                                public void onUploadProgress(long l, long l1) {
-                                    //do nada
-                                }
-                            });
-                        } catch (FileNotFoundException e) {
-                            e.printStackTrace();
+                    if (Preferences.useProofMode()) {
+                        Uri proofUri = Uri.parse(mediaPath + PROOF_FILE_TAG);
+                        File fileProof = new info.guardianproject.iocipher.File(proofUri.getPath());
+                        if (fileProof.exists()) {
+                            String proofUrl = null;
+                            try {
+                                proofUrl = mConnection.publishFile(sendFileName + ProofMode.PROOF_FILE_TAG, ProofMode.PROOF_MIME_TYPE, fileProof.length(), new info.guardianproject.iocipher.FileInputStream(fileProof), doEncryption, new UploadProgressListener() {
+                                    @Override
+                                    public void onUploadProgress(long l, long l1) {
+                                        //do nada
+                                    }
+                                });
+                            } catch (FileNotFoundException e) {
+                                e.printStackTrace();
+                            }
+                            resultUrl += ' ' + proofUrl;
                         }
-                        resultUrl += ' ' + proofUrl;
                     }
-
 
                     sendMediaMessage(mediaPath, resultUrl, msgMedia);
                 }

@@ -207,4 +207,8 @@
   <string name="enter_your_friends_account">Enter your friend\'s full Zom account. Yours is %s</string>
   <string name="send_your_invite_link">Send your invite link</string>
   <string name="standing_next_to_them">Standing next to them?</string>
+
+  <string name="pref_enable_proof_mode_title">Photo Verification</string>
+  <string name="pref_enable_proof_mode_summary">Add extra proof data to your photos to make it easier for people to verify the authenticity</string>
+
 </resources>
