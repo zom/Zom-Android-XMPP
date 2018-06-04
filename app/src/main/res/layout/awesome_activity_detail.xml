@@ -272,14 +272,21 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:layout_gravity="left"
             android:layout_margin="3dp"
-            android:background="@android:color/transparent"
+            android:background="#CCCCCCCC"
             android:id="@+id/mediaPreviewContainer"
             android:layout_weight="2"
             android:visibility="gone"
             >
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|end"
+                android:src="@drawable/ic_menu_close"
+                android:id="@+id/mediaPreviewCancel"
+                />
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="200dp"

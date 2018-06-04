@@ -55,6 +55,7 @@ import android.view.WindowManager;
 import android.widget.TextView;
 
 import org.awesomeapp.messenger.ImApp;
+import org.awesomeapp.messenger.Preferences;
 import org.awesomeapp.messenger.model.Presence;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.service.IChatSession;
@@ -485,25 +486,29 @@ public class ConversationDetailActivity extends BaseActivity {
         }
         else {
 
-            /**
-            // create Intent to take a picture and return control to the calling application
-            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            File photo = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), "cs_" + new Date().getTime() + ".jpg");
+           if (Preferences.useProofMode())
+           {
+               Intent intent = new Intent(this, CameraActivity.class);
+               intent.putExtra(CameraActivity.SETTING_ONE_AND_DONE,true);
+               startActivityForResult(intent, ConversationDetailActivity.REQUEST_TAKE_PICTURE);
+           }
+           else {
+               // create Intent to take a picture and return control to the calling application
+               Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+               File photo = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), "cs_" + new Date().getTime() + ".jpg");
 
-            mLastPhoto = FileProvider.getUriForFile(this,
-                    BuildConfig.APPLICATION_ID + ".provider",
-                    photo);
+               mLastPhoto = FileProvider.getUriForFile(this,
+                       BuildConfig.APPLICATION_ID + ".provider",
+                       photo);
 
-            intent.putExtra(MediaStore.EXTRA_OUTPUT,
-                    mLastPhoto);
+               intent.putExtra(MediaStore.EXTRA_OUTPUT,
+                       mLastPhoto);
 
-            // start the image capture Intent
-            startActivityForResult(intent, ConversationDetailActivity.REQUEST_TAKE_PICTURE);
-             **/
+               // start the image capture Intent
+               startActivityForResult(intent, ConversationDetailActivity.REQUEST_TAKE_PICTURE);
 
-            Intent intent = new Intent(this, CameraActivity.class);
-            intent.putExtra(CameraActivity.SETTING_ONE_AND_DONE,true);
-            startActivityForResult(intent, ConversationDetailActivity.REQUEST_TAKE_PICTURE);
+           }
+
         }
     }
 
@@ -734,22 +739,29 @@ public class ConversationDetailActivity extends BaseActivity {
             }
             else if (requestCode == REQUEST_TAKE_PICTURE)
             {
+                ShareRequest request = new ShareRequest();
 
-                if (resultIntent.getData() != null)
-                {
-                    ShareRequest request = new ShareRequest();
+                if (Preferences.useProofMode()) {
                     request.deleteFile = false;
                     request.resizeImage = false;
                     request.importContent = false;
                     request.media = resultIntent.getData();
-                    request.mimeType = "image/jpeg";
+                }
+                else
+                {
+                    request.deleteFile = false;
+                    request.resizeImage = true;
+                    request.importContent = true;
+                    request.media = mLastPhoto;
+                }
 
-                    try {
-                        mConvoView.setMediaDraft(request);
-                    }
-                    catch (Exception e){
-                        Log.w(ImApp.LOG_TAG,"error setting media draft",e);
-                    }
+                request.mimeType = "image/jpeg";
+
+                try {
+                    mConvoView.setMediaDraft(request);
+                }
+                catch (Exception e){
+                    Log.w(ImApp.LOG_TAG,"error setting media draft",e);
                 }
 
             }

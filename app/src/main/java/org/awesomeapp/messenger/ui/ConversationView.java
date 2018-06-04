@@ -906,6 +906,13 @@ public class ConversationView {
 
         });
 
+        mActivity.findViewById(R.id.mediaPreviewCancel).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                clearMediaDraft();
+
+            }
+        });
 
         mActivity.findViewById(R.id.btnAttachPicture).setOnClickListener(new View.OnClickListener() {
 
@@ -2143,6 +2150,12 @@ public class ConversationView {
         mComposeMessage.setText(" ");
         toggleInputMode();
 
+    }
+
+    void clearMediaDraft () {
+        mShareDraft = null;
+        mComposeMessage.setText("");
+        mActivity.findViewById(R.id.mediaPreviewContainer).setVisibility(View.GONE);
     }
 
     void deleteMessage (String packetId, String message)

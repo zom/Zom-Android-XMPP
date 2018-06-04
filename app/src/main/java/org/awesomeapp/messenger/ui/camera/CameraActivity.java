@@ -29,6 +29,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Date;
 import java.util.UUID;
+import java.util.concurrent.Executor;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import im.zom.messenger.R;
 
@@ -56,10 +60,16 @@ public class CameraActivity extends AppCompatActivity {
 
             if (msg.what == 1)
             {
-                Toast.makeText(CameraActivity.this,"\uD83D\uDCF7",Toast.LENGTH_SHORT).show();
+              //  Toast.makeText(CameraActivity.this,"\uD83D\uDCF7",Toast.LENGTH_SHORT).show();
+            }
+            else if (msg.what == 2)
+            {
+                mCameraView.stop();
             }
         }
     };
+
+    private Executor mExec = new ThreadPoolExecutor(1,3,60L, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,14 +87,18 @@ public class CameraActivity extends AppCompatActivity {
             @Override
             public void onPictureTaken(final Bitmap bitmap, final int rotationDegrees) {
 
-                new Thread ()
+                mExec.execute(new Runnable()
                 {
                     public void run ()
                     {
+
+                        if (mOneAndDone)
+                            mHandler.sendEmptyMessage(2);
+
                         storeBitmap(rotate(bitmap,rotationDegrees));
 
                     }
-                }.start();
+                });
 
                 mHandler.sendEmptyMessage(1);
             }
@@ -225,7 +239,10 @@ public class CameraActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
-        mCameraView.stop();
+
+        if (mCameraView.isCameraOpened())
+            mCameraView.stop();
+
         super.onPause();
     }
 
