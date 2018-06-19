@@ -260,6 +260,7 @@ public class RemoteImService extends Service implements ImService, ICacheWordSub
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void scheduleNetworkJob() {
+
         JobInfo myJob = new JobInfo.Builder(0, new ComponentName(this, NetworkSchedulerService.class))
                 .setMinimumLatency(1000)
                 .setOverrideDeadline(2000)
@@ -268,6 +269,15 @@ public class RemoteImService extends Service implements ImService, ICacheWordSub
                 .build();
 
         JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        jobScheduler.schedule(myJob);
+
+        myJob = new JobInfo.Builder(0, new ComponentName(this, NetworkSchedulerService.class))
+                .setMinimumLatency(1000)
+                .setOverrideDeadline(2000)
+                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_METERED)
+                .setPersisted(true)
+                .build();
+
         jobScheduler.schedule(myJob);
     }
 
