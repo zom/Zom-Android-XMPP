@@ -56,7 +56,6 @@ public class CustomTypefaceTextView extends TextView {
             final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
             themeColorText = settings.getInt("themeColorText", -1);
 
-
             mInit = true;
         }
 
