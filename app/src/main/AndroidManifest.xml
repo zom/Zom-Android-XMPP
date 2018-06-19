@@ -338,7 +338,7 @@
             </intent-filter>
         </receiver>
         <receiver
-            android:name="org.awesomeapp.messenger.service.BootCompletedListener"
+            android:name="org.awesomeapp.messenger.service.BootCompletedReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -456,6 +456,10 @@
         <service
             android:name="org.awesomeapp.messenger.service.NetworkSchedulerService"
             android:exported="true"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+
+        <service
+            android:name="org.awesomeapp.messenger.service.GeneralJobIntentService"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <activity
