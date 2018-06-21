@@ -20,6 +20,7 @@ package org.awesomeapp.messenger.ui;
 import im.zom.messenger.R;
 
 import org.awesomeapp.messenger.ImApp;
+import org.awesomeapp.messenger.model.Server;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.service.ImServiceConstants;
 import org.awesomeapp.messenger.tasks.MigrateAccountTask;
@@ -121,7 +122,7 @@ public class AccountSettingsActivity extends PreferenceActivity implements
 
             mIsMigrating = true;
 
-            String domain = "home.zom.im";
+            Server[] servers = Server.getServers(this);
             final ProgressDialog progress = new ProgressDialog(this);
             progress.setIndeterminate(true);
             progress.setTitle(R.string.upgrade_progress_action);
@@ -144,7 +145,7 @@ public class AccountSettingsActivity extends PreferenceActivity implements
 
                 }
             });
-            maTask.execute(domain);
+            maTask.execute(servers);
         }
 
     }

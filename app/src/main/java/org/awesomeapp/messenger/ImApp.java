@@ -53,6 +53,7 @@ import net.sqlcipher.database.SQLiteDatabase;
 import org.awesomeapp.messenger.crypto.otr.OtrAndroidKeyManagerImpl;
 import org.awesomeapp.messenger.model.ImConnection;
 import org.awesomeapp.messenger.model.ImErrorInfo;
+import org.awesomeapp.messenger.model.Server;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.provider.ImpsProvider;
 import org.awesomeapp.messenger.service.Broadcaster;
@@ -1121,7 +1122,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
     }
 
-    public boolean doUpgrade (Activity activity, String newDomain, MigrateAccountTask.MigrateAccountListener listener)
+    public boolean doUpgrade (Activity activity, MigrateAccountTask.MigrateAccountListener listener)
     {
 
         boolean result = false;
@@ -1147,23 +1148,10 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
                 long providerId = cursorProviders.getLong(0);
                 long accountId = cursorProviders.getLong(1);
-                String username = cursorProviders.getString(2);
-                String nickname = cursorProviders.getString(3);
                 boolean keepSignedIn = cursorProviders.getInt(4) != 0;
 
-                Cursor pCursor = getContentResolver().query(Imps.ProviderSettings.CONTENT_URI, new String[]{Imps.ProviderSettings.NAME, Imps.ProviderSettings.VALUE}, Imps.ProviderSettings.PROVIDER + "=?", new String[]{Long.toString(providerId)}, null);
-
-                Imps.ProviderSettings.QueryMap settings = new Imps.ProviderSettings.QueryMap(
-                        pCursor, getContentResolver(), providerId, false /* don't keep updated */, null /* no handler */);
-
-                username = username + '@' + settings.getDomain();
-
-                if (settings.getDomain().equalsIgnoreCase("dukgo.com") && keepSignedIn)
-                {
-                    new MigrateAccountTask(activity, this, providerId, accountId, listener).execute(newDomain);
-                }
-
-                settings.close();
+                if (keepSignedIn)
+                    new MigrateAccountTask(activity, this, providerId, accountId, listener).execute(Server.getServers(this));
 
             }
         }

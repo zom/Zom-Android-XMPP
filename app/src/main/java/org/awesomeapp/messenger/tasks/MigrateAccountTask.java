@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -20,6 +21,7 @@ import org.awesomeapp.messenger.crypto.otr.OtrAndroidKeyManagerImpl;
 import org.awesomeapp.messenger.model.Contact;
 import org.awesomeapp.messenger.model.ImConnection;
 import org.awesomeapp.messenger.model.ImErrorInfo;
+import org.awesomeapp.messenger.model.Server;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.service.IChatSession;
 import org.awesomeapp.messenger.service.IChatSessionManager;
@@ -49,10 +51,11 @@ import im.zom.messenger.R;
  * Created by n8fr8 on 5/1/17.
  */
 
-public class MigrateAccountTask extends AsyncTask<String, Void, OnboardingAccount> {
+public class MigrateAccountTask extends AsyncTask<Server, Void, OnboardingAccount> {
 
     Activity mContext;
     IImConnection mConn;
+    String mDomain;
     long mAccountId;
     long mProviderId;
     ImApp mApp;
@@ -76,11 +79,23 @@ public class MigrateAccountTask extends AsyncTask<String, Void, OnboardingAccoun
 
         mConn = app.getConnection(providerId, accountId);
 
+        Cursor cursor = context.getContentResolver().query(Imps.ProviderSettings.CONTENT_URI, new String[]{Imps.ProviderSettings.NAME, Imps.ProviderSettings.VALUE}, Imps.ProviderSettings.PROVIDER + "=?", new String[]{Long.toString(mProviderId)}, null);
+
+        if (cursor == null)
+            return;
+
+        Imps.ProviderSettings.QueryMap providerSettings = new Imps.ProviderSettings.QueryMap(
+                cursor, context.getContentResolver(), mProviderId, false, null);
+        mDomain = providerSettings.getDomain();
+        providerSettings.close();
+        if (!cursor.isClosed())
+            cursor.close();
+
         mContacts = new ArrayList<>();
     }
 
     @Override
-    protected OnboardingAccount doInBackground(String... newDomains) {
+    protected OnboardingAccount doInBackground(Server... newServers) {
 
         //get existing account username
         String nickname = Imps.Account.getNickname(mContext.getContentResolver(), mAccountId);
@@ -92,120 +107,114 @@ public class MigrateAccountTask extends AsyncTask<String, Void, OnboardingAccoun
         String fingerprint = keyMan.getFingerprint(keyPair.getPublic());
 
         //find or use provided new server/domain
-        String domain = newDomains[0];
+        for (Server newServer : newServers) {
 
-        //register account on new domain with same password
-        mNewAccount = registerNewAccount(nickname, username, password, domain, null);
+            if (mDomain.equals(newServer.domain))
+                continue; //don't migrate to the same server... to to =
 
-        if (mNewAccount == null) {
-
-            username = username + '.' + fingerprint.substring(fingerprint.length()-8,fingerprint.length()).toLowerCase();
-            mNewAccount = registerNewAccount(nickname, username, password, domain, null);
+            //register account on new domain with same password
+            mNewAccount = registerNewAccount(nickname, username, password, newServer.domain, newServer.server);
 
             if (mNewAccount == null)
-                return null;
-        }
+                continue; //try the next server
 
-        String newJabberId = mNewAccount.username + '@' + mNewAccount.domain;
-        keyMan.storeKeyPair(newJabberId,keyPair);
+            String newJabberId = mNewAccount.username + '@' + mNewAccount.domain;
+            keyMan.storeKeyPair(newJabberId, keyPair);
 
-        //send migration message to existing contacts and/or sessions
-        try {
+            //send migration message to existing contacts and/or sessions
+            try {
 
-            boolean loggedInToOldAccount = mConn.getState() == ImConnection.LOGGED_IN;
+                boolean loggedInToOldAccount = mConn.getState() == ImConnection.LOGGED_IN;
 
-            //login and set new default account
-            SignInHelper signInHelper = new SignInHelper(mContext, mHandler);
-            signInHelper.activateAccount(mNewAccount.providerId, mNewAccount.accountId);
-            signInHelper.signIn(mNewAccount.password, mNewAccount.providerId, mNewAccount.accountId, true);
+                //login and set new default account
+                SignInHelper signInHelper = new SignInHelper(mContext, mHandler);
+                signInHelper.activateAccount(mNewAccount.providerId, mNewAccount.accountId);
+                signInHelper.signIn(mNewAccount.password, mNewAccount.providerId, mNewAccount.accountId, true);
 
-            mNewConn = mApp.getConnection(mNewAccount.providerId, mNewAccount.accountId);
+                mNewConn = mApp.getConnection(mNewAccount.providerId, mNewAccount.accountId);
 
-            while (mNewConn.getState() != ImConnection.LOGGED_IN) {
-                try {
-                    Thread.sleep(500);
-                } catch (Exception e) {
-                }
-            }
-
-            String inviteLink = OnboardingManager.generateInviteLink(mContext, newJabberId, fingerprint, nickname,true);
-
-            String migrateMessage = mContext.getString(R.string.migrate_message) + ' ' + inviteLink;
-            IChatSessionManager sessionMgr = mConn.getChatSessionManager();
-            IContactListManager clManager = mConn.getContactListManager();
-            List<IContactList> listOfLists = clManager.getContactLists();
-
-            if (loggedInToOldAccount) {
-
-                for (IContactList contactList : listOfLists) {
-                    String[] contacts = contactList.getContacts();
-
-                    for (String contact : contacts) {
-                        mContacts.add(contact);
-
-                        IChatSession session = sessionMgr.getChatSession(contact);
-
-                        if (session == null) {
-                            session = sessionMgr.createChatSession(contact, true);
-                        }
-
-                        if (!session.isEncrypted()) {
-                            //try to kick off some encryption here
-                            session.getDefaultOtrChatSession().startChatEncryption();
-                            try {
-                                Thread.sleep(500);
-                            } //just wait a half second here?
-                            catch (Exception e) {
-                            }
-                        }
-
-                        session.sendMessage(migrateMessage, false);
-
-
-                        //archive existing contact
-                        clManager.archiveContact(contact,session.isGroupChatSession() ? Imps.Contacts.TYPE_NORMAL : Imps.Contacts.TYPE_GROUP, true);
+                while (mNewConn.getState() != ImConnection.LOGGED_IN) {
+                    try {
+                        Thread.sleep(500);
+                    } catch (Exception e) {
                     }
-
                 }
-            }
-            else
-            {
-                String[] offlineAddresses = clManager.getOfflineAddresses();
 
-                for (String address : offlineAddresses) {
-                    mContacts.add(address);
-                    clManager.archiveContact(address, Imps.Contacts.TYPE_NORMAL, true);
+                String inviteLink = OnboardingManager.generateInviteLink(mContext, newJabberId, fingerprint, nickname, true);
+
+                String migrateMessage = mContext.getString(R.string.migrate_message) + ' ' + inviteLink;
+                IChatSessionManager sessionMgr = mConn.getChatSessionManager();
+                IContactListManager clManager = mConn.getContactListManager();
+                List<IContactList> listOfLists = clManager.getContactLists();
+
+                if (loggedInToOldAccount) {
+
+                    for (IContactList contactList : listOfLists) {
+                        String[] contacts = contactList.getContacts();
+
+                        for (String contact : contacts) {
+                            mContacts.add(contact);
+
+                            IChatSession session = sessionMgr.getChatSession(contact);
+
+                            if (session == null) {
+                                session = sessionMgr.createChatSession(contact, true);
+                            }
+
+                            if (!session.isEncrypted()) {
+                                //try to kick off some encryption here
+                                session.getDefaultOtrChatSession().startChatEncryption();
+                                try {
+                                    Thread.sleep(500);
+                                } //just wait a half second here?
+                                catch (Exception e) {
+                                }
+                            }
+
+                            session.sendMessage(migrateMessage, false);
+
+
+                            //archive existing contact
+                            clManager.archiveContact(contact, session.isGroupChatSession() ? Imps.Contacts.TYPE_NORMAL : Imps.Contacts.TYPE_GROUP, true);
+                        }
+
+                    }
+                } else {
+                    String[] offlineAddresses = clManager.getOfflineAddresses();
+
+                    for (String address : offlineAddresses) {
+                        mContacts.add(address);
+                        clManager.archiveContact(address, Imps.Contacts.TYPE_NORMAL, true);
+                    }
                 }
-            }
 
-            for (String contact : mContacts) {
-                addToContactList(mNewConn, contact, keyMan.getRemoteFingerprint(contact), null);
-            }
-
-            if (loggedInToOldAccount) {
-                //archive existing conversations and contacts
-                List<IChatSession> listSession = mConn.getChatSessionManager().getActiveChatSessions();
-                for (IChatSession session : listSession) {
-                    session.leave();
+                for (String contact : mContacts) {
+                    addToContactList(mNewConn, contact, keyMan.getRemoteFingerprint(contact), null);
                 }
-                mConn.broadcastMigrationIdentity(newJabberId);
+
+                if (loggedInToOldAccount) {
+                    //archive existing conversations and contacts
+                    List<IChatSession> listSession = mConn.getChatSessionManager().getActiveChatSessions();
+                    for (IChatSession session : listSession) {
+                        session.leave();
+                    }
+                    mConn.broadcastMigrationIdentity(newJabberId);
+                }
+
+                migrateAvatars(username, newJabberId);
+                mApp.setDefaultAccount(mNewAccount.providerId, mNewAccount.accountId);
+
+                //logout of existing account
+                setKeepSignedIn(mAccountId, false);
+
+                if (loggedInToOldAccount)
+                    mConn.logout();
+
+                return mNewAccount;
+
+            } catch (Exception e) {
+                Log.e(ImApp.LOG_TAG, "error with migration", e);
             }
-
-            migrateAvatars(username, newJabberId);
-            mApp.setDefaultAccount(mNewAccount.providerId, mNewAccount.accountId);
-
-            //logout of existing account
-            setKeepSignedIn(mAccountId, false);
-
-            if (loggedInToOldAccount)
-                mConn.logout();
-
-            return mNewAccount;
-
-        }
-        catch (Exception e)
-        {
-            Log.e(ImApp.LOG_TAG,"error with migration",e);
         }
 
         //failed

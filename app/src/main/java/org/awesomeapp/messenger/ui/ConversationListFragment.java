@@ -636,6 +636,7 @@ public class ConversationListFragment extends Fragment {
 
     }
 
+
     private MigrateAccountTask.MigrateAccountListener mMigrateTaskListener;
 
     private synchronized void doUpgrade () {
@@ -691,7 +692,7 @@ public class ConversationListFragment extends Fragment {
             mUpgradeImage.setImageResource(R.drawable.olo_thinking);
 
 
-            ((ImApp) getActivity().getApplication()).doUpgrade(getActivity(), "home.zom.im", mMigrateTaskListener);
+            ((ImApp) getActivity().getApplication()).doUpgrade(getActivity(), mMigrateTaskListener);
 
         }
     }
