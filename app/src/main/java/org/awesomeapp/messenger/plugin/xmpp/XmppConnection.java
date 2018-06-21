@@ -5196,9 +5196,9 @@ public class XmppConnection extends ImConnection {
                         urlConnection = (HttpURLConnection) putUrl.openConnection(proxy);
                     }
                     else if (useAdvancedNetworking) {
-                        //setProxy("SOCKS5","127.0.0.1",31059);
-                     //   java.net.Proxy proxy =new java.net.Proxy(java.net.Proxy.Type.SOCKS,new InetSocketAddress(AdvancedNetworking.DEFAULT_SERVER,AdvancedNetworking.DEFAULT_PORT));
-                      //  urlConnection = (HttpURLConnection) putUrl.openConnection(proxy);
+
+                        java.net.Proxy proxy =new java.net.Proxy(java.net.Proxy.Type.SOCKS,new InetSocketAddress(AdvancedNetworking.DEFAULT_HTTP_PROXY_SERVER,AdvancedNetworking.DEFAULT_HTTP_PORT));
+                        urlConnection = (HttpURLConnection) putUrl.openConnection(proxy);
                     }
                     else
                     {

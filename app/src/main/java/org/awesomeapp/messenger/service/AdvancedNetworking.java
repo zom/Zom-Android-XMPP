@@ -25,6 +25,9 @@ public class AdvancedNetworking {
     public final static String DEFAULT_SERVER = "172.104.48.102";
     public final static int DEFAULT_PORT = 80;
 
+    public final static String DEFAULT_HTTP_PROXY_SERVER = "52.68.246.231";
+    public final static int DEFAULT_HTTP_PORT = 80;
+
     public boolean installTransport (Context context, String assetKey)
     {
         BinaryInstaller bi = new BinaryInstaller(context,context.getFilesDir());
