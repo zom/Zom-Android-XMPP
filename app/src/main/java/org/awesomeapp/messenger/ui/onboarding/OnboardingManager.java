@@ -267,28 +267,7 @@ public class OnboardingManager {
         return pw.toString();
     }
 
-    public static String[] getServers (Context context)
-    {
-        try {
-            JSONObject obj = new JSONObject(loadServersJSON(context));
-            JSONArray servers = obj.getJSONArray("servers");
-            String[] results = new String[servers.length()];
 
-            for (int i = 0; i < servers.length(); i++) {
-
-                JSONObject server = servers.getJSONObject(i);
-                results[i] = server.getString("domain");
-
-
-            }
-
-            return results;
-        }
-        catch (Exception e)
-        {
-            return null;
-        }
-    }
 
     public static boolean changePassword (Activity context, long providerId, long accountId, String oldPassword, String newPassword)
     {
@@ -385,18 +364,7 @@ public class OnboardingManager {
 
     }
 
-    public static Pair<String,String> getServerInfo (Context context, int idx) throws JSONException
-    {
-        //load servers and try them all
-        JSONObject obj = new JSONObject(loadServersJSON(context));
-        JSONArray servers = obj.getJSONArray("servers");
-        JSONObject serverInfo = servers.getJSONObject(0);
 
-        String domain = serverInfo.getString("domain");
-        String server = serverInfo.getString("server");
-
-        return new Pair(domain, server);
-    }
 
     public static OnboardingAccount addExistingAccount (Activity context, Handler handler, String nickname, String jabberId, String password) {
 
@@ -463,31 +431,6 @@ public class OnboardingManager {
 
     }
 
-
-    public static String loadServersJSON(Context context) {
-        String json = null;
-        try {
-
-            InputStream is = context.getAssets().open("servers.json");
-
-            int size = is.available();
-
-            byte[] buffer = new byte[size];
-
-            is.read(buffer);
-
-            is.close();
-
-            json = new String(buffer, "UTF-8");
-
-
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            return null;
-        }
-        return json;
-
-    }
 
     public static class DecodedInviteLink {
         public String username;

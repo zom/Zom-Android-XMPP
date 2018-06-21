@@ -32,6 +32,7 @@ import org.awesomeapp.messenger.model.ImException;
 import org.awesomeapp.messenger.model.Invitation;
 import org.awesomeapp.messenger.model.Message;
 import org.awesomeapp.messenger.model.Presence;
+import org.awesomeapp.messenger.model.Server;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.provider.ImpsErrorInfo;
 import org.awesomeapp.messenger.service.IChatSession;
@@ -1996,10 +1997,6 @@ public class XmppConnection extends ImConnection {
 
             //SRV lookup shouldn't be done through a proxy
             if (doDnsSrv) {
-
-                //java.lang.System.setProperty("java.net.preferIPv4Stack", "true");
-                //java.lang.System.setProperty("java.net.preferIPv6Addresses", "false");
-
                 debug(TAG, "(DNS SRV) resolving: " + domain);
                 List<HostAddress> listHostsFailed = new ArrayList<>();
                 List<HostAddress> listHosts = DNSUtil.resolveXMPPServiceDomain(DnsName.from(domain), listHostsFailed, ConnectionConfiguration.DnssecMode.disabled);
@@ -2015,6 +2012,21 @@ public class XmppConnection extends ImConnection {
 
                     if (serverPort != -1)
                         mConfig.setPort(serverPort);
+                }
+            }
+            else
+            {
+                //if we don't use DNS lookup, see if we have info from the server json
+                Server serverConfig = Server.getServer(mContext,domain);
+                if (serverConfig != null)
+                {
+                    if (serverConfig.ip != null)
+                        mConfig.setHost(serverConfig.ip);
+                    else
+                        mConfig.setHost(serverConfig.server);
+
+                    mConfig.setPort(serverConfig.port);
+
                 }
             }
 

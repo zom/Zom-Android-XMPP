@@ -51,6 +51,7 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.MainActivity;
 import org.awesomeapp.messenger.crypto.otr.OtrAndroidKeyManagerImpl;
+import org.awesomeapp.messenger.model.Server;
 import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.tasks.AddContactAsyncTask;
@@ -150,7 +151,7 @@ public class OnboardingActivity extends BaseActivity {
         mDomainList = new ListPopupWindow(this);
         mDomainList.setAdapter(new ArrayAdapter(
                 this,
-                android.R.layout.simple_dropdown_item_1line, OnboardingManager.getServers(this)));
+                android.R.layout.simple_dropdown_item_1line, Server.getServersText(this)));
         mDomainList.setAnchorView(mSpinnerDomains);
         mDomainList.setWidth(600);
         mDomainList.setHeight(400);
@@ -159,7 +160,7 @@ public class OnboardingActivity extends BaseActivity {
         mDomainList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                mSpinnerDomains.setText(OnboardingManager.getServers(OnboardingActivity.this)[position]);
+                mSpinnerDomains.setText(Server.getServersText(OnboardingActivity.this)[position]);
                 mDomainList.dismiss();
             }
         });
@@ -566,24 +567,23 @@ public class OnboardingActivity extends BaseActivity {
         protected OnboardingAccount doInBackground(String... setupValues) {
             try {
 
-                String server = null;
-                String domain = null;
+                Server[] servers = Server.getServers(OnboardingActivity.this);
+
+                Server myServer = new Server();
                 String password = null;
 
                 if (setupValues.length > 2)
-                    domain = setupValues[2]; //user can specify the domain they want to be on for a new account
+                    myServer.domain = setupValues[2]; //user can specify the domain they want to be on for a new account
 
                 if (setupValues.length > 3)
                     password = setupValues[3];
 
                 if (setupValues.length > 4)
-                    server = setupValues[4];
+                    myServer.server = setupValues[4];
 
-                if (domain == null)
+                if (myServer.domain == null)
                 {
-                    Pair<String,String> serverInfo = OnboardingManager.getServerInfo(OnboardingActivity.this,0);
-                    domain = serverInfo.first;
-                    server = serverInfo.second;
+                    myServer = servers[0];
                 }
 
                 OtrAndroidKeyManagerImpl keyMan = OtrAndroidKeyManagerImpl.getInstance(OnboardingActivity.this);
@@ -597,7 +597,7 @@ public class OnboardingActivity extends BaseActivity {
 
                 while (result == null) {
 
-                    result = OnboardingManager.registerAccount(OnboardingActivity.this, nickname, username, password, domain, server, 5222);
+                    result = OnboardingManager.registerAccount(OnboardingActivity.this, nickname, username, password, myServer.domain, myServer.domain, myServer.port);
 
                     if (result == null)
                     {

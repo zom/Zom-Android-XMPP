@@ -43,6 +43,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.awesomeapp.messenger.model.Server;
 import org.awesomeapp.messenger.ui.legacy.ImPluginHelper;
 import org.awesomeapp.messenger.ui.legacy.ProviderDef;
 import org.awesomeapp.messenger.ui.legacy.SignInHelper;
@@ -323,7 +324,7 @@ public class AccountViewFragment extends Fragment {
             mEditUserAccount.setHint(R.string.account_setup_new_username);
 
             ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
-                    android.R.layout.simple_dropdown_item_1line, OnboardingManager.getServers(getActivity()));
+                    android.R.layout.simple_dropdown_item_1line, Server.getServersText(getActivity()));
             mSpinnerDomains.setAdapter(adapter);
 
         }
