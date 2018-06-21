@@ -71,7 +71,22 @@ public abstract class IOCipherOmemoStore<T_IdKeyPair, T_IdKey, T_PreKey, T_SigPr
     public boolean isFreshInstallation(OmemoManager omemoManager) {
         File userDirectory = hierarchy.getUserDeviceDirectory(omemoManager);
         File[] files = userDirectory.listFiles();
-        return files == null || files.length == 0;
+        if (files == null || files.length == 0)
+            return true;
+        else
+        {
+            try {
+                Object key = loadOmemoIdentityKeyPair(omemoManager);
+                if (key == null)
+                    return true;
+            } catch (CorruptedOmemoKeyException e) {
+                e.printStackTrace();
+                return true;
+            }
+
+        }
+
+        return false;
     }
 
     @Override
