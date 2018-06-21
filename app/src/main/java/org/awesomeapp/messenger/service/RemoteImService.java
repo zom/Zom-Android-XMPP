@@ -82,6 +82,8 @@ import im.zom.messenger.R;
 import info.guardianproject.cacheword.CacheWordHandler;
 import info.guardianproject.cacheword.ICacheWordSubscriber;
 
+import static org.awesomeapp.messenger.service.AdvancedNetworking.TRANSPORT_SS2;
+
 
 public class RemoteImService extends Service implements ImService, ICacheWordSubscriber {
 
@@ -623,7 +625,7 @@ public class RemoteImService extends Service implements ImService, ICacheWordSub
             }
 
             aNetworking = new AdvancedNetworking();
-            aNetworking.installTransport(context,"ss");
+            aNetworking.installTransport(context,AdvancedNetworking.TRANSPORT_SS2);
             aNetworking.startTransport();
 
         }
@@ -807,7 +809,7 @@ public class RemoteImService extends Service implements ImService, ICacheWordSub
         else
         {
             aNetworking = new AdvancedNetworking();
-            aNetworking.installTransport(context,"ss");
+            aNetworking.installTransport(context,TRANSPORT_SS2);
         }
 
         aNetworking.startTransport();

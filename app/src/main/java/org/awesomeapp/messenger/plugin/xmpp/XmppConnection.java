@@ -1717,10 +1717,8 @@ public class XmppConnection extends ImConnection {
         if (type == null) {
             mProxyInfo = null;
         } else {
-
             ProxyInfo.ProxyType pType = ProxyInfo.ProxyType.valueOf(type);
             mProxyInfo = new ProxyInfo(pType, host, port, null, null);
-
         }
     }
 
@@ -2002,8 +2000,73 @@ public class XmppConnection extends ImConnection {
         }
         else if (doAdvancedNetworking)
         {
-            RemoteImService.activateAdvancedNetworking(mContext);
-            setProxy("SOCKS5","127.0.0.1",31059);
+            /**
+            //if we don't use DNS lookup, see if we have info from the server json
+            Server serverConfig = Server.getServer(mContext,domain);
+            if (serverConfig != null)
+            {
+                if (serverConfig.ip != null)
+                    server = serverConfig.ip;
+                else
+                    server = serverConfig.server;
+
+                serverPort = serverConfig.port;
+
+                mConfig.setHost(server);
+                mConfig.setPort(serverPort);
+
+                try {
+
+                    String[] addressParts = server.split("\\.");
+                    if (Integer.parseInt(addressParts[0]) != -1) {
+                        byte[] parts = new byte[addressParts.length];
+                        for (int i = 0; i < 4; i++)
+                            parts[i] = (byte) Integer.parseInt(addressParts[i]);
+
+                        byte[] ipAddr = new byte[]{parts[0], parts[1], parts[2], parts[3]};
+                        InetAddress addr = InetAddress.getByAddress(ipAddr);
+                        mConfig.setHostAddress(addr);
+
+                    } else {
+                        mConfig.setHostAddress(InetAddress.getByName(server));
+                    }
+                } catch (Exception e) {
+                    debug(TAG, "error parsing server as IP address; using as hostname instead");
+                    mConfig.setHostAddress(InetAddress.getByName(server));
+
+                }
+
+
+            }**/
+
+        //    RemoteImService.activateAdvancedNetworking(mContext);
+          //  setProxy(AdvancedNetworking.DEFAULT_PROXY_TYPE,AdvancedNetworking.DEFAULT_SERVER,AdvancedNetworking.DEFAULT_PORT);
+
+            server = AdvancedNetworking.DEFAULT_SERVER;
+            serverPort = AdvancedNetworking.DEFAULT_PORT;
+            mConfig.setHost(server);
+
+            mConfig.setPort(serverPort);
+            try {
+
+                String[] addressParts = server.split("\\.");
+                if (Integer.parseInt(addressParts[0]) != -1) {
+                    byte[] parts = new byte[addressParts.length];
+                    for (int i = 0; i < 4; i++)
+                        parts[i] = (byte) Integer.parseInt(addressParts[i]);
+
+                    byte[] ipAddr = new byte[]{parts[0], parts[1], parts[2], parts[3]};
+                    InetAddress addr = InetAddress.getByAddress(ipAddr);
+                    mConfig.setHostAddress(addr);
+
+                } else {
+                    mConfig.setHostAddress(InetAddress.getByName(server));
+                }
+            } catch (Exception e) {
+                debug(TAG, "error parsing server as IP address; using as hostname instead");
+                mConfig.setHostAddress(InetAddress.getByName(server));
+
+            }
         }
         else {
             mProxyInfo = null;
@@ -2106,7 +2169,6 @@ public class XmppConnection extends ImConnection {
 
             while (true) {
                 try {
-
                     if (Build.VERSION.SDK_INT >= 20) {
 
                         sslContext.getDefaultSSLParameters().setCipherSuites(XMPPCertPins.SSL_IDEAL_CIPHER_SUITES_API_20);
@@ -2163,7 +2225,7 @@ public class XmppConnection extends ImConnection {
         mConfig.setCustomSSLContext(sslContext);
         mConfig.setSecurityMode(ConnectionConfiguration.SecurityMode.required);
         mConfig.setHostnameVerifier(
-                mMemTrust.wrapHostnameVerifier(new org.apache.http.conn.ssl.StrictHostnameVerifier()));
+             mMemTrust.wrapHostnameVerifier(new org.apache.http.conn.ssl.StrictHostnameVerifier()));
 
         mConfig.setSendPresence(true);
 
@@ -2820,6 +2882,7 @@ public class XmppConnection extends ImConnection {
 
                             org.jivesoftware.smack.packet.Message msgEncrypted
                                     = getOmemo().getManager().encrypt(muc, msgXmpp.getBody());
+
                             msgEncrypted.addExtension(new DeliveryReceiptRequest());
                             msgEncrypted.setStanzaId(msgXmpp.getStanzaId());
                             String deliveryReceiptId = DeliveryReceiptRequest.addTo(msgEncrypted);
@@ -5125,7 +5188,7 @@ public class XmppConnection extends ImConnection {
 
                     if (!isReachable(putUrl.getHost(),putUrl.getPort()))
                         useAdvancedNetworking = true;
-                    
+
                     //urlconnection socks proxying only works on SDK 23+
                     if (!TextUtils.isEmpty(Preferences.getProxyServerHost()))
                     {
@@ -5134,8 +5197,8 @@ public class XmppConnection extends ImConnection {
                     }
                     else if (useAdvancedNetworking) {
                         //setProxy("SOCKS5","127.0.0.1",31059);
-                        java.net.Proxy proxy =new java.net.Proxy(java.net.Proxy.Type.SOCKS,new InetSocketAddress("127.0.0.1",31059));
-                        urlConnection = (HttpURLConnection) putUrl.openConnection(proxy);
+                     //   java.net.Proxy proxy =new java.net.Proxy(java.net.Proxy.Type.SOCKS,new InetSocketAddress(AdvancedNetworking.DEFAULT_SERVER,AdvancedNetworking.DEFAULT_PORT));
+                      //  urlConnection = (HttpURLConnection) putUrl.openConnection(proxy);
                     }
                     else
                     {

@@ -10,7 +10,7 @@ def getVersionName = { ->
     }
     return stdout.toString().trim()
 }
-
+1
 
 configurations {
     all*.exclude group: 'xpp3', module: 'xpp3'
@@ -22,7 +22,7 @@ android {
 
     defaultConfig {
         applicationId 'im.zom.messenger'
-        versionCode 1560014
+        versionCode 1560015
         versionName getVersionName()
         archivesBaseName = "Zom-$versionName"
         minSdkVersion project.ext.minSdkVersion

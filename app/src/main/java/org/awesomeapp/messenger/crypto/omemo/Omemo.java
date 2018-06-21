@@ -51,6 +51,11 @@ public class Omemo {
 
     }
 
+    public void purgeDeviceKeys ()
+    {
+        mOmemoStore.purgeOwnDeviceKeys(mOmemoManager);
+    }
+
     private OmemoManager initOMemoManager(XMPPTCPConnection conn, BareJid altUser) {
         BareJid user;
 

@@ -19,16 +19,25 @@ public class AdvancedNetworking {
     private File mFileTransport = null;
     private Thread mTransportThread = null;
 
-    public void installTransport (Context context, String assetKey)
+    public final static String TRANSPORT_SS2 = "ss2";
+
+    public final static String DEFAULT_PROXY_TYPE = "SOCKS5";
+    public final static String DEFAULT_SERVER = "172.104.48.102";
+    public final static int DEFAULT_PORT = 80;
+
+    public boolean installTransport (Context context, String assetKey)
     {
         BinaryInstaller bi = new BinaryInstaller(context,context.getFilesDir());
         try {
-            mFileTransport = bi.installResource("transports", assetKey, false);
+            mFileTransport = bi.installResource("transports", assetKey, true);
+            return mFileTransport.exists();
         }
         catch (Exception ioe)
         {
             debug("Couldn't install transport: " + ioe);
         }
+
+        return false;
     }
 
     public void startTransport ()
@@ -58,22 +67,32 @@ public class AdvancedNetworking {
             {
 
                 String serverAddress = "172.104.48.102";
-                String serverPort = "443";
+                String serverPort = "80";
                 String serverPassword = "zomzom123";
-                String serverCipher = "aes-128-cfb";
+                String serverCipher = "AEAD_CHACHA20_POLY1305";//"aes-128-cfb";
                 String localAddress = "127.0.0.1";
                 String localPort = "31059";
 
                 StringBuffer cmd = new StringBuffer();
                 cmd.append(mFileTransport.getCanonicalPath()).append(' ');
+
+                 /**
                 cmd.append("-s ").append(serverAddress).append(' ');
                 cmd.append("-p ").append(serverPort).append(' ');
                 cmd.append("-k ").append(serverPassword).append(' ');
                 cmd.append("-m ").append(serverCipher).append(' ');
                 cmd.append("-b ").append(localAddress).append(' ');
                 cmd.append("-l ").append(localPort).append(' ');
+                 **/
 
-                exec(cmd.toString(), false);
+                 cmd.append(" -c ").append("'ss://").append(serverCipher).append(":");
+                 cmd.append(serverPassword).append("@");
+                 cmd.append(serverAddress).append(":").append(serverPort).append("'");
+                 cmd.append(" -socks :").append(localPort);
+
+                 //disable for now
+               // exec(cmd.toString(), false);
+
             }
         }
         catch (Exception ioe)
