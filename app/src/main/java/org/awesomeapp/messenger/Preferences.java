@@ -276,6 +276,11 @@ public class Preferences {
         return preferences.getBoolean(ADVANCED_NETWORKING,false);
     }
 
+    public static void enableAdvancedNetworking (boolean enable)
+    {
+        preferences.edit().putBoolean(ADVANCED_NETWORKING,enable).apply();
+    }
+
     public static String getProxyServerHost ()
     {
         return preferences.getString(PROXY_SERVER_HOST,null);

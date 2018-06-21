@@ -797,22 +797,29 @@ public class RemoteImService extends Service implements ImService, ICacheWordSub
 
     private static AdvancedNetworking aNetworking;
 
+    public static void activateAdvancedNetworking (Context context)
+    {
+
+        if (aNetworking != null)
+        {
+            aNetworking.stopTransport();
+        }
+        else
+        {
+            aNetworking = new AdvancedNetworking();
+            aNetworking.installTransport(context,"ss");
+        }
+
+        aNetworking.startTransport();
+
+    }
+
     // package private for inner class access
     boolean reestablishConnections() {
 
         //restart transports if needed
         if (Preferences.useAdvancedNetworking())
-        {
-            if (aNetworking != null)
-            {
-                aNetworking.stopTransport();
-            }
-
-            aNetworking = new AdvancedNetworking();
-            aNetworking.installTransport(this,"ss");
-            aNetworking.startTransport();
-
-        }
+            activateAdvancedNetworking(this);
 
         for (ImConnectionAdapter conn : mConnections.values()) {
             int connState = conn.getState();

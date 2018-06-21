@@ -35,8 +35,10 @@ import org.awesomeapp.messenger.model.Presence;
 import org.awesomeapp.messenger.model.Server;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.provider.ImpsErrorInfo;
+import org.awesomeapp.messenger.service.AdvancedNetworking;
 import org.awesomeapp.messenger.service.IChatSession;
 import org.awesomeapp.messenger.service.IImConnection;
+import org.awesomeapp.messenger.service.RemoteImService;
 import org.awesomeapp.messenger.service.adapters.ChatSessionAdapter;
 import org.awesomeapp.messenger.ui.legacy.DatabaseUtils;
 import org.awesomeapp.messenger.util.Debug;
@@ -171,6 +173,7 @@ import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
@@ -1941,6 +1944,7 @@ public class XmppConnection extends ImConnection {
         boolean allowPlainAuth = false;//never! // providerSettings.getAllowPlainAuth();
         boolean requireTls = true;// providerSettings.getRequireTls(); //always!
         boolean doDnsSrv = providerSettings.getDoDnsSrv();
+        boolean doAdvancedNetworking = Preferences.useAdvancedNetworking();
        // boolean tlsCertVerify = providerSettings.getTlsCertVerify();
 
        // boolean useSASL = true;//!allowPlainAuth;
@@ -1952,16 +1956,6 @@ public class XmppConnection extends ImConnection {
         String server = providerSettings.getServer();
         if ("".equals(server))
             server = null;
-
-        if (domain.equals("dukgo.com"))
-        {
-            doDnsSrv = false;
-            server = "dukgo.com";
-        }
-
-        debug(TAG, "TLS required? " + requireTls);
-
-
 
         if (serverPort == 0) //if serverPort is set to 0 then use 5222 as default
             serverPort = 5222;
@@ -1979,13 +1973,36 @@ public class XmppConnection extends ImConnection {
 
         if (!TextUtils.isEmpty(server))
             mConfig.setHost(server);
+        else
+        {
+            //if we don't use DNS lookup, see if we have info from the server json
+            Server serverConfig = Server.getServer(mContext,domain);
+            if (serverConfig != null)
+            {
+                if (serverConfig.ip != null)
+                    server = serverConfig.ip;
+                else
+                    server = serverConfig.server;
+
+                serverPort = serverConfig.port;
+
+                mConfig.setHost(server);
+                mConfig.setPort(serverPort);
+
+            }
+        }
+
+        //check if server is reachable, if not, enable advanced networking
+        if (!isReachable(server,serverPort))
+            doAdvancedNetworking = true;
 
         if (!TextUtils.isEmpty(Preferences.getProxyServerHost()))
         {
             setProxy("SOCKS5",Preferences.getProxyServerHost(),Preferences.getProxyServerPort());
         }
-        else if (Preferences.useAdvancedNetworking())
+        else if (doAdvancedNetworking)
         {
+            RemoteImService.activateAdvancedNetworking(mContext);
             setProxy("SOCKS5","127.0.0.1",31059);
         }
         else {
@@ -2014,26 +2031,11 @@ public class XmppConnection extends ImConnection {
                         mConfig.setPort(serverPort);
                 }
             }
-            else
-            {
-                //if we don't use DNS lookup, see if we have info from the server json
-                Server serverConfig = Server.getServer(mContext,domain);
-                if (serverConfig != null)
-                {
-                    if (serverConfig.ip != null)
-                        mConfig.setHost(serverConfig.ip);
-                    else
-                        mConfig.setHost(serverConfig.server);
 
-                    mConfig.setPort(serverConfig.port);
-
-                }
-            }
-
+            //check if server is actually an IP address
             if (!TextUtils.isEmpty(server)) {
 
                 try {
-
 
                     String[] addressParts = server.split("\\.");
                     if (Integer.parseInt(addressParts[0]) != -1) {
@@ -5119,13 +5121,18 @@ public class XmppConnection extends ImConnection {
 
                 if (Build.VERSION.SDK_INT >= 23)
                 {
+                    boolean useAdvancedNetworking = Preferences.useAdvancedNetworking();
+
+                    if (!isReachable(putUrl.getHost(),putUrl.getPort()))
+                        useAdvancedNetworking = true;
+                    
                     //urlconnection socks proxying only works on SDK 23+
                     if (!TextUtils.isEmpty(Preferences.getProxyServerHost()))
                     {
                         java.net.Proxy proxy =new java.net.Proxy(java.net.Proxy.Type.SOCKS,new InetSocketAddress(Preferences.getProxyServerHost(),Preferences.getProxyServerPort()));
                         urlConnection = (HttpURLConnection) putUrl.openConnection(proxy);
                     }
-                    else if (Preferences.useAdvancedNetworking()) {
+                    else if (useAdvancedNetworking) {
                         //setProxy("SOCKS5","127.0.0.1",31059);
                         java.net.Proxy proxy =new java.net.Proxy(java.net.Proxy.Type.SOCKS,new InetSocketAddress("127.0.0.1",31059));
                         urlConnection = (HttpURLConnection) putUrl.openConnection(proxy);
@@ -5224,6 +5231,26 @@ public class XmppConnection extends ImConnection {
                 }
 
             }
+        }
+    }
+
+    public static boolean isReachable(String host, int port)
+    {
+        Socket s = null;
+        try
+        {
+            s = new Socket(host, port);
+            return true;
+        }
+        catch (Exception e)
+        {
+            return false;
+        }
+        finally
+        {
+            if(s != null)
+                try {s.close();}
+                catch(Exception e){}
         }
     }
 
