@@ -188,5 +188,10 @@ interface IChatSession {
       * Mark this chat session as seen.
       */
      void markAsSeen();
+
+     /**
+     * Set last message (stores the last message received)
+     */
+     void setLastMessage (String message);
 }
 

@@ -252,7 +252,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         
             mMessageURI = Imps.Messages.getContentUriByThreadId(mContactId);
             if (isNewSession)
-                insertOrUpdateChat("");
+                setLastMessage("");
 
             for (Contact c : group.getMembers()) {
                 mContactStatusMap.put(c.getName(), c.getPresence().getStatus());
@@ -277,7 +277,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         mChatURI = ContentUris.withAppendedId(Imps.Chats.CONTENT_URI, mContactId);
 
         if (isNewSession)
-            insertOrUpdateChat(null);
+            setLastMessage(null);
 
         mMessageURI = Imps.Messages.getContentUriByThreadId(mContactId);
 
@@ -288,7 +288,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
     public void reInit ()
     {
-       // insertOrUpdateChat(null);
+       // setLastMessage(null);
 
     }
 
@@ -410,7 +410,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
         if (!isResend) {
             insertMessageInDb(null, text, sendTime, msg.getType(), 0, msg.getID(), null);
-            insertOrUpdateChat(text);
+            setLastMessage(text);
         }
 
         int newType = mChatSession.sendMessageAsync(msg, mEnableOmemoGroups);
@@ -434,7 +434,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         long sendTime = System.currentTimeMillis();
 
         insertMessageInDb(null, mediaPath, sendTime, msg.getType(), 0, msg.getID(), mimeType);
-        insertOrUpdateChat(mediaPath);
+        setLastMessage(mediaPath);
 
         return msg;
     }
@@ -826,7 +826,12 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         }
     }*/
 
-    Uri insertOrUpdateChat(String message) {
+    public void setLastMessage (String message)
+    {
+        setLastMessageForUri(message);
+    }
+
+    private Uri setLastMessageForUri(String message) {
 
         ContentValues values = new ContentValues(4);
 
@@ -1223,7 +1228,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
                 else
                     messageUri = insertMessageInDb(nickname, body, time, msg.getType(), 0, msg.getID(), null);
 
-                insertOrUpdateChat(body);
+                setLastMessage(body);
 
                 if (messageUri == null) {
                     Log.e(TAG,"error saving message to the db: " + msg.getID());
@@ -1659,7 +1664,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
                         int type = isVerified ? Imps.MessageType.INCOMING_ENCRYPTED_VERIFIED : Imps.MessageType.INCOMING_ENCRYPTED;
 
-                        insertOrUpdateChat(filePath);
+                        setLastMessage(filePath);
 
                         Uri messageUri = Imps.insertMessageInDb(service.getContentResolver(),
                                 mIsGroupChat, getId(),
@@ -2066,7 +2071,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
                     String result = SecureMediaStore.vfsUri(fileDownload.getAbsolutePath()).toString();
 
-                    insertOrUpdateChat(result);
+                    setLastMessage(result);
 
                     Uri messageUri = Imps.insertMessageInDb(service.getContentResolver(),
                             mIsGroupChat, getId(),

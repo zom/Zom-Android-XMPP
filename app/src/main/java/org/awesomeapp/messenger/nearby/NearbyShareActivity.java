@@ -8,10 +8,12 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.nearby.connection.ConnectionInfo;
@@ -28,6 +30,7 @@ import org.awesomeapp.messenger.service.IChatSession;
 import org.awesomeapp.messenger.tasks.AddContactAsyncTask;
 import org.awesomeapp.messenger.ui.ContactListItem;
 import org.awesomeapp.messenger.ui.ContactViewHolder;
+import org.awesomeapp.messenger.util.GlideUtils;
 import org.awesomeapp.messenger.util.SecureMediaStore;
 
 import java.io.FileNotFoundException;
@@ -59,8 +62,10 @@ public class NearbyShareActivity extends ConnectionsActivity {
     private String mName = null;
     private File mFile = null;
 
-    private static RecyclerView mList;
-    private static HashMap<String,Contact> contactList = new HashMap<>();
+    private RecyclerView mList;
+    private ImageView mView;
+
+    private HashMap<String,Contact> contactList = new HashMap<>();
 
     private State mState = State.UNKNOWN;
 
@@ -80,11 +85,16 @@ public class NearbyShareActivity extends ConnectionsActivity {
         mList.setLayoutManager(new LinearLayoutManager(this));
         mList.setItemAnimator(new DefaultItemAnimator());
 
+        mView = (ImageView) findViewById(R.id.nearbyIcon);
+
         NearbyShareListRecyclerViewAdapter adapter = new NearbyShareListRecyclerViewAdapter(this,new ArrayList<Contact>(contactList.values()));
         mList.setAdapter(adapter);
 
-
         mName = getIntent().getStringExtra("name");
+        if (TextUtils.isEmpty(mName))
+        {
+            mName = mApp.getDefaultUsername();
+        }
 
         if (getIntent().getData() != null)
             mFile = new File(getIntent().getData().getPath());
@@ -102,20 +112,34 @@ public class NearbyShareActivity extends ConnectionsActivity {
     private void confirmContact (Contact contact)
     {
         Endpoint endpoint = mUserEndpoint.get(contact.getAddress().getBareAddress());
-        connectToEndpoint(endpoint);
-        contact.setSubscriptionStatus(Imps.ContactsColumns.SUBSCRIPTION_TYPE_BOTH);
+        if (endpoint != null) {
+            connectToEndpoint(endpoint);
+            contact.setSubscriptionStatus(Imps.ContactsColumns.SUBSCRIPTION_TYPE_BOTH);
+        }
+        else
+        {
+            contactList.remove(contact);
+        }
+
+        refreshList();
+    }
+
+    private void removeContact (String username) {
+        contactList.remove(username);
         refreshList();
     }
 
     private void addContact (String username)
     {
-        Contact contact = new Contact(new XmppAddress(username));
-        contact.setName(username);
-        contact.setPresence(new Presence());
-        contact.setSubscriptionType(Imps.ContactsColumns.SUBSCRIPTION_TYPE_FROM);
-        contact.setSubscriptionStatus(Imps.ContactsColumns.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING);
-        contactList.put(contact.getAddress().getAddress(),contact);
-        refreshList();
+        if (!contactList.containsKey(username)) {
+            Contact contact = new Contact(new XmppAddress(username));
+            contact.setName(username);
+            contact.setPresence(new Presence());
+            contact.setSubscriptionType(Imps.ContactsColumns.SUBSCRIPTION_TYPE_FROM);
+            contact.setSubscriptionStatus(Imps.ContactsColumns.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING);
+            contactList.put(contact.getAddress().getAddress(), contact);
+            refreshList();
+        }
     }
 
     private void refreshList ()
@@ -172,6 +196,11 @@ public class NearbyShareActivity extends ConnectionsActivity {
                             true, name,
                             result, System.currentTimeMillis(), type,
                             0, msgId, mimeType);
+
+                    session.setLastMessage(result);
+
+                    Uri mediaUri = Uri.parse("vfs://" + fileDownload.getAbsolutePath());
+                    GlideUtils.loadImageFromUri(this, Uri.parse(result), mView);
                 }
 
             } catch (Exception e) {
@@ -209,7 +238,7 @@ public class NearbyShareActivity extends ConnectionsActivity {
         // visually see which device they connected with.
         //  mConnectedColor = COLORS[connectionInfo.getAuthenticationToken().hashCode() % COLORS.length];
         acceptConnection(endpoint);
-
+        addContact(endpoint.getName());
     }
 
     @Override
@@ -228,6 +257,9 @@ public class NearbyShareActivity extends ConnectionsActivity {
     protected void onEndpointDisconnected(Endpoint endpoint) {
 
         setState(State.SEARCHING);
+
+        removeContact(endpoint.getName());
+
     }
 
     @Override
@@ -236,6 +268,8 @@ public class NearbyShareActivity extends ConnectionsActivity {
         if (getState() == State.SEARCHING) {
             startDiscovering();
         }
+
+        removeContact(endpoint.getName());
     }
 
     /**

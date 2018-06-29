@@ -192,9 +192,6 @@ public class ImageViewActivity extends AppCompatActivity implements PZSImageView
         if (currentItem >= 0 && currentItem < uris.size()) {
             String resharePath = uris.get(currentItem).toString();
             Intent shareIntent = new Intent(this, NearbyShareActivity.class);
-
-            shareIntent.putExtra("name",((ImApp)getApplication()).getDefaultUsername());
-
             shareIntent.setAction(Intent.ACTION_SEND);
             shareIntent.setDataAndType(Uri.parse(resharePath), mimeTypes.get(currentItem));
             startActivity(shareIntent);

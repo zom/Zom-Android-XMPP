@@ -3187,6 +3187,10 @@ public class ConversationView {
                         ((MessageListItem)mLastSelectedView).forwardMediaFile();
                         mode.finish(); // Action picked, so close the CAB
                         return true;
+                    case R.id.menu_message_nearby:
+                        ((MessageListItem)mLastSelectedView).nearbyMediaFile();
+                        mode.finish(); // Action picked, so close the CAB
+                        return true;
                     case R.id.menu_message_resend:
                         resendMessage(((MessageListItem)mLastSelectedView).getLastMessage(),((MessageListItem)mLastSelectedView).getMimeType());
                         mode.finish(); // Action picked, so close the CAB

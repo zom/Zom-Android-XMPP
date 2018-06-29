@@ -46,6 +46,7 @@ import android.widget.Toast;
 
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.MainActivity;
+import org.awesomeapp.messenger.nearby.NearbyShareActivity;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.service.IChatSession;
 import org.awesomeapp.messenger.tasks.AddContactAsyncTask;
@@ -252,16 +253,23 @@ public class GalleryActivity extends BaseActivity {
             case android.R.id.home:
                 finish();
                 return true;
-
+            case R.id.menu_message_nearby:
+                receiveNearby();
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
+    private void receiveNearby ()
+    {
+        Intent shareIntent = new Intent(this, NearbyShareActivity.class);
+        startActivity(shareIntent);
+    }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-      //  getMenuInflater().inflate(R.menu.menu_conversation_detail, menu);
+        getMenuInflater().inflate(R.menu.menu_gallery, menu);
         return true;
     }
 

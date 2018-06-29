@@ -2769,7 +2769,6 @@ public class XmppConnection extends ImConnection {
 
             if (participant == null) {
                 try {
-
                     mChatGroupManager.createChatGroupAsync(address, xmppAddress.getUser(), mUser.getName());
                     participant = mChatGroupManager.getChatGroup(xmppAddress);
                 } catch (Exception e) {

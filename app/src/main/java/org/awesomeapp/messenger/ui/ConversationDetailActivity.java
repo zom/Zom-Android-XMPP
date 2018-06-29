@@ -31,6 +31,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.media.AudioManager;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Build;
@@ -38,6 +39,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.os.ParcelFileDescriptor;
 import android.os.Parcelable;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
@@ -847,27 +849,33 @@ public class ConversationDetailActivity extends BaseActivity {
             }
         }
         else {
-            mMediaRecorder = new MediaRecorder();
 
-            String fileName = UUID.randomUUID().toString().substring(0,8) + ".m4a";
-            mAudioFilePath = new File(getFilesDir(), fileName);
+            AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+            if (am.getMode() == AudioManager.MODE_NORMAL) {
 
-            mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-            mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-            mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+                mMediaRecorder = new MediaRecorder();
 
-            //maybe we can modify these in the future, or allow people to tweak them
-            mMediaRecorder.setAudioChannels(1);
-            mMediaRecorder.setAudioEncodingBitRate(22050);
-            mMediaRecorder.setAudioSamplingRate(64000);
-            mMediaRecorder.setOutputFile(mAudioFilePath.getAbsolutePath());
+                String fileName = UUID.randomUUID().toString().substring(0, 8) + ".m4a";
+                mAudioFilePath = new File(getFilesDir(), fileName);
 
-            try {
-                mIsAudioRecording = true;
-                mMediaRecorder.prepare();
-                mMediaRecorder.start();
-            } catch (Exception e) {
-                Log.e(ImApp.LOG_TAG, "couldn't start audio", e);
+                mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+                mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+                mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+
+                //maybe we can modify these in the future, or allow people to tweak them
+                mMediaRecorder.setAudioChannels(1);
+                mMediaRecorder.setAudioEncodingBitRate(22050);
+                mMediaRecorder.setAudioSamplingRate(64000);
+
+                mMediaRecorder.setOutputFile(mAudioFilePath.getAbsolutePath());
+
+                try {
+                    mIsAudioRecording = true;
+                    mMediaRecorder.prepare();
+                    mMediaRecorder.start();
+                } catch (Exception e) {
+                    Log.e(ImApp.LOG_TAG, "couldn't start audio", e);
+                }
             }
         }
     }

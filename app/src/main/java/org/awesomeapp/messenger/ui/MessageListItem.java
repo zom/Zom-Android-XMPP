@@ -20,6 +20,7 @@ package org.awesomeapp.messenger.ui;
 import im.zom.messenger.R;
 
 import org.awesomeapp.messenger.ImUrlActivity;
+import org.awesomeapp.messenger.nearby.NearbyShareActivity;
 import org.awesomeapp.messenger.service.IChatSession;
 import org.awesomeapp.messenger.ui.onboarding.OnboardingManager;
 import org.awesomeapp.messenger.ui.widgets.AudioWife;
@@ -609,6 +610,18 @@ public class MessageListItem extends FrameLayout {
         shareIntent.setDataAndType(Uri.parse(resharePath), mimeType);
         context.startActivity(shareIntent);
 
+
+    }
+
+    public void nearbyMediaFile ()
+    {
+        if (mimeType != null && mediaUri != null) {
+            String resharePath = "vfs:/" + mediaUri.getPath();
+            Intent shareIntent = new Intent(context, NearbyShareActivity.class);
+            shareIntent.setAction(Intent.ACTION_SEND);
+            shareIntent.setDataAndType(Uri.parse(resharePath), mimeType);
+            context.startActivity(shareIntent);
+        }
 
     }
 
