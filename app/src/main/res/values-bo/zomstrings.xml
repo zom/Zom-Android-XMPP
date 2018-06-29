@@ -102,5 +102,6 @@
   <string name="bot_zomkyi_desc">ང་ལ་འཛོམས་སྐོར་དྲི་བ་དྲི་</string>
   <string name="bot_quiz_name">ཨ་ཁུ་བདེན་པ་</string>
   <string name="bot_quiz_desc">ངའི་དྲི་བ་ལ་ལན་རྒྱབས་</string>
-
+  <string name="bot_topgyal_name">སྟོབས་རྒྱལ་</string>
+  <string name="bot_topgyal_desc">ང་ལ་དྲི་བ་གང་ཡིན་ན་དྲིས་རོགས།</string>
 </resources>
