@@ -258,6 +258,24 @@ public class SecureMediaStore {
         return vfsUri(targetPath);
     }
 
+    /**
+     * Copy device content into vfs.
+     * All imported content is stored under /SESSION_NAME/
+     * The original full path is retained to facilitate browsing
+     * The session content can be deleted when the session is over
+     * @param sessionId
+     * @return vfs uri
+     * @throws IOException
+     */
+    public static Uri createContentPath(String sessionId, String fileName) throws IOException {
+        //list("/");
+        String targetPath = "/" + sessionId + "/upload/" + UUID.randomUUID().toString() + '/' + fileName.replaceAll("[^a-zA-Z0-9\\.\\-]", "_");
+        targetPath = createUniqueFilename(targetPath);
+        mkdirs( targetPath );
+
+        //list("/");
+        return vfsUri(targetPath);
+    }
 
     /**
      * Resize an image to an efficient size for sending via OTRDATA, then copy

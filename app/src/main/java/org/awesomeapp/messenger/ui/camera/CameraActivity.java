@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.google.android.cameraview.CameraView;
 import com.google.android.cameraview.CameraViewImpl;
 
+import org.apache.commons.io.IOUtils;
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.Preferences;
 import org.awesomeapp.messenger.provider.Imps;
@@ -28,6 +29,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Date;
 import java.util.UUID;
 import java.util.concurrent.Executor;
@@ -36,7 +38,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import im.zom.messenger.R;
-
+import info.guardianproject.iocipher.File;
+import info.guardianproject.iocipher.FileOutputStream;
 
 
 public class CameraActivity extends AppCompatActivity {
@@ -83,27 +86,6 @@ public class CameraActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mCameraView = findViewById(R.id.camera_view);
-
-        mCameraView.setOnPictureTakenListener(new CameraViewImpl.OnPictureTakenListener() {
-            @Override
-            public void onPictureTaken(final Bitmap bitmap, final int rotationDegrees) {
-
-                mExec.execute(new Runnable()
-                {
-                    public void run ()
-                    {
-
-                        if (mOneAndDone)
-                            mHandler.sendEmptyMessage(2);
-
-                        storeBitmap(rotate(bitmap,rotationDegrees));
-
-                    }
-                });
-
-                mHandler.sendEmptyMessage(1);
-            }
-        });
 
         findViewById(R.id.btnCamera).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -167,6 +149,7 @@ public class CameraActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         mOrientationEventListener.disable();
+        System.gc();
     }
 
     @Override
@@ -226,16 +209,27 @@ public class CameraActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         mCameraView.start();
-        /**
-        if (isStoragePermissionGranted() && isCameraPermissionGranted()) {
-            mCameraView.start();
-        } else {
-            if (!isCameraPermissionGranted()) {
-                checkCameraPermission();
-            } else {
-                checkStoragePermission();
+        mCameraView.setOnPictureTakenListener(new CameraViewImpl.OnPictureTakenListener() {
+            @Override
+            public void onPictureTaken(final Bitmap bitmap, final int rotationDegrees) {
+
+                mExec.execute(new Runnable()
+                {
+                    public void run ()
+                    {
+
+                        if (mOneAndDone)
+                            mHandler.sendEmptyMessage(2);
+
+                        storeBitmap(rotate(bitmap,rotationDegrees));
+
+                    }
+                });
+
+                mHandler.sendEmptyMessage(1);
             }
-        }**/
+        });
+
     }
 
     @Override
@@ -254,14 +248,15 @@ public class CameraActivity extends AppCompatActivity {
         String offerId = UUID.randomUUID().toString();
 
         try {
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
+            final Uri vfsUri = SecureMediaStore.createContentPath(sessionId,"cam" + new Date().getTime() + ".jpg");
+
+            OutputStream out = new FileOutputStream(new File(vfsUri.getPath()));
             bitmap = getResizedBitmap(bitmap,SecureMediaStore.DEFAULT_IMAGE_WIDTH,SecureMediaStore.DEFAULT_IMAGE_WIDTH);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100 /*ignored for JPG*/, out);
 
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100 /*ignored for JPG*/, bos);
-            ByteArrayInputStream bs = new ByteArrayInputStream(bos.toByteArray());
-
-            final Uri vfsUri = SecureMediaStore.importContent(sessionId,"cam" + new Date().getTime() + ".jpg",bs);
+            bitmap.recycle();
+            System.gc();
 
             String mimeType = "image/jpeg";
 
@@ -280,18 +275,13 @@ public class CameraActivity extends AppCompatActivity {
 
             if (Preferences.useProofMode()) {
 
-                mExec.execute(new Runnable ()
-                {
-                    public void run ()
-                    {
-                        try {
-                            ProofMode.generateProof(CameraActivity.this, vfsUri);
-                        } catch (FileNotFoundException e) {
-                            Log.e(ImApp.LOG_TAG,"error generating proof for photo",e);
-                        }
-                    }
-                });
+                try {
+                    ProofMode.generateProof(CameraActivity.this, vfsUri);
+                } catch (FileNotFoundException e) {
+                    Log.e(ImApp.LOG_TAG,"error generating proof for photo",e);
+                }
             }
+
 
         }
         catch (IOException ioe)

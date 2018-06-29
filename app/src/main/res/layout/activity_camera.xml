@@ -9,6 +9,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
     <com.google.android.cameraview.CameraView
         android:id="@+id/camera_view"
         android:layout_width="match_parent"
@@ -17,9 +18,11 @@
         android:adjustViewBounds="true"
         app:autoFocus="true"
         app:cameraAspectRatio="4:3"
+        app:maximumWidth="1280"
+        app:maximumPreviewWidth="1280"
+        app:useHighResPicture="false"
         app:facing="back"
         app:flash="off"/>
-
 
 
         <LinearLayout

@@ -91,7 +91,6 @@
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/ic_launcher_name"
-        android:largeHeap="false"
         android:theme="@style/AppTheme"
         tools:replace="android:icon,android:allowBackup,android:label">
         <meta-data
