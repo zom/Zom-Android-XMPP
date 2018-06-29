@@ -4,6 +4,7 @@
     <array name="bots">
         <item>@array/bot_zomkyi</item>
         <item>@array/bot_agu_denpa</item>
+        <item>@array/bot_topgyal</item>
     </array>
 
     <array name="bot_zomkyi">
@@ -18,5 +19,13 @@
         <item>quizbot@home.zom.im</item>
         <item>@string/bot_quiz_desc</item>
         <item>@drawable/bot_agu_denpa</item>
+    </array>
+
+
+    <array name="bot_topgyal">
+        <item>@string/bot_topgyal_name</item>
+        <item>topgyalbot@home.zom.im</item>
+        <item>@string/bot_topgyal_desc</item>
+        <item>@drawable/bot_topgyal</item>
     </array>
 </resources>

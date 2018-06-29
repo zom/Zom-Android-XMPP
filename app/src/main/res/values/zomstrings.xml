@@ -183,7 +183,11 @@
   <string name="bot_zomkyi_desc">Ask me about Zom</string>
   <string name="bot_quiz_name">Agu Denpa</string>
   <string name="bot_quiz_desc">Take my quiz</string>
-    <string name="stickers_pema">Pema</string>
+  <string name="bot_topgyal_name">Topgyal</string>
+  <string name="bot_topgyal_desc">Ask me anything</string>
+
+
+  <string name="stickers_pema">Pema</string>
     <string name="stickers_zomkyi">Zomkyi</string>
     <string name="stickers_topgyal">Topgyal</string>
     <string name="stickers_sindu">Sindu</string>

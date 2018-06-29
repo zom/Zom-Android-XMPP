@@ -1408,6 +1408,7 @@ public class ConversationView {
                         sb.show();
                     }
                     else if (mSubscriptionType == Imps.Contacts.SUBSCRIPTION_TYPE_TO) {
+                        /**
                         mActivity.findViewById(R.id.waiting_view).setVisibility(View.VISIBLE);
                         final View buttonRefresh = mActivity.findViewById(R.id.waiting_refresh_background);
                         final ImageView iconRefresh = (ImageView) mActivity.findViewById(R.id.waiting_refresh);
@@ -1447,7 +1448,8 @@ public class ConversationView {
                                 resendFriendRequest();
                                 iconRefresh.startAnimation(rotate);
                             }
-                        });
+                        });**/
+
                     }
                     else {
                         mActivity.findViewById(R.id.waiting_view).setVisibility(View.GONE);
