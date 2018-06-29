@@ -121,6 +121,9 @@ public class MessageListItem extends FrameLayout {
     }
 
 
+    private final static int THUMB_HEIGHT_LARGE = 450;
+    private final static int THUMB_HEIGHT_SMALL = 100;
+
     /**
      * This trickery is needed in order to have clickable links that open things
      * in a new {@code Task} rather than in ChatSecure's {@code Task.} Thanks to @commonsware
@@ -211,6 +214,7 @@ public class MessageListItem extends FrameLayout {
         mHolder.mTextViewForMessages.setVisibility(View.VISIBLE);
         mHolder.mAudioContainer.setVisibility(View.GONE);
         mHolder.mMediaContainer.setVisibility(View.GONE);
+        mHolder.mTextViewForTimestamp.setVisibility(View.VISIBLE);
 
         this.packetId = packetId;
 
@@ -350,7 +354,6 @@ public class MessageListItem extends FrameLayout {
 
 
          mHolder.mTextViewForTimestamp.setText(tsText);
-         mHolder.mTextViewForTimestamp.setVisibility(View.VISIBLE);
 
         }
         else
@@ -430,25 +433,49 @@ public class MessageListItem extends FrameLayout {
         holder.mTextViewForMessages.setText("");
         holder.mTextViewForMessages.setVisibility(View.GONE);
 
+        holder.mMediaThumbnail.getLayoutParams().height = THUMB_HEIGHT_LARGE;
+
         if (centerCrop)
             holder.mMediaThumbnail.setScaleType(ImageView.ScaleType.CENTER_CROP);
         else
             holder.mMediaThumbnail.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
         if( mimeType.startsWith("image/") ) {
+
+            holder.mAvatar.setVisibility(View.VISIBLE);
+            holder.mTextViewForTimestamp.setVisibility(View.VISIBLE);
+            holder.mMediaThumbnail.getLayoutParams().height = THUMB_HEIGHT_LARGE;
             setImageThumbnail( getContext().getContentResolver(), id, holder, mediaUri );
             holder.mMediaThumbnail.setBackgroundResource(android.R.color.transparent);
 
         }
         else if (mimeType.startsWith("video/")) {
+
+            holder.mAvatar.setVisibility(View.VISIBLE);
+            holder.mTextViewForTimestamp.setVisibility(View.VISIBLE);
+            holder.mMediaThumbnail.getLayoutParams().height = THUMB_HEIGHT_LARGE;
             //setVideoThumbnail( getContext().getContentResolver(), id, holder, mediaUri );
             //holder.mMediaThumbnail.setBackgroundResource(android.R.color.transparent);
             holder.mMediaThumbnail.setImageResource(R.drawable.video256); // generic file icon
             holder.mTextViewForMessages.setText(mediaUri.getLastPathSegment() + " (" + mimeType + ")");
             holder.mTextViewForMessages.setVisibility(View.VISIBLE);
         }
+        else if (mimeType.equals("text/csv") && mediaUri.getLastPathSegment().contains("proof.csv"))
+        {
+            holder.mAvatar.setVisibility(View.GONE);
+            holder.mTextViewForTimestamp.setVisibility(View.GONE);
+            holder.mMediaThumbnail.setScaleType(ImageView.ScaleType.FIT_START);
+            holder.mMediaThumbnail.setImageResource(R.drawable.proofmodebadge); // generic file icon
+            holder.mMediaThumbnail.getLayoutParams().height = THUMB_HEIGHT_SMALL;
+            holder.mTextViewForMessages.setVisibility(View.GONE);
+        }
         else
         {
+
+            holder.mAvatar.setVisibility(View.VISIBLE);
+            holder.mTextViewForTimestamp.setVisibility(View.VISIBLE);
+            holder.mMediaThumbnail.setScaleType(ImageView.ScaleType.FIT_START);
+            holder.mMediaThumbnail.getLayoutParams().height = THUMB_HEIGHT_SMALL;
             holder.mMediaThumbnail.setImageResource(R.drawable.ic_file); // generic file icon
             holder.mTextViewForMessages.setText(mediaUri.getLastPathSegment() + " (" + mimeType + ")");
             holder.mTextViewForMessages.setVisibility(View.VISIBLE);
@@ -480,6 +507,8 @@ public class MessageListItem extends FrameLayout {
         this.mediaUri = newMediaUri;
         this.mimeType = mimeType;
 
+        holder.mAvatar.setVisibility(View.VISIBLE);
+        holder.mTextViewForTimestamp.setVisibility(View.VISIBLE);
         mHolder.mTextViewForMessages.setText("");
 
         if (holder.mAudioWife != null)
@@ -871,10 +900,8 @@ public class MessageListItem extends FrameLayout {
         {
 
             CharSequence tsText = formatTimeStamp(date,messageType, delivery, encryption, null);
-
             mHolder.mTextViewForTimestamp.setText(tsText);
 
-            mHolder.mTextViewForTimestamp.setVisibility(View.VISIBLE);
 
         }
         else

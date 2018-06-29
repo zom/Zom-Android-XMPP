@@ -26,6 +26,7 @@ import org.awesomeapp.messenger.util.SystemServices;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Date;
 import java.util.UUID;
@@ -260,7 +261,7 @@ public class CameraActivity extends AppCompatActivity {
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100 /*ignored for JPG*/, bos);
             ByteArrayInputStream bs = new ByteArrayInputStream(bos.toByteArray());
 
-            Uri vfsUri = SecureMediaStore.importContent(sessionId,"cam" + new Date().getTime() + ".jpg",bs);
+            final Uri vfsUri = SecureMediaStore.importContent(sessionId,"cam" + new Date().getTime() + ".jpg",bs);
 
             String mimeType = "image/jpeg";
 
@@ -270,14 +271,26 @@ public class CameraActivity extends AppCompatActivity {
                     System.currentTimeMillis(), Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED,
                     0, offerId, mimeType);
 
-            if (Preferences.useProofMode())
-                ProofMode.generateProof(this, vfsUri);
-
             if (mOneAndDone) {
                 Intent data = new Intent();
                 data.setData(vfsUri);
                 setResult(RESULT_OK, data);
                 finish();
+            }
+
+            if (Preferences.useProofMode()) {
+
+                mExec.execute(new Runnable ()
+                {
+                    public void run ()
+                    {
+                        try {
+                            ProofMode.generateProof(CameraActivity.this, vfsUri);
+                        } catch (FileNotFoundException e) {
+                            Log.e(ImApp.LOG_TAG,"error generating proof for photo",e);
+                        }
+                    }
+                });
             }
 
         }
