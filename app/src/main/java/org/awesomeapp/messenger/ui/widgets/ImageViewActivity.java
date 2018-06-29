@@ -31,6 +31,7 @@ import com.bumptech.glide.request.RequestOptions;
 
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.ImUrlActivity;
+import org.awesomeapp.messenger.nearby.NearbyShareActivity;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.util.SecureMediaStore;
 
@@ -176,10 +177,31 @@ public class ImageViewActivity extends AppCompatActivity implements PZSImageView
                 deleteMediaFile();
                 return true;
 
+            case R.id.menu_message_nearby:
+                sendNearby();
+                return true;
+
             default:
         }
         return super.onOptionsItemSelected(item);
     }
+
+    public void sendNearby ()
+    {
+        int currentItem = viewPagerPhotos.getCurrentItem();
+        if (currentItem >= 0 && currentItem < uris.size()) {
+            String resharePath = uris.get(currentItem).toString();
+            Intent shareIntent = new Intent(this, NearbyShareActivity.class);
+
+            shareIntent.putExtra("name",((ImApp)getApplication()).getDefaultUsername());
+
+            shareIntent.setAction(Intent.ACTION_SEND);
+            shareIntent.setDataAndType(Uri.parse(resharePath), mimeTypes.get(currentItem));
+            startActivity(shareIntent);
+        }
+
+    }
+
 
     public void exportMediaFile ()
     {

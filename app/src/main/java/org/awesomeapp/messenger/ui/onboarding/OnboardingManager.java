@@ -1,13 +1,9 @@
 package org.awesomeapp.messenger.ui.onboarding;
 
-import org.awesomeapp.messenger.model.ImConnection;
-import org.awesomeapp.messenger.nearby.NearbyActivity;
+import org.awesomeapp.messenger.nearby.NearbyAddContactActivity;
 import org.awesomeapp.messenger.provider.Imps;
-import org.awesomeapp.messenger.service.IImConnection;
 import org.awesomeapp.messenger.ui.qr.QrScanActivity;
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.ui.legacy.ImPluginHelper;
@@ -15,9 +11,6 @@ import org.awesomeapp.messenger.plugin.xmpp.XmppConnection;
 import org.awesomeapp.messenger.util.LogCleaner;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.security.SecureRandom;
 import java.util.HashMap;
 
@@ -34,8 +27,6 @@ import android.os.Handler;
 import android.provider.Telephony;
 import android.util.Base64;
 import android.util.Log;
-import android.util.Pair;
-import android.widget.Toast;
 
 public class OnboardingManager {
 
@@ -86,7 +77,7 @@ public class OnboardingManager {
 
     public static void inviteNearby(Activity context, String message)
     {
-        Intent intent = new Intent(context, NearbyActivity.class);
+        Intent intent = new Intent(context, NearbyAddContactActivity.class);
         intent.putExtra(Intent.EXTRA_TEXT, message);
         intent.setType("text/plain");
         context.startActivity(intent);

@@ -411,7 +411,7 @@
     <string name="group_encryption_summary">Encryption must also be manually enabled for each group.</string>
     <string name="action_forward">Forward</string>
     <string name="action_resend">Resend</string>
-    <string name="title_activity_nearby">NearbyActivity</string>
+    <string name="title_activity_nearby">Nearby</string>
     <string name="nearby_not_supported">Nearby sharing not supported on this device</string>
     <string name="battery_opt_title">Battery Optimization</string>
     <string name="battery_opt_message">Ensure Zom receives messages in the background, by disabling battery optimizations</string>

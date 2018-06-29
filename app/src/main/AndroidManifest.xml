@@ -30,6 +30,15 @@
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
+
+    <!-- Required for Nearby Connections -->
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+
     <!--
      Some Chromebooks don't support touch. Although not essential,
      it's a good idea to explicitly include this declaration.
@@ -441,7 +450,9 @@
         <activity android:name="org.awesomeapp.messenger.ui.GroupDisplayActivity" />
         <activity
             android:name="org.awesomeapp.messenger.ui.AccountsActivity"
-            android:label="@string/accounts" />
+            android:label="@string/accounts"
+            android:exported="false"
+            />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -463,12 +474,21 @@
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <activity
-            android:name="org.awesomeapp.messenger.nearby.NearbyActivity"
-            android:label="@string/title_activity_nearby" />
+            android:name="org.awesomeapp.messenger.nearby.NearbyAddContactActivity"
+            android:label="@string/title_activity_nearby"
+            android:exported="false"
+            />
+
+        <activity
+            android:name="org.awesomeapp.messenger.nearby.NearbyShareActivity"
+            android:label="@string/title_activity_nearby"
+            android:exported="false"
+            />
         <activity
             android:name="org.awesomeapp.messenger.ui.camera.CameraActivity"
             android:label=""
             android:screenOrientation="portrait"
+            android:exported="false"
             />
     </application>
 

@@ -2,20 +2,14 @@ package org.awesomeapp.messenger.nearby;
 
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
-import android.app.Dialog;
 import android.content.Context;
-import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
-import android.app.Activity;
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -27,7 +21,6 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.nearby.Nearby;
 import com.google.android.gms.nearby.messages.Message;
 import com.google.android.gms.nearby.messages.MessageListener;
@@ -38,10 +31,8 @@ import org.awesomeapp.messenger.model.Presence;
 import org.awesomeapp.messenger.plugin.xmpp.XmppAddress;
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.tasks.AddContactAsyncTask;
-import org.awesomeapp.messenger.ui.ContactDisplayActivity;
 import org.awesomeapp.messenger.ui.ContactListItem;
 import org.awesomeapp.messenger.ui.ContactViewHolder;
-import org.awesomeapp.messenger.ui.CursorRecyclerViewAdapter;
 import org.awesomeapp.messenger.ui.onboarding.OnboardingManager;
 
 import java.util.ArrayList;
@@ -51,10 +42,8 @@ import im.zom.messenger.R;
 
 import static android.content.Intent.EXTRA_TEXT;
 import static org.awesomeapp.messenger.ui.AccountViewFragment.TAG;
-import static org.awesomeapp.messenger.ui.ContactListItem.COLUMN_CONTACT_ACCOUNT;
-import static org.awesomeapp.messenger.ui.ContactListItem.COLUMN_CONTACT_PROVIDER;
 
-public class NearbyActivity extends AppCompatActivity {
+public class NearbyAddContactActivity extends AppCompatActivity {
 
     private MessageListener mMessageListener;
     private Message mMessage;
@@ -262,13 +251,13 @@ public class NearbyActivity extends AppCompatActivity {
                ((ContactListItem)viewHolder.itemView).bind(viewHolder, contact, new View.OnClickListener() {
                    @Override
                    public void onClick(View view) {
-                        NearbyActivity.confirmContact(contact);
+                        NearbyAddContactActivity.confirmContact(contact);
 
                    }
                }, new View.OnClickListener() {
                    @Override
                    public void onClick(View view) {
-                        NearbyActivity.ignoreContact(contact);
+                        NearbyAddContactActivity.ignoreContact(contact);
                    }
                });
             }

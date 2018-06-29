@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
 
-    tools:context="org.awesomeapp.messenger.nearby.NearbyActivity">
+    tools:context="org.awesomeapp.messenger.nearby.NearbyAddContactActivity">
 <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
