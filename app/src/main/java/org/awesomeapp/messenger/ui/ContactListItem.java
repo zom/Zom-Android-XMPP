@@ -82,12 +82,7 @@ public class ContactListItem extends FrameLayout {
     public static final int COLUMN_LAST_MESSAGE = 11;
     public static final int COLUMN_LAST_READ_DATE = 12;
 
-
-
     static Drawable AVATAR_DEFAULT_GROUP = null;
-
-    private String address;
-    private String nickname;
 
     private ContactViewHolder mHolder;
 
@@ -106,8 +101,8 @@ public class ContactListItem extends FrameLayout {
     }
 
     public void bind (ContactViewHolder holder, Contact contact, OnClickListener confirmListener, OnClickListener denyListener) {
-        address = contact.getAddress().getBareAddress();
-        nickname = contact.getName();
+        String address = contact.getAddress().getBareAddress();
+        String nickname = contact.getName();
 
         int typeUnmasked = Imps.ContactsColumns.TYPE_NORMAL;
         final int type = typeUnmasked & Imps.Contacts.TYPE_MASK;
@@ -273,8 +268,8 @@ public class ContactListItem extends FrameLayout {
 
     public void bind(ContactViewHolder holder, Cursor cursor, String underLineText, boolean showChatMsg, boolean scrolling) {
 
-        address = cursor.getString(COLUMN_CONTACT_USERNAME);
-        nickname = cursor.getString(COLUMN_CONTACT_NICKNAME);
+        final String address = cursor.getString(COLUMN_CONTACT_USERNAME);
+        String nickname = cursor.getString(COLUMN_CONTACT_NICKNAME);
 
         int typeUnmasked = cursor.getInt(COLUMN_CONTACT_TYPE);
         final int type = typeUnmasked & Imps.Contacts.TYPE_MASK;
@@ -287,9 +282,7 @@ public class ContactListItem extends FrameLayout {
         final int subType = cursor.getInt(COLUMN_SUBSCRIPTION_TYPE);
         final int subStatus = cursor.getInt(COLUMN_SUBSCRIPTION_STATUS);
 
-        String statusText = cursor.getString(COLUMN_CONTACT_CUSTOM_STATUS);
-
-     //   nickname += " " + holder.mContactId + " " + holder.mAccountId + " " + holder.mProviderId;
+     //   String statusText = cursor.getString(COLUMN_CONTACT_CUSTOM_STATUS);
 
 
         if (TextUtils.isEmpty(nickname))
@@ -301,8 +294,7 @@ public class ContactListItem extends FrameLayout {
             nickname = nickname.split("@")[0].split("\\.")[0];
         }
 
-
-    //    nickname += " " + subType;// + " " + subStatus;
+        final Contact contact = new Contact(new XmppAddress(address), nickname, Imps.Contacts.TYPE_NORMAL);
 
         if (!TextUtils.isEmpty(underLineText)) {
             // highlight/underline the word being searched 
@@ -384,7 +376,7 @@ public class ContactListItem extends FrameLayout {
             }
         }
 
-        statusText = address;
+        String statusText = address;
 
         if ((typeUnmasked & Imps.Contacts.TYPE_FLAG_HIDDEN) != 0)
         {
@@ -407,7 +399,7 @@ public class ContactListItem extends FrameLayout {
                         holder.mButtonSubApprove.setOnClickListener(new OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                approveSubscription();
+                                approveSubscription(contact);
                                 mHolder.itemView.performClick();
                             }
 
@@ -416,7 +408,7 @@ public class ContactListItem extends FrameLayout {
                         holder.mButtonSubDecline.setOnClickListener(new OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                declineSubscription();
+                                declineSubscription(contact);
                             }
                         });
                     }
@@ -539,7 +531,7 @@ public class ContactListItem extends FrameLayout {
         return buf.toString();
     }*/
 
-    void approveSubscription() {
+    void approveSubscription(Contact contact) {
 
         ImApp app = ((ImApp)((Activity)getContext()).getApplication());
         IImConnection mConn = app.getConnection(mHolder.mProviderId, mHolder.mAccountId);
@@ -548,7 +540,7 @@ public class ContactListItem extends FrameLayout {
         {
             try {
                 IContactListManager manager = mConn.getContactListManager();
-                manager.approveSubscription(new Contact(new XmppAddress(address),nickname, Imps.Contacts.TYPE_NORMAL));
+                manager.approveSubscription(contact);
             } catch (RemoteException e) {
 
                 // mHandler.showServiceErrorAlert(e.getLocalizedMessage());
@@ -557,7 +549,7 @@ public class ContactListItem extends FrameLayout {
         }
     }
 
-    void declineSubscription() {
+    void declineSubscription(Contact contact) {
 
         ImApp app = ((ImApp)((Activity)getContext()).getApplication());
         IImConnection mConn = app.getConnection(mHolder.mProviderId, mHolder.mAccountId);
@@ -566,9 +558,9 @@ public class ContactListItem extends FrameLayout {
         {
             try {
                 IContactListManager manager = mConn.getContactListManager();
-                manager.declineSubscription(new Contact(new XmppAddress(address),nickname, Imps.Contacts.TYPE_NORMAL));
-                app.dismissChatNotification(mHolder.mProviderId,address);
-                manager.removeContact(address);
+                manager.declineSubscription(contact);
+                app.dismissChatNotification(mHolder.mProviderId,contact.getAddress().getBareAddress());
+                manager.removeContact(contact.getAddress().getBareAddress());
             } catch (RemoteException e) {
                 // mHandler.showServiceErrorAlert(e.getLocalizedMessage());
                 LogCleaner.error(ImApp.LOG_TAG, "decline sub error",e);
@@ -576,7 +568,7 @@ public class ContactListItem extends FrameLayout {
         }
     }
 
-    void deleteContact ()
+    void deleteContact (Contact contact)
     {
         try {
 
@@ -586,7 +578,7 @@ public class ContactListItem extends FrameLayout {
 
             IContactListManager manager = mConn.getContactListManager();
 
-            int res = manager.removeContact(address);
+            int res = manager.removeContact(contact.getAddress().getBareAddress());
             if (res != ImErrorInfo.NO_ERROR) {
                 //mHandler.showAlert(R.string.error,
                 //      ErrorResUtils.getErrorRes(getResources(), res, address));
