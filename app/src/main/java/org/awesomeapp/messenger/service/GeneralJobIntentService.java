@@ -19,6 +19,8 @@ public class GeneralJobIntentService extends JobIntentService {
 
     public static final int JOB_ID = 0x01;
 
+    private boolean isBooted = false;
+
     public static void enqueueWork(Context context, Intent work) {
         enqueueWork(context, GeneralJobIntentService.class, JOB_ID, work);
     }
@@ -34,7 +36,6 @@ public class GeneralJobIntentService extends JobIntentService {
 
     private void handleBoot (Context context, Intent intent)
     {
-        GeneralJobIntentService.enqueueWork(getApplicationContext(), intent);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
@@ -42,23 +43,28 @@ public class GeneralJobIntentService extends JobIntentService {
 
         Debug.onServiceStart();
         if (prefStartOnBoot) {
-            if (Imps.isUnencrypted(context) || prefs.contains(ImApp.PREFERENCE_KEY_TEMP_PASS)) {
-                Log.d(ImApp.LOG_TAG, "autostart");
 
-                Intent serviceIntent = new Intent(context, RemoteImService.class);
-                //   serviceIntent.setComponent(ImServiceConstants.IM_SERVICE_COMPONENT);
-                serviceIntent.putExtra(ImServiceConstants.EXTRA_CHECK_AUTO_LOGIN, true);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    context.startForegroundService(serviceIntent);
+            if (!isBooted) {
+                if (Imps.isUnencrypted(context) || prefs.contains(ImApp.PREFERENCE_KEY_TEMP_PASS)) {
+                    Log.d(ImApp.LOG_TAG, "autostart");
+
+                    Intent serviceIntent = new Intent(context, RemoteImService.class);
+                    //   serviceIntent.setComponent(ImServiceConstants.IM_SERVICE_COMPONENT);
+                    serviceIntent.putExtra(ImServiceConstants.EXTRA_CHECK_AUTO_LOGIN, true);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        context.startForegroundService(serviceIntent);
+                    } else {
+                        context.startService(serviceIntent);
+                    }
+
+                    Log.d(ImApp.LOG_TAG, "autostart done");
                 } else {
-                    context.startService(serviceIntent);
+                    //show unlock notification
+                    StatusBarNotifier sbn = new StatusBarNotifier(context);
+                    sbn.notifyLocked();
                 }
 
-                Log.d(ImApp.LOG_TAG, "autostart done");
-            } else {
-                //show unlock notification
-                StatusBarNotifier sbn = new StatusBarNotifier(context);
-                sbn.notifyLocked();
+                isBooted = true;
             }
         }
     }
