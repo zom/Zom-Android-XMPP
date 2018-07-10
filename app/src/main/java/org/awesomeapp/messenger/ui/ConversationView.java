@@ -421,7 +421,7 @@ public class ConversationView {
 
     private boolean checkConnection ()
     {
-        if (mConn == null && mProviderId != -1) {
+        if (mConn == null) {
             mConn = mApp.getConnection(mProviderId, mAccountId);
 
             if (mConn == null)
@@ -2048,6 +2048,8 @@ public class ConversationView {
 
         try
         {
+            checkConnection();
+
             if (mConn != null) {
                     IChatSessionManager sessionMgr = mConn.getChatSessionManager();
                     if (sessionMgr != null) {
@@ -3501,7 +3503,7 @@ public class ConversationView {
                     super.onPostExecute(chatId);
                 }
 
-            }.executeOnExecutor(ImApp.sThreadPoolExecutor, new Contact(new XmppAddress(username)));
+            }.execute(new Contact(new XmppAddress(username)));
 
             mActivity.finish();
         }
