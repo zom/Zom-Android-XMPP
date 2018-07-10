@@ -955,7 +955,7 @@ public class GroupDisplayActivity extends BaseActivity implements IChatSessionLi
     }
 
     private boolean canChangeSubject(GroupMemberDisplay member) {
-        return TextUtils.equals(member.role, "moderator") &&
+        return TextUtils.equals(member.role, "moderator") ||
                 (TextUtils.equals(member.affiliation, "admin") || TextUtils.equals(member.affiliation, "owner"));
     }
 
@@ -964,7 +964,7 @@ public class GroupDisplayActivity extends BaseActivity implements IChatSessionLi
     }
 
     public boolean canGrantAdmin(GroupMemberDisplay granter, GroupMemberDisplay grantee) {
-        return TextUtils.equals(granter.affiliation, "owner") &&
+        return canChangeSubject(granter) &&
                 (TextUtils.equals(grantee.affiliation, "member") || TextUtils.equals(grantee.affiliation, "none"));
     }
 
