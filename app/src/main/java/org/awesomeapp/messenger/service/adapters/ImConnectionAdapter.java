@@ -235,6 +235,11 @@ public class ImConnectionAdapter extends org.awesomeapp.messenger.service.IImCon
         return cookie;
     }
 
+    public void clearMemory ()
+    {
+        mChatSessionManager.closeAllChatSessions();
+    }
+
     @Override
     public void logout() {
        // OtrChatManager.endSessionsForAccount(mConnection.getLoginUser());
@@ -496,7 +501,7 @@ public class ImConnectionAdapter extends org.awesomeapp.messenger.service.IImCon
                                     String nickname = c.getString(4);
                                     if (remoteAddress != null)
                                        new ChatSessionInitTask((ImApp) getContext().getApplication(), mProviderId, mAccountId, chatType, false)
-                                               .executeOnExecutor(ImApp.sThreadPoolExecutor,new Contact(new XmppAddress(remoteAddress),nickname,chatType));
+                                               .execute(new Contact(new XmppAddress(remoteAddress),nickname,chatType));
                                 }
                             }
                             c.close();

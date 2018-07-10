@@ -169,7 +169,11 @@ public class ChatSessionManagerAdapter extends
             ArrayList<ChatSessionAdapter> adapters = new ArrayList<ChatSessionAdapter>(
                     mActiveChatSessionAdapters.values());
             for (ChatSessionAdapter adapter : adapters) {
-                adapter.leave();
+                ChatSession session = adapter.getAdaptee();
+                getChatSessionManager().closeChatSession(session);
+
+                String key = Address.stripResource(adapter.getAddress());
+                mActiveChatSessionAdapters.remove(key);
             }
         }
     }
@@ -218,7 +222,7 @@ public class ChatSessionManagerAdapter extends
         ChatSessionAdapter adapter = mActiveChatSessionAdapters.get(key);
 
         if (adapter == null) {
-            adapter = new ChatSessionAdapter(session, mConnection, isNewSession);
+            adapter = new ChatSessionAdapter(session, session.getParticipant(), mConnection, isNewSession);
             mActiveChatSessionAdapters.put(key, adapter);
         }
 

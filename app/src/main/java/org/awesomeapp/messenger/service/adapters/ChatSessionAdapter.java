@@ -146,7 +146,7 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
     private boolean mEnableOmemoGroups = true;
     private String mNickname = null;
 
-    public ChatSessionAdapter(ChatSession chatSession, ImConnectionAdapter connection, boolean isNewSession) {
+    public ChatSessionAdapter(ChatSession chatSession, ImEntity participant, ImConnectionAdapter connection, boolean isNewSession) {
 
         mChatSession = chatSession;
         mConnection = connection;
@@ -161,8 +161,6 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         mOtrChatSessions = new HashMap<String, OtrChatSessionAdapter>();
 
         mDataHandlerListener = new DataHandlerListenerImpl();
-
-        ImEntity participant = mChatSession.getParticipant();
 
         if (participant instanceof ChatGroup) {
             init((ChatGroup) participant,isNewSession);
@@ -381,7 +379,6 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         mContentResolver.delete(mChatURI, null, null);
         mStatusBarNotifier.dismissChatNotification(mConnection.getProviderId(), getAddress());
         mChatSessionManager.closeChatSession(this);
-
 
     }
 

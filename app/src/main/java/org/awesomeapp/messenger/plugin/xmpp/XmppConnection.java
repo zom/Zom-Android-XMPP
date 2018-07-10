@@ -92,6 +92,7 @@ import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.disco.provider.DiscoverInfoProvider;
 import org.jivesoftware.smackx.disco.provider.DiscoverItemsProvider;
 import org.jivesoftware.smackx.eme.element.ExplicitMessageEncryptionElement;
+import org.jivesoftware.smackx.forward.packet.Forwarded;
 import org.jivesoftware.smackx.httpfileupload.HttpFileUploadManager;
 import org.jivesoftware.smackx.httpfileupload.UploadProgressListener;
 import org.jivesoftware.smackx.httpfileupload.UploadService;
@@ -99,6 +100,7 @@ import org.jivesoftware.smackx.httpfileupload.element.Slot;
 import org.jivesoftware.smackx.iqlast.LastActivityManager;
 import org.jivesoftware.smackx.iqlast.packet.LastActivity;
 import org.jivesoftware.smackx.iqprivate.PrivateDataManager;
+import org.jivesoftware.smackx.mam.MamManager;
 import org.jivesoftware.smackx.muc.Affiliate;
 import org.jivesoftware.smackx.muc.AutoJoinFailedCallback;
 import org.jivesoftware.smackx.muc.DiscussionHistory;
@@ -307,7 +309,7 @@ public class XmppConnection extends ImConnection {
         SmackConfiguration.setDefaultPacketReplyTimeout(SOTIMEOUT);
 
         XMPPTCPConnection.setUseStreamManagementDefault(true);
-        XMPPTCPConnection.setUseStreamManagementResumptiodDefault(true);
+        XMPPTCPConnection.setUseStreamManagementResumptionDefault(true);
 
         // Create a single threaded executor.  This will serialize actions on the underlying connection.
         createExecutor();
@@ -655,16 +657,38 @@ public class XmppConnection extends ImConnection {
 
                 try {
                     DiscussionHistory history = new DiscussionHistory();
+                    history.setMaxStanzas(Integer.MAX_VALUE);
                     reMuc.join(Resourcepart.from(mUser.getName()), null, history, SmackConfiguration.getDefaultPacketReplyTimeout());
+
                     mMUCs.put(muc.getRoom().toString(),reMuc);
                     ChatGroup group = mGroups.get(muc.getRoom().toString());
 
                     addMucListeners(reMuc, group);
+                    loadMembers(muc, group);
+
+                    queryArchive(muc.getRoom());
 
                 } catch (Exception e) {
                     Log.w(TAG,"unable to join MUC: " + e.getMessage());
                 }
             }
+        }
+
+        private void queryArchive (EntityBareJid jid) throws XMPPException.XMPPErrorException, SmackException.NotLoggedInException, SmackException.NotConnectedException, InterruptedException, SmackException.NoResponseException {
+
+            /**
+            MamManager mucMamManager = MamManager.getInstanceFor(mConnection, jid);
+            MamManager.MamQueryArgs.Builder args = new MamManager.MamQueryArgs.Builder();
+            args.setResultPageSizeTo(20);
+
+            MamManager.MamQuery result = mucMamManager.queryArchive(args.build());
+
+            if (result != null && result.getMessageCount() > 0) {
+                for (org.jivesoftware.smack.packet.Message msg : result.getMessages())
+                {
+                    Log.w(TAG, "retreived archive message: " + msg);
+                }
+            }**/
         }
 
         @Override
@@ -697,8 +721,25 @@ public class XmppConnection extends ImConnection {
         }
 
         @Override
-        public boolean createChatGroupAsync(String chatRoomJid, String subject, String nickname) throws Exception {
+        public boolean createChatGroupAsync(final String chatRoomJid, final String subject, final String nickname) throws Exception {
 
+            execute(new Runnable()
+            {
+                @Override
+                public void run() {
+                    try {
+                        createChatGroup(chatRoomJid, subject, nickname);
+                    } catch (Exception e) {
+                        debug(TAG,"error creating group: " + chatRoomJid,e);
+                    }
+                }
+            });
+
+            return true;
+
+        };
+
+        private boolean createChatGroup(String chatRoomJid, String subject, String nickname) throws Exception {
             ChatGroup chatGroup;
             MultiUserChat muc;
 
@@ -917,6 +958,7 @@ public class XmppConnection extends ImConnection {
             }
 
             addMucListeners(muc,chatGroup);
+            loadMembers(muc, chatGroup);
 
             return true;
 
@@ -986,9 +1028,11 @@ public class XmppConnection extends ImConnection {
                 // Create a MultiUserChat using a Connection for a room
                 MultiUserChatManager mucMgr = MultiUserChatManager.getInstanceFor(mConnection);
                 mucMgr.setAutoJoinOnReconnect(true);
-                MultiUserChat muc = mucMgr.getMultiUserChat( JidCreate.entityBareFrom(chatRoomJid));
+                EntityBareJid crJid = JidCreate.entityBareFrom(chatRoomJid);
+                MultiUserChat muc = mucMgr.getMultiUserChat( crJid);
 
                 DiscussionHistory history = new DiscussionHistory();
+                history.setMaxStanzas(Integer.MAX_VALUE);
                 muc.join(Resourcepart.from(mUser.getName()), null, history, SmackConfiguration.getDefaultPacketReplyTimeout());
                 String subject = muc.getSubject();
 
@@ -1005,6 +1049,9 @@ public class XmppConnection extends ImConnection {
                 mMUCs.put(chatRoomJid, muc);
 
                 addMucListeners(muc, chatGroup);
+                loadMembers(muc, chatGroup);
+
+                queryArchive(crJid);
 
             } catch (Exception e) {
                 debug(TAG,"error joining MUC",e);
@@ -1047,13 +1094,16 @@ public class XmppConnection extends ImConnection {
                 for (EntityFullJid entity : muc.getOccupants()) {
                     Occupant occupant = muc.getOccupant(entity);
                     Jid jidSource = occupant.getJid();
-                    try {
-                        getOmemo().trustOmemoDevice(jidSource.asBareJid(), null, true);
-                    }
-                    catch (Exception e){
-                        debug("MUC", "Error trusting group member OMEMO: "  + jidSource,e);
 
+                    if (getOmemo() != null) {
+                        try {
+                            getOmemo().trustOmemoDevice(jidSource.asBareJid(), null, true);
+                        } catch (Exception e) {
+                            debug("MUC", "Error trusting group member OMEMO: " + jidSource, e);
+
+                        }
                     }
+
                     xa = new XmppAddress(jidSource.toString());
                     Contact mucContact = new Contact(xa, xa.getUser(), Imps.Contacts.TYPE_NORMAL);
                     chatGroup.notifyMemberJoined(entity.toString(), mucContact);
@@ -1082,14 +1132,17 @@ public class XmppConnection extends ImConnection {
                 ArrayList<Contact> owners = new ArrayList<>();
                 for (Affiliate member : muc.getOwners()) {
                     xa = new XmppAddress(member.getJid().toString());
-                    try {
-                        getOmemo().trustOmemoDevice(member.getJid().asBareJid(), null, true);
-                    }
-                    catch (Exception e){
 
-                        debug("MUC", "Error trusting group owner OMEMO: "  + member.getJid(),e);
+                    if (getOmemo() != null) {
+                        try {
+                            getOmemo().trustOmemoDevice(member.getJid().asBareJid(), null, true);
+                        } catch (Exception e) {
 
+                            debug("MUC", "Error trusting group owner OMEMO: " + member.getJid(), e);
+
+                        }
                     }
+
                     Contact mucContact = new Contact(xa, xa.getUser(), Imps.Contacts.TYPE_NORMAL);
                     chatGroup.notifyMemberJoined(null, mucContact);
                     // Owners are also moderators
@@ -1107,13 +1160,16 @@ public class XmppConnection extends ImConnection {
                 ArrayList<Contact> admins = new ArrayList<>();
                 for (Affiliate member : muc.getAdmins()) {
                     xa = new XmppAddress(member.getJid().toString());
-                    try {
-                        getOmemo().trustOmemoDevice(member.getJid().asBareJid(), null, true);
-                    }
-                    catch (Exception e){
-                        debug("MUC", "Error trusting group admin OMEMO: "  + member.getJid(),e);
 
+                    if (getOmemo() != null) {
+                        try {
+                            getOmemo().trustOmemoDevice(member.getJid().asBareJid(), null, true);
+                        } catch (Exception e) {
+                            debug("MUC", "Error trusting group admin OMEMO: " + member.getJid(), e);
+
+                        }
                     }
+
                     Contact mucContact = new Contact(xa, xa.getUser(), Imps.Contacts.TYPE_NORMAL);
                     chatGroup.notifyMemberJoined(null, mucContact);
                     chatGroup.notifyMemberRoleUpdate(mucContact, null, "admin");
@@ -1186,6 +1242,7 @@ public class XmppConnection extends ImConnection {
                             }
                             debug("MUC", "Got group presence: " + presence.toString());
 
+                            /**
                             MUCUser user = MUCUser.from(presence);
                             if (user != null && user.hasStatus() && user.getStatus().contains(MUCUser.Status.PRESENCE_TO_SELF_110)) {
                                 // We are now logged in, fetch the lists for members, admins, owners!
@@ -1193,7 +1250,8 @@ public class XmppConnection extends ImConnection {
                                 if (presence.isAvailable()) {
                                     loadMembers(muc, chatGroup);
                                 }
-                            }
+                            }**/
+
                         } catch (Exception e) {
                             debug("MUC", "Error handling group presence: " + e);
                         }
@@ -1706,6 +1764,10 @@ public class XmppConnection extends ImConnection {
 
     private Omemo getOmemo () throws Exception
     {
+
+        if (mOmemoInstance == null)
+            mOmemoInstance = initOmemo(mConnection);
+
         return mOmemoInstance;
     }
 
@@ -1740,15 +1802,15 @@ public class XmppConnection extends ImConnection {
 
             mResource = providerSettings.getXmppResource();
 
-            mRoster = Roster.getInstanceFor(mConnection);
+            mRoster = Roster.getInstanceFor(conn);
             mRoster.setRosterLoadedAtLogin(true);
             mRoster.setSubscriptionMode(subMode);
             getContactListManager().listenToRoster(mRoster);
 
             mChatManager = ChatManager.getInstanceFor(conn);
 
-        //    mPingManager = PingManager.getInstanceFor(mConnection) ;
-         //   mPingManager.setPingInterval(PING_INTERVAL);
+            mPingManager = PingManager.getInstanceFor(mConnection) ;
+            mPingManager.setPingInterval(PING_INTERVAL);
 
             if (mUser == null)
                 mUser = makeUser(providerSettings,mContext.getContentResolver());
@@ -1990,8 +2052,7 @@ public class XmppConnection extends ImConnection {
             }
         }
 
-        //check if server is reachable, if not, enable advanced networking
-        if (!isReachable(server,serverPort))
+        //check if server is reachable, if not, enable advanced networkiif (!isReachable(server,serverPort))
             doAdvancedNetworking = true;
 
         if (!TextUtils.isEmpty(Preferences.getProxyServerHost()))
@@ -2136,26 +2197,14 @@ public class XmppConnection extends ImConnection {
             });
             mConfig.enableDefaultDebugger();
         }
-        //mConfig.setSASLAuthenticationEnabled(useSASL);
 
 
         // Android has no support for Kerberos or GSSAPI, so disable completely
         SASLAuthentication.unregisterSASLMechanism("KERBEROS_V4");
         SASLAuthentication.unregisterSASLMechanism("GSSAPI");
 
-        /**
-        SASLAuthentication.registerSASLMechanism( GTalkOAuth2.NAME, GTalkOAuth2.class );
-
-        if (mIsGoogleAuth) //if using google auth enable sasl
-            SASLAuthentication.supportSASLMechanism( GTalkOAuth2.NAME, 0);
-        else if (domain.contains("google.com")||domain.contains("gmail.com")) //if not google auth, disable if doing direct google auth
-            SASLAuthentication.unsupportSASLMechanism( GTalkOAuth2.NAME);
-            */
-
-        if (allowPlainAuth)
-            SASLAuthentication.unBlacklistSASLMechanism("PLAIN");
-
-        SASLAuthentication.unBlacklistSASLMechanism("DIGEST-MD5");
+       // SASLAuthentication.unBlacklistSASLMechanism("PLAIN");
+        //SASLAuthentication.unBlacklistSASLMechanism("DIGEST-MD5");
 
         if (mMemTrust == null)
             mMemTrust = new MemorizingTrustManager(mContext);
@@ -2370,13 +2419,13 @@ public class XmppConnection extends ImConnection {
                 debug(TAG, "connected");
 
                 try {
-                    initOmemo((XMPPTCPConnection)connection);
-
+                    initOmemo((XMPPTCPConnection)mConnection);
                 }
                 catch (Exception e)
                 {
                     debug("OMEMO","There was a problem init'g omemo",e);
                 }
+
 
             }
 
@@ -2384,10 +2433,31 @@ public class XmppConnection extends ImConnection {
             public void authenticated(XMPPConnection connection, boolean resumed) {
                 debug(TAG, "authenticated: resumed=" + resumed);
 
-                sendPresencePacket();
-                mChatGroupManager.reconnectAll();
+                if (!resumed) {
+                    try {
 
-                initServiceDiscovery();
+                        try {
+                            ((XMPPTCPConnection)connection).sendSmAcknowledgement();
+                           ((XMPPTCPConnection)connection).requestSmAcknowledgement();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    } catch (SmackException.NotConnectedException | StreamManagementException.StreamManagementNotEnabledException e) {
+                        e.printStackTrace();
+                    }
+
+                    sendPresencePacket();
+
+                    initServiceDiscovery();
+
+                    new Thread ()
+                    {
+                        public void run ()
+                        {
+                            mChatGroupManager.reconnectAll();
+                        }
+                    }.start();
+                }
 
             }
 
@@ -2414,7 +2484,6 @@ public class XmppConnection extends ImConnection {
                 setState(DISCONNECTED,
                         new ImErrorInfo(ImErrorInfo.NETWORK_ERROR, "network error"));
 
-                /**
                 if (getState() != SUSPENDED)
                 {
                     execute(new Runnable() {
@@ -2429,7 +2498,7 @@ public class XmppConnection extends ImConnection {
                         }
 
                     });
-                }**/
+                }
             }
         };
 
@@ -2871,6 +2940,7 @@ public class XmppConnection extends ImConnection {
                 {
                     if (!muc.isJoined()) {
                         DiscussionHistory history = new DiscussionHistory();
+                        history.setMaxStanzas(Integer.MAX_VALUE);
                         muc.join(Resourcepart.from(mUser.getName()), null, history, SmackConfiguration.getDefaultPacketReplyTimeout());
                     }
 
@@ -3853,6 +3923,14 @@ public class XmppConnection extends ImConnection {
 
         super.networkTypeChanged();
 
+        if (mState != LOGGED_IN) {
+            debug(TAG, "network type changed");
+            mNeedReconnect = true;
+            setState(LOGGING_IN, null);
+            reconnect();
+        }
+
+        /**
         new Thread(new Runnable ()
                 {
                     public void run ()
@@ -3865,7 +3943,7 @@ public class XmppConnection extends ImConnection {
                         }
                     }
                 }
-        ).start();
+        ).start();**/
 
 
     }
@@ -3952,6 +4030,7 @@ public class XmppConnection extends ImConnection {
                 setState(LOGGED_IN, null);
                 return;
             }
+
             debug(TAG, "reconnect");
 
             try {
@@ -3969,7 +4048,7 @@ public class XmppConnection extends ImConnection {
                     mConnection = null;
                     mNeedReconnect = true;
                     setState(DISCONNECTED, new ImErrorInfo(ImErrorInfo.NETWORK_ERROR, null));
-                    do_login_async();
+//                    do_login_async();
 
                // }
             } catch (Exception e) {
@@ -4007,6 +4086,10 @@ public class XmppConnection extends ImConnection {
         {
             //update and send new presence packet out
             mUserPresence = new Presence(Presence.AVAILABLE, "", Presence.CLIENT_TYPE_MOBILE);
+
+            sendPresencePacket();
+
+
         } else if (state == DISCONNECTED || state == SUSPENDED) {
             for (ChatGroup group : getChatGroupManager().getAllChatGroups()) {
                 group.clearMembers(false);
@@ -4140,14 +4223,10 @@ public class XmppConnection extends ImConnection {
         mBookmarkManager = BookmarkManager.getBookmarkManager(mConnection);
         mPrivateManager = PrivateDataManager.getInstanceFor(mConnection);
 
-        if (mPingManager != null)
-        {
-            mPingManager.setPingInterval(-1);
-        }
-
         mPingManager = PingManager.getInstanceFor(mConnection);
         mPingManager.setPingInterval(60);
         mPingManager.pingServerIfNecessary();
+
 
         if (mReconnectionManager != null) {
             mReconnectionManager.abortPossiblyRunningReconnection();
@@ -4155,7 +4234,7 @@ public class XmppConnection extends ImConnection {
         }
 
         mReconnectionManager = ReconnectionManager.getInstanceFor(mConnection);
-        mReconnectionManager.setReconnectionPolicy(ReconnectionManager.ReconnectionPolicy.RANDOM_INCREASING_DELAY);
+        mReconnectionManager.setReconnectionPolicy(ReconnectionManager.ReconnectionPolicy.FIXED_DELAY);
         mReconnectionManager.addReconnectionListener(new ReconnectionListener() {
             @Override
             public void reconnectingIn(int i) {
@@ -4166,10 +4245,12 @@ public class XmppConnection extends ImConnection {
             @Override
             public void reconnectionFailed(Exception e) {
                 debug(TAG,"Reconnection failed",e);
+                reconnect();
             }
-        });
-        mReconnectionManager.disableAutomaticReconnection();
 
+
+        });
+        mReconnectionManager.enableAutomaticReconnection();
 
         try {
             debug(TAG,"is Private Data supported?" + mPrivateManager.isSupported());

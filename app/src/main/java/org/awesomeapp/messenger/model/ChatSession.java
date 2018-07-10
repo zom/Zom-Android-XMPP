@@ -57,6 +57,10 @@ public class ChatSession {
      * @param manager the underlying network connection.
      */
     ChatSession(ImEntity participant, ChatSessionManager manager) {
+
+        if (participant == null)
+            throw new RuntimeException ("participant cannot be null");
+
         mParticipant = participant;
         mManager = manager;
 
