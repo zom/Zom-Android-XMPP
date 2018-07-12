@@ -925,9 +925,10 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
         if (id == -1)
         {
             id = ContentUris.parseId(mContentResolver.insert(contactUri, values));
-            for (Contact member : group.getMembers()) {
-                insertGroupMemberInDb(member);
-            }
+        }
+
+        for (Contact member : group.getMembers()) {
+            insertGroupMemberInDb(member);
         }
 
         return id;

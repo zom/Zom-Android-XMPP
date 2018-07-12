@@ -42,6 +42,7 @@ import android.os.PowerManager.WakeLock;
 import android.os.RemoteCallbackList;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -317,10 +318,8 @@ public class RemoteImService extends Service implements ImService, ICacheWordSub
             .setContentTitle(getString(R.string.app_name))
             .setSmallIcon(R.drawable.notify_zom);
 
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
-            mNotifyBuilder.setPriority(Notification.PRIORITY_MIN);
-        }
-
+        mNotifyBuilder.setVisibility(NotificationCompat.VISIBILITY_PRIVATE);
+        mNotifyBuilder.setPriority(NotificationCompat.PRIORITY_MIN);
         mNotifyBuilder.setOngoing(true);
         mNotifyBuilder.setWhen(System.currentTimeMillis());
         
@@ -527,19 +526,21 @@ public class RemoteImService extends Service implements ImService, ICacheWordSub
     {
         clearMemoryMedium ();
 
+        /**
         for (ImConnectionAdapter conn : mConnections.values())
         {
-            conn.logout();
-            mConnections.remove(conn);
+            conn.suspend();
         }
 
         for (ImConnectionAdapter conn : mConnectionsByUser.values())
         {
-            conn.logout();
-            mConnections.remove(conn);
-        }
+            conn.suspend();
+        }**/
 
+        SecureMediaStore.unmount();
         System.gc();
+        openEncryptedStores(tempKey,true);
+
     }
 
     private void clearConnectionStatii() {
@@ -1109,8 +1110,6 @@ public class RemoteImService extends Service implements ImService, ICacheWordSub
     public void onCacheWordOpened() {
 
         debug("cacheword is opened");
-
-      //  mCacheWord.setTimeout(0);
 
        tempKey = mCacheWord.getEncryptionKey();
        openEncryptedStores(tempKey, true);

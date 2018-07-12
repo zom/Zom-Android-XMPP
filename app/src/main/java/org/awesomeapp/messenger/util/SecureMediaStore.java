@@ -41,6 +41,7 @@ public class SecureMediaStore {
 
     public static final int DEFAULT_IMAGE_WIDTH = 1080;
 
+
     public static void unmount() {
         VirtualFileSystem.get().unmount();
     }

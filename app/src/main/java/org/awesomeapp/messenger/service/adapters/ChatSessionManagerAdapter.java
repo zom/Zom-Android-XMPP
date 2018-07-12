@@ -130,9 +130,12 @@ public class ChatSessionManagerAdapter extends
 
             Address address = new XmppAddress(roomAddress); //TODO hard coding XMPP for now
 
-            groupMan.createChatGroupAsync(roomAddress, subject, nickname);
-
             ChatGroup chatGroup = groupMan.getChatGroup(address);
+            if (chatGroup == null)
+                groupMan.createChatGroupAsync(roomAddress, subject, nickname);
+
+            chatGroup = groupMan.getChatGroup(address);
+
             if (chatGroup != null)
                 chatGroup.setName(subject);
 

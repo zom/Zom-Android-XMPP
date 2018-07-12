@@ -102,11 +102,6 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
     public static final String LOG_TAG = "Zom";
 
     public static final String EXTRA_INTENT_SEND_TO_USER = "Send2_U";
-    public static final String EXTRA_INTENT_PASSWORD = "password";
-
-    public static final String EXTRA_INTENT_PROXY_TYPE = "proxy.type";
-    public static final String EXTRA_INTENT_PROXY_HOST = "proxy.host";
-    public static final String EXTRA_INTENT_PROXY_PORT = "proxy.port";
 
     public static final String IMPS_CATEGORY = "org.awesomeapp.messenger.service.IMPS_CATEGORY";
     public static final String ACTION_QUIT = "org.awesomeapp.messenger.service.QUIT";
@@ -131,7 +126,6 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
     //ACCOUNT SETTINGS Imps defaults
     public static final String DEFAULT_XMPP_RESOURCE = "Zom";
     public static final int DEFAULT_XMPP_PRIORITY = 20;
-    public static final String DEFAULT_XMPP_OTR_MODE = "auto";
 
     public final static String URL_UPDATER = "https://raw.githubusercontent.com/zom/Zom-Android/master/appupdater.xml";
 

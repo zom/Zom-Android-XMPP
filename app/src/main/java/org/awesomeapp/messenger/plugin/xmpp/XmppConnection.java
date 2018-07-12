@@ -129,6 +129,7 @@ import org.jivesoftware.smackx.omemo.internal.CipherAndAuthTag;
 import org.jivesoftware.smackx.omemo.internal.OmemoMessageInformation;
 import org.jivesoftware.smackx.omemo.listener.OmemoMessageListener;
 import org.jivesoftware.smackx.omemo.listener.OmemoMucMessageListener;
+import org.jivesoftware.smackx.ping.PingFailedListener;
 import org.jivesoftware.smackx.ping.PingManager;
 import org.jivesoftware.smackx.ping.provider.PingProvider;
 import org.jivesoftware.smackx.privacy.PrivacyListManager;
@@ -721,7 +722,16 @@ public class XmppConnection extends ImConnection {
         }
 
         @Override
-        public boolean createChatGroupAsync(final String chatRoomJid, final String subject, final String nickname) throws Exception {
+        public synchronized boolean createChatGroupAsync(final String chatRoomJid, final String subject, final String nickname) throws Exception {
+
+            Address address = new XmppAddress (chatRoomJid);
+
+            ChatGroup chatGroup = mGroups.get(chatRoomJid);
+
+            if (chatGroup == null) {
+                chatGroup = new ChatGroup(address, subject, this);
+                mGroups.put(chatRoomJid, chatGroup);
+            }
 
             execute(new Runnable()
             {
@@ -739,12 +749,21 @@ public class XmppConnection extends ImConnection {
 
         };
 
-        private boolean createChatGroup(String chatRoomJid, String subject, String nickname) throws Exception {
+        private synchronized boolean createChatGroup(String chatRoomJid, String subject, String nickname) throws Exception {
             ChatGroup chatGroup;
             MultiUserChat muc;
 
             if (mConnection == null || getState() != ImConnection.LOGGED_IN)
                 return false;
+
+            Address address = new XmppAddress (chatRoomJid);
+
+            chatGroup = mGroups.get(chatRoomJid);
+
+            if (chatGroup == null) {
+                chatGroup = new ChatGroup(address, subject, this);
+                mGroups.put(chatRoomJid, chatGroup);
+            }
 
             // Create a MultiUserChat using a Connection for a room
             MultiUserChatManager mucMgr = MultiUserChatManager.getInstanceFor(mConnection);
@@ -756,8 +775,6 @@ public class XmppConnection extends ImConnection {
 
                 }
             });
-
-            Address address = new XmppAddress (chatRoomJid);
 
             String[] parts = chatRoomJid.split("@");
             String room = parts[0];
@@ -823,12 +840,6 @@ public class XmppConnection extends ImConnection {
                     }
                 }
 
-                chatGroup = mGroups.get(chatRoomJid);
-
-                if (chatGroup == null) {
-                    chatGroup = new ChatGroup(address, subject, this);
-                    mGroups.put(chatRoomJid, chatGroup);
-                }
 
                 mMUCs.put(chatRoomJid, muc);
 
@@ -940,7 +951,7 @@ public class XmppConnection extends ImConnection {
                             field.setType(FormField.Type.bool);
                             submitForm.addField(field);
                         }
-                        submitForm.setAnswer("muc#roomconfig_enablelogging", false);
+                        submitForm.setAnswer("muc#roomconfig_enablelogging", true);
 
                         if (submitForm.getField(MucConfigFormManager.MUC_ROOMCONFIG_MEMBERSONLY) == null)
                             submitForm.addField(new FormField(MucConfigFormManager.MUC_ROOMCONFIG_MEMBERSONLY));
@@ -2450,13 +2461,6 @@ public class XmppConnection extends ImConnection {
 
                     initServiceDiscovery();
 
-                    new Thread ()
-                    {
-                        public void run ()
-                        {
-                            mChatGroupManager.reconnectAll();
-                        }
-                    }.start();
                 }
 
             }
@@ -3923,27 +3927,21 @@ public class XmppConnection extends ImConnection {
 
         super.networkTypeChanged();
 
-        if (mState != LOGGED_IN) {
-            debug(TAG, "network type changed");
-            mNeedReconnect = true;
-            setState(LOGGING_IN, null);
-            reconnect();
-        }
-
-        /**
-        new Thread(new Runnable ()
-                {
-                    public void run ()
+        if (mState == SUSPENDED || mState == SUSPENDING) {
+            executeNow(new Runnable ()
                     {
-                        if (mState != LOGGED_IN) {
-                            debug(TAG, "network type changed");
-                            mNeedReconnect = true;
-                            setState(LOGGING_IN, null);
-                            reconnect();
+                        public void run ()
+                        {
+
+                                debug(TAG, "network type changed");
+                                mNeedReconnect = true;
+                                setState(LOGGING_IN, null);
+                                reconnect();
+
                         }
                     }
-                }
-        ).start();**/
+            );
+        }
 
 
     }
@@ -4043,10 +4041,13 @@ public class XmppConnection extends ImConnection {
                     initPacketProcessor();
 
                 } else {**/
+
+
                     debug(TAG, "reconnection on network change failed: " + mUser.getAddress().getAddress());
 
                     mConnection = null;
                     mNeedReconnect = true;
+                    do_login();
                     setState(DISCONNECTED, new ImErrorInfo(ImErrorInfo.NETWORK_ERROR, null));
 //                    do_login_async();
 
@@ -4226,7 +4227,13 @@ public class XmppConnection extends ImConnection {
         mPingManager = PingManager.getInstanceFor(mConnection);
         mPingManager.setPingInterval(60);
         mPingManager.pingServerIfNecessary();
-
+        mPingManager.registerPingFailedListener(new PingFailedListener() {
+            @Override
+            public void pingFailed() {
+                debug(TAG,"ping failed");
+                reconnect();
+            }
+        });
 
         if (mReconnectionManager != null) {
             mReconnectionManager.abortPossiblyRunningReconnection();
@@ -4234,7 +4241,8 @@ public class XmppConnection extends ImConnection {
         }
 
         mReconnectionManager = ReconnectionManager.getInstanceFor(mConnection);
-        mReconnectionManager.setReconnectionPolicy(ReconnectionManager.ReconnectionPolicy.FIXED_DELAY);
+
+        mReconnectionManager.setReconnectionPolicy(ReconnectionManager.ReconnectionPolicy.RANDOM_INCREASING_DELAY);
         mReconnectionManager.addReconnectionListener(new ReconnectionListener() {
             @Override
             public void reconnectingIn(int i) {

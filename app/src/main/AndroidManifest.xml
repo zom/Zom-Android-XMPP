@@ -372,11 +372,10 @@
         <activity
             android:name="org.awesomeapp.messenger.MainActivity"
             android:exported="true"
-            android:launchMode="standard"
+            android:launchMode="singleTask"
             android:theme="@style/AppThemeNoAction">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="info.guardianproject.otr.app.im.IMPS_CATEGORY" />
 
