@@ -362,6 +362,7 @@ public class MessageListItem extends FrameLayout {
             mHolder.mTextViewForTimestamp.setText("");
 
         }
+
         if (linkify)
            LinkifyHelper.addLinks(mHolder.mTextViewForMessages, new URLSpanConverter());
 

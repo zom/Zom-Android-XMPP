@@ -140,10 +140,9 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
     private boolean mAcceptAllTransfer = true;//TODO set this via preference, but default true
     private String mLastFileUrl = null;
 
-
     private long mContactId;
     private boolean mIsMuted = false;
-    private boolean mEnableOmemoGroups = true;
+    private boolean mEnableOmemoGroups = false;
     private String mNickname = null;
 
     public ChatSessionAdapter(ChatSession chatSession, ImEntity participant, ImConnectionAdapter connection, boolean isNewSession) {
