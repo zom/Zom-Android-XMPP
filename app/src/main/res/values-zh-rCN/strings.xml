@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <!--General: Names-->
-  <string name="ic_launcher_name">众</string>
-  <string name="app_name">众</string>
-  <string name="im_label">众</string>
+  <string name="ic_launcher_name">Zom</string>
+  <string name="app_name">Zom</string>
+  <string name="im_label">Zom</string>
   <!--General: Permissions-->
   <string name="ro_perm_label">阅读即时信息</string>
   <string name="ro_perm_desc">允许程序读取从IM内容提供商的数据</string>
@@ -19,19 +19,19 @@
   <string name="no">取消</string>
   <string name="connect">连接</string>
   <!--Views-->
-  <string name="title_activity_lock_screen">众已锁定</string>
+  <string name="title_activity_lock_screen">Zom 已锁定</string>
   <string name="lock_screen_create_passphrase">设置密码</string>
   <string name="lock_screen_confirm_passphrase">确认密码</string>
   <string name="lock_screen_passphrase_hint">密码</string>
   <string name="lock_screen_passphrase_not_set_enter">新密码</string>
   <string name="lock_screen_passphrase_not_set_confirm">确认新密码</string>
   <string name="lock_screen_passphrases_not_matching">密码不匹配，请重试</string>
-  <string name="lock_screen_skip">懒人模式(无密码)</string>
+  <string name="lock_screen_skip">跳过</string>
   <!--Views: Setup-->
   <string name="add_account">添加 <xliff:g id="ACCOUNT">%1$s</xliff:g> 帐户</string>
   <string name="menu_about">关于</string>
-  <string name="signed_out_prompt_with_error">您已经登出了 <xliff:g id="account">%1$s</xliff:g> 因为 <xliff:g id="reason">%2$s</xliff:g></string>
-  <string name="pass_err_length">您的密码不足够长</string>
+  <string name="signed_out_prompt_with_error">你的账号 <xliff:g id="account">%1$s</xliff:g> 因为 <xliff:g id="reason">%2$s</xliff:g>而登出了。</string>
+  <string name="pass_err_length">你的密码不够长！</string>
   <!--Views: About: Welcome-->
   <!--Views: About: OTR-->
   <!--Views: About: Security-->
@@ -44,7 +44,7 @@
   <string name="account_setup_password_confirm">确认密码</string>
   <string name="btn_create_new_account">注册帐号</string>
   <string name="account_setup_pers_now_title">立即登录</string>
-  <string name="select_domain_new_account">选择域</string>
+  <string name="select_domain_new_account">选择域名</string>
   <string name="registering_new_account_">正在注册新账户</string>
   <string name="signing_in_wait">正以\u2026登录</string>
   <string name="signing_out_wait">正在退出\u2026</string>
@@ -53,7 +53,7 @@
   <string name="use_dns_srv_to_find_actual_xmpp_server_from_domain_name">从域名中使用DNS SRV查找XMPP服务器</string>
   <string name="allow_the_username_and_password_to_be_sent_as_plain_text_when_using_an_unencrypted_transport">当使用非加密传输模式时，允许用户名和密码以明文方式传送</string>
   <string name="allow_plain_text_auth">允许明文授权</string>
-  <string name="require_tls_ssl_connection">要求TLS连接</string>
+  <string name="require_tls_ssl_connection">要求TLS加密</string>
   <string name="transport_encryption">加密传输</string>
   <string name="how_encrypted_chats_are_started">加密聊天已启动</string>
   <string name="the_server_to_connect_to_if_needed">必要时连接服务器</string>
@@ -61,7 +61,7 @@
   <string name="tcp_port_for_xmpp_server">XMPP服务器的TCP端口</string>
   <string name="server_port">服务器端口</string>
   <string name="xmpp_resource">XMPP资源</string>
-  <string name="to_distinguish_this_connection_from_other_clients_that_are_also_logged_in">识别此连接是否已被其它客户登录</string>
+  <string name="to_distinguish_this_connection_from_other_clients_that_are_also_logged_in">识别此连接是否已被其它客户端登录</string>
   <string name="xmpp_resource_prio_title">XMPP资源优先级</string>
   <string name="xmpp_resource_prio_summary">发送给具有多个活动资源的客户端上的消息将被发送到具有最高优先级的源上</string>
   <!--Views: Contact list-->
@@ -69,7 +69,7 @@
   <string name="empty_account_message">你没有⏎
 被设置的账户。⏎
 ⏎
-点击这里来添加！</string>
+点击这里添加！</string>
   <string name="menu_remove_contact">删除联系人</string>
   <string name="menu_contact_nickname">联系人昵称</string>
   <string name="menu_view_blocked">已阻止</string>
@@ -95,7 +95,7 @@
   <string name="file_transfer">文件传输</string>
   <string name="accept_transfer_">是否接受传输？</string>
   <string name="wants_to_send_you_the_file">想发送给您文件</string>
-  <string name="no_connection_for_sending">无网路连线传输您的分享！</string>
+  <string name="no_connection_for_sending">没有网络连接！</string>
   <string name="compose_hint">发送消息</string>
   <string name="compose_hint_secure">发送安全消息</string>
   <string name="menu_end_conversation">结束聊天</string>
@@ -103,16 +103,16 @@
   <string name="delete">删除</string>
   <string name="export_media">汇出媒体档案？</string>
   <!--Views: Chat: Group-->
-  <string name="invitation_prompt"><xliff:g id="USER">%1$s</xliff:g>邀请您加入群聊。</string>
+  <string name="invitation_prompt"><xliff:g id="USER">%1$s</xliff:g>邀请你加入群聊。</string>
   <string name="accept_invitation">接受</string>
   <string name="decline_invitation">拒绝</string>
-  <string name="connecting_to_group_chat_">正在连接到群聊</string>
+  <string name="connecting_to_group_chat_">正在连接到群聊…</string>
   <string name="empty_contact_list">没有找到任何联系人。
 点击邀请。</string>
   <string name="subscription_prompt">添加 <xliff:g id="USER">%1$s</xliff:g> 吗？</string>
   <string name="approve_subscription">是</string>
   <string name="decline_subscription">否</string>
-  <string name="approve_subscription_error">无法批准来自<xliff:g id="USER">%1$s</xliff:g>的好友申请。请稍后再试。</string>
+  <string name="approve_subscription_error">无法同意来自<xliff:g id="USER">%1$s</xliff:g>的好友申请。请稍后再试。</string>
   <string name="decline_subscription_error">无法拒绝来自<xliff:g id="USER">%1$s</xliff:g>的好友申请。请稍后再试。</string>
   <!--Security: OTR-->
   <string name="otr_session_status_finished">您的联系人已经停止此加密聊天</string>
@@ -121,14 +121,14 @@
   <string name="otr_mode_requested">按照要求</string>
   <string name="otr_mode_disabled">失效</string>
   <!--Security: OTR: Keyring-->
-  <string name="detected_Otr_keystore_import">我们监测到可被倒入的OTR秘钥库。你是否愿意开始QR密码扫描？</string>
+  <string name="detected_Otr_keystore_import">我们监测到可被导入的OTR秘钥库。你是否愿意开始二维码扫描？</string>
   <!--Security: OTR: Verification-->
   <!--Security: OTR: Verification: QA-->
   <string name="smp_question_title">验证</string>
-  <string name="smp_question_summary">输入一个问题给你的联系人并且得到你希望的答案以验证他们是不是你想联系的人（对暗号）</string>
+  <string name="smp_question_summary">输入一个问题给你的联系人并且得到你希望的答案以验证他们是不是你想联系的人（也可以对暗号）</string>
   <string name="smp_question_hint">要问的问题</string>
   <string name="qmp_answer_hint">希望得到的答案</string>
-  <string name="remote_verified_us">您的联系人已经成功的认证了您，现在您可以问一些自己的问题来验证您的联系人。</string>
+  <string name="remote_verified_us">您的联系人已经成功认证了你，现在你可以问一些自己的问题来验证你的联系人。</string>
   <string name="otr_qa_title">OTR 问答验证</string>
   <string name="chat_encryption_title">聊天加密</string>
   <string name="otr_qa_send">发送</string>
@@ -140,34 +140,34 @@
   <string name="encryption_and_anonymity_title">加密和匿名</string>
   <!--Actions: Settings: General: User Interface-->
   <string name="pref_linkify_on_tor_title">Tor 中的可点击链接</string>
-  <string name="pref_linkify_on_tor_summary">让这个链接在使用Tor的账户中可点击 (注意，可能会使资讯外泄！)</string>
+  <string name="pref_linkify_on_tor_summary">让链接在使用Tor的账户中可点击 (注意，可能会使信息外泄！)</string>
   <string name="menu_locale">语言</string>
   <string name="KEY_PREF_LANGUAGE_TITLE">多国语言</string>
-  <string name="use_system_default">使用系统预设值</string>
+  <string name="use_system_default">系统默认</string>
   <string name="button_yes_accept_all">接受全部</string>
   <string name="pref_delete_unsecured_media_title">删除不安全的媒体</string>
-  <string name="pref_delete_unsecured_media_summary">分享照片或档案后。自动将原档从原本不安全的储存位置中删除。</string>
+  <string name="pref_delete_unsecured_media_summary">分享照片或其他文件后。自动将原文件从不安全的本地存储中删除。</string>
   <!--Actions: Settings: General: Other Tuning-->
   <string name="pref_group_tuning_title">其他调整</string>
-  <string name="start_on_boot">自动启动ZOM</string>
-  <string name="start_on_boot_summary">始终启动并且自动登录所有的帐号</string>
+  <string name="start_on_boot">开机自启</string>
+  <string name="start_on_boot_summary">开机时启动 Zom 并自动登录所有帐号</string>
   <string name="hide_offline_contacts">隐藏离线联系人</string>
-  <string name="foreground_service_title">使用前景优先级</string>
-  <string name="foreground_service_summary">减少安卓重启链接服务的几率。这将放一个通知在通知栏。</string>
+  <string name="foreground_service_title">保持前台服务</string>
+  <string name="foreground_service_summary">减少重启连接服务的概率，将在通知栏显示一个通知以保持前台服务。</string>
   <string name="heartbeat_interval_title">心跳包间隔</string>
-  <string name="heartbeat_interval_summary">使用高值(分钟)来节省电池。一个过高的值可能会导致您的链接被提供者因长时间不活动而切断。</string>
+  <string name="heartbeat_interval_summary">使用更高的值(单位为分钟)可以降低电量消耗。但是过高的值可能会导致您的连接因长时间不活动而断开。</string>
   <!--Actions: Settings: General: Notifications-->
   <string name="notification_group_title">通知设置</string>
   <string name="notification_enabled_title">即时消息通知</string>
   <string name="notification_enabled_summary">收到即时消息时在状态栏中显示通知</string>
   <string name="notification_vibrate_title">振动</string>
-  <string name="notification_vibrate_summary">在收到即时消息的同时振动</string>
+  <string name="notification_vibrate_summary">收到即时消息时振动</string>
   <string name="notification_sound_title">声音</string>
-  <string name="notification_sound_summary">在收到即时消息的同时播放铃声</string>
+  <string name="notification_sound_summary">收到即时消息时播放铃声</string>
   <string name="notification_ringtone_title">使用Zom自定义铃声</string>
   <!--Actions: Settings: General: Developer-->
-  <string name="pref_debug_title">开启纠错记录</string>
-  <string name="pref_debug_summary">为纠错将应用的登陆数据导出为标准格式</string>
+  <string name="pref_debug_title">开启debug日志</string>
+  <string name="pref_debug_summary">将应用的登陆数据导出为标准格式以便除错</string>
   <!--Alerts: Dialogs-->
   <string name="bg_data_prompt_message"><xliff:g id="PROVIDER">%1$s</xliff:g> 需要启用背景数据。</string>
   <string name="prompt_create_new_account_">建立新账户?</string>
@@ -211,23 +211,23 @@
   <string name="already_logged_in">您已从另一个客户端登录。</string>
   <string name="msisdn_error">抱歉，无法从您的 SIM 卡读取手机号码。请与运营商联系寻求帮助。</string>
   <string name="not_signed_in">您当前未登录。</string>
-  <string name="account_setup_error_server">Zom连接聊天服务器的时候发生错误，请检查网络连接。</string>
-  <string name="error_suspended_connection">Zom失去网络连接</string>
+  <string name="account_setup_error_server">Zom 连接聊天服务器的时候发生错误，请检查网络连接。</string>
+  <string name="error_suspended_connection">Zom 失去网络连接</string>
   <string name="unable_to_create_or_join_group_chat">无法创建或加入群聊</string>
-  <string name="unsupported_incoming_data">不支援此数据，无法分享！</string>
-  <string name="swipe_alert">Zom 检测到删除目前任务的要求。ZOM将会崩溃。请从帐户列表屏幕里使用登出所有的菜单项。</string>
+  <string name="unsupported_incoming_data">不支持此数据，无法分享！</string>
+  <string name="swipe_alert">Zom 检测到删除目前任务的要求。Zom 将会崩溃。请从帐户列表屏幕里使用登出所有的菜单项。</string>
   <string name="there_is_no_viewer_available_for_this_file_format">没有针对该格式的阅览器可用</string>
   <string name="otr_keysync_warning_message">请从桌面OtrFileConverter工具将\'otr_keystore.ofcaes\'文件复制到你设备存储空间的根目录。</string>
   <string name="msg_sent_failed">无法发送此消息。</string>
   <string name="disconnected_warning">消息将在重新连接后再发送</string>
   <string name="error_account_password_mismatch">您的密码不符</string>
-  <string name="error_account_settings_priority">您的顺序必须为数字 [0至127]</string>
-  <string name="error_account_settings_port">连接阜号码必须为一个数码</string>
-  <string name="error_welcome_database">重大错误：无法解锁或储存应用程式资料库；请重新安装、或清除所有数据。</string>
+  <string name="error_account_settings_priority">优先级必须是数字 [0至127]</string>
+  <string name="error_account_settings_port">端口必须是数字</string>
+  <string name="error_welcome_database">严重错误：无法解锁或储存应用程式资料库；请重新安装、或清除所有数据。</string>
   <string name="account_settings_title">帐号设置</string>
   <string name="pref_group_protect_data_title">保护我的数据</string>
   <string name="panic_trigger_app">恐慌触发程式</string>
-  <string name="panic_trigger_app_summary">紧急设定能够触发众锁定、发送讯息、已经删除资讯等等。</string>
+  <string name="panic_trigger_app_summary">紧急设定能够触发 Zom 锁定、发送讯息、已经删除资讯等等。</string>
   <string name="panic_setup">紧急设定</string>
   <string name="panic_setup_summary">设定众对紧急通知的反应</string>
   <string name="panic_app_none">无</string>
