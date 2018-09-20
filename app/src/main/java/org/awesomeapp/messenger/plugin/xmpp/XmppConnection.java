@@ -3,15 +3,13 @@ package org.awesomeapp.messenger.plugin.xmpp;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Proxy;
-import android.net.TrafficStats;
 import android.os.Build;
 import android.os.RemoteException;
 import android.support.v4.net.TrafficStatsCompat;
 import android.text.TextUtils;
 import android.util.Log;
+
+import com.google.common.collect.Lists;
 
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.Preferences;
@@ -34,18 +32,18 @@ import org.awesomeapp.messenger.model.Message;
 import org.awesomeapp.messenger.model.Presence;
 import org.awesomeapp.messenger.model.Server;
 import org.awesomeapp.messenger.provider.Imps;
-import org.awesomeapp.messenger.provider.ImpsErrorInfo;
 import org.awesomeapp.messenger.service.AdvancedNetworking;
 import org.awesomeapp.messenger.service.IChatSession;
-import org.awesomeapp.messenger.service.IImConnection;
-import org.awesomeapp.messenger.service.RemoteImService;
-import org.awesomeapp.messenger.service.adapters.ChatSessionAdapter;
 import org.awesomeapp.messenger.ui.legacy.DatabaseUtils;
 import org.awesomeapp.messenger.util.Debug;
+import org.bouncycastle.crypto.engines.AESEngine;
+import org.bouncycastle.crypto.modes.AEADBlockCipher;
+import org.bouncycastle.crypto.modes.GCMBlockCipher;
+import org.bouncycastle.crypto.params.AEADParameters;
+import org.bouncycastle.crypto.params.KeyParameter;
 import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.ConnectionListener;
-import org.jivesoftware.smack.ExceptionCallback;
 import org.jivesoftware.smack.MessageListener;
 import org.jivesoftware.smack.PresenceListener;
 import org.jivesoftware.smack.ReconnectionListener;
@@ -61,9 +59,7 @@ import org.jivesoftware.smack.chat2.ChatManager;
 import org.jivesoftware.smack.debugger.SmackDebugger;
 import org.jivesoftware.smack.debugger.SmackDebuggerFactory;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
-import org.jivesoftware.smack.packet.DefaultExtensionElement;
 import org.jivesoftware.smack.packet.ExtensionElement;
-import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.StandardExtensionElement;
 import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.provider.ProviderManager;
@@ -72,17 +68,14 @@ import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.roster.RosterGroup;
 import org.jivesoftware.smack.roster.RosterListener;
-import org.jivesoftware.smack.roster.packet.RosterPacket;
 import org.jivesoftware.smack.sm.StreamManagementException;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 import org.jivesoftware.smack.util.DNSUtil;
 import org.jivesoftware.smack.util.dns.HostAddress;
-
 import org.jivesoftware.smackx.address.provider.MultipleAddressesProvider;
 import org.jivesoftware.smackx.bookmarks.BookmarkManager;
 import org.jivesoftware.smackx.bytestreams.socks5.provider.BytestreamsProvider;
-import org.jivesoftware.smackx.chat_markers.ChatMarkersManager;
 import org.jivesoftware.smackx.chatstates.ChatState;
 import org.jivesoftware.smackx.chatstates.ChatStateManager;
 import org.jivesoftware.smackx.chatstates.provider.ChatStateExtensionProvider;
@@ -91,8 +84,6 @@ import org.jivesoftware.smackx.debugger.android.AndroidDebugger;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.disco.provider.DiscoverInfoProvider;
 import org.jivesoftware.smackx.disco.provider.DiscoverItemsProvider;
-import org.jivesoftware.smackx.eme.element.ExplicitMessageEncryptionElement;
-import org.jivesoftware.smackx.forward.packet.Forwarded;
 import org.jivesoftware.smackx.httpfileupload.HttpFileUploadManager;
 import org.jivesoftware.smackx.httpfileupload.UploadProgressListener;
 import org.jivesoftware.smackx.httpfileupload.UploadService;
@@ -100,18 +91,15 @@ import org.jivesoftware.smackx.httpfileupload.element.Slot;
 import org.jivesoftware.smackx.iqlast.LastActivityManager;
 import org.jivesoftware.smackx.iqlast.packet.LastActivity;
 import org.jivesoftware.smackx.iqprivate.PrivateDataManager;
-import org.jivesoftware.smackx.mam.MamManager;
 import org.jivesoftware.smackx.muc.Affiliate;
 import org.jivesoftware.smackx.muc.AutoJoinFailedCallback;
 import org.jivesoftware.smackx.muc.DiscussionHistory;
 import org.jivesoftware.smackx.muc.InvitationListener;
 import org.jivesoftware.smackx.muc.MucConfigFormManager;
 import org.jivesoftware.smackx.muc.MultiUserChat;
-import org.jivesoftware.smackx.muc.MultiUserChatException;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.smackx.muc.Occupant;
 import org.jivesoftware.smackx.muc.ParticipantStatusListener;
-import org.jivesoftware.smackx.muc.RoomInfo;
 import org.jivesoftware.smackx.muc.SubjectUpdatedListener;
 import org.jivesoftware.smackx.muc.packet.GroupChatInvitation;
 import org.jivesoftware.smackx.muc.packet.MUCUser;
@@ -120,7 +108,6 @@ import org.jivesoftware.smackx.muc.provider.MUCOwnerProvider;
 import org.jivesoftware.smackx.muc.provider.MUCUserProvider;
 import org.jivesoftware.smackx.offline.packet.OfflineMessageInfo;
 import org.jivesoftware.smackx.offline.packet.OfflineMessageRequest;
-import org.jivesoftware.smackx.omemo.OmemoFingerprint;
 import org.jivesoftware.smackx.omemo.OmemoManager;
 import org.jivesoftware.smackx.omemo.OmemoService;
 import org.jivesoftware.smackx.omemo.exceptions.CryptoFailedException;
@@ -162,15 +149,10 @@ import org.jxmpp.stringprep.XmppStringprepException;
 import org.minidns.dnsname.DnsName;
 
 import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.Reader;
-import java.io.Writer;
-import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
@@ -183,7 +165,6 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -192,30 +173,22 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSocketFactory;
 
 import de.duenndns.ssl.MemorizingTrustManager;
 import eu.siacs.conversations.Downloader;
-import eu.siacs.conversations.Uploader;
 import im.zom.messenger.R;
-import info.guardianproject.netcipher.proxy.OrbotHelper;
 
 public class XmppConnection extends ImConnection {
 
@@ -5210,30 +5183,57 @@ public class XmppConnection extends ImConnection {
             }
         }
 
-        public String doUpload (String fileName, String mimeType, long fileSize, InputStream is, UploadProgressListener uploadListener, boolean doEncryption)
-        {
+        public String doUpload(String fileName, String mimeType, long fileSize, InputStream is, UploadProgressListener uploadListener, boolean doEncryption) {
             if (!mIsDiscovered)
                 return null;
 
             if (getState() != ImConnection.LOGGED_IN)
                 return null;
 
-       //     manager.useTlsSettingsFrom(mConnection.getConfiguration());
+            if (fileSize >= 2147483647L) {
+                //throw new IllegalArgumentException("File size " + fileSize + " must be less than " + 2147483647);
+                return null;
+            }
+
+            //     manager.useTlsSettingsFrom(mConnection.getConfiguration());
             UploadService upService = manager.getDefaultUploadService();
 
             if (upService != null) {
-                if (upService.hasMaxFileSizeLimit()) {
-                    if (!upService.acceptsFileOfSize(fileSize))
-                        return null;
-                }
+                BufferedInputStream inputStream = null;
 
                 try {
 
+                    String uploadKey = null;
+                    if (doEncryption) {
+                        byte[] keyAndIv = secureRandom.generateSeed(48);
+                        uploadKey = Downloader.bytesToHex(keyAndIv);
+                        InputStream cis = Downloader.setupInputStream(is, keyAndIv);
+                        inputStream = new BufferedInputStream(cis);
+
+                        // Get size of encrypted data for content-length header
+                        if (keyAndIv != null && keyAndIv.length == 48) {
+                            byte[] key = new byte[32];
+                            byte[] iv = new byte[16];
+                            System.arraycopy(keyAndIv, 0, iv, 0, 16);
+                            System.arraycopy(keyAndIv, 16, key, 0, 32);
+                            AEADBlockCipher cipher = new GCMBlockCipher(new AESEngine());
+                            cipher.init(true, new AEADParameters(new KeyParameter(key), 128, iv));
+                            fileSize = cipher.getOutputSize((int) fileSize);
+                        }
+                    } else {
+                        inputStream = new BufferedInputStream(is);
+                        uploadKey = "none";
+                    }
+
+
+                    if (upService.hasMaxFileSizeLimit()) {
+                        if (!upService.acceptsFileOfSize(fileSize))
+                            return null;
+                    }
+
                     //   String defaultType = "application/octet-stream";
                     Slot upSlot = manager.requestSlot(fileName, fileSize, mimeType);
-
-                    String uploadKey = uploadFile(fileSize, is, upSlot, uploadListener, doEncryption);
-
+                    uploadFile(fileSize, inputStream, mimeType, upSlot, uploadListener, doEncryption);
                     if (uploadKey != null) {
                         URL resultUrl = upSlot.getGetUrl();
                         String shareUrl = resultUrl.toExternalForm();
@@ -5248,6 +5248,13 @@ public class XmppConnection extends ImConnection {
                 } catch (Exception e) {
                     Log.e(TAG, "error getting upload slot", e);
 
+                } finally {
+                    if (inputStream != null) {
+                        try {
+                            inputStream.close();
+                        } catch (Exception ignored) {
+                        }
+                    }
                 }
 
             }
@@ -5255,16 +5262,15 @@ public class XmppConnection extends ImConnection {
             return null;
         }
 
-        private String uploadFile(long fileSize, InputStream fis, Slot slot, UploadProgressListener listener, boolean useEncryption) throws IOException {
+        private void uploadFile(long contentLength, InputStream is, String mimeType, Slot slot, UploadProgressListener listener, boolean useEncryption) throws IOException {
 
             TrafficStatsCompat.setThreadStatsTag(0xF00D);
 
-            String result = null;
             int connectTimeout = 60000;
             int socketTimeout = 60000;
 
-            if(fileSize >= 2147483647L) {
-                throw new IllegalArgumentException("File size " + fileSize + " must be less than " + 2147483647);
+            if(contentLength >= 2147483647L) {
+                throw new IllegalArgumentException("Size " + contentLength + " must be less than " + 2147483647);
             } else {
                 // int fileSizeInt = (int)fileSize;
                 URL putUrl = slot.getPutUrl();
@@ -5304,12 +5310,18 @@ public class XmppConnection extends ImConnection {
                 urlConnection.setUseCaches(false);
                 urlConnection.setDoOutput(true);
                 // urlConnection.setFixedLengthStreamingMode(fileSizeInt);
-                urlConnection.setRequestProperty("Content-Type", "application/octet-stream;");
-                Iterator tlsSocketFactory = slot.getHeaders().entrySet().iterator();
+                urlConnection.setRequestProperty("Content-Type", TextUtils.isEmpty(mimeType) ? "application/octet-stream" : mimeType);
+                urlConnection.setRequestProperty("Content-Length", String.valueOf(contentLength));
 
-                while (tlsSocketFactory.hasNext()) {
-                    Map.Entry outputStream = (Map.Entry) tlsSocketFactory.next();
-                    urlConnection.setRequestProperty((String) outputStream.getKey(), (String) outputStream.getValue());
+                // Pick optional headers from the slot and filter out any not allowed by
+                // XEP-0363 (https://xmpp.org/extensions/xep-0363.html#request)
+                List<String> allowedHeaders = Lists.newArrayList("authorization", "cookie", "expires");
+                for (Map.Entry<String, String> headerEntry : slot.getHeaders().entrySet()) {
+                    String name = headerEntry.getKey().replace("\n", "").toLowerCase();
+                    String value = headerEntry.getValue().replace("\n", "");
+                    if (allowedHeaders.contains(name)) {
+                        urlConnection.setRequestProperty(name, value);
+                    }
                 }
 
                 if (urlConnection instanceof HttpsURLConnection) {
@@ -5323,41 +5335,21 @@ public class XmppConnection extends ImConnection {
 
                     long bytesSend = 0L;
                     if(listener != null) {
-                        listener.onUploadProgress(0L, fileSize);
-                    }
-
-                    BufferedInputStream inputStream = null;
-
-                    if (useEncryption) {
-                        byte[] keyAndIv = secureRandom.generateSeed(48);
-                        result = Downloader.bytesToHex(keyAndIv);
-                        InputStream cis = Downloader.setupInputStream(fis, keyAndIv);
-                        inputStream = new BufferedInputStream(cis);
-                    }
-                    else
-                    {
-                        inputStream = new BufferedInputStream(fis);
-                        result = "none";
+                        listener.onUploadProgress(0L, contentLength);
                     }
 
                     byte[] buffer = new byte[4096];
 
                     int bytesRead;
                     try {
-                        while((bytesRead = inputStream.read(buffer)) != -1) {
+                        while((bytesRead = is.read(buffer)) != -1) {
                             outputStream2.write(buffer, 0, bytesRead);
                             bytesSend += (long)bytesRead;
                             if(listener != null) {
-                                listener.onUploadProgress(bytesSend, fileSize);
+                                listener.onUploadProgress(bytesSend, contentLength);
                             }
                         }
                     } finally {
-                        try {
-                            inputStream.close();
-                        } catch (IOException var34) {
-                         //   LOGGER.log(Level.WARNING, "Exception while closing input stream", var34);
-                        }
-
                         try {
                             outputStream2.close();
                         } catch (IOException var33) {
@@ -5371,11 +5363,11 @@ public class XmppConnection extends ImConnection {
                         case 200:
                         case 201:
                         case 204:
-                            return result;
+                            return;
                         case 202:
                         case 203:
                         default:
-                            throw new IOException("Error response " + status + " from server during file upload: " + urlConnection.getResponseMessage() + ", file size: " + fileSize + ", put URL: " + putUrl);
+                            throw new IOException("Error response " + status + " from server during file upload: " + urlConnection.getResponseMessage() + ", file size: " + contentLength + ", put URL: " + putUrl);
                     }
                 } finally {
                     urlConnection.disconnect();
