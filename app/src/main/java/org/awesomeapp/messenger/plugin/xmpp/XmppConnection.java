@@ -1985,14 +1985,9 @@ public class XmppConnection extends ImConnection {
 
         TrafficStatsCompat.setThreadStatsTag(0xF00D);
 
-        boolean allowPlainAuth = false;//never! // providerSettings.getAllowPlainAuth();
-        boolean requireTls = true;// providerSettings.getRequireTls(); //always!
         boolean doDnsSrv = providerSettings.getDoDnsSrv();
         boolean doAdvancedNetworking = Preferences.useAdvancedNetworking();
-       // boolean tlsCertVerify = providerSettings.getTlsCertVerify();
 
-       // boolean useSASL = true;//!allowPlainAuth;
-       // boolean useProxy = providerSettings.getUseTor();
         String domain = providerSettings.getDomain();
 
         mPriority = providerSettings.getXmppResourcePrio();
@@ -2036,9 +2031,6 @@ public class XmppConnection extends ImConnection {
             }
         }
 
-        //check if server is reachable, if not, enable advanced networkiif (!isReachable(server,serverPort))
-            doAdvancedNetworking = true;
-
         if (!TextUtils.isEmpty(Preferences.getProxyServerHost()))
         {
             setProxy("SOCKS5",Preferences.getProxyServerHost(),Preferences.getProxyServerPort());
@@ -2081,11 +2073,11 @@ public class XmppConnection extends ImConnection {
 
                 }
 
+            }
 
-            }**/
-
-        //    RemoteImService.activateAdvancedNetworking(mContext);
-          //  setProxy(AdvancedNetworking.DEFAULT_PROXY_TYPE,AdvancedNetworking.DEFAULT_SERVER,AdvancedNetworking.DEFAULT_PORT);
+            RemoteImService.activateAdvancedNetworking(mContext);
+            setProxy(AdvancedNetworking.DEFAULT_PROXY_TYPE,AdvancedNetworking.DEFAULT_SERVER,AdvancedNetworking.DEFAULT_PORT);
+            **/
 
             server = AdvancedNetworking.DEFAULT_SERVER;
             serverPort = AdvancedNetworking.DEFAULT_PORT;
@@ -2654,13 +2646,12 @@ public class XmppConnection extends ImConnection {
     }
 
     // We must release resources here, because we will not be reused
-    void disconnected(ImErrorInfo info) {
+    private void disconnected(ImErrorInfo info) {
         debug(TAG, "disconnected");
         join();
         setState(DISCONNECTED, info);
         TrafficStatsCompat.clearThreadStatsTag();
     }
-
 
     @Override
     public void logoutAsync() {
