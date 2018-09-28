@@ -213,6 +213,8 @@ public class RemoteImService extends Service implements ImService, ICacheWordSub
     public void onCreate() {
         debug("ImService started");
 
+        startForeground(notifyId, getForegroundNotification());
+
         final String prev = Debug.getTrail(this, SERVICE_CREATE_TRAIL_KEY);
         if (prev != null)
             Debug.recordTrail(this, PREV_SERVICE_CREATE_TRAIL_TAG, prev);
@@ -230,7 +232,7 @@ public class RemoteImService extends Service implements ImService, ICacheWordSub
         Debug.onServiceStart();
 
         PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        mWakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "IM_WAKELOCK");
+        mWakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, ImApp.LOG_TAG + ":IM_WAKELOCK");
 
         // Clear all account statii to logged-out, since we just got started and we don't want
         // leftovers from any previous crash.
@@ -246,10 +248,6 @@ public class RemoteImService extends Service implements ImService, ICacheWordSub
         mNeedCheckAutoLogin = true;
 
         HeartbeatService.startBeating(getApplicationContext());
-
-        if (Preferences.getUseForegroundPriority()) {
-            startForeground(notifyId, getForegroundNotification());
-        }
 
         installTransports(this);
 
