@@ -6,7 +6,6 @@ import im.zom.messenger.R;
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.model.Address;
 
-import org.awesomeapp.messenger.util.AES_256_CBC;
 import org.awesomeapp.messenger.util.LogCleaner;
 import org.awesomeapp.messenger.util.OpenSSLPBEInputStream;
 import org.awesomeapp.messenger.util.OpenSSLPBEOutputStream;
@@ -197,12 +196,13 @@ public class OtrAndroidKeyManagerImpl extends IOtrKeyManager.Stub {
             
         }*/
 
+        /**
         private void loadAES(final String password) throws IOException
         {
             String decoded;
                 decoded = AES_256_CBC.decrypt(mStoreFile, password);
                 mProperties.load(new ByteArrayInputStream(decoded.getBytes()));
-        }
+        }**/
 
         public void setProperty(String id, String value) {
             mProperties.setProperty(id, value);
