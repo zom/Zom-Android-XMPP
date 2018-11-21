@@ -646,6 +646,10 @@ public class ConversationDetailActivity extends BaseActivity {
                     throw new IOException("Error deleting " + contentUri);
                 }
             }
+
+            if (info.stream != null)
+                info.stream.close();
+
         } catch (Exception e) {
             //  Toast.makeText(this, "Error sending file", Toast.LENGTH_LONG).show(); // TODO i18n
             Log.e(ImApp.LOG_TAG, "error sending file", e);
