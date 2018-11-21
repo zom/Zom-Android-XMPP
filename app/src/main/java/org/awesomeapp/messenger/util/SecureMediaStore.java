@@ -364,7 +364,8 @@ public class SecureMediaStore {
         Bitmap scaledBitmap = BitmapFactory.decodeStream(is, null, opts);
         is.close();
 
-        ExifInterface exif = new ExifInterface(openInputStream(context,uri));
+        InputStream isEx = openInputStream(context,uri);
+        ExifInterface exif = new ExifInterface(isEx);
         int orientationType = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
         int orientationD  = 0;
         if (orientationType == ExifInterface.ORIENTATION_ROTATE_90)
@@ -376,6 +377,8 @@ public class SecureMediaStore {
 
         if (orientationD != 0)
             scaledBitmap = rotateBitmap(scaledBitmap, orientationD);
+
+        isEx.close();
 
         return scaledBitmap;
     }
