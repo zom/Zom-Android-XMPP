@@ -240,12 +240,11 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
             mCacheWord.reattach();
     }
 
-    private void doOnResume() {
+    private void doOnResume(Intent intent) {
         mHandler.registerForBroadcastEvents();
 
         int countAvailable = accountsAvailable();
 
-        Intent intent = getIntent();
         if (intent != null && intent.getAction() != null && !intent.getAction().equals(Intent.ACTION_MAIN)) {
             String action = intent.getAction();
                 Intent imUrlIntent = new Intent(this, ImUrlActivity.class);
@@ -502,7 +501,7 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
 
         if (cursorUnlocked()) {
 
-            doOnResume();
+            doOnResume(getIntent());
 
             return true;
         } else {
@@ -510,6 +509,10 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
         }
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
 
-
+        doOnResume(intent);
+    }
 }
