@@ -86,11 +86,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import im.zom.messenger.BuildConfig;
+import im.zom.messenger.R;
 import info.guardianproject.cacheword.CacheWordHandler;
 import info.guardianproject.cacheword.ICacheWordSubscriber;
 import info.guardianproject.cacheword.PRNGFixes;
 import info.guardianproject.iocipher.VirtualFileSystem;
-import im.zom.messenger.R;
 
 import org.awesomeapp.messenger.util.Languages;
 import org.ironrabbit.type.CustomTypefaceManager;
@@ -266,16 +266,14 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(new NetworkConnectivityReceiver(), intentFilter);
 
+        /**
         if(Build.VERSION.SDK_INT>=24){
             try{
-                Method m = StrictMode.class.getMethod("disableDeathOnFileUriExposure");
-                m.invoke(null);
-
                 StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.LAX);
             }catch(Exception e){
                 e.printStackTrace();
             }
-        }
+        }**/
 
     }
 
