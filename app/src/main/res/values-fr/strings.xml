@@ -107,8 +107,8 @@ Appuyez ici pour en ajouter un !</string>
 Appuyez pour inviter.</string>
   <string name="approve_subscription">Oui</string>
   <string name="decline_subscription">Non</string>
-  <string name="approve_subscription_error">Impossible d'approuver l'inscription de <xliff:g id="USER">%1$s</xliff:g>. Veuillez réessayer ultérieurement.</string>
-  <string name="decline_subscription_error">Impossible de refuser l'inscription de <xliff:g id="USER">%1$s</xliff:g>. Veuillez réessayer ultérieurement.</string>
+  <string name="approve_subscription_error">Impossible d\'approuver l\'inscription de <xliff:g id="USER">%1$s</xliff:g>. Veuillez réessayer ultérieurement.</string>
+  <string name="decline_subscription_error">Impossible de refuser l\'inscription de <xliff:g id="USER">%1$s</xliff:g>. Veuillez réessayer ultérieurement.</string>
   <!--Security: OTR-->
   <string name="otr_session_status_finished">Votre contact a arrêté le chat chiffré.</string>
   <!--Security: OTR: Keyring-->
@@ -152,7 +152,7 @@ Appuyez pour inviter.</string>
   <string name="pref_debug_title">Activer journal de déboguage</string>
   <string name="pref_debug_summary">Afficher journal de l\'application sur la sortie standard / logcat pour déboguage</string>
   <!--Alerts: Dialogs-->
-  <string name="bg_data_prompt_message">Les données d'arrière-plan sont requises pour l'activation de <xliff:g id="PROVIDER">%1$s</xliff:g>.</string>
+  <string name="bg_data_prompt_message">Les données d\'arrière-plan sont requises pour l\'activation de <xliff:g id="PROVIDER">%1$s</xliff:g>.</string>
   <string name="prompt_create_new_account_">Créer un nouveau compte ?</string>
   <string name="allow_s_to_create_a_new_chat_account_for_s_">Créer un nouveau compte de chat pour \'%1$s\'?</string>
   <!--Alerts: Notifications-->
@@ -161,7 +161,7 @@ Appuyez pour inviter.</string>
   <string name="app_unlocked">Activé &amp; déverrouillé</string>
   <!--Alerts: Exceptions-->
   <string name="error">Avertissement</string>
-  <string name="general_error">Code d'erreur <xliff:g id="CODE">%1$d</xliff:g></string>
+  <string name="general_error">Code d\'erreur <xliff:g id="CODE">%1$d</xliff:g></string>
   <string name="login_service_failed">Connexion au service <xliff:g id="SERVICE">%1$s</xliff:g> impossible. Veuillez réessayer ultérieurement."\n"(Détails : <xliff:g id="DESCRIPTION">%2$s</xliff:g>)</string>
   <string name="add_list_failed">La liste n\'a pas été ajoutée.</string>
   <string name="block_contact_failed">Le contact n\'a pas été bloqué.</string>

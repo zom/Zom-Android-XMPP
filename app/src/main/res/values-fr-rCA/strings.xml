@@ -85,7 +85,7 @@
   <string name="contact_away"><xliff:g id="user">%1$s</xliff:g> est absent</string>
   <string name="contact_busy"><xliff:g id="user">%1$s</xliff:g> est occupé</string>
   <string name="contact_offline"><xliff:g id="user">%1$s</xliff:g> est hors ligne</string>
-  <string name="contact_joined"><xliff:g id="user">%1$s</xliff:g> s'est joint</string>
+  <string name="contact_joined"><xliff:g id="user">%1$s</xliff:g> s\'est joint</string>
   <string name="contact_left"><xliff:g id="user">%1$s</xliff:g> est parti</string>
   <string name="file_transfer">Transfert de fichiers</string>
   <string name="accept_transfer_">Accepter le transfert ?</string>
@@ -106,8 +106,8 @@
   <string name="subscription_prompt">Ajouter le contact?</string>
   <string name="approve_subscription">Oui</string>
   <string name="decline_subscription">Non</string>
-  <string name="approve_subscription_error">Impossible d'approuver l'abonnement de <xliff:g id="user">%1$s</xliff:g>. Veuillez ressayer ultérieurement.</string>
-  <string name="decline_subscription_error">Impossible de refuser l'abonnement de <xliff:g id="user">%1$s</xliff:g>. Veuillez ressayer ultérieurement.</string>
+  <string name="approve_subscription_error">Impossible d\'approuver l\'abonnement de <xliff:g id="user">%1$s</xliff:g>. Veuillez ressayer ultérieurement.</string>
+  <string name="decline_subscription_error">Impossible de refuser l\'abonnement de <xliff:g id="user">%1$s</xliff:g>. Veuillez ressayer ultérieurement.</string>
   <!--Security: OTR-->
   <string name="otr_session_status_finished">Votre contact a arrêté le clavardage chiffré.</string>
   <!--Security: OTR: Keyring-->
@@ -162,7 +162,7 @@
   <string name="prompt_create_new_account_">Créer un nouveau compte ?</string>
   <string name="allow_s_to_create_a_new_chat_account_for_s_">Créer un nouveau compte de clavardage pour « %1$s » ?</string>
   <!--Alerts: Notifications-->
-  <string name="subscription_notify_text">Nouvelle invitation d'amitié de <xliff:g id="user">%s</xliff:g></string>
+  <string name="subscription_notify_text">Nouvelle invitation d\'amitié de <xliff:g id="user">%s</xliff:g></string>
   <string name="file_notify_text">Nouveau fichier <xliff:g id="filename">%1$s</xliff:g> de <xliff:g id="user">%2$s</xliff:g></string>
   <string name="notify_groupchat_label">Invitation à un clavardage de groupe</string>
   <string name="group_chat_invite_notify_text">Nouvelle invitation de clavardage de groupe de <xliff:g id="user">%s</xliff:g></string>
@@ -171,7 +171,7 @@
   <!--Alerts: Exceptions-->
   <string name="error">Attention</string>
   <string name="error_prefix">Erreur :</string>
-  <string name="general_error">Code d'erreur <xliff:g id="code">%1$d</xliff:g></string>
+  <string name="general_error">Code d\'erreur <xliff:g id="code">%1$d</xliff:g></string>
   <string name="login_service_failed">Impossible de se connecter au service <xliff:g id="service">%1$s</xliff:g>. Veuillez ressayer ultérieurement.\n"(Détails : <xliff:g id="description">%2$s</xliff:g>)</string>
   <string name="add_list_failed">La liste n\'a pas été ajoutée.</string>
   <string name="block_contact_failed">Le contact n\'a pas été bloqué.</string>
