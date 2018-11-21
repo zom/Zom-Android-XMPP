@@ -2,40 +2,38 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
     repositories {
+        google()
+        jcenter()
+        maven { url "https://jitpack.io" }
         maven {
             url 'https://oss.sonatype.org/content/repositories/snapshots'
         }
-        mavenCentral()
-        jcenter()
-        maven { url "https://jitpack.io" }
-        google()
-
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.3'
+        classpath 'com.android.tools.build:gradle:3.2.1'
         classpath files('libs/gradle-witness.jar')
     }
 }
 
 allprojects {
     repositories {
+        google()
         jcenter()
+        maven { url "https://raw.githubusercontent.com/guardianproject/gpmaven/master" }
         maven { url "https://jitpack.io" }
         maven {
             url 'https://oss.sonatype.org/content/repositories/snapshots'
         }
-        mavenCentral()
-        maven { url "https://raw.githubusercontent.com/guardianproject/gpmaven/master" }
 
-        google()
+
     }
     project.ext {
         // these are common variables used in */build.gradle
-        buildToolsVersion="27.0.3"
-        compileSdkVersion=27
+        buildToolsVersion="28.0.3"
+        compileSdkVersion=28
         minSdkVersion=16
         targetSdkVersion=27
-        appcompat='com.android.support:appcompat-v7:27.0.2'
+        appcompat='com.android.support:appcompat-v7:28.0.0'
     }
 }
 

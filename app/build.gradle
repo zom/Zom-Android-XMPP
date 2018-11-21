@@ -32,6 +32,7 @@ android {
         multiDexEnabled true
     }
 
+
     dexOptions {
         javaMaxHeapSize "1536m"
         preDexLibraries true
@@ -53,11 +54,13 @@ android {
     }
 
     /* set the versionCode to a UNIX timestamp on any debug build */
+    /**
     applicationVariants.all { variant ->
-        if (variant.buildType.isDebuggable()) {
-            variant.mergedFlavor.versionCode = new Date().getTime() / 1000
+        variant.outputs.each { output ->
+                output.versionCodeOverride = new Date().getTime() / 1000
         }
-    }
+
+    }**/
 
     // Specifies two flavor dimensions.
     flavorDimensions "free"
@@ -119,7 +122,7 @@ android {
 
     }
 
-    buildToolsVersion '27.0.3'
+    buildToolsVersion '28.0.3'
 }
 
 ext {
@@ -140,28 +143,28 @@ dependencies {
     implementation project(':tibetanTextLibrary')
     implementation project.ext.appcompat
     implementation 'com.android.support:multidex:1.0.3'
-    implementation 'com.android.support:design:27.1.1'
-    implementation 'com.android.support:recyclerview-v7:27.1.1'
-    implementation 'com.android.support:support-v4:27.1.1'
-    implementation 'com.android.support:exifinterface:27.1.1'
+    implementation 'com.android.support:design:28.0.0'
+    implementation 'com.android.support:recyclerview-v7:28.0.0'
+    implementation 'com.android.support:support-v4:28.0.0'
+    implementation 'com.android.support:exifinterface:28.0.0'
     implementation 'net.zetetic:android-database-sqlcipher:3.5.4@aar'
     implementation 'com.google.zxing:core:3.3.0'
     implementation 'commons-codec:commons-codec:1.9'
     implementation 'commons-io:commons-io:2.4'
     implementation 'org.thoughtcrime.ssl.pinning:AndroidPinning:1.0.0'
     implementation 'info.guardianproject.iocipher:IOCipher:0.4'
-    implementation 'info.guardianproject.netcipher:netcipher:2.0.0-alpha1'
+    implementation 'info.guardianproject.netcipher:netcipher:2.0.0-beta1'
     implementation 'info.guardianproject.netcipher:netcipher-httpclient:2.0.0-alpha1'
     implementation 'info.guardianproject.panic:panic:0.5'
     implementation 'cz.msebera.android:httpclient:4.4.1.2'
 
     //   implementation 'de.measite.minidns:minidns-hla:0.2.4'
-    implementation 'org.minidns:minidns-hla:0.3.0'
+    implementation 'org.minidns:minidns-hla:0.3.3'
 
     // https://mvnrepository.com/artifact/org.jxmpp/jxmpp-core
-    implementation 'org.jxmpp:jxmpp-core:0.6.2'
-    implementation 'org.jxmpp:jxmpp-jid:0.6.2'
-    implementation 'org.jxmpp:jxmpp-util-cache:0.6.2'
+    implementation 'org.jxmpp:jxmpp-core:0.6.3'
+    implementation 'org.jxmpp:jxmpp-jid:0.6.3'
+    implementation 'org.jxmpp:jxmpp-util-cache:0.6.3'
 
     // for OMEMO support
     implementation 'org.whispersystems:signal-protocol-java:2.4.0'
@@ -172,7 +175,7 @@ dependencies {
     implementation 'org.ocpsoft.prettytime:prettytime:4.0.1.Final'
     implementation 'com.theartofdev.edmodo:android-image-cropper:2.0.0'
     implementation 'de.hdodenhof:circleimageview:2.0.0'
-    implementation 'com.github.bumptech.glide:glide:4.3.1'
+    implementation 'com.github.bumptech.glide:glide:4.6.1'
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.3.1'
     implementation 'com.github.javiersantos:AppUpdater:2.6.4'
@@ -195,11 +198,11 @@ dependencies {
     implementation 'com.jrummyapps:android-shell:1.0.1'
 
     //adding this nearby library for now
-    implementation 'com.google.android.gms:play-services-nearby:15.0.1'
+    implementation 'com.google.android.gms:play-services-nearby:16.0.0'
 
     //built in camera now!
     //https://github.com/siralam/CameraViewPlus
-    implementation 'com.asksira.android:cameraviewplus:0.9.4'
+    implementation 'com.asksira.android:cameraviewplus:0.9.5'
 
     //from here: https://github.com/guardianproject/proofmode
     implementation 'org.witness:android-libproofmode:0.0.3'
