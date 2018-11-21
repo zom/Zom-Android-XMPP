@@ -695,7 +695,7 @@ public class XmppConnection extends ImConnection {
         }
 
         @Override
-        public synchronized boolean createChatGroupAsync(final String chatRoomJid, final String subject, final String nickname) throws Exception {
+        public boolean createChatGroupAsync(final String chatRoomJid, final String subject, final String nickname) throws Exception {
 
             Address address = new XmppAddress (chatRoomJid);
 
@@ -722,7 +722,7 @@ public class XmppConnection extends ImConnection {
 
         };
 
-        private synchronized boolean createChatGroup(String chatRoomJid, String subject, String nickname) throws Exception {
+        private boolean createChatGroup(String chatRoomJid, String subject, String nickname) throws Exception {
             ChatGroup chatGroup;
             MultiUserChat muc;
 
@@ -765,7 +765,7 @@ public class XmppConnection extends ImConnection {
             if (chatGroup != null && muc !=null)
             {
 
-                mBookmarkManager.addBookmarkedConference(muc.getSubject(),muc.getRoom(),true,muc.getNickname(),null);
+           //     mBookmarkManager.addBookmarkedConference(muc.getSubject(),muc.getRoom(),true,muc.getNickname(),null);
 
                 if (!muc.isJoined()) {
                     DiscussionHistory history = new DiscussionHistory();
@@ -1007,7 +1007,7 @@ public class XmppConnection extends ImConnection {
                 if (mConnection == null || (!mConnection.isAuthenticated()))
                     return;
 
-                mBookmarkManager.addBookmarkedConference(address.getUser(),JidCreate.entityBareFrom(chatRoomJid),true,null,null);
+//                mBookmarkManager.addBookmarkedConference(address.getUser(),JidCreate.entityBareFrom(chatRoomJid),true,null,null);
 
                 // Create a MultiUserChat using a Connection for a room
                 MultiUserChatManager mucMgr = MultiUserChatManager.getInstanceFor(mConnection);
@@ -1272,7 +1272,7 @@ public class XmppConnection extends ImConnection {
             if (mMUCs.containsKey(chatRoomJid))
             {
                 try {
-                    mBookmarkManager.removeBookmarkedConference(JidCreate.entityBareFrom(chatRoomJid));
+              //      mBookmarkManager.removeBookmarkedConference(JidCreate.entityBareFrom(chatRoomJid));
                 }
                 catch (Exception e){}
 
@@ -4187,7 +4187,7 @@ public class XmppConnection extends ImConnection {
         mLastActivityManager = LastActivityManager.getInstanceFor(mConnection);
         mLastActivityManager.enable();
 
-        mBookmarkManager = BookmarkManager.getBookmarkManager(mConnection);
+    //    mBookmarkManager = BookmarkManager.getBookmarkManager(mConnection);
         mPrivateManager = PrivateDataManager.getInstanceFor(mConnection);
 
         mPingManager = PingManager.getInstanceFor(mConnection);
