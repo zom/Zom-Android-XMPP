@@ -234,7 +234,7 @@ public class ChatSessionManagerAdapter extends
 
     class ChatSessionListenerAdapter implements ChatSessionListener {
 
-        public void onChatSessionCreated(ChatSession session) {
+        public synchronized void onChatSessionCreated(ChatSession session) {
             final IChatSession sessionAdapter = getChatSessionAdapter(session, false);
             final int N = mRemoteListeners.beginBroadcast();
             if (N > 0) {
@@ -251,7 +251,7 @@ public class ChatSessionManagerAdapter extends
             }
         }
 
-        public void notifyChatSessionCreateFailed(final String name, final ImErrorInfo error) {
+        public synchronized void notifyChatSessionCreateFailed(final String name, final ImErrorInfo error) {
             final int N = mRemoteListeners.beginBroadcast();
             if (N > 0) {
                 for (int i = 0; i < N; i++) {
