@@ -245,7 +245,7 @@ public class XmppConnection extends ImConnection {
     private final static int SOTIMEOUT = 1000 * 60;
     private final static int CONNECT_TIMEOUT = 1000 * 60;
     private final static int PING_INTERVAL = 60 * 1; //1 minutes
-
+    private final static int PACKET_REPLY_TIMEOUT = 1000 * 5;
   //  private PingManager mPingManager;
 
     private String mUsername;
@@ -280,7 +280,7 @@ public class XmppConnection extends ImConnection {
 
         Debug.onConnectionStart();
 
-        SmackConfiguration.setDefaultPacketReplyTimeout(SOTIMEOUT);
+        SmackConfiguration.setDefaultPacketReplyTimeout(PACKET_REPLY_TIMEOUT);
 
         XMPPTCPConnection.setUseStreamManagementDefault(true);
         XMPPTCPConnection.setUseStreamManagementResumptionDefault(true);
@@ -2165,6 +2165,7 @@ public class XmppConnection extends ImConnection {
         SmackConfiguration.DEBUG = Debug.DEBUG_ENABLED;
 
         if (SmackConfiguration.DEBUG) {
+
             SmackConfiguration.setDefaultSmackDebuggerFactory(new SmackDebuggerFactory() {
                 @Override
                 public SmackDebugger create(XMPPConnection xmppConnection) throws IllegalArgumentException {
@@ -2762,10 +2763,11 @@ public class XmppConnection extends ImConnection {
 
                         qAvatar.put(bareJid.toString(), "");
 
+                        /**
                         if (getOmemo().getManager().contactSupportsOmemo(bareJid)) {
                             getOmemo().getManager().requestDeviceListUpdateFor(bareJid);
                             getOmemo().getManager().buildSessionsWith(bareJid);
-                        }
+                        }**/
                     }
                 }
                 else
