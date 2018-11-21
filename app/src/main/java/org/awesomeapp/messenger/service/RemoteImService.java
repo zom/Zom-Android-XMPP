@@ -354,9 +354,11 @@ public class RemoteImService extends Service implements ImService, ICacheWordSub
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
+        startForeground(notifyId, getForegroundNotification());
+
         //if the service restarted, then we need to reconnect/reinit to cacheword
-//        if ((flags & START_FLAG_REDELIVERY)!=0)  // if crash restart..
-        connectToCacheWord();
+        if ((flags & START_FLAG_REDELIVERY)!=0)  // if crash restart..
+            connectToCacheWord();
 
         if (intent != null)
         {
@@ -434,7 +436,7 @@ public class RemoteImService extends Service implements ImService, ICacheWordSub
 
     @Override
     public void onLowMemory() {
-        
+        debug ("onLowMemory()!");
     }
 
 
@@ -473,7 +475,7 @@ public class RemoteImService extends Service implements ImService, ICacheWordSub
                    If the event is TRIM_MEMORY_RUNNING_CRITICAL, then the system will
                    begin killing background processes.
                 */
-                clearMemoryMedium();
+             //   clearMemoryMedium();
 
                 break;
 
@@ -488,7 +490,7 @@ public class RemoteImService extends Service implements ImService, ICacheWordSub
                    If the event is TRIM_MEMORY_COMPLETE, the process will be one of
                    the first to be terminated.
                 */
-                clearMemoryComplete();
+              //  clearMemoryComplete();
 
 
                 break;
@@ -524,7 +526,6 @@ public class RemoteImService extends Service implements ImService, ICacheWordSub
     {
         clearMemoryMedium ();
 
-        /**
         for (ImConnectionAdapter conn : mConnections.values())
         {
             conn.suspend();
@@ -533,7 +534,7 @@ public class RemoteImService extends Service implements ImService, ICacheWordSub
         for (ImConnectionAdapter conn : mConnectionsByUser.values())
         {
             conn.suspend();
-        }**/
+        }
 
         SecureMediaStore.unmount();
         System.gc();
