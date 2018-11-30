@@ -4045,7 +4045,8 @@ public class XmppConnection extends ImConnection {
     }
 
     @Override
-    protected void setState(int state, ImErrorInfo error) {
+    protected void
+    setState(int state, ImErrorInfo error) {
         debug(TAG, "setState to " + state);
         super.setState(state, error);
 
@@ -4192,6 +4193,7 @@ public class XmppConnection extends ImConnection {
 
         mPingManager = PingManager.getInstanceFor(mConnection);
         mPingManager.setPingInterval(60);
+
         mPingManager.pingServerIfNecessary();
         mPingManager.registerPingFailedListener(new PingFailedListener() {
             @Override
@@ -4201,14 +4203,15 @@ public class XmppConnection extends ImConnection {
             }
         });
 
+        /**
         if (mReconnectionManager != null) {
             mReconnectionManager.abortPossiblyRunningReconnection();
             mReconnectionManager.disableAutomaticReconnection();
-        }
+        }**/
 
         mReconnectionManager = ReconnectionManager.getInstanceFor(mConnection);
 
-        mReconnectionManager.setReconnectionPolicy(ReconnectionManager.ReconnectionPolicy.RANDOM_INCREASING_DELAY);
+        mReconnectionManager.setReconnectionPolicy(ReconnectionManager.ReconnectionPolicy.FIXED_DELAY);
         mReconnectionManager.addReconnectionListener(new ReconnectionListener() {
             @Override
             public void reconnectingIn(int i) {

@@ -316,11 +316,12 @@ public class RemoteImService extends Service implements ImService, ICacheWordSub
             .setContentTitle(getString(R.string.app_name))
             .setSmallIcon(R.drawable.notify_zom);
 
-        mNotifyBuilder.setVisibility(NotificationCompat.VISIBILITY_PRIVATE);
-        mNotifyBuilder.setPriority(NotificationCompat.PRIORITY_MIN);
+        mNotifyBuilder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+        mNotifyBuilder.setPriority(NotificationCompat.PRIORITY_MAX);
         mNotifyBuilder.setOngoing(true);
         mNotifyBuilder.setWhen(System.currentTimeMillis());
-        
+        mNotifyBuilder.setTicker("Zom service restarted at: " + new Date().toLocaleString());
+
         Intent notificationIntent = new Intent(this, MainActivity.class);
         PendingIntent launchIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent, 0);
 
@@ -331,7 +332,7 @@ public class RemoteImService extends Service implements ImService, ICacheWordSub
 
     }
 
-    public void sendHeartbeat() {
+    public synchronized void sendHeartbeat() {
         Debug.onHeartbeat();
         try {
             if (mNeedCheckAutoLogin && mNetworkState != NetworkConnectivityReceiver.State.NOT_CONNECTED) {
@@ -346,6 +347,7 @@ public class RemoteImService extends Service implements ImService, ICacheWordSub
             {
                 conn.sendHeartbeat();
             }
+
         } finally {
             return;
         }
