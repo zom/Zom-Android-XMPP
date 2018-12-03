@@ -2974,20 +2974,6 @@ public class XmppConnection extends ImConnection {
                 else {
                     Chat thisChat = mChatManager.chatWith(jidTo.asEntityBareJidIfPossible());
 
-                    /**
-                    if (mConnection.isSmEnabled()) {
-                        try {
-                            mConnection.addStanzaIdAcknowledgedListener(message.getID(), new StanzaListener() {
-                                @Override
-                                public void processStanza(Stanza stanza) throws SmackException.NotConnectedException, InterruptedException, SmackException.NotLoggedInException {
-                                    message.setType(Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED);
-                                }
-                            });
-                        } catch (StreamManagementException.StreamManagementNotEnabledException e) {
-                            e.printStackTrace();
-                        }
-                    }**/
-
                     if (message.getType() == Imps.MessageType.QUEUED) {
 
                         //if this isn't already OTR encrypted, and the JID can support OMEMO then do it!
@@ -4207,14 +4193,13 @@ public class XmppConnection extends ImConnection {
             }
         });
 
+
+        mReconnectionManager = ReconnectionManager.getInstanceFor(mConnection);
         /**
         if (mReconnectionManager != null) {
             mReconnectionManager.abortPossiblyRunningReconnection();
             mReconnectionManager.disableAutomaticReconnection();
-        }**/
-
-        mReconnectionManager = ReconnectionManager.getInstanceFor(mConnection);
-
+        }
         mReconnectionManager.setReconnectionPolicy(ReconnectionManager.ReconnectionPolicy.FIXED_DELAY);
         mReconnectionManager.addReconnectionListener(new ReconnectionListener() {
             @Override
@@ -4230,8 +4215,9 @@ public class XmppConnection extends ImConnection {
             }
 
 
-        });
-        mReconnectionManager.enableAutomaticReconnection();
+        });**/
+
+        mReconnectionManager.disableAutomaticReconnection();
 
         try {
             debug(TAG,"is Private Data supported?" + mPrivateManager.isSupported());

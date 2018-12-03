@@ -247,8 +247,6 @@ public class RemoteImService extends Service implements ImService, ICacheWordSub
         // Have the heartbeat start autoLogin, unless onStart turns this off
         mNeedCheckAutoLogin = true;
 
-        HeartbeatService.startBeating(getApplicationContext());
-
         installTransports(this);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -431,7 +429,9 @@ public class RemoteImService extends Service implements ImService, ICacheWordSub
             mNeedCheckAutoLogin = !autoLogin();
         }
 
-        return START_STICKY;
+        HeartbeatService.startBeating(getApplicationContext());
+
+        return START_REDELIVER_INTENT;
     }
 
 
@@ -507,6 +507,7 @@ public class RemoteImService extends Service implements ImService, ICacheWordSub
         }
     }
 
+    /**
     private void clearMemoryMedium ()
     {
         mOtrChatManager = null;
@@ -542,7 +543,7 @@ public class RemoteImService extends Service implements ImService, ICacheWordSub
         System.gc();
         openEncryptedStores(tempKey,true);
 
-    }
+    }**/
 
     private void clearConnectionStatii() {
         ContentResolver cr = getContentResolver();
