@@ -35,9 +35,6 @@ import javax.annotation.Nonnull;
  */
 public class OtrChatManager implements OtrEngineListener {
 
-    //the singleton instance
-    private static OtrChatManager mInstance;
-
     private OtrEngineHost mOtrEngineHost;
     private Hashtable<String, Session> mSessions;
     private OtrAndroidKeyManagerImpl mKeyManager;
@@ -47,7 +44,7 @@ public class OtrChatManager implements OtrEngineListener {
 
     private final static String TAG = "OtrChatManager";
 
-    private OtrChatManager(int otrPolicy, RemoteImService imService, OtrAndroidKeyManagerImpl otrKeyManager) throws Exception {
+    public OtrChatManager(RemoteImService imService, OtrAndroidKeyManagerImpl otrKeyManager) throws Exception {
 
         mContext = imService;
         mKeyManager = otrKeyManager;
@@ -66,6 +63,7 @@ public class OtrChatManager implements OtrEngineListener {
     }
 
 
+    /**
 
     public static synchronized OtrChatManager getInstance(int otrPolicy, RemoteImService imService, OtrAndroidKeyManagerImpl otrKeyManager)
             throws Exception {
@@ -79,7 +77,7 @@ public class OtrChatManager implements OtrEngineListener {
     public static OtrChatManager getInstance()
     {
         return mInstance;
-    }
+    }**/
 
 
     public void setPolicy(int otrPolicy) {

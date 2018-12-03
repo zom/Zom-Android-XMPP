@@ -3005,7 +3005,6 @@ public class XmppConnection extends ImConnection {
                             } catch (CryptoFailedException cfe) {
                                 debug(TAG, "crypto failed", cfe);
                             } catch (UndecidedOmemoIdentityException uoie) {
-                                debug(TAG, "crypto failed", uoie);
 
                                 //if we are connected, then try again
                                 if (mConnection != null && mConnection.isConnected()) {
@@ -3017,6 +3016,11 @@ public class XmppConnection extends ImConnection {
                                     DeliveryReceiptRequest.addTo(msgEncrypted);
                                     thisChat.send(msgEncrypted);
                                     message.setType(Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED);
+                                }
+                                else
+                                {
+                                    debug(TAG, "crypto failed", uoie);
+
                                 }
                             }
 

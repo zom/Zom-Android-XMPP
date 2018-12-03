@@ -167,9 +167,9 @@ public class RemoteImService extends Service implements ImService, ICacheWordSub
 
                 if (otrKeyManager != null)
                 {
-                    mOtrChatManager = OtrChatManager.getInstance(otrPolicy, this, otrKeyManager);
-            //        mOtrChatManager.addOtrEngineListener(this);
-    
+                    mOtrChatManager = new OtrChatManager(this, otrKeyManager);
+                    mOtrChatManager.setPolicy(otrPolicy);
+
 
                 }
 

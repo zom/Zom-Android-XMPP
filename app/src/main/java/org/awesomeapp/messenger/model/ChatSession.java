@@ -173,22 +173,26 @@ public class ChatSession {
             if (mJid.hasNoResource())
                 initJid();
 
+            /**
             OtrChatManager cm = OtrChatManager.getInstance();
             SessionID sId = cm.getSessionId(message.getFrom().getAddress(), mJid.toString());
 
             SessionStatus otrStatus = cm.getSessionStatus(sId);
             boolean verified = cm.getKeyManager().isVerified(sId);
+             **/
 
             message.setTo(mXa);
             message.setType(Imps.MessageType.QUEUED);
 
             //if we can't omemo, check it again to be sure
-            if (!mCanOmemo) {
-                mCanOmemo = mManager.resourceSupportsOmemo(mJid);
-            }
+//            if (!mCanOmemo) {
+  //              mCanOmemo = mManager.resourceSupportsOmemo(mJid);
+    //        }
 
+            mManager.sendMessageAsync(this, message);
+
+            /**
             if (mCanOmemo && otrStatus != SessionStatus.ENCRYPTED) {
-                mManager.sendMessageAsync(this, message);
             } else {
 
                 //do OTR!
@@ -219,7 +223,7 @@ public class ChatSession {
 
                 }
 
-            }
+            }**/
 
         }
         else if (mParticipant instanceof ChatGroup)
@@ -256,12 +260,13 @@ public class ChatSession {
      */
     public void sendDataAsync(Message message, boolean isResponse, byte[] data) {
 
-        OtrChatManager cm = OtrChatManager.getInstance();
-        sendDataAsync(cm, message, isResponse, data);
+      //  OtrChatManager cm = OtrChatManager.getInstance();
+        //sendDataAsync(cm, message, isResponse, data);
 
 
     }
 
+    /**
     private void sendDataAsync (OtrChatManager cm, Message message, boolean isResponse, byte[] data)
     {
         SessionID sId = cm.getSessionId(message.getFrom().getAddress(), message.getTo().getAddress());
@@ -285,7 +290,7 @@ public class ChatSession {
         }
 
 
-    }
+    }**/
 
     /**
      * Called by ChatSessionManager when received a message of the ChatSession.
@@ -354,6 +359,7 @@ public class ChatSession {
         return Collections.unmodifiableList(mHistoryMessages);
     }*/
 
+    /**
     public void sendPushWhitelistTokenAsync(@NonNull Message message,
                                             @NonNull String[] whitelistTokens) {
 
@@ -378,7 +384,7 @@ public class ChatSession {
                 mManager.sendMessageAsync(this, message);
 
         }
-    }
+    }**/
 
     public boolean isSubscribed() {
         return mIsSubscribed;

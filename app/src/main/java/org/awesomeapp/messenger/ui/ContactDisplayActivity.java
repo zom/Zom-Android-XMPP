@@ -159,9 +159,9 @@ public class ContactDisplayActivity extends BaseActivity {
 
                     mRemoteOtrFingerprint = strings[0];
 
-                    if (mRemoteOtrFingerprint == null) {
-                        mRemoteOtrFingerprint = OtrChatManager.getInstance().getRemoteKeyFingerprint(mUsername);
-                    }
+              //      if (mRemoteOtrFingerprint == null) {
+                //        mRemoteOtrFingerprint = OtrChatManager.getInstance().getRemoteKeyFingerprint(mUsername);
+                  //  }
 
 
                     try {

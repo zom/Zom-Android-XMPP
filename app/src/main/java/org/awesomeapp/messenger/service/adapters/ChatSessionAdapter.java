@@ -1843,7 +1843,9 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
     }
 
+
     public boolean sendPushWhitelistToken(@NonNull String token) {
+        /**
         if (mConnection.getState() == ImConnection.SUSPENDED) {
             // TODO Is it possible to postpone a TLV message? e.g: insertMessageInDb with type QUEUED
             return false;
@@ -1860,6 +1862,8 @@ public class ChatSessionAdapter extends org.awesomeapp.messenger.service.IChatSe
 
         mChatSession.sendPushWhitelistTokenAsync(msg, new String[]{token});
         return true;
+         **/
+        return false;
     }
 
     public synchronized void setContactTyping (Contact contact, boolean isTyping)

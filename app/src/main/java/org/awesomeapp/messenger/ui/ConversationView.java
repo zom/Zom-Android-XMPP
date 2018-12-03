@@ -224,7 +224,6 @@ public class ConversationView {
 
     private SessionStatus mLastSessionStatus = null;
     private boolean mIsStartingOtr = false;
-    private boolean mIsVerified = false;
 
     private ConversationRecyclerViewAdapter mMessageAdapter;
  //   private boolean isServiceUp;
@@ -2413,17 +2412,6 @@ public class ConversationView {
 
 
 
-                if (otrChatSession != null) {
-                    try {
-                        String rFingerprint = otrChatSession.getRemoteFingerprint();
-                        mIsVerified = (OtrChatManager.getInstance().isRemoteKeyVerified(mRemoteAddress, rFingerprint));
-                    } catch (RemoteException re) {
-                    }
-                }
-
-
-    //            mActivity.findViewById(R.id.waiting_view).setVisibility(View.GONE);
-
 
             }
             else if (mIsStartingOtr)
@@ -2450,11 +2438,6 @@ public class ConversationView {
 
     }
 
-
-    public boolean isOtrSessionVerified ()
-    {
-        return mIsVerified;
-    }
 
     public int getRemotePresence ()
     {
