@@ -201,7 +201,6 @@ public class XmppConnection extends ImConnection {
     private BookmarkManager mBookmarkManager;
     private PrivateDataManager mPrivateManager;
     private ReconnectionManager mReconnectionManager;
-    private PingManager mPingManager;
 
     private Contact mUser;
     private BareJid mUserJid;
@@ -245,8 +244,8 @@ public class XmppConnection extends ImConnection {
     private final static int SOTIMEOUT = 1000 * 60;
     private final static int CONNECT_TIMEOUT = 1000 * 60;
     private final static int PING_INTERVAL = 60 * 1; //1 minutes
-    private final static int PACKET_REPLY_TIMEOUT = 1000 * 5;
-  //  private PingManager mPingManager;
+    private final static int PACKET_REPLY_TIMEOUT = 1000 * 30;
+    private PingManager mPingManager;
 
     private String mUsername;
     private String mPassword;
@@ -3835,7 +3834,7 @@ public class XmppConnection extends ImConnection {
             setState(LOGGING_IN, new ImErrorInfo(ImErrorInfo.NETWORK_ERROR, "network disconnected"));
             force_reconnect();
         } else if (getState() == LOGGED_IN) {
-            /**
+
             if (PING_ENABLED) {
                 // Check ping on every heartbeat.  checkPing() will return true immediately if we already checked.
                 if (!mPingSuccess) {
@@ -3850,7 +3849,7 @@ public class XmppConnection extends ImConnection {
                         sendPing();
                     }
                 }
-            }**/
+            }
         }
     }
 
@@ -3859,7 +3858,7 @@ public class XmppConnection extends ImConnection {
         heartbeatSequence = 0;
     }
 
-        /**
+
     boolean mPingSuccess = true;
     // Runs in executor thread
     private void sendPing() {
@@ -3874,7 +3873,7 @@ public class XmppConnection extends ImConnection {
         }
 
 
-    }**/
+    }
 
     @Override
     public void networkTypeChanged() {
