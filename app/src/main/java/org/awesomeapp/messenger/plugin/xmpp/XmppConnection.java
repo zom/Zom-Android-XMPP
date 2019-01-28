@@ -5265,7 +5265,11 @@ public class XmppConnection extends ImConnection {
                 {
                     boolean useAdvancedNetworking = Preferences.useAdvancedNetworking();
 
-                    if (!isReachable(putUrl.getHost(),putUrl.getPort()))
+                    int upPort = putUrl.getPort();
+                    if (upPort == -1)
+                        upPort = 443;//defualt to SSL
+
+                    if (!isReachable(putUrl.getHost(),upPort))
                         useAdvancedNetworking = true;
 
                     //urlconnection socks proxying only works on SDK 23+
